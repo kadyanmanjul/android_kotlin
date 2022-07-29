@@ -120,7 +120,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         userId=mBundle!!.getString("user")
         isFromDeeplink=mBundle!!.getBoolean("deeplink")
         source= mBundle.getString("source").toString()
-        Log.i("IMPRESSION", "onCreateView: $source")
         isFromBBPage= mBundle.getBoolean("BBPage")
         source= mBundle.getString("source").toString()
 
@@ -296,7 +295,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                                 showToast(resp.errorMessage())
 
                         } catch (e: Exception){
-                            Log.i("REQUESTMSG", "requestRoomPopup: ${e.message}")
+                            Timber.d("REQUESTMSG requestRoomPopup: ${e.message}")
                         }
                     }
                     alertDialog.dismiss()
@@ -413,7 +412,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         }
 
         feedViewModel.isBackPressed.observe(requireActivity()){
-            Log.i("LIVEROOMSouRCE", "addObserver: ${feedViewModel.isBackPressed.value}")
             if(it==true) {
                 try {
                     (activity as FeedActivity).swipeRefreshLayout.isEnabled=true

@@ -50,7 +50,6 @@ class SearchFragment : Fragment(), Call {
         savedInstanceState: Bundle?
     ): View? {
         viewModel.searchResponse.value=null
-        Log.i("YASHENDRA", "onCreateView: (${viewModel.searchResponse.value})")
 
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)

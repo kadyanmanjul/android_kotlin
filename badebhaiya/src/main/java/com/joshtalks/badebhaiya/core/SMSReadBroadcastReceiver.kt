@@ -27,7 +27,6 @@ class SMSReadBroadcastReceiver : BroadcastReceiver() {
                                 CommonStatusCodes.SUCCESS -> {
                                     val message: String? =
                                         this[SmsRetriever.EXTRA_SMS_MESSAGE] as String
-                                    Log.i("ayushg", "onReceive: message: $message")
 
                                     if (message != null) {
                                         var otp =

@@ -148,10 +148,6 @@ class FeedViewModel : ViewModel() {
                     viewModelScope.launch {
                         for(i in it.documents) {
                             if(i.id==User.getInstance().userId) {
-                                Log.i(
-                                    "HELOOBADGE",
-                                    "readRequestCount: ${i.data?.get("request_count")}"
-                                )
                                 BbDatastore.updateRoomRequestCount(i.data?.get("request_count") as Long)
                                 return@launch
                             }
@@ -197,7 +193,6 @@ class FeedViewModel : ViewModel() {
     }
 
     fun reader() {
-        Log.i("MODERATORSTATUS", "reader: ")
         collectModeratorStatus()
 //        PubNubManager.initSpeakerJoined()
     }
@@ -300,7 +295,6 @@ class FeedViewModel : ViewModel() {
                                 topic
                             )
                         }
-                        Log.i("YASHEN", "postvalue: ")
                         singleLiveEvent.value = message
                     } else
                         showToast("Oops Something Went Wrong! Try Again")
@@ -317,8 +311,7 @@ class FeedViewModel : ViewModel() {
                     }
                     showToast(response.errorMessage())
 
-                    Log.i("YASHEN", "joinRoom: failed")
-                }
+                    }
                 Log.d("sahil", "joinRoom:$response")
 
             } catch (e: SocketTimeoutException) {
@@ -607,7 +600,6 @@ class FeedViewModel : ViewModel() {
                                     roomtopic
                                 )
                             }
-                            Log.i("YASHEN", "postvalue: ")
                             singleLiveEvent.value = message
                         } else
                             showToast("Oops Something Went Wrong! Try Again")
@@ -624,8 +616,7 @@ class FeedViewModel : ViewModel() {
                         }
                         showToast(response.errorMessage())
 
-                        Log.i("YASHEN", "joinRoom: failed")
-                    }
+                        }
                     Log.d("sahil", "joinRoom:$response")
 
                 } catch (e: SocketTimeoutException) {

@@ -217,7 +217,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             val list = it.toList()
             Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IS => $list")
             audienceAdapter?.submitList(list)
-            Log.i("AUDIENCE", "addViewModelObserver: ${it}")
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()

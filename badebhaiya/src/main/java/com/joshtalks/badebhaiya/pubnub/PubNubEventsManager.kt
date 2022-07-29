@@ -86,7 +86,6 @@ object PubNubEventsManager {
     }
 
     fun sendModeratorStatus(status: Boolean, channelName: String?) {
-        Log.i("MODERATORSTATUS", "sendModeratorStatus: $channelName")
         val customMessage = JsonObject()
         customMessage.addProperty("is_speaker_joined", status)
         PubNubManager.sendCustomMessage(customMessage, channelName+"waitingRoom")

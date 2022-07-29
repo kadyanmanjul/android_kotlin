@@ -44,7 +44,6 @@ class SignUpAddProfilePhotoFragment: Fragment() {
                 //showToast("Back Pressed")
                 activity?.run {
                     viewModel.redirect= "ENTER_PIC"
-                    Log.i("SIGNUPActivity", "handleOnBackPressed: ${viewModel.redirect}")
                     requireActivity().supportFragmentManager.beginTransaction().remove(this@SignUpAddProfilePhotoFragment).commit()
                 }
             }

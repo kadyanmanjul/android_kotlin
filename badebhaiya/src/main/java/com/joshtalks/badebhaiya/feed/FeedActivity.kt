@@ -120,7 +120,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             flags: Array<Int> = arrayOf()
         ) = Intent(context, FeedActivity::class.java).apply {
 
-            Log.i("CHECKNOTIFICATION", "getIntentForNotification: $roomId &&& TOPIC:-$topicName")
             Timber.d("INTENT FOR NOTIFICATION DATA => $roomId $topicName")
             putExtra(OPEN_FROM_NOTIFICATION, true)
             putExtra(ROOM_ID, roomId.toInt())
@@ -256,7 +255,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private fun checkAndOpenLiveRoom() {
         Timber.d("FEED ACIVITY ON RESTART  => ${intent.extras}")
-        Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)} ----- boolean:- ${intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)}")
         if (intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)) {
 
             // TODO: Open Live Room.
@@ -269,7 +267,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     )
                 } and topic name => ${intent.getStringExtra(TOPIC_NAME)}"
             )
-            Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)}")
             takePermissions(
                 intent.getIntExtra(ROOM_ID, 0).toString(),
                 intent.getStringExtra(TOPIC_NAME) ?: "",
@@ -439,8 +436,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_ROOM -> {
 
                     it.data?.let {
-                        Log.i("MODERATORSTATUS", "addObserver: OPEN $it")
-                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
+                       it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
                             val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
                                 room,
                                 it.getString(TOPIC)!!
@@ -456,7 +452,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(it1) }
                         //viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(channelName = it1) }
                         viewModel.reader()
-                        Log.i("MODERATORSTATUS", "addObserver: WAIT $it")
                         WaitingFragment.open(this)
                     }
                 }

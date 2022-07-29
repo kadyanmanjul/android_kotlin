@@ -66,7 +66,6 @@ object WorkManagerAdmin {
 */
 
     fun forceRefreshFcmToken() {
-        Log.i("YAMI", "forceRefreshFcmToken: ")
         val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>()
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)

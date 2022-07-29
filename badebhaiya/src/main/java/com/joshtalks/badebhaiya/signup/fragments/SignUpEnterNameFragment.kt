@@ -48,7 +48,6 @@ class SignUpEnterNameFragment: Fragment() {
                 (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
                 //showToast("Back Pressed")
                 activity?.run {
-                    Log.i("SIGNUPActivity", "handleOnBackPressed: ${viewModel.redirect}")
                     requireActivity().supportFragmentManager.beginTransaction().remove(this@SignUpEnterNameFragment).commit()
                     //supportFragmentManager.beginTransaction().remove(this@SignUpEnterNameFragment)
 //                        .commitAllowingStateLoss()
@@ -59,7 +58,6 @@ class SignUpEnterNameFragment: Fragment() {
         var check=true
 
         binding.etFirstName.addTextChangedListener{
-            Log.i("FLOWENTERNAME", "onCreateView: ")
             if(check) {
                 check=false
                 viewModel.sendEvent(Impression("ENTER_NAME_FRAGMENT", "FILLED_NAME"))

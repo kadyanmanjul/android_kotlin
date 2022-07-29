@@ -29,7 +29,6 @@ class WaitingCallback: SubscribeCallback() {
         val msg = pnMessageResult.message.asJsonObject
         //val act = msg["action"].asString
         try {
-            Log.i("MODERATORSTATUS", "message: $msg")
             if (msg != null) {
                 Log.d(
                     "ABCEvent",

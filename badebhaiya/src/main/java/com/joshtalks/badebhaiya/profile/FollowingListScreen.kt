@@ -142,7 +142,6 @@ fun ItemFans(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth(.8f)
         ) {
-            Log.i("FOLLOWING", "ItemFans: ${following.full_name}")
             NameText(text = following.full_name ?: "")
             ListBioText(text = following.bio ?: "")
         }

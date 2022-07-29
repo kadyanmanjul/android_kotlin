@@ -116,7 +116,6 @@ class RecordedRoomFragment : Fragment() {
         userId=mBundle?.getString("userId").toString()
         clickListener()
         attachBackPressedDispatcher()
-        Log.i("RECORDS", "onCreateView: $url")
         binding.profilePic.apply {
             clipToOutline = true
             setUserImageRectOrInitials(
@@ -158,14 +157,12 @@ class RecordedRoomFragment : Fragment() {
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
-                Log.i("TAG", "onStartTrackingTouch: ")
                 binding.seekbar.thumb.alpha = 255
                 shouldUpdateSeekbar = false
 
             }
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
-                Log.i("TAG", "onStopTrackingTouch: ")
                 p0?.let {
                     binding.seekbar.thumb.alpha = 255
                     viewModel.seekTo(it.progress.toLong())
@@ -185,7 +182,6 @@ class RecordedRoomFragment : Fragment() {
     }
 
     private fun handleBackPress(onBackPressedCallback: OnBackPressedCallback) {
-        Log.i("KHOLO", "handleBackPress: ${viewModel.lvRoomState.value}")
         if (viewModel.lvRoomState.value  == LiveRoomState.EXPANDED){
             // Minimise live room.
             collapseLiveRoom()

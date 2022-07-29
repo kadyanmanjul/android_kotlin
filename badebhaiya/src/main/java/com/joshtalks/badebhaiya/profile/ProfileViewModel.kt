@@ -77,13 +77,12 @@ class ProfileViewModel : ViewModel() {
                 requestMap["bio"] = url
                 val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
                 if (response.isSuccessful) {
-                    Log.i("BOTTOMSHEET", "saveProfileInfo: success")
                     response.body()?.let {
                         User.getInstance().updateFromResponse(it)
                     }
                 }
             } catch (ex: Exception) {
-                Log.i("BOTTOMSHEET", "saveProfileInfo: ${ex.message}")
+                Timber.d("BOTTOMSHEET saveProfileInfo: ${ex.message}")
 
             }
         }

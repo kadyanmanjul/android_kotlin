@@ -180,7 +180,6 @@ class SignUpActivity : AppCompatActivity(), Call {
     }
 
     private fun openNextActivity() {
-        Log.i("FCM", "openNextActivity: ")
         WorkManagerAdmin.appStartWorker()
         when {
             PrefManager.getBoolValue(IS_NEW_USER) -> {
@@ -240,7 +239,6 @@ class SignUpActivity : AppCompatActivity(), Call {
     }
 
     fun openTrueCallerBottomSheet() {
-        Log.i("SIGNUPActivity", "openTrueCallerBottomSheet: ${viewModel.redirect}")
         if (viewModel.redirect == "ENTER_NAME") {
             binding.btnWelcome.visibility = View.GONE
             openEnterNameFragment()

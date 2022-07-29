@@ -109,7 +109,6 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
     }
 
     private fun startActivityForState(viewUserId: String? = null) {
-        Log.i("YASHENDRA", "startActivityForState: $viewUserId")
         val intent: Intent = when {
             User.getInstance().userId.isNotBlank() -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {

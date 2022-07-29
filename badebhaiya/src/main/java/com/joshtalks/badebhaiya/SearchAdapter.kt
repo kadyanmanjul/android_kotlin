@@ -97,7 +97,6 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
 //            SearchFragment().displayNull()
 //            //holder.noresult.visibility= View.VISIBLE
 //        }
-        Log.i("YASHENDRA", "onBindViewHolder: ${searchResult}")
         searchResult.let {
                 searchResult->
             holder.item.tvProfileBio.text = searchResult[position].bio

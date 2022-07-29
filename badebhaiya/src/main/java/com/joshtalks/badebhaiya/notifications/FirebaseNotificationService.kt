@@ -149,7 +149,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         executor.execute {
             Timber.tag("ROOMREQUEST").d("inside executor")
 
-            Log.i("CHECKNOTIFICATION", "sendNotification: $notificationObject")
             val intent = getIntentAccordingAction(
                 notificationObject,
                 notificationObject.action,
@@ -268,7 +267,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         actionData: String?
     ): Intent? {
         Timber.tag("ROOMREQUEST").d("get intent according action")
-        Log.i("CHECKNOTIFICATION", "getIntentAccordingAction: notification data:-$notificationObject  ------- actionData:$actionData ------- action:-$action")
         return when(action) {
             NotificationAction.ACTION_LOGOUT_USER -> {
                 if (User.getInstance().userId.isNotEmpty()) {
@@ -296,7 +294,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
                         if (roomId.isNotBlank()) {
                             Timber.d("YOYO")
-                            Log.i("CHECKNOTIFICATION", "getIntentAccordingAction: $roomId  && $topic")
                             return FeedActivity.getIntentForNotification(
                                 AppObjectController.joshApplication,
                                 roomId, topicName = topic

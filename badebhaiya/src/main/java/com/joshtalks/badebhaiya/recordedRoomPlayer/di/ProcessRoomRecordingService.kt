@@ -70,7 +70,6 @@ class ProcessRoomRecordingService : Service() {
                                 val callId = intent.getStringExtra(CALL_ID)
                                 val agoraMentorId = intent.getStringExtra(ROOM_ID)
                                 val duration = intent.getIntExtra(RECORD_DURATION,0)
-                                Log.i("RECORDUPLOAD", "onStartCommand: ")
                                 startProcessingAudioVideoMixing(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration))
                             }
                     }
@@ -104,7 +103,6 @@ class ProcessRoomRecordingService : Service() {
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-            Log.i("RECORDUPLOAD", "startProcessingAudioVideoMixing: ")
             fileQueue.add(inputFiles)
             startMuxingVideo()
         }
@@ -113,7 +111,6 @@ class ProcessRoomRecordingService : Service() {
     private fun startMuxingVideo() {
         CoroutineScope(Dispatchers.IO).launch {
             if (mFileUploadTask == null) {
-                Log.i("RECORDUPLOAD", "startMuxingVideo: ")
                 mFileUploadTask = VideoMuxingTask()
             }
             if (!isMuxingRunning) {
@@ -127,7 +124,6 @@ class ProcessRoomRecordingService : Service() {
 
         override fun run() {
             CoroutineScope(Dispatchers.IO).launch {
-                Log.i("RECORDUPLOAD", "run: ")
                 if (fileQueue.isEmpty()) {
                     isMuxingRunning = false
                     AppObjectController.uiHandler.post {
@@ -138,7 +134,6 @@ class ProcessRoomRecordingService : Service() {
                         val inputFiles = fileQueue.take()
 //                        val audioFile = PrefManager.getLastRecordingPath()
 //                        copy(inputFiles.audioPath!!, audioFile)
-                        Log.i("RECORDUPLOAD", "run: ${inputFiles.audioPath}")
 
                         uploadOutputVideoToS3Server(inputFiles)
                         delay(1000)
@@ -154,24 +149,19 @@ class ProcessRoomRecordingService : Service() {
     private fun uploadOutputVideoToS3Server(inputFiles: InputFiles) {
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
             try {
-                Log.i("RECORDUPLOAD", "uploadOutputVideoToS3Server: ${inputFiles?.audioPath}")
                 val requestEngage = inputFiles
                 if (inputFiles.audioPath.isNullOrEmpty()==false) {
                     val obj = mapOf(
                         "media_path" to File(inputFiles.audioPath).name
                     )
-                    Log.i("RECORDUPLOAD", "uploadOutputVideoToS3Server: ${inputFiles?.audioPath}")
-
                     val responseObj =
                         CommonRepository().requestUploadMediaAsync(obj).await()
                     val statusCode: Int =
                         uploadOnS3Server(responseObj, inputFiles.audioPath!!)
                     if(statusCode==-1) {
-                        Log.i("RECORDUPLOAD", "uploadCompressedMedia: failed")
                         showToast("Error while uploading")
                     }
                     if(statusCode==-1) {
-                        Log.i("RECORDUPLOAD", "uploadCompressedMedia: failed timeout")
                         showToast("TimeOut Error while uploading")
                     }
                     if (statusCode in 200..210) {
@@ -243,15 +233,12 @@ class ProcessRoomRecordingService : Service() {
                     parameters,
                     body
                 ).execute()
-                Log.i(TAG, "uploadOnS3Server: succeed")
                 return@async responseUpload.code()
             }
             catch (ex:OutOfMemoryError){
-                Log.i("RECORDUPLOAD", "uploadOnS3Server: $ex")
                 return@async -1
             }
             catch (ex:TimeoutException){
-                Log.i("RECORDUPLOAD", "uploadOnS3Server: $ex")
                 return@async -2
             }
         }.await()
@@ -326,7 +313,6 @@ class ProcessRoomRecordingService : Service() {
             audioPath: String,
             recordDuration: Int
         ) {
-            Log.i("RECORDUPLOAD", "processSingleRoomRecording: ")
             val intent = Intent(context, ProcessRoomRecordingService::class.java)
             intent.action = START_AUDIO_PROCESSING
             intent.putExtra(CALL_ID, callId)
