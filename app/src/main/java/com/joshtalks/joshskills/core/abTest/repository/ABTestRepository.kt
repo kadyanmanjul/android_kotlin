@@ -66,7 +66,6 @@ class ABTestRepository {
             }
             apiService.postGoalData(mapOf("goal_key" to goal))
             setOfPostedGoals.add(goal)
-            Log.d("ABTestRepository.kt", "YASH => postGoal:68 $setOfPostedGoals")
             PrefManager.put(AB_TEST_GOALS_POSTED, setOfPostedGoals.joinToString(","))
         } catch (ex: Throwable) {
             ex.showAppropriateMsg()

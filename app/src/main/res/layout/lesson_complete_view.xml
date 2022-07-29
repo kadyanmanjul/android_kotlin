@@ -87,22 +87,10 @@
             android:layout_marginEnd="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="@id/view11"
             app:layout_constraintHorizontal_bias="0.5"
-            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@+id/view14"
             app:layout_constraintTop_toTopOf="@+id/view11"
             app:srcCompat="@drawable/ic_lesson_green_tick" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:layout_marginEnd="@dimen/_4sdp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/view11"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/view15"
-            app:layout_constraintTop_toTopOf="@+id/view11"
-            app:srcCompat="@drawable/ic_lesson_green_tick" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/continue_lesson_tv__completed"

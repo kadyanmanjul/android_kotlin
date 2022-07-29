@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -1145,11 +1146,7 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if (userProfileData.isCourseBought){
-                    conversationBinding.imgFppBtn.visibility = VISIBLE
-                }else{
-                    conversationBinding.imgFppBtn.visibility = GONE
-                }
+                    conversationBinding.imgFppBtn.isVisible = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
                 if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)) {
