@@ -169,7 +169,7 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
         fun playRoom(room: RoomListResponseItem, view: View)
         fun setReminder(room: RoomListResponseItem, view: View)
         //fun deleteReminder(room: RoomListResponseItem,view: View)
-        fun viewProfile(profile: String?, deeplink:Boolean)
+        fun viewProfile(profile: String?, deeplink: Boolean, requestDialog: Boolean)
         fun viewRoom(room: RoomListResponseItem, view: View,deeplink: Boolean)
     }
 }

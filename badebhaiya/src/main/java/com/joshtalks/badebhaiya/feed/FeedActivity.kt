@@ -172,6 +172,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
 
         var user = intent.getStringExtra("userId")
+        var requestDialog=intent.getBooleanExtra("request_dialog",false)
         val mUserId = intent.getStringExtra(USER_ID)
 
         val db = Firebase.firestore
@@ -189,11 +190,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
          if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
         } else if (user != null) {
-            viewProfile(user, true)
+            viewProfile(user, true,requestDialog)
         } else if (mUserId != null){
-            viewProfile(mUserId, false)
+            viewProfile(mUserId, false,requestDialog)
         } else if (SingleDataManager.pendingPilotAction != null) {
-            viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
+            viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true, requestDialog)
         }
         if (User.getInstance().isLoggedIn()) {
             viewModel.setIsBadeBhaiyaSpeaker()
@@ -699,7 +700,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     }
 
-    override fun viewProfile(profile: String?, deeplink: Boolean) {
+    override fun viewProfile(profile: String?, deeplink: Boolean, requestDialog: Boolean) {
         val fragment = ProfileFragment() // replace your custom fragment class
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -708,6 +709,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         bundle.putString("source", "deeplink")
         else
             bundle.putString("source","feed")
+        bundle.putBoolean("request_dialog",requestDialog)
 
         fragment.arguments = bundle
         fragmentTransaction.replace(R.id.fragmentContainer, fragment)

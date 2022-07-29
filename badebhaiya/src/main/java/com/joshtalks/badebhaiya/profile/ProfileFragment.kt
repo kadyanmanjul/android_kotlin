@@ -97,6 +97,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     lateinit var binding: FragmentProfileBinding
 
     private var userId: String? = EMPTY
+    private var requestDialog=false
 
     @Inject
     lateinit var notificationScheduler: NotificationScheduler
@@ -118,6 +119,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         userId=mBundle!!.getString("user")
+        requestDialog=mBundle!!.getBoolean("request_dialog")
         isFromDeeplink=mBundle!!.getBoolean("deeplink")
         source= mBundle.getString("source").toString()
         isFromBBPage= mBundle.getBoolean("BBPage")
@@ -130,7 +132,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.handler = this
         binding.viewModel = viewModel
 
-
+        if(requestDialog){
+            requestRoomPopup()
+        }
         binding.profileToolbar.iv_back.setOnClickListener{
             activity?.run {
                 try {
@@ -264,41 +268,45 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun requestRoomPopup() {
-        if(liveRoomViewModel.pubNubState.value==PubNubState.STARTED)
-        {
-            showToast("Can't Sent Request During Call")
-        }
-        else
-        {
-            val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-            val dialogBinding = RequestRoomBinding.inflate(layoutInflater)
-            dialogBuilder.setView(dialogBinding.root)
-            val alertDialog: AlertDialog = dialogBuilder.create()
-            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            alertDialog.show()
-
-            dialogBinding.message.addTextChangedListener {
-                dialogBinding.submit.isEnabled = !it.toString().trim().isEmpty()
+        if (!User.getInstance().isLoggedIn() ){
+            userId?.let {
+                redirectToSignUp(REQUEST_ROOM, PendingPilotEventData(pilotUserId = it), false)
             }
+        }
+        else {
+            if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED) {
+                showToast("Can't Sent Request During Call")
+            } else {
+                val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                val dialogBinding = RequestRoomBinding.inflate(layoutInflater)
+                dialogBuilder.setView(dialogBinding.root)
+                val alertDialog: AlertDialog = dialogBuilder.create()
+                alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                alertDialog.show()
 
-            dialogBinding.submit.setOnClickListener{
-                val msg:String
-                if(dialogBinding.message.toString().isNotBlank()) {
-                    msg = dialogBinding.message.text.toString()
-                    val obj=FormRequest(User.getInstance().userId,msg,userId!!)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val resp= CommonRepository().sendRequest(obj)
-                            if(resp.isSuccessful)
-                                showToast("Request Sent Successfully")
-                            else
-                                showToast(resp.errorMessage())
+                dialogBinding.message.addTextChangedListener {
+                    dialogBinding.submit.isEnabled = !it.toString().trim().isEmpty()
+                }
 
-                        } catch (e: Exception){
-                            Timber.d("REQUESTMSG requestRoomPopup: ${e.message}")
+                dialogBinding.submit.setOnClickListener {
+                    val msg: String
+                    if (dialogBinding.message.toString().isNotBlank()) {
+                        msg = dialogBinding.message.text.toString()
+                        val obj = FormRequest(User.getInstance().userId, msg, userId!!)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                val resp = CommonRepository().sendRequest(obj)
+                                if (resp.isSuccessful)
+                                    showToast("Request Sent Successfully")
+                                else
+                                    showToast(resp.errorMessage())
+
+                            } catch (e: Exception) {
+                                Timber.d("REQUESTMSG requestRoomPopup: ${e.message}")
+                            }
                         }
+                        alertDialog.dismiss()
                     }
-                    alertDialog.dismiss()
                 }
             }
         }
@@ -372,6 +380,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         SingleDataManager.pendingPilotAction?.let {
             when(it){
                 FOLLOW -> followPilot()
+                REQUEST_ROOM->requestRoomPopup()
             }
         }
     }
@@ -482,7 +491,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     fun updateFollowStatus() {
         if (!User.getInstance().isLoggedIn() ){
             userId?.let {
-                redirectToSignUp(FOLLOW, PendingPilotEventData(pilotUserId = it))
+                redirectToSignUp(FOLLOW, PendingPilotEventData(pilotUserId = it),false)
             }
             return
         }
@@ -510,10 +519,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
     }
 
-    private fun redirectToSignUp(pendingPilotAction: PendingPilotEvent, pendingPilotEventData: PendingPilotEventData) {
+    private fun redirectToSignUp(pendingPilotAction: PendingPilotEvent, pendingPilotEventData: PendingPilotEventData, requestRoom:Boolean) {
         SingleDataManager.pendingPilotAction = pendingPilotAction
         SingleDataManager.pendingPilotEventData = pendingPilotEventData
-        SignUpActivity.start(requireActivity(), isRedirected = true)
+        SignUpActivity.start(requireActivity(), isRedirected = true, requestRoom = requestRoom)
         requireActivity().finish()
     }
 
@@ -670,7 +679,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     override fun setReminder(room: RoomListResponseItem, view: View) {
         if (!User.getInstance().isLoggedIn()){
             userId?.let {
-                redirectToSignUp(SET_REMINDER, PendingPilotEventData(roomId = room.roomId, pilotUserId = it))
+                redirectToSignUp(SET_REMINDER, PendingPilotEventData(roomId = room.roomId, pilotUserId = it),false)
             }
             return
         }
@@ -690,7 +699,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     }
 
-    override fun viewProfile(profile: String?, deeplink: Boolean) {
+    override fun viewProfile(profile: String?, deeplink: Boolean, requestDialog: Boolean) {
     }
 
 

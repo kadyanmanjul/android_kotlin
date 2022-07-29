@@ -146,7 +146,7 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun getProfileForUser(userId: String, source: String) {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
 //                if(isFromDeepLink)
 //                    updateFollowStatus(userId)

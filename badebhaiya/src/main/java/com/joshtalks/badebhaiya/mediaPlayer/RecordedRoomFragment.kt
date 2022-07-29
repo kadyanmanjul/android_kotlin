@@ -249,6 +249,7 @@ class RecordedRoomFragment : Fragment() {
                 startId: Int,
                 endId: Int
             ) {
+                viewModel.lvRoomState.value = LiveRoomState.EXPANDED
             }
 
             override fun onTransitionChange(
