@@ -7,6 +7,7 @@ package com.joshtalks.badebhaiya.core.models
 
 enum class PendingPilotEvent {
     FOLLOW,
+    REQUEST_ROOM,
     SET_REMINDER,
 }
 

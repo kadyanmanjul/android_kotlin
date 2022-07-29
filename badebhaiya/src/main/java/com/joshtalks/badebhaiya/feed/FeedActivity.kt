@@ -1,8 +1,6 @@
 package com.joshtalks.badebhaiya.feed
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -13,22 +11,17 @@ import android.os.Message
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
 import com.joshtalks.badebhaiya.core.EMPTY
@@ -37,7 +30,6 @@ import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
-import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.joinPreviousRoom.PreviousRoomDialog
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -50,21 +42,15 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
-import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
-import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
-import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.showCallRequests.RequestBottomSheetFragment
-import com.joshtalks.badebhaiya.signup.PeopleToFollowActivity
-import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setImage
-import com.joshtalks.badebhaiya.utils.urlToBitmap
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -78,7 +64,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback, CreateRoom.CreateRoomCallback {
@@ -134,7 +119,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             flags: Array<Int> = arrayOf()
         ) = Intent(context, FeedActivity::class.java).apply {
 
-            Log.i("CHECKNOTIFICATION", "getIntentForNotification: $roomId &&& TOPIC:-$topicName")
             Timber.d("INTENT FOR NOTIFICATION DATA => $roomId $topicName")
             putExtra(OPEN_FROM_NOTIFICATION, true)
             putExtra(ROOM_ID, roomId.toInt())
@@ -187,6 +171,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
 
         var user = intent.getStringExtra("userId")
+        var requestDialog=intent.getBooleanExtra("request_dialog",false)
         val mUserId = intent.getStringExtra(USER_ID)
 
         val db = Firebase.firestore
@@ -203,13 +188,19 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.roomRequestCount.value=0
          if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
+
         } else if (user != null) {
-            viewProfile(user, true)
+            viewProfile(user, true,requestDialog)
+             Log.i("REQUESTDIALOG", "onCreate: 1 $requestDialog")
         } else if (mUserId != null){
-            viewProfile(mUserId, false)
-        } else if (SingleDataManager.pendingPilotAction != null) {
-            viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
-        }
+            viewProfile(mUserId, false,requestDialog)
+             Log.i("REQUESTDIALOG", "onCreate: 2 $requestDialog")
+
+         } else if (SingleDataManager.pendingPilotAction != null) {
+            viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true, requestDialog)
+             Log.i("REQUESTDIALOG", "onCreate: 3 $requestDialog")
+
+         }
         if (User.getInstance().isLoggedIn()) {
             viewModel.setIsBadeBhaiyaSpeaker()
             addObserver()
@@ -270,7 +261,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private fun checkAndOpenLiveRoom() {
         Timber.d("FEED ACIVITY ON RESTART  => ${intent.extras}")
-        Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)} ----- boolean:- ${intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)}")
         if (intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)) {
 
             // TODO: Open Live Room.
@@ -283,7 +273,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     )
                 } and topic name => ${intent.getStringExtra(TOPIC_NAME)}"
             )
-            Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)}")
             takePermissions(
                 intent.getIntExtra(ROOM_ID, 0).toString(),
                 intent.getStringExtra(TOPIC_NAME) ?: "",
@@ -453,8 +442,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_ROOM -> {
 
                     it.data?.let {
-                        Log.i("MODERATORSTATUS", "addObserver: OPEN $it")
-                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
+                       it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
                             val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
                                 room,
                                 it.getString(TOPIC)!!
@@ -470,7 +458,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(it1) }
                         //viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(channelName = it1) }
                         viewModel.reader()
-                        Log.i("MODERATORSTATUS", "addObserver: WAIT $it")
                         WaitingFragment.open(this)
                     }
                 }
@@ -712,7 +699,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     }
 
-    override fun viewProfile(profile: String?, deeplink: Boolean) {
+    override fun viewProfile(profile: String?, deeplink: Boolean, requestDialog: Boolean) {
         val fragment = ProfileFragment() // replace your custom fragment class
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -721,6 +708,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         bundle.putString("source", "deeplink")
         else
             bundle.putString("source","feed")
+        bundle.putBoolean("request_dialog",requestDialog)
 
         fragment.arguments = bundle
         fragmentTransaction.replace(R.id.fragmentContainer, fragment)

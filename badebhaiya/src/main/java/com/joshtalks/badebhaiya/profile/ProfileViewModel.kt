@@ -7,6 +7,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
@@ -80,13 +81,12 @@ class ProfileViewModel : ViewModel() {
                 requestMap["bio"] = url
                 val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
                 if (response.isSuccessful) {
-                    Log.i("BOTTOMSHEET", "saveProfileInfo: success")
                     response.body()?.let {
                         User.getInstance().updateFromResponse(it)
                     }
                 }
             } catch (ex: Exception) {
-                Log.i("BOTTOMSHEET", "saveProfileInfo: ${ex.message}")
+                Timber.d("BOTTOMSHEET saveProfileInfo: ${ex.message}")
 
             }
         }
@@ -94,13 +94,13 @@ class ProfileViewModel : ViewModel() {
 
 
 
-    fun updateFollowStatus(userId: String, isFromBBPage: Boolean, isFromDeeplink: Boolean) {
+    fun updateFollowStatus(userId: String, isFromBBPage: Boolean, isFromDeeplink: Boolean, source:String?="PROFILE_SCREEN") {
         speakerFollowed.value?.let {
             if (it.not()) {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userId, User.getInstance().userId,isFromBBPage,isFromDeeplink,"PROFILE_SCREEN")
+                            FollowRequest(userId, User.getInstance().userId,isFromBBPage,isFromDeeplink,source!!)
                         val response = service.updateFollowStatus(followRequest)
                         if (response.isSuccessful) {
                             speakerFollowed.value = true
@@ -116,7 +116,7 @@ class ProfileViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userId, User.getInstance().userId, isFromBBPage, isFromDeeplink,"PROFILE_SCREEN")
+                            FollowRequest(userId, User.getInstance().userId, isFromBBPage, isFromDeeplink,source!!)
                         val response=service.updateUnfollowStatus(followRequest)
                         if(response.isSuccessful)
                         {
@@ -150,54 +150,113 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun getProfileForUser(userId: String, source: String) {
-        viewModelScope.launch {
-            try {
+        if(!User.getInstance().isLoggedIn()){
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
 //                if(isFromDeepLink)
 //                    updateFollowStatus(userId)
-                val response = repository.getProfileForUser(userId,source)
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        userProfileData.postValue(it)
-                        userFullName.set(it.fullName)
-                        profileUrl= it.profilePicUrl?: ""
-                        speakerFollowed.postValue(it.isSpeakerFollowed)
-                        isBadeBhaiyaSpeaker.set(it.isSpeaker)
-                        isSpeaker=it.isSpeaker
-                        isBadeBhaiyaSpeaker.notifyChange()
-                        isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
-                        isSelfProfile.set(it.userId == User.getInstance().userId)
-                        val list = mutableListOf<RoomListResponseItem>()
-                        if (it.liveRoomList.isNullOrEmpty().not())
-                            list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
-                                roomListResponseItem.conversationRoomType =
-                                    ConversationRoomType.LIVE
-                                roomListResponseItem
-                            })
-                        if (it.scheduledRoomList.isNullOrEmpty().not())
-                            list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
-                                roomListResponseItem.conversationRoomType =
-                                    if (roomListResponseItem.isScheduled == true)
-                                        ConversationRoomType.SCHEDULED
-                                    else
-                                        ConversationRoomType.NOT_SCHEDULED
-                                roomListResponseItem
-                            })
-                        if (list.isNullOrEmpty().not()) {
-                            list.forEach { listItem ->
-                                listItem.currentTime = it.currentTime
+                    val response = repository.getProfileForUser(userId, source)
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            userProfileData.postValue(it)
+                            userFullName.set(it.fullName)
+                            profileUrl = it.profilePicUrl ?: ""
+                            speakerFollowed.postValue(it.isSpeakerFollowed)
+                            it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
+                            isSpeaker = it.isSpeaker == true
+                            isBadeBhaiyaSpeaker.notifyChange()
+                            isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
+                            isSelfProfile.set(it.userId == User.getInstance().userId)
+                            val list = mutableListOf<RoomListResponseItem>()
+                            if (it.liveRoomList.isNullOrEmpty().not())
+                                list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        ConversationRoomType.LIVE
+                                    roomListResponseItem
+                                })
+                            if (it.scheduledRoomList.isNullOrEmpty().not())
+                                list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        if (roomListResponseItem.isScheduled == true)
+                                            ConversationRoomType.SCHEDULED
+                                        else
+                                            ConversationRoomType.NOT_SCHEDULED
+                                    roomListResponseItem
+                                })
+                            if (list.isNullOrEmpty().not()) {
+                                list.forEach { listItem ->
+                                    listItem.currentTime = it.currentTime!!
+                                }
+                                speakerProfileRoomsAdapter.submitList(list.toList())
+                            } else {
+                                speakerProfileRoomsAdapter.submitList(emptyList())
                             }
-                            speakerProfileRoomsAdapter.submitList(list.toList())
                         }
-                        else {
-                            speakerProfileRoomsAdapter.submitList(emptyList())
-                        }
+                    } else {
+                        showToast("Some Error Occured")
                     }
+                } catch (ex: Exception) {
+                    Timber.tag("YASHENDRA").d("getProfileForUser: Exception ${ex.message}")
+                    ex.printStackTrace()
+                    ex.cause
+                    showToast("Some Error Occured")
+                    speakerProfileRoomsAdapter.submitList(emptyList())
                 }
-            } catch(ex: Exception) {
-                Timber.tag("YASHENDRA").d( "getProfileForUser: Exception ${ex.message}")
-                ex.printStackTrace()
-                ex.cause
-                speakerProfileRoomsAdapter.submitList(emptyList())
+            }
+        }
+        else
+        {
+            viewModelScope.launch {
+                try {
+//                if(isFromDeepLink)
+//                    updateFollowStatus(userId)
+                    val response = repository.getProfileForUser(userId, source)
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            userProfileData.postValue(it)
+                            userFullName.set(it.fullName)
+                            profileUrl = it.profilePicUrl ?: ""
+                            speakerFollowed.postValue(it.isSpeakerFollowed)
+                            it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
+                            isSpeaker = it.isSpeaker == true
+                            isBadeBhaiyaSpeaker.notifyChange()
+                            isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
+                            isSelfProfile.set(it.userId == User.getInstance().userId)
+                            val list = mutableListOf<RoomListResponseItem>()
+                            if (it.liveRoomList.isNullOrEmpty().not())
+                                list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        ConversationRoomType.LIVE
+                                    roomListResponseItem
+                                })
+                            if (it.scheduledRoomList.isNullOrEmpty().not())
+                                list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        if (roomListResponseItem.isScheduled == true)
+                                            ConversationRoomType.SCHEDULED
+                                        else
+                                            ConversationRoomType.NOT_SCHEDULED
+                                    roomListResponseItem
+                                })
+                            if (list.isNullOrEmpty().not()) {
+                                list.forEach { listItem ->
+                                    listItem.currentTime = it.currentTime!!
+                                }
+                                speakerProfileRoomsAdapter.submitList(list.toList())
+                            } else {
+                                speakerProfileRoomsAdapter.submitList(emptyList())
+                            }
+                        }
+                    } else {
+                        showToast("Some Error Occured")
+                    }
+                } catch (ex: Exception) {
+                    Timber.tag("YASHENDRA").d("getProfileForUser: Exception ${ex.message}")
+                    ex.printStackTrace()
+                    ex.cause
+                    showToast("Some Error Occured")
+                    speakerProfileRoomsAdapter.submitList(emptyList())
+                }
             }
         }
     }
