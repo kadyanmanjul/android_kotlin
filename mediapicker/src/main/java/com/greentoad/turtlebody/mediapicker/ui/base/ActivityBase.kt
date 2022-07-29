@@ -5,14 +5,10 @@ import android.graphics.Color
 import android.os.Build
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 
 
 abstract class ActivityBase : AppCompatActivity() {
-    init {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-    }
 
     var toolbarTitle: String
         get() = supportActionBar?.title.toString()

@@ -17,7 +17,7 @@ android {
     compileSdkVersion 31
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName "${majorVersion}.${minorVersion}.${patchVersion}"
@@ -56,6 +56,7 @@ android {
 
         renderscriptTargetApi 25
         renderscriptSupportModeEnabled true
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86' ,'x86_64'
     }
 
     buildFeatures {
@@ -102,7 +103,7 @@ android {
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             ext.enableCrashlytics = true
             minifyEnabled true
-            shrinkResources true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
@@ -230,6 +231,7 @@ android {
     aaptOptions {
         cruncherEnabled = false
     }
+    dynamicFeatures = [':dynamic']
 }
 
 dependencies {

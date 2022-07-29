@@ -24,7 +24,6 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -47,13 +46,28 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
 import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
 import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.DATE_FORMATTER
+import com.joshtalks.joshskills.core.DD_MM_YYYY
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
@@ -63,7 +77,13 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.fpp.constants.*
+import com.joshtalks.joshskills.ui.fpp.constants.ALREADY_FPP
+import com.joshtalks.joshskills.ui.fpp.constants.GROUP
+import com.joshtalks.joshskills.ui.fpp.constants.HAS_RECIEVED_REQUEST
+import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
+import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
+import com.joshtalks.joshskills.ui.fpp.constants.REQUESTED
+import com.joshtalks.joshskills.ui.fpp.constants.SENT_REQUEST
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT_DATA
@@ -72,8 +92,22 @@ import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMAT
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
-import com.joshtalks.joshskills.ui.userprofile.fragments.*
-import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.userprofile.fragments.EditProfileFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.EnrolledCoursesFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.MENTOR_ID
+import com.joshtalks.joshskills.ui.userprofile.fragments.MyGroupsFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.PreviousProfilePicsFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.ProfileImageShowFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
+import com.joshtalks.joshskills.ui.userprofile.models.Award
+import com.joshtalks.joshskills.ui.userprofile.models.AwardCategory
+import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
+import com.joshtalks.joshskills.ui.userprofile.models.EnrolledCoursesList
+import com.joshtalks.joshskills.ui.userprofile.models.FppDetails
+import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
+import com.joshtalks.joshskills.ui.userprofile.models.GroupsList
+import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.userprofile.utils.COURSE
 import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP
 import com.joshtalks.joshskills.ui.userprofile.utils.USER_PROFILE_BACK_STACK
@@ -84,16 +118,20 @@ import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
+import java.util.Locale
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.android.synthetic.main.base_toolbar.*
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_edit
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.iv_setting
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.DecimalFormat
-import java.util.*
 
 const val FOR_BASIC_DETAILS = "For_Basic_Details"
 const val FOR_REST = "For_Rest"
@@ -123,10 +161,6 @@ class UserProfileActivity : CoreJoshActivity() {
 
     private var viewerReferral: Int? = 0
     private var helpCountControl: Boolean = false
-
-    init {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-    }
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
