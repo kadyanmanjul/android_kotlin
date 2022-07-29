@@ -42,7 +42,6 @@
                 android:layout_height="37dp"
                 android:layout_margin="@dimen/_6sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="@{() -> handler.collapseLiveRoom()}"
                 android:padding="@dimen/_6sdp"
                 android:tint="#000000"
                 android:visibility="visible"

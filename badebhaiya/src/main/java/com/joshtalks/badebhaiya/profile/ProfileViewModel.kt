@@ -146,65 +146,125 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun getProfileForUser(userId: String, source: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
+        if(!User.getInstance().isLoggedIn()){
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
 //                if(isFromDeepLink)
 //                    updateFollowStatus(userId)
-                val response = repository.getProfileForUser(userId,source)
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        userProfileData.postValue(it)
-                        userFullName.set(it.fullName)
-                        profileUrl= it.profilePicUrl?: ""
-                        speakerFollowed.postValue(it.isSpeakerFollowed)
-                        it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
-                        isSpeaker= it.isSpeaker == true
-                        isBadeBhaiyaSpeaker.notifyChange()
-                        isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
-                        isSelfProfile.set(it.userId == User.getInstance().userId)
-                        val list = mutableListOf<RoomListResponseItem>()
-                        if (it.liveRoomList.isNullOrEmpty().not())
-                            list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
-                                roomListResponseItem.conversationRoomType =
-                                    ConversationRoomType.LIVE
-                                roomListResponseItem
-                            })
-                        if (it.recordedRooms.isNullOrEmpty().not())
-                            list.addAll(it.recordedRooms!!.map { roomListResponseItem ->
-                                roomListResponseItem.conversationRoomType =
-                                    ConversationRoomType.RECORDED
-                                roomListResponseItem
-                            })
-                        if (it.scheduledRoomList.isNullOrEmpty().not())
-                            list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
-                                roomListResponseItem.conversationRoomType =
-                                    if (roomListResponseItem.isScheduled == true)
-                                        ConversationRoomType.SCHEDULED
-                                    else
-                                        ConversationRoomType.NOT_SCHEDULED
-                                roomListResponseItem
-                            })
-                        if (list.isNullOrEmpty().not()) {
-                            list.forEach { listItem ->
-                                listItem.currentTime = it.currentTime!!
+                    val response = repository.getProfileForUser(userId, source)
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            userProfileData.postValue(it)
+                            userFullName.set(it.fullName)
+                            profileUrl = it.profilePicUrl ?: ""
+                            speakerFollowed.postValue(it.isSpeakerFollowed)
+                            it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
+                            isSpeaker = it.isSpeaker == true
+                            isBadeBhaiyaSpeaker.notifyChange()
+                            isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
+                            isSelfProfile.set(it.userId == User.getInstance().userId)
+                            val list = mutableListOf<RoomListResponseItem>()
+                            if (it.liveRoomList.isNullOrEmpty().not())
+                                list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        ConversationRoomType.LIVE
+                                    roomListResponseItem
+                                })
+                            if (it.recordedRooms.isNullOrEmpty().not())
+                                list.addAll(it.recordedRooms!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        ConversationRoomType.RECORDED
+                                    roomListResponseItem
+                                })
+                            if (it.scheduledRoomList.isNullOrEmpty().not())
+                                list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        if (roomListResponseItem.isScheduled == true)
+                                            ConversationRoomType.SCHEDULED
+                                        else
+                                            ConversationRoomType.NOT_SCHEDULED
+                                    roomListResponseItem
+                                })
+                            if (list.isNullOrEmpty().not()) {
+                                list.forEach { listItem ->
+                                    listItem.currentTime = it.currentTime!!
+                                }
+                                speakerProfileRoomsAdapter.submitList(list.toList())
+                            } else {
+                                speakerProfileRoomsAdapter.submitList(emptyList())
                             }
-                            speakerProfileRoomsAdapter.submitList(list.toList())
                         }
-                        else {
-                            speakerProfileRoomsAdapter.submitList(emptyList())
-                        }
+                    } else {
+                        showToast("Some Error Occured")
                     }
-                }
-                else
-                {
+                } catch (ex: Exception) {
+                    Timber.tag("YASHENDRA").d("getProfileForUser: Exception ${ex.message}")
+                    ex.printStackTrace()
+                    ex.cause
                     showToast("Some Error Occured")
+                    speakerProfileRoomsAdapter.submitList(emptyList())
                 }
-            } catch(ex: Exception) {
-                Timber.tag("YASHENDRA").d( "getProfileForUser: Exception ${ex.message}")
-                ex.printStackTrace()
-                ex.cause
-                showToast("Some Error Occured")
-                speakerProfileRoomsAdapter.submitList(emptyList())
+            }
+        }
+        else
+        {
+            viewModelScope.launch {
+                try {
+//                if(isFromDeepLink)
+//                    updateFollowStatus(userId)
+                    val response = repository.getProfileForUser(userId, source)
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            userProfileData.postValue(it)
+                            userFullName.set(it.fullName)
+                            profileUrl = it.profilePicUrl ?: ""
+                            speakerFollowed.postValue(it.isSpeakerFollowed)
+                            it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
+                            isSpeaker = it.isSpeaker == true
+                            isBadeBhaiyaSpeaker.notifyChange()
+                            isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
+                            isSelfProfile.set(it.userId == User.getInstance().userId)
+                            val list = mutableListOf<RoomListResponseItem>()
+                            if (it.liveRoomList.isNullOrEmpty().not())
+                                list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        ConversationRoomType.LIVE
+                                    roomListResponseItem
+                                })
+                            if (it.recordedRooms.isNullOrEmpty().not())
+                                list.addAll(it.recordedRooms!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        ConversationRoomType.RECORDED
+                                    roomListResponseItem
+                                })
+                            if (it.scheduledRoomList.isNullOrEmpty().not())
+                                list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        if (roomListResponseItem.isScheduled == true)
+                                            ConversationRoomType.SCHEDULED
+                                        else
+                                            ConversationRoomType.NOT_SCHEDULED
+                                    roomListResponseItem
+                                })
+                            if (list.isNullOrEmpty().not()) {
+                                list.forEach { listItem ->
+                                    listItem.currentTime = it.currentTime!!
+                                }
+                                speakerProfileRoomsAdapter.submitList(list.toList())
+                            } else {
+                                speakerProfileRoomsAdapter.submitList(emptyList())
+                            }
+                        }
+                    } else {
+                        showToast("Some Error Occured")
+                    }
+                } catch (ex: Exception) {
+                    Timber.tag("YASHENDRA").d("getProfileForUser: Exception ${ex.message}")
+                    ex.printStackTrace()
+                    ex.cause
+                    showToast("Some Error Occured")
+                    speakerProfileRoomsAdapter.submitList(emptyList())
+                }
             }
         }
     }
