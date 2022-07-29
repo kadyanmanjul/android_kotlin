@@ -642,7 +642,7 @@ class UserProfileActivity : CoreJoshActivity() {
                         }
                         ALREADY_FPP -> {
                             isFpp = true
-                            if (viewModel.fppRequest.value?.groupId != null && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
+                            if (viewModel.fppRequest.value?.groupId != null && viewModel.fppRequest.value?.canSendMessage == true)
                                 binding.btnSendMessage.visibility = VISIBLE
                         }
                         REQUESTED -> {

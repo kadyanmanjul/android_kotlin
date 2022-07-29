@@ -18,6 +18,8 @@ data class FppRequest (
     val groupId: String?,
     @SerializedName("agora_uid")
     val agoraUid: Int,
+    @SerializedName("can_send_message")
+    val canSendMessage: Boolean = false,
 )
 data class FppDetails(
     @SerializedName("mentor_id")
