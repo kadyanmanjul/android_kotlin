@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
@@ -314,7 +315,7 @@ class RecordedRoomFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun clickListener() {
-        viewModel.lvRoomState.value = LiveRoomState.EXPANDED
+//        viewModel.lvRoomState.value = LiveRoomState.EXPANDED
 
         binding.leaveEndRoomBtn.setOnClickListener {
 //                expandLiveRoom()
@@ -323,6 +324,7 @@ class RecordedRoomFragment : Fragment() {
 
         binding.apply {
             shareBtn.setOnClickListener {
+                feedViewModel.sendEvent(Impression("MEDIA_PLAYER","CLICKED_RECORD_ROOM_SHARE"))
                 showToast("Feature yet to be added")
             }
 

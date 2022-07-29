@@ -544,6 +544,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
         viewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_REPLAY"))
+        viewModel.userRoomRecord(room.recordings?.get(0)?.id!!,User.getInstance().userId)
         RecordedRoomFragment.open(this,"Feed", room)
     }
 

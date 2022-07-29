@@ -471,6 +471,16 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    fun userRoomRecord(id:Int, user:String){
+        viewModelScope.launch {
+            try {
+                repository.userRoomRecord(id,user)
+            }catch (ex:Exception){
+
+            }
+        }
+    }
+
     fun scheduleRoom(topic: String, startTime: String, callback: CreateRoom.CreateRoomCallback) {
         viewModelScope.launch {
             if (topic.isNullOrBlank()) {

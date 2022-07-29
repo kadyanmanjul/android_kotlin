@@ -87,6 +87,8 @@ data class RecordedResponseList(
 )
 @Parcelize
 data class RecordedResponse(
+    @SerializedName("id")
+    val id:Int,
     @SerializedName("recording_file")
     val url:String
 ):Parcelable

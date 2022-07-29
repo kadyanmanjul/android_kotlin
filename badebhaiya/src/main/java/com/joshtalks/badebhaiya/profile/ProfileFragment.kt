@@ -589,6 +589,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     override fun playRoom(room: RoomListResponseItem, view: View) {
         feedViewModel.source="Profile"
         viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_REPLAY"))
+        feedViewModel.userRoomRecord(room.recordings?.get(0)?.id!!,User.getInstance().userId)
         RecordedRoomFragment.open(activity as AppCompatActivity,"Profile", room)
     }
 
