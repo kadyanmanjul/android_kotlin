@@ -26,6 +26,9 @@ import com.joshtalks.joshskills.ui.special_practice.utils.WHATSAPP_PACKAGE_STRIN
 import com.joshtalks.joshskills.ui.video_player.VIDEO_URL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.DeepLinkUtil
+import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 
 class CallRecordingShare : AppCompatActivity() {
     private val binding by lazy<ActivityCallRecordingShareBinding> {
@@ -54,8 +57,18 @@ class CallRecordingShare : AppCompatActivity() {
         binding.executePendingBindings()
         getIntentExtra()
         binding.materialCardView.setOnClickListener {
+            CallAnalytics.addAnalytics(
+                event = EventName.RECORDING_SHARE_BUTTON_CLICKED,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
             getDeepLinkAndInviteFriends(videoUrl)
         }
+        CallAnalytics.addAnalytics(
+            event = EventName.CALL_RECORDING_NOTIFICATION_CLICKED,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
         playRecordedVideo()
     }
 

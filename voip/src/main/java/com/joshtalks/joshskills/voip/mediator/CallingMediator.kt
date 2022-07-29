@@ -266,15 +266,17 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         val envelope = Envelope(Event.NEXT_WORD_REQUEST, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
-                    UserAction.START_GAME -> {
+                        UserAction.START_GAME -> {
                         val envelope = Envelope(Event.START_GAME, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
                     UserAction.END_GAME -> {
-                        val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
-                        stateChannel.send(envelopeEndGame)
-                        val envelope = Envelope(Event.END_GAME, data = ActionDirection.SERVER)
-                        stateChannel.send(envelope)
+                        if(callContext?.currentUiState!!.isStartGameClicked) {
+                            val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
+                            stateChannel.send(envelopeEndGame)
+                            val envelope = Envelope(Event.END_GAME, data = ActionDirection.SERVER)
+                            stateChannel.send(envelope)
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -514,22 +516,26 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         ServerConstants.NEXT_WORD_RECEIVED ->{
                             Log.d(TAG, " GAME observe: START GAME RECORDING  ServerConstants NEXT_WORD_RECEIVED")
 
-                            val envelopeStartRecording = Envelope(Event.START_GAME_RECORDING, data = ActionDirection.LOCAL)
-                            stateChannel.send(envelopeStartRecording)
-                            val incomingWorData = IncomingGameNextWord(word = event.getWord(), color = event.getWordColor())
-                            val envelope = Envelope(
-                                Event.NEXT_WORD_RECEIVED,
-                                incomingWorData
-                            )
-                            stateChannel.send(envelope)
+                            if(callContext?.currentUiState!!.isStartGameClicked) {
+                                val envelopeStartRecording = Envelope(Event.START_GAME_RECORDING, data = ActionDirection.LOCAL)
+                                stateChannel.send(envelopeStartRecording)
+                                val incomingWorData = IncomingGameNextWord(word = event.getWord(), color = event.getWordColor())
+                                val envelope = Envelope(
+                                    Event.NEXT_WORD_RECEIVED,
+                                    incomingWorData
+                                )
+                                stateChannel.send(envelope)
+                            }
                         }
                         ServerConstants.END_GAME ->{
                             Log.d(TAG, " GAME observe: START GAME RECORDING ServerConstants  END_GAME")
-                            val envelope = Envelope(
-                                Event.END_GAME,
-                                data = ActionDirection.LOCAL
-                            )
-                            stateChannel.send(envelope)
+                            if(callContext?.currentUiState!!.isStartGameClicked) {
+                                val envelope = Envelope(
+                                    Event.END_GAME,
+                                    data = ActionDirection.LOCAL
+                                )
+                                stateChannel.send(envelope)
+                            }
                         }
                         // Remote User Disconnected
                         ServerConstants.DISCONNECTED -> {
