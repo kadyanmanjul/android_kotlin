@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.feed.model.*
+import com.joshtalks.badebhaiya.feed.model.searchSuggestion.SearchSuggestion
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.heartbeat.Heartbeat
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -9,6 +10,7 @@ import com.joshtalks.badebhaiya.repository.model.ApiResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.PubNubExceptionRequest
+import com.joshtalks.badebhaiya.signup.response.BBtoFollow
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -59,5 +61,10 @@ interface ConversationRoomNetworkService {
 
     @POST("$DIR/conversation_room/live_room_users/")
     suspend fun triggerHeartbeat(@Body body: Heartbeat):Response<Void>
+
+    @GET("$DIR/conversation_room/speakers_search_list/")
+    suspend fun getSearchSuggestions(
+        @Query("page") page: Int
+    ):Response<SearchSuggestion>
 
 }
