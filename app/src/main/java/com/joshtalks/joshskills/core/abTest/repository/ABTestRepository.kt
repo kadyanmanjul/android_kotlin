@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.abTest.repository
 
+import android.util.Log
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
@@ -16,6 +17,9 @@ class ABTestRepository {
     var data: Map<String, Boolean> = getABTestData()
 
     private val listOfCampaigns = CampaignKeys.values().map { it.NAME }
+    private val setOfPostedGoals: MutableSet<String> by lazy {
+        PrefManager.getStringValue(AB_TEST_GOALS_POSTED).split(",").toMutableSet()
+    }
 
     suspend fun getCampaignData(campaign: String): ABTestCampaignData? {
         return database.getABTestCampaign(campaign)
@@ -57,7 +61,13 @@ class ABTestRepository {
 
     suspend fun postGoal(goal: String) {
         try {
+            if (setOfPostedGoals.contains(goal)) {
+                return
+            }
             apiService.postGoalData(mapOf("goal_key" to goal))
+            setOfPostedGoals.add(goal)
+            Log.d("ABTestRepository.kt", "YASH => postGoal:68 $setOfPostedGoals")
+            PrefManager.put(AB_TEST_GOALS_POSTED, setOfPostedGoals.joinToString(","))
         } catch (ex: Throwable) {
             ex.showAppropriateMsg()
         }

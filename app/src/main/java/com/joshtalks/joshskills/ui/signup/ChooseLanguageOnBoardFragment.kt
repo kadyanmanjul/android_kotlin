@@ -63,28 +63,29 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
-        viewModel.saveImpression(LANGUAGE_SELECTION_SCREEN_OPENED)
         errorView = Stub(view.findViewById(R.id.error_view))
-
 //        if (Utils.isInternetAvailable().not()) {
 //            binding.noInternetContainer.visibility = View.VISIBLE
 //        } else {
 //            binding.noInternetContainer.visibility = View.GONE
 //            viewModel.getAvailableLanguages()
 //        }
-        if (isInternetAvailable()) {
-            viewModel.getAvailableLanguages()
-            errorView?.resolved()?.let {
-                errorView!!.get().onSuccess()
-            }
-        } else {
-            binding.progress.visibility = View.GONE
-            errorView?.resolved().let {
-                errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
-                    override fun onRetryButtonClicked() {
-                        viewModel.getAvailableLanguages()
-                    }
-                })
+        if (viewModel.availableLanguages.value == null || viewModel.availableLanguages.value.isNullOrEmpty()) {
+            if (isInternetAvailable()) {
+                viewModel.getAvailableLanguages()
+                viewModel.saveImpression(LANGUAGE_SELECTION_SCREEN_OPENED)
+                errorView?.resolved()?.let {
+                    errorView!!.get().onSuccess()
+                }
+            } else {
+                binding.progress.visibility = View.GONE
+                errorView?.resolved().let {
+                    errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                        override fun onRetryButtonClicked() {
+                            viewModel.getAvailableLanguages()
+                        }
+                    })
+                }
             }
         }
     }
@@ -149,9 +150,5 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
         } catch (e: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }
-    }
-
-    fun onBackPressed() {
-        requireActivity().onBackPressed()
     }
 }

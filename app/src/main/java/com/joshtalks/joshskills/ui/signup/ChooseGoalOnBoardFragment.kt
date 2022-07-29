@@ -58,19 +58,21 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         errorView = Stub(view.findViewById(R.id.error_view))
-        if (isInternetAvailable()) {
-            viewModel.getAvailableCourseGoals()
-            errorView?.resolved()?.let {
-                errorView!!.get().onSuccess()
-            }
-        } else {
-            binding.progress.visibility = View.GONE
-            errorView?.resolved().let {
-                errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
-                    override fun onRetryButtonClicked() {
-                        viewModel.getAvailableCourseGoals()
-                    }
-                })
+        if (viewModel.availableGoals.value == null || viewModel.availableGoals.value.isNullOrEmpty()) {
+            if (isInternetAvailable()) {
+                viewModel.getAvailableCourseGoals()
+                errorView?.resolved()?.let {
+                    errorView!!.get().onSuccess()
+                }
+            } else {
+                binding.progress.visibility = View.GONE
+                errorView?.resolved().let {
+                    errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                        override fun onRetryButtonClicked() {
+                            viewModel.getAvailableCourseGoals()
+                        }
+                    })
+                }
             }
         }
     }
@@ -129,9 +131,5 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
         } catch (e: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }
-    }
-
-    fun onBackPressed() {
-        requireActivity().onBackPressed()
     }
 }

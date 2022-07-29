@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -333,8 +334,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     override fun onBackPressed() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
-        if (supportFragmentManager.backStackEntryCount == 1) {
-            this@FreeTrialOnBoardActivity.finish()
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+//            this@FreeTrialOnBoardActivity.finish()
             return
         }
         super.onBackPressed()
@@ -343,6 +345,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     fun openChooseLanguageFragment() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
+            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             addToBackStack(null)
             replace(
                 R.id.container,
@@ -353,9 +356,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun openGoalFragment() {
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
-            addToBackStack(null)
+            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            addToBackStack(ChooseGoalOnBoardFragment::class.java.name)
             replace(
                 R.id.container,
                 ChooseGoalOnBoardFragment.newInstance(),
