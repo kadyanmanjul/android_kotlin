@@ -1,12 +1,16 @@
 package com.joshtalks.joshskills.ui.signup
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.ApiCallStatus
@@ -64,12 +68,6 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         errorView = Stub(view.findViewById(R.id.error_view))
-//        if (Utils.isInternetAvailable().not()) {
-//            binding.noInternetContainer.visibility = View.VISIBLE
-//        } else {
-//            binding.noInternetContainer.visibility = View.GONE
-//            viewModel.getAvailableLanguages()
-//        }
         if (viewModel.availableLanguages.value == null || viewModel.availableLanguages.value.isNullOrEmpty()) {
             if (isInternetAvailable()) {
                 viewModel.getAvailableLanguages()
@@ -77,46 +75,57 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
                 errorView?.resolved()?.let {
                     errorView!!.get().onSuccess()
                 }
-            } else {
-                binding.progress.visibility = View.GONE
-                errorView?.resolved().let {
-                    errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
-                        override fun onRetryButtonClicked() {
-                            viewModel.getAvailableLanguages()
-                        }
-                    })
+            } else
+                showErrorView()
+        }
+    }
+
+    fun showErrorView() {
+        binding.progress.visibility = View.GONE
+        errorView?.resolved().let {
+            errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                override fun onRetryButtonClicked() {
+                    if (isInternetAvailable()) {
+                        viewModel.getAvailableLanguages()
+                    } else {
+                        errorView?.get()?.enableRetryBtn()
+                        Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
+                            .setAction(getString(R.string.settings)) {
+                                startActivity(
+                                    Intent(
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                                            Settings.Panel.ACTION_INTERNET_CONNECTIVITY
+                                        else
+                                            Settings.ACTION_WIRELESS_SETTINGS
+                                    )
+                                )
+                            }.show()
+                    }
                 }
-            }
+            })
         }
     }
 
     private fun addObservers() {
         viewModel.availableLanguages.observe(viewLifecycleOwner) {
-            errorView?.resolved()?.let {
-                errorView!!.get().onSuccess()
-            }
             if (it.isNullOrEmpty().not()) {
+                errorView?.resolved()?.let {
+                    errorView!!.get().onSuccess()
+                }
                 languageAdapter.setData(it)
             }
         }
         viewModel.apiStatus.observe(viewLifecycleOwner) {
             when (it) {
-                ApiCallStatus.START -> binding.progress.visibility = View.VISIBLE
+                ApiCallStatus.START ->
+                    binding.progress.visibility = View.VISIBLE
                 ApiCallStatus.SUCCESS -> {
                     binding.progress.visibility = View.GONE
                     errorView?.resolved()?.let {
                         errorView!!.get().onSuccess()
                     }
                 }
-                ApiCallStatus.FAILED -> {
-                    errorView?.resolved().let {
-                        errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
-                            override fun onRetryButtonClicked() {
-                                viewModel.getAvailableLanguages()
-                            }
-                        })
-                    }
-                }
+                ApiCallStatus.FAILED -> showErrorView()
                 else -> {}
             }
         }

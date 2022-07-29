@@ -1,12 +1,16 @@
 package com.joshtalks.joshskills.ui.signup
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.ApiCallStatus
@@ -59,21 +63,36 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
         addObservers()
         errorView = Stub(view.findViewById(R.id.error_view))
         if (viewModel.availableGoals.value == null || viewModel.availableGoals.value.isNullOrEmpty()) {
-            if (isInternetAvailable()) {
+            if (isInternetAvailable())
                 viewModel.getAvailableCourseGoals()
-                errorView?.resolved()?.let {
-                    errorView!!.get().onSuccess()
+            else
+                showErrorView()
+        }
+    }
+
+    fun showErrorView() {
+        binding.progress.visibility = View.GONE
+        errorView?.resolved().let {
+            errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                override fun onRetryButtonClicked() {
+                    if (isInternetAvailable()) {
+                        viewModel.getAvailableCourseGoals()
+                    } else {
+                        errorView?.get()?.enableRetryBtn()
+                        Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
+                            .setAction(getString(R.string.settings)) {
+                                startActivity(
+                                    Intent(
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                                            Settings.Panel.ACTION_INTERNET_CONNECTIVITY
+                                        else
+                                            Settings.ACTION_WIRELESS_SETTINGS
+                                    )
+                                )
+                            }.show()
+                    }
                 }
-            } else {
-                binding.progress.visibility = View.GONE
-                errorView?.resolved().let {
-                    errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
-                        override fun onRetryButtonClicked() {
-                            viewModel.getAvailableCourseGoals()
-                        }
-                    })
-                }
-            }
+            })
         }
     }
 
@@ -95,16 +114,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
                         errorView!!.get().onSuccess()
                     }
                 }
-                ApiCallStatus.FAILED -> {
-                    binding.progress.visibility = View.GONE
-                    errorView?.resolved().let {
-                        errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
-                            override fun onRetryButtonClicked() {
-                                viewModel.getAvailableCourseGoals()
-                            }
-                        })
-                    }
-                }
+                ApiCallStatus.FAILED -> showErrorView()
                 else -> {}
             }
         }

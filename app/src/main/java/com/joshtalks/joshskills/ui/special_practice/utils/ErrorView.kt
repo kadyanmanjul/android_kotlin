@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.special_practice.utils
 import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.annotation.DrawableRes
@@ -57,9 +58,9 @@ class ErrorView : ConstraintLayout {
         stopLoadingAnimation()
         enableRetryBtn()
         retryBtn.setOnClickListener {
-            callback.onRetryButtonClicked()
             disableRetryBtn()
             startLoadingAnimation()
+            callback.onRetryButtonClicked()
         }
     }
 
