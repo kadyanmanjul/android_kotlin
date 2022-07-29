@@ -51,6 +51,7 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.joshtalks.joshskills.BuildConfig
@@ -868,6 +869,13 @@ class ReadingFragmentWithoutFeedback :
                 video = null
              }else{
                  fetchVideo()
+                SplitInstallHelper.loadLibrary(requireContext(), "avutil")
+                SplitInstallHelper.loadLibrary(requireContext(), "swscale")
+                SplitInstallHelper.loadLibrary(requireContext(), "swresample")
+                SplitInstallHelper.loadLibrary(requireContext(), "avcodec")
+                SplitInstallHelper.loadLibrary(requireContext(), "avformat")
+                SplitInstallHelper.loadLibrary(requireContext(), "avfilter")
+                SplitInstallHelper.loadLibrary(requireContext(), "avdevice")
              }
             currentLessonQuestion?.run {
 
