@@ -27,7 +27,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.constants.GROUP
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
+import com.joshtalks.joshskills.base.model.groups.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment

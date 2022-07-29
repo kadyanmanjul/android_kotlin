@@ -67,7 +67,7 @@ import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT_DATA
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.base.model.groups.GroupsItem
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity

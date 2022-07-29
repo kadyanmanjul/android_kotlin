@@ -47,8 +47,8 @@ import com.joshtalks.joshskills.ui.group.data.local.GroupMemberDao
 import com.joshtalks.joshskills.ui.group.data.local.TimeTokenDao
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.GroupMember
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
-import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.base.model.groups.GroupsItem
+import com.joshtalks.joshskills.base.model.groups.TimeTokenRequest
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao

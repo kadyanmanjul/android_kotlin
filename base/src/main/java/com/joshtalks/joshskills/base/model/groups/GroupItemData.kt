@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.group.model
+package com.joshtalks.joshskills.base.model.groups
 
 interface GroupItemData {
     fun getTitle() : String

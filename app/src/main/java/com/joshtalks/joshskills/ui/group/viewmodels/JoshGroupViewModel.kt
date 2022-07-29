@@ -16,6 +16,10 @@ import androidx.paging.cachedIn
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.base.model.groups.AddGroupRequest
+import com.joshtalks.joshskills.base.model.groups.EditGroupRequest
+import com.joshtalks.joshskills.base.model.groups.GroupMemberCount
+import com.joshtalks.joshskills.base.model.groups.GroupsItem
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.ONE_GROUP_REQUEST_SENT

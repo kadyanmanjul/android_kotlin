@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP_TEXT
 import com.joshtalks.joshskills.ui.group.constants.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.constants.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.constants.GROUPS_TITLE
-import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
+import com.joshtalks.joshskills.base.model.groups.GroupJoinRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 
 private const val TAG = "RequestListFragment"

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.lib
 
+import com.joshtalks.joshskills.base.model.groups.GroupListResponse
 import com.joshtalks.joshskills.ui.group.model.*
 import com.pubnub.api.models.consumer.objects_api.uuid.PNGetUUIDMetadataResult
 

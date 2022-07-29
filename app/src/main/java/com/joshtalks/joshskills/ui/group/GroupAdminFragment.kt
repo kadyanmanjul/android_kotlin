@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.ADD_GROUP_TO_SERVER
 import com.joshtalks.joshskills.databinding.FragmentGroupAdminBinding
 import com.joshtalks.joshskills.ui.group.constants.ADD_GROUP_REQUEST
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
+import com.joshtalks.joshskills.base.model.groups.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 
 private const val TAG = "GroupAdminFragment"

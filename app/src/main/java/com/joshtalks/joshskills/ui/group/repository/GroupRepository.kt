@@ -5,8 +5,11 @@ import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.joshtalks.joshskills.base.core.AppObjectController
+import com.joshtalks.joshskills.base.model.groups.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
@@ -34,12 +37,10 @@ private const val TAG = "GroupRepository"
 
 class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     // TODO: Will use dagger2 for injecting apiService
-    private val apiService by lazy { AppObjectController.groupsNetworkService }
+    private val apiService by lazy { AppObjectController.groupsApiService }
     private val mentorId = Mentor.getInstance().getId()
     private val chatService: ChatService = PubNubService
-    private val database = AppObjectController.appDatabase
-    private val p2pNetworkService by lazy { AppObjectController.p2pNetworkService }
-    private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
+    private val database = AppDatabase.getDatabase(AppObjectController.joshApplication)!!
 
     fun getGroupSearchResult(query: String) =
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
@@ -453,9 +454,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     suspend fun removeUserFormFppLit(uId: Int) {
         val requestParams: HashMap<String, List<Int>> = HashMap()
         requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
-        val response = p2pNetworkService.removeFavoriteCallerList(Mentor.getInstance().getId(), requestParams)
+        val response = apiService.removeFavoriteCallerList(Mentor.getInstance().getId(), requestParams)
         if (response.isSuccessful) {
-            favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
+            database.favoriteCallerDao().removeFromFavorite(uId.let { return@let listOf(uId) })
             showToast("Successfully removed")
         }
     }

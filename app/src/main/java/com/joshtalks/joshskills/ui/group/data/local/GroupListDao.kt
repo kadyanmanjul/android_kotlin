@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.ui.group.data.local
 
 import androidx.paging.PagingSource
 import androidx.room.*
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.base.model.groups.GroupsItem
 
 @Dao
 interface GroupListDao {

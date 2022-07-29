@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.constants.DIR
+import com.joshtalks.joshskills.base.core.JoshApplication
 import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
@@ -39,10 +40,11 @@ import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
-import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.AppDatabase
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.model.FirestoreNewNotificationObject
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.FirestoreNewNotificationObject
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
@@ -50,7 +52,6 @@ import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.cohort_based_course.repository.CbcNetwork
-import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
@@ -104,13 +105,13 @@ private val IGNORE_UNAUTHORISED = setOf(
     "$DIR/fpp/block/"
 )
 
-class AppObjectController {
+class AppObjectControllerTemp {
 
     companion object {
 
         @JvmStatic
-        var INSTANCE: AppObjectController =
-            AppObjectController()
+        var INSTANCE: AppObjectControllerTemp =
+            AppObjectControllerTemp()
 
         @JvmStatic
         lateinit var joshApplication: JoshApplication
@@ -170,10 +171,6 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        lateinit var groupsNetworkService: GroupApiService
-            private set
-
-        @JvmStatic
             lateinit var CbcNetworkService: CbcNetwork
             private set
 
@@ -228,7 +225,7 @@ class AppObjectController {
 
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
-        fun initLibrary(context: Context): AppObjectController {
+        fun initLibrary(context: Context): AppObjectControllerTemp {
             CoroutineScope(Dispatchers.IO).launch {
                 joshApplication = context as JoshApplication
                 appDatabase = AppDatabase.getDatabase(context)!!
@@ -330,7 +327,6 @@ class AppObjectController {
                 seniorStudentService = retrofit.create(SeniorStudentService::class.java)
                 abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
                 utilsAPIService = retrofit.create(UtilsAPIService::class.java)
-                groupsNetworkService = retrofit.create(GroupApiService::class.java)
                 CbcNetworkService = retrofit.create(CbcNetwork::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
@@ -776,8 +772,8 @@ class StatusCodeInterceptor : Interceptor {
             val response = chain.proceed(it)
             if (response.code in 401..403) {
                 if (Utils.isAppRunning(
-                        AppObjectController.joshApplication,
-                        AppObjectController.joshApplication.packageName
+                        AppObjectControllerTemp.joshApplication,
+                        AppObjectControllerTemp.joshApplication.packageName
                     )
                 ) {
                     if (IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
@@ -789,7 +785,7 @@ class StatusCodeInterceptor : Interceptor {
                         if (JoshApplication.isAppVisible) {
                             val intent =
                                 Intent(
-                                    AppObjectController.joshApplication,
+                                    AppObjectControllerTemp.joshApplication,
                                     SignUpActivity::class.java
                                 )
                             intent.apply {
@@ -797,7 +793,7 @@ class StatusCodeInterceptor : Interceptor {
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 putExtra("Flow", "StatusCodeInterceptor")
                             }
-                            AppObjectController.joshApplication.startActivity(intent)
+                            AppObjectControllerTemp.joshApplication.startActivity(intent)
                         }
                     }
                 }

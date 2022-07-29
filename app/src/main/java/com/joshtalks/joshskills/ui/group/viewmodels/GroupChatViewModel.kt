@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_IMAGE
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_NAME
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
@@ -35,9 +34,9 @@ import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
+import com.joshtalks.joshskills.base.model.groups.GroupJoinRequest
 import com.joshtalks.joshskills.ui.group.model.GroupMember
-import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
+import com.joshtalks.joshskills.base.model.groups.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator

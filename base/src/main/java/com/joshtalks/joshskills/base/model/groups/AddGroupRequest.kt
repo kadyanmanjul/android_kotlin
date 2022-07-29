@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.group.model
+package com.joshtalks.joshskills.base.model.groups
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName

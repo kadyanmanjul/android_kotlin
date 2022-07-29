@@ -9,7 +9,7 @@
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.group.model.GroupMemberRequest" />
+            type="com.joshtalks.joshskills.base.model.groups.GroupMemberRequest" />
 
     </data>
 

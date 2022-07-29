@@ -1,9 +1,8 @@
-package com.joshtalks.joshskills.ui.group.model
+package com.joshtalks.joshskills.base.model.groups
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 
 class GroupRequest(
     @field:SerializedName("mentor_id")

@@ -1,16 +1,11 @@
-package com.joshtalks.joshskills.ui.group.model
+package com.joshtalks.joshskills.base.model.groups
 
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.ui.group.constants.JOINED_GROUP
-import com.joshtalks.joshskills.ui.group.constants.NOT_JOINED_GROUP
-import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
-import com.joshtalks.joshskills.ui.group.constants.REQUESTED_GROUP
+import com.joshtalks.joshskills.base.storage.EMPTY
 import kotlinx.android.parcel.Parcelize
 
 data class GroupListResponse(

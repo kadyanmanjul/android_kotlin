@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.GroupRequestItemBinding
-import com.joshtalks.joshskills.ui.group.model.GroupMemberRequest
+import com.joshtalks.joshskills.base.model.groups.GroupMemberRequest
 
 class GroupRequestAdapter(var requestList: List<GroupMemberRequest> = listOf()) :
     RecyclerView.Adapter<GroupRequestAdapter.RequestViewHolder>() {

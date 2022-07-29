@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.adapters.GroupRequestAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
-import com.joshtalks.joshskills.ui.group.model.GroupRequest
+import com.joshtalks.joshskills.base.model.groups.GroupRequest
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 import kotlinx.coroutines.Dispatchers

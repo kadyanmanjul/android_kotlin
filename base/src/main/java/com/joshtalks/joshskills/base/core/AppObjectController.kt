@@ -1,11 +1,9 @@
 package com.joshtalks.joshskills.base.core
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.clevertap.android.sdk.ActivityLifecycleCallback
@@ -36,7 +34,6 @@ import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.userexperior.UserExperior
 import com.yariksoffice.lingver.Lingver
-import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
@@ -134,9 +131,9 @@ class AppObjectController {
         lateinit var utilsAPIService: UtilsAPIService
             private set
 
-        @JvmStatic
-        lateinit var groupsNetworkService: GroupApiService
-            private set
+        val groupsApiService: GroupApiService by lazy {
+            retrofit.create(GroupApiService::class.java)
+        }
 
         @JvmStatic
             lateinit var CbcNetworkService: CbcNetwork
@@ -163,6 +160,7 @@ class AppObjectController {
         lateinit var facebookEventLogger: AppEventsLogger
             private set
 
+        //TODO : Imp move 1st
         @JvmStatic
         lateinit var firebaseAnalytics: FirebaseAnalytics
             private set
@@ -193,6 +191,7 @@ class AppObjectController {
             CoroutineScope(Dispatchers.IO).launch {
                 joshApplication = context as JoshApplication
 
+                //TODO : 1. Firebase
                 firebaseAnalytics = FirebaseAnalytics.getInstance(context)
                 firebaseAnalytics.setAnalyticsCollectionEnabled(true)
                 //   initDebugService()
@@ -236,12 +235,10 @@ class AppObjectController {
                     .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
                     .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                     .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
-                    // .retryOnConnectionFailure(true)
                     .followSslRedirects(true)
                     .addInterceptor(StatusCodeInterceptor())
                     .addInterceptor(HeaderInterceptor())
                     .hostnameVerifier { _, _ -> true }
-                    //  .addInterceptor(OfflineInterceptor())
                     .cache(cache())
 
                 if (BuildConfig.DEBUG) {
@@ -322,8 +319,7 @@ class AppObjectController {
                             )
                             if (isFistTimeNotification) {
                                 try {
-                                    val nc =
-                                        fNotification.toNotificationObject(fNotification.id.toString())
+                                    val nc = fNotification.toNotificationObject(fNotification.id.toString())
                                     NotificationUtils(joshApplication).sendNotification(nc)
                                 } catch (ex: java.lang.Exception) {
                                     ex.printStackTrace()

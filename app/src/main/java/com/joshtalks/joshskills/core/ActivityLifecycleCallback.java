@@ -1,17 +1,15 @@
 package com.joshtalks.joshskills.core;
 
-import static com.joshtalks.joshskills.core.CountUpTimer.TAG;
-
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.joshtalks.joshskills.base.core.AppObjectController;
+import com.joshtalks.joshskills.base.local.entity.AppActivityModel;
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
-import com.joshtalks.joshskills.engage_notification.AppActivityModel;
 
 import org.jetbrains.annotations.NotNull;
 

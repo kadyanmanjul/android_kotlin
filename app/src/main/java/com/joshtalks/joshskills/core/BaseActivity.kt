@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
+import com.joshtalks.joshskills.base.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
@@ -153,47 +154,6 @@ abstract class BaseActivity :
         }
     }
 
-    /*private fun addScreenRecording() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (BuildConfig.DEBUG.not()) {
-                if (AppObjectController.getFirebaseRemoteConfig()
-                        .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
-                ) {
-                    UXCam.startWithKey(BuildConfig.WX_CAM_KEY)
-                }
-                if (AppObjectController.getFirebaseRemoteConfig()
-                        .getBoolean(FirebaseRemoteConfigKey.SMART_LOOK_FEATURE_ENABLE)
-                ) {
-                    Smartlook.registerIntegrationListener(object : IntegrationListener {
-                        override fun onSessionReady(dashboardSessionUrl: String) {
-                            Timber.tag("baseactivity").e(dashboardSessionUrl)
-                            FirebaseCrashlytics.getInstance()
-                                .setCustomKey("Smartlook_session_Link", dashboardSessionUrl)
-                        }
-
-                        override fun onVisitorReady(dashboardVisitorUrl: String) {
-                            Timber.tag("baseactivity1").e(dashboardVisitorUrl)
-                            FirebaseCrashlytics.getInstance()
-                                .setCustomKey("Smartlook_visitor_Link", dashboardVisitorUrl)
-                        }
-                    })
-                    val id = if (Mentor.getInstance().hasId()) {
-                        Mentor.getInstance().getId()
-                    } else {
-                        PrefManager.getStringValue(USER_UNIQUE_ID)
-                    }
-                    Smartlook.setUserIdentifier(id)
-                    Smartlook.setUserProperties(UserProperties())
-                    if (Smartlook.isRecording().not()) {
-                        Smartlook.startRecording()
-                    }
-                    Smartlook.enableIntegration(FirebaseCrashlyticsIntegration())
-                }
-            }
-        }
-    }*/
-
-
     private fun initIdentifierForTools() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
@@ -269,8 +229,6 @@ abstract class BaseActivity :
         return Intent(applicationContext, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            //putExtra(SHOW_OVERLAY, true)
-            //putExtra(IS_FROM_NEW_ONBOARDING, isFromOnBoardingFlow)
         }
     }
 
