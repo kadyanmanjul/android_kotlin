@@ -609,14 +609,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             binding.btnCallDemo.visibility = View.GONE
         }
         binding.btnGroupCall.isVisible =
-            PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(
-                CURRENT_COURSE_ID
-            ) == DEFAULT_COURSE_ID
+            PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
 
         binding.btnFavorite.isVisible =
-            PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(
-                CURRENT_COURSE_ID
-            ) == DEFAULT_COURSE_ID
+            PrefManager.getBoolValue(IS_COURSE_BOUGHT)
     }
 
     private fun speakingSectionComplete() {

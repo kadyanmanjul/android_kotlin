@@ -55,10 +55,10 @@ class ChatNPayDialogFragment : BottomSheetDialogFragment() {
                 .push()
             Freshchat.showConversations(requireContext())
             PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
+            activity?.finish()
         } catch (e: PackageManager.NameNotFoundException) {
             showToast(getString(R.string.something_went_wrong))
         }
-        activity?.finish()
     }
 
     companion object {

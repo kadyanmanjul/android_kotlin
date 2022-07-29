@@ -9,13 +9,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import com.freshchat.consumer.sdk.Freshchat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.HELP_ACTIVITY_REQUEST_CODE
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -25,8 +22,6 @@ import com.joshtalks.joshskills.databinding.FragmentPaymentFailedDialogBinding
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryViewModel
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
-
-const val WHATSAPP_URL_PAYMENT_FAILED = "http://english-new.joshtalks.org/whats_app/201"
 
 class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentPaymentFailedDialogBinding
@@ -106,15 +101,12 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
 
     private fun openWhatsapp() {
         try {
-            AppAnalytics.create(AnalyticsEvent.WHATSAPP_CLICKED_PAYMENT_FAILED.NAME)
-                .addUserDetails()
+            AppAnalytics.create(AnalyticsEvent.HELP_CHAT.NAME)
                 .addBasicParam()
+                .addUserDetails()
                 .push()
-            val intent = Intent().apply {
-                action = Intent.ACTION_VIEW
-                data = Uri.parse(WHATSAPP_URL_PAYMENT_FAILED)
-            }
-            startActivity(intent)
+            Freshchat.showConversations(requireContext())
+            PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
             activity?.finish()
         } catch (ex: Exception) {
             ex.printStackTrace()

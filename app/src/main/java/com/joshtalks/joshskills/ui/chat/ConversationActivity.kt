@@ -1145,9 +1145,13 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
+                if (userProfileData.isCourseBought){
+                    conversationBinding.imgFppBtn.visibility = VISIBLE
+                }else{
+                    conversationBinding.imgFppBtn.visibility = GONE
+                }
                 if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
-                    conversationBinding.imgFppBtn.visibility = VISIBLE
                     if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)) {
                         PrefManager.put(
                             ONE_GROUP_REQUEST_SENT,
@@ -1165,7 +1169,6 @@ class ConversationActivity :
                     }
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
-                    conversationBinding.imgFppBtn.visibility = GONE
                 }
                 getAllPendingRequest()
                 initScoreCardView(userProfileData)
