@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.repository.local.model
+package com.joshtalks.joshskills.base.model.notification
 
 import com.google.gson.annotations.SerializedName
 

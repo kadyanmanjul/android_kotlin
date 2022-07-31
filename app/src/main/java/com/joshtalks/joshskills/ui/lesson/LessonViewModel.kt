@@ -38,7 +38,6 @@ import com.joshtalks.joshskills.core.Speed
 import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.THRESHOLD_SPEED_IN_KBPS
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent

@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.constants.INVITE_FRIENDS_METHOD
 import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
 import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.base.model.common.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository

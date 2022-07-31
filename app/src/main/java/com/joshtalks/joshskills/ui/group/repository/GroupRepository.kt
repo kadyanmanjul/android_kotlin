@@ -37,7 +37,7 @@ private const val TAG = "GroupRepository"
 
 class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     // TODO: Will use dagger2 for injecting apiService
-    private val apiService by lazy { AppObjectController.groupsApiService }
+    private val apiService by lazy { AppObjectController.groupsNetworkService }
     private val mentorId = Mentor.getInstance().getId()
     private val chatService: ChatService = PubNubService
     private val database = AppDatabase.getDatabase(AppObjectController.joshApplication)!!

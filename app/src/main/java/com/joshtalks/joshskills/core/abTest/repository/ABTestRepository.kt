@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.core.abTest.repository
 
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.base.model.common.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker

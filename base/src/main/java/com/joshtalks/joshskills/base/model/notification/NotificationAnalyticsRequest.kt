@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.core.firestore
+package com.joshtalks.joshskills.base.model.notification
 
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.model.Mentor

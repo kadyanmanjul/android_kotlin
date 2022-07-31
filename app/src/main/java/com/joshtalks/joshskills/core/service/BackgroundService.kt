@@ -17,12 +17,12 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
-import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
+import com.joshtalks.joshskills.base.model.notification.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.joshtalks.joshskills.repository.service.UtilsAPIService
+import com.joshtalks.joshskills.base.services.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.util.showAppropriateMsg

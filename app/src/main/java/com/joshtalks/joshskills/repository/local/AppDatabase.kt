@@ -8,8 +8,8 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.abTest.VariableMap
+import com.joshtalks.joshskills.base.model.common.ABTestCampaignData
+import com.joshtalks.joshskills.base.model.common.VariableMap
 import com.joshtalks.joshskills.core.abTest.repository.ABTestCampaignDao
 import com.joshtalks.joshskills.core.notification.database.NotificationEventDao
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent

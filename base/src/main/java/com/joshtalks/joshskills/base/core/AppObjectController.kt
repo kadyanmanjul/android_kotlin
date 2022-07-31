@@ -112,10 +112,6 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        lateinit var seniorStudentService: SeniorStudentService
-            private set
-
-        @JvmStatic
         lateinit var chatNetworkService: ChatNetworkService
             private set
 
@@ -123,21 +119,17 @@ class AppObjectController {
         lateinit var mediaDUNetworkService: MediaDUNetworkService
             private set
 
-        @JvmStatic
-        lateinit var abTestNetworkService: ABTestNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var utilsAPIService: UtilsAPIService
-            private set
-
-        val groupsApiService: GroupApiService by lazy {
-            retrofit.create(GroupApiService::class.java)
+        val abTestNetworkService: ABTestNetworkService by lazy {
+            retrofit.create(ABTestNetworkService::class.java)
         }
 
-        @JvmStatic
-            lateinit var CbcNetworkService: CbcNetwork
-            private set
+        val utilsAPIService: UtilsAPIService by lazy {
+            retrofit.create(UtilsAPIService::class.java)
+        }
+
+        val groupsNetworkService: GroupApiService by lazy {
+            retrofit.create(GroupApiService::class.java)
+        }
 
         @JvmStatic
         private var fetch: Fetch? = null
@@ -264,11 +256,6 @@ class AppObjectController {
                 chatNetworkService = retrofit.create(ChatNetworkService::class.java)
                 commonNetworkService = retrofit.create(CommonNetworkService::class.java)
                 voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
-                seniorStudentService = retrofit.create(SeniorStudentService::class.java)
-                abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
-                utilsAPIService = retrofit.create(UtilsAPIService::class.java)
-                groupsNetworkService = retrofit.create(GroupApiService::class.java)
-                CbcNetworkService = retrofit.create(CbcNetwork::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)

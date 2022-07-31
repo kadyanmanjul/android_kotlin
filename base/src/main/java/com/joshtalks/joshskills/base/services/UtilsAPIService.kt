@@ -1,7 +1,8 @@
-package com.joshtalks.joshskills.repository.service
+package com.joshtalks.joshskills.base.services
 
-import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
-import com.joshtalks.joshskills.repository.local.model.MissedNotification
+import com.joshtalks.joshskills.base.constants.DIR
+import com.joshtalks.joshskills.base.model.notification.MissedNotification
+import com.joshtalks.joshskills.base.model.notification.NotificationAnalyticsRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

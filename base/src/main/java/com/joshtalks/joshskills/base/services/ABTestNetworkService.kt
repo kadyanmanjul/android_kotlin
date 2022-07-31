@@ -1,12 +1,12 @@
-package com.joshtalks.joshskills.core.abTest
+package com.joshtalks.joshskills.base.services
 
+import com.joshtalks.joshskills.base.constants.DIR
+import com.joshtalks.joshskills.base.model.common.ABTestCampaignData
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
-
-const val DIR = "api/skill/v1"
 
 interface ABTestNetworkService {
 

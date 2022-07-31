@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.base.core.JoshApplication
-import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
@@ -42,7 +41,6 @@ import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.base.local.AppDatabase
 import com.joshtalks.joshskills.base.local.entity.ChatModel
-import com.joshtalks.joshskills.base.local.model.FirestoreNewNotificationObject
 import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.FirestoreNewNotificationObject
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
@@ -50,9 +48,6 @@ import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
-import com.joshtalks.joshskills.repository.service.UtilsAPIService
-import com.joshtalks.joshskills.ui.cohort_based_course.repository.CbcNetwork
-import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
 import com.tonyodev.fetch2.Fetch
@@ -150,28 +145,12 @@ class AppObjectControllerTemp {
             private set
 
         @JvmStatic
-        lateinit var seniorStudentService: SeniorStudentService
-            private set
-
-        @JvmStatic
         lateinit var chatNetworkService: ChatNetworkService
             private set
 
 
         @JvmStatic
         lateinit var mediaDUNetworkService: MediaDUNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var abTestNetworkService: ABTestNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var utilsAPIService: UtilsAPIService
-            private set
-
-        @JvmStatic
-            lateinit var CbcNetworkService: CbcNetwork
             private set
 
         @JvmStatic
@@ -324,10 +303,6 @@ class AppObjectControllerTemp {
                 chatNetworkService = retrofit.create(ChatNetworkService::class.java)
                 commonNetworkService = retrofit.create(CommonNetworkService::class.java)
                 voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
-                seniorStudentService = retrofit.create(SeniorStudentService::class.java)
-                abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
-                utilsAPIService = retrofit.create(UtilsAPIService::class.java)
-                CbcNetworkService = retrofit.create(CbcNetwork::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)

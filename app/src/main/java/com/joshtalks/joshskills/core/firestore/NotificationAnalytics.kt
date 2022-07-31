@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.core.firestore
 import android.content.Context
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.model.notification.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
@@ -13,8 +13,6 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.reflect.Type
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 private const val TAG = "NotificationAnalytics"
 

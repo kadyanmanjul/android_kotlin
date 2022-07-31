@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
+import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.VoipStatusResponse
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 
@@ -72,6 +73,9 @@ interface P2PNetworkService {
 
     @GET("$DIR/voicecall/agora_call_feedback_options/{value}")
     suspend fun getVoipCallOptions(@Path("value") value: String): VoipReportModel
+
+    @GET("$DIR/voicecall/senior_student_info/")
+    suspend fun getSeniorStudentData(): SeniorStudentModel
 
     @GET("$DIR/fpp/get_recent_calls/")
     suspend fun getRecentCallsList(@Query("mentor_id") mentorId: String) : Response<RecentCallResponse>
