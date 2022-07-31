@@ -45,7 +45,6 @@ import com.joshtalks.joshskills.core.custom_ui.AnimationView
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
 import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
-import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.databinding.ActivityCourseProgressBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel

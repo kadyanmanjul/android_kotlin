@@ -31,7 +31,6 @@ import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
-import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question

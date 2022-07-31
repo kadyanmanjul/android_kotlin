@@ -1,20 +1,7 @@
-package com.joshtalks.joshskills.repository.service
+package com.joshtalks.joshskills.base.services
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.repository.local.model.*
-import com.joshtalks.joshskills.repository.server.*
-import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
-import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
-import com.joshtalks.joshskills.repository.server.onboarding.LogGetStartedEventRequest
-import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusResponse
-import com.joshtalks.joshskills.repository.server.signup.LoginResponse
-import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
-import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
-import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
-import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
-import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
 import kotlinx.coroutines.Deferred
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 

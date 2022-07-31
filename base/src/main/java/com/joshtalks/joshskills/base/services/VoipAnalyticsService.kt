@@ -1,8 +1,6 @@
-package com.joshtalks.joshskills.voip.voipanalytics.data.network
+package com.joshtalks.joshskills.base.services
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
-import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body

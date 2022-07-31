@@ -27,13 +27,13 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.constants.DIR
+import com.joshtalks.joshskills.base.core.AppObjectController.Companion.p2pNetworkService
 import com.joshtalks.joshskills.base.core.JoshApplication
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationListener
-import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -43,13 +43,9 @@ import com.joshtalks.joshskills.base.local.AppDatabase
 import com.joshtalks.joshskills.base.local.entity.ChatModel
 import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.FirestoreNewNotificationObject
-import com.joshtalks.joshskills.repository.service.ChatNetworkService
-import com.joshtalks.joshskills.repository.service.CommonNetworkService
-import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
-import com.joshtalks.joshskills.repository.service.P2PNetworkService
-import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.base.storage.*
+import com.joshtalks.joshskills.base.storage.database.AppDatabase
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -126,31 +122,6 @@ class AppObjectControllerTemp {
 
         @JvmStatic
         lateinit var retrofit: Retrofit
-            private set
-
-        @JvmStatic
-        lateinit var signUpNetworkService: SignUpNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var commonNetworkService: CommonNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var p2pNetworkService: P2PNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var voipAnalyticsService: VoipAnalyticsService
-            private set
-
-        @JvmStatic
-        lateinit var chatNetworkService: ChatNetworkService
-            private set
-
-
-        @JvmStatic
-        lateinit var mediaDUNetworkService: MediaDUNetworkService
             private set
 
         @JvmStatic
@@ -299,10 +270,6 @@ class AppObjectControllerTemp {
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
-                signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
-                chatNetworkService = retrofit.create(ChatNetworkService::class.java)
-                commonNetworkService = retrofit.create(CommonNetworkService::class.java)
-                voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
@@ -316,7 +283,6 @@ class AppObjectControllerTemp {
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
-                p2pNetworkService = p2pRetrofitBuilder.create(P2PNetworkService::class.java)
                 getNewArchVoipFlag()
                 initObjectInThread(context)
             }
@@ -377,7 +343,6 @@ class AppObjectControllerTemp {
                         PrefManager.put(SPEED_TEST_FILE_URL, resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg")
                         PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                         PrefManager.put(SPEED_TEST_FILE_SIZE, resp.testFileSize ?: 100)
-                        PrefManager.put(IS_GAME_ON, resp.isGameOn ?: 1)
                     } catch (ex: Exception) {
                         when (ex) {
                             is HttpException -> {

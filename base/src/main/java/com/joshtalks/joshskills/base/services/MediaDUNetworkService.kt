@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.repository.service
+package com.joshtalks.joshskills.base.services
 
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody

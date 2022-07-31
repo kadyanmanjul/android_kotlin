@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.repository.service
+package com.joshtalks.joshskills.base.services
 
 import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller

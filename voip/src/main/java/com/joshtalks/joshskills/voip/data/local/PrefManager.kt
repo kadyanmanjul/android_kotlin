@@ -20,7 +20,6 @@ const val AGORA_CALL_ID = "josh_pref_key_agora_call_id"
 const val CURRENT_CALL_CATEGORY = "josh_pref_key_call_category"
 const val LAST_RECORDING = "josh_pref_key_agora_call_recording"
 
-
 private const val TAG = "PrefManager"
 
 class PrefManager {

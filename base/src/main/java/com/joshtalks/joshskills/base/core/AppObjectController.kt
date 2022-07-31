@@ -96,24 +96,28 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        lateinit var signUpNetworkService: SignUpNetworkService
+        lateinit var p2pRetrofitBuilder: Retrofit
             private set
 
-        @JvmStatic
-        lateinit var commonNetworkService: CommonNetworkService
-            private set
+        val signUpNetworkService: SignUpNetworkService by lazy {
+            retrofit.create(SignUpNetworkService::class.java)
+        }
 
-        @JvmStatic
-        lateinit var p2pNetworkService: P2PNetworkService
-            private set
+        val commonNetworkService: CommonNetworkService by lazy {
+            retrofit.create(CommonNetworkService::class.java)
+        }
 
-        @JvmStatic
-        lateinit var voipAnalyticsService: VoipAnalyticsService
-            private set
+        val p2pNetworkService: P2PNetworkService by lazy {
+            p2pRetrofitBuilder.create(P2PNetworkService::class.java)
+        }
 
-        @JvmStatic
-        lateinit var chatNetworkService: ChatNetworkService
-            private set
+        val voipAnalyticsService: VoipAnalyticsService by lazy {
+            retrofit.create(VoipAnalyticsService::class.java)
+        }
+
+        val chatNetworkService: ChatNetworkService by lazy {
+            retrofit.create(ChatNetworkService::class.java)
+        }
 
         @JvmStatic
         lateinit var mediaDUNetworkService: MediaDUNetworkService
@@ -252,12 +256,8 @@ class AppObjectController {
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
-                signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
-                chatNetworkService = retrofit.create(ChatNetworkService::class.java)
-                commonNetworkService = retrofit.create(CommonNetworkService::class.java)
-                voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
 
-                val p2pRetrofitBuilder = Retrofit.Builder()
+                p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
                     .client(
                         builder.connectTimeout(5L, TimeUnit.SECONDS)
@@ -269,7 +269,6 @@ class AppObjectController {
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
-                p2pNetworkService = p2pRetrofitBuilder.create(P2PNetworkService::class.java)
                 getNewArchVoipFlag()
                 initObjectInThread(context)
             }
@@ -326,7 +325,10 @@ class AppObjectController {
                     try {
                         val resp = p2pNetworkService.getVoipNewArchFlag()
                         PrefManager.put(IS_VOIP_NEW_ARCH_ENABLED, resp.status ?: 1)
-                        PrefManager.put(SPEED_TEST_FILE_URL, resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg")
+                        PrefManager.put(
+                            SPEED_TEST_FILE_URL,
+                            resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg"
+                        )
                         PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                         PrefManager.put(SPEED_TEST_FILE_SIZE, resp.testFileSize ?: 100)
                     } catch (ex: Exception) {
@@ -340,7 +342,7 @@ class AppObjectController {
                             else -> {
                                 try {
                                     FirebaseCrashlytics.getInstance().recordException(ex)
-                                }catch (ex:Exception){
+                                } catch (ex: Exception) {
                                     ex.printStackTrace()
                                 }
                             }
@@ -570,7 +572,6 @@ class AppObjectController {
                     .client(mediaOkhttpBuilder.build())
                     .build().create(MediaDUNetworkService::class.java)
 
-
                 DateTimeUtils.setTimeZone("UTC")
                 try {
                     if (VideoDownloadController.getInstance().downloadTracker != null)
@@ -650,7 +651,6 @@ inline fun Request.safeCall(block: (Request) -> Response): Response {
     }
 }
 
-
 class StatusCodeInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         return chain.request().safeCall {
@@ -668,11 +668,10 @@ class StatusCodeInterceptor : Interceptor {
                         WorkManagerAdmin.appInitWorker()
                         WorkManagerAdmin.appStartWorker()
                         if (JoshApplication.isAppVisible) {
-                            val intent =
-                                Intent(
-                                    AppObjectController.joshApplication,
-                                    SignUpActivity::class.java
-                                )
+                            val intent = Intent(
+                                AppObjectController.joshApplication,
+                                SignUpActivity::class.java
+                            )
                             intent.apply {
                                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

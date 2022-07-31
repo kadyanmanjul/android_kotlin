@@ -14,9 +14,9 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.util.Log
 import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController.Companion.gsonMapper
-import com.joshtalks.joshskills.core.PrefManager.getStringValue
-import com.joshtalks.joshskills.core.SELECTED_QUALITY
+import com.joshtalks.joshskills.base.core.AppObjectController.Companion.gsonMapper
+import com.joshtalks.joshskills.base.storage.PrefManager.getStringValue
+import com.joshtalks.joshskills.base.storage.SELECTED_QUALITY
 import com.joshtalks.joshskills.core.videoplayer.VideoQualityTrack
 import com.joshtalks.joshskills.messaging.RxBus2.publish
 import com.joshtalks.joshskills.repository.local.entity.ChatModel

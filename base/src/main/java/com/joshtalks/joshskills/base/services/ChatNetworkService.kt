@@ -1,22 +1,6 @@
-package com.joshtalks.joshskills.repository.service
+package com.joshtalks.joshskills.base.services
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
-import com.joshtalks.joshskills.repository.local.entity.Course
-import com.joshtalks.joshskills.repository.local.entity.GetLessonQuestionsResponse
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
-import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
-import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
-import com.joshtalks.joshskills.repository.server.*
-import com.joshtalks.joshskills.repository.server.assessment.*
-import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
-import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
-import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
-import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
-import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
-import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*

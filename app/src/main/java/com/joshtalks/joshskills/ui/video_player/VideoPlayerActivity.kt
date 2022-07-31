@@ -29,7 +29,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.interfaces.UsbEventListener
-import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
