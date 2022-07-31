@@ -35,5 +35,6 @@ object LogException {
 enum class ErrorTag(val NAME: String) {
     TRUE_CALLER("TrueCaller"),
     OTP_REQUEST("OTP Request"),
-    AUDIO_RECORDER("Audio Recorder")
+    AUDIO_RECORDER("Audio Recorder"),
+    FFMPEG_ERROR_LOAD("ffmpeg lib error")
 }

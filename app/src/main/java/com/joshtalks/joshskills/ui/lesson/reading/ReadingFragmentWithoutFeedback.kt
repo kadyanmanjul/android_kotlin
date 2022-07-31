@@ -57,6 +57,7 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.joshtalks.joshskills.BuildConfig
@@ -90,6 +91,8 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VIDEO_PLAYED_RP
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.ErrorTag
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -857,7 +860,25 @@ class ReadingFragmentWithoutFeedback :
             currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
             splitManager?.installedModules?.forEach { module->
                 if(module.equals(getString(R.string.dynamic_feature_title))){
+                    Log.d(TAG, "addObserver() called with: module = $module")
                     isDynamicModuleInstalled = true
+                    try {
+                        SplitInstallHelper.loadLibrary(requireContext(), "avutil")
+                        SplitInstallHelper.loadLibrary(requireContext(), "avutil")
+                        SplitInstallHelper.loadLibrary(requireContext(), "swscale")
+                        SplitInstallHelper.loadLibrary(requireContext(), "swresample")
+                        SplitInstallHelper.loadLibrary(requireContext(), "avcodec")
+                        SplitInstallHelper.loadLibrary(requireContext(), "avformat")
+                        SplitInstallHelper.loadLibrary(requireContext(), "avfilter")
+                        SplitInstallHelper.loadLibrary(requireContext(), "avdevice")
+
+                    }catch (e:NoClassDefFoundError){
+                        LogException.catchError(ErrorTag.FFMPEG_ERROR_LOAD,"SplitInstallHelper NoClassDefFoundError occured in ${this::class.java} error : $e")
+                    } catch (ex:kotlin.Error){
+                        LogException.catchError(ErrorTag.FFMPEG_ERROR_LOAD,"SplitInstallHelper ${this::class.java} error : $ex")
+                    }catch (ex:Exception){
+                        LogException.catchException(ex)
+                    }
                 }
             }
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
@@ -1467,18 +1488,16 @@ class ReadingFragmentWithoutFeedback :
                                 }
 
                                 muxerJob = scope.launch {
-                                    if (isActive) {
+                                    if (isActive && isAdded) {
                                         mutex.withLock {
                                             if (isDynamicModuleInstalled) {
-                                                if (isAdded) {
-                                                    if (video != null && activity != null)
+                                                    if (video != null)
                                                         viewModel.saveReadingPracticeImpression(
                                                             RECORD_READING_VIDEO,
                                                             lessonID.toString()
                                                         )
                                                     if (videoDownPath != null)
                                                         startService(videoDownPath!!, filePath!!)
-                                                }
                                             } else {
                                                 muxVideoOldMethod()
                                             }
@@ -1499,6 +1518,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun muxVideoOldMethod() {
+        showToast("Video muxing from old method")
         if (File(outputFile).exists()) {
             File(outputFile).delete()
         }
@@ -1996,6 +2016,7 @@ class ReadingFragmentWithoutFeedback :
                 TAG,
                 "startService() called with: videoDownPath = $videoDownPath, audioPath = $audioPath"
             )
+            showToast("Video muxing from new method")
             val cls = Class.forName("com.joshtalks.joshskills.dynamic.VideoMergeService")
             Intent().setClassName(BuildConfig.APPLICATION_ID,cls.name).also {
                 it.putExtra("VIDEO_PATH",videoDownPath)

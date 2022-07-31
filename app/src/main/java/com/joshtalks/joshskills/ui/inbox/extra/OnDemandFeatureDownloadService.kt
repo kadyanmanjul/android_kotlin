@@ -10,7 +10,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
@@ -40,13 +39,7 @@ class OnDemandFeatureDownloadService : Service() {
 
                 }
                 SplitInstallSessionStatus.INSTALLED -> {
-                    SplitInstallHelper.loadLibrary(this, "avutil")
-                    SplitInstallHelper.loadLibrary(this, "swscale")
-                    SplitInstallHelper.loadLibrary(this, "swresample")
-                    SplitInstallHelper.loadLibrary(this, "avcodec")
-                    SplitInstallHelper.loadLibrary(this, "avformat")
-                    SplitInstallHelper.loadLibrary(this, "avfilter")
-                    SplitInstallHelper.loadLibrary(this, "avdevice")
+
                 }
                 else -> {
                     hideNotification()

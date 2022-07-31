@@ -25,11 +25,14 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.arthenica.mobileffmpeg.FFmpeg
-import com.arthenica.mobileffmpeg.LogMessage
+import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.FFmpegSession
+import com.arthenica.ffmpegkit.FFmpegSessionCompleteCallback
+import com.arthenica.ffmpegkit.LogCallback
+import com.arthenica.ffmpegkit.Statistics
+import com.arthenica.ffmpegkit.StatisticsCallback
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.INCREASE_AUDIO_VOLUME
 import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MERGED_PATH
 import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MUX_FAILED
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
@@ -41,6 +44,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val VIDEO_PATH = "VIDEO_PATH"
 const val AUDIO_PATH = "AUDIO_PATH"
@@ -70,7 +74,15 @@ class VideoMergeService : Service() {
                 TAG,
                 "onStartCommand() called with: videoPath = $videoPath, audioPath = $audioPath"
             )
-            startVideoMuxing(videoPath, audioPath)
+            try {
+                startVideoMuxing(videoPath, audioPath)
+            } catch (ex: UnsatisfiedLinkError) {
+                ex.printStackTrace()
+                hideNotification()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                hideNotification()
+            }
             showNotification()
         }
         return START_STICKY
@@ -86,24 +98,24 @@ class VideoMergeService : Service() {
         }
 
         val lNotificationBuilder = NotificationCompat.Builder(
-                this,
-                CHANNEL_ID
-            )
-                .setChannelId(CHANNEL_ID)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText("Creating your Video...")
-                .setSmallIcon(R.drawable.ic_status_bar_notification)
-                .setOngoing(false)
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_MIN)
+            this,
+            CHANNEL_ID
+        )
+            .setChannelId(CHANNEL_ID)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText("Creating your Video...")
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setOngoing(false)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
 
 
         startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
     }
 
-    private fun hideNotification(isSuccess :Boolean = false) {
+    private fun hideNotification(isSuccess: Boolean = false) {
         Log.d(TAG, "hideNotification() called $isSuccess")
-        if (isSuccess.not()){
+        if (isSuccess.not()) {
             EventLiveData.value = Message().apply {
                 what = VIDEO_AUDIO_MUX_FAILED
             }
@@ -125,45 +137,26 @@ class VideoMergeService : Service() {
                     } else {
                         outputFile = getVideoFilePath()
                     }
-                    increaseAudioVolume(audioPath)
                     if (outputFile != null) {
-                        val extractedPath = extractAudioFromVideo(videoDownPath)
+                        val outputAudioPath = getAudioFilePathAAC()
+                        val extractedPath = extractAudioFromVideoFFmpeg(videoDownPath,outputAudioPath)?: extractAudioFromVideo(videoDownPath)
                         mergeAudioWithAudio(
                             audioPath,
                             extractedPath, videoDownPath, outputFile
                         )
-                    } else{
+                    } else {
                         hideNotification()
                     }
-                } else{
+                } else {
                     hideNotification()
                 }
-            }catch (ex:Exception){
-                hideNotification()
-            }
-        }
-    }
-
-    private fun increaseAudioVolume(inputAudio: String) {
-        val outputPath = getAudioFilePathMP3()
-        val query = audioVolumeUpdate(inputAudio, volume = 10.0f, output = outputPath)
-        CallBackOfQuery().callQuery(query, object : FFmpegCallBack {
-            override fun process(logMessage: LogMessage) {
-            }
-
-            override fun success() {
-                EventLiveData.value = Message().apply {
-                    what = INCREASE_AUDIO_VOLUME
-                    obj = outputPath
+            } catch (ex: Exception) {
+                Log.d(TAG, "startVideoMuxing() called $ex")
+                withContext(Dispatchers.Main) {
+                    hideNotification()
                 }
             }
-
-            override fun cancel() {
-            }
-
-            override fun failed() {
-            }
-        })
+        }
     }
 
 
@@ -173,20 +166,6 @@ class VideoMergeService : Service() {
 
     private fun getAudioFilePathAAC(): String {
         return getAndroidDownloadFolder()?.absolutePath + "/" + "JoshSkill-" + System.currentTimeMillis() + ".aac"
-    }
-
-    private fun audioVolumeUpdate(inputFile: String, volume: Float, output: String): Array<String> {
-        val inputs: ArrayList<String> = ArrayList()
-        inputs.apply {
-            add("-i")
-            add(inputFile)
-            add("-af")
-            add("volume=$volume")
-            add("-preset")
-            add("ultrafast")
-            add(output)
-        }
-        return inputs.toArray(arrayOfNulls<String>(inputs.size))
     }
 
 
@@ -245,7 +224,23 @@ class VideoMergeService : Service() {
     }
 
 
-    private fun mergeAudioWithAudio(audio1: String, audio2: String, videoPath: String, output: String) {
+    private fun extractAudioFromVideoFFmpeg(
+        videoPath: String,
+        outputPath: String
+    ) :String? {
+        val query = extractAudioCommand(videoPath, DURATION_FIRST, outputPath)
+        val session = FFmpegKit.executeWithArguments(query)
+        if (session.returnCode.value == 0 ){
+            return outputPath
+        } else return null
+    }
+
+    private fun mergeAudioWithAudio(
+        audio1: String,
+        audio2: String,
+        videoPath: String,
+        output: String
+    ) {
         val outputPath = getAudioFilePathMP3()
         val pathsList = ArrayList<String>()
 
@@ -254,26 +249,56 @@ class VideoMergeService : Service() {
 
         val query = mergeAudios(pathsList, DURATION_FIRST, outputPath)
 
-        CallBackOfQuery().callQuery(query, object : FFmpegCallBack {
-            override fun process(logMessage: LogMessage) {
-                Log.d(TAG, "mergeAudioWithAudio process() called with: logMessage = $logMessage")
+        FFmpegKit.executeWithArgumentsAsync(query, object : FFmpegSessionCompleteCallback {
+            override fun apply(session: FFmpegSession?) {
+                Log.d(TAG, "FFmpegSessionCompleteCallback called with: session = $session")
+                if (session != null) {
+                    if (session.returnCode.value == 0) {
+                        mergeAudioWithVideo(videoPath, outputPath, output)
+                    } else hideNotification()
+                }
             }
 
-            override fun success() {
-                Log.d(TAG, "mergeAudioWithAudio success() called")
-                mergeAudioWithVideo(videoPath, outputPath, output)
+        }, object : LogCallback {
+            override fun apply(log: com.arthenica.ffmpegkit.Log?) {
+                Log.d(TAG, "LogCallback called with: log = $log")
             }
 
-            override fun cancel() {
-                Log.d(TAG, "mergeAudioWithAudio cancel() called")
-                hideNotification()
+        }, object : StatisticsCallback {
+            override fun apply(statistics: Statistics?) {
+                Log.d(TAG, "StatisticsCallback called with: statistics = $statistics")
             }
 
-            override fun failed() {
-                Log.d(TAG, "mergeAudioWithAudio failed() called")
-                hideNotification()
-            }
         })
+
+
+        /*  val sessionAudioMerge = FFmpegKit.execute(query)
+          Log.d(TAG, "mergeAudioWithAudio() called with: sessionAudioMerge = $sessionAudioMerge")
+          if (ReturnCode.isSuccess(sessionAudioMerge.returnCode)){
+          }else hideNotification()*/
+    }
+
+    private fun extractAudioCommand(
+        inputAudioList: String,
+        duration: String,
+        output: String
+    ): Array<String> {
+        val inputs: ArrayList<String> = ArrayList()
+        inputs.apply {
+            add("-i")
+            add(inputAudioList)
+            add("-vn")
+            add("-ar")
+            add("44100")
+            add("-ac")
+            add("2")
+            add("-ab")
+            add("-192k")
+            add("-f")
+            add("-mp3")
+            add(output)
+        }
+        return inputs.toArray(arrayOfNulls<String>(inputs.size))
     }
 
     private fun mergeAudios(
@@ -321,21 +346,44 @@ class VideoMergeService : Service() {
             "$output",
             "-y"
         )
-        mergeVideo(c,output)
+        mergeVideo(c, output)
     }
 
     private fun mergeVideo(co: Array<String>, output: String) {
-        FFmpeg.executeAsync(co) { executionId, returnCode ->
-            Log.d(
-                TAG,
-                "mergeVideo() called with: executionId = $executionId, returnCode = $returnCode"
-            )
-            EventLiveData.value = Message().apply {
-                what = VIDEO_AUDIO_MERGED_PATH
-                obj = output
-                hideNotification(true)
-            }
-        }
+
+        FFmpegKit.executeWithArgumentsAsync(co,
+            object : FFmpegSessionCompleteCallback {
+                override fun apply(session: FFmpegSession?) {
+                    Log.d(
+                        TAG,
+                        "mergeVideo FFmpegSessionCompleteCallback called with: session = $session"
+                    )
+                    if (session != null) {
+                        if (session.returnCode.value == 0) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                EventLiveData.value = Message().apply {
+                                    what = VIDEO_AUDIO_MERGED_PATH
+                                    obj = output
+                                }
+                            }
+                            hideNotification(true)
+                        } else hideNotification()
+                    }
+                }
+            },
+            object : LogCallback {
+                override fun apply(log: com.arthenica.ffmpegkit.Log?) {
+                    Log.d(TAG, "mergeVideo LogCallback called with: log = $log")
+                }
+            },
+            object : StatisticsCallback {
+                override fun apply(statistics: Statistics?) {
+                    Log.d(
+                        TAG,
+                        "mergeVideo StatisticsCallback called with: statistics = $statistics"
+                    )
+                }
+            })
     }
 
 
@@ -380,7 +428,7 @@ class VideoMergeService : Service() {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
         return getVideoFilePath()
@@ -403,14 +451,21 @@ class VideoMergeService : Service() {
         var selection: String? = null
         var selectionArgs: Array<String>? = null
         // Uri is different in versions after KITKAT (Android 4.4), we need to
-        if (Build.VERSION.SDK_INT >= 19 && DocumentsContract.isDocumentUri(context.applicationContext, uri)) {
+        if (Build.VERSION.SDK_INT >= 19 && DocumentsContract.isDocumentUri(
+                context.applicationContext,
+                uri
+            )
+        ) {
             if (isExternalStorageDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
             } else if (isDownloadsDocument(uri)) {
                 val id = DocumentsContract.getDocumentId(uri)
-                uri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id))
+                uri = ContentUris.withAppendedId(
+                    Uri.parse("content://downloads/public_downloads"),
+                    java.lang.Long.valueOf(id)
+                )
             } else if (isMediaDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -430,7 +485,8 @@ class VideoMergeService : Service() {
             val projection = arrayOf(MediaStore.Images.Media.DATA)
             val cursor: Cursor?
             try {
-                cursor = context.contentResolver.query(uri, projection, selection, selectionArgs, null)
+                cursor =
+                    context.contentResolver.query(uri, projection, selection, selectionArgs, null)
                 val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                 if (cursor.moveToFirst()) {
                     return cursor.getString(column_index)
