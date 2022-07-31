@@ -9,9 +9,9 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.ConvertersForDownloadStatus
+import com.joshtalks.joshskills.base.storage.database.ConvertersForDownloadStatus
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
+import com.joshtalks.joshskills.base.storage.database.typeconverter.TypeConverterChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceResponse
 import kotlinx.android.parcel.Parcelize

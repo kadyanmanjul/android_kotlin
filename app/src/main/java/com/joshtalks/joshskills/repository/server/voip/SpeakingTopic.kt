@@ -1,17 +1,11 @@
 package com.joshtalks.joshskills.repository.server.voip
 
-
 import android.os.Parcelable
 import androidx.room.ColumnInfo
-import androidx.room.Dao
 import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
-import androidx.room.Query
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.core.EMPTY
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
@@ -57,14 +51,3 @@ data class SpeakingTopic(
     var isFromDb: Boolean = false
 
 ) : Parcelable
-
-@Dao
-interface SpeakingTopicDao {
-
-    @Query(value = "SELECT * FROM SpeakingTopic  where id=:topicId")
-    suspend fun getTopicById(topicId: String): SpeakingTopic?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateTopic(topic: SpeakingTopic)
-
-}

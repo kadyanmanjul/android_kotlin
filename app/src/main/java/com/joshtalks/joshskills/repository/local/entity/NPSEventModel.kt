@@ -1,21 +1,13 @@
 package com.joshtalks.joshskills.repository.local.entity
 
-
 import android.os.Parcelable
 import androidx.room.ColumnInfo
-import androidx.room.Dao
 import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Transaction
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.base.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.dateStartOfDay
 import kotlinx.android.parcel.Parcelize
 import java.lang.reflect.Type
 import java.util.*
@@ -124,30 +116,3 @@ enum class NPSEvent(val type: String) : Parcelable {
     PRACTICE_COMPLETED("Practice completed"),
     WATCH_VIDEO("WATCH_VIDEO")
 }
-
-@Dao
-interface NPSEventModelDao {
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNPSEvent(npsEventModel: NPSEventModel)
-
-    @Query(value = "SELECT count() FROM nps_event_table where event_name= :eventName AND day= :day AND event_id= :eventId ")
-    suspend fun isEventExist(
-        eventName: String,
-        day: Int,
-        eventId: String = EMPTY
-    ): Long
-
-    @Query(value = "SELECT COUNT() FROM nps_event_table where created_at >= :startDate AND created_at <= :endDate")
-    suspend fun getTotalRecords(startDate: Date, endDate: Date): Long
-
-
-    @Transaction
-    suspend fun getTotalCountOfRows(): Long {
-        val startDate = dateStartOfDay()
-        val endDate = Date()
-        return getTotalRecords(startDate, endDate)
-    }
-}
-
-

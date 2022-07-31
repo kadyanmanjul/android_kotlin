@@ -380,9 +380,6 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.39.1'
     kapt 'com.google.dagger:dagger-compiler:2.35.1'
 
-    // Paging3
-    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
-
     //keyboard
     implementation "com.vanniktech:emoji-ios:0.8.0"
     implementation "com.vanniktech:emoji-material:0.8.0"

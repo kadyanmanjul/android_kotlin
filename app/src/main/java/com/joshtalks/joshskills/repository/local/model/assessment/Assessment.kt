@@ -8,8 +8,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentStatus
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentType
+import com.joshtalks.joshskills.base.storage.database.typeconverter.TypeConverterAssessmentStatus
+import com.joshtalks.joshskills.base.storage.database.typeconverter.TypeConverterAssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType

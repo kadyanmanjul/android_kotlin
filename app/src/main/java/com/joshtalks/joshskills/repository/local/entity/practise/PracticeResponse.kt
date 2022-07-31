@@ -17,9 +17,9 @@ import androidx.room.TypeConverters
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.ConvectorForPhoneticClass
-import com.joshtalks.joshskills.repository.local.ConvectorForWrongWord
-import com.joshtalks.joshskills.repository.local.ListConverters
+import com.joshtalks.joshskills.base.storage.database.ConvectorForPhoneticClass
+import com.joshtalks.joshskills.base.storage.database.ConvectorForWrongWord
+import com.joshtalks.joshskills.base.storage.database.ListConverters
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import java.util.Date
@@ -253,27 +253,3 @@ data class Phonetic(
 enum class PractiseType {
     SUBMITTED, NOT_SUBMITTED
 }
-
-
-@Dao
-interface PracticeEngagementDao {
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPractise(practiceEngagementV2: PracticeEngagementV2): Long
-
-    @Query(value = "SELECT * FROM practise_engagement_table where  questionForId= :questionId")
-    suspend fun getPractice(questionId: String): List<PracticeEngagementV2>?
-
-    @Query(value = "DELETE FROM practise_engagement_table where   questionForId= :questionId AND uploadStatus=:type")
-    suspend fun deleteTempPractise(
-        questionId: String,
-        type: DOWNLOAD_STATUS = DOWNLOAD_STATUS.UPLOADING
-    )
-
-    @Transaction
-    suspend fun insertPractiseAfterUploaded(practiceEngagementV2: PracticeEngagementV2) {
-        deleteTempPractise(practiceEngagementV2.questionForId!!)
-        insertPractise(practiceEngagementV2)
-    }
-}
-

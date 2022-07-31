@@ -16,8 +16,8 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.ConverterForLessonMaterialType
-import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
+import com.joshtalks.joshskills.base.storage.database.ConverterForLessonMaterialType
+import com.joshtalks.joshskills.base.storage.database.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
@@ -170,94 +170,6 @@ enum class LessonMaterialType(val type: String) {
     IM("IM"), // IMAGE
     PD("PD"), // PDF
     OTHER("OTHER") // Default Value
-}
-
-@Dao
-interface LessonQuestionDao {
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertQuestionForLesson(question: LessonQuestion)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertQuestionForLessonOnAnyThread(question: LessonQuestion)
-
-    @Update
-    suspend fun updateQuestionObject(vararg question: LessonQuestion)
-
-    @Query("UPDATE lesson_question set status = :questionStatus WHERE id=:questionId")
-    suspend fun updateQuestionStatus(questionId: String, questionStatus: QUESTION_STATUS)
-
-    @Query("SELECT practice_word,lessonId FROM lesson_question")
-    fun getRandomWord() : List<RandomWord>
-
-    @Query("SELECT lessonId FROM lesson_question WHERE id = :questionId")
-    fun getLessonIdOfQuestion(questionId: String): Int
-
-    @Query("SELECT * FROM lesson_question WHERE lessonId= :lessonId")
-    fun getQuestionsForLesson(lessonId: Int): List<LessonQuestion>
-
-    @Query(value = "SELECT * FROM lesson_question  where id=:questionId")
-    suspend fun getLessonQuestionById(questionId: String): LessonQuestion?
-
-    @Transaction
-    suspend fun getUpdatedLessonQuestion(questionId: String): LessonQuestion? {
-        val question: LessonQuestion? = getLessonQuestionById(questionId)
-        if (question != null) {
-            when (question.materialType) {
-                LessonMaterialType.IM ->
-                    question.imageList =
-                        AppObjectController.appDatabase.chatDao()
-                            .getImagesOfQuestion(questionId = question.id)
-                LessonMaterialType.VI ->
-                    question.videoList =
-                        AppObjectController.appDatabase.chatDao()
-                            .getVideosOfQuestion(questionId = question.id)
-                LessonMaterialType.AU ->
-                    question.audioList =
-                        AppObjectController.appDatabase.chatDao()
-                            .getAudiosOfQuestion(questionId = question.id)
-                LessonMaterialType.PD ->
-                    question.pdfList =
-                        AppObjectController.appDatabase.chatDao()
-                            .getPdfOfQuestion(questionId = question.id)
-//                LessonMaterialType.OTHER ->
-//                    question.imageList =
-//                        AppObjectController.appDatabase.chatDao()
-//                            .getImagesOfQuestion(questionId = question.id)
-//                LessonMaterialType.OTHER ->
-//                    question.videoList =
-//                        AppObjectController.appDatabase.chatDao()
-//                            .getVideosOfQuestion(questionId = question.id)
-                else->{
-                    question.imageList =
-                        AppObjectController.appDatabase.chatDao()
-                            .getImagesOfQuestion(questionId = question.id)
-                    question.videoList =
-                        AppObjectController.appDatabase.chatDao()
-                            .getVideosOfQuestion(questionId = question.id)
-
-                }
-            }
-            if (question.type == LessonQuestionType.PR) {
-                question.practiseEngagementV2 =
-                    AppObjectController.appDatabase.practiceEngagementDao()
-                        .getPractice(question.id)
-                question.imageList = AppObjectController.appDatabase.chatDao()
-                    .getImagesOfQuestion(questionId = question.id)
-            }
-        }
-        return question
-    }
-
-    @Query("UPDATE lesson_question SET downloadStatus = :status , downloadedLocalPath = :path where id=:lessonQuestionId")
-    fun updateDownloadStatus(
-        lessonQuestionId: String,
-        status: DOWNLOAD_STATUS,
-        path: String = EMPTY,
-    )
-
-    @Query("SELECT COUNT(id) FROM lesson_question WHERE interval= :interval")
-    suspend fun getLessonCount(interval: Int): Long
 }
 
 data class RandomWord(

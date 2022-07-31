@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.base.model.notification.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.notification.NotificationUtils
-import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.base.storage.database.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.base.services.UtilsAPIService

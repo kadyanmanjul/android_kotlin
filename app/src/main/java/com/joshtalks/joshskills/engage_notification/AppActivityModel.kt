@@ -23,9 +23,3 @@ data class AppActivityModel(
     @ColumnInfo(name = "created")
     var usageDate: Date = Date()
 }
-
-@Dao
-interface AppActivityDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertIntoAppActivity(obj: AppActivityModel)
-}

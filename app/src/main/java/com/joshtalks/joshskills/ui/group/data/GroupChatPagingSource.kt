@@ -6,7 +6,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.joshtalks.joshskills.base.services.GroupApiService
-import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.base.storage.database.AppDatabase
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.ChatItem

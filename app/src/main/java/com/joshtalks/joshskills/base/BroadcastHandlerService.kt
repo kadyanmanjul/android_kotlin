@@ -6,7 +6,7 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.core.LAST_TIME_WORK_MANAGER_START
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.base.storage.database.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.voip.notification.NotificationData

@@ -9,10 +9,10 @@ import com.joshtalks.joshskills.base.core.AppObjectController
 import com.joshtalks.joshskills.base.model.groups.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.base.storage.database.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
+import com.joshtalks.joshskills.ui.group.analytics.GroupChatAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource

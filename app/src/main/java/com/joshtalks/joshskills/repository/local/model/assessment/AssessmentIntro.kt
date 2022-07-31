@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
+import com.joshtalks.joshskills.base.storage.database.typeconverter.TypeConverterChoiceType
 import kotlinx.android.parcel.Parcelize
 
 @Entity(

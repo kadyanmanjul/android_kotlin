@@ -35,15 +35,3 @@ data class AppUsageModel(
     @SerializedName("gaid_id")
     var gaidId: String? = null
 }
-
-@Dao
-interface AppUsageDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertIntoAppUsage(obj: AppUsageModel)
-
-    @Query(value = "SELECT * FROM app_usage ")
-    suspend fun getAllSession(): List<AppUsageModel>
-
-    @Query("DELETE FROM app_usage")
-    suspend fun deleteAllSyncSession()
-}

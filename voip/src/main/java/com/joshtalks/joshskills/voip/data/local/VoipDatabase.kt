@@ -13,7 +13,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.joshtalks.joshskills.voip.recordinganalytics.data.local.RecordingAnalyticsDao
 import com.joshtalks.joshskills.voip.recordinganalytics.data.local.RecordingAnalyticsEntity
-import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsDao
+import com.joshtalks.joshskills.base.storage.database.dao.VoipAnalyticsDao
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntity
 
 // TODO: Will be used to insert Disconnected call Data and Voip Analytics

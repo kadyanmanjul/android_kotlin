@@ -2,12 +2,8 @@ package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
-import androidx.room.Dao
 import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
-import androidx.room.Query
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -72,20 +68,6 @@ data class AwardMentorModel(
     @Expose
     var dateText: String?
 ) : Parcelable
-
-@Dao
-interface AwardMentorModelDao {
-
-    @Query("SELECT * FROM awardmentormodel WHERE id=:id")
-    fun getAwardMentorModel(id: Int): AwardMentorModel?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertSingleItem(awardMentorModel: AwardMentorModel)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(awardMentorModelList: List<AwardMentorModel>)
-
-}
 
 enum class AwardTypes(val type: String) {
     SOTD("SOTD"),
