@@ -111,8 +111,7 @@ class AppObjectController {
     companion object {
 
         @JvmStatic
-        var INSTANCE: AppObjectController =
-            AppObjectController()
+        var INSTANCE: AppObjectController = AppObjectController()
 
         @JvmStatic
         lateinit var joshApplication: JoshApplication

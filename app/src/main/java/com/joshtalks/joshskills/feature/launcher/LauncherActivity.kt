@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.launch
+package com.joshtalks.joshskills.feature.launcher
 
 import com.singular.sdk.*
 import android.animation.ArgbEvaluator
@@ -23,10 +23,10 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
+import com.joshtalks.joshskills.feature.launcher.di.component
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
@@ -40,11 +40,13 @@ import io.branch.referral.Defines
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import javax.inject.Inject
 
 class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     private var testId: String? = null
+
     private val viewModel: LauncherViewModel by lazy {
-        ViewModelProvider(this).get(LauncherViewModel::class.java)
+        ViewModelProvider(this, viewModelFactory).get(LauncherViewModel::class.java)
     }
     private var jsonParams: JSONObject? = null
 
@@ -53,6 +55,10 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+            component()
+            .getLauncherComponentBuilder()
+            .build()
+            .inject(this)
         viewModel.initApp()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)

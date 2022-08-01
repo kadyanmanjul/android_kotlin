@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.core.service.NOTIFICATION_TEXT_TEXT
 import com.joshtalks.joshskills.core.service.NOTIFICATION_TITLE_TEXT
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.launch.LauncherActivity
+import com.joshtalks.joshskills.feature.launcher.LauncherActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

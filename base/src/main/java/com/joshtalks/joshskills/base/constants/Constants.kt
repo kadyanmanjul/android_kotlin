@@ -8,6 +8,11 @@ const val KEY_APP_VERSION_NAME = "app-version-name"
 const val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
 const val KEY_APP_ACCEPT_LANGUAGE = "Accept-Language"
 
+// Okhttp timeout
+const val READ_TIMEOUT = "READ_TIMEOUT"
+const val WRITE_TIMEOUT = "WRITE_TIMEOUT"
+const val CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT"
+
 // Intent Data Constant
 const val INTENT_DATA_API_HEADER = "josh_intent_data_api_header"
 const val INTENT_DATA_MENTOR_ID = "josh_intent_data_mentor_id"

@@ -1,11 +1,12 @@
 package com.joshtalks.joshskills.di
 
 import com.joshtalks.joshskills.base.core.Envelope
+import com.joshtalks.joshskills.di.annotation.AppScope
 import kotlinx.coroutines.channels.Channel
 import javax.inject.Inject
 
 @AppScope
-class ApplicationEventListener @Inject constructor(){
+class ApplicationEventListener @Inject constructor() {
     private val channel = Channel<Envelope<ApplicationEvent>>(Channel.UNLIMITED)
 
     suspend fun emitEvent(event : Envelope<ApplicationEvent>) {

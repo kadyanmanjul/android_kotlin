@@ -174,7 +174,7 @@
             android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
         <activity
-            android:name=".ui.launch.LauncherActivity"
+            android:name=".feature.launcher.LauncherActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

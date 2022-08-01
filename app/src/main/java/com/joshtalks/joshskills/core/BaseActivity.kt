@@ -16,11 +16,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.*
 import androidx.lifecycle.Observer
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -94,6 +91,7 @@ import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
+import javax.inject.Inject
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -109,6 +107,8 @@ abstract class BaseActivity :
     private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
     private var versionResponse: VersionResponse? = null
     var videoChatObject: ChatModel? = null
+    @Inject
+    protected lateinit var viewModelFactory: ViewModelProvider.Factory
 
     enum class ActivityEnum {
         Conversation,

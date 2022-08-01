@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.di
+package com.joshtalks.joshskills.di.module
 
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -8,6 +8,9 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.core.Envelope
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.di.ApplicationEvent
+import com.joshtalks.joshskills.di.ApplicationEventListener
+import com.joshtalks.joshskills.di.annotation.AppScope
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
@@ -28,9 +31,9 @@ import javax.inject.Inject
 import javax.inject.Named
 
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
-private const val READ_TIMEOUT = 30L
-private const val WRITE_TIMEOUT = 30L
-private const val CONNECTION_TIMEOUT = 30L
+private const val DEFAULT_READ_TIMEOUT = 30
+private const val DEFAULT_WRITE_TIMEOUT = 30
+private const val DEFAULT_CONNECTION_TIMEOUT = 30
 private const val CALL_TIMEOUT = 60L
 private const val CACHE_SIZE = 10 * 1024 * 1024L
 
@@ -99,16 +102,17 @@ class NetworkModule {
 
     @AppScope
     @Provides
-    fun provideOkHttp(headerInterceptor: HeaderInterceptor, statusCodeInterceptor: StatusCodeInterceptor, cache: Cache) : OkHttpClient {
+    fun provideOkHttp(headerInterceptor: HeaderInterceptor, statusCodeInterceptor: StatusCodeInterceptor, timeoutInterceptor: TimeoutInterceptor, cache: Cache) : OkHttpClient {
         val builder = OkHttpClient().newBuilder()
-            .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+            .connectTimeout(DEFAULT_CONNECTION_TIMEOUT.toLong(), TimeUnit.SECONDS)
+            .writeTimeout(DEFAULT_WRITE_TIMEOUT.toLong(), TimeUnit.SECONDS)
+            .readTimeout(DEFAULT_READ_TIMEOUT.toLong(), TimeUnit.SECONDS)
             .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
             // .retryOnConnectionFailure(true)
             .followSslRedirects(true)
             .addInterceptor(statusCodeInterceptor)
             .addInterceptor(headerInterceptor)
+            .addInterceptor(timeoutInterceptor)
             .hostnameVerifier { _, _ -> true }
             .cache(cache)
         //TODO: Need below code for debugging
@@ -196,6 +200,28 @@ class HeaderInterceptor @Inject constructor() : Interceptor {
                 }
             }
             chain.proceed(newRequest.build())
+        }
+    }
+}
+
+/**
+ * Use below annotations for dynamic timeout
+ * @Headers({"CONNECT_TIMEOUT:10000", "READ_TIMEOUT:10000", "WRITE_TIMEOUT:10000"})
+ */
+@AppScope
+class TimeoutInterceptor @Inject constructor() : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        return chain.request().safeCall {
+            val connectionTimeout = it.header(CONNECTION_TIMEOUT)?.toIntOrNull()
+            if(connectionTimeout != null) {
+                chain
+                    .withConnectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                    .withReadTimeout(it.header(READ_TIMEOUT)?.toIntOrNull() ?: DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS)
+                    .withWriteTimeout(it.header(WRITE_TIMEOUT)?.toIntOrNull() ?: DEFAULT_WRITE_TIMEOUT, TimeUnit.SECONDS)
+                    .proceed(it);
+            } else {
+                chain.proceed(it)
+            }
         }
     }
 }

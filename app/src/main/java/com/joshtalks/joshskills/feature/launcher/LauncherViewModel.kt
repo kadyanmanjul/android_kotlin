@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.launch
+package com.joshtalks.joshskills.feature.launcher
 
 import android.app.Application
 import android.content.Context
@@ -7,18 +7,16 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.telephony.TelephonyManager
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.feature.launcher.network.LauncherNetworkService
 import com.joshtalks.joshskills.repository.local.model.*
-import com.joshtalks.joshskills.ui.inbox.mentor_id
-import com.joshtalks.joshskills.util.DeepLinkImpression
-import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.singular.sdk.Singular
 import io.branch.referral.Branch
 import io.branch.referral.Defines
@@ -27,8 +25,9 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class LauncherViewModel(application: Application) : AndroidViewModel(application) {
+class LauncherViewModel @Inject constructor(val application: Application, val launcherNetworkService: LauncherNetworkService) : ViewModel() {
 
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
@@ -92,8 +91,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 obj.test = testId?.split("_")?.get(1)?.toInt()
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isBlank()) {
                     PrefManager.put(USER_UNIQUE_ID, EMPTY)
-                    val response =
-                        AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
+                    val response = launcherNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
                     if (response.isSuccessful && response.body() != null) {
                         PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
                     } else {
@@ -135,7 +133,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 obj.exploreCardType = ExploreCardType.valueOf(exploreType!!)
             }
             try {
-                val resp = AppObjectController.commonNetworkService.registerGAIdDetailsV2Async(obj)
+                val resp = launcherNetworkService.registerGAIdDetailsV2Async(obj)
                 GaIDMentorModel.update(resp)
                 PrefManager.put(SERVER_GID_ID, resp.gaidServerDbId)
                 PrefManager.put(EXPLORE_TYPE, exploreType ?: ExploreCardType.NORMAL.name, false)
@@ -153,8 +151,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
-                val response =
-                    AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
+                val response = launcherNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
                 Mentor.updateFromLoginResponse(response)
                 apiCallStatus.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Exception) {
@@ -171,18 +168,18 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
 
     fun initApp() {
         viewModelScope.launch(Dispatchers.IO) {
-            WorkManager.getInstance(AppObjectController.joshApplication).cancelAllWork()
+            WorkManager.getInstance(application).cancelAllWork()
             WorkManagerAdmin.appInitWorker()
             val dateFormat = SimpleDateFormat("HH")
             val time: Int = dateFormat.format(Date()).toInt()
             val getCurrentTimeInMillis = Calendar.getInstance().timeInMillis
             val lastFakeCallInMillis: Long =
                 PrefManager.getLongValue(LAST_FAKE_CALL_INVOKE_TIME, true)
-            if ((time in 7..23) && isUserOnline(getApplication<Application>().applicationContext) && getCurrentTimeInMillis - lastFakeCallInMillis >= 3600000) {
+            if ((time in 7..23) && isUserOnline(application) && getCurrentTimeInMillis - lastFakeCallInMillis >= 3600000) {
                 PrefManager.put(LAST_FAKE_CALL_INVOKE_TIME, getCurrentTimeInMillis, true)
                 WorkManagerAdmin.setFakeCallNotificationWorker()
             }
-            Branch.getAutoInstance(AppObjectController.joshApplication).resetUserSession()
+            Branch.getAutoInstance(application).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
             if (PrefManager.hasKey(IS_FREE_TRIAL).not() && User.getInstance().isVerified.not()) {
                 PrefManager.put(IS_FREE_TRIAL, value = true, isConsistent = false)
@@ -191,7 +188,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     }
 
     private fun getNetworkOperatorName() =
-        (AppObjectController.joshApplication.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.networkOperatorName
+        (application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.networkOperatorName
             ?: ""
 
     private fun isUserOnline(context: Context): Boolean {
@@ -236,7 +233,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     fun saveDeepLinkImpression(deepLink: String, action: String) {
         viewModelScope.launch {
             try {
-                val response = AppObjectController.commonNetworkService.saveDeepLinkImpression(
+                val response = launcherNetworkService.saveDeepLinkImpression(
                     mapOf(
                         "mentor" to Mentor.getInstance().getId(),
                         "deep_link" to deepLink,

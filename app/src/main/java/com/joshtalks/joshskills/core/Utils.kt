@@ -1417,7 +1417,7 @@ fun Intent.serviceStart() {
 fun Intent.startServiceForWebrtc() {
 
     if (JoshApplication.isAppVisible) {
-        AppObjectController.joshApplication.startService(this)
+        AppObjectController().joshApplication.startService(this)
     } else {
         ContextCompat.startForegroundService(
             AppObjectController.joshApplication,

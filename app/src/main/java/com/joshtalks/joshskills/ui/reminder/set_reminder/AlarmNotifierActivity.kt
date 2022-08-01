@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.ui.launch.LauncherActivity
+import com.joshtalks.joshskills.feature.launcher.LauncherActivity
 import com.joshtalks.joshskills.util.RingtoneManager
 import java.text.SimpleDateFormat
 import java.util.*

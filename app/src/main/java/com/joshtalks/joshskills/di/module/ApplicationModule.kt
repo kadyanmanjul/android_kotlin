@@ -1,6 +1,6 @@
-package com.joshtalks.joshskills.di
+package com.joshtalks.joshskills.di.module
 
-import android.app.Application
+import com.joshtalks.joshskills.di.annotation.AppScope
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope

@@ -28,8 +28,8 @@ import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.di.ApplicationComponent
-import com.joshtalks.joshskills.di.DaggerApplicationComponent
+import com.joshtalks.joshskills.di.components.ApplicationComponent
+import com.joshtalks.joshskills.di.components.DaggerApplicationComponent
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.Utils
@@ -428,5 +428,42 @@ class JoshApplication :
     fun isMainProcess(): Boolean {
         Log.d(TAG, "onCreate: STARTING ...IS MAIN PROCESS")
         return TextUtils.equals(packageName, getProcName())
+    }
+}
+
+class Main {
+    fun testing() {
+        Parent.chat.doSomething()
+    }
+}
+
+class Parent {
+
+
+    companion object {
+        lateinit var chat : Chat
+
+        @Synchronized fun getChat1() : Chat{
+            return Chat()
+        }
+
+        fun initParent() {
+            chat = Chat()
+        }
+    }
+}
+
+
+class Chat {
+    companion object {
+        val abc = Chat()
+    }
+
+    fun sendMessage() {
+        abc.sendMessage()
+    }
+
+    fun doSomething() {
+
     }
 }

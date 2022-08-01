@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.di
+package com.joshtalks.joshskills.di.annotation
 
 import java.lang.annotation.Documented
 import java.lang.annotation.Retention
