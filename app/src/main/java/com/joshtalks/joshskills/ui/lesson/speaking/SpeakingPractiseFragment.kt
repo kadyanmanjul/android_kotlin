@@ -45,6 +45,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
@@ -148,6 +149,27 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.isFavoriteCallerExist()
         subscribeRXBus()
         //checkForVoipState()
+
+        // dialog for warning about shorter calls
+        AlertDialog.Builder(activity).setTitle(R.string.warning)
+            .setIcon(R.drawable.ic_baseline_warning_24)
+            .setPositiveButton(R.string.got_it){dialog,which ->
+                dialog.dismiss()
+            }
+            .setMessage(R.string.shorter_calls_error_message)
+            .show()
+
+        // redirect to buy screen
+        binding.txtBuyToContinueCalls.setOnClickListener {
+            activity?.let { it1 ->
+                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                    it1,
+                    AppObjectController.getFirebaseRemoteConfig().getString(
+                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                    )
+                )
+            }
+        }
     }
 
     private fun getVoipState(): State? {
