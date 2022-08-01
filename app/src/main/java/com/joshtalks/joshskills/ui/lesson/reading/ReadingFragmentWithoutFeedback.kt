@@ -57,12 +57,9 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.splitinstall.SplitInstallHelper
-import com.google.android.play.core.splitinstall.SplitInstallManager
-import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.getAndroidDownloadFolder
 import com.joshtalks.joshskills.base.getVideoFilePath
 import com.joshtalks.joshskills.base.saveVideoQ
 import com.joshtalks.joshskills.constants.CANCEL_BUTTON_CLICK
@@ -85,14 +82,11 @@ import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.READING_SHARED_WHATSAPP
-import com.joshtalks.joshskills.core.RECORD_READING_VIDEO
 import com.joshtalks.joshskills.core.SUBMIT_READING_VIDEO
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VIDEO_PLAYED_RP
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.ErrorTag
-import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -159,6 +153,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
+import zeroonezero.android.audio_mixer.AudioMixer
+import zeroonezero.android.audio_mixer.input.GeneralAudioInput
 
 private const val TAG = "ReadingFragmentWithoutFeedback"
 
@@ -195,8 +191,6 @@ class ReadingFragmentWithoutFeedback :
     private var internetAvailableFlag: Boolean = true
     private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
     private var linearLayoutManager: LinearLayoutManager? = null
-    private var splitManager: SplitInstallManager? = null
-    var isDynamicModuleInstalled = false
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -300,7 +294,6 @@ class ReadingFragmentWithoutFeedback :
         super.onCreate(savedInstanceState)
         totalTimeSpend = System.currentTimeMillis()
         linearLayoutManager = LinearLayoutManager(requireActivity())
-        splitManager = SplitInstallManagerFactory.create(requireActivity())
     }
 
     override fun onCreateView(
@@ -363,7 +356,7 @@ class ReadingFragmentWithoutFeedback :
                 } else {
                     binding.mergedVideo.scaleY = 1f / scaleX
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 showToast(getString(R.string.something_went_wrong))
                 ex.printStackTrace()
             }
@@ -822,7 +815,7 @@ class ReadingFragmentWithoutFeedback :
         lifecycleScope.launch(Dispatchers.IO) {
             if (isAdded && activity != null) {
                 val thumbnailDrawable: Drawable? =
-                    Utils.getDrawableFromUrl(requireContext(),thumbnailUrl)
+                    Utils.getDrawableFromUrl(requireContext(), thumbnailUrl)
                 if (thumbnailDrawable != null) {
                     AppObjectController.uiHandler.post {
                         binding.videoPlayer.useArtwork = true
@@ -832,7 +825,7 @@ class ReadingFragmentWithoutFeedback :
 //                    imgArtwork.visibility = View.VISIBLE
                     }
                 }
-            }else{
+            } else {
                 showToast(getString(R.string.something_went_wrong))
             }
         }
@@ -858,29 +851,6 @@ class ReadingFragmentWithoutFeedback :
             viewLifecycleOwner
         ) {
             currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
-            splitManager?.installedModules?.forEach { module->
-                if(module.equals(getString(R.string.dynamic_feature_title))){
-                    Log.d(TAG, "addObserver() called with: module = $module")
-                    isDynamicModuleInstalled = true
-                    try {
-                        SplitInstallHelper.loadLibrary(requireContext(), "avutil")
-                        SplitInstallHelper.loadLibrary(requireContext(), "avutil")
-                        SplitInstallHelper.loadLibrary(requireContext(), "swscale")
-                        SplitInstallHelper.loadLibrary(requireContext(), "swresample")
-                        SplitInstallHelper.loadLibrary(requireContext(), "avcodec")
-                        SplitInstallHelper.loadLibrary(requireContext(), "avformat")
-                        SplitInstallHelper.loadLibrary(requireContext(), "avfilter")
-                        SplitInstallHelper.loadLibrary(requireContext(), "avdevice")
-
-                    }catch (e:NoClassDefFoundError){
-                        LogException.catchError(ErrorTag.FFMPEG_ERROR_LOAD,"SplitInstallHelper NoClassDefFoundError occured in ${this::class.java} error : $e")
-                    } catch (ex:kotlin.Error){
-                        LogException.catchError(ErrorTag.FFMPEG_ERROR_LOAD,"SplitInstallHelper ${this::class.java} error : $ex")
-                    }catch (ex:Exception){
-                        LogException.catchException(ex)
-                    }
-                }
-            }
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
             lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -928,7 +898,10 @@ class ReadingFragmentWithoutFeedback :
                             binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                         }
                         binding.btnWhatsapp.setOnClickListener {
-                            viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
+                            viewModel.saveReadingPracticeImpression(
+                                READING_SHARED_WHATSAPP,
+                                lessonID.toString()
+                            )
                             scope.launch {
                                 if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
                                         .not()
@@ -1178,10 +1151,10 @@ class ReadingFragmentWithoutFeedback :
             binding.btnWhatsapp.setOnClickListener {
                 viewModel.shareVideoForAudio(outputFile)
                 viewModel.saveReadingPracticeImpression(
-                        READING_SHARED_WHATSAPP,
-                        lessonID.toString()
+                    READING_SHARED_WHATSAPP,
+                    lessonID.toString()
                 )
-                }
+            }
         }
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -1363,7 +1336,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun recordPermission() {
-        if (isAdded && activity!=null) {
+        if (isAdded && activity != null) {
             PermissionUtils.audioRecordStorageReadAndWritePermission(
                 requireActivity(),
                 object : MultiplePermissionsListener {
@@ -1375,7 +1348,7 @@ class ReadingFragmentWithoutFeedback :
                                 audioRecordTouchListener()
                                 return
                             }
-                            if (isAdded && activity!=null) {
+                            if (isAdded && activity != null) {
                                 if (report.isAnyPermissionPermanentlyDenied) {
                                     PermissionUtils.permissionPermanentlyDeniedDialog(
                                         requireActivity(),
@@ -1383,7 +1356,7 @@ class ReadingFragmentWithoutFeedback :
                                     )
                                     return
                                 }
-                            }else{
+                            } else {
                                 showToast(getString(R.string.something_went_wrong))
                             }
                         }
@@ -1397,7 +1370,7 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
             )
-        }else{
+        } else {
             showToast(getString(R.string.something_went_wrong))
         }
     }
@@ -1455,7 +1428,7 @@ class ReadingFragmentWithoutFeedback :
                             startTime
                         )
                     if (timeDifference > 1) {
-                        if(Utils.isInternetAvailable()) {
+                        if (Utils.isInternetAvailable()) {
                             viewModel.recordFile?.let {
                                 isAudioRecordDone = true
 //                            Log.e("Ayaaz","${currentLessonQuestion?.videoList?.get(0)?.video_url}")
@@ -1490,14 +1463,8 @@ class ReadingFragmentWithoutFeedback :
                                 muxerJob = scope.launch {
                                     if (isActive && isAdded) {
                                         mutex.withLock {
-                                            if (isDynamicModuleInstalled) {
-                                                    if (video != null)
-                                                        viewModel.saveReadingPracticeImpression(
-                                                            RECORD_READING_VIDEO,
-                                                            lessonID.toString()
-                                                        )
-                                                    if (videoDownPath != null)
-                                                        startService(videoDownPath!!, filePath!!)
+                                            if (true) {
+                                                mergeTwoAudiosIntoOne()
                                             } else {
                                                 muxVideoOldMethod()
                                             }
@@ -1506,8 +1473,7 @@ class ReadingFragmentWithoutFeedback :
                                 }
                                 binding.playBtn.visibility = VISIBLE
                             }
-                        }
-                        else{
+                        } else {
                             showToast(getString(R.string.internet_not_available_msz))
                         }
                     }
@@ -1515,6 +1481,123 @@ class ReadingFragmentWithoutFeedback :
             }
             true
         }
+    }
+
+    private fun mergeTwoAudiosIntoOne() {
+        val input1 = GeneralAudioInput(requireContext(), Uri.parse(filePath!!), null)
+        input1.volume = 5f
+        val out2 = extractAudioFromVideo(videoDownPath!!)
+        val input2 = GeneralAudioInput(requireContext(), Uri.parse(out2), null)
+        input2.volume = 5f
+
+        val mergedAudioPath = getAudioFilePathMP3()
+        val audioMixer = AudioMixer(mergedAudioPath)
+        audioMixer.addDataSource(input1)
+        audioMixer.addDataSource(input2)
+        audioMixer.mixingType = AudioMixer.MixingType.PARALLEL
+        audioMixer.setProcessingListener(object : AudioMixer.ProcessingListener {
+            override fun onProgress(progress: Double) {
+                Log.d(TAG, "onProgress() called with: progress = $progress")
+            }
+
+            override fun onEnd() {
+                Log.d(TAG, "onEnd() called")
+                mux(mergedAudioPath, videoDownPath!!)
+                audioMixer.release()
+            }
+
+        })
+
+        audioMixer.start()
+        audioMixer.processAsync()
+    }
+
+    @SuppressLint("WrongConstant")
+    fun mux(audioFile: String, videoFile: String) {
+        showToast("Video muxing from latest method")
+        if (File(outputFile).exists()) {
+            File(outputFile).delete()
+        }
+        if (Build.VERSION.SDK_INT >= 29) {
+            if (isAdded) {
+                outputFile = saveVideoQ(
+                    requireContext(),
+                    videoDownPath ?: EMPTY
+                ) ?: EMPTY
+            }
+        } else {
+            outputFile = getVideoFilePath()
+        }
+
+        // Init extractors which will get encoded frames
+        val videoExtractor = MediaExtractor()
+        videoExtractor.setDataSource(requireContext(), Uri.parse(videoFile), null)
+        videoExtractor.selectTrack(0) // Assuming only one track per file. Adjust code if this is not the case.
+        val videoFormat = videoExtractor.getTrackFormat(0)
+
+        val audioExtractor = MediaExtractor()
+        audioExtractor.setDataSource(audioFile)
+        audioExtractor.selectTrack(0) // Assuming only one track per file. Adjust code if this is not the case.
+        val audioFormat = audioExtractor.getTrackFormat(0)
+
+        // Init muxer
+        val muxer = MediaMuxer(outputFile, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
+        val videoIndex = muxer.addTrack(videoFormat)
+        val audioIndex = muxer.addTrack(audioFormat)
+        muxer.start()
+
+        // Prepare buffer for copying
+        val maxChunkSize = 1024 * 1024
+        val buffer = ByteBuffer.allocate(maxChunkSize)
+        val bufferInfo = MediaCodec.BufferInfo()
+
+        // Copy Video
+        while (true) {
+            val chunkSize = videoExtractor.readSampleData(buffer, 0)
+
+            if (chunkSize > 0) {
+                bufferInfo.presentationTimeUs = videoExtractor.sampleTime
+                bufferInfo.flags = videoExtractor.sampleFlags
+                bufferInfo.size = chunkSize
+
+                muxer.writeSampleData(videoIndex, buffer, bufferInfo)
+
+                videoExtractor.advance()
+
+            } else {
+                break
+            }
+        }
+
+        // Copy audio
+        while (true) {
+            val chunkSize = audioExtractor.readSampleData(buffer, 0)
+
+            if (chunkSize >= 0) {
+                bufferInfo.presentationTimeUs = audioExtractor.sampleTime
+                bufferInfo.flags = audioExtractor.sampleFlags
+                bufferInfo.size = chunkSize
+
+                muxer.writeSampleData(audioIndex, buffer, bufferInfo)
+                audioExtractor.advance()
+            } else {
+                break
+            }
+        }
+
+        // Cleanup
+        muxer.stop()
+        muxer.release()
+        videoExtractor.release()
+        audioExtractor.release()
+        binding.mergedVideo.setVideoPath(outputFile)
+        if (isAdded && activity != null) {
+            requireActivity().runOnUiThread {
+                binding.progressDialog.visibility = GONE
+                viewModel.sendOutputToFullScreen(outputFile)
+            }
+        }
+        Log.d(TAG, "mux() called with: outputFile = $outputFile ")
     }
 
     private fun muxVideoOldMethod() {
@@ -1539,6 +1622,68 @@ class ReadingFragmentWithoutFeedback :
                 viewModel.sendOutputToFullScreen(outputFile)
             }
         }
+    }
+
+    private fun getAudioFilePathAAC(): String {
+        return getAndroidDownloadFolder()?.absolutePath + "/" + "JoshSkill-" + System.currentTimeMillis() + ".aac"
+    }
+
+    private fun getAudioFilePathMP3(): String {
+        return getAndroidDownloadFolder()?.absolutePath + "/" + "JoshSkill-" + System.currentTimeMillis() + ".mp3"
+    }
+
+    private fun extractAudioFromVideo(videoPath: String): String {
+        val outputAudioPath = getAudioFilePathAAC()
+        val videoAudioExtractor: MediaExtractor = MediaExtractor()
+        var videoAudioFormat: MediaFormat = MediaFormat()
+        val sampleSize = 256 * 1024
+        var sawEOS = false
+        var frameCount = 0
+        val offset = 100
+
+        videoAudioExtractor.setDataSource(videoPath)
+        for (i in 0 until videoAudioExtractor.trackCount) {
+            videoAudioFormat = videoAudioExtractor.getTrackFormat(i)
+            val mime = videoAudioFormat.getString(MediaFormat.KEY_MIME);
+            if (mime!!.startsWith("audio/")) {
+                videoAudioExtractor.selectTrack(i)
+            }
+        }
+
+        val muxer: MediaMuxer = MediaMuxer(
+            outputAudioPath,
+            MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
+        )
+
+        val videoAudioTrack = muxer.addTrack(videoAudioFormat)
+        val videoAudioBuffer: ByteBuffer = ByteBuffer.allocate(sampleSize)
+        val videoAudioBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
+        videoAudioExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
+
+        muxer.start()
+
+        while (!sawEOS) {
+            frameCount++
+
+            videoAudioBufferInfo.offset = offset
+            videoAudioBufferInfo.size = videoAudioExtractor.readSampleData(videoAudioBuffer, offset)
+
+            if (videoAudioBufferInfo.size < 0) {
+                sawEOS = true
+                videoAudioBufferInfo.size = 0
+            } else {
+                videoAudioBufferInfo.presentationTimeUs = videoAudioExtractor.getSampleTime()
+                videoAudioBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME;
+                muxer.writeSampleData(videoAudioTrack, videoAudioBuffer, videoAudioBufferInfo)
+                videoAudioExtractor.advance()
+            }
+        }
+
+        muxer.stop()
+        muxer.release()
+        videoAudioExtractor.release()
+
+        return outputAudioPath
     }
 
     fun audioVideoMuxer() {
@@ -1648,6 +1793,7 @@ class ReadingFragmentWithoutFeedback :
         binding.playBtn.visibility = INVISIBLE
         binding.mergedVideo.start()
     }
+
     private fun gainAudioFocus() {
         val mAudioManager =
             context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
@@ -1812,7 +1958,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun submitPractise() {
-        if(Utils.isInternetAvailable()) {
+        if (Utils.isInternetAvailable()) {
             MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .push()
@@ -1897,8 +2043,7 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
             }
-        }
-        else{
+        } else {
             showToast(getString(R.string.internet_not_available_msz))
         }
     }
@@ -2005,27 +2150,6 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
         )
-    }
-
-    private fun startService(
-        videoDownPath: String,
-        audioPath: String
-    ) {
-        try {
-            Log.d(
-                TAG,
-                "startService() called with: videoDownPath = $videoDownPath, audioPath = $audioPath"
-            )
-            showToast("Video muxing from new method")
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.VideoMergeService")
-            Intent().setClassName(BuildConfig.APPLICATION_ID,cls.name).also {
-                it.putExtra("VIDEO_PATH",videoDownPath)
-                it.putExtra("AUDIO_PATH",audioPath)
-                ContextCompat.startForegroundService(requireActivity(),it)
-            }
-        } catch (e:Exception){
-            e.printStackTrace()
-        }
     }
 
 }

@@ -823,10 +823,6 @@
             android:name=".ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService"
             android:enabled="true"
             android:exported="false" />
-        <service
-            android:name=".ui.inbox.extra.OnDemandFeatureDownloadService"
-            android:enabled="true"
-            android:exported="false" />
 
     </application>
     <queries>

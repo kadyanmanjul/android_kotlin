@@ -21,6 +21,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDex
+import androidx.multidex.MultiDexApplication
 import androidx.work.impl.background.greedy.GreedyScheduler
 import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
@@ -58,7 +59,7 @@ import timber.log.Timber
 const val TAG = "JoshSkill"
 
 class JoshApplication :
-    SplitCompatApplication(),
+    MultiDexApplication(),
     LifecycleEventObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
@@ -76,7 +77,6 @@ class JoshApplication :
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        MultiDex.install(this)
         base.let { ViewPumpContextWrapper.wrap(it) }
     }
 

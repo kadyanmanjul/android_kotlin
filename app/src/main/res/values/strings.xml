@@ -1010,7 +1010,6 @@
     <string name="describe_your_word_without_saying_it_and_your_partner_will_guess_it" translatable="false">निचे दिए गए word को बोलना नहीं है, hint देकर समझाना है। आपके practice partner word को guess करेंगे।</string>
     <string name="your_word" translatable="false">My Word</string>
     <string name="stars" translatable="false">*********</string>
-    <string name="dynamic_feature_title" translatable="false">dynamic</string>
     <string name="video_error" translatable="false">Sorry unable to process your video please retry after some time</string>
     <string name="wait_for_your_partner_to_click_next" translatable="false">Wait for your partner to click next</string>
     <string name="image_button_to_move_left" translatable="false">Image button to move left</string>

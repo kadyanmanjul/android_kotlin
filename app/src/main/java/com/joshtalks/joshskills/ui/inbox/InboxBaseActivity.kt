@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.facebook.share.internal.ShareConstants
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -25,7 +23,6 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.inbox.extra.NewUserLayout
-import com.joshtalks.joshskills.ui.inbox.extra.OnDemandFeatureDownloadService
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -57,7 +54,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
             versionResponse = VersionResponse.getInstance()
         }
         AppObjectController.isSettingUpdate = false
-        defferInstallOnDemandModule()
     }
 
     override fun onStart() {
@@ -94,13 +90,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
 //            }
 //        }
 //    }
-
-    private fun defferInstallOnDemandModule() {
-        val manager = SplitInstallManagerFactory.create(this)
-        if(manager.installedModules.contains(getString(R.string.dynamic_feature_title)) == false){
-            OnDemandFeatureDownloadService.startOnDemandFeatureDownloadService(this, true)
-        }
-    }
 
     //    private fun showInAppReview() {
 //        val manager = ReviewManagerFactory.create(applicationContext)

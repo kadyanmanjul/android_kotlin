@@ -56,7 +56,6 @@ android {
 
         renderscriptTargetApi 25
         renderscriptSupportModeEnabled true
-        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86' ,'x86_64'
     }
 
     buildFeatures {
@@ -231,7 +230,6 @@ android {
     aaptOptions {
         cruncherEnabled = false
     }
-    dynamicFeatures = [':dynamic']
 }
 
 dependencies {
@@ -471,4 +469,6 @@ dependencies {
 
     // Anr-watchdog
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
+    implementation 'com.github.ZeroOneZeroR:android_audio_mixer:v1.1'
+
 }
