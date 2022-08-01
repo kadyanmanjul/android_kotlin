@@ -345,7 +345,6 @@ class WaitingFragment : Fragment() {
 
     private fun addObserver(){
         viewModel.waitResponse.observe(viewLifecycleOwner){
-            Log.i("WAITINGROOM", "adObserver: $it")
             users= viewModel.waitResponse.value as MutableList<Waiting>
             Timber.d("LIST SIZE HAI => ${it.size}")
               lifecycleScope.launch {
@@ -363,7 +362,6 @@ class WaitingFragment : Fragment() {
 //            Timber.d("WAITING LIST => $it")
 //        }
         viewModel.isRoomActive.observe(viewLifecycleOwner){
-            Log.i("WAITINGWORLD", " wait addObserver: $it")
             if(it) {
                 try {
                     (activity as FeedActivity).swipeRefreshLayout.isEnabled = true

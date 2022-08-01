@@ -86,7 +86,6 @@ object PubNubManager {
     var isRoomActive = false
 
     fun warmUp(liveRoomProperties: StartingLiveRoomProperties) {
-        Log.i("MODERATORSTATUS", "warmUp: $liveRoomProperties")
         this.liveRoomProperties = liveRoomProperties
         pubNubCallback = PubNubCallback()
     }
@@ -96,7 +95,6 @@ object PubNubManager {
     }
 
     fun warmUpChannel(channelName: String){
-        Log.i("MODERATORSTATUS", "warmUpChannel: $channelName")
         this.channelName= channelName
     }
 
@@ -153,7 +151,7 @@ object PubNubManager {
         pnConf.maximumConnections = Int.MAX_VALUE
         pnConf.isSecure = false
         pubnub = PubNub(pnConf)
-        Log.i("MODERATORSTATUS", "initPubNub: ")
+
 
         addUserLocally()
         pubNubCallback?.let {
@@ -188,7 +186,6 @@ object PubNubManager {
     }
 
     fun initSpeakerJoined(){
-        Log.i("MODERATORSTATUS", "initSpeakerJoined: ${channelName}waitingRoom")
         val pnConf = PNConfiguration(User.getInstance().userId)
         pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
         pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
@@ -217,7 +214,6 @@ object PubNubManager {
                 pubnub.channelMembers.channel(liveRoomProperties?.channelName+"waitingRoom")
                     ?.includeCustom(true)
                     ?.async { result, status ->
-                        Log.i("WAITING", "getSpeakerStatus: $result")
                     }
             } catch (e: Exception){
                 sendPubNubException(e)
@@ -454,7 +450,6 @@ object PubNubManager {
 
     fun postToSpeakerStatus(message: Message) {
         jobs+= CoroutineScope(Dispatchers.IO).launch {
-            Log.i("MODERATORSTATUS", "postToSpeakerStatus: $message")
             moderatorStatus.emit(message)
         }
 
@@ -543,13 +538,11 @@ object PubNubManager {
         jobs += CoroutineScope(Dispatchers.IO).launch() {
             try {
 //                throw Exception()
-                Log.i("MODERATORSTATUS", "sendCustomMessage: $channel")
                 channel.let {
                     pubnub.publish()
                         .message(eventData)
                         ?.channel(it)
                         ?.async { result, status ->
-                            Log.i("MODERATORSTATUS", "sendCustomMessage: $result && $status")
                         }
                 }
             }

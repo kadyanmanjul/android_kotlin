@@ -120,7 +120,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             flags: Array<Int> = arrayOf()
         ) = Intent(context, FeedActivity::class.java).apply {
 
-            Log.i("CHECKNOTIFICATION", "getIntentForNotification: $roomId &&& TOPIC:-$topicName")
             Timber.d("INTENT FOR NOTIFICATION DATA => $roomId $topicName")
             putExtra(OPEN_FROM_NOTIFICATION, true)
             putExtra(ROOM_ID, roomId.toInt())
@@ -173,6 +172,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
 
         var user = intent.getStringExtra("userId")
+        var requestDialog=intent.getBooleanExtra("request_dialog",false)
         val mUserId = intent.getStringExtra(USER_ID)
 
         val db = Firebase.firestore
@@ -190,12 +190,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
          if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
         } else if (user != null) {
-            viewProfile(user, true)
+            viewProfile(user, true,requestDialog)
         } else if (mUserId != null){
-            viewProfile(mUserId, false)
+            viewProfile(mUserId, false,requestDialog)
         } else if (SingleDataManager.pendingPilotAction != null) {
-            viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
+            viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true, requestDialog)
         }
+        requestDialog=false
         if (User.getInstance().isLoggedIn()) {
             viewModel.setIsBadeBhaiyaSpeaker()
             addObserver()
@@ -256,7 +257,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private fun checkAndOpenLiveRoom() {
         Timber.d("FEED ACIVITY ON RESTART  => ${intent.extras}")
-        Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)} ----- boolean:- ${intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)}")
         if (intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)) {
 
             // TODO: Open Live Room.
@@ -269,7 +269,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     )
                 } and topic name => ${intent.getStringExtra(TOPIC_NAME)}"
             )
-            Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)}")
             takePermissions(
                 intent.getIntExtra(ROOM_ID, 0).toString(),
                 intent.getStringExtra(TOPIC_NAME) ?: "",
@@ -439,8 +438,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_ROOM -> {
 
                     it.data?.let {
-                        Log.i("MODERATORSTATUS", "addObserver: OPEN $it")
-                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
+                       it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
                             val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
                                 room,
                                 it.getString(TOPIC)!!
@@ -456,7 +454,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(it1) }
                         //viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(channelName = it1) }
                         viewModel.reader()
-                        Log.i("MODERATORSTATUS", "addObserver: WAIT $it")
                         WaitingFragment.open(this)
                     }
                 }
@@ -548,6 +545,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
+        viewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_REPLAY"))
+        viewModel.userRoomRecord(room.recordings?.get(0)?.id!!,User.getInstance().userId)
+//        RecordedRoomFragment.open(this,"Feed", room)
         RecordedRoomFragment.open(this,"Feed", room, viewModel)
     }
 
@@ -702,7 +702,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     }
 
-    override fun viewProfile(profile: String?, deeplink: Boolean) {
+    override fun viewProfile(profile: String?, deeplink: Boolean, requestDialog: Boolean) {
         val fragment = ProfileFragment() // replace your custom fragment class
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -711,6 +711,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         bundle.putString("source", "deeplink")
         else
             bundle.putString("source","feed")
+        bundle.putBoolean("request_dialog",requestDialog)
 
         fragment.arguments = bundle
         fragmentTransaction.replace(R.id.fragmentContainer, fragment)

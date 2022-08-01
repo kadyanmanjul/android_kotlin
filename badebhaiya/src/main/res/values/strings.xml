@@ -133,5 +133,8 @@
     <string name="no_call_request">You do not have any call requests yet</string>
     <string name="recorded_room">recorded_room</string>
     <string name="recorded_room_channel_description">To control recorded room streaming</string>
+    <string name="request_title">आपकी Life की कौन-सी Problem मेरे से बात करके Solve हो सकती है?</string>
+    <string name="submit">SUBMIT</string>
+    <string name="request_hint">Write Here</string>
 
 </resources>

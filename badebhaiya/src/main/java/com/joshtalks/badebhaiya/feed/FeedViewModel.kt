@@ -26,6 +26,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
+import com.joshtalks.badebhaiya.recordedRoomPlayer.di.ProcessRoomRecordingService
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
@@ -150,10 +151,6 @@ class FeedViewModel : ViewModel() {
                     viewModelScope.launch {
                         for(i in it.documents) {
                             if(i.id==User.getInstance().userId) {
-                                Log.i(
-                                    "HELOOBADGE",
-                                    "readRequestCount: ${i.data?.get("request_count")}"
-                                )
                                 BbDatastore.updateRoomRequestCount(i.data?.get("request_count") as Long)
                                 return@launch
                             }
@@ -199,7 +196,6 @@ class FeedViewModel : ViewModel() {
     }
 
     fun reader() {
-        Log.i("MODERATORSTATUS", "reader: ")
         collectModeratorStatus()
 //        PubNubManager.initSpeakerJoined()
     }
@@ -252,45 +248,11 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun uploadCompressedMedia(mediaPath: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val obj = mutableMapOf("media_path" to File(mediaPath).name)
-                val responseObj =
-                    CommonRepository().requestUploadMediaAsync(obj).await()
-                val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
-                if (statusCode in 200..210) {
-                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    repository.requestUploadRoomRecording(Records(currentRoom.roomId,url))
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
+    fun uploadCompressedMedia(mediaPath: File) {
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+            ProcessRoomRecordingService.processSingleRoomRecording(context = Utils.context, videoPath = mediaPath.absolutePath?:"", audioPath = mediaPath.absolutePath, callId = currentRoom.roomId.toString(),agoraMentorId = currentRoom.roomId.toString(),recordDuration = 12345678.toInt())
         }
     }
-
-    private suspend fun uploadOnS3Server(responseObj: AmazonPolicyResponse, mediaPath: String): Int {
-        return GlobalScope.async(Dispatchers.IO) {
-            val parameters = emptyMap<String, RequestBody>().toMutableMap()
-            for (entry in responseObj.fields) {
-                parameters[entry.key] = Utils.createPartFromString(entry.value)
-            }
-            val requestFile = File(mediaPath).asRequestBody("*".toMediaTypeOrNull())
-            val body = MultipartBody.Part.createFormData(
-                "file",
-                responseObj.fields["key"],
-                requestFile
-            )
-            val responseUpload = RetrofitInstance.mediaDUNetworkService.uploadMediaAsync(
-                responseObj.url,
-                parameters,
-                body
-            ).execute()
-            return@async responseUpload.code()
-        }.await()
-    }
-
-
 
     fun joinRoom(roomId: String, topic: String, source: String, isRejoin: Boolean = false) {
         Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
@@ -336,7 +298,6 @@ class FeedViewModel : ViewModel() {
                                 topic
                             )
                         }
-                        Log.i("YASHEN", "postvalue: ")
                         singleLiveEvent.value = message
                     } else
                         showToast("Oops Something Went Wrong! Try Again")
@@ -353,8 +314,7 @@ class FeedViewModel : ViewModel() {
                     }
                     showToast(response.errorMessage())
 
-                    Log.i("YASHEN", "joinRoom: failed")
-                }
+                    }
                 Log.d("sahil", "joinRoom:$response")
 
             } catch (e: SocketTimeoutException) {
@@ -514,6 +474,16 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    fun userRoomRecord(id:Int, user:String){
+        viewModelScope.launch {
+            try {
+                repository.userRoomRecord(id,user)
+            }catch (ex:Exception){
+
+            }
+        }
+    }
+
     fun scheduleRoom(topic: String, startTime: String, callback: CreateRoom.CreateRoomCallback) {
         viewModelScope.launch {
             if (topic.isNullOrBlank()) {
@@ -643,7 +613,6 @@ class FeedViewModel : ViewModel() {
                                     roomtopic
                                 )
                             }
-                            Log.i("YASHEN", "postvalue: ")
                             singleLiveEvent.value = message
                         } else
                             showToast("Oops Something Went Wrong! Try Again")
@@ -660,8 +629,7 @@ class FeedViewModel : ViewModel() {
                         }
                         showToast(response.errorMessage())
 
-                        Log.i("YASHEN", "joinRoom: failed")
-                    }
+                        }
                     Log.d("sahil", "joinRoom:$response")
 
                 } catch (e: SocketTimeoutException) {

@@ -51,7 +51,6 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
         if (roomUserInfo?.userPhoto?.isNotEmpty() == true) {
             userPhoto?.setImage(roomUserInfo?.userPhoto ?: "")
         }
-        Log.i("MOVETOAUDIENCE", "setupDialog: ${PubNubManager.currentUser?.isModerator}")
         userName?.text = roomUserInfo?.userName
         openProfileButton?.visibility = View.VISIBLE
 

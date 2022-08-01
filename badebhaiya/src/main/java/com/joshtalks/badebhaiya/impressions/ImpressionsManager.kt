@@ -20,3 +20,10 @@ data class Records(
     @SerializedName("recording_file")
     val file: String,
 )
+
+data class UserRecords(
+    @SerializedName("room_recording")
+    val roomId: Int,
+    @SerializedName("user")
+    val userId: String,
+)

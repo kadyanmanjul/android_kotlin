@@ -108,8 +108,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         }.withData(this.intent.data).init()*/
     }
 
-    private fun startActivityForState(viewUserId: String? = null) {
-        Log.i("YASHENDRA", "startActivityForState: $viewUserId")
+    private fun startActivityForState(viewUserId: String? = null, request_dialog: Boolean?=false) {
         val intent: Intent = when {
             User.getInstance().userId.isNotBlank() -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {
@@ -126,6 +125,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
 //                }
                 val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
                 intent.putExtra("userId", viewUserId)
+                intent.putExtra("request_dialog",request_dialog)
                 intent
             }
             else -> {
@@ -136,6 +136,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                     val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
                     intent.putExtra("userId", viewUserId)
                     intent.putExtra("profile_deeplink", true)
+                    intent.putExtra("request_dialog",request_dialog)
                     intent
 
                 } else {
@@ -181,6 +182,9 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 startActivityForState(
                     if (it.has("user_id"))
                         it.getString("user_id")
+                    else null,
+                    if (it.has("request_dialog"))
+                        it.getBoolean("request_dialog")
                     else null
                 )
 

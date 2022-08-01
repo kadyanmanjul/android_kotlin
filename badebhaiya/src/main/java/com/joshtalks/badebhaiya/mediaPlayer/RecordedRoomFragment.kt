@@ -23,11 +23,13 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.model.Room
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
 import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
+import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
 import com.joshtalks.badebhaiya.recordedRoomPlayer.PlayerData
 import com.joshtalks.badebhaiya.recordedRoomPlayer.isPlaying
@@ -95,15 +97,14 @@ class RecordedRoomFragment : Fragment() {
 
 
 
-                activity
-                    .supportFragmentManager
-                    .beginTransaction()
-//                .replace(R.id.feedRoot, fragment, TAG)
-                    .add(R.id.feedRoot, fragment, TAG)
-                    .addToBackStack(TAG)
-                    .commit()
-            }
+            activity
+                .supportFragmentManager
+                .beginTransaction()
+                .add(R.id.feedRoot, fragment, TAG)
+                .addToBackStack(TAG)
+                .commit()
         }
+    }
 
         fun removeIfFound(activity: AppCompatActivity){
             val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
@@ -205,14 +206,12 @@ class RecordedRoomFragment : Fragment() {
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
-                Log.i("TAG", "onStartTrackingTouch: ")
                 binding.seekbar.thumb.alpha = 255
                 shouldUpdateSeekbar = false
 
             }
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
-                Log.i("TAG", "onStopTrackingTouch: ")
                 p0?.let {
                     binding.seekbar.thumb.alpha = 255
                     viewModel.seekTo(it.progress.toLong())
@@ -232,7 +231,6 @@ class RecordedRoomFragment : Fragment() {
     }
 
     private fun handleBackPress(onBackPressedCallback: OnBackPressedCallback) {
-        Log.i("KHOLO", "handleBackPress: ${viewModel.lvRoomState.value}")
         if (viewModel.lvRoomState.value  == LiveRoomState.EXPANDED){
             // Minimise live room.
             collapseLiveRoom()
@@ -302,6 +300,7 @@ class RecordedRoomFragment : Fragment() {
                 startId: Int,
                 endId: Int
             ) {
+                viewModel.lvRoomState.value = LiveRoomState.EXPANDED
             }
 
             override fun onTransitionChange(
@@ -377,7 +376,7 @@ class RecordedRoomFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun clickListener() {
-        viewModel.lvRoomState.value = LiveRoomState.EXPANDED
+//        viewModel.lvRoomState.value = LiveRoomState.EXPANDED
 
         binding.leaveEndRoomBtn.setOnClickListener {
 //                expandLiveRoom()
@@ -385,6 +384,25 @@ class RecordedRoomFragment : Fragment() {
         }
 
         binding.apply {
+            shareBtn.setOnClickListener {
+                feedViewModel.sendEvent(Impression("MEDIA_PLAYER","CLICKED_RECORD_ROOM_SHARE"))
+                showToast("Feature yet to be added")
+            }
+
+            profilePic.setOnClickListener {
+                collapseLiveRoom()
+                itemClick(userId)
+            }
+
+            roomName.setOnClickListener {
+                collapseLiveRoom()
+                itemClick(userId)
+            }
+
+            moderatorName.setOnClickListener {
+                collapseLiveRoom()
+                itemClick(userId)
+            }
 
             downArrow.setOnClickListener {
                 collapseLiveRoom()
@@ -432,6 +450,17 @@ class RecordedRoomFragment : Fragment() {
         val sec = DateTimeUtils.millisToTime(ms)
         binding.currentTime.text = sec
         Timber.tag("audiotime").d("STARTING TIME IS => ${sec}")
+    }
+    fun itemClick(userId: String) {
+        val nextFrag = ProfileFragment()
+        val bundle = Bundle()
+        bundle.putString("user", userId) // use as per your need
+        bundle.putString("source","RECORD_PLAYER")
+        nextFrag.arguments = bundle
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.root_view, nextFrag, "findThisFragment")
+            //?.addToBackStack(null)
+            ?.commit()
     }
 
 }

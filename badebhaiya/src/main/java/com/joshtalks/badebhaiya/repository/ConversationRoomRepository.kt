@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.repository
 
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.impressions.Records
+import com.joshtalks.badebhaiya.impressions.UserRecords
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
@@ -16,6 +17,8 @@ class ConversationRoomRepository {
         service.getRoomList()
 
     suspend fun getRecordsList()=service.getRecordsList()
+
+    suspend fun userRoomRecord(id:Int, user:String)=service.userRoomRecord(UserRecords(id, user))
 
     suspend fun createRoom(conversationRoomRequest: ConversationRoomRequest) =
         service.createRoom(conversationRoomRequest)

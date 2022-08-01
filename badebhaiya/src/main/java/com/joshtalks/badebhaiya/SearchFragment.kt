@@ -50,7 +50,6 @@ class SearchFragment : Fragment(), Call {
         savedInstanceState: Bundle?
     ): View? {
         viewModel.searchResponse.value=null
-        Log.i("YASHENDRA", "onCreateView: (${viewModel.searchResponse.value})")
 
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
@@ -91,15 +90,15 @@ class SearchFragment : Fragment(), Call {
         binding.searchBar.addTextChangedListener {
                 //var job: Job? = null
 
-            binding.noresult.visibility= GONE
-            if(it.toString()=="")
-            {
-                viewModel.searchResponse.value= null
-                binding.defaultText.visibility= VISIBLE
-                binding.noresult.visibility= GONE
-                binding.recyclerView.visibility=GONE
-            }
-            else {
+            binding.noresult.visibility = GONE
+//            if(it.toString().trim()=="")
+//            {
+//                viewModel.searchResponse.value= null
+//                binding.defaultText.visibility= VISIBLE
+//                binding.noresult.visibility= GONE
+//                binding.recyclerView.visibility=GONE
+//            }
+//            else {
                 binding.defaultText.visibility = GONE
                 job?.cancel()
                 job = MainScope().launch {
@@ -108,7 +107,7 @@ class SearchFragment : Fragment(), Call {
                         viewModel.searchUser(it.toString())
                 }
 //                addObserver()
-            }
+//        }
 
         }
         addObserver()

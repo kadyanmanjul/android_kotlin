@@ -39,7 +39,6 @@ import com.joshtalks.badebhaiya.core.base.BaseFragment
 import com.joshtalks.badebhaiya.databinding.FragmentLiveRoomBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.adapter.AudienceAdapter
 import com.joshtalks.badebhaiya.liveroom.adapter.SpeakerAdapter
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.ConversationRoomBottomSheet
@@ -79,6 +78,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 
 
 @AndroidEntryPoint
@@ -219,7 +219,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             val list = it.toList()
             Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IS => $list")
             audienceAdapter?.submitList(list)
-            Log.i("AUDIENCE", "addViewModelObserver: ${it}")
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()
@@ -1351,7 +1350,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         mBoundService?.onStopRecording()
         feedViewModel.readRequestCount()
         vm.deflate.value=false
-        feedViewModel.uploadCompressedMedia(PrefManager.getLastRecordingPath())
+        feedViewModel.uploadCompressedMedia(File(PrefManager.getLastRecordingPath()))
         vm.unSubscribePubNub()
         vm.pubNubState.value=PubNubState.ENDED
         feedViewModel.pubNubState=PubNubState.ENDED

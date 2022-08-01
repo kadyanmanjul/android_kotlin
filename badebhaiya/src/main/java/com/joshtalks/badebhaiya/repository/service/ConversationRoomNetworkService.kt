@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.repository.service
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.impressions.Records
+import com.joshtalks.badebhaiya.impressions.UserRecords
 import com.joshtalks.badebhaiya.liveroom.heartbeat.Heartbeat
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
@@ -64,6 +65,9 @@ interface ConversationRoomNetworkService {
     suspend fun requestUploadRoomRecording(
     @Body roomId: Records
     ): Deferred<AmazonPolicyResponse>
+
+    @POST("$DIR/conversation_room/user_room_record/")
+    suspend fun userRoomRecord(@Body userRecords: UserRecords):Response<Unit>
 
 
     @GET("$DIR/conversation_room/record_room/")

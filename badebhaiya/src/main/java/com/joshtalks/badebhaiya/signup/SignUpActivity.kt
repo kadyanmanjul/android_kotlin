@@ -180,7 +180,6 @@ class SignUpActivity : AppCompatActivity(), Call {
     }
 
     private fun openNextActivity() {
-        Log.i("FCM", "openNextActivity: ")
         WorkManagerAdmin.appStartWorker()
         when {
             PrefManager.getBoolValue(IS_NEW_USER) -> {
@@ -190,6 +189,7 @@ class SignUpActivity : AppCompatActivity(), Call {
                 //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
                 val bundle = Bundle()
                 bundle.putString("user", intent.extras?.getString(USER_ID))
+                bundle.putString("request_dialog",intent.extras?.getString("request_room"))
                 supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
@@ -240,7 +240,6 @@ class SignUpActivity : AppCompatActivity(), Call {
     }
 
     fun openTrueCallerBottomSheet() {
-        Log.i("SIGNUPActivity", "openTrueCallerBottomSheet: ${viewModel.redirect}")
         if (viewModel.redirect == "ENTER_NAME") {
             binding.btnWelcome.visibility = View.GONE
             openEnterNameFragment()
@@ -283,11 +282,12 @@ class SignUpActivity : AppCompatActivity(), Call {
 
 
         @JvmStatic
-        fun start(context: Context, redirect: String? = null, userId: String? = null, isRedirected: Boolean = false) {
+        fun start(context: Context, redirect: String? = null, userId: String? = null, isRedirected: Boolean = false, requestRoom:Boolean?=false) {
             val starter = Intent(context, SignUpActivity::class.java)
                 .putExtra(IS_REDIRECTED, isRedirected)
                 .putExtra(REDIRECT, redirect)
                 .putExtra(USER_ID, userId)
+                .putExtra("request_dialog", requestRoom)
             context.startActivity(starter)
         }
 
