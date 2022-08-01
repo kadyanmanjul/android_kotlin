@@ -389,19 +389,19 @@ class RecordedRoomFragment : Fragment() {
                 showToast("Feature yet to be added")
             }
 
-            profilePic.setOnClickListener {
-                collapseLiveRoom()
-                itemClick(userId)
-            }
+//            profilePic.setOnClickListener {
+//                collapseLiveRoom()
+//                itemClick()
+//            }
 
             roomName.setOnClickListener {
                 collapseLiveRoom()
-                itemClick(userId)
+                itemClick()
             }
 
             moderatorName.setOnClickListener {
                 collapseLiveRoom()
-                itemClick(userId)
+                itemClick()
             }
 
             downArrow.setOnClickListener {
@@ -451,10 +451,10 @@ class RecordedRoomFragment : Fragment() {
         binding.currentTime.text = sec
         Timber.tag("audiotime").d("STARTING TIME IS => ${sec}")
     }
-    fun itemClick(userId: String) {
+    fun itemClick() {
         val nextFrag = ProfileFragment()
         val bundle = Bundle()
-        bundle.putString("user", userId) // use as per your need
+        bundle.putString("user", roomData?.speakersData?.userId) // use as per your need
         bundle.putString("source","RECORD_PLAYER")
         nextFrag.arguments = bundle
         activity?.supportFragmentManager?.beginTransaction()
