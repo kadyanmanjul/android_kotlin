@@ -386,7 +386,7 @@ class RecordedRoomFragment : Fragment() {
         binding.apply {
             shareBtn.setOnClickListener {
                 feedViewModel.sendEvent(Impression("MEDIA_PLAYER","CLICKED_RECORD_ROOM_SHARE"))
-                showToast("Feature yet to be added")
+//                showToast("Feature yet to be added")
             }
 
 //            profilePic.setOnClickListener {

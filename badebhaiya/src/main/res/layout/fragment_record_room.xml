@@ -254,7 +254,7 @@
                     app:layout_constraintBottom_toTopOf="@id/seekbar"
                     android:layout_marginStart="@dimen/_215sdp"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:text="00:00:00"
+                    tools:text="00:00:00"
                     android:layout_marginBottom="@dimen/_10sdp"
                     />
 
