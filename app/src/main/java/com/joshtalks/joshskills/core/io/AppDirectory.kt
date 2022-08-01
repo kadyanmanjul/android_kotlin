@@ -21,7 +21,7 @@ object AppDirectory {
 
     const val TODAY_DATE = "today_date"
     const val APP_SHORT_NAME = "JS"
-    const val AUDIO_EXTENSION = ".aac"
+    const val AUDIO_EXTENSION = ".m4a"
 
 
     enum class FileType {

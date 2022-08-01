@@ -1,6 +1,9 @@
 package com.joshtalks.joshskills.util
 
 import android.media.MediaRecorder
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.ErrorTag
 import com.joshtalks.joshskills.core.analytics.LogException
 import java.io.File
@@ -14,18 +17,18 @@ class AudioRecording {
     private var recorder: MediaRecorder? = null
     private var recordingJob: CoroutineScope? = null
 
-    fun startPlayer(recordFile: File?) {
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun startPlayer(recordFile: File? ) {
         destroyCurrentScope()
         recordingJob = CoroutineScope(Dispatchers.IO)
         recordingJob?.launch {
             try {
-                recorder = MediaRecorder()
+                recorder = MediaRecorder(AppObjectController.joshApplication)
                 recorder?.setAudioChannels(1)
-                recorder?.setAudioSamplingRate(32000)
-                recorder?.setAudioEncodingBitRate(48000)
+                recorder?.setAudioSamplingRate(48000)
                 recorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
-                recorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-                recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                recorder?.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+                recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
                 recorder?.setOutputFile(recordFile?.absolutePath)
                 val errorListener =
                     MediaRecorder.OnErrorListener { arg0, arg1, arg2 ->

@@ -1461,9 +1461,9 @@ class ReadingFragmentWithoutFeedback :
                                 }
 
                                 muxerJob = scope.launch {
-                                    if (isActive && isAdded) {
+                                    if (isActive && isAdded && video !=null) {
                                         mutex.withLock {
-                                            if (true) {
+                                            if (videoDownPath!=null) {
                                                 mergeTwoAudiosIntoOne()
                                             } else {
                                                 muxVideoOldMethod()
@@ -1484,7 +1484,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun mergeTwoAudiosIntoOne() {
-        val input1 = GeneralAudioInput(requireContext(), Uri.parse(filePath!!), null)
+        val input1 = GeneralAudioInput(requireContext(), Uri.parse(viewModel.recordFile!!.absolutePath!!), null)
         input1.volume = 5f
         val out2 = extractAudioFromVideo(videoDownPath!!)
         val input2 = GeneralAudioInput(requireContext(), Uri.parse(out2), null)
@@ -1501,7 +1501,16 @@ class ReadingFragmentWithoutFeedback :
             }
 
             override fun onEnd() {
-                Log.d(TAG, "onEnd() called")
+                Log.d(TAG, "onEnd() called $mergedAudioPath ")
+                val videoExtractor = MediaExtractor()
+                videoExtractor.setDataSource(requireContext(), Uri.parse(mergedAudioPath), null)
+                Log.d(TAG, "onEnd() called videoExtractor ${videoExtractor.getTrackFormat(0)}")
+                val audio1 = MediaExtractor()
+                audio1.setDataSource(requireContext(), Uri.parse(filePath), null)
+                Log.d(TAG, "onEnd() called audio1 ${audio1.getTrackFormat(0)}")
+                val audio2 = MediaExtractor()
+                audio2.setDataSource(requireContext(), Uri.parse(out2), null)
+                Log.d(TAG, "onEnd() called audio2 ${audio2.getTrackFormat(0)}")
                 mux(mergedAudioPath, videoDownPath!!)
                 audioMixer.release()
             }
@@ -1539,6 +1548,7 @@ class ReadingFragmentWithoutFeedback :
         audioExtractor.setDataSource(audioFile)
         audioExtractor.selectTrack(0) // Assuming only one track per file. Adjust code if this is not the case.
         val audioFormat = audioExtractor.getTrackFormat(0)
+        Log.d(TAG, "mux() called with: audioFormat = $audioFormat, videoFormat = $videoFormat")
 
         // Init muxer
         val muxer = MediaMuxer(outputFile, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)

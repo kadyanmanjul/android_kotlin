@@ -103,7 +103,7 @@ android {
             ext.enableCrashlytics = true
             minifyEnabled true
             shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
