@@ -235,11 +235,16 @@ class AppObjectController {
                 firebaseAnalytics = FirebaseAnalytics.getInstance(context)
                 firebaseAnalytics.setAnalyticsCollectionEnabled(true)
                 //   initDebugService()
+                // TODO: Should run once
                 initFirebaseRemoteConfig()
+                // TODO: ***Needed***
                 configureCrashlytics()
                 //   initNewRelic(context)
                 initFonts()
+
+                // TODO: No need of worker - We need it just to fire an API so get it before that
                 WorkManagerAdmin.deviceIdGenerateWorker()
+                // TODO: Can Differ
                 WorkManagerAdmin.runMemoryManagementWorker()
 
                 gsonMapper = GsonBuilder()
