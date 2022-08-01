@@ -147,10 +147,10 @@
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/profile_pic"
                     android:layout_width="@dimen/_198sdp"
-                    android:background="@color/black"
                     android:layout_height="@dimen/_198sdp"
                     android:layout_marginTop="@dimen/_23sdp"
                     android:scaleType="centerCrop"
+                    android:foreground="@color/profile_tint"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
