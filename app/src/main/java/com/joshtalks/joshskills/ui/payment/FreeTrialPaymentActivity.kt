@@ -135,6 +135,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         binding.handler = this
         binding.lifecycleOwner = this
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        dynamicCardCreation()
         errorView = Stub(findViewById(R.id.error_view))
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
@@ -159,10 +160,20 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
         }
         initABTest()
-        viewModel.getPaymentDetails(Integer.parseInt(testId))
+        try {
+            try {
+                if (testId.isBlank())
+                    viewModel.getPaymentDetails(Integer.parseInt(FREE_TRIAL_PAYMENT_TEST_ID))
+                else
+                    viewModel.getPaymentDetails(Integer.parseInt(testId))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } catch (e: NumberFormatException) {
+            e.printStackTrace()
+        }
         setObservers()
         logNewPaymentPageOpened()
-        dynamicCardCreation()
         setListeners()
         Singular.event(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, testId)
     }

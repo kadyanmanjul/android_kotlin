@@ -1250,16 +1250,18 @@ fun ImageView.setUserImageOrInitials(
                 .error(R.drawable.ic_call_placeholder)
                 .format(DecodeFormat.PREFER_RGB_565)
                 .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-            Glide.with(context)
-                .load(url)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CircleCrop())
-                )
-                .circleCrop()
-                .apply(requestOptions)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(this)
+            if (isValidContextForGlide(context)) {
+                Glide.with(context)
+                    .load(url)
+                    .optionalTransform(
+                        WebpDrawable::class.java,
+                        WebpDrawableTransformation(CircleCrop())
+                    )
+                    .circleCrop()
+                    .apply(requestOptions)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(this)
+            }
         } else {
             this.setImage(url)
         }
@@ -1282,16 +1284,18 @@ fun ImageView.setUserImageOrInitialsWithWhiteBackground(
                 .error(R.drawable.ic_call_placeholder)
                 .format(DecodeFormat.PREFER_RGB_565)
                 .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-            Glide.with(context)
-                .load(url)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CircleCrop())
-                )
-                .circleCrop()
-                .apply(requestOptions)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(this)
+            if (isValidContextForGlide(context)) {
+                Glide.with(context)
+                    .load(url)
+                    .optionalTransform(
+                        WebpDrawable::class.java,
+                        WebpDrawableTransformation(CircleCrop())
+                    )
+                    .circleCrop()
+                    .apply(requestOptions)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(this)
+            }
         } else {
             this.setImage(url)
         }
