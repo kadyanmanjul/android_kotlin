@@ -1,11 +1,8 @@
 package com.joshtalks.joshskills.core;
 
-import static com.joshtalks.joshskills.core.CountUpTimer.TAG;
-
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -36,7 +33,7 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityCreated(@NotNull Activity activity, Bundle bundle) {
-                        currentActivity=activity;
+                        currentActivity = activity;
                         AppAnalytics.create(AnalyticsEvent.ACTIVITY_CREATED.getNAME())
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();
@@ -45,7 +42,7 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityStarted(@NotNull Activity activity) {
-                        currentActivity=activity;
+                        currentActivity = activity;
                         AppAnalytics.create(AnalyticsEvent.ACTIVITY_START.getNAME())
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();
@@ -54,7 +51,7 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityResumed(@NotNull Activity activity) {
-                        currentActivity=activity;
+                        currentActivity = activity;
                         AppAnalytics.create(AnalyticsEvent.ACTIVITY_RESUME.getNAME())
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();

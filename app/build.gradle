@@ -379,7 +379,6 @@ dependencies {
     implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
 
     implementation 'io.branch.sdk.android:library:5.0.3'
-    implementation 'com.clevertap.android:clevertap-android-sdk:4.0.4'
 
     //Payment Razor pay
     implementation 'com.razorpay:checkout:1.6.21'

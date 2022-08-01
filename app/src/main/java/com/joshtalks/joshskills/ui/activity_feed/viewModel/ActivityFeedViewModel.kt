@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.ui.activity_feed.viewModel
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.provider.Contacts
 import android.view.View
 import android.widget.SeekBar
 import androidx.databinding.ObservableBoolean
@@ -11,9 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.viewModelScope
-import com.clevertap.android.sdk.Utils.runOnUiThread
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
@@ -25,14 +21,11 @@ import com.joshtalks.joshskills.ui.activity_feed.utils.*
 import com.joshtalks.joshskills.ui.inbox.mentor_id
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.sql.Timestamp
 
 class ActivityFeedViewModel : BaseViewModel(), LifecycleObserver {
     val activityFeedRepository by lazy{ ActivityFeedRepository() }
@@ -86,7 +79,7 @@ class ActivityFeedViewModel : BaseViewModel(), LifecycleObserver {
     }
     @SuppressLint("RestrictedApi")
     private fun addItem(activityFeedResponse: ActivityFeedResponse) {
-        runOnUiThread {
+        viewModelScope.launch(Dispatchers.Main) {
             adapter.items.add(0, activityFeedResponse)
             adapter.notifyItemInserted(0)
             message.what= ON_ITEM_ADDED

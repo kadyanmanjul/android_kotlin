@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core.notification
 
 import android.content.Intent
-import com.clevertap.android.sdk.CleverTapAPI
 import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -21,7 +20,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.pushbase.MoEPushHelper
-import com.singular.sdk.Singular
 import java.lang.reflect.Type
 import kotlin.collections.set
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -60,7 +58,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
         PrefManager.put(FCM_TOKEN, token)
         MoEFireBaseHelper.getInstance().passPushToken(applicationContext, token)
-        CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token, true)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
         }

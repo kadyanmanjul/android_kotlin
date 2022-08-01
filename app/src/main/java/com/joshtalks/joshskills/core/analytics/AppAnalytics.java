@@ -1,10 +1,8 @@
 package com.joshtalks.joshskills.core.analytics;
 
-import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import com.clevertap.android.sdk.CleverTapAPI;
 import com.freshchat.consumer.sdk.FreshchatUser;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
@@ -37,8 +35,6 @@ import timber.log.Timber;
 
 public class AppAnalytics {
 
-    @SuppressLint("StaticFieldLeak")
-    private static CleverTapAPI cleverTapAnalytics;
     private static FirebaseAnalytics firebaseAnalytics;
     private final String event;
     private final HashMap<String, Object> parameters = new HashMap<>();
@@ -51,23 +47,18 @@ public class AppAnalytics {
     private static void init() {
         JoshSkillExecutors.getBOUNDED().submit(() -> {
             try {
-                if (cleverTapAnalytics == null) {
-                    cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
-                    if (BuildConfig.DEBUG) {
-                        CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
-                    }
-                }
                 if (firebaseAnalytics == null) {
                     firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
 
     public static void updateUser() {
         init();
-        updateCleverTapUser();
+        updateMixPanelUser();
         updateFreshchatSdkUser();
         updateFreshchatSdkUserProperties();
         updateFirebaseSdkUser();
@@ -128,7 +119,7 @@ public class AppAnalytics {
         }
     }
 
-    private static void updateCleverTapUser() {
+    private static void updateMixPanelUser() {
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
         HashMap<String, Object> profileUpdate = new HashMap<>();
@@ -141,7 +132,6 @@ public class AppAnalytics {
         profileUpdate.put("Username", user.getUsername());
         profileUpdate.put("User Type", user.getUserType());
         profileUpdate.put("Gender", user.getGender());
-        cleverTapAnalytics.pushProfile(profileUpdate);
 
         MixPanelTracker.INSTANCE.getMixPanel().alias(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
         MixPanelTracker.INSTANCE.getMixPanel().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
@@ -150,13 +140,13 @@ public class AppAnalytics {
         JSONObject obj = new JSONObject();
         try {
             obj.put("gaid", PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
-            obj.put("mentor id",Mentor.getInstance().getId());
-            obj.put("gender",User.getInstance().getGender());
-            obj.put("date of birth",User.getInstance().getDateOfBirth());
-            obj.put("created source",User.getInstance().getSource());
-            obj.put("is verified",User.getInstance().isVerified());
-            obj.put("email",User.getInstance().getEmail());
-            obj.put("phone number",User.getInstance().getPhoneNumber());
+            obj.put("mentor id", Mentor.getInstance().getId());
+            obj.put("gender", User.getInstance().getGender());
+            obj.put("date of birth", User.getInstance().getDateOfBirth());
+            obj.put("created source", User.getInstance().getSource());
+            obj.put("is verified", User.getInstance().isVerified());
+            obj.put("email", User.getInstance().getEmail());
+            obj.put("phone number", User.getInstance().getPhoneNumber());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -166,7 +156,7 @@ public class AppAnalytics {
 
         JSONObject props = new JSONObject();
         try {
-            props.put("is paid",!PrefManager.INSTANCE.getBoolValue(IS_FREE_TRIAL,false,true));
+            props.put("is paid", !PrefManager.INSTANCE.getBoolValue(IS_FREE_TRIAL, false, true));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -201,7 +191,6 @@ public class AppAnalytics {
             Location location = new Location("Location");
             location.setLatitude(latitude);
             location.setLongitude(longitude);
-            cleverTapAnalytics.setLocation(location);
         }
     }
 
@@ -231,15 +220,6 @@ public class AppAnalytics {
             age--;
         }
         return age;
-    }
-
-    public static void flush() {
-        JoshSkillExecutors.getBOUNDED().submit(() -> {
-            if (cleverTapAnalytics == null) {
-                cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
-            }
-            cleverTapAnalytics.flush();
-        });
     }
 
     private String format(String unformatted) {
@@ -349,7 +329,6 @@ public class AppAnalytics {
         JoshSkillExecutors.getBOUNDED().submit(() -> {
             try {
                 formatParameters();
-                pushToCleverTap();
                 pushToFirebase();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -406,14 +385,5 @@ public class AppAnalytics {
             }
         }
         return newMap;
-    }
-
-    private void pushToCleverTap() {
-        try {
-            if (cleverTapAnalytics!=null)
-                cleverTapAnalytics.pushEvent(event, parameters);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 }

@@ -9,7 +9,6 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.airbnb.lottie.L
-import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
@@ -62,8 +61,6 @@ import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.userexperior.UserExperior
 import com.yariksoffice.lingver.Lingver
-import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.RtcEngine
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
@@ -220,10 +217,6 @@ class AppObjectController {
 
         @JvmStatic
         @Volatile
-        var mRtcEngine: RtcEngine? = null
-
-        @JvmStatic
-        @Volatile
         var appUsageStartTime: Long = 0L
 
         private const val cacheSize = 10 * 1024 * 1024.toLong()
@@ -234,12 +227,10 @@ class AppObjectController {
                 appDatabase = AppDatabase.getDatabase(context)!!
                 firebaseAnalytics = FirebaseAnalytics.getInstance(context)
                 firebaseAnalytics.setAnalyticsCollectionEnabled(true)
-                //   initDebugService()
                 // TODO: Should run once
                 initFirebaseRemoteConfig()
                 // TODO: ***Needed***
                 configureCrashlytics()
-                //   initNewRelic(context)
                 initFonts()
 
                 // TODO: No need of worker - We need it just to fire an API so get it before that
@@ -285,7 +276,6 @@ class AppObjectController {
                     .addInterceptor(StatusCodeInterceptor())
                     .addInterceptor(HeaderInterceptor())
                     .hostnameVerifier { _, _ -> true }
-                    //  .addInterceptor(OfflineInterceptor())
                     .cache(cache())
 
                 if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
@@ -361,13 +351,10 @@ class AppObjectController {
             joshApplication = context
             CoroutineScope(Dispatchers.IO).launch {
                 // TODO: *** Needed to be checked, Do we need this? ***
-                com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
-                // TODO: Can be removed
                 ActivityLifecycleCallback.register(joshApplication)
                 AppEventsLogger.activateApp(joshApplication)
                 initUserExperionCam()
                 initFacebookService(joshApplication)
-                initRtcEngine(joshApplication)
                 // TODO: Put this in Splash
                 if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
                     PrefManager.put(USER_LOCALE, "en")
@@ -438,24 +425,6 @@ class AppObjectController {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-        }
-
-        private fun initRtcEngine(context: Context): RtcEngine? {
-            try {
-
-                mRtcEngine = RtcEngine.create(
-                    context,
-                    BuildConfig.AGORA_API_KEY,
-                    object : IRtcEngineEventHandler() {})
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
-            return mRtcEngine
-        }
-
-        fun getRtcEngine(context: Context): RtcEngine? {
-            initRtcEngine(context)
-            return mRtcEngine
         }
 
         @SuppressLint("RestrictedApi")
@@ -545,8 +514,7 @@ class AppObjectController {
         fun initialiseFreshChat() {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val config =
-                        FreshchatConfig(
+                    val config = FreshchatConfig(
                             BuildConfig.FRESH_CHAT_APP_ID,
                             BuildConfig.FRESH_CHAT_APP_KEY
                         )

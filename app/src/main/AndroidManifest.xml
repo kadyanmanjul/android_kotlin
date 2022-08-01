@@ -508,16 +508,6 @@
         <activity android:name=".ui.cohort_based_course.views.CommitmentFormActivity"
             android:noHistory="true"
             android:screenOrientation="portrait" />
-
-        <meta-data
-            android:name="CLEVERTAP_ACCOUNT_ID"
-            android:value="844-6K5-865Z" />
-        <meta-data
-            android:name="CLEVERTAP_TOKEN"
-            android:value="536-44b" />
-        <meta-data
-            android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
-            android:value="1" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_places_api_key" />
@@ -583,9 +573,6 @@
         <meta-data
             android:name="com.truecaller.android.sdk.PartnerKey"
             android:value="@string/truecaller_key" />
-        <meta-data
-            android:name="CLEVERTAP_BACKGROUND_SYNC"
-            android:value="1" /> <!-- replace below value with your FCM project number. -->
         <meta-data
             android:name="FCM_SENDER_ID"
             android:value="id:359106841538" />
@@ -687,11 +674,6 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE"
             tools:ignore="ExportedService" />
-<!--        <service android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
-<!--            </intent-filter>-->
-<!--        </service>-->
         <service
             android:name=".core.service.video_download.VideoDownloadService"
             android:enabled="true"

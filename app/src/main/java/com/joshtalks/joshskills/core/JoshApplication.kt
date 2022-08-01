@@ -107,20 +107,14 @@ class JoshApplication :
             registerBroadcastReceiver()
             initMoEngage()
             initGroups()
-            } else {
-                FirebaseApp.initializeApp(this)
-                Timber.plant(Timber.DebugTree())
-                Utils.initUtils(this)
-                Stetho.initializeWithDefaults(this);
-            }
+        } else {
+            FirebaseApp.initializeApp(this)
+            Timber.plant(Timber.DebugTree())
+            Utils.initUtils(this)
+            Stetho.initializeWithDefaults(this);
+        }
 
-            Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
-//        Log.d(TAG, "onCreate: $isMainProcess ... $packageName")
-//        if(isMainProcess()) {
-//            CoroutineScope(Dispatchers.IO).launch {
-//
-//            }
-//        }
+        Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
     }
 
     private fun initMoEngage() {
@@ -235,15 +229,12 @@ class JoshApplication :
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
-//        userPresenceStatus.setUserPresence(Mentor.getInstance().getId(),System.currentTimeMillis())
         WorkManagerAdmin.userAppUsage(isAppVisible)
-//        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         ReminderUtil(this).deleteNotificationAlarms()
         val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
         for (i in startIndex..2) {
             removeAlarmReminder(i)
         }
-//        UsageStatsService.activeUserService(this)
     }
 
     private fun removeAlarmReminder(delay: Int) {
@@ -271,16 +262,13 @@ class JoshApplication :
         Timber.tag(TAG).e("************* backgrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = false
-//        userPresenceStatus.setUserPresence(Mentor.getInstance().getId(),null)
         WorkManagerAdmin.userAppUsage(isAppVisible)
-//        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         if (getConditionForShowLocalNotifications()) {
             val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
             for (i in startIndex..2) {
                 setAlarmReminder(i)
             }
         }
-//        UsageStatsService.inactiveUserService(this)
         WorkManagerAdmin.setLocalNotificationWorker()
         ReminderUtil(this).setAlarmNotificationWorker()
     }
@@ -361,14 +349,14 @@ class JoshApplication :
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-        when(event){
-            Lifecycle.Event.ON_START ->{
+        when (event) {
+            Lifecycle.Event.ON_START -> {
                 onAppForegrounded()
             }
-            Lifecycle.Event.ON_STOP ->{
+            Lifecycle.Event.ON_STOP -> {
                 onAppBackgrounded()
             }
-            Lifecycle.Event.ON_DESTROY ->{
+            Lifecycle.Event.ON_DESTROY -> {
                 onAppDestroy()
             }
 
