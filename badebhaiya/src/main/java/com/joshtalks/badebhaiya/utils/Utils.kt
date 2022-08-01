@@ -209,7 +209,7 @@ object Utils {
     }
 
     fun Context.getTempFileForCallRecording(): File? {
-        return File.createTempFile("record", ".aac", this.cacheDir)
+        return File.createTempFile("record", ".wav", this.cacheDir)
     }
 
     private fun isYesterday(d: Date): Boolean {
