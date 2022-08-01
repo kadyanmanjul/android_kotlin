@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.feed.model.*
+import com.joshtalks.badebhaiya.feed.model.searchSuggestion.SearchSuggestion
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.impressions.Records
 import com.joshtalks.badebhaiya.impressions.UserRecords
