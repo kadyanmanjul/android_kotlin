@@ -340,8 +340,8 @@ class FeedViewModel : ViewModel() {
         return waitResponse.value
     }
 
-    fun getRooms() {
-        val list = mutableListOf<RoomListResponseItem>()
+    fun getRooms(list: MutableList<RoomListResponseItem>) {
+
         viewModelScope.launch {
             try {
                 isLoading.set(true)
@@ -375,7 +375,7 @@ class FeedViewModel : ViewModel() {
                             list.forEach { listItem ->
                                 listItem.currentTime = it.currentTime
                             }
-                            feedAdapter.submitList(list.toList())
+                            feedAdapter.submitList(list.toList().reversed())
                         }
                     }
                     message.what = SCROLL_TO_TOP
@@ -392,18 +392,18 @@ class FeedViewModel : ViewModel() {
             } finally {
                 isLoading.set(false)
             }
-            getRecordRooms(list)
         }
-
-
     }
 
-    fun getRecordRooms(list: MutableList<RoomListResponseItem>) {
+    fun getRecordRooms() {
+        val list = mutableListOf<RoomListResponseItem>()
+
         viewModelScope.launch {
             try{
                 val res=repository.getRecordsList()
                 if(res.isSuccessful){
                     res.body()?.let {
+
 //                        val recordList= mutableListOf<RoomListResponseItem>()
                         if(it.recordings.isNullOrEmpty().not())
                         {
@@ -415,7 +415,7 @@ class FeedViewModel : ViewModel() {
                         }
                         if (list.isNullOrEmpty().not()) {
                             isRoomsAvailable.set(true)
-                            feedAdapter.submitList(list)
+                            feedAdapter.submitList(list.reversed())
                         }
 
                     }
@@ -423,6 +423,7 @@ class FeedViewModel : ViewModel() {
             }catch(ex:Exception){
 
             }
+            getRooms(list)
         }
     }
 

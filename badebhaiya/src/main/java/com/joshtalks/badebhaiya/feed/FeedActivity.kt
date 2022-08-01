@@ -238,7 +238,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         super.onResume()
 //        viewModel.getRoomRequestCount()
         if (User.getInstance().isLoggedIn()) {
-            viewModel.getRooms()
+            viewModel.getRecordRooms()
         }
         if (PubNubManager.isRoomActive){
             try {
