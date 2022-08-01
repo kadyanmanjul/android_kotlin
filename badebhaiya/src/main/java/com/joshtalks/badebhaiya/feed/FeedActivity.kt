@@ -24,10 +24,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
-import com.joshtalks.badebhaiya.core.EMPTY
-import com.joshtalks.badebhaiya.core.PermissionUtils
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.models.FormResponse
-import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
@@ -171,11 +169,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 this.resources.getColor(R.color.conversation_room_color, this.theme)
         }
 
+        Timber.tag("myfcm").d("FCM TOKEN IS => ${PrefManager.getStringValue(FCM_TOKEN)}")
+
         var user = intent.getStringExtra("userId")
         var requestDialog=intent.getBooleanExtra("request_dialog",false)
         val mUserId = intent.getStringExtra(USER_ID)
 
-        val db = Firebase.firestore
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         binding.lifecycleOwner = this
         binding.handler = this

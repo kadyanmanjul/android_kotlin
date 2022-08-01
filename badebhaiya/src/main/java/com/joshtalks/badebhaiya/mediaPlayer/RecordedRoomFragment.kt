@@ -470,7 +470,7 @@ class RecordedRoomFragment : Fragment() {
     }
 
     fun openListenersList(){
-        ListenersListFragment.open(supportFragmentManager = requireActivity().supportFragmentManager, R.id.root_view, roomData!!.roomId)
+        ListenersListFragment.open(supportFragmentManager = requireActivity().supportFragmentManager, R.id.fragmentContainer, roomData!!.roomId)
     }
 
 }
