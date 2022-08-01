@@ -41,6 +41,8 @@ class MusicPlayerEventListener(
 
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
+        error.printStackTrace()
+        Timber.tag("playererror").d("Player error is => $error")
         Toast.makeText(musicService, "An unknown error occured", Toast.LENGTH_LONG).show()
     }
 

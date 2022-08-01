@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.util.NotificationUtil
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.utils.playSnackbarSound
 
 
 class MusicNotificationManager(
@@ -44,7 +45,7 @@ class MusicNotificationManager(
                 .setPauseActionIconResourceId(R.drawable.ic_pause_plain_white)
                 .setFastForwardActionIconResourceId(R.drawable.ic_fast_forward)
                 .setRewindActionIconResourceId(R.drawable.ic_rewind)
-                .setChannelImportance(NotificationUtil.IMPORTANCE_HIGH)
+                .setChannelImportance(NotificationUtil.IMPORTANCE_LOW)
                 .setSmallIconResourceId(R.drawable.ic_status_bar_notification)
                 .build()
 

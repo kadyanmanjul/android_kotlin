@@ -33,6 +33,7 @@ import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
 import com.joshtalks.badebhaiya.recordedRoomPlayer.PlayerData
 import com.joshtalks.badebhaiya.recordedRoomPlayer.isPlaying
+import com.joshtalks.badebhaiya.recordedRoomPlayer.listeners.ListenersListFragment
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
@@ -394,6 +395,11 @@ class RecordedRoomFragment : Fragment() {
 //                itemClick()
 //            }
 
+            audienceCount.setOnClickListener {
+                collapseLiveRoom()
+                openListenersList()
+            }
+
             roomName.setOnClickListener {
                 collapseLiveRoom()
                 itemClick()
@@ -461,6 +467,10 @@ class RecordedRoomFragment : Fragment() {
             ?.replace(R.id.root_view, nextFrag, "findThisFragment")
             //?.addToBackStack(null)
             ?.commit()
+    }
+
+    fun openListenersList(){
+        ListenersListFragment.open(supportFragmentManager = requireActivity().supportFragmentManager, R.id.root_view, roomData!!.roomId)
     }
 
 }

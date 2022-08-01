@@ -1,6 +1,8 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.core.models.*
+import com.joshtalks.badebhaiya.feed.model.Fans
+import com.joshtalks.badebhaiya.recordedRoomPlayer.listeners.model.RecordedRoomListener
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.showCallRequests.model.RequestContent
@@ -57,4 +59,9 @@ interface CommonNetworkService {
     @GET("$DIR/request_call/request_count/")
     suspend fun getRoomRequestCount(): Response<RoomRequestCount>
 
+    @GET("$DIR/user/listeners_list/")
+    suspend fun getRecordedRoomListeners(
+        @Query("room_id") roomId: Int,
+        @Query("page") pageNo: Int
+    ): Response<RecordedRoomListener>
 }
