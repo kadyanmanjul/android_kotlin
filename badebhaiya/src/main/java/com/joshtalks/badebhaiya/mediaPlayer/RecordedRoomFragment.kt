@@ -461,7 +461,7 @@ class RecordedRoomFragment : Fragment() {
         val nextFrag = ProfileFragment()
         val bundle = Bundle()
         bundle.putString("user", roomData?.speakersData?.userId) // use as per your need
-        bundle.putString("source","RECORD_PLAYER")
+        bundle.putString("source","MEDIA_PLAYER")
         nextFrag.arguments = bundle
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.root_view, nextFrag, "findThisFragment")
