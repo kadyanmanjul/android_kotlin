@@ -746,6 +746,43 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </FrameLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_how_to_speak"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_container"
+                    android:orientation="vertical"
+                    android:background="@drawable/crd_red_border"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:paddingVertical="@dimen/_16sdp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:gravity="center_horizontal"
+                        android:textSize="@dimen/_16sdp"
+                        android:layout_marginHorizontal="@dimen/_12sdp"
+                        android:textColor="@color/red"
+                        android:text="@string/you_have_reached_limit_freetrial" />
+
+                    <TextView
+                        android:id="@+id/txt_buy_to_continue_calls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:gravity="center_horizontal"
+                        android:textSize="@dimen/_14sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:clickable="true"
+                        android:textColor="@color/btn_share_facebook"
+                        android:autoLink="all"
+                        android:text="@string/buy_course_to_continue_calling"
+                        android:focusable="true" />
+                </LinearLayout>
+
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/mark_as_correct"
