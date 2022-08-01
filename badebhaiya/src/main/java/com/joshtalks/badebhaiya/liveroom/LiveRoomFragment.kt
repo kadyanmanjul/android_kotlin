@@ -33,6 +33,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.gson.Gson
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.base.BaseFragment
@@ -48,6 +51,7 @@ import com.joshtalks.badebhaiya.liveroom.bottomsheet.RaisedHandsBottomSheet
 import com.joshtalks.badebhaiya.liveroom.heartbeat.HeartbeatViewModel
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomListingNavigation
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
+import com.joshtalks.badebhaiya.liveroom.records.Records
 import com.joshtalks.badebhaiya.liveroom.service.ConversationRoomCallback
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.*
@@ -121,6 +125,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private var isInviteRequestComeFromModerator: Boolean = false
     private var isBackPressed: Boolean = false
     private var isExitApiFired: Boolean = false
+    private var isRecordingAllowed=false
     private var backPressCallback: OnBackPressedCallback? = null
     private val vm by lazy { ViewModelProvider(requireActivity()).get(LiveRoomViewModel::class.java) }
     val speakingListForGoldenRing: androidx.collection.ArraySet<Int?> = arraySetOf()
@@ -620,7 +625,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             mBoundService = myBinder.getService()
             mServiceBound = true
             mBoundService?.addListener(callbackOld)
-            mBoundService?.onStartRecording()
+            checkIfRecordingAllowed()
+
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -1092,6 +1098,36 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     }
 
+    private fun checkIfRecordingAllowed() {
+        val remoteConfig = Firebase.remoteConfig
+        activity?.let {
+            Log.i("recordaudio", "checkIfRecordingAllowed: ")
+            remoteConfig.fetchAndActivate().addOnCompleteListener(it) {
+                Log.i("recordaudio", "checkIfRecordingAllowed: ${it.isSuccessful}")
+                if (it.isSuccessful) {
+                    try {
+                        val value = remoteConfig.getString("recording_ids")
+                        Log.i("recordaudio", "checkIfRecordingAllowed: ${value}")
+                        val isRecordingAllowed = Gson().fromJson(value, Array<Records>::class.java)
+                        Log.i("recordaudio", "checkIfRecordingAllowed: ${isRecordingAllowed}")
+                        isRecordingAllowed?.let { record ->
+                            if(record.contains(Records(User.getInstance().userId))) {
+                                this@LiveRoomFragment.isRecordingAllowed =true
+                                mBoundService?.onStartRecording()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        isRecordingAllowed = false
+                    }
+                } else {
+                    Log.i("recordaudio", "checkIfRecordingAllowed: failed")
+//                    isUpdateAvailable.value = false
+
+                }
+            }
+        }
+    }
+
     private fun getDataOnSpeakerAdapterItemClick(
         user: LiveRoomUser?, userUid: Int?,
         toSpeaker: Boolean
@@ -1333,10 +1369,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
-        mBoundService?.onStopRecording()
+
         feedViewModel.readRequestCount()
         vm.deflate.value=false
-        feedViewModel.uploadCompressedMedia(File(PrefManager.getLastRecordingPath()))
+        if(isRecordingAllowed) {
+            mBoundService?.onStopRecording()
+            feedViewModel.uploadCompressedMedia(File(PrefManager.getLastRecordingPath()))
+        }
         vm.unSubscribePubNub()
         vm.pubNubState.value=PubNubState.ENDED
         feedViewModel.pubNubState=PubNubState.ENDED
