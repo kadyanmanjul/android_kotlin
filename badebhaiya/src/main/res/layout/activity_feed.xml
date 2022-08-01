@@ -27,7 +27,7 @@
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
-        onRefresh="@{viewModel::getRooms}"
+        onRefresh="@{viewModel::getRecordRooms}"
         setRefreshing="@{viewModel.isLoading}"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -142,7 +142,7 @@
                     style="@style/GreyButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="@{()-> viewModel.getRooms()}"
+                    android:onClick="@{()-> viewModel.getRecordRooms()}"
                     android:padding="@dimen/_4sdp"
                     android:text="@string/retry" />
 

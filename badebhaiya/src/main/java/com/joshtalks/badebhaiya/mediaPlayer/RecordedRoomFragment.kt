@@ -150,6 +150,7 @@ class RecordedRoomFragment : Fragment() {
         binding.recordedViewModel = viewModel
         binding.handler = this
 //        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
+        viewModel.lvRoomState.value = LiveRoomState.EXPANDED
 
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
@@ -301,7 +302,6 @@ class RecordedRoomFragment : Fragment() {
                 startId: Int,
                 endId: Int
             ) {
-                viewModel.lvRoomState.value = LiveRoomState.EXPANDED
             }
 
             override fun onTransitionChange(
