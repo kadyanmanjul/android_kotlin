@@ -161,14 +161,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         initABTest()
         try {
-            try {
-                if (testId.isBlank())
-                    viewModel.getPaymentDetails(Integer.parseInt(FREE_TRIAL_PAYMENT_TEST_ID))
-                else
-                    viewModel.getPaymentDetails(Integer.parseInt(testId))
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            if (testId.isBlank())
+                viewModel.getPaymentDetails(Integer.parseInt(FREE_TRIAL_PAYMENT_TEST_ID))
+            else
+                viewModel.getPaymentDetails(Integer.parseInt(testId))
         } catch (e: NumberFormatException) {
             e.printStackTrace()
         }

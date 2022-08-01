@@ -15,6 +15,7 @@ class CallRatingsViewModel: BaseViewModel() {
 
     private val callRatingsRepository by lazy { CallRatingsRepository() }
     var ifDialogShow : Int = 1
+    var ifGoogleInAppReviewShow : Int = 4
     var responseLiveData = MutableLiveData<Response<KFactor>?>()
 
 
@@ -66,8 +67,9 @@ class CallRatingsViewModel: BaseViewModel() {
             try {
                 val map: java.util.HashMap<String, Int?> = java.util.HashMap()
                 map["agora_call_id"] = VoipPref.getLastCallId()
-                val resp = AppObjectController.p2pNetworkService.showFppDialogNew(map).body()?.get("fpp_option")?:1
-                ifDialogShow = resp
+                val resp = AppObjectController.p2pNetworkService.showFppDialogNew(map).body()
+                ifDialogShow = resp?.get("fpp_option") ?: 1
+                ifGoogleInAppReviewShow = resp?.get("playstore_rating") ?: 4
             }catch (ex: Throwable) {
                 ex.printStackTrace()
             }

@@ -258,22 +258,22 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
     private fun closeSheet() {
         // 3-> Means Show in app review
         // 4-> Means don't Show in app review
+        if (vm.ifGoogleInAppReviewShow == 3){
+            if (PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN) < 2  && PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL) < 2 && selectedRating in 9..10 && PrefManager.getLongValue(ONE_WEEK_TIME_STAMP, false) < System.currentTimeMillis()) {
+                dismissAllowingStateLoss()
+                showCustomRatingAndReviewDialog(requireActivity())
+                val timestamp = Calendar.getInstance().apply {
+                    add(Calendar.DAY_OF_MONTH, 7)
+                }.time.time
+                PrefManager.put(ONE_WEEK_TIME_STAMP, timestamp)
+            } else {
+                dismissAllowingStateLoss()
+            }
+        }
         when (vm.ifDialogShow) {
             0 -> {
                 showFeedBackDialog()
                 dismissAllowingStateLoss()
-            }
-            3 -> {
-                if (PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN) < 2  && PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL) < 2 && selectedRating in 9..10 && PrefManager.getLongValue(ONE_WEEK_TIME_STAMP, false) < System.currentTimeMillis()) {
-                    dismissAllowingStateLoss()
-                    showCustomRatingAndReviewDialog(requireActivity())
-                    val timestamp = Calendar.getInstance().apply {
-                        add(Calendar.DAY_OF_MONTH, 7)
-                    }.time.time
-                    PrefManager.put(ONE_WEEK_TIME_STAMP, timestamp)
-                } else {
-                    dismissAllowingStateLoss()
-                }
             }
             else -> {
                 dismissAllowingStateLoss()
