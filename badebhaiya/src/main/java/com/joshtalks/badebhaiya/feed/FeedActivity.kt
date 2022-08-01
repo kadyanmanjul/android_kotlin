@@ -169,8 +169,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 this.resources.getColor(R.color.conversation_room_color, this.theme)
         }
 
-        Timber.tag("myfcm").d("FCM TOKEN IS => ${PrefManager.getStringValue(FCM_TOKEN)}")
-
         var user = intent.getStringExtra("userId")
         var requestDialog=intent.getBooleanExtra("request_dialog",false)
         val mUserId = intent.getStringExtra(USER_ID)
@@ -188,6 +186,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.roomRequestCount.value=0
          if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
+
         } else if (user != null) {
             viewProfile(user, true,requestDialog)
         } else if (mUserId != null){

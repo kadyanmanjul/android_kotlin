@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="user"
+            type="com.joshtalks.badebhaiya.feed.model.searchSuggestion.User" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="0dp"
+        android:clickable="true"
+        android:id="@+id/userCard"
+        app:cardCornerRadius="@dimen/_14sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
+        android:backgroundTint="@color/base_app_color">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/_8sdp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profilePicSuggestion"
+                imageCornerRadius="@{@dimen/_16sdp}"
+                initialsFontSize="@{24}"
+                android:layout_width="@dimen/_53sdp"
+                android:layout_height="@dimen/_53sdp"
+                android:layout_marginTop="12dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.046"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView_23dp"
+                tools:background="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/userNameSuggestion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@{user.full_name}"
+                android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+                android:textColor="@color/profile_feed_item_font_color"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/profilePicSuggestion"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Akhand Swarup Pandit" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvProfileBioSuggestion"
+                android:layout_width="200dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:text="@{user.bio}"
+                android:textAppearance="@style/BB_Typography_Nunito_Regular"
+                android:textColor="@color/profile_font_color"
+                android:textSize="@dimen/_10ssp"
+                app:layout_constraintStart_toStartOf="@id/userNameSuggestion"
+                app:layout_constraintTop_toBottomOf="@id/userNameSuggestion"
+                tools:text="This is Akhand Swarup’s Bio.\nHe is an IES Officer" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

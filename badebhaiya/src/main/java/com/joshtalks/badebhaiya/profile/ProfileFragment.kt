@@ -61,6 +61,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
@@ -274,6 +275,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             }
         }
         else {
+            SingleDataManager.pendingPilotAction=null
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED) {
                 showToast("Can't Sent Request During Call")
             } else {

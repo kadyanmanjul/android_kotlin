@@ -170,12 +170,6 @@ class ProfileViewModel : ViewModel() {
                                         ConversationRoomType.LIVE
                                     roomListResponseItem
                                 })
-                            if (it.recordedRooms.isNullOrEmpty().not())
-                                list.addAll(it.recordedRooms!!.map { roomListResponseItem ->
-                                    roomListResponseItem.conversationRoomType =
-                                        ConversationRoomType.RECORDED
-                                    roomListResponseItem
-                                })
                             if (it.scheduledRoomList.isNullOrEmpty().not())
                                 list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
                                     roomListResponseItem.conversationRoomType =
@@ -229,12 +223,6 @@ class ProfileViewModel : ViewModel() {
                                 list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
                                     roomListResponseItem.conversationRoomType =
                                         ConversationRoomType.LIVE
-                                    roomListResponseItem
-                                })
-                            if (it.recordedRooms.isNullOrEmpty().not())
-                                list.addAll(it.recordedRooms!!.map { roomListResponseItem ->
-                                    roomListResponseItem.conversationRoomType =
-                                        ConversationRoomType.RECORDED
                                     roomListResponseItem
                                 })
                             if (it.scheduledRoomList.isNullOrEmpty().not())

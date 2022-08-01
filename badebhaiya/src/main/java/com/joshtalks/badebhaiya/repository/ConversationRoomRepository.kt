@@ -46,6 +46,9 @@ class ConversationRoomRepository {
     suspend fun speakersList(page:Int)=
         service.speakersList(page)
 
+     fun getSearchSuggestions() = SearchSuggestionsPagingSource()
+
+
     suspend fun waitingList()=service.waitingMember()
 
     suspend fun sendEvent(impression:Impression)=service.sendEvent(impression)

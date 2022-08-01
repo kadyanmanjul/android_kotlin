@@ -11,6 +11,7 @@ import com.joshtalks.badebhaiya.repository.model.ApiResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.PubNubExceptionRequest
+import com.joshtalks.badebhaiya.signup.response.BBtoFollow
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
@@ -60,6 +61,11 @@ interface ConversationRoomNetworkService {
 
     @POST("$DIR/conversation_room/live_room_users/")
     suspend fun triggerHeartbeat(@Body body: Heartbeat):Response<Void>
+
+    @GET("$DIR/conversation_room/speakers_search_list/")
+    suspend fun getSearchSuggestions(
+        @Query("page") page: Int
+    ):Response<SearchSuggestion>
 
     @POST("$DIR/conversation_room/record_room/")
     suspend fun requestUploadRoomRecording(
