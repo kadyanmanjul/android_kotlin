@@ -360,16 +360,21 @@ class AppObjectController {
         fun init(context: JoshApplication) {
             joshApplication = context
             CoroutineScope(Dispatchers.IO).launch {
+                // TODO: *** Needed to be checked, Do we need this? ***
                 com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
+                // TODO: Can be removed
                 ActivityLifecycleCallback.register(joshApplication)
                 AppEventsLogger.activateApp(joshApplication)
                 initUserExperionCam()
                 initFacebookService(joshApplication)
                 initRtcEngine(joshApplication)
+                // TODO: Put this in Splash
                 if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
                     PrefManager.put(USER_LOCALE, "en")
                 }
+                // TODO: Put this in Splash
                 Lingver.init(context, PrefManager.getStringValue(USER_LOCALE))
+                // TODO: **** Needed ****
                 observeFirestore()
             }
         }
