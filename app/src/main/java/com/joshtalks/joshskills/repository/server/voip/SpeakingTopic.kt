@@ -2,16 +2,11 @@ package com.joshtalks.joshskills.repository.server.voip
 
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
+import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.ui.fpp.constants.NONE
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
@@ -54,7 +49,11 @@ data class SpeakingTopic(
 
     @IgnoredOnParcel
     @Expose
-    var isFromDb: Boolean = false
+    var isFromDb: Boolean = false,
+
+    @IgnoredOnParcel
+    @SerializedName("is_ft_caller_blocked")
+    val isFtCallerBlocked: String?
 
 ) : Parcelable
 

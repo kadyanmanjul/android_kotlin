@@ -151,27 +151,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.isFavoriteCallerExist()
         subscribeRXBus()
         //checkForVoipState()
-
-        // dialog for warning about shorter calls
-        AlertDialog.Builder(activity).setTitle(R.string.warning)
-            .setIcon(R.drawable.ic_baseline_warning_24)
-            .setPositiveButton(R.string.got_it){dialog,which ->
-                dialog.dismiss()
-            }
-            .setMessage(R.string.shorter_calls_error_message)
-            .show()
-
-        // redirect to buy screen
-        binding.txtBuyToContinueCalls.setOnClickListener {
-            activity?.let { it1 ->
-                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-                    it1,
-                    AppObjectController.getFirebaseRemoteConfig().getString(
-                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                    )
-                )
-            }
-        }
     }
 
     private fun getVoipState(): State? {
@@ -312,6 +291,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 CONVERSATION_ID
             )
         }
+        // redirect to buy screen
+        binding.txtBuyToContinueCalls.setOnClickListener {
+            activity?.let { it1 ->
+                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                    it1,
+                    AppObjectController.getFirebaseRemoteConfig().getString(
+                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                    )
+                )
+            }
+        }
 
         viewModel.speakingTopicLiveData.observe(viewLifecycleOwner) { response ->
             binding.progressView.visibility = GONE
@@ -343,6 +333,25 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             CampaignKeys.EXTEND_FREE_TRIAL.name
                         )
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
+                    }
+                    when(response.isFtCallerBlocked){
+                        "BLOCKED" -> {
+                            binding.txtHowToSpeak.visibility = VISIBLE
+                            binding.containerReachedFtLimit.visibility = VISIBLE
+                        }
+                        "SHOW_WARNING_POPUP" -> {
+                            // dialog for warning about shorter calls
+                            AlertDialog.Builder(activity).setTitle(R.string.warning)
+                                .setIcon(R.drawable.ic_baseline_warning_24)
+                                .setPositiveButton(R.string.got_it){dialog,which ->
+                                    dialog.dismiss()
+                                }
+                                .setMessage(R.string.shorter_calls_error_message)
+                                .show()
+                        }
+                        else->{
+                            Log.i("TAG_MIHIR","the value of ft blocked is: ${response.isFtCallerBlocked}")
+                        }
                     }
 
                     binding.tvTodayTopic.text = response.topicName
