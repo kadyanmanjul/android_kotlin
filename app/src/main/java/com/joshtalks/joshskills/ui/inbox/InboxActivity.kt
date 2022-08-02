@@ -271,14 +271,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 } else {
                     MixPanelTracker.publishEvent(MixPanelEvent.INBOX_OPENED).push()
                     addCourseInRecyclerView(it)
-                    dismissProgressDialog()
                 }
             }
         }
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseLocalData.collect {
-                addCourseInRecyclerView(it)
-                dismissProgressDialog()
+                if(it.isNotEmpty()) {
+                    addCourseInRecyclerView(it)
+                }
             }
         }
 
@@ -293,6 +293,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 //            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
 //            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
 //        }
+        if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT, false) == 1 &&
+            items.size == 1 &&
+            items.first().isCourseBought.not()
+        ) {
+            ConversationActivity.startConversionActivity(this, items.first())
+        }
+        dismissProgressDialog()
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
             val temp: ArrayList<InboxEntity> = arrayListOf()
