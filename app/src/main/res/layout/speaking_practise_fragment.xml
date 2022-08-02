@@ -754,6 +754,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/btn_container"
                     android:orientation="vertical"
+                    android:visibility="gone"
                     android:background="@drawable/crd_red_border"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:paddingVertical="@dimen/_16sdp">
