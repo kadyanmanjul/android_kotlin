@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.util
 
 import android.media.MediaRecorder
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.ErrorTag
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -17,13 +16,16 @@ class AudioRecording {
     private var recorder: MediaRecorder? = null
     private var recordingJob: CoroutineScope? = null
 
-    @RequiresApi(Build.VERSION_CODES.S)
     fun startPlayer(recordFile: File? ) {
         destroyCurrentScope()
         recordingJob = CoroutineScope(Dispatchers.IO)
         recordingJob?.launch {
             try {
-                recorder = MediaRecorder(AppObjectController.joshApplication)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    recorder = MediaRecorder(AppObjectController.joshApplication)
+                } else {
+                    recorder = MediaRecorder()
+                }
                 recorder?.setAudioChannels(1)
                 recorder?.setAudioSamplingRate(48000)
                 recorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
