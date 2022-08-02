@@ -26,6 +26,28 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/_16sdp"
+        android:background="@drawable/rectangle_with_blue_bound_stroke"
+        android:paddingStart="@dimen/_30sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_30sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:text="@string/find_more_courses"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_line"
+        app:rippleColor="@color/white"
+        tools:visibility="visible" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/buy_english_course"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/round_rectangle"
         android:backgroundTint="@color/button_color"
         android:gravity="center"
@@ -33,62 +55,15 @@
         android:paddingTop="@dimen/_10sdp"
         android:paddingEnd="@dimen/_30sdp"
         android:paddingBottom="@dimen/_10sdp"
-        android:text="@string/find_more_courses"
+        android:text="@string/buy_english_course"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
         android:textColor="@color/white"
-        android:visibility="visible"
-        tools:visibility="gone"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_line"
-        app:rippleColor="@color/white" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/find_more_new"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_16sdp"
-        android:layout_marginBottom="@dimen/_16sdp"
-        android:background="@drawable/rectangle_with_blue_bound_stroke"
-        android:gravity="center"
-        android:paddingTop="@dimen/_10sdp"
-        android:paddingBottom="@dimen/_10sdp"
-        android:text="@string/find_more_courses"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-        android:textColor="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/buy_english_course"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_line"
-        android:visibility="gone"
-        tools:visibility="visible"
-        app:rippleColor="@color/white" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/buy_english_course"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/_16sdp"
-        android:layout_marginBottom="@dimen/_16sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
-        android:background="@drawable/round_rectangle"
-        android:backgroundTint="@color/button_color"
-        android:gravity="center"
-        android:paddingTop="@dimen/_10sdp"
-        android:paddingBottom="@dimen/_10sdp"
-        android:text="@string/buy_english_course"
-        tools:visibility="visible"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/find_more_new"
-        app:layout_constraintTop_toBottomOf="@+id/top_line"
-        app:rippleColor="@color/white" />
+        app:rippleColor="@color/white"
+        tools:visibility="visible" />
 
 
     <androidx.constraintlayout.widget.Barrier
@@ -96,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="find_more,find_more_new" />
+        app:constraint_referenced_ids="find_more,buy_english_course" />
 
     <View
         android:layout_width="match_parent"

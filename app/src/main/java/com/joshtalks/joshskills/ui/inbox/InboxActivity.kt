@@ -10,10 +10,10 @@ import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
@@ -23,23 +23,7 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
-import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -66,14 +50,9 @@ import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.util.FileUploadService
 import com.moengage.core.analytics.MoEAnalyticsHelper
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
-import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
-import kotlinx.android.synthetic.main.find_more_layout.find_more
-import kotlinx.android.synthetic.main.find_more_layout.find_more_new
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
-import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -95,11 +74,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     var isPermissionRequired: Boolean = true
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
-    private var isExtendFreeTrialActive = false
-    private var increaseCoursePrice = false
 
     var progressDialog: ProgressDialog? = null
-
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
@@ -165,9 +141,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         find_more.setOnClickListener {
-            courseExploreClick()
-        }
-        find_more_new.setOnClickListener {
             courseExploreClick()
         }
         buy_english_course.setOnClickListener {
@@ -276,7 +249,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseLocalData.collect {
-                if(it.isNotEmpty()) {
+                if (it.isNotEmpty()) {
                     addCourseInRecyclerView(it)
                 }
             }
@@ -308,9 +281,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 .let { courseList ->
                     courseList.forEach { inboxEntity ->
                         // User is Free Trail
-                        if(isServiceStarted.not()) {
+                        if (isServiceStarted.not()) {
                             isServiceStarted = true
-                            val broadcastIntent=Intent().apply {
+                            val broadcastIntent = Intent().apply {
                                 action = CALLING_SERVICE_ACTION
                                 putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
                             }
@@ -343,27 +316,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             lifecycleScope.launch(Dispatchers.Main) {
                 inboxAdapter.addItems(temp)
                 val inboxEntityBought = temp.filter { it.isCapsuleCourse }.getOrNull(0)
-                Log.e(TAG, "addCourseInRecyclerView: $inboxEntityBought  ${inboxEntityBought?.isCourseBought?.not()} ${inboxEntityBought != null && inboxEntityBought.isCourseBought.not()}")
-                if (inboxEntityBought != null && inboxEntityBought.isCourseBought.not()) {
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
-                        View.GONE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
-                        View.VISIBLE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
-                        View.VISIBLE
-                } else {
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
-                        View.VISIBLE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
-                        View.GONE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
-                        View.GONE
-                }
+                Log.e(
+                    TAG,
+                    "addCourseInRecyclerView: $inboxEntityBought  ${inboxEntityBought?.isCourseBought?.not()} ${inboxEntityBought != null && inboxEntityBought.isCourseBought.not()}"
+                )
+                val isCapsuleCourseBought = (inboxEntityBought != null && inboxEntityBought.isCourseBought)
+                findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible =
+                    isCapsuleCourseBought.not()
+                findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = isCapsuleCourseBought
             }
         }
-        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(
-                INBOX_SCREEN_VISIT_COUNT
-            ) >= 2
+        if (findMoreLayout.visibility != View.VISIBLE &&
+            PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
         ) {
             findMoreLayout.visibility = View.VISIBLE
         }
@@ -375,9 +339,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             INBOX_SCREEN_VISIT_COUNT,
             PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT).plus(1)
         )
-        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(
-                INBOX_SCREEN_VISIT_COUNT
-            ) >= 2
+        if (findMoreLayout.visibility != View.VISIBLE &&
+            PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
         ) {
             findMoreLayout.visibility = View.VISIBLE
         }
@@ -501,7 +464,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun applicationClosed() {
-        val broadcastIntent=Intent().apply {
+        val broadcastIntent = Intent().apply {
             action = CALLING_SERVICE_ACTION
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
