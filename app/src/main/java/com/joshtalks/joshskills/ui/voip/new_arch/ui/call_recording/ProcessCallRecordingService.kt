@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
@@ -29,6 +30,7 @@ import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.voip.constant.SCREENSHOT_BITMAP
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import java.io.File
@@ -84,7 +86,8 @@ class ProcessCallRecordingService : Service() {
                                 val callId = intent.getStringExtra(CALL_ID)
                                 val agoraMentorId = intent.getStringExtra(AGORA_MENTOR_ID)
                                 val duration = intent.getIntExtra(RECORD_DURATION,0)
-                                generateVideoFromImage(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration))
+                                val bitmap= intent.getByteArrayExtra(BITMAP_SCREENSHOT)
+                                generateVideoFromImage(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration),bitmap!!)
                             }
                     }
                     UPLOAD_ALL_CALL_RECORDING -> {}
@@ -96,14 +99,20 @@ class ProcessCallRecordingService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun generateVideoFromImage(inputFiles: InputFiles) {
-        Log.d(TAG, "generateVideoFromImage:1 $inputFiles")
+    private fun generateVideoFromImage(inputFiles: InputFiles,bitmap: ByteArray) {
+        Log.d(TAG, "makeVideo:0 $inputFiles")
 
-        val screenshot: Bitmap? = PrefManager.getBitmap()
+        var screenshot: Bitmap = BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size)
+        if(screenshot.height %2 != 0){
+            screenshot = editMyBitmap(screenshot,screenshot.height-1,screenshot.width)
+        }
+        if(screenshot.width %2 != 0){
+           screenshot =  editMyBitmap(screenshot,screenshot.height,screenshot.width-1)
+        }
 
         var out: FileChannelWrapper? = null
         val dir = application.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-        val file = File(dir, "naman2.mp4")
+        val file = File(dir, "roughVideo.mp4")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -130,7 +139,7 @@ class ProcessCallRecordingService : Service() {
         }
     }
 
-    fun editMyBitmap(myBitmap: Bitmap, newHeight: Int, newWidth: Int): Bitmap? {
+    fun editMyBitmap(myBitmap: Bitmap, newHeight: Int, newWidth: Int): Bitmap {
         return Bitmap.createScaledBitmap(myBitmap, newWidth, newHeight, false)
 
     }
@@ -329,6 +338,7 @@ class ProcessCallRecordingService : Service() {
         const val RECORD_DURATION = "RECORD_DURATION"
         const val CALL_ID = "CALL_ID"
         const val AGORA_MENTOR_ID = "AGORA_MENTOR_ID"
+        const val BITMAP_SCREENSHOT = "BITMAP_SCREENSHOT"
         val TAG = "RecordingService"
         const val CHANNEL_ID = "VIDEO_PROCESSING"
         const val NOTIFICATION_ID = 1201
@@ -349,7 +359,9 @@ class ProcessCallRecordingService : Service() {
             agoraMentorId: String?,
             videoPath: String,
             audioPath: String,
-            recordDuration: Int
+            recordDuration: Int,
+            bitmap: ByteArray
+
         ) {
             val intent = Intent(context, ProcessCallRecordingService::class.java)
             intent.action = START_VIDEO_AUDIO_PROCESSING
@@ -358,6 +370,7 @@ class ProcessCallRecordingService : Service() {
             intent.putExtra(VIDEO_PATH, videoPath)
             intent.putExtra(AUDIO_PATH, audioPath)
             intent.putExtra(RECORD_DURATION,recordDuration)
+            intent.putExtra(BITMAP_SCREENSHOT,bitmap)
             context?.startService(intent)
         }
     }

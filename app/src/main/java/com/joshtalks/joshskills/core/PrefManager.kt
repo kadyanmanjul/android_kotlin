@@ -338,8 +338,7 @@ object PrefManager {
 
     fun putBitmap(bitmap: Bitmap){
         val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos)
         val compressImage: ByteArray = baos.toByteArray()
         val sEncodedImage: String = Base64.encodeToString(compressImage, Base64.DEFAULT)
         put("bitmap", sEncodedImage)
@@ -350,6 +349,7 @@ object PrefManager {
             val encodedImage: String? = getStringValue("bitmap")
             val b: ByteArray = Base64.decode(encodedImage, Base64.DEFAULT)
             val bitmapImage: Bitmap = BitmapFactory.decodeByteArray(b, 0, b.size)
+            removeKey("bitmap")
             return bitmapImage
         }
         return null

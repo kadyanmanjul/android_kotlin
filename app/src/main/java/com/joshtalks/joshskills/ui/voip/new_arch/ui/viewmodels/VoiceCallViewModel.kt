@@ -186,7 +186,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 }
                 val currentTime = SystemClock.elapsedRealtime()
                 Log.d(TAG, "stopRecording: ${recordFile.getMediaDuration().toInt()}")
-                ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = recordFile.getMediaDuration().toInt())
+                ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = recordFile.getMediaDuration().toInt(), bitmap = PrefManager.getBitmap()!!)
                 CallRecordingAnalytics.addAnalytics(
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
@@ -220,7 +220,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun startAudioVideoRecording(view: View){
         try {
             videoRecordFile = File(Utils.context?.getVideoUrl()?:"")
-            ScreenViewRecorder.videoRecorder.startPlayer(videoRecordFile?.absolutePath?:"", Utils.context!!,view)
+//            ScreenViewRecorder.videoRecorder.startPlayer(videoRecordFile?.absolutePath?:"", Utils.context!!,view)
             repository.startAgoraRecording()
         }catch (ex:Exception){
             Log.e(TAG, "startAudioVideoRecording: ${ex.message}")
@@ -229,7 +229,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     fun stopAudioVideoRecording(){
         try {
-            ScreenViewRecorder.videoRecorder.stopPlaying()
+//            ScreenViewRecorder.videoRecorder.stopPlaying()
             repository.stopAgoraClientCallRecording()
         }catch (e:Exception){
             Log.e(TAG, "stopAudioVideoRecording: ${e.message}")
@@ -253,7 +253,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 Log.d(TAG, "listenUIState: State --> $voipState")
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
-                uiState.isRecordingEnabled = state.isRecordingEnabled
                 uiState.isCallerSpeaking = state.isCallerSpeaking
                 uiState.isCalleeSpeaking = state.isCalleeSpeaking
                 uiState.recordButtonPressedTwoTimes = state.recordingButtonNooftimesclicked
@@ -306,22 +305,19 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     RecordingButtonState.SENTREQUEST -> {
                         Log.d(TAG, "GAME observe: SENTREQUEST ")
                             cancelRecordingTimer()
-                            if (state.isStartGameClicked) {
+                            if (state.isStartGameClicked && !uiState.isRecordingEnabled) {
                                 if(applicationContext.ifEnoughMemorySize())
                                 recordingStopButtonClickListener()
                             }
+                        uiState.isRecordingEnabled = state.isRecordingEnabled
+
                     }
                     RecordingButtonState.RECORDING -> {
                         Log.d(TAG, "GAME observe: RECORDING ")
-                        if (applicationContext.ifEnoughMemorySize()) {
+                        if (applicationContext.ifEnoughMemorySize() && !uiState.isRecordingEnabled) {
                             startRecordingTimer(uiState.recordingButtonState)
-                            val msg = Message.obtain().apply {
-                                what = SHOW_RECORDING_PERMISSION_DIALOG
-                            }
-                            withContext(Dispatchers.Main) {
-                                singleLiveEvent.value = msg
-                            }
                             recordingStartedUIChanges()
+                            uiState.isRecordingEnabled = state.isRecordingEnabled
                         }
                     }
                 }
@@ -344,6 +340,13 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     }
                     withContext(Dispatchers.Main) {
                         singleLiveEvent.value = msg
+                    }
+
+                    val msg1 = Message.obtain().apply {
+                        what = SAVE_SCREENSHOT
+                    }
+                    withContext(Dispatchers.Main) {
+                        singleLiveEvent.value = msg1
                     }
                 }
 

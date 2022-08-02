@@ -20,6 +20,8 @@ const val HIDE_RECORDING_PERMISSION_DIALOG = 134
 const val GET_FRAGMENT_BITMAP = 135
 const val CHANGE_APP_THEME_T0_BLACK= 136
 const val CHANGE_APP_THEME_T0_BLUE= 137
+const val SAVE_SCREENSHOT= 138
+
 
 const val CALL_CONNECT_REQUEST = 115
 const val IPC_CONNECTION_ESTABLISHED = 117
@@ -35,11 +37,15 @@ const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining
 const val CONTENT_VOIP_STATE_AUTHORITY = "content://com.joshtalks.joshskills.voipstate"
 const val VOIP_STATE_PATH = "/current_voip_state"
 const val PSTN_STATE_PATH = "/current_pstn_state"
+const val BITMAP_PATH = "/bitmap"
+
 
 
 //    Content values for Voip State
 const val CURRENT_VOIP_STATE = "josh_current_voip_state"
 const val CURRENT_PSTN_STATE = "josh_current_pstn_state"
+const val SCREENSHOT_BITMAP = "screenshot_bitmap"
+
 
 
 //PSTN states

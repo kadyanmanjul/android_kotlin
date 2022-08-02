@@ -3,8 +3,6 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -14,7 +12,6 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.PowerManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,6 +33,7 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.GET_FRAGMENT_BITMAP
+import com.joshtalks.joshskills.voip.constant.SAVE_SCREENSHOT
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -126,13 +124,20 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                     val imageFile = getBitMapFromView(callBinding.container).toFile(requireContext())
                     vm.saveImageAudioToFolder(imageFile)
                 }
+                SAVE_SCREENSHOT->{
+                    saveBitmap()
+                }
+
             }
         }
     }
 
 
     private fun saveBitmap() {
-        com.joshtalks.joshskills.core.PrefManager.putBitmap( callBinding.root.drawToBitmap())
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(2000)
+            PrefManager.putBitmap(callBinding.root.drawToBitmap())
+        }
     }
 
     private fun gainAudioFocus() {
@@ -226,11 +231,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 progressAnimator.resume()
             }
         }
-
-        CoroutineScope(Dispatchers.IO).launch {
-        delay(2000)
-        saveBitmap()
-    }
     }
 
     override fun onStart() {
