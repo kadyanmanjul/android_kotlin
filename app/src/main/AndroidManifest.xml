@@ -139,13 +139,6 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.introduction.ReadyForDemoClassActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
             android:name=".ui.voip.new_arch.ui.views.CallRecordingShare"
             android:exported="false" />
         <activity android:name=".ui.points_history.PointsInfoActivity" />
@@ -167,7 +160,8 @@
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Splash">
+            android:theme="@style/AppTheme.Splash"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -249,7 +243,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme">
+            android:theme="@style/AppNoBarTheme"
+            android:exported="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.inbox.InboxActivity" />
@@ -290,7 +285,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme">
+            android:theme="@style/AppNoBarTheme"
+            android:exported="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.inbox.InboxActivity" />
@@ -438,14 +434,8 @@
             android:name=".ui.voip.favorite.FavoriteListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction"/>
-        <activity
-            android:name=".ui.voip.voip_rating.VoipCallFeedbackActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:theme="@style/AppThemeNoAction"
+            android:exported="false"/>
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -807,17 +797,13 @@
             <!-- Automatically run MyInitializer at app startup -->
 
             <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
-                android:value="androidx.startup" />
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove"/>
             <meta-data
                 android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
                 android:value="androidx.startup" />
         </provider>
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            android:enabled="false"
-            android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${file_provider}.provider"

@@ -1444,28 +1444,6 @@ internal fun View?.findSuitableParent(): ViewGroup? {
     return fallback
 }
 
-fun Intent.serviceStart() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        this.also { intent ->
-            AppObjectController.joshApplication.startForegroundService(intent)
-        }
-    } else {
-        AppObjectController.joshApplication.startService(this)
-    }
-}
-
-fun Intent.startServiceForWebrtc() {
-
-    if (JoshApplication.isAppVisible) {
-        AppObjectController.joshApplication.startService(this)
-    } else {
-        ContextCompat.startForegroundService(
-            AppObjectController.joshApplication,
-            this
-        )
-    }
-}
-
 fun getTouchableSpannable(
     string: String,
     currentColor: Int,
