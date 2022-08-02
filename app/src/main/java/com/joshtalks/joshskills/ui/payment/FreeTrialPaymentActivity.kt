@@ -533,10 +533,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (it.promoCode.isNullOrEmpty().not())
+                    if (it.promoCode.isNullOrEmpty().not()) {
                         showProgressBar()
-                    couponApplied = true
-                    viewModel.getPaymentDetails(testId.toInt(), it.promoCode!!)
+                        couponApplied = true
+                        viewModel.getPaymentDetails(testId.toInt(), it.promoCode!!)
+                    }
                 }, {
                     it.printStackTrace()
                 })

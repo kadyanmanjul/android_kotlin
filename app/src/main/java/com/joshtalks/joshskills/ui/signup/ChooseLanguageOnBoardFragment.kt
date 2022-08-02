@@ -154,7 +154,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
             if (language.testId == HINDI_TO_ENGLISH_TEST_ID && isGovernmentCourseActive) {
                 (requireActivity() as FreeTrialOnBoardActivity).openGoalFragment()
             } else {
-                language.let { (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(it.testId) }
+                language.let { (requireActivity() as FreeTrialOnBoardActivity).startFreeTrial(it.testId) }
             }
         } catch (e: Exception) {
             showToast(getString(R.string.something_went_wrong))

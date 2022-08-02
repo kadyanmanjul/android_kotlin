@@ -135,7 +135,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
             viewModel.postGoal(GoalKeys.GOVT_EXAMS_SELECTED)
         }
         try {
-            (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+            (requireActivity() as FreeTrialOnBoardActivity).startFreeTrial(
                 goalSelectionResponse.testId ?: HINDI_TO_ENGLISH_TEST_ID
             )
         } catch (e: Exception) {

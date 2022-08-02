@@ -136,7 +136,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         else if (languageActive)
             openChooseLanguageFragment()
         else
-            showStartTrialPopup(language.testId)
+            startFreeTrial(language.testId)
     }
 
     private fun addViewModelObservers() {
@@ -178,71 +178,21 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun showStartTrialPopup(testId: String) {
-        MixPanelTracker.publishEvent(MixPanelEvent.START_NOW).push()
-        viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
+    fun startFreeTrial(testId: String) {
+        layout.btnStartTrial.pauseAnimation()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, testId)
-        layout.btnStartTrial.pauseAnimation()
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.freetrial_alert_dialog, null)
-        dialogBuilder.setView(dialogView)
-        MarketingAnalytics.startFreeTrail()
-        val alertDialog: AlertDialog = dialogBuilder.create()
-        val width = AppObjectController.screenWidth * .9
-        val height = ViewGroup.LayoutParams.WRAP_CONTENT
-        alertDialog.show()
-        alertDialog.window?.setLayout(width.toInt(), height)
-        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        if (is100PointsActive && testId == HINDI_TO_ENGLISH_TEST_ID) {
-            dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                getString(R.string.free_trial_popup_100_points_header)
-                    .replace("\\n", "\n")
-        } else {
-            dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED) && testId == HINDI_TO_ENGLISH_TEST_ID) {
-                    getString(R.string.free_trial_popup_for_icp)
-                } else {
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FREE_TRIAL_POPUP_BODY_TEXT + testId)
-                        .replace("\\n", "\n")
-                }
+        PrefManager.put(USER_LOCALE, testId)
+        if (testId != HINDI_TO_ENGLISH_TEST_ID && testId != ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
+            requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)
         }
-        dialogView.findViewById<TextView>(R.id.add_a_topic).text =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FREE_TRIAL_POPUP_TITLE_TEXT + testId)
-
-        dialogView.findViewById<TextView>(R.id.yes).text =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + testId)
-
-        dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
-            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-            Singular.eventJSON(SingularEvent.JI_HAA_CLICK.name, jsonData)
-            AppAnalytics.create(SingularEvent.JI_HAA_CLICK.name).addDeviceId().push()
-            PrefManager.put(USER_LOCALE, testId)
-            if (testId != HINDI_TO_ENGLISH_TEST_ID && testId != ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
-                requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)
+        if (Mentor.getInstance().getId().isNotEmpty()) {
+            if (TruecallerSDK.getInstance().isUsable)
+                openTrueCallerBottomSheet()
+            else {
+                viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED_JI_HAAN)
+                openProfileDetailFragment()
             }
-            MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
-            if (Mentor.getInstance().getId().isNotEmpty()) {
-                viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
-                PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
-                if (TruecallerSDK.getInstance().isUsable)
-                    openTrueCallerBottomSheet()
-                else {
-                    viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED_JI_HAAN)
-                    openProfileDetailFragment()
-                }
-                alertDialog.dismiss()
-            }
-        }
-
-        dialogView.findViewById<MaterialTextView>(R.id.cancel).setOnClickListener {
-            viewModel.saveImpression(IMPRESSION_START_TRIAL_NO)
-            alertDialog.dismiss()
         }
     }
 
