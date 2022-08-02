@@ -65,6 +65,7 @@ android {
     configurations.all {
         resolutionStrategy.force "org.antlr:antlr4-runtime:4.7.1"
         resolutionStrategy.force "org.antlr:antlr4-tool:4.7.1"
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
     }
 /*
 
@@ -467,4 +468,8 @@ dependencies {
     //singular
 //    implementation 'com.singular.sdk:singular_sdk:12.0.5'
     implementation files("libs/singular_sdk-12.0.5.aar")
+
+    //jcodec
+    implementation 'org.jcodec:jcodec:0.2.3'
+    implementation 'org.jcodec:jcodec-android:0.2.3'
 }
