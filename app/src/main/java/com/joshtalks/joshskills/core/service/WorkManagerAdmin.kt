@@ -10,11 +10,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
@@ -168,13 +164,20 @@ object WorkManagerAdmin {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
+        val delay = AppObjectController.getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.NOTIFICATION_API_TIME)
+
         val workRequest = OneTimeWorkRequestBuilder<BackgroundNotificationWorker>()
             .setConstraints(constraints)
-            .setInitialDelay(30, TimeUnit.MINUTES)
+            .setInitialDelay(delay, TimeUnit.HOURS)
             .addTag(BackgroundNotificationWorker::class.java.name)
             .build()
 
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
+
+    fun removeBackgroundNotificationWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .cancelAllWorkByTag(BackgroundNotificationWorker::class.java.name)
     }
 
     fun getQuestionNPA(eventName: String): UUID {
