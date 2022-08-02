@@ -3,12 +3,18 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -222,7 +228,6 @@ class VoiceCallActivity : BaseActivity() {
                 SHOW_RECORDING_PERMISSION_DIALOG -> {
                     vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
                 }
-                SHOW_RECORDING_PERMISSION_DIALOG -> vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 HIDE_RECORDING_PERMISSION_DIALOG -> {
                     hideRecordingPermissionDialog()

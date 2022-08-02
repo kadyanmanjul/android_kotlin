@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -12,6 +14,7 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.PowerManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
 import android.widget.Toast
+import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -38,6 +42,7 @@ import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -125,6 +130,11 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         }
     }
 
+
+    private fun saveBitmap() {
+        com.joshtalks.joshskills.core.PrefManager.putBitmap( callBinding.root.drawToBitmap())
+    }
+
     private fun gainAudioFocus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
            audioRequest =  AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
@@ -208,9 +218,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        /*val am =  requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val volume = am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
-        showToast("$volume is your volume")*/
         proximity?.also { proximity ->
             sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
         }
@@ -219,6 +226,11 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 progressAnimator.resume()
             }
         }
+
+        CoroutineScope(Dispatchers.IO).launch {
+        delay(2000)
+        saveBitmap()
+    }
     }
 
     override fun onStart() {

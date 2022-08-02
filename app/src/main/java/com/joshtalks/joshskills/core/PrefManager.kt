@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
@@ -19,6 +22,7 @@ import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
+import java.io.ByteArrayOutputStream
 
 const val USER_UNIQUE_ID = "user_unique_id"
 const val GID_SET_FOR_USER = "gid_set_for_user"
@@ -330,6 +334,25 @@ object PrefManager {
         val gson = Gson()
         val json: String = getStringValue(key = key, defaultValue = "") as String
         return gson.fromJson(json, object : TypeToken<MutableMap<String, Any?>>() {}.type)
+    }
+
+    fun putBitmap(bitmap: Bitmap){
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+
+        val compressImage: ByteArray = baos.toByteArray()
+        val sEncodedImage: String = Base64.encodeToString(compressImage, Base64.DEFAULT)
+        put("bitmap", sEncodedImage)
+    }
+
+    fun getBitmap():Bitmap?{
+        if (prefManagerCommon?.contains("bitmap") == true) {
+            val encodedImage: String? = getStringValue("bitmap")
+            val b: ByteArray = Base64.decode(encodedImage, Base64.DEFAULT)
+            val bitmapImage: Bitmap = BitmapFactory.decodeByteArray(b, 0, b.size)
+            return bitmapImage
+        }
+        return null
     }
 
     fun getLessonObject(key: String): LessonModel? {
