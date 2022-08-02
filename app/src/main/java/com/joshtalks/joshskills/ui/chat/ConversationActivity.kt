@@ -39,6 +39,9 @@ import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
+import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
@@ -107,6 +110,7 @@ import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
@@ -250,6 +254,7 @@ class ConversationActivity :
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.handler = this
+        conversationBinding.isFreeTrialCallBlocked = PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED)
         conversationBinding.executePendingBindings()
         activityRef = WeakReference(this)
         initIntentObject()
@@ -318,8 +323,9 @@ class ConversationActivity :
         initRV()
         initView()
         initFuture()
+        if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) > 1)
+            initFreeTrialTimer()
         addObservable()
-        initFreeTrialTimer()
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
@@ -884,19 +890,27 @@ class ConversationActivity :
             conversationBinding.freeTrialContainer.visibility = GONE
             countdownTimerBack?.stop()
         }
+    }
 
-        conversationBinding.buyBtn.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-                this,
-                AppObjectController.getFirebaseRemoteConfig().getString(
-                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),
-                inboxEntity.expiryDate?.time
+    fun callPracticePartner(v: View) {
+        startActivity(Intent(this, VoiceCallActivity::class.java).apply {
+            putExtra(
+                INTENT_DATA_COURSE_ID,
+                inboxEntity.courseId
             )
-            //conversationBinding.freeTrialContainer.visibility = View.GONE
-            //countdownTimerBack?.stop()
-        }
+            putExtra(STARTING_POINT, FROM_ACTIVITY)
+        })
+    }
+
+    fun moveToPaymentActivity(v: View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
+        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            this,
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+            ),
+            inboxEntity.expiryDate?.time
+        )
     }
 
     private fun showNextTooltip() {
@@ -1134,7 +1148,10 @@ class ConversationActivity :
 
         conversationViewModel.pendingRequestsList.observe(this) {
             with(conversationBinding) {
-                if (it.pendingRequestsList.isNotEmpty() && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
+                if (it.pendingRequestsList.isNotEmpty() && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse && PrefManager.getStringValue(
+                        CURRENT_COURSE_ID
+                    ) == DEFAULT_COURSE_ID
+                ) {
                     fppRequestCountNumber.text = it.pendingRequestsList.size.toString()
                     fppRequestCountNumber.visibility = VISIBLE
                 } else {
@@ -1146,7 +1163,8 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                    conversationBinding.imgFppBtn.isVisible = PrefManager.getBoolValue(IS_COURSE_BOUGHT) && inboxEntity.isCapsuleCourse
+                conversationBinding.imgFppBtn.isVisible =
+                    PrefManager.getBoolValue(IS_COURSE_BOUGHT) && inboxEntity.isCapsuleCourse
                 if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)) {
@@ -1376,8 +1394,7 @@ class ConversationActivity :
                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
                     if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
                         showLeaderBoardSpotlight()
-                    }
-                    else {
+                    } else {
 
                     }
                 } else {
@@ -2145,7 +2162,11 @@ class ConversationActivity :
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
-
+        try {
+            conversationBinding.isFreeTrialCallBlocked = PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED)
+            conversationBinding.executePendingBindings()
+        } catch (e: Exception) {
+        }
         if (inboxEntity.isCapsuleCourse) {
             utilConversationViewModel.getProfileData(Mentor.getInstance().getId())
         }
@@ -2522,7 +2543,7 @@ class ConversationActivity :
         }
     }
 
-    fun groupAndFppButtonElevation(){
+    fun groupAndFppButtonElevation() {
         conversationBinding.imgGroupChatBtn.elevation = 24f
         conversationBinding.imgFppBtn.elevation = 24f
         conversationBinding.ringingIcon.elevation = 28f

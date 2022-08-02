@@ -481,6 +481,7 @@
     <string name="speak_practise_title" translatable="false">Welcome to \n Practice with Partner</string>
     <string name="today_topic" translatable="false">Today\'s Topic</string>
     <string name="call_practice_partner" translatable="false">Call Practice Partner</string>
+    <string name="call_partner" translatable="false">Call Partner</string>
     <string name="pp_message" translatable="false">In this practice you have to speak to a practice partner for %s minute</string>
     <string name="pp_messages" translatable="false">In this practice you have to speak to a practice partner for %s minutes</string>
     <string name="pp_calling" translatable="false">Calling Favorite Practice Partner</string>

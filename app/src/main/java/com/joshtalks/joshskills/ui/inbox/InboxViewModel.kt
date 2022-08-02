@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -99,9 +100,13 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         return@launch
                     }
                     appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
-                        delay(1000)
+//                        delay(1000)
                         _registerCourseNetworkData.emit(
-                            appDatabase.courseDao().getRegisterCourseMinimal()
+                            appDatabase.courseDao().getRegisterCourseMinimal().also{
+                                Log.d(
+                                    "InboxViewModel.kt",
+                                    "YASH => getCourseFromServer:105 ${it.first().expiryDate}")
+                            }
                         )
                     }
                 } else {

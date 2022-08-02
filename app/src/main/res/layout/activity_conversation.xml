@@ -16,6 +16,10 @@
         <variable
             name="viewmodel"
             type="com.joshtalks.joshskills.ui.chat.ConversationViewModel" />
+        <variable
+            name="isFreeTrialCallBlocked"
+            type="Boolean" />
+
     </data>
 
     <RelativeLayout
@@ -209,7 +213,8 @@
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_5sdp"
                 android:paddingVertical="@dimen/_4sdp"
-                android:text="@string/buy_now"
+                android:onClick="@{isFreeTrialCallBlocked ? handler::moveToPaymentActivity :  handler::callPracticePartner}"
+                android:text="@{isFreeTrialCallBlocked ? @string/buy_now : @string/call_partner}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -5,8 +5,6 @@ import android.os.Parcelable
 import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.ui.fpp.constants.NONE
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
@@ -51,11 +49,35 @@ data class SpeakingTopic(
     @Expose
     var isFromDb: Boolean = false,
 
+    @Ignore
     @IgnoredOnParcel
     @SerializedName("is_ft_caller_blocked")
     val isFtCallerBlocked: String?
 
-) : Parcelable
+) : Parcelable {
+    constructor(
+        id: Int,
+        topicName: String,
+        duration: Int,
+        alreadyTalked: Int,
+        totalNewStudentCalls: Int,
+        requiredNewStudentCalls: Int,
+        isNewStudentCallsActivated: Boolean,
+        callDurationStatus: String,
+        isFromDb: Boolean
+    ) : this(
+        id,
+        topicName,
+        duration,
+        alreadyTalked,
+        totalNewStudentCalls,
+        requiredNewStudentCalls,
+        isNewStudentCallsActivated,
+        callDurationStatus,
+        isFromDb,
+        null
+    )
+}
 
 @Dao
 interface SpeakingTopicDao {

@@ -338,11 +338,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                     when(response.isFtCallerBlocked){
                         "BLOCKED" -> {
+                    if(PrefManager.getBoolValue(IS_FREE_TRIAL))
+                            PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
                             binding.txtHowToSpeak.visibility = VISIBLE
                             binding.containerReachedFtLimit.visibility = VISIBLE
+                            binding.btnStartTrialText.isEnabled = false
                         }
                         "SHOW_WARNING_POPUP" -> {
                             // dialog for warning about shorter calls
+                            binding.containerReachedFtLimit.visibility = GONE
                             AlertDialog.Builder(activity).setTitle(R.string.warning)
                                 .setIcon(R.drawable.ic_baseline_warning_24)
                                 .setPositiveButton(R.string.got_it){dialog,which ->
@@ -352,7 +356,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 .show()
                         }
                         else->{
-                            Log.i("TAG_MIHIR","the value of ft blocked is: ${response.isFtCallerBlocked}")
+                            binding.containerReachedFtLimit.visibility = GONE
                         }
                     }
 
