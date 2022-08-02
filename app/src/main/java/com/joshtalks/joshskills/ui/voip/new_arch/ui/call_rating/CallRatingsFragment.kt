@@ -122,15 +122,15 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
         callerMentorId = mArgs.getString(CALLER_MENTOR_ID).toString()
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
-        if (vm.getCallDurationString() == "5"){
+        if (vm.getCallDurationString() == "5") {
             val jsonData = JSONObject()
             jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
-            Singular.event("CALL_COMPLETED_5MIN",jsonData)
+            Singular.eventJSON("CALL_COMPLETED_5MIN", jsonData)
         }
-        if (vm.getCallDurationString() == "20"){
+        if (vm.getCallDurationString() == "20") {
             val jsonData = JSONObject()
             jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
-            Singular.event("CALL_COMPLETED_20MIN",jsonData)
+            Singular.eventJSON("CALL_COMPLETED_20MIN", jsonData)
         }
         binding.howCallTxt.text = getString(R.string.how_was_your_call_name, callerName)
         binding.callDurationText.text = getString(R.string.you_spoke_for_minutes, vm.getCallDurationString())

@@ -181,7 +181,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
         jsonData.put(ParamKeys.TEST_ID.name, testId)
-        Singular.event(SingularEvent.OPENED_CHECKOUT_PAGE.name, jsonData)
+        Singular.eventJSON(SingularEvent.OPENED_CHECKOUT_PAGE.name, jsonData)
     }
 
     private fun initViewModel() {
@@ -946,9 +946,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name, jsonData)
+        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
         }

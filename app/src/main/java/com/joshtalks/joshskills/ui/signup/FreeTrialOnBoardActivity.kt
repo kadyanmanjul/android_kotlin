@@ -211,7 +211,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             val jsonData = JSONObject()
             jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-            Singular.event(SingularEvent.JI_HAA_CLICK.name, jsonData)
+            Singular.eventJSON(SingularEvent.JI_HAA_CLICK.name, jsonData)
             PrefManager.put(USER_LOCALE, testId)
             if (testId != HINDI_TO_ENGLISH_TEST_ID && testId != ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
                 requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)

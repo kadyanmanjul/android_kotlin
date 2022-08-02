@@ -224,7 +224,7 @@ class VoiceCallActivity : BaseActivity() {
                 CLOSE_CALL_SCREEN -> {
                     val jsonData = JSONObject()
                     jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
-                    Singular.event("SPEAKING_COMPLETED",jsonData)
+                    Singular.eventJSON("SPEAKING_COMPLETED", jsonData)
                     finishAndRemoveTask()
                 }
                 CHANGE_APP_THEME_T0_BLACK->{

@@ -216,7 +216,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             val jsonData = JSONObject()
             jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-            Singular.event(SingularEvent.CALL_INITIATED.name, jsonData)
+            Singular.eventJSON(SingularEvent.CALL_INITIATED.name, jsonData)
             val parameters = HashMap<String, Any>()
             AppObjectController.firebaseAnalytics.logEvent("CALL_INITIATED", convertMapToBundle(parameters))
             MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)

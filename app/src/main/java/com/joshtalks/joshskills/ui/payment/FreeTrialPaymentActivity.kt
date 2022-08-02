@@ -174,7 +174,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
         jsonData.put(ParamKeys.TEST_ID.name, testId)
-        Singular.event(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, jsonData)
+        Singular.eventJSON(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, jsonData)
     }
 
     private fun dynamicCardCreation() {
@@ -997,9 +997,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name, jsonData)
+        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
         if (viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
             if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED))
                 viewModel.postGoal("ICP_COURSE_BOUGHT", CampaignKeys.INCREASE_COURSE_PRICE.name)

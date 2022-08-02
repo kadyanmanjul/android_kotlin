@@ -127,7 +127,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     fun submitProfile() {
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-        Singular.event(SingularEvent.REGISTER_FREE_TRIAL_NAME.name, jsonData)
+        Singular.eventJSON(SingularEvent.REGISTER_FREE_TRIAL_NAME.name, jsonData)
         if (Utils.isInternetAvailable().not()){
             showToast(getString(R.string.internet_not_available_msz))
             return

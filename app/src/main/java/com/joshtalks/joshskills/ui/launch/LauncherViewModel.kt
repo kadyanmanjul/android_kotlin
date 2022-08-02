@@ -257,9 +257,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         if (isAppOpenedForFirstTime) {
             PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
             MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
-            val jsonData = JSONObject()
-            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-            Singular.event(SingularEvent.APP_OPENED_FIRST_TIME.name, jsonData)
+            Singular.event(SingularEvent.APP_OPENED_FIRST_TIME.name)
         }
     }
 
