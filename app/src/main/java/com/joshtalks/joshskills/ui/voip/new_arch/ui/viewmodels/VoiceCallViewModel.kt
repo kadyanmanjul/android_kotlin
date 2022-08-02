@@ -2,10 +2,13 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
 import android.app.Activity
 import android.app.Application
+import android.media.MediaMetadataRetriever
+import android.media.MediaMetadataRetriever.METADATA_KEY_DURATION
 import android.os.Message
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
+import androidx.core.net.toUri
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
@@ -182,12 +185,25 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     return@launch
                 }
                 val currentTime = SystemClock.elapsedRealtime()
-                ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = ((currentTime - uiState.recordTime)/1000).toInt())
+                Log.d(TAG, "stopRecording: ${recordFile.getMediaDuration().toInt()}")
+                ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = recordFile.getMediaDuration().toInt())
                 CallRecordingAnalytics.addAnalytics(
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
                     localPath = recordFile.absolutePath )
             }
+        }
+    }
+    fun File.getMediaDuration(): Long {
+        if (!exists()) return 0
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(applicationContext, this.toUri())
+            val duration = retriever.extractMetadata(METADATA_KEY_DURATION)
+            retriever.release()
+            duration?.toLongOrNull() ?: 0
+        } catch (exception: Exception) {
+            0
         }
     }
 

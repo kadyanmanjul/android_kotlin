@@ -3,28 +3,26 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_GAME_ON
 import com.joshtalks.joshskills.core.PermissionUtils.callingPermissionPermanentlyDeniedDialog
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
@@ -33,8 +31,8 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -228,7 +226,6 @@ class VoiceCallActivity : BaseActivity() {
                 SHOW_RECORDING_PERMISSION_DIALOG -> {
                     vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
                 }
-                SHOW_RECORDING_PERMISSION_DIALOG -> vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 HIDE_RECORDING_PERMISSION_DIALOG -> {
                     hideRecordingPermissionDialog()

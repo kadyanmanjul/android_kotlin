@@ -5,10 +5,13 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.text.TextUtils
+import android.util.Log
 import androidx.annotation.Nullable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -18,6 +21,7 @@ import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.copy
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
@@ -40,6 +44,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.jcodec.api.android.AndroidSequenceEncoder
+import org.jcodec.common.io.FileChannelWrapper
+import org.jcodec.common.io.NIOUtils
+import org.jcodec.common.model.Rational
 import timber.log.Timber
 
 class ProcessCallRecordingService : Service() {
@@ -76,7 +84,7 @@ class ProcessCallRecordingService : Service() {
                                 val callId = intent.getStringExtra(CALL_ID)
                                 val agoraMentorId = intent.getStringExtra(AGORA_MENTOR_ID)
                                 val duration = intent.getIntExtra(RECORD_DURATION,0)
-                                startProcessingAudioVideoMixing(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration))
+                                generateVideoFromImage(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration))
                             }
                     }
                     UPLOAD_ALL_CALL_RECORDING -> {}
@@ -86,6 +94,45 @@ class ProcessCallRecordingService : Service() {
             ex.printStackTrace()
         }
         return START_NOT_STICKY
+    }
+
+    private fun generateVideoFromImage(inputFiles: InputFiles) {
+        Log.d(TAG, "generateVideoFromImage:1 $inputFiles")
+
+        val screenshot: Bitmap? = PrefManager.getBitmap()
+
+        var out: FileChannelWrapper? = null
+        val dir = application.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+        val file = File(dir, "naman2.mp4")
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                out = NIOUtils.writableFileChannel(file.absolutePath)
+                val encoder = AndroidSequenceEncoder(out, Rational.R(15, 1))
+
+                Log.d(TAG, "makeVideo: 1 ${screenshot?.height} ${screenshot?.width}  ${inputFiles.duration!!}")
+
+                for (a in 0..((inputFiles.duration!!)/1000)*25) {
+                    encoder.encodeImage(screenshot)
+                }
+                encoder.finish()
+            }catch (ex:Exception){
+                print("Exception arrived brother")
+                ex.printStackTrace()
+            }
+            finally {
+                println("IOSSE")
+                inputFiles.videoPath = file.absolutePath
+                startProcessingAudioVideoMixing(inputFiles)
+                Log.d(TAG, "makeVideo: 2: $inputFiles")
+                NIOUtils.closeQuietly(out)
+            }
+        }
+    }
+
+    fun editMyBitmap(myBitmap: Bitmap, newHeight: Int, newWidth: Int): Bitmap? {
+        return Bitmap.createScaledBitmap(myBitmap, newWidth, newHeight, false)
+
     }
 
     private fun cancelFileUpload() {
@@ -319,7 +366,7 @@ class ProcessCallRecordingService : Service() {
 data class InputFiles(
     val callId: String?,
     val agoraMentorId: String?,
-    val videoPath: String?,
+    var videoPath: String?,
     val audioPath: String?,
     var outputFile: File? = null,
     var serverUrl: String? = null,

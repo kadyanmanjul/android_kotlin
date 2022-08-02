@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -12,12 +14,14 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.PowerManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
+import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -37,6 +41,7 @@ import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -122,6 +127,11 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 }
             }
         }
+    }
+
+
+    private fun saveBitmap() {
+        com.joshtalks.joshskills.core.PrefManager.putBitmap( callBinding.root.drawToBitmap())
     }
 
     private fun gainAudioFocus() {
@@ -215,6 +225,11 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 progressAnimator.resume()
             }
         }
+
+        CoroutineScope(Dispatchers.IO).launch {
+        delay(5000)
+        saveBitmap()
+    }
     }
 
     override fun onStart() {
