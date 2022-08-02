@@ -103,9 +103,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-const val GRAMMAR_POSITION = 0
-const val TRANSLATION_POSITION = 1
-const val SPEAKING_POSITION = 2
+const val SPEAKING_POSITION = 0
+const val GRAMMAR_POSITION = 1
+const val TRANSLATION_POSITION = 2
 const val VOCAB_POSITION = 3
 const val READING_POSITION = 4
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
@@ -472,28 +472,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.arrowAnimation.visibility = View.GONE
                     lifecycleScope.launch {
                         delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1)
-                    }
-                }
-                LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1 -> {
-                    binding.overlayLayout.visibility = View.VISIBLE
-                    binding.spotlightTabGrammar.visibility = View.VISIBLE
-                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
-                    binding.spotlightTabVocab.visibility = View.INVISIBLE
-                    binding.spotlightTabReading.visibility = View.INVISIBLE
-                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(
-                        resources.getText(R.string.label_grammar_spotlight).toString()
-                    )
-                    binding.lessonSpotlightTooltip.startAnimation(
-                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
-                    )
-                    binding.spotlightStartGrammarTest.visibility = View.GONE
-                    binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
-                    binding.arrowAnimation.visibility = View.GONE
-                    lifecycleScope.launch {
-                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
                         viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT)
                     }
                 }
@@ -506,6 +484,28 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 //                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
                     binding.lessonSpotlightTooltip.setTooltipText(
                         resources.getText(R.string.label_speaking_spotlight).toString()
+                    )
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1)
+                    }
+                }
+                LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.VISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_grammar_spotlight).toString()
                     )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
@@ -945,15 +945,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             viewModel.lessonLiveData.value?.let { lesson ->
                 val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
                 when (tabPosition) {
-                    GRAMMAR_POSITION -> {
-                        if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
-                            MarketingAnalytics.logGrammarSectionCompleted()
-                            if (isWhatsappRemarketingActive) {
-                                MarketingAnalytics.logWhatsappRemarketing()
-                            }
-                        }
-                        lesson.grammarStatus = status
-                    }
                     SPEAKING_POSITION -> {
                         if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
@@ -963,6 +954,15 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                 .push()
                         }
                         lesson.speakingStatus = status
+                    }
+                    GRAMMAR_POSITION -> {
+                        if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
+                            MarketingAnalytics.logGrammarSectionCompleted()
+                            if (isWhatsappRemarketingActive) {
+                                MarketingAnalytics.logWhatsappRemarketing()
+                            }
+                        }
+                        lesson.grammarStatus = status
                     }
                     VOCAB_POSITION -> lesson.vocabStatus = status
                     READING_POSITION -> lesson.readingStatus = status
@@ -983,6 +983,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     ) {
 
         isTranslationDisabled = 1
+        arrayFragment.add(
+            SPEAKING_POSITION,
+            SpeakingPractiseFragment.newInstance()
+        )
         if (PrefManager.getBoolValue(IS_COURSE_BOUGHT) && lessonIsNewGrammar &&
             PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) &&
             PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED) &&
@@ -997,11 +1001,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         } else {
             arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
         }
-
-        arrayFragment.add(
-            SPEAKING_POSITION - isTranslationDisabled,
-            SpeakingPractiseFragment.newInstance()
-        )
         arrayFragment.add(VOCAB_POSITION - isTranslationDisabled, VocabularyFragment.getInstance())
         arrayFragment.add(
             READING_POSITION - isTranslationDisabled,
@@ -1028,17 +1027,17 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         ) { tab, position ->
             tab.setCustomView(R.layout.capsule_tab_layout_view)
             when (position) {
-                GRAMMAR_POSITION -> {
+                SPEAKING_POSITION -> {
                     setSelectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
+                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                 }
-                SPEAKING_POSITION - isTranslationDisabled -> {
+                GRAMMAR_POSITION -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
                 }
                 VOCAB_POSITION - isTranslationDisabled -> {
                     setUnselectedColor(tab)
@@ -1081,7 +1080,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             {
                 if (defaultSection != -1) {
                     binding.lessonViewpager.currentItem =
-                        if (defaultSection == GRAMMAR_POSITION) GRAMMAR_POSITION else defaultSection - isTranslationDisabled
+                        if (defaultSection == SPEAKING_POSITION || defaultSection == GRAMMAR_POSITION ) defaultSection else defaultSection - isTranslationDisabled
                 } else {
                     openIncompleteTab(arrayFragment.size - 1)
                 }
@@ -1102,19 +1101,20 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             if (nextTabIndex == arrayFragment.size) {
                 nextTabIndex = 0
             } else {
+                Log.d("LessonActivity.kt", "YASH => openIncompleteTab:1106 $nextTabIndex")
                 viewModel.lessonLiveData.value?.let { lesson ->
                     when (nextTabIndex) {
-                        GRAMMAR_POSITION ->
-                            if (lesson.grammarStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = GRAMMAR_POSITION
+                        SPEAKING_POSITION ->
+                            if (lesson.speakingStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem =
+                                    SPEAKING_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
-                        SPEAKING_POSITION - isTranslationDisabled ->
-                            if (lesson.speakingStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem =
-                                    SPEAKING_POSITION - isTranslationDisabled
+                        GRAMMAR_POSITION ->
+                            if (lesson.grammarStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem = GRAMMAR_POSITION
                                 return
                             } else {
                                 nextTabIndex++
@@ -1159,6 +1159,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     PrefManager.put(LESSON_TWO_OPENED, true)
                 }
                 setTabCompletionStatus(
+                    tabs.getChildAt(SPEAKING_POSITION),
+                    lesson.speakingStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
                     tabs.getChildAt(GRAMMAR_POSITION),
                     lesson.grammarStatus == LESSON_STATUS.CO
                 )
@@ -1173,10 +1177,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 setTabCompletionStatus(
                     tabs.getChildAt(READING_POSITION - isTranslationDisabled),
                     lesson.readingStatus == LESSON_STATUS.CO
-                )
-                setTabCompletionStatus(
-                    tabs.getChildAt(SPEAKING_POSITION - isTranslationDisabled),
-                    lesson.speakingStatus == LESSON_STATUS.CO
                 )
             }
             if (isLesssonCompleted.not()) {
@@ -1204,6 +1204,22 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 ?.setTextColor(ContextCompat.getColor(this, R.color.white))
 
             when (tab.position) {
+                SPEAKING_POSITION -> {
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
+                    PrefManager.put(IS_SPEAKING_SCREEN_CLICKED, true)
+                    viewModel.postGoal(GoalKeys.SPEAKING_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
+                    MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_OPENED)
+                        .addParam(ParamKeys.LESSON_ID, getLessonId)
+                        .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
+                        .push()
+                    if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+                        hideSpotlight()
+                    } else {
+                        showSpeakingSpotlight()
+                    }
+                }
                 GRAMMAR_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
@@ -1231,22 +1247,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
                         .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
-                }
-                SPEAKING_POSITION - isTranslationDisabled -> {
-                    tab.view.background =
-                        ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
-                    viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
-                    PrefManager.put(IS_SPEAKING_SCREEN_CLICKED, true)
-                    viewModel.postGoal(GoalKeys.SPEAKING_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
-                    MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_OPENED)
-                        .addParam(ParamKeys.LESSON_ID, getLessonId)
-                        .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
-                        .push()
-                    if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
-                        hideSpotlight()
-                    } else {
-                        showSpeakingSpotlight()
-                    }
                 }
                 TRANSLATION_POSITION -> {
                     tab.view.background =
