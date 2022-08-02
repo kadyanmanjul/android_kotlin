@@ -101,8 +101,8 @@ android {
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             ext.enableCrashlytics = true
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {

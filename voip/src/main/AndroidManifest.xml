@@ -16,13 +16,11 @@
 
     <application>
         <service android:name=".data.CallingRemoteService"
-            android:process=":joshSkillsCallingService"
             android:foregroundServiceType="phoneCall"/>
         <provider
             android:authorities="com.joshtalks.joshskills.voipstate"
             android:name=".contentprovider.VoipStateContentProvider"
             android:permission="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"
-            android:process=":joshSkillsCallingService"
             android:enabled="true"
             android:exported="true"/>
     </application>

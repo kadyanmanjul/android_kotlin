@@ -98,13 +98,11 @@ class JoshApplication :
             registerBroadcastReceiver()
             initMoEngage()
             initGroups()
-            } else {
-                FirebaseApp.initializeApp(this)
-                Timber.plant(Timber.DebugTree())
-                Utils.initUtils(this)
-                Stetho.initializeWithDefaults(this);
+            FirebaseApp.initializeApp(this)
+            Timber.plant(Timber.DebugTree())
+            Utils.initUtils(this)
+            Stetho.initializeWithDefaults(this);
             }
-
             Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
 //        Log.d(TAG, "onCreate: $isMainProcess ... $packageName")
 //        if(isMainProcess()) {
