@@ -32,7 +32,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
-import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -204,9 +203,15 @@ class ReadingFragmentWithoutFeedback :
                         true
                     )
                 }
-                binding.mergedVideo.setVideoPath(fileDir)
+                setVideoPlayerWuthUrl(fileDir)
             }
         }
+    }
+
+    private fun setVideoPlayerWuthUrl(fileDir: String) {
+        binding.mergedVideo.setUrl(fileDir)
+        // binding.videoPlayer.setCourseId(course_id)
+        binding.mergedVideo.fitToScreen()
     }
 
     private val pauseAnimationCallback by lazy {
@@ -336,7 +341,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.progressDialog.visibility = GONE
                     outputFile = it.obj as String
                     viewModel.sendOutputToFullScreen(outputFile)
-                    binding.mergedVideo.setVideoPath(outputFile)
+                    setVideoPlayerWuthUrl(outputFile)
                 }
                 INCREASE_AUDIO_VOLUME -> {
 
@@ -346,38 +351,12 @@ class ReadingFragmentWithoutFeedback :
                 }
             }
         }
-        binding.mergedVideo.setOnPreparedListener { mediaPlayer ->
-            try {
-                val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
-                val screenRatio = binding.mergedVideo.width / binding.mergedVideo.height.toFloat()
-                val scaleX = videoRatio / screenRatio
-                if (scaleX >= 1f) {
-                    binding.mergedVideo.scaleX = scaleX
-                } else {
-                    binding.mergedVideo.scaleY = 1f / scaleX
-                }
-            } catch (ex: Exception) {
-                showToast(getString(R.string.something_went_wrong))
-                ex.printStackTrace()
-            }
-        }
-
-        binding.mergedVideo.setOnClickListener {
-            if (binding.mergedVideo.isPlaying) {
-                binding.mergedVideo.pause()
-                binding.playBtn.visibility = VISIBLE
-            }
-        }
-        binding.mergedVideo.setOnCompletionListener {
-            binding.playBtn.visibility = VISIBLE
-        }
         binding.videoLayout.clipToOutline = true
     }
 
     override fun onResume() {
         super.onResume()
         showRecordHintAnimation()
-        binding.mergedVideo.seekTo(5)
         subscribeRXBus()
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -397,16 +376,11 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        binding.mergedVideo.seekTo(5)
-    }
 
     override fun onPause() {
         super.onPause()
         binding.videoPlayer.onPause()
-        binding.mergedVideo.pause()
-        binding.playBtn.visibility = VISIBLE
+        binding.mergedVideo.onPause()
         pauseAllAudioAndUpdateViews()
     }
 
@@ -540,7 +514,7 @@ class ReadingFragmentWithoutFeedback :
 //                binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             }
             binding.videoPlayer.onPause()
-            binding.mergedVideo.pause()
+            binding.mergedVideo.onPause()
             pauseAllViewHolderAudio()
         } catch (ex: Exception) {
             Timber.d(ex)
@@ -550,8 +524,7 @@ class ReadingFragmentWithoutFeedback :
     override fun onStop() {
         appAnalytics?.push()
         super.onStop()
-        binding.mergedVideo.stopPlayback()
-        binding.playBtn.visibility = VISIBLE
+        binding.mergedVideo.onPause()
         compositeDisposable.clear()
         try {
             binding.videoPlayer.onPause()
@@ -885,7 +858,7 @@ class ReadingFragmentWithoutFeedback :
                                     val submittedVideoPath =
                                         AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
-                                    binding.mergedVideo.setVideoPath(submittedVideoPath)
+                                    setVideoPlayerWuthUrl(submittedVideoPath)
                                 } else {
                                     val url = currentLessonQuestion!!.practiceEngagement?.get(
                                         0
@@ -896,7 +869,11 @@ class ReadingFragmentWithoutFeedback :
                                 }
                             }
                         } else {
-                            binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
+                            this.practiceEngagement?.get(0)?.localPath?.let { it1 ->
+                                setVideoPlayerWuthUrl(
+                                    it1
+                                )
+                            }
                         }
                         binding.btnWhatsapp.setOnClickListener {
                             viewModel.saveReadingPracticeImpression(
@@ -1333,7 +1310,6 @@ class ReadingFragmentWithoutFeedback :
         binding.subAnswerLayout.visibility = VISIBLE
         binding.ivClose.visibility = VISIBLE
         binding.progressDialog.visibility = VISIBLE
-        binding.playBtn.visibility = GONE
     }
 
     private fun recordPermission() {
@@ -1399,8 +1375,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.progressBarImageView.progress = 0
                     binding.practiseSeekbar.progress = 0
                     audioManager?.seekTo(0)
-                    binding.mergedVideo.seekTo(0)
-                    binding.videoPlayer.seekToStart()
+                    binding.mergedVideo.seekToStart()
                     if (isAdded && activity != null)
                         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
@@ -1469,7 +1444,6 @@ class ReadingFragmentWithoutFeedback :
                                         }
                                     }
                                 }
-                                binding.playBtn.visibility = VISIBLE
                             }
                         } else {
                             showToast(getString(R.string.internet_not_available_msz))
@@ -1482,6 +1456,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun mergeTwoAudiosIntoOne() {
+        showToast("Audio Muxer : Video mixing")
         val input1 = GeneralAudioInput(requireContext(), Uri.parse(filePath), null)
         input1.volume = 5f
         val out2 = extractAudioFromVideo(videoDownPath!!)
@@ -1585,7 +1560,7 @@ class ReadingFragmentWithoutFeedback :
         audioExtractor.release()
         if (isAdded && activity != null) {
             requireActivity().runOnUiThread {
-                binding.mergedVideo.setVideoPath(outputFile)
+                setVideoPlayerWuthUrl(outputFile)
                 binding.progressDialog.visibility = GONE
                 viewModel.sendOutputToFullScreen(outputFile)
             }
@@ -1594,7 +1569,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun muxVideoOldMethod() {
-        showToast("Video muxing from old method")
+        showToast("Media Muxer : Video mixing")
         if (File(outputFile).exists()) {
             File(outputFile).delete()
         }
@@ -1750,7 +1725,7 @@ class ReadingFragmentWithoutFeedback :
 
             muxer.stop()
             muxer.release()
-            binding.mergedVideo.setVideoPath(outputFile)
+            setVideoPlayerWuthUrl(outputFile)
 
         } catch (e: IOException) {
             Timber.e(e)
@@ -1769,8 +1744,10 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun closeRecordedView() {
-        if (binding.mergedVideo.isPlaying) {
-            binding.mergedVideo.stopPlayback()
+        try {
+            binding.mergedVideo.onPause()
+        }catch (ex:Exception){
+            ex.printStackTrace()
         }
         binding.practiseSubmitLayout.visibility = GONE
         disableSubmitButton()
@@ -1783,8 +1760,7 @@ class ReadingFragmentWithoutFeedback :
                 lessonID.toString()
             )
         }
-        binding.playBtn.visibility = INVISIBLE
-        binding.mergedVideo.start()
+        binding.mergedVideo.onStart()
     }
 
     private fun gainAudioFocus() {

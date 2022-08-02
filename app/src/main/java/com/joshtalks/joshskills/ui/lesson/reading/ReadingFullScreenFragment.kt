@@ -28,13 +28,12 @@ class ReadingFullScreenFragment : BaseFragment() {
     }
 
     override fun initViewBinding() {
-        Log.e("Ayaaz","initviewbinding")
+
         binding.mergedVideo.setOnCompletionListener {
             binding.mergedVideo.start()
         }
         binding.mergedVideo.start()
         binding.ivBack.setOnClickListener {
-            Log.e("Ayaaz","backpressed")
             viewModel.closeCurrentFragment()
             viewModel.showVideoView()
             binding.mergedVideo.stopPlayback()
@@ -57,26 +56,29 @@ class ReadingFullScreenFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        Log.e("Ayaaz","start")
         binding.mergedVideo.start()
     }
 
     override fun initViewState() {
-        liveData.observe(this) {
-            when(it.what) {
-                SEND_OUTPUT_FILE -> {
-                    binding.loadingGroup.visibility = View.GONE
-                    binding.mergedVideo.setVideoPath(it.obj as String)
-                    binding.submitAnswerBtn.visibility = View.VISIBLE
-                    binding.ivBack.visibility = View.VISIBLE
-                    binding.ivClose.visibility = View.VISIBLE
-                }
-                VIDEO_AUDIO_MUX_FAILED -> {
-                    viewModel.closeCurrentFragment()
-                    binding.mergedVideo.stopPlayback()
-                }
-                CLOSE_VIDEO_VIEW -> {
-                    binding.mergedVideo.stopPlayback()
+        liveData.observe(requireActivity()) {
+            if (this.isVisible) {
+                when (it.what) {
+                    SEND_OUTPUT_FILE -> {
+                        Log.d("Manjul", "initViewState() called")
+                        binding.loadingGroup.visibility = View.GONE
+                        binding.mergedVideo.setVideoPath(it.obj as String)
+                        binding.submitAnswerBtn.visibility = View.VISIBLE
+                        binding.ivBack.visibility = View.VISIBLE
+                        binding.ivClose.visibility = View.VISIBLE
+
+                    }
+                    VIDEO_AUDIO_MUX_FAILED -> {
+                        viewModel.closeCurrentFragment()
+                        binding.mergedVideo.stopPlayback()
+                    }
+                    CLOSE_VIDEO_VIEW -> {
+                        binding.mergedVideo.stopPlayback()
+                    }
                 }
             }
         }
@@ -86,29 +88,12 @@ class ReadingFullScreenFragment : BaseFragment() {
         //TODO("Not yet implemented")
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.e("Ayaaz","onstop")
+    fun isFragmentUIActive(): Boolean {
+        return isAdded && !isDetached && !isRemoving
     }
 
     override fun onPause() {
         super.onPause()
         binding.mergedVideo.stopPlayback()
-        Log.e("Ayaaz","onpause")
     }
-
-//    companion object{
-//        var instance: ReadingFullScreenFragment? = null
-//
-//        fun newInstance(): ReadingFullScreenFragment {
-//            if (instance == null)
-//                instance = ReadingFullScreenFragment()
-//            return instance!!
-//        }
-//    }
-//    companion object {
-//    @JvmStatic
-//    fun newInstance() =
-//        ReadingFullScreenFragment()
-//}
 }

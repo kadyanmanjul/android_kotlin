@@ -573,7 +573,7 @@
                         tools:visibility="visible">
 
 
-                        <VideoView
+                        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
                             android:id="@+id/merged_video"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
@@ -583,22 +583,10 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:visibility="visible" />
+                            tools:visibility="visible"
+                            android:background="#000"
+                            app:controller_layout_id="@layout/layout_live_player_controller"/>
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/play_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:elevation="@dimen/_10sdp"
-                            android:onClick="@{()->handler.playVideo()}"
-                            android:visibility="visible"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.5"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.5"
-                            app:srcCompat="@drawable/ic__play_video" />
 
                         <com.pnikosis.materialishprogress.ProgressWheel
                             android:id="@+id/progress_dialog"

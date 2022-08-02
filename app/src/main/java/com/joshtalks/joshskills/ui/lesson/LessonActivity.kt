@@ -1328,7 +1328,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
             binding.containerReading.isVisible -> {
-                val videoView = findViewById<VideoView>(R.id.merged_video)
                 Log.e("Ayaaz", "OnBackPressedddddd")
 //                videoView.stopPlayback()
 //                supportFragmentManager.remove(yourfragment).commit()
