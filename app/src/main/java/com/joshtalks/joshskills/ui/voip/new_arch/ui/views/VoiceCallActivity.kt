@@ -36,9 +36,12 @@ import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getDeviceId
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.singular.sdk.Singular
 import kotlinx.coroutines.sync.Mutex
+import org.json.JSONObject
 
 private const val TAG = "VoiceCallActivity"
 
@@ -218,7 +221,12 @@ class VoiceCallActivity : BaseActivity() {
                         else -> {}
                     }
                 }
-                CLOSE_CALL_SCREEN -> finishAndRemoveTask()
+                CLOSE_CALL_SCREEN -> {
+                    val jsonData = JSONObject()
+                    jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
+                    Singular.event("SPEAKING_COMPLETED",jsonData)
+                    finishAndRemoveTask()
+                }
                 CHANGE_APP_THEME_T0_BLACK->{
                     window.statusBarColor  = ContextCompat.getColor(this,R.color.black_quiz)
                 }

@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
@@ -34,9 +35,11 @@ import com.joshtalks.joshskills.repository.server.onboarding.OnboardingCourseDat
 import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.singular.sdk.Singular
 import com.truecaller.android.sdk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.*
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
@@ -206,6 +209,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + testId)
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
+            val jsonData = JSONObject()
+            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            Singular.event(SingularEvent.JI_HAA_CLICK.name, jsonData)
             PrefManager.put(USER_LOCALE, testId)
             if (testId != HINDI_TO_ENGLISH_TEST_ID && testId != ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
                 requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)

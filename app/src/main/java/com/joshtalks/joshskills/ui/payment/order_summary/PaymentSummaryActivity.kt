@@ -178,8 +178,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         subscribeObservers()
         initCountryCode()
         logPaymentAnalyticsEvents()
-
-        Singular.event(SingularEvent.OPENED_CHECKOUT_PAGE.name, testId)
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+        jsonData.put(ParamKeys.TEST_ID.name, testId)
+        Singular.event(SingularEvent.OPENED_CHECKOUT_PAGE.name, jsonData)
     }
 
     private fun initViewModel() {
@@ -836,6 +838,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
         jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
+        jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
         Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
 
         if(!loginStartFreeTrial) {
@@ -926,6 +929,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
             jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
             jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
+            jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
             Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -942,7 +946,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name, jsonData)
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
         }

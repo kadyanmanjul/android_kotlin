@@ -14,8 +14,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -33,6 +31,7 @@ import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.SingularEvent
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -62,12 +61,15 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import com.singular.sdk.Singular
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.lang.String.format
 import java.util.*
 
 const val NOT_ATTEMPTED = "NA"
@@ -212,6 +214,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnStartTrialText.setOnSingleClickListener {
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+            val jsonData = JSONObject()
+            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            Singular.event(SingularEvent.CALL_INITIATED.name, jsonData)
+            val parameters = HashMap<String, Any>()
+            AppObjectController.firebaseAnalytics.logEvent("CALL_INITIATED", convertMapToBundle(parameters))
             MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
@@ -549,6 +556,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
         initDemoViews(lessonNo)
+    }
+
+    private fun convertMapToBundle(properties: HashMap<String, Any>): Bundle? {
+        val bundle = Bundle()
+        for (o in properties.keys) {
+            val key: String = format(o)
+            val value = "" + properties[key]
+            bundle.putString(key, value)
+        }
+        return bundle
     }
 
     private fun postSpeakingScreenSeenGoal() {

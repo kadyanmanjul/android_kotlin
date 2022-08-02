@@ -49,10 +49,14 @@ import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.getDeviceId
+import com.singular.sdk.Singular
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.*
 
 class CallRatingsFragment : BottomSheetDialogFragment() {
@@ -118,6 +122,16 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
         callerMentorId = mArgs.getString(CALLER_MENTOR_ID).toString()
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
+        if (vm.getCallDurationString() == "5"){
+            val jsonData = JSONObject()
+            jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
+            Singular.event("CALL_COMPLETED_5MIN",jsonData)
+        }
+        if (vm.getCallDurationString() == "20"){
+            val jsonData = JSONObject()
+            jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
+            Singular.event("CALL_COMPLETED_20MIN",jsonData)
+        }
         binding.howCallTxt.text = getString(R.string.how_was_your_call_name, callerName)
         binding.callDurationText.text = getString(R.string.you_spoke_for_minutes, vm.getCallDurationString())
         binding.block.text = getString(R.string.block_caller, callerName)

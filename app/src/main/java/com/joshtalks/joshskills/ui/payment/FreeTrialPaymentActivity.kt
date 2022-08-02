@@ -171,7 +171,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         setObservers()
         logNewPaymentPageOpened()
         setListeners()
-        Singular.event(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, testId)
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+        jsonData.put(ParamKeys.TEST_ID.name, testId)
+        Singular.event(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, jsonData)
     }
 
     private fun dynamicCardCreation() {
@@ -905,6 +908,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 ParamKeys.COURSE_PRICE.name,
                 viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
             )
+            jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
             Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -984,6 +988,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 ParamKeys.IS_COUPON_APPLIED.name,
                 viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode
             )
+            jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
             Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -992,7 +997,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name, jsonData)
         if (viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
             if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED))
                 viewModel.postGoal("ICP_COURSE_BOUGHT", CampaignKeys.INCREASE_COURSE_PRICE.name)

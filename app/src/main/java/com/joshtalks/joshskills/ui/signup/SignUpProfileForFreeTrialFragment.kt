@@ -17,16 +17,14 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_ENTER_NAME_TEXT
 import com.joshtalks.joshskills.core.abTest.GoalKeys
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.singular.sdk.Singular
 import java.util.*
 import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
+import org.json.JSONObject
 
 class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
@@ -127,6 +125,9 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     }
 
     fun submitProfile() {
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+        Singular.event(SingularEvent.REGISTER_FREE_TRIAL_NAME.name, jsonData)
         if (Utils.isInternetAvailable().not()){
             showToast(getString(R.string.internet_not_available_msz))
             return

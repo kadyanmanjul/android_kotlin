@@ -114,6 +114,11 @@ class JoshContentProvider : ContentProvider() {
                     cursor.addRow(arrayOf(User.getInstance().photo))
                 return cursor
             }
+            DEVICE_ID -> {
+                val cursor = MatrixCursor(arrayOf(DEVICE_ID_COLUMN))
+                cursor.addRow(arrayOf(Utils.getDeviceId()))
+                return cursor
+            }
             RECORDING_TEXT -> {
                 val cursor = MatrixCursor(arrayOf(RECORDING_TEXT_COLUMN))
                 val toastText  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")

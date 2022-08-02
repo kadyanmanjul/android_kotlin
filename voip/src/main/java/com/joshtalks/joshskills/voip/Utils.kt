@@ -276,6 +276,27 @@ fun Context.getMentorProfile(): String {
     return mentorProfile
 }
 
+fun Context.getDeviceId(): String {
+    var deviceId = ""
+    val deviceIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + DEVICE_ID),
+        null,
+        null,
+        null,
+        null
+    )
+
+    deviceIdCursor?.moveToFirst()
+    try {
+        deviceId = deviceIdCursor.getStringData(DEVICE_ID_COLUMN)
+        deviceIdCursor?.close()
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        return ""
+    }
+    return deviceId
+}
+
 fun Context.getServiceNotificationIntent(data: NotificationData): PendingIntent {
     val callingActivity = Intent()
     var pendingIntent: PendingIntent? = null
