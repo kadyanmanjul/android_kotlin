@@ -464,4 +464,8 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
 
     implementation 'com.github.ZeroOneZeroR:android_audio_mixer:v1.1'
+
+    //jcodec
+    implementation 'org.jcodec:jcodec:0.2.3'
+    implementation 'org.jcodec:jcodec-android:0.2.3'
 }
