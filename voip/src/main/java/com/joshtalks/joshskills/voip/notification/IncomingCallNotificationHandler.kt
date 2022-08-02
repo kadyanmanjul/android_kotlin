@@ -44,10 +44,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
                 calling = GroupCall()
             }
         }
-
         if(!isShowingIncomingCall && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState() == PSTN_STATE_IDLE) {
-            val remoteView = calling.notificationLayout(map) ?: return
-            voipNotification = VoipNotification(remoteView, NotificationPriority.High)
             voipNotification.show()
             currentIncomingCallNotificationId = voipNotification.getNotificationId()
             updateIncomingCallState(true)
@@ -76,6 +73,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
     }
 
     override fun removeNotification() {
+        if(isShowingIncomingCall)
         voipNotification.removeNotification(currentIncomingCallNotificationId)
         stopAudio()
         updateIncomingCallState(false)
