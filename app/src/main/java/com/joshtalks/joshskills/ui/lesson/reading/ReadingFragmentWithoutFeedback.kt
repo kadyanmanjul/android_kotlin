@@ -347,7 +347,7 @@ class ReadingFragmentWithoutFeedback :
 
                 }
                 VIDEO_AUDIO_MUX_FAILED -> {
-                    muxVideoOldMethod()
+                    muxVideoOldMethod(filePath!!)
                 }
             }
         }
@@ -1475,7 +1475,7 @@ class ReadingFragmentWithoutFeedback :
 
             override fun onEnd() {
                 Log.d(TAG, "onEnd() called $mergedAudioPath ")
-                mux(mergedAudioPath, videoDownPath!!)
+                muxVideoOldMethod(mergedAudioPath)
                 audioMixer.release()
             }
 
@@ -1568,7 +1568,7 @@ class ReadingFragmentWithoutFeedback :
         Log.d(TAG, "mux() called with: outputFile = $outputFile ")
     }
 
-    private fun muxVideoOldMethod() {
+    private fun muxVideoOldMethod(audio:String) {
         showToast("Media Muxer : Video mixing")
         if (File(outputFile).exists()) {
             File(outputFile).delete()
@@ -1583,7 +1583,7 @@ class ReadingFragmentWithoutFeedback :
         } else {
             outputFile = getVideoFilePath()
         }
-        audioVideoMuxer()
+        audioVideoMuxer(audio)
         if (isAdded && activity != null) {
             requireActivity().runOnUiThread {
                 binding.progressDialog.visibility = GONE
@@ -1654,7 +1654,7 @@ class ReadingFragmentWithoutFeedback :
         return outputAudioPath
     }
 
-    fun audioVideoMuxer() {
+    fun audioVideoMuxer(filePath: String) {
         try {
             val videoExtractor: MediaExtractor = MediaExtractor()
             val audioExtractor: MediaExtractor = MediaExtractor()
