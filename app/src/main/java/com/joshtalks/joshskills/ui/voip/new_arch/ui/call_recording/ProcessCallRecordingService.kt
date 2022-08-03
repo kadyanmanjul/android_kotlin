@@ -97,9 +97,9 @@ class ProcessCallRecordingService : Service() {
     }
 
     private fun generateVideoFromImage(inputFiles: InputFiles,bitmap: ByteArray) {
-        Log.d(TAG, "makeVideo:0 $inputFiles")
+        Log.d(TAG, "GAME observe: generateVideoFromImage 0 $inputFiles")
 
-        var screenshot: Bitmap = getResizedBitmap(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size),500)
+        var screenshot: Bitmap = getResizedBitmap(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size),400)
         if(screenshot.height %2 != 0){
             screenshot = editMyBitmap(screenshot,screenshot.height-1,screenshot.width)
         }
@@ -109,14 +109,14 @@ class ProcessCallRecordingService : Service() {
 
         var out: FileChannelWrapper? = null
         val dir = application.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-        val file = File(dir, "roughVideo.mp4")
+        val file = File(dir, "roughVideo"+"${System.currentTimeMillis()}"+".mp4")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 out = NIOUtils.writableFileChannel(file.absolutePath)
-                val encoder = AndroidSequenceEncoder(out, Rational.R(15, 1))
+                val encoder = AndroidSequenceEncoder(out, Rational.R(25, 1))
 
-                Log.d(TAG, "makeVideo: 1 ${screenshot?.height} ${screenshot?.width}  ${inputFiles.duration!!}  ${screenshot.allocationByteCount}")
+                Log.d(TAG, "GAME observe: generateVideoFromImage 1 ${screenshot?.height} ${screenshot?.width}  ${inputFiles.duration!!}  ${screenshot.allocationByteCount}")
 
                 for (a in 0..((inputFiles.duration!!)/1000)*25) {
                     encoder.encodeImage(screenshot)
@@ -130,7 +130,7 @@ class ProcessCallRecordingService : Service() {
                 println("IOSSE")
                 inputFiles.videoPath = file.absolutePath
                 startProcessingAudioVideoMixing(inputFiles)
-                Log.d(TAG, "makeVideo: 2: $inputFiles")
+                Log.d(TAG, "GAME observe: generateVideoFromImage 3 $inputFiles")
                 NIOUtils.closeQuietly(out)
             }
         }

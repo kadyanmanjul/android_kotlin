@@ -134,6 +134,7 @@ class PrefManager {
         }
 
         fun putBitmap(bitmap: Bitmap){
+            preferenceManager.edit().remove("bitmap")?.apply()
             val editor = preferenceManager.edit()
             val baos = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 10, baos)
@@ -148,7 +149,6 @@ class PrefManager {
                 val encodedImage: String? = preferenceManager.getString("bitmap",null)
                 val b: ByteArray = Base64.decode(encodedImage, Base64.DEFAULT)
                 val bitmapImage: Bitmap = BitmapFactory.decodeByteArray(b, 0, b.size)
-                preferenceManager.edit().remove("bitmap")?.apply()
                 return b
             }
             return null

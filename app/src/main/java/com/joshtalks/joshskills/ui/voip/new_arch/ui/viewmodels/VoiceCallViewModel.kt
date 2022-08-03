@@ -147,7 +147,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         }
                         if (uiState.recordingButtonState == RecordingButtonState.RECORDING) {
                             cancelRecordingTimer()
-                            stopAudioVideoRecording()
+                            stopAudioRecording()
                         }
                     }
                     ServiceEvents.RECONNECTING_FAILED -> {
@@ -159,9 +159,9 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         }
                     }
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
-                        Log.d(TAG, " GAME observe: listenVoipEvents() called")
+                        Log.d(TAG, " GAME observe: PROCESS_AGORA_CALL_RECORDING")
                         File(PrefManager.getLastRecordingPath()).let { file ->
-                            stopRecording(file)
+                            processRecording(file)
                             cancelRecordingTimer()
                         }
                     }
@@ -177,15 +177,15 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         uiState.recordBtnTxt = "Stop"
     }
 
-    fun stopRecording(recordFile: File) {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun processRecording(recordFile: File) {
+        CoroutineScope(Dispatchers.IO).launch {
             if (recordFile.absolutePath.isEmpty().not()) {
                 val len = recordFile.length()
                 if (len < 1) {
                     return@launch
                 }
                 val currentTime = SystemClock.elapsedRealtime()
-                Log.d(TAG, "stopRecording: ${recordFile.getMediaDuration().toInt()}")
+                Log.d(TAG, "GAME observe :processRecording  ${recordFile.getMediaDuration().toInt()} ${recordFile.absolutePath}")
                 ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = recordFile.getMediaDuration().toInt(), bitmap = PrefManager.getBitmap()!!)
                 CallRecordingAnalytics.addAnalytics(
                     agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -214,22 +214,21 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             agoraCallId = PrefManager.getAgraCallId().toString(),
             agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
         )
-        startAudioVideoRecording(view)
+        startAudioRecording()
     }
 
-    fun startAudioVideoRecording(view: View){
+    fun startAudioRecording(){
         try {
-            videoRecordFile = File(Utils.context?.getVideoUrl()?:"")
-//            ScreenViewRecorder.videoRecorder.startPlayer(videoRecordFile?.absolutePath?:"", Utils.context!!,view)
+            Log.d(TAG, " GAME observe: startAudioRecording")
             repository.startAgoraRecording()
         }catch (ex:Exception){
             Log.e(TAG, "startAudioVideoRecording: ${ex.message}")
         }
     }
 
-    fun stopAudioVideoRecording(){
+    fun stopAudioRecording(){
         try {
-//            ScreenViewRecorder.videoRecorder.stopPlaying()
+            Log.d(TAG, " GAME observe: stopAudioRecording")
             repository.stopAgoraClientCallRecording()
         }catch (e:Exception){
             Log.e(TAG, "stopAudioVideoRecording: ${e.message}")
@@ -282,7 +281,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 uiState.gameWord = state.nextGameWord
                 uiState.wordColor = state.nextGameWordColor
                 uiState.isStartGameClicked = state.isStartGameClicked
-                uiState.isNextWordClicked = state.isNextWordClicked
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType
@@ -307,7 +305,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             cancelRecordingTimer()
                             if (state.isStartGameClicked && uiState.isRecordingEnabled) {
                                     Log.d(TAG, "GAME observe: SENTREQUEST inside ")
-                                    recordingStopButtonClickListener()
+                                stopAudioRecording()
                                 uiState.isRecordingEnabled = state.isRecordingEnabled
                             }
 
@@ -316,7 +314,13 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         Log.d(TAG, "GAME observe: RECORDING ${applicationContext.ifEnoughMemorySize()} ${!uiState.isRecordingEnabled} ${state.isRecordingEnabled}")
                         if (applicationContext.ifEnoughMemorySize() && !uiState.isRecordingEnabled) {
                             startRecordingTimer(uiState.recordingButtonState)
-                            recordingStartedUIChanges()
+                            val msg1 = Message.obtain().apply {
+                                what = SAVE_SCREENSHOT
+                            }
+                            withContext(Dispatchers.Main) {
+                                singleLiveEvent.value = msg1
+                            }
+                            startAudioRecording()
                             uiState.isRecordingEnabled = state.isRecordingEnabled
                         }
                     }
@@ -342,12 +346,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         singleLiveEvent.value = msg
                     }
 
-                    val msg1 = Message.obtain().apply {
-                        what = SAVE_SCREENSHOT
-                    }
-                    withContext(Dispatchers.Main) {
-                        singleLiveEvent.value = msg1
-                    }
                 }
 
                 if(!state.isStartGameClicked || state.nextGameWord.equals("")){
@@ -358,6 +356,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         singleLiveEvent.value = msg
                     }
                 }
+                uiState.isNextWordClicked = state.isNextWordClicked
+
 
                 if (uiState.isSpeakerOn != state.isSpeakerOn) {
                     uiState.isSpeakerOn = state.isSpeakerOn
@@ -374,7 +374,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun getTime(recordingButtonState: RecordingButtonState): Job? {
         try {
             timer = CoroutineScope(Dispatchers.IO).launch {
-                delay(180000)
+                delay(15000)
                 if (recordingButtonState == RecordingButtonState.RECORDING) {
                     if (uiState.recordTime > 0) {
                         repository.stopCallRecording()
@@ -452,60 +452,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             )
             repository.turnOnSpeaker()
         }
-    }
-
-    // User Action
-    fun recordCall(v: View) {
-        Log.d(TAG, "recordCall")
-        when(uiState.recordingButtonState) {
-            RecordingButtonState.IDLE -> {
-                CallAnalytics.addAnalytics(
-                    event = EventName.RECORDING_INITIATED,
-                    agoraCallId = PrefManager.getAgraCallId().toString(),
-                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-                )
-                recordingWaitingForUserUI()
-                repository.startCallRecording()
-            }
-            RecordingButtonState.SENTREQUEST -> {
-                Log.i(TAG, "recordCall: cancelled")
-                cancelRecording()
-                CallAnalytics.addAnalytics(
-                    event = EventName.RECORDING_STOPPED,
-                    agoraCallId = PrefManager.getAgraCallId().toString(),
-                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-                )
-                stoppedRecUIchanges()
-                stopAudioVideoRecording()
-                repository.stopCallRecording()
-            }
-            RecordingButtonState.RECORDING -> {
-                recordingStopButtonClickListener()
-            }
-        }
-    }
-
-    fun recordingStopButtonClickListener(){
-        CallAnalytics.addAnalytics(
-            event = EventName.RECORDING_STOPPED,
-            agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-        )
-        stoppedRecUIchanges()
-        stopAudioVideoRecording()
-    }
-
-    private fun stoppedRecUIchanges() {
-        uiState.recordBtnTxt = "Record"
-        uiState.recordBtnImg = R.drawable.call_fragment_record
-        uiState.visibleCrdView = false
-    }
-
-    private fun recordingWaitingForUserUI() {
-        uiState.recordCrdViewTxt = "Waiting for your partner to accept"
-        uiState.visibleCrdView = true
-        uiState.recordBtnImg = R.drawable.ic_cancel_record
-        uiState.recordBtnTxt = "Cancel"
     }
 
     // User Action

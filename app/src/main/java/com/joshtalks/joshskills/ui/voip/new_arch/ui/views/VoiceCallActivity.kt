@@ -226,13 +226,13 @@ class VoiceCallActivity : BaseActivity() {
                     window.statusBarColor  = ContextCompat.getColor(this,R.color.colorPrimaryDark)
                 }
                 SHOW_RECORDING_PERMISSION_DIALOG -> {
-                    vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
+//                    vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
                 }
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 HIDE_RECORDING_PERMISSION_DIALOG -> {
                     hideRecordingPermissionDialog()
                     if (it.obj == true){
-                        vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
+//                        vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
                     }
                 }
                 else -> {

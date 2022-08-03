@@ -135,7 +135,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
 
     private fun saveBitmap() {
         try {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.Main).launch {
                 delay(2000)
                 PrefManager.putBitmap(callBinding.root.drawToBitmap())
             }
