@@ -12,9 +12,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.profile.FansListFragment
 import com.joshtalks.badebhaiya.profile.FansListScreen
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -54,6 +56,15 @@ class ListenersListFragment: Fragment() {
                     listenersList,
                     onItemClick = {
 //                        viewModel.openProfile(it.user_id)
+                        val nextFrag = ProfileFragment()
+                        val bundle = Bundle()
+                        bundle.putString("user", it.uuid) // use as per your need
+                        bundle.putString("source","LIVE_ROOM")
+                        nextFrag.arguments = bundle
+                        activity?.supportFragmentManager?.beginTransaction()
+                            ?.add(R.id.fragmentContainer, nextFrag, "findThisFragment")
+                            //?.addToBackStack(null)
+                            ?.commit()
                     },
                     onCloseCall = {
                         dismissFragment() }
