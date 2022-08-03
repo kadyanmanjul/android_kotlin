@@ -177,6 +177,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = viewModel
+        binding.user = User.getInstance()
 
 
         Timber.d("FEED INTENT ${intent.extras}")

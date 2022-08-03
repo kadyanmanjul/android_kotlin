@@ -10,6 +10,7 @@ import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.appUpdater.JoshAppUpdater
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
+import com.joshtalks.badebhaiya.customViews.ProfileViewTestActivity
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.model.User
@@ -124,6 +125,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
 //                    ProfileActivity.getIntent(this@LauncherActivity, viewUserId, true)
 //                }
                 val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
+//                val intent = Intent(this@LauncherActivity, ProfileViewTestActivity::class.java)
                 intent.putExtra("userId", viewUserId)
                 intent.putExtra("request_dialog",request_dialog)
                 intent
@@ -134,6 +136,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 if (viewUserId != null) {
                     // came by deeplink.. redirect to profile
                     val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
+//                    val intent = Intent(this@LauncherActivity, ProfileViewTestActivity::class.java)
                     intent.putExtra("userId", viewUserId)
                     intent.putExtra("profile_deeplink", true)
                     intent.putExtra("request_dialog",request_dialog)

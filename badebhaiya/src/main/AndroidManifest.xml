@@ -32,6 +32,9 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".customViews.ProfileViewTestActivity"
+            android:exported="false" />
+        <activity
             android:name=".signup.PeopleToFollowActivity"
             android:exported="false"
             android:label="@string/title_activity_people_to_follow"
@@ -133,7 +136,6 @@
             android:name=".recordedRoomPlayer.di.ProcessRoomRecordingService"
             android:enabled="true"
             android:exported="false" />
-
         <service android:name=".recordedRoomPlayer.AudioPlayerService">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />

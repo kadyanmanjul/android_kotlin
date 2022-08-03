@@ -6,7 +6,6 @@
     <data>
 
         <import type="android.view.View" />
-        <import type="com.joshtalks.badebhaiya.repository.model.User" />
 
         <variable
             name="viewModel"
@@ -15,6 +14,10 @@
         <variable
             name="handler"
             type="com.joshtalks.badebhaiya.feed.FeedActivity" />
+
+        <variable
+            name="user"
+            type="com.joshtalks.badebhaiya.repository.model.User" />
 
     </data>
 
@@ -88,16 +91,17 @@
                     tools:text="39"
                     tools:visibility="visible" />
 
-                <com.google.android.material.imageview.ShapeableImageView
+                <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                     android:id="@+id/profile_iv"
-                    initialsFontSize="@{16}"
                     onSingleClick="@{() -> handler.onProfileClicked()}"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    app:dynamicImageUrl="@{user.profilePicUrl}"
+                    app:dynamicUserName="@{user.firstName}"
+                    app:cornerRadius="@dimen/_6sdp"
+                    app:textSize="@dimen/_4ssp"
                     android:layout_marginVertical="@dimen/_10sdp"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp"
-                    app:srcCompat="@drawable/ic_profile_header" />
+                    android:scaleType="centerCrop"/>
 
             </FrameLayout>
 
