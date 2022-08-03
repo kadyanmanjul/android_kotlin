@@ -67,6 +67,7 @@ import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
+import com.joshtalks.joshskills.voip.getDeviceId
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import com.singular.sdk.Singular
@@ -111,7 +112,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var loginStartFreeTrial = false
     private var is100PointsObtained = false
     private var isHundredPointsActive = false
-
     companion object {
         fun startPaymentSummaryActivity(
             activity: Activity,
@@ -182,6 +182,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
         jsonData.put(ParamKeys.TEST_ID.name, testId)
         Singular.eventJSON(SingularEvent.OPENED_CHECKOUT_PAGE.name, jsonData)
+        AppAnalytics.create(SingularEvent.OPENED_CHECKOUT_PAGE.name).addDeviceId().push()
     }
 
     private fun initViewModel() {
@@ -840,6 +841,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
         jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
         Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
+        AppAnalytics.create(SingularEvent.INITIATED_PAYMENT.name).addDeviceId().push()
 
         if(!loginStartFreeTrial) {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_STARTED)
@@ -931,6 +933,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
             jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
             Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
+            AppAnalytics.create(SingularEvent.PAYMENT_FAILED.name).addDeviceId().push()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1014,6 +1017,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     Pair(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 )
             )
+            AppAnalytics.create(SingularEvent.PAYMENT_SUCCESSFUL.name).addDeviceId().push()
         } catch (e: Exception) {
             e.printStackTrace()
         }

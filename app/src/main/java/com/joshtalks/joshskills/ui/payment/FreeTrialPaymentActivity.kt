@@ -175,6 +175,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
         jsonData.put(ParamKeys.TEST_ID.name, testId)
         Singular.eventJSON(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, jsonData)
+        AppAnalytics.create(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name).addDeviceId().push()
     }
 
     private fun dynamicCardCreation() {
@@ -910,6 +911,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             )
             jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
             Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
+            AppAnalytics.create(SingularEvent.INITIATED_PAYMENT.name).addDeviceId().push()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -990,6 +992,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             )
             jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
             Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
+            AppAnalytics.create(SingularEvent.PAYMENT_FAILED.name).addDeviceId().push()
         } catch (e: Exception) {
             e.printStackTrace()
         }

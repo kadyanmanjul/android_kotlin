@@ -28,10 +28,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.analytics.SingularEvent
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -69,7 +66,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.lang.String.format
 import java.util.*
 
 const val NOT_ATTEMPTED = "NA"
@@ -217,8 +213,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             val jsonData = JSONObject()
             jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             Singular.eventJSON(SingularEvent.CALL_INITIATED.name, jsonData)
-            val parameters = HashMap<String, Any>()
-            AppObjectController.firebaseAnalytics.logEvent("CALL_INITIATED", convertMapToBundle(parameters))
+            AppAnalytics.create(SingularEvent.CALL_INITIATED.name).addDeviceId().push()
             MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
@@ -556,16 +551,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
         initDemoViews(lessonNo)
-    }
-
-    private fun convertMapToBundle(properties: HashMap<String, Any>): Bundle? {
-        val bundle = Bundle()
-        for (o in properties.keys) {
-            val key: String = format(o)
-            val value = "" + properties[key]
-            bundle.putString(key, value)
-        }
-        return bundle
     }
 
     private fun postSpeakingScreenSeenGoal() {

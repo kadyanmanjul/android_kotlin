@@ -22,8 +22,6 @@ import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.singular.sdk.Singular
-import java.util.*
-import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 import org.json.JSONObject
 
 class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
@@ -128,6 +126,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
         Singular.eventJSON(SingularEvent.REGISTER_FREE_TRIAL_NAME.name, jsonData)
+        AppAnalytics.create(SingularEvent.REGISTER_FREE_TRIAL_NAME.name).addDeviceId().push()
         if (Utils.isInternetAvailable().not()){
             showToast(getString(R.string.internet_not_available_msz))
             return

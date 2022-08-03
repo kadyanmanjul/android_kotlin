@@ -7,10 +7,13 @@ import com.facebook.appevents.AppEventsLogger
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.RegistrationMethods
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.singular.sdk.Singular
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.util.*
+import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.*
 
@@ -323,6 +326,11 @@ object MarketingAnalytics {
                     .addBasicParam()
                     .addUserDetails()
                     .push()
+
+                val jsonData = JSONObject()
+                jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+                Singular.eventJSON(SingularEvent.SPEAKING_COMPLETED.name, jsonData)
+                AppAnalytics.create(SingularEvent.SPEAKING_COMPLETED.name).addDeviceId().push()
             }
         }
 

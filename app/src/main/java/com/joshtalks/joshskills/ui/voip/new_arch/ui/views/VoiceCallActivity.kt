@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,15 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_GAME_ON
 import com.joshtalks.joshskills.core.PermissionUtils.callingPermissionPermanentlyDeniedDialog
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
@@ -33,15 +25,12 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.getDeviceId
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import com.singular.sdk.Singular
 import kotlinx.coroutines.sync.Mutex
-import org.json.JSONObject
 
 private const val TAG = "VoiceCallActivity"
 
@@ -222,9 +211,6 @@ class VoiceCallActivity : BaseActivity() {
                     }
                 }
                 CLOSE_CALL_SCREEN -> {
-                    val jsonData = JSONObject()
-                    jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
-                    Singular.eventJSON("SPEAKING_COMPLETED", jsonData)
                     finishAndRemoveTask()
                 }
                 CHANGE_APP_THEME_T0_BLACK->{

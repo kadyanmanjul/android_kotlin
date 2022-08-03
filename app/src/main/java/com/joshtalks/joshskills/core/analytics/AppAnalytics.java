@@ -16,6 +16,7 @@ import static com.joshtalks.joshskills.core.PrefManagerKt.IS_FREE_TRIAL;
 import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
 import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
 import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
+import com.joshtalks.joshskills.core.Utils;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
@@ -269,6 +270,14 @@ public class AppAnalytics {
                             !InstallReferrerModel.getPrefObject().getUtmMedium().isEmpty()
             )
                 parameters.put(AnalyticsEvent.UTM_MEDIUM.getNAME(), InstallReferrerModel.getPrefObject().getUtmMedium());
+        } catch (Exception e) {
+        }
+        return this;
+    }
+
+    public AppAnalytics addDeviceId(){
+        try {
+            parameters.put(AnalyticsEvent.DEVICE_ID.getNAME(), Utils.INSTANCE.getDeviceId());
         } catch (Exception e) {
         }
         return this;

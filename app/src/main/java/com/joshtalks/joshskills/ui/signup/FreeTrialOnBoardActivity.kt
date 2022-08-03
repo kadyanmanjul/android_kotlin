@@ -58,6 +58,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private var eftActive = false
     private var is100PointsActive = false
     private var increaseCoursePrice = false
+    val jsonData = JSONObject()
+    val parameters = HashMap<String, Any>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -209,9 +211,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + testId)
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
-            val jsonData = JSONObject()
             jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             Singular.eventJSON(SingularEvent.JI_HAA_CLICK.name, jsonData)
+            AppAnalytics.create(SingularEvent.JI_HAA_CLICK.name).addDeviceId().push()
             PrefManager.put(USER_LOCALE, testId)
             if (testId != HINDI_TO_ENGLISH_TEST_ID && testId != ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
                 requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)

@@ -1,12 +1,9 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -33,12 +30,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.android.play.core.review.testing.FakeReviewManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.SingularEvent
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
@@ -83,6 +80,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
     private var count = 0
     private var isRatingSubmittedCount = 0
     private var isRatingSubmittedCountBilkul = 0
+    val jsonData = JSONObject()
 
     val vm: CallRatingsViewModel by lazy {
         ViewModelProvider(requireActivity())[CallRatingsViewModel::class.java]
@@ -122,15 +120,15 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
         callerMentorId = mArgs.getString(CALLER_MENTOR_ID).toString()
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
-        if (vm.getCallDurationString() == "5") {
-            val jsonData = JSONObject()
-            jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
-            Singular.eventJSON("CALL_COMPLETED_5MIN", jsonData)
+        if (vm.getDurationInMin() >= 5) {
+            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.context?.getDeviceId())
+            Singular.eventJSON(SingularEvent.CALL_COMPLETED_5MIN.name, jsonData)
+            AppAnalytics.create(SingularEvent.CALL_COMPLETED_5MIN.name).addDeviceId().push()
         }
-        if (vm.getCallDurationString() == "20") {
-            val jsonData = JSONObject()
-            jsonData.put("DEVICE_ID", Utils.context?.getDeviceId())
-            Singular.eventJSON("CALL_COMPLETED_20MIN", jsonData)
+        if (vm.getDurationInMin() >= 20) {
+            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.context?.getDeviceId())
+            Singular.eventJSON(SingularEvent.CALL_COMPLETED_20MIN.name, jsonData)
+            AppAnalytics.create(SingularEvent.CALL_COMPLETED_20MIN.name).addDeviceId().push()
         }
         binding.howCallTxt.text = getString(R.string.how_was_your_call_name, callerName)
         binding.callDurationText.text = getString(R.string.you_spoke_for_minutes, vm.getCallDurationString())

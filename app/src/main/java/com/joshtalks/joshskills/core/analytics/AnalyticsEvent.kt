@@ -20,6 +20,7 @@ enum class AnalyticsEvent(val NAME: String) {
     USER_NAME("User name V3"),
     USER_EMAIL("User email id V3"),
     USER_PHONE_NUMBER("User Phone Number V3"),
+    DEVICE_ID("Device id"),
 
     APP_LAUNCHED("App Launched V3"),
     NETWORK_CARRIER("Network Carrier V3"),
