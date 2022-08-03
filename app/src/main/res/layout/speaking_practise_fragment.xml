@@ -189,6 +189,7 @@
                     android:drawablePadding="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="@string/how_to_speak"
+                    app:drawableStartCompat="@drawable/ic_info"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16.90sp"
@@ -757,6 +758,7 @@
                     android:orientation="vertical"
                     android:visibility="gone"
                     android:background="@drawable/crd_red_border"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:paddingVertical="@dimen/_16sdp">
 
@@ -765,7 +767,7 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
                         android:gravity="center_horizontal"
-                        android:textSize="@dimen/_16sdp"
+                        android:textSize="@dimen/_15sdp"
                         android:layout_marginHorizontal="@dimen/_12sdp"
                         android:textColor="@color/red"
                         android:text="@string/you_have_reached_limit_freetrial" />
