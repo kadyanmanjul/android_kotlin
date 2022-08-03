@@ -1,12 +1,13 @@
 package com.joshtalks.badebhaiya
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
@@ -28,11 +29,6 @@ import com.joshtalks.badebhaiya.search.SearchSuggestionAdapter
 import com.joshtalks.badebhaiya.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_feed.*
-import kotlinx.android.synthetic.main.activity_sign_up.*
-import kotlinx.android.synthetic.main.fragment_search.*
-import kotlinx.android.synthetic.main.li_room_event.view.*
-import kotlinx.android.synthetic.main.li_search_event.*
-import kotlinx.android.synthetic.main.li_search_event.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -145,6 +141,8 @@ class SearchFragment : Fragment(), Call {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 searchViewModel.searchSuggestions.collectLatest {
+                    val animationController: LayoutAnimationController =
+                        AnimationUtils.loadLayoutAnimation(binding.searchSuggestionList.context, R.anim.search_animation)
                     searchSuggestionAdapter.submitData(it)
                 }
             }

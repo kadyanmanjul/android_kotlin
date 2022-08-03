@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.mediaPlayer
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.os.Bundle
+import android.transition.Fade
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -96,8 +97,8 @@ class RecordedRoomFragment : Fragment() {
                 bundle.putParcelable(ROOM_DATA,room)
                 fragment.arguments = bundle
 
-
-
+                fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
+                fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
             activity
                 .supportFragmentManager
                 .beginTransaction()
@@ -245,9 +246,8 @@ class RecordedRoomFragment : Fragment() {
             }
             else
             {
-                activity?.supportFragmentManager?.popBackStack()
-//                        finishFragment()
-//                        return
+                activity?.supportFragmentManager?.beginTransaction()?.remove(this@RecordedRoomFragment)
+                    ?.commitAllowingStateLoss()
             }
             feedViewModel.isBackPressed.value = false
         }

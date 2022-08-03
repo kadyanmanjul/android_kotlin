@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Fade
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -133,10 +134,13 @@ class SignUpActivity : AppCompatActivity(), Call {
     private fun openEnterPhoneNumberFragment() {
         binding.btnWelcome.visibility = View.GONE
         supportFragmentManager.commit(true) {
+            val fragment=SignUpEnterPhoneFragment()
+            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
+            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
             addToBackStack(SignUpEnterPhoneFragment::class.java.name)
             replace(
                 R.id.container,
-                SignUpEnterPhoneFragment.newInstance(),
+                fragment,
                 SignUpEnterPhoneFragment::class.java.name
             )
         }
@@ -144,9 +148,12 @@ class SignUpActivity : AppCompatActivity(), Call {
 
     private fun openOTPVerificationFragment() {
         supportFragmentManager.commit(true) {
+            val fragment=SignUpEnterOTPFragment()
+            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
+            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
             replace(
                 R.id.container,
-                SignUpEnterOTPFragment.newInstance(),
+                fragment,
                 SignUpEnterOTPFragment::class.java.name
             )
         }
@@ -154,9 +161,12 @@ class SignUpActivity : AppCompatActivity(), Call {
 
     private fun openEnterNameFragment() {
         supportFragmentManager.commit(true) {
+            val fragment=SignUpEnterNameFragment()
+            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
+            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
             replace(
                 R.id.container,
-                SignUpEnterNameFragment.newInstance(),
+                fragment,
                 SignUpEnterNameFragment::class.java.name
             )
         }
@@ -171,9 +181,12 @@ class SignUpActivity : AppCompatActivity(), Call {
 
     private fun openUploadProfilePicFragment() {
         supportFragmentManager.commit(true) {
+            val fragment=SignUpAddProfilePhotoFragment()
+            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
+            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
             replace(
                 R.id.container,
-                SignUpAddProfilePhotoFragment.newInstance(),
+                fragment,
                 SignUpAddProfilePhotoFragment::class.java.name
             )
         }
@@ -188,11 +201,14 @@ class SignUpActivity : AppCompatActivity(), Call {
             intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY -> {
                 //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
                 val bundle = Bundle()
+                val fragment=ProfileFragment()
+                fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
+                fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
                 bundle.putString("user", intent.extras?.getString(USER_ID))
                 bundle.putString("request_dialog",intent.extras?.getString("request_room"))
                 supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
+                    .replace(R.id.root_view, fragment, ProfileFragment::class.java.simpleName)
                     .commit()
 
                 this@SignUpActivity.finishAffinity()
@@ -200,6 +216,7 @@ class SignUpActivity : AppCompatActivity(), Call {
             }
             else -> Intent(this, FeedActivity::class.java).also { it ->
                 startActivity(it)
+                overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
 
                 this@SignUpActivity.finishAffinity()
 

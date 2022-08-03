@@ -155,7 +155,7 @@ class ProfileViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         response.body()?.let {
                             userProfileData.postValue(it)
-                            userFullName.set(it.fullName)
+                            userFullName.set(it.firstName)
                             profileUrl = it.profilePicUrl ?: ""
                             speakerFollowed.postValue(it.isSpeakerFollowed)
                             it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
@@ -168,6 +168,12 @@ class ProfileViewModel : ViewModel() {
                                 list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
                                     roomListResponseItem.conversationRoomType =
                                         ConversationRoomType.LIVE
+                                    roomListResponseItem
+                                })
+                            if (it.recordedRooms.isNullOrEmpty().not())
+                                list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        ConversationRoomType.RECORDED
                                     roomListResponseItem
                                 })
                             if (it.scheduledRoomList.isNullOrEmpty().not())
@@ -210,7 +216,7 @@ class ProfileViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         response.body()?.let {
                             userProfileData.postValue(it)
-                            userFullName.set(it.fullName)
+                            userFullName.set(it.firstName)
                             profileUrl = it.profilePicUrl ?: ""
                             speakerFollowed.postValue(it.isSpeakerFollowed)
                             it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
@@ -223,6 +229,12 @@ class ProfileViewModel : ViewModel() {
                                 list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
                                     roomListResponseItem.conversationRoomType =
                                         ConversationRoomType.LIVE
+                                    roomListResponseItem
+                                })
+                            if (it.recordedRooms.isNullOrEmpty().not())
+                                list.addAll(it.recordedRooms!!.map { roomListResponseItem ->
+                                    roomListResponseItem.conversationRoomType =
+                                        ConversationRoomType.RECORDED
                                     roomListResponseItem
                                 })
                             if (it.scheduledRoomList.isNullOrEmpty().not())

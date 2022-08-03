@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.transition.Fade
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -1077,7 +1078,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             layoutManager = GridLayoutManager(requireContext(), 3)
             setHasFixedSize(false)
             isNestedScrollingEnabled = false
-            itemAnimator = null
+//            itemAnimator = null
             adapter = speakerAdapter
         }
 
@@ -1085,7 +1086,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             layoutManager = GridLayoutManager(requireContext(), 3)
             setHasFixedSize(false)
             isNestedScrollingEnabled = false
-            itemAnimator = null
+//            itemAnimator = null
             adapter = audienceAdapter
         }
 
@@ -1441,6 +1442,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
                     val fragment = LiveRoomFragment() // replace your custom fragment class
                     val bundle = Bundle()
+                    fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
+                    fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
                     bundle.putString("source", from) // use as per your need
                     bundle.putBoolean("isSpeaker",isSpeaker)
                     fragment.arguments = bundle
