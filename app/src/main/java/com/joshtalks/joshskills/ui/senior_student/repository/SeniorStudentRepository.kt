@@ -16,7 +16,7 @@ class SeniorStudentRepository {
 
     private suspend fun getSeniorStudentDataFromNetwork() : SeniorStudentModel {
             return try {
-                AppObjectController.seniorStudentService.getSeniorStudentData()
+                AppObjectController.commonNetworkService.getSeniorStudentData()
             } catch (e : Exception) {
                 SeniorStudentModel()
             }

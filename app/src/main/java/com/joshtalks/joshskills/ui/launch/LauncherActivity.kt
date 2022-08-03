@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.util.*
+import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
@@ -42,6 +43,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
+
     private var testId: String? = null
     private val viewModel: LauncherViewModel by lazy {
         ViewModelProvider(this).get(LauncherViewModel::class.java)
@@ -52,8 +54,14 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         ActivityLauncherBinding.inflate(layoutInflater)
     }
 
+    companion object {
+        @JvmStatic
+        var isLingverInit = false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel.initApp()
+        initiateLibraries()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         LogSaver.startSavingLog() // to save logs in external storage
@@ -62,6 +70,17 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         setObservers()
         initSingularSDK()
         viewModel.addAnalytics()
+    }
+
+    @Synchronized
+    private fun initiateLibraries() {
+        if (!isLingverInit) {
+            isLingverInit = true
+            if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
+                PrefManager.put(USER_LOCALE, "en")
+            }
+            Lingver.init(application, PrefManager.getStringValue(USER_LOCALE))
+        }
     }
 
     private fun initSingularSDK() {

@@ -116,7 +116,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.group.views.JoshVoipGroupActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.group.JoshGroupActivity"
             android:exported="true"
@@ -631,13 +632,13 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".core.service.ServiceStartReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_LOCKED_BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+<!--        <receiver-->
+<!--            android:name=".core.service.ServiceStartReceiver"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.ACTION_LOCKED_BOOT_COMPLETED" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
         <!-- Audio Control Module Receivers -->
         <receiver
             android:name="com.joshtalks.joshskills.voip.audiocontroller.HeadsetReceiver"

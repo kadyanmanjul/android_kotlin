@@ -33,7 +33,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
-import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
@@ -164,7 +163,7 @@ class JoshApplication :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intentFilter.addAction(Intent.ACTION_USER_UNLOCKED)
         }
-        registerReceiver(ServiceStartReceiver(), intentFilter)
+//        registerReceiver(ServiceStartReceiver(), intentFilter)
 
         JoshSkillExecutors.BOUNDED.submit {
             if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {

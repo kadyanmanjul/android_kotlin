@@ -27,6 +27,8 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
+import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
+import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.userprofile.models.*
@@ -155,6 +157,9 @@ interface CommonNetworkService {
 
     @GET("$DIR/voicecall/topic/v2/{id}/")
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopic
+
+    @GET("$DIR/voicecall/senior_student_info/")
+    suspend fun getSeniorStudentData(): SeniorStudentModel
 
     @GET("$DIR/certificateexam/{id}/")
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
@@ -307,6 +312,13 @@ interface CommonNetworkService {
 
     @POST("$DIR/course/free_trial_register_course/")
     suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, String>): Response<Void>
+
+    @GET("$DIR/course/cohort_batch/")
+    suspend fun getCohortBatches(): Response<CohortModel>
+
+    @JvmSuppressWildcards
+    @POST("$DIR/course/cohort_batch/")
+    suspend fun postSelectedBatch(@Body params: Map<String, Any>): Response<Unit>
 
     @POST("$DIR/impression/track_impressions/")
     suspend fun saveImpression(@Body params: Map<String, String>): Response<Void>

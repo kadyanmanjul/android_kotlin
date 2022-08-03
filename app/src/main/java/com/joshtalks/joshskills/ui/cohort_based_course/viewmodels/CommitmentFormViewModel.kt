@@ -67,7 +67,7 @@ class CommitmentFormViewModel : ViewModel() {
     fun getCohortBatches() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp = AppObjectController.CbcNetworkService.getCohortBatches().body()
+                val resp = AppObjectController.commonNetworkService.getCohortBatches().body()
                 withContext(Dispatchers.Main) {
                     cohortBatchList.addAll(resp?.slots as ArrayList<CohortItemModel>)
                 }
@@ -83,7 +83,7 @@ class CommitmentFormViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 if (Utils.isInternetAvailable()){
-                    val resp = AppObjectController.CbcNetworkService.postSelectedBatch(map)
+                    val resp = AppObjectController.commonNetworkService.postSelectedBatch(map)
                     if (resp.isSuccessful) {
                         sendEvent(START_CONVERSATION_ACTIVITY)
                     } else {

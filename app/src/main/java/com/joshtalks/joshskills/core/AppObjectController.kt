@@ -48,9 +48,7 @@ import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
-import com.joshtalks.joshskills.ui.cohort_based_course.repository.CbcNetwork
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
-import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
 import com.tonyodev.fetch2.Fetch
@@ -60,7 +58,6 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.userexperior.UserExperior
-import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
@@ -106,8 +103,7 @@ class AppObjectController {
     companion object {
 
         @JvmStatic
-        var INSTANCE: AppObjectController =
-            AppObjectController()
+        var INSTANCE: AppObjectController = AppObjectController()
 
         @JvmStatic
         lateinit var joshApplication: JoshApplication
@@ -129,49 +125,40 @@ class AppObjectController {
         lateinit var retrofit: Retrofit
             private set
 
-        @JvmStatic
-        lateinit var signUpNetworkService: SignUpNetworkService
-            private set
+        val signUpNetworkService: SignUpNetworkService by lazy {
+            retrofit.create(SignUpNetworkService::class.java)
+        }
 
-        @JvmStatic
-        lateinit var commonNetworkService: CommonNetworkService
-            private set
+        val commonNetworkService: CommonNetworkService by lazy {
+            retrofit.create(CommonNetworkService::class.java)
+        }
+
+        val voipAnalyticsService: VoipAnalyticsService by lazy {
+            retrofit.create(VoipAnalyticsService::class.java)
+        }
+
+        val chatNetworkService: ChatNetworkService by lazy {
+            retrofit.create(ChatNetworkService::class.java)
+        }
+
+        val abTestNetworkService: ABTestNetworkService by lazy {
+            retrofit.create(ABTestNetworkService::class.java)
+        }
+
+        val utilsAPIService: UtilsAPIService by lazy {
+            retrofit.create(UtilsAPIService::class.java)
+        }
+
+        val groupsNetworkService: GroupApiService by lazy {
+            retrofit.create(GroupApiService::class.java)
+        }
 
         @JvmStatic
         lateinit var p2pNetworkService: P2PNetworkService
             private set
 
         @JvmStatic
-        lateinit var voipAnalyticsService: VoipAnalyticsService
-            private set
-
-        @JvmStatic
-        lateinit var seniorStudentService: SeniorStudentService
-            private set
-
-        @JvmStatic
-        lateinit var chatNetworkService: ChatNetworkService
-            private set
-
-
-        @JvmStatic
         lateinit var mediaDUNetworkService: MediaDUNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var abTestNetworkService: ABTestNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var utilsAPIService: UtilsAPIService
-            private set
-
-        @JvmStatic
-        lateinit var groupsNetworkService: GroupApiService
-            private set
-
-        @JvmStatic
-            lateinit var CbcNetworkService: CbcNetwork
             private set
 
         @JvmStatic
@@ -301,12 +288,10 @@ class AppObjectController {
 
                 if (BuildConfig.DEBUG) {
                     builder.addInterceptor(getOkhhtpToolInterceptor())
-                    val logging =
-                        HttpLoggingInterceptor { message ->
+                    val logging = HttpLoggingInterceptor { message ->
                             Timber.tag("OkHttp").d(message)
                         }.apply {
                             level = HttpLoggingInterceptor.Level.BODY
-
                         }
                     builder.addInterceptor(logging)
                     builder.addNetworkInterceptor(getStethoInterceptor())
@@ -318,15 +303,6 @@ class AppObjectController {
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
-                signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
-                chatNetworkService = retrofit.create(ChatNetworkService::class.java)
-                commonNetworkService = retrofit.create(CommonNetworkService::class.java)
-                voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
-                seniorStudentService = retrofit.create(SeniorStudentService::class.java)
-                abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
-                utilsAPIService = retrofit.create(UtilsAPIService::class.java)
-                groupsNetworkService = retrofit.create(GroupApiService::class.java)
-                CbcNetworkService = retrofit.create(CbcNetwork::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
@@ -355,12 +331,6 @@ class AppObjectController {
                 AppEventsLogger.activateApp(joshApplication)
                 initUserExperionCam()
                 initFacebookService(joshApplication)
-                // TODO: Put this in Splash
-                if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
-                    PrefManager.put(USER_LOCALE, "en")
-                }
-                // TODO: Put this in Splash
-                Lingver.init(context, PrefManager.getStringValue(USER_LOCALE))
                 // TODO: **** Needed ****
                 observeFirestore()
             }
@@ -571,7 +541,7 @@ class AppObjectController {
 
         private fun initUserExperionCam() {
             UserExperior.startRecording(
-                Companion.joshApplication,
+                joshApplication,
                 "942a0473-e1ca-40e5-af83-034cb7f57ee9"
             )
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
@@ -618,7 +588,7 @@ class AppObjectController {
             return getAppCachePath()
         }
 
-        private fun cache(): Cache? {
+        private fun cache(): Cache {
             return Cache(
                 File(joshApplication.cacheDir, "api_cache"),
                 cacheSize
@@ -645,7 +615,6 @@ class AppObjectController {
                             Timber.tag("OkHttp").d(message)
                         }.apply {
                             level = HttpLoggingInterceptor.Level.BODY
-
                         }
                     mediaOkhttpBuilder.addInterceptor(logging)
                     mediaOkhttpBuilder.addNetworkInterceptor(getStethoInterceptor())
