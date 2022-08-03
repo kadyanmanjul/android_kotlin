@@ -355,13 +355,6 @@ class FeedViewModel : ViewModel() {
                     res.body()?.let {
                         isSpeaker.value=it.isSpeaker
                         User.getInstance().isSpeaker=it.isSpeaker!!
-
-                        if (it.liveRoomList.isNullOrEmpty().not())
-                            list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
-                                roomListResponseItem.conversationRoomType =
-                                    ConversationRoomType.LIVE
-                                roomListResponseItem
-                            })
                         if (it.scheduledRoomList.isNullOrEmpty().not())
                             list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
                                 roomListResponseItem.conversationRoomType =
@@ -371,6 +364,13 @@ class FeedViewModel : ViewModel() {
                                         ConversationRoomType.NOT_SCHEDULED
                                 roomListResponseItem
                             })
+                        if (it.liveRoomList.isNullOrEmpty().not())
+                            list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
+                                roomListResponseItem.conversationRoomType =
+                                    ConversationRoomType.LIVE
+                                roomListResponseItem
+                            })
+
                         if (list.isNullOrEmpty())
                             isRoomsAvailable.set(false)
                         else {
@@ -381,8 +381,6 @@ class FeedViewModel : ViewModel() {
                             feedAdapter.submitList(list.toList().reversed())
                         }
                     }
-                    message.what = SCROLL_TO_TOP
-                    singleLiveEvent.postValue(message)
 
                 } else {
                     isRoomsAvailable.set(false)
@@ -395,6 +393,8 @@ class FeedViewModel : ViewModel() {
             } finally {
                 isLoading.set(false)
             }
+            message.what = SCROLL_TO_TOP
+            singleLiveEvent.postValue(message)
         }
     }
 
