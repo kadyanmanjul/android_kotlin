@@ -39,13 +39,12 @@ import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -113,6 +112,7 @@ import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -254,7 +254,8 @@ class ConversationActivity :
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.handler = this
-        conversationBinding.isFreeTrialCallBlocked = PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED)
+        conversationBinding.isFreeTrialCallBlocked =
+            PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED) || PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)
         conversationBinding.executePendingBindings()
         activityRef = WeakReference(this)
         initIntentObject()
@@ -323,8 +324,6 @@ class ConversationActivity :
         initRV()
         initView()
         initFuture()
-        if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) > 1)
-            initFreeTrialTimer()
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
@@ -381,6 +380,7 @@ class ConversationActivity :
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time < System.currentTimeMillis()
         ) {
+            PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
             conversationBinding.freeTrialContainer.visibility = VISIBLE
@@ -573,6 +573,7 @@ class ConversationActivity :
                 finish()
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             }
+            conversationBinding.ivIconReferral.isVisible = inboxEntity.isCourseBought
             conversationBinding.ivIconReferral.setOnClickListener {
                 refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
 
@@ -893,13 +894,14 @@ class ConversationActivity :
     }
 
     fun callPracticePartner(v: View) {
-        startActivity(Intent(this, VoiceCallActivity::class.java).apply {
-            putExtra(
-                INTENT_DATA_COURSE_ID,
-                inboxEntity.courseId
-            )
-            putExtra(STARTING_POINT, FROM_ACTIVITY)
-        })
+        startActivity(
+            Intent(this, VoiceCallActivity::class.java).apply {
+                putExtra(INTENT_DATA_COURSE_ID, "151")
+                putExtra(INTENT_DATA_TOPIC_ID, "10")
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            }
+        )
     }
 
     fun moveToPaymentActivity(v: View) {
@@ -934,7 +936,10 @@ class ConversationActivity :
         audioPlayerManager = ExoAudioPlayer.getInstance()
         audioPlayerManager?.setProgressUpdateListener(this@ConversationActivity)
         audioPlayerManager?.playerListener = this@ConversationActivity
-        onlyChatView()
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT))
+            onlyChatView()
+        else
+            conversationBinding.bottomBar.visibility = GONE
         initSnackBar()
     }
 
@@ -2162,8 +2167,11 @@ class ConversationActivity :
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
+        if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) > 1)
+            initFreeTrialTimer()
         try {
-            conversationBinding.isFreeTrialCallBlocked = PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED)
+            conversationBinding.isFreeTrialCallBlocked =
+                PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED) || PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)
             conversationBinding.executePendingBindings()
         } catch (e: Exception) {
         }

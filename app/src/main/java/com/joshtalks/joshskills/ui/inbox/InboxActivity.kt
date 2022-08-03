@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -316,11 +315,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             lifecycleScope.launch(Dispatchers.Main) {
                 inboxAdapter.addItems(temp)
                 val inboxEntityBought = temp.filter { it.isCapsuleCourse }.getOrNull(0)
-                Log.e(
-                    TAG,
-                    "addCourseInRecyclerView: $inboxEntityBought  ${inboxEntityBought?.isCourseBought?.not()} ${inboxEntityBought != null && inboxEntityBought.isCourseBought.not()}"
-                )
-                val isCapsuleCourseBought = (inboxEntityBought != null && inboxEntityBought.isCourseBought)
+                val subscriptionCourseBought = temp.filter { it.courseId == SUBSCRIPTION_COURSE_ID }
+                var isCapsuleCourseBought = (inboxEntityBought != null && inboxEntityBought.isCourseBought)
+                subscriptionCourseBought.firstOrNull()?.let {
+                    isCapsuleCourseBought = true
+                }
                 findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible =
                     isCapsuleCourseBought.not()
                 findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = isCapsuleCourseBought
