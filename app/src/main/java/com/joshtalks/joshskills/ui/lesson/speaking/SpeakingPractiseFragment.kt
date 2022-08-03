@@ -14,7 +14,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -340,23 +339,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                     }
 
-                    when(BLOCKED){
+                    when(response.isFtCallerBlocked){
                          BLOCKED -> {
                     if(PrefManager.getBoolValue(IS_FREE_TRIAL))
                             PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
-                            binding.txtHowToSpeak.visibility = VISIBLE
                             binding.containerReachedFtLimit.visibility = VISIBLE
                             binding.btnStartTrialText.isEnabled = false
-                            binding.txtHowToSpeak.setOnClickListener {
-                                lessonActivityListener?.introVideoCmplt()
-                                viewModel.isHowToSpeakClicked(true)
-                                binding.btnCallDemo.visibility = VISIBLE
-                                viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
-                                MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_SPEAK)
-                                    .addParam(ParamKeys.LESSON_ID, lessonID)
-                                    .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
-                                    .push()
-                            }
                          }
                         SHOW_WARNING_POPUP -> {
                             // dialog for warning about shorter calls
