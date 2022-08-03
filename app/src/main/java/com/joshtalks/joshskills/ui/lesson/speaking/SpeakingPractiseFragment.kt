@@ -731,7 +731,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     fun openRatingDialog(v: View) {
         if (isAdded && activity != null) {
-            val rating = 7
+            val rating = PrefManager.getRatingObject(RATING_OBJECT)?.rating
             val dialog = AlertDialog.Builder(context)
             dialog
                 .setTitle(getString(R.string.rating_title, rating.toString()))
