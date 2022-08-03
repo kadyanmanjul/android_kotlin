@@ -136,6 +136,7 @@ class AppObjectController {
                 .create()
         }
 
+        @JvmStatic
         val gsonMapperForLocal: Gson by lazy {
             GsonBuilder()
                 .serializeNulls()
@@ -157,27 +158,6 @@ class AppObjectController {
                 .addInterceptor(HeaderInterceptor())
                 .hostnameVerifier { _, _ -> true }
                 .cache(cache())
-
-            if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
-                builder.certificatePinner(
-                    CertificatePinner.Builder()
-                        .add(
-                            getHostOfUrl(),
-                            *getCertificatePins()
-                        )
-                        .build()
-                )
-                val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .tlsVersions(TlsVersion.TLS_1_2)
-                    .cipherSuites(
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
-                    )
-                    .build()
-
-                builder.connectionSpecs(Collections.singletonList(spec))
-            }
 
             if (BuildConfig.DEBUG) {
                 builder.addInterceptor(getOkhhtpToolInterceptor())
