@@ -647,7 +647,7 @@
     <string name="label_lesson_spotlight" translatable="false">हर Lesson में चार भाग होते है</string>
     <string name="label_grammar_spotlight" translatable="false">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
     <string name="label_speaking_spotlight" translatable="false">एस भाग में आपको एक प्रैक्टिस पार्टनर के साथ 2 मिनट के लिए अंग्रेजी में बात करनी है</string>
-    <string name="label_speaking_spotlight_2" translatable="false"> To complete this section you have to speak to a practice partner for 2 minutes</string>
+    <string name="label_speaking_spotlight_2" translatable="false"> Click here. Lesson का पहला भाग है speaking practice.</string>
     <string name="label_vocab_spotlight_1" translatable="false">हर रोज़ यहाँ पर हम नए शब्द सिखेंगे</string>
     <string name="label_vocab_spotlight_2" translatable="false">Appreciate का सही उच्चारण क्या है यहां से देखे</string>
     <string name="label_vocab_spotlight_3" translatable="false">अब ये तीन वाक्यों को साथ में पढ़ कर बोले</string>

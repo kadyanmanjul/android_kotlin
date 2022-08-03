@@ -11,8 +11,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -339,27 +338,41 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                     }
 
+                    if(!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) && PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                        binding.imgRecentCallsHistory.visibility = INVISIBLE
+                        binding.btnContinue.visibility = GONE
+                        PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN,true)
+                    }
+
                     when(response.isFtCallerBlocked){
                          BLOCKED -> {
-                    if(PrefManager.getBoolValue(IS_FREE_TRIAL))
-                            PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
-                            binding.containerReachedFtLimit.visibility = VISIBLE
-                            binding.btnStartTrialText.isEnabled = false
+                            if(PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                                PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
+                                binding.containerReachedFtLimit.visibility = VISIBLE
+                                binding.btnStartTrialText.isEnabled = false
+                                binding.btnStartTrialText.alpha = 0.2F
+                                binding.infoContainer.visibility = INVISIBLE
+                            }
                          }
                         SHOW_WARNING_POPUP -> {
-                            // dialog for warning about shorter calls
-                            binding.containerReachedFtLimit.visibility = GONE
-                            AlertDialog.Builder(activity).setTitle(R.string.warning)
-                                .setIcon(R.drawable.ic_baseline_warning_24)
-                                .setPositiveButton(R.string.got_it){dialog,_ ->
-                                    dialog.dismiss()
-                                }
-                                .setMessage(R.string.shorter_calls_error_message)
-                                .show()
+                            if(PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                                // dialog for warning about shorter calls
+                                binding.containerReachedFtLimit.visibility = GONE
+                                AlertDialog.Builder(activity).setTitle(R.string.warning)
+                                    .setIcon(R.drawable.ic_baseline_warning_24)
+                                    .setPositiveButton(R.string.got_it){dialog,_ ->
+                                        dialog.dismiss()
+                                    }
+                                    .setMessage(R.string.shorter_calls_error_message)
+                                    .show()
+                            }
+
                         }
                         else->{
-                            binding.infoContainer.visibility = VISIBLE
-                            binding.containerReachedFtLimit.visibility = GONE
+                            if(PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                                binding.infoContainer.visibility = VISIBLE
+                                binding.containerReachedFtLimit.visibility = GONE
+                            }
                         }
                     }
 
