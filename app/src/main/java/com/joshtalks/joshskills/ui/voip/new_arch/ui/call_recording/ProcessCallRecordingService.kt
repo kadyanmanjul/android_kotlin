@@ -7,22 +7,24 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.Nullable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.copy
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
@@ -30,18 +32,9 @@ import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.voip.constant.SCREENSHOT_BITMAP
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
-import java.io.File
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -51,6 +44,10 @@ import org.jcodec.common.io.FileChannelWrapper
 import org.jcodec.common.io.NIOUtils
 import org.jcodec.common.model.Rational
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
 
 class ProcessCallRecordingService : Service() {
     private val MAX_NUMBER_OF_RETRIES = 5
@@ -102,7 +99,7 @@ class ProcessCallRecordingService : Service() {
     private fun generateVideoFromImage(inputFiles: InputFiles,bitmap: ByteArray) {
         Log.d(TAG, "makeVideo:0 $inputFiles")
 
-        var screenshot: Bitmap = BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size)
+        var screenshot: Bitmap = getResizedBitmap(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size),500)
         if(screenshot.height %2 != 0){
             screenshot = editMyBitmap(screenshot,screenshot.height-1,screenshot.width)
         }
@@ -119,7 +116,7 @@ class ProcessCallRecordingService : Service() {
                 out = NIOUtils.writableFileChannel(file.absolutePath)
                 val encoder = AndroidSequenceEncoder(out, Rational.R(15, 1))
 
-                Log.d(TAG, "makeVideo: 1 ${screenshot?.height} ${screenshot?.width}  ${inputFiles.duration!!}")
+                Log.d(TAG, "makeVideo: 1 ${screenshot?.height} ${screenshot?.width}  ${inputFiles.duration!!}  ${screenshot.allocationByteCount}")
 
                 for (a in 0..((inputFiles.duration!!)/1000)*25) {
                     encoder.encodeImage(screenshot)
@@ -144,6 +141,23 @@ class ProcessCallRecordingService : Service() {
 
     }
 
+    fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap {
+        var width = image.width
+        var height = image.height
+        val bitmapRatio = width.toFloat() / height.toFloat()
+        if (bitmapRatio > 1) {
+            width = maxSize
+            height = (width / bitmapRatio).toInt()
+        } else {
+            height = maxSize
+            width = (height * bitmapRatio).toInt()
+        }
+        val scaledBitmap = Bitmap.createScaledBitmap(image, width, height, true)
+        val stream = ByteArrayOutputStream()
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 75, stream) //0=lowest, 100=highest quality
+        val byteArray = stream.toByteArray()
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
     private fun cancelFileUpload() {
         CoroutineScope(Dispatchers.IO).launch {
             fileQueue.clear()
@@ -268,7 +282,7 @@ class ProcessCallRecordingService : Service() {
 
     private suspend fun uploadOnS3Server(
         responseObj: AmazonPolicyResponse,
-        mediaPath: String
+        mediaPath: String,
     ): Int {
         return CoroutineScope(Dispatchers.IO).async {
             val parameters = emptyMap<String, RequestBody>().toMutableMap()
@@ -360,9 +374,9 @@ class ProcessCallRecordingService : Service() {
             videoPath: String,
             audioPath: String,
             recordDuration: Int,
-            bitmap: ByteArray
+            bitmap: ByteArray,
 
-        ) {
+            ) {
             val intent = Intent(context, ProcessCallRecordingService::class.java)
             intent.action = START_VIDEO_AUDIO_PROCESSING
             intent.putExtra(CALL_ID, callId)
@@ -383,5 +397,5 @@ data class InputFiles(
     val audioPath: String?,
     var outputFile: File? = null,
     var serverUrl: String? = null,
-    var duration: Int? = null
+    var duration: Int? = null,
 )

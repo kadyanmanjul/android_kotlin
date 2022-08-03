@@ -207,7 +207,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 )
                                 context.sendMessageToServer(userAction)
                             }else{
-                                val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST)
+                                val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST, isRecordingEnabled = false)
                                 context.updateUIState(uiState = uiState)
                                 context.sendEventToUI(event)
                             }
@@ -438,14 +438,15 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val startTime = SystemClock.elapsedRealtime()
                                 val uiState = context.currentUiState.copy(
                                     recordingButtonState = RecordingButtonState.RECORDING,
-                                    recordingStartTime = startTime
+                                    recordingStartTime = startTime,
+                                    isRecordingEnabled = true
                                 )
                                 context.updateUIState(uiState = uiState)
                                 context.startRecording()
                             }
                         }
                         STOP_GAME_RECORDING ->{
-                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST)
+                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST, isRecordingEnabled = false)
                                 context.updateUIState(uiState = uiState)
                                 context.sendEventToUI(event)
                         }

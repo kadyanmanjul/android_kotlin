@@ -303,17 +303,17 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
                 when(state.recordingButtonState) {
                     RecordingButtonState.SENTREQUEST -> {
-                        Log.d(TAG, "GAME observe: SENTREQUEST ")
+                        Log.d(TAG, "GAME observe: SENTREQUEST ${state.isStartGameClicked} ${uiState.isRecordingEnabled} ${state.isRecordingEnabled}")
                             cancelRecordingTimer()
-                            if (state.isStartGameClicked && !uiState.isRecordingEnabled) {
-                                if(applicationContext.ifEnoughMemorySize())
-                                recordingStopButtonClickListener()
+                            if (state.isStartGameClicked && uiState.isRecordingEnabled) {
+                                    Log.d(TAG, "GAME observe: SENTREQUEST inside ")
+                                    recordingStopButtonClickListener()
+                                uiState.isRecordingEnabled = state.isRecordingEnabled
                             }
-                        uiState.isRecordingEnabled = state.isRecordingEnabled
 
                     }
                     RecordingButtonState.RECORDING -> {
-                        Log.d(TAG, "GAME observe: RECORDING ")
+                        Log.d(TAG, "GAME observe: RECORDING ${applicationContext.ifEnoughMemorySize()} ${!uiState.isRecordingEnabled} ${state.isRecordingEnabled}")
                         if (applicationContext.ifEnoughMemorySize() && !uiState.isRecordingEnabled) {
                             startRecordingTimer(uiState.recordingButtonState)
                             recordingStartedUIChanges()

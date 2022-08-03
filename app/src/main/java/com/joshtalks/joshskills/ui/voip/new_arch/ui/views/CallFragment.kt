@@ -42,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 
 class   CallFragment : BaseFragment() , SensorEventListener {
@@ -132,11 +133,14 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         }
     }
 
-
     private fun saveBitmap() {
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(2000)
-            PrefManager.putBitmap(callBinding.root.drawToBitmap())
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                delay(2000)
+                PrefManager.putBitmap(callBinding.root.drawToBitmap())
+            }
+        }catch (ex:Exception) {
+            ex.printStackTrace()
         }
     }
 

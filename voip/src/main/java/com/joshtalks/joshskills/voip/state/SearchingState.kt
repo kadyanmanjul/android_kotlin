@@ -236,7 +236,6 @@ class SearchingState(val context: CallContext) : VoipState {
                                 currentTopicImage = context.channelData.getTopicImage(),
                                 occupation = context.channelData.getOccupation(),
                                 aspiration = context.channelData.getAspiration(),
-                                isRecordingEnabled = context.channelData.isCallRecordingEnabled()
                             )
                             context.updateUIState(uiState)
                             if (context.direction == CallDirection.OUTGOING) {
