@@ -1015,4 +1015,5 @@
     <string name="wait_for_your_partner_to_click_next" translatable="false">Wait for your partner to click next</string>
     <string name="image_button_to_move_left" translatable="false">Image button to move left</string>
     <string name="image_button_to_move_right" translatable="false">Image button to move right</string>
+    <string name="grammar_completed">Grammar Completed!</string>
 </resources>
