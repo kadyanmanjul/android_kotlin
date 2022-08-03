@@ -113,17 +113,94 @@ class AppObjectController {
         lateinit var appDatabase: AppDatabase
             private set
 
-        @JvmStatic
-        lateinit var gsonMapper: Gson
-            private set
+        val gsonMapper: Gson by lazy {
+            GsonBuilder()
+                .enableComplexMapKeySerialization()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date> {
+                    @Throws(JsonParseException::class)
+                    override fun deserialize(
+                        json: JsonElement,
+                        typeOfT: Type,
+                        context: JsonDeserializationContext
+                    ): Date {
+                        return Date(json.asJsonPrimitive.asLong * 1000)
+                    }
+                })
+                .excludeFieldsWithModifiers(
+                    Modifier.TRANSIENT
+                )
+                .setDateFormat(DateFormat.LONG)
+                .setPrettyPrinting()
+                .serializeNulls()
+                .create()
+        }
 
-        @JvmStatic
-        lateinit var gsonMapperForLocal: Gson
-            private set
+        val gsonMapperForLocal: Gson by lazy {
+            GsonBuilder()
+                .serializeNulls()
+                .setDateFormat(DateFormat.LONG)
+                .setPrettyPrinting()
+                .setLenient()
+                .create()
+        }
 
-        @JvmStatic
-        lateinit var retrofit: Retrofit
-            private set
+        val builder : OkHttpClient.Builder by lazy {
+            val builder = OkHttpClient().newBuilder()
+                .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+                .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
+                // .retryOnConnectionFailure(true)
+                .followSslRedirects(true)
+                .addInterceptor(StatusCodeInterceptor())
+                .addInterceptor(HeaderInterceptor())
+                .hostnameVerifier { _, _ -> true }
+                .cache(cache())
+
+            if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
+                builder.certificatePinner(
+                    CertificatePinner.Builder()
+                        .add(
+                            getHostOfUrl(),
+                            *getCertificatePins()
+                        )
+                        .build()
+                )
+                val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .tlsVersions(TlsVersion.TLS_1_2)
+                    .cipherSuites(
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+                    )
+                    .build()
+
+                builder.connectionSpecs(Collections.singletonList(spec))
+            }
+
+            if (BuildConfig.DEBUG) {
+                builder.addInterceptor(getOkhhtpToolInterceptor())
+                val logging = HttpLoggingInterceptor { message ->
+                    Timber.tag("OkHttp").d(message)
+                }.apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+                builder.addInterceptor(logging)
+                builder.addNetworkInterceptor(getStethoInterceptor())
+                builder.eventListener(PrintingEventListener())
+            }
+            builder
+        }
+
+        val retrofit: Retrofit by lazy {
+            Retrofit.Builder()
+                .baseUrl(BuildConfig.BASE_URL)
+                .client(builder.build())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addConverterFactory(GsonConverterFactory.create(gsonMapper))
+                .build()
+        }
 
         val signUpNetworkService: SignUpNetworkService by lazy {
             retrofit.create(SignUpNetworkService::class.java)
@@ -153,13 +230,56 @@ class AppObjectController {
             retrofit.create(GroupApiService::class.java)
         }
 
-        @JvmStatic
-        lateinit var p2pNetworkService: P2PNetworkService
-            private set
+        val p2pNetworkService: P2PNetworkService by lazy {
+            Retrofit.Builder()
+                .baseUrl(BuildConfig.BASE_URL)
+                .client(
+                    builder.connectTimeout(5L, TimeUnit.SECONDS)
+                        .writeTimeout(5L, TimeUnit.SECONDS)
+                        .readTimeout(5L, TimeUnit.SECONDS)
+                        .callTimeout(5L, TimeUnit.SECONDS)
+                        .build()
+                )
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addConverterFactory(GsonConverterFactory.create(gsonMapper))
+                .build().create(P2PNetworkService::class.java)
+        }
 
-        @JvmStatic
-        lateinit var mediaDUNetworkService: MediaDUNetworkService
-            private set
+        val mediaDUNetworkService: MediaDUNetworkService by lazy {
+            val mediaOkhttpBuilder = OkHttpClient().newBuilder()
+            mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
+                .writeTimeout(45, TimeUnit.SECONDS)
+                .readTimeout(45, TimeUnit.SECONDS)
+                .followRedirects(true)
+                .addInterceptor(StatusCodeInterceptor())
+
+            if (BuildConfig.DEBUG) {
+                val logging =
+                    HttpLoggingInterceptor { message ->
+                        Timber.tag("OkHttp").d(message)
+                    }.apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    }
+                mediaOkhttpBuilder.addInterceptor(logging)
+                mediaOkhttpBuilder.addNetworkInterceptor(getStethoInterceptor())
+                mediaOkhttpBuilder.addInterceptor(getOkhhtpToolInterceptor())
+            }
+
+            mediaOkhttpBuilder.addInterceptor(object : Interceptor {
+                override fun intercept(chain: Interceptor.Chain): Response {
+                    return chain.request().safeCall {
+                        val newRequest: Request.Builder = it.newBuilder()
+                        newRequest.addHeader("Connection", "close")
+                        chain.proceed(newRequest.build())
+                    }
+                }
+            })
+
+            Retrofit.Builder()
+                .baseUrl(BuildConfig.BASE_URL)
+                .client(mediaOkhttpBuilder.build())
+                .build().create(MediaDUNetworkService::class.java)
+        }
 
         @JvmStatic
         private var fetch: Fetch? = null
@@ -225,98 +345,6 @@ class AppObjectController {
                 // TODO: Can Differ
                 WorkManagerAdmin.runMemoryManagementWorker()
 
-                gsonMapper = GsonBuilder()
-                    .enableComplexMapKeySerialization()
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                    .registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date> {
-                        @Throws(JsonParseException::class)
-                        override fun deserialize(
-                            json: JsonElement,
-                            typeOfT: Type,
-                            context: JsonDeserializationContext
-                        ): Date {
-                            return Date(json.asJsonPrimitive.asLong * 1000)
-                        }
-                    })
-                    .excludeFieldsWithModifiers(
-                        Modifier.TRANSIENT
-                    )
-                    .setDateFormat(DateFormat.LONG)
-                    .setPrettyPrinting()
-                    .serializeNulls()
-                    .create()
-
-                gsonMapperForLocal = GsonBuilder()
-                    .serializeNulls()
-                    .setDateFormat(DateFormat.LONG)
-                    .setPrettyPrinting()
-                    .setLenient()
-                    .create()
-
-                val builder = OkHttpClient().newBuilder()
-                    .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
-                    .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-                    .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
-                    .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
-                    // .retryOnConnectionFailure(true)
-                    .followSslRedirects(true)
-                    .addInterceptor(StatusCodeInterceptor())
-                    .addInterceptor(HeaderInterceptor())
-                    .hostnameVerifier { _, _ -> true }
-                    .cache(cache())
-
-                if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
-                    builder.certificatePinner(
-                        CertificatePinner.Builder()
-                            .add(
-                                getHostOfUrl(),
-                                *getCertificatePins()
-                            )
-                            .build()
-                    )
-                    val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                        .tlsVersions(TlsVersion.TLS_1_2)
-                        .cipherSuites(
-                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                            CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
-                        )
-                        .build()
-
-                    builder.connectionSpecs(Collections.singletonList(spec))
-                }
-
-                if (BuildConfig.DEBUG) {
-                    builder.addInterceptor(getOkhhtpToolInterceptor())
-                    val logging = HttpLoggingInterceptor { message ->
-                            Timber.tag("OkHttp").d(message)
-                        }.apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        }
-                    builder.addInterceptor(logging)
-                    builder.addNetworkInterceptor(getStethoInterceptor())
-                    builder.eventListener(PrintingEventListener())
-                }
-                retrofit = Retrofit.Builder()
-                    .baseUrl(BuildConfig.BASE_URL)
-                    .client(builder.build())
-                    .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                    .addConverterFactory(GsonConverterFactory.create(gsonMapper))
-                    .build()
-
-                val p2pRetrofitBuilder = Retrofit.Builder()
-                    .baseUrl(BuildConfig.BASE_URL)
-                    .client(
-                        builder.connectTimeout(5L, TimeUnit.SECONDS)
-                            .writeTimeout(5L, TimeUnit.SECONDS)
-                            .readTimeout(5L, TimeUnit.SECONDS)
-                            .callTimeout(5L, TimeUnit.SECONDS)
-                            .build()
-                    )
-                    .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                    .addConverterFactory(GsonConverterFactory.create(gsonMapper))
-                    .build()
-                p2pNetworkService = p2pRetrofitBuilder.create(P2PNetworkService::class.java)
                 getNewArchVoipFlag()
                 initObjectInThread(context)
             }
@@ -602,41 +630,6 @@ class AppObjectController {
         private fun initObjectInThread(context: Context) {
             Log.i(TAG, "initObjectInThread: ")
             Thread {
-                val mediaOkhttpBuilder = OkHttpClient().newBuilder()
-                mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
-                    .writeTimeout(45, TimeUnit.SECONDS)
-                    .readTimeout(45, TimeUnit.SECONDS)
-                    .followRedirects(true)
-                    .addInterceptor(StatusCodeInterceptor())
-
-                if (BuildConfig.DEBUG) {
-                    val logging =
-                        HttpLoggingInterceptor { message ->
-                            Timber.tag("OkHttp").d(message)
-                        }.apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        }
-                    mediaOkhttpBuilder.addInterceptor(logging)
-                    mediaOkhttpBuilder.addNetworkInterceptor(getStethoInterceptor())
-                    mediaOkhttpBuilder.addInterceptor(getOkhhtpToolInterceptor())
-                }
-
-                mediaOkhttpBuilder.addInterceptor(object : Interceptor {
-                    override fun intercept(chain: Interceptor.Chain): Response {
-                        return chain.request().safeCall {
-                            val newRequest: Request.Builder = it.newBuilder()
-                            newRequest.addHeader("Connection", "close")
-                            chain.proceed(newRequest.build())
-                        }
-                    }
-                })
-
-                mediaDUNetworkService = Retrofit.Builder()
-                    .baseUrl(BuildConfig.BASE_URL)
-                    .client(mediaOkhttpBuilder.build())
-                    .build().create(MediaDUNetworkService::class.java)
-
-
                 DateTimeUtils.setTimeZone("UTC")
                 try {
                     if (VideoDownloadController.getInstance().downloadTracker != null)
