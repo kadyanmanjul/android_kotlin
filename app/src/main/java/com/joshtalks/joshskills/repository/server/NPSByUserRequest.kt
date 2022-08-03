@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class NPSByUserRequest(
 
-    @SerializedName("instance")
-    val instanceId: String?,
     @SerializedName("mentor")
     val mentor: String,
     @SerializedName("event_name")

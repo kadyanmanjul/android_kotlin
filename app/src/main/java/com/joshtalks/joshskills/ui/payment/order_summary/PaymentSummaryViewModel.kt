@@ -243,7 +243,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 }
                 val data = mutableMapOf(
                     "encrypted_text" to getEncryptedText(),
-                    "instance_id" to PrefManager.getStringValue(INSTANCE_ID, false),
+                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
                     "mobile" to mobileNumber,
                     "test_id" to getPaymentTestId()
                 )
@@ -301,7 +301,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 viewState?.postValue(ViewState.PROCESSING)
                 val data = CreateOrderResponse(
                     testId,
-                    PrefManager.getStringValue(INSTANCE_ID, false),
+                    PrefManager.getStringValue(USER_UNIQUE_ID),
                     mobileNumber,
                     getEncryptedText(),
                     null
@@ -340,7 +340,6 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             try {
                 val response =
                     AppObjectController.signUpNetworkService.getOnBoardingStatus(
-                        PrefManager.getStringValue(INSTANCE_ID, false),
                         Mentor.getInstance().getId(),
                         PrefManager.getStringValue(USER_UNIQUE_ID)
                     )

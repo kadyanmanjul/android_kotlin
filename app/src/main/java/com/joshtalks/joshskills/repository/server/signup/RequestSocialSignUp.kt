@@ -3,8 +3,8 @@ package com.joshtalks.joshskills.repository.server.signup
 import com.google.gson.annotations.SerializedName
 
 class RequestSocialSignUp private constructor(
-    @SerializedName("instance_id")
-    val instanceId: String,
+    @SerializedName("gaid")
+    val gaid: String,
     @SerializedName("id")
     val id: String,
     @SerializedName("name")
@@ -18,14 +18,14 @@ class RequestSocialSignUp private constructor(
         var id: String,
         var name: String? = null,
         var email: String? = null,
-        var instanceId: String,
+        var gaid: String,
         var photoUrl: String? = null
     ) {
-        fun instanceId(instanceId: String) = apply { this.instanceId = instanceId }
+        fun gaid(gaid: String) = apply { this.gaid = gaid }
         fun id(id: String) = apply { this.id = id }
         fun email(email: String?) = apply { this.email = email }
         fun name(name: String?) = apply { this.name = name }
         fun photoUrl(photoUrl: String?) = apply { this.photoUrl = photoUrl }
-        fun build() = RequestSocialSignUp(instanceId, id, name, email, photoUrl)
+        fun build() = RequestSocialSignUp(gaid, id, name, email, photoUrl)
     }
 }

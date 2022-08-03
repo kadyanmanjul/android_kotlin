@@ -10,11 +10,8 @@ import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusRes
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
-import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
-import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
 import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
 import kotlinx.coroutines.Deferred
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -46,7 +43,6 @@ interface SignUpNetworkService {
 
     @GET("$DIR/version/get_onboarding_status/")
     suspend fun getOnBoardingStatus(
-        @Query("instance_id") instanceId: String,
         @Query("mentor_id") mentorId: String,
         @Query("gaid") gaId: String
     ): Response<OnBoardingStatusResponse>

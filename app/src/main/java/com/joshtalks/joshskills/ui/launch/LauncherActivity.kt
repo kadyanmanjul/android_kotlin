@@ -148,12 +148,12 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
 
     private fun analyzeAppRequirement() {
         when {
-            PrefManager.getStringValue(INSTANCE_ID).isEmpty() -> {
+            PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> {
                 if (intent.data == null)
                     viewModel.initGaid(testId)
             }
             Mentor.getInstance().hasId() -> startNextActivity()
-            else -> viewModel.getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
+            else -> viewModel.getMentorForUser(PrefManager.getStringValue(USER_UNIQUE_ID), testId)
         }
     }
 
@@ -300,7 +300,7 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 if (PrefManager.hasKey(API_TOKEN)) {
                     startNextActivity()
                 } else {
-                    viewModel.getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
+                    viewModel.getMentorForUser(PrefManager.getStringValue(USER_UNIQUE_ID), testId)
                 }
             Mentor.getInstance().hasId() -> startNextActivity()
             else -> viewModel.initGaid(testId)

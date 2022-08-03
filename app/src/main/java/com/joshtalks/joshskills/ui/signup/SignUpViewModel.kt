@@ -76,7 +76,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val reqObj = RequestSocialSignUp.Builder(
                     id = id,
-                    instanceId = PrefManager.getStringValue(INSTANCE_ID, false)
+                    gaid = PrefManager.getStringValue(USER_UNIQUE_ID, false)
                 )
                     .name(name)
                     .email(email)
@@ -138,7 +138,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     profile.payload,
                     profile.signature,
                     profile.signatureAlgorithm,
-                    PrefManager.getStringValue(INSTANCE_ID, false)
+                    PrefManager.getStringValue(USER_UNIQUE_ID)
                 )
                 val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
                 if (response.isSuccessful) {
@@ -163,7 +163,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = RequestUserVerification(
-                    PrefManager.getStringValue(INSTANCE_ID, false),
+                    PrefManager.getStringValue(USER_UNIQUE_ID),
                     countryCode,
                     mNumber
                 )
@@ -190,7 +190,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = RequestVerifyOTP(
-                    PrefManager.getStringValue(INSTANCE_ID, false),
+                    PrefManager.getStringValue(USER_UNIQUE_ID),
                     countryCode,
                     phoneNumber,
                     otp ?: otpField.get()!!
@@ -385,7 +385,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val response =
                     AppObjectController.signUpNetworkService.getOnBoardingStatus(
-                        PrefManager.getStringValue(INSTANCE_ID, false),
                         Mentor.getInstance().getId(),
                         PrefManager.getStringValue(USER_UNIQUE_ID)
                     )

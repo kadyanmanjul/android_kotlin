@@ -9,8 +9,6 @@ data class LoginResponse(
     val userId: String,
     @SerializedName("mentor_id")
     val mentorId: String,
-    @SerializedName("instance_id")
-    val instance_id: String,
     @SerializedName("mobile")
     val mobile: String,
     @SerializedName("token")
@@ -24,5 +22,18 @@ data class LoginResponse(
     @SerializedName("created_source")
     val createdSource: String?,
     @SerializedName("is_user_exist")
-    val isUserExist : Boolean
+    val isUserExist: Boolean,
+    @SerializedName("last_login_type")
+    val lastLoginType: LastLoginType = LastLoginType.NEVER,
 )
+
+enum class LastLoginType {
+    @SerializedName("NEVER")
+    NEVER, // new user (never logged in)
+
+    @SerializedName("VERIFIED_LOGIN")
+    VERIFIED_LOGIN, // user who logged in using otp or social media login
+
+    @SerializedName("UNVERIFIED_LOGIN")
+    UNVERIFIED_LOGIN //For users who signed up using name
+}

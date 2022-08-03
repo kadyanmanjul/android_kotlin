@@ -13,16 +13,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
-import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.databinding.FragmentEnterReferralCodeBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
@@ -130,7 +125,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
             showProgress()
             try {
                 val data = HashMap<String, String>()
-                data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
+                data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                 data["coupon"] = binding.tvReferralCode.text.toString()
 
                 val res =

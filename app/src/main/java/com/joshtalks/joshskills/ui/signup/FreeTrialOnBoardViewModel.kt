@@ -82,7 +82,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     profile.payload,
                     profile.signature,
                     profile.signatureAlgorithm,
-                    PrefManager.getStringValue(INSTANCE_ID, false)
+                    PrefManager.getStringValue(USER_UNIQUE_ID)
                 )
                 val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
                 if (response.isSuccessful && response.body() != null) {

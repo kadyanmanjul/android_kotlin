@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName
 class CreateOrderResponse(
     @SerializedName("test_id")
     val testId: String,
-    @SerializedName("instance_id")
-    val instanceId: String,
+    @SerializedName("gaid")
+    val gaid: String,
     @SerializedName("mobile")
     val mobile: String,
     @SerializedName("encrypted_text")

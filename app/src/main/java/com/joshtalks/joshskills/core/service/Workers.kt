@@ -210,9 +210,9 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
             if (PrefManager.hasKey(INSTANCE_ID, false) &&
                 VersionResponse.getInstance().hasVersion().not()
             ) {
-                val instanceId = PrefManager.getStringValue(INSTANCE_ID)
+                val gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
                 val res =
-                    AppObjectController.commonNetworkService.getOnBoardingVersionDetails(mapOf("instance_id" to instanceId))
+                    AppObjectController.commonNetworkService.getOnBoardingVersionDetails(mapOf("gaid" to gaid))
                 val sortedInterest =
                     res.courseInterestTags?.sortedBy { tag -> tag.sortOrder }
                 val sortedCategories =

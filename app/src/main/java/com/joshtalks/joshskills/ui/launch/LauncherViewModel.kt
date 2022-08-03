@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.server.signup.LastLoginType
 import com.singular.sdk.Singular
 import io.branch.referral.Branch
 import io.branch.referral.Defines
@@ -139,9 +140,9 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 GaIDMentorModel.update(resp)
                 PrefManager.put(SERVER_GID_ID, resp.gaidServerDbId)
                 PrefManager.put(EXPLORE_TYPE, exploreType ?: ExploreCardType.NORMAL.name, false)
-                PrefManager.put(INSTANCE_ID, resp.instanceId)
-                PrefManager.put(INSTANCE_ID, resp.instanceId, isConsistent = true)
-                getMentorForUser(resp.instanceId, testId)
+//                PrefManager.put(INSTANCE_ID, resp.instanceId)
+//                PrefManager.put(INSTANCE_ID, resp.instanceId, isConsistent = true)
+                getMentorForUser(PrefManager.getStringValue(USER_UNIQUE_ID), testId)
             } catch (ex: Exception) {
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
@@ -149,12 +150,14 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getMentorForUser(instanceId: String, testId: String?) {
+    fun getMentorForUser(gaid: String, testId: String?) {
         viewModelScope.launch {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
                 val response =
-                    AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
+                    AppObjectController.signUpNetworkService.createGuestUser(mapOf("gaid" to gaid))
+                if (response.lastLoginType != LastLoginType.NEVER)
+                    PrefManager.put(LAST_LOGIN_TYPE, response.lastLoginType.name)
                 Mentor.updateFromLoginResponse(response)
                 apiCallStatus.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Exception) {

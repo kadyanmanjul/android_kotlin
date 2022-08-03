@@ -24,7 +24,6 @@ class NPSViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val npsByUserRequest = NPSByUserRequest(
-                    PrefManager.getStringValue(INSTANCE_ID, false),
                     Mentor.getInstance().getId(),
                     eventName,
                     selectedRating,
