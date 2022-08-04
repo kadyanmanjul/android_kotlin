@@ -6,7 +6,7 @@ import android.widget.RemoteViews
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
-import com.joshtalks.joshskills.voip.data.api.CallActionRequest
+import com.joshtalks.joshskills.voip.constant.TOAST_MESSAGE
 import com.joshtalks.joshskills.voip.data.api.FavoriteCallActionRequest
 import com.joshtalks.joshskills.voip.data.api.FavoriteConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
@@ -52,6 +52,10 @@ class FavoriteCall : CallCategory {
             )
             val response = voipNetwork.startFavouriteCall(request)
             Log.d(TAG, "onPreCallConnect: $response")
+
+            if (response[TOAST_MESSAGE] != null && response[TOAST_MESSAGE]?.equals("") != true) {
+                showToast(response[TOAST_MESSAGE] .toString())
+            }
 
         }
     }

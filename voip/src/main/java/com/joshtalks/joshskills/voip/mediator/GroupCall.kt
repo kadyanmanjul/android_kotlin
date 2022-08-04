@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE
 import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME
+import com.joshtalks.joshskills.voip.constant.TOAST_MESSAGE
 import com.joshtalks.joshskills.voip.data.api.*
 import java.io.IOException
 import java.net.URL
@@ -58,6 +59,9 @@ class GroupCall : CallCategory {
             )
             val response = voipNetwork.startGroupCall(request)
             Log.d(TAG, "onPreCallConnect: $response")
+            if (response[TOAST_MESSAGE] != null && response[TOAST_MESSAGE]?.equals("") != true) {
+                showToast(response[TOAST_MESSAGE] .toString())
+            }
         }
     }
 

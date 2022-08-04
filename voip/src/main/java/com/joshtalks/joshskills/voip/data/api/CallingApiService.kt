@@ -25,7 +25,7 @@ interface CallingApiService {
 //    FPP
 
     @POST("${BuildConfig.MS_BASE_URL}/$DIR_FPP_GROUP/fpp/call")
-    suspend fun startFavouriteCall(@Body request : FavoriteConnectionRequest) : Response<Unit>
+    suspend fun startFavouriteCall(@Body request : FavoriteConnectionRequest) : HashMap<String, Any?>
 
     @POST("${BuildConfig.MS_BASE_URL}/$DIR_FPP_GROUP/call_response")
     suspend fun favouriteCallAccept(@Body request : FavoriteCallActionRequest) : Response<Unit>
@@ -38,7 +38,7 @@ interface CallingApiService {
 
 //    GROUP
     @POST("${BuildConfig.MS_BASE_URL}/$DIR_FPP_GROUP/group/call")
-    suspend fun startGroupCall(@Body request : GroupConnectionRequest) : Response<Unit>
+    suspend fun startGroupCall(@Body request : GroupConnectionRequest) : HashMap<String, Any?>
 
     @POST("${BuildConfig.MS_BASE_URL}/$DIR_FPP_GROUP/call_response")
     suspend fun groupCallAccept(@Body request : GroupCallActionRequest) : Response<Unit>

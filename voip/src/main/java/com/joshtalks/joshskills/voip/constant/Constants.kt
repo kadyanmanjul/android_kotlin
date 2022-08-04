@@ -54,6 +54,8 @@ const val REMOTE_USER_NAME = "remote_user_name"
 const val INCOMING_GROUP_NAME = "group_name"
 const val INCOMING_GROUP_IMAGE = "group_icon"
 
+//API response Constants
+const val TOAST_MESSAGE = "msg"
 
 
 

@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.voip.constant.TOAST_MESSAGE
 import com.joshtalks.joshskills.voip.data.api.CallActionRequest
 import com.joshtalks.joshskills.voip.data.api.ConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
@@ -30,7 +31,7 @@ class PeerToPeerCall : CallCategory {
 
     override suspend fun onPreCallConnect(callData: HashMap<String, Any>, direction: CallDirection) {
         Log.d(TAG, "Calling API ---- $callData")
-        if(direction == CallDirection.INCOMING) {
+        if (direction == CallDirection.INCOMING) {
             Log.d(TAG, "onPreCallConnect: INCOMING")
             val request = CallActionRequest(
                 callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
@@ -50,8 +51,10 @@ class PeerToPeerCall : CallCategory {
             )
             val response = voipNetwork.startPeerToPeerCall(request)
             Log.d(TAG, "onPreCallConnect: $response")
-//            if (response.isSuccessful)
-//                voipLog?.log("Sucessfull")
+
+            if (response[TOAST_MESSAGE] != null && response[TOAST_MESSAGE]?.equals("") != true) {
+                showToast(response[TOAST_MESSAGE] .toString())
+            }
         }
     }
 
