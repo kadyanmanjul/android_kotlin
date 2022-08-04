@@ -212,6 +212,7 @@ class ReadingFragmentWithoutFeedback :
         binding.mergedVideo.setUrl(fileDir)
         // binding.videoPlayer.setCourseId(course_id)
         binding.mergedVideo.fitToScreen()
+        binding.mergedVideo.onStart()
     }
 
     private val pauseAnimationCallback by lazy {

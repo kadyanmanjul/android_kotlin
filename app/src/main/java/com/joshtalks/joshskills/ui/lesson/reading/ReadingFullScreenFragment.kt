@@ -28,18 +28,13 @@ class ReadingFullScreenFragment : BaseFragment() {
     }
 
     override fun initViewBinding() {
-
-        binding.mergedVideo.setOnCompletionListener {
-            binding.mergedVideo.start()
-        }
-        binding.mergedVideo.start()
         binding.ivBack.setOnClickListener {
             viewModel.closeCurrentFragment()
             viewModel.showVideoView()
-            binding.mergedVideo.stopPlayback()
+            binding.mergedVideo.onStop()
         }
         binding.submitAnswerBtn.setOnClickListener {
-            binding.mergedVideo.stopPlayback()
+            binding.mergedVideo.onStop()
             viewModel.submitButton()
             viewModel.closeCurrentFragment()
             viewModel.showVideoView()
@@ -47,16 +42,11 @@ class ReadingFullScreenFragment : BaseFragment() {
         binding.ivClose.setOnClickListener {
             viewModel.closeCurrentFragment()
             viewModel.cancelButton()
-            binding.mergedVideo.stopPlayback()
+            binding.mergedVideo.onStop()
         }
         binding.mergedVideo.setOnTouchListener(View.OnTouchListener { v, event ->
             true
         })
-    }
-
-    override fun onStart() {
-        super.onStart()
-        binding.mergedVideo.start()
     }
 
     override fun initViewState() {
@@ -66,7 +56,10 @@ class ReadingFullScreenFragment : BaseFragment() {
                     SEND_OUTPUT_FILE -> {
                         Log.d("Manjul", "initViewState() called")
                         binding.loadingGroup.visibility = View.GONE
-                        binding.mergedVideo.setVideoPath(it.obj as String)
+                        binding.mergedVideo.visibility = View.VISIBLE
+                        binding.mergedVideo.setUrl(it.obj as String)
+                        binding.mergedVideo.fitToScreen()
+                        binding.mergedVideo.onStart()
                         binding.submitAnswerBtn.visibility = View.VISIBLE
                         binding.ivBack.visibility = View.VISIBLE
                         binding.ivClose.visibility = View.VISIBLE
@@ -74,10 +67,10 @@ class ReadingFullScreenFragment : BaseFragment() {
                     }
                     VIDEO_AUDIO_MUX_FAILED -> {
                         viewModel.closeCurrentFragment()
-                        binding.mergedVideo.stopPlayback()
+                        binding.mergedVideo.onStop()
                     }
                     CLOSE_VIDEO_VIEW -> {
-                        binding.mergedVideo.stopPlayback()
+                        binding.mergedVideo.onStop()
                     }
                 }
             }
@@ -94,6 +87,6 @@ class ReadingFullScreenFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        binding.mergedVideo.stopPlayback()
+        binding.mergedVideo.onPause()
     }
 }
