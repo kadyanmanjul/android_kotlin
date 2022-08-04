@@ -141,8 +141,6 @@ class SearchFragment : Fragment(), Call {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 searchViewModel.searchSuggestions.collectLatest {
-                    val animationController: LayoutAnimationController =
-                        AnimationUtils.loadLayoutAnimation(binding.searchSuggestionList.context, R.anim.search_animation)
                     searchSuggestionAdapter.submitData(it)
                 }
             }
