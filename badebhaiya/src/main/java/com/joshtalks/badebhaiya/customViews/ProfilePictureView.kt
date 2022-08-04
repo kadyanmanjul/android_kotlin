@@ -269,7 +269,7 @@ fun ProfilePictureView.setDpUrl(dpUrl: String?) {
 }
 
 @BindingAdapter("app:dynamicUserName")
-fun ProfilePictureView.setDynamicUsername(name: String) {
+fun ProfilePictureView.setDynamicUsername(name: String?) {
     this.userName = name
 }
 

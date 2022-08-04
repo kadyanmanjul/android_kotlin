@@ -24,12 +24,11 @@
             android:id="@+id/profile_toolbar"
             layout="@layout/base_toolbar" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <com.joshtalks.badebhaiya.customViews.ProfilePictureView
             android:id="@+id/iv_profile_pic"
-            imageCornerRadius="@{@dimen/_24sdp}"
-            imageUrl="@{viewModel.userProfileData.profilePicUrl}"
-            initialsFontSize="@{24}"
-            userName="@{viewModel.userFullName}"
+            app:cornerRadius="28dp"
+            app:dynamicImageUrl="@{viewModel.userProfileData.profilePicUrl}"
+            app:dynamicUserName="@{viewModel.userFullName}"
             android:layout_width="@dimen/_68sdp"
             android:layout_height="@dimen/_68sdp"
             android:layout_marginTop="@dimen/_3sdp"
@@ -38,7 +37,6 @@
             app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
-            app:shapeAppearanceOverlay="@style/roundedCornersImageView_28dp"
             tools:background="@drawable/user_profile_background" />
 
 
