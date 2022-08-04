@@ -56,6 +56,7 @@
             app:cornerRadius="@dimen/_12sdp"
             app:dynamicUserName="@{requestUser.full_name}"
             android:layout_width="@dimen/_32sdp"
+            app:nameLetters="one"
             android:layout_height="@dimen/_32sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:scaleType="centerCrop"

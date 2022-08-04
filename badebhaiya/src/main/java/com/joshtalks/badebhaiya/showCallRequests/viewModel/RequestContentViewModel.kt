@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.showCallRequests.viewModel
 
+import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,11 +18,13 @@ class RequestContentViewModel: ViewModel() {
     }
 
     val requestContent = MutableLiveData<RequestContent>()
+    val requestView=ObservableField<RequestContent>()
 
     fun getRequestContent(userId: String){
         viewModelScope.launch {
             repository.requestsContent(userId).collectLatest {
-                requestContent.postValue(it)
+                requestContent.value=it
+                requestView.set(it)
             }
         }
     }

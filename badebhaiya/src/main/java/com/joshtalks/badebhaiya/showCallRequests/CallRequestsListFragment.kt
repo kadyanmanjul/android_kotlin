@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.annotation.IdRes
 import androidx.compose.ui.platform.ComposeView
@@ -21,6 +22,7 @@ import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.showCallRequests.viewModel.RequestsViewModel
 import com.joshtalks.badebhaiya.utils.open
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 //@AndroidEntryPoint
 class CallRequestsListFragment : Fragment() {
@@ -36,6 +38,15 @@ class CallRequestsListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                activity?.run {
+                    Timber.d("back from profile")
+                    supportFragmentManager.popBackStack()
+                }
+            }
+        })
         return ComposeView(
             requireContext()
         ).apply {
