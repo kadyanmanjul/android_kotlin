@@ -3,22 +3,14 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.os.Environment
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.*
@@ -32,7 +24,6 @@ import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -225,16 +216,6 @@ class VoiceCallActivity : BaseActivity() {
                 CHANGE_APP_THEME_T0_BLUE->{
                     window.statusBarColor  = ContextCompat.getColor(this,R.color.colorPrimaryDark)
                 }
-                SHOW_RECORDING_PERMISSION_DIALOG -> {
-//                    vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
-                }
-                SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
-                HIDE_RECORDING_PERMISSION_DIALOG -> {
-                    hideRecordingPermissionDialog()
-                    if (it.obj == true){
-//                        vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
-                    }
-                }
                 else -> {
                     if (it.what < 0) {
                         showToast("Error Occurred")
@@ -243,39 +224,6 @@ class VoiceCallActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    private fun showRecordingRejectedDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Recording request rejected")
-            .setMessage("User declined your request to start recording")
-            .setPositiveButton("Dismiss") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
-    private fun showRecordingPermissionDialog() {
-        recordingPermissionAlert = AlertDialog.Builder(this).apply {
-            setView(
-                LayoutInflater.from(this@VoiceCallActivity)
-                    .inflate(R.layout.dialog_record_call, null)
-            )
-            setPositiveButton("ACCEPT") { dialog, _ ->
-                vm.recordingStartedUIChanges()
-                vm.acceptCallRecording(this@VoiceCallActivity.window.decorView)
-                dialog.dismiss()
-            }
-            setNegativeButton("DECLINE") { dialog, which ->
-                vm.rejectCallRecording()
-                dialog.dismiss()
-            }
-            setOnCancelListener {
-                    vm.rejectCallRecording()
-            }
-        }.create()
-        recordingPermissionAlert?.setCanceledOnTouchOutside(false)
-        recordingPermissionAlert?.show()
     }
 
     private fun hideRecordingPermissionDialog() {
@@ -350,8 +298,6 @@ class VoiceCallActivity : BaseActivity() {
             }
         else {
             super.onBackPressed()
-            if (vm.uiState.recordingButtonState == RecordingButtonState.SENTREQUEST)
-                vm.cancelRecording()
             val v = View(this)
             vm.endGame(v)
             vm.backPress()

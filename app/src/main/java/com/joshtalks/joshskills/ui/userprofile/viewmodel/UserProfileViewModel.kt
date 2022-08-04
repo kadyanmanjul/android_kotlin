@@ -41,6 +41,8 @@ import com.joshtalks.joshskills.ui.voip.favorite.FavoriteCallerRepository
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.quality
+import id.zelory.compressor.constraint.resolution
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -326,9 +328,9 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         return viewModelScope.async(Dispatchers.IO) {
             try {
                 AppDirectory.copy(
-                    Compressor(getApplication()).setQuality(75).setMaxWidth(720).setMaxHeight(
-                        1280
-                    ).compressToFile(File(path)).absolutePath, path
+                    Compressor.compress(getApplication(),File(path)){
+                        quality(75)
+                        resolution(720,1280)}.absolutePath, path
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()

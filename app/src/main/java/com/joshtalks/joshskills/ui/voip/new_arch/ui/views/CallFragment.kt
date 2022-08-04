@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Bitmap
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -27,12 +28,9 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.databinding.FragmentCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.util.getBitMapFromView
-import com.joshtalks.joshskills.util.toFile
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
-import com.joshtalks.joshskills.voip.constant.GET_FRAGMENT_BITMAP
 import com.joshtalks.joshskills.voip.constant.SAVE_SCREENSHOT
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -121,10 +119,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                     stopAnimation()
                     callBinding.incomingTimerContainer.visibility = View.INVISIBLE
                 }
-                GET_FRAGMENT_BITMAP -> {
-                    val imageFile = getBitMapFromView(callBinding.container).toFile(requireContext())
-                    vm.saveImageAudioToFolder(imageFile)
-                }
                 SAVE_SCREENSHOT->{
                     saveBitmap()
                 }
@@ -137,7 +131,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         try {
             CoroutineScope(Dispatchers.Main).launch {
                 delay(2000)
-                PrefManager.putBitmap(callBinding.root.drawToBitmap())
+                PrefManager.putBitmap(callBinding.root.drawToBitmap(Bitmap.Config.RGB_565))
             }
         }catch (ex:Exception) {
             ex.printStackTrace()
@@ -241,8 +235,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         super.onStart()
         setCurrentCallState()
     }
-
-
 
     private fun setCurrentCallState() {
         if(isFragmentRestarted) {

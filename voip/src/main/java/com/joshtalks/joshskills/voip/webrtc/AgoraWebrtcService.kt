@@ -166,13 +166,13 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         }
         Utils.context?.getTempFileForCallRecording()?.let { file->
             recordFile = file
-            Log.d(TAG, "onStopRecording: 1 ${recordFile?.absolutePath}")
+            Log.d(TAG, "GAME observe Agora onStartRecording:  ${recordFile?.absolutePath}")
             agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000))
         }
     }
 
     override fun onStopRecording() {
-        Log.d(TAG, "onStopRecording: ${recordFile?.absolutePath}")
+        Log.d(TAG, "GAME observe Agora onStopRecording: ${recordFile?.absolutePath}")
             recordFile?.absolutePath?.let {
                 agoraEngine?.stopAudioRecording()
                 PrefManager.saveLastRecordingPath(recordFile!!.absolutePath)

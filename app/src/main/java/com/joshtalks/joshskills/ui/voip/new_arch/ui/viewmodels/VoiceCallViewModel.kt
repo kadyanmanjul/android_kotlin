@@ -145,10 +145,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
                         }
-                        if (uiState.recordingButtonState == RecordingButtonState.RECORDING) {
-                            cancelRecordingTimer()
-                            stopAudioRecording()
-                        }
                     }
                     ServiceEvents.RECONNECTING_FAILED -> {
                         val msg = Message.obtain().apply {
@@ -374,7 +370,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun getTime(recordingButtonState: RecordingButtonState): Job? {
         try {
             timer = CoroutineScope(Dispatchers.IO).launch {
-                delay(15000)
+                delay(60000)
                 if (recordingButtonState == RecordingButtonState.RECORDING) {
                     if (uiState.recordTime > 0) {
                         repository.stopCallRecording()
@@ -505,19 +501,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         repository.stopService(activity)
     }
 
-    override fun onCleared() {
-        Log.d(TAG, "onCleared: ")
-        super.onCleared()
-        repository.clearRepository()
-    }
-
-    fun saveImageAudioToFolder(imageFile: File) {
-        // TODO save another file in downloads folder with merged audio and Screenshot
-    }
-
-    fun cancelRecording(){
-        repository.cancelRecordingRequest()
-    }
     fun startGame(v:View){
         if (Utils.isInternetAvailable().not()) {
             Utils.showToast("Seems like you have no internet")

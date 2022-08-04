@@ -7,19 +7,16 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
-import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.Nullable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.copy
@@ -34,6 +31,11 @@ import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.format
+import id.zelory.compressor.constraint.quality
+import id.zelory.compressor.constraint.resolution
+import id.zelory.compressor.constraint.size
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -44,21 +46,17 @@ import org.jcodec.common.io.FileChannelWrapper
 import org.jcodec.common.io.NIOUtils
 import org.jcodec.common.model.Rational
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
 
 class ProcessCallRecordingService : Service() {
-    private val MAX_NUMBER_OF_RETRIES = 5
     private val fileQueue: BlockingQueue<InputFiles> = ArrayBlockingQueue(100)
     private val mFileUploadHandler = Handler()
     private var mFileUploadTask: VideoMuxingTask? = null
     private var isMuxingRunning = false
     private var mNotificationManager: NotificationManager? = null
-    private val callApiService by lazy {
-        VoipNetwork.getVoipApi()
-    }
 
     @Nullable
     override fun onBind(intent: Intent): IBinder? {
@@ -82,9 +80,13 @@ class ProcessCallRecordingService : Service() {
                                 val audioPath = intent.getStringExtra(AUDIO_PATH)
                                 val callId = intent.getStringExtra(CALL_ID)
                                 val agoraMentorId = intent.getStringExtra(AGORA_MENTOR_ID)
-                                val duration = intent.getIntExtra(RECORD_DURATION,0)
-                                val bitmap= intent.getByteArrayExtra(BITMAP_SCREENSHOT)
-                                generateVideoFromImage(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration),bitmap!!)
+                                val duration = intent.getIntExtra(RECORD_DURATION, 0)
+                                val bitmap = intent.getByteArrayExtra(BITMAP_SCREENSHOT)
+                                generateVideoFromImage(InputFiles(callId,
+                                    agoraMentorId,
+                                    videoPath,
+                                    audioPath,
+                                    duration = duration), bitmap!!)
                             }
                     }
                     UPLOAD_ALL_CALL_RECORDING -> {}
@@ -96,41 +98,58 @@ class ProcessCallRecordingService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun generateVideoFromImage(inputFiles: InputFiles,bitmap: ByteArray) {
+    private fun generateVideoFromImage(inputFiles: InputFiles, bitmap: ByteArray) {
         Log.d(TAG, "GAME observe: generateVideoFromImage 0 $inputFiles")
 
-        var screenshot: Bitmap = getResizedBitmap(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.size),400)
-        if(screenshot.height %2 != 0){
-            screenshot = editMyBitmap(screenshot,screenshot.height-1,screenshot.width)
+        val file1 = File(applicationContext.cacheDir, "test_img" + "${System.currentTimeMillis()}")
+        file1.createNewFile()
+        val fos = FileOutputStream(file1)
+        fos.write(bitmap)
+        fos.flush()
+        fos.close()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val compressedImageFile = Compressor.compress(applicationContext, file1) {
+                quality(40)
+                resolution(200, 400)
+                format(Bitmap.CompressFormat.JPEG)
+                size(50000)
+            }
+            proceedFurther(BitmapFactory.decodeFile(compressedImageFile.path), inputFiles)
         }
-        if(screenshot.width %2 != 0){
-           screenshot =  editMyBitmap(screenshot,screenshot.height,screenshot.width-1)
+    }
+
+    private fun proceedFurther(screenshot1: Bitmap, inputFiles: InputFiles) {
+        Log.d(TAG, "GAME observe: proceedFurther ")
+        var screenshot = screenshot1
+        if (screenshot.height % 2 != 0) {
+            screenshot = editMyBitmap(screenshot, screenshot.height - 1, screenshot.width)
+        }
+        if (screenshot.width % 2 != 0) {
+            screenshot = editMyBitmap(screenshot, screenshot.height, screenshot.width - 1)
         }
 
         var out: FileChannelWrapper? = null
         val dir = application.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-        val file = File(dir, "roughVideo"+"${System.currentTimeMillis()}"+".mp4")
+        val file = File(dir, "roughVideo" + "${System.currentTimeMillis()}" + ".mp4")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 out = NIOUtils.writableFileChannel(file.absolutePath)
                 val encoder = AndroidSequenceEncoder(out, Rational.R(25, 1))
 
-                Log.d(TAG, "GAME observe: generateVideoFromImage 1 ${screenshot?.height} ${screenshot?.width}  ${inputFiles.duration!!}  ${screenshot.allocationByteCount}")
+                Log.d(TAG, "GAME observe: generateVideoFromImage details ${screenshot?.height} ${screenshot?.width}  ${inputFiles.duration!!}  ${screenshot.allocationByteCount}")
 
-                for (a in 0..((inputFiles.duration!!)/1000)*25) {
+                for (a in 0..((inputFiles.duration!!) / 1000) * 25) {
                     encoder.encodeImage(screenshot)
                 }
                 encoder.finish()
-            }catch (ex:Exception){
-                print("Exception arrived brother")
+            } catch (ex: Exception) {
                 ex.printStackTrace()
-            }
-            finally {
-                println("IOSSE")
+            } finally {
                 inputFiles.videoPath = file.absolutePath
                 startProcessingAudioVideoMixing(inputFiles)
-                Log.d(TAG, "GAME observe: generateVideoFromImage 3 $inputFiles")
+                Log.d(TAG, "GAME observe: generateVideoFromImage output ready")
                 NIOUtils.closeQuietly(out)
             }
         }
@@ -139,37 +158,6 @@ class ProcessCallRecordingService : Service() {
     fun editMyBitmap(myBitmap: Bitmap, newHeight: Int, newWidth: Int): Bitmap {
         return Bitmap.createScaledBitmap(myBitmap, newWidth, newHeight, false)
 
-    }
-
-    fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap {
-        var width = image.width
-        var height = image.height
-        val bitmapRatio = width.toFloat() / height.toFloat()
-        if (bitmapRatio > 1) {
-            width = maxSize
-            height = (width / bitmapRatio).toInt()
-        } else {
-            height = maxSize
-            width = (height * bitmapRatio).toInt()
-        }
-        val scaledBitmap = Bitmap.createScaledBitmap(image, width, height, true)
-        val stream = ByteArrayOutputStream()
-        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 75, stream) //0=lowest, 100=highest quality
-        val byteArray = stream.toByteArray()
-        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-    }
-    private fun cancelFileUpload() {
-        CoroutineScope(Dispatchers.IO).launch {
-            fileQueue.clear()
-            if (mFileUploadTask != null) {
-                mFileUploadHandler.removeCallbacks(mFileUploadTask!!)
-                isMuxingRunning = false
-                mFileUploadTask = null
-                AppObjectController.uiHandler.post {
-                    hideNotification()
-                }
-            }
-        }
     }
 
     private fun startProcessingAudioVideoMixing(inputFiles: InputFiles) {
@@ -258,7 +246,7 @@ class ProcessCallRecordingService : Service() {
                             agoraCallId = inputFiles.callId,
                             agoraMentorId = inputFiles.agoraMentorId,
                             recording_url = inputFiles.serverUrl!!,
-                            duration = inputFiles.duration?:0
+                            duration = inputFiles.duration ?: 0
                         )
                     )
                 if (resp.isSuccessful && resp.body() != null) {
@@ -266,7 +254,7 @@ class ProcessCallRecordingService : Service() {
                         contentTitle = "Processed Call Recording"
                         contentText = "Well done!, Here is your call recording"
                         action = NotificationAction.CALL_RECORDING_NOTIFICATION
-                        extraData = requestEngage.outputFile?.absolutePath?: EMPTY
+                        extraData = requestEngage.outputFile?.absolutePath ?: EMPTY
                     }
                     NotificationUtils(applicationContext).sendNotification(nc)
                 } else {
@@ -383,8 +371,8 @@ class ProcessCallRecordingService : Service() {
             intent.putExtra(AGORA_MENTOR_ID, agoraMentorId)
             intent.putExtra(VIDEO_PATH, videoPath)
             intent.putExtra(AUDIO_PATH, audioPath)
-            intent.putExtra(RECORD_DURATION,recordDuration)
-            intent.putExtra(BITMAP_SCREENSHOT,bitmap)
+            intent.putExtra(RECORD_DURATION, recordDuration)
+            intent.putExtra(BITMAP_SCREENSHOT, bitmap)
             context?.startService(intent)
         }
     }

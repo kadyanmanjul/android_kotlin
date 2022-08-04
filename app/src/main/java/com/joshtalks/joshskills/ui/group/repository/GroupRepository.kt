@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.group.repository
 
 import android.text.format.DateUtils
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -18,10 +19,9 @@ import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 import com.pubnub.api.callbacks.SubscribeCallback
 import id.zelory.compressor.Compressor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import id.zelory.compressor.constraint.quality
+import id.zelory.compressor.constraint.resolution
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -315,20 +315,21 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
         apiService.groupImpressionDetails(request)
 
-    private fun getCompressImage(path: String): String {
-        return try {
-            AppDirectory.copy(
-                Compressor(AppObjectController.joshApplication).setQuality(75).setMaxWidth(720)
-                    .setMaxHeight(
-                        1280
-                    ).compressToFile(File(path)).absolutePath, path
-            )
-            path
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            path
-        }
+    private suspend fun getCompressImage(path: String): String {
+        return CoroutineScope(Dispatchers.IO).async {
+            try {
+                AppDirectory.copy(
+                    Compressor.compress(AppObjectController.joshApplication,File(path)){
+                        quality(75)
+                        resolution(720,1280)}.absolutePath, path
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+            return@async path
+        }.await()
     }
+
 
     private suspend fun uploadCompressedMedia(mediaPath: String): String? {
         try {
