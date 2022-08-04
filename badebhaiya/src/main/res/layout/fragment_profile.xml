@@ -26,15 +26,17 @@
 
         <com.joshtalks.badebhaiya.customViews.ProfilePictureView
             android:id="@+id/iv_profile_pic"
-            app:cornerRadius="28dp"
-            app:dynamicImageUrl="@{viewModel.userProfileData.profilePicUrl}"
+            app:cornerRadius="@dimen/_28sdp"
+            app:dynamicImageUrl="@{viewModel.profileUrl}"
             app:dynamicUserName="@{viewModel.userFullName}"
             android:layout_width="@dimen/_68sdp"
             android:layout_height="@dimen/_68sdp"
             android:layout_marginTop="@dimen/_3sdp"
             android:scaleType="centerCrop"
+            app:textSize="@dimen/_12sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.05"
+            app:nameLetters="two"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             tools:background="@drawable/user_profile_background" />

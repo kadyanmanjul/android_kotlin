@@ -44,6 +44,7 @@ class SpeakerAdapter : RecyclerView.Adapter<SpeakerAdapter.SpeakerViewHolder>() 
             this.userImage = binding.userImage
             this.model = model
             with(binding) {
+                roomData=model
                 name.text = model.name
                 userImageIv.apply {
                     clipToOutline = true

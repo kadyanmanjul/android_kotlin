@@ -97,12 +97,16 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
-            <com.google.android.material.imageview.ShapeableImageView
+            <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                 android:id="@+id/user_photo"
+                app:dynamicImageUrl="@{viewModel.userPhoto}"
+                app:dynamicUserName="@{viewModel.userName}"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                app:textSize="@{14}"
+                app:nameLetters="one"
+                app:cornerRadius="@dimen/_7sdp"
                 android:layout_marginVertical="@dimen/_10sdp"
-                android:background="@color/base_app_color"
                 android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp" />
 

@@ -2,24 +2,35 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+        <variable
+            name="roomData"
+            type="com.joshtalks.badebhaiya.feed.model.LiveRoomUser" />
+
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_marginTop="@dimen/_4sdp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <com.joshtalks.badebhaiya.customViews.ProfilePictureView
             android:id="@+id/user_photo"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
+            app:dynamicUserName="@{roomData.fullName}"
+            app:dynamicImageUrl="@{roomData.photoUrl}"
+            app:textSize="@{24}"
+            app:nameLetters="two"
+            app:cornerRadius="@dimen/_16sdp"
             android:layout_marginVertical="@dimen/_10sdp"
             android:background="@color/red"
             android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/raised_hand_user_name"

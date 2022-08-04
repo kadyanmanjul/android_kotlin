@@ -37,19 +37,6 @@ class SearchSuggestionAdapter(
         fun bind(item: User?) {
             with(binding) {
                 user = item
-
-                item?.let { it ->
-                    if (!it.photo_url.isNullOrEmpty()){
-                        Glide.with(binding.root.context)
-                            .load(it.photo_url)
-                            .into(profilePicSuggestion)
-                    }
-                    else {
-                        profilePicSuggestion.setUserInitialInRect(it.short_name ?: "A", 24)
-                    }
-                }
-
-
                 userCard.setOnClickListener {
                     item?.let {
                         onItemClick(it)

@@ -45,19 +45,21 @@
             android:layout_height="match_parent"
             android:paddingBottom="@dimen/_8sdp">
 
-            <com.google.android.material.imageview.ShapeableImageView
+            <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                 android:id="@+id/iv_profile_pic"
-                imageCornerRadius="@{@dimen/_16sdp}"
-                initialsFontSize="@{24}"
+                app:dynamicUserName="@{roomData.short_name}"
+                app:dynamicImageUrl="@{roomData.profilePic}"
+                app:textSize="@{24}"
+                app:cornerRadius="@dimen/_23sdp"
                 android:layout_width="@dimen/_53sdp"
                 android:layout_height="@dimen/_53sdp"
                 android:layout_marginTop="12dp"
                 android:scaleType="centerCrop"
+                app:nameLetters="two"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.046"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedCornersImageView_23dp"
                 tools:background="@color/black" />
 
             <androidx.appcompat.widget.AppCompatTextView

@@ -301,12 +301,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun initView() {
-        if(User.getInstance().profilePicUrl!=null) {
-            User.getInstance().apply {
-                profilePicUrl?.let { binding.profileIv.setImage(it, radius = 16) }
-                //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
-            }
-        }
+//        if(User.getInstance().profilePicUrl!=null) {
+//            User.getInstance().apply {
+//                profilePicUrl?.let { binding.profileIv.setImage(it, radius = 16) }
+//            }
+//        }
 
     }
 

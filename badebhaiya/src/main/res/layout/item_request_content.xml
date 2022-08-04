@@ -49,12 +49,12 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="6:37 pm" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <com.joshtalks.badebhaiya.customViews.ProfilePictureView
             android:id="@+id/requestContentDp"
-            imageCornerRadius="@{@dimen/_12sdp}"
-            imageUrl="@{requestUser.photo_url}"
+            app:dynamicImageUrl="@{requestUser.photo_url}"
             initialsFontSize="@{12}"
-            userName="@{requestUser.full_name}"
+            app:cornerRadius="@dimen/_12sdp"
+            app:dynamicUserName="@{requestUser.full_name}"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
             android:layout_marginTop="@dimen/_10sdp"

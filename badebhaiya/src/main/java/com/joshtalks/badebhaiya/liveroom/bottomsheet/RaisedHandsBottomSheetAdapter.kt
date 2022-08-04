@@ -38,6 +38,7 @@ class RaisedHandsBottomSheetAdapter() :
 
         fun bind(model: LiveRoomUser, position: Int) {
             with(binding) {
+                roomData=model
                 raisedHandUserName.text = model.name
                 userPhoto.apply {
                     setUserImageRectOrInitials(

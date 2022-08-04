@@ -668,19 +668,14 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private fun updateUI() {
         setUpRecyclerView()
         setLeaveEndButton(PubNubManager.getLiveRoomProperties().isRoomCreatedByUser)
-        if(User.getInstance().profilePicUrl!=null) {
-            User.getInstance().apply {
-                profilePicUrl?.let { binding.userPhoto.setImage(it, radius = 16) }
-                //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
-            }
-        }
-        binding.userPhoto.clipToOutline = true
-//        binding.userPhoto.setUserImageRectOrInitials(
-//            User.getInstance().profilePicUrl,
-//            User.getInstance().firstName ?: DEFAULT_NAME,
-//            textColor = R.color.black,
-//            bgColor = R.color.conversation_room_gray
-//        )
+//        if(User.getInstance().profilePicUrl!=null) {
+//            User.getInstance().apply {
+//                profilePicUrl?.let { binding.userPhoto.setImage(it, radius = 16) }
+//                //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
+//            }
+//        }
+        vm.userPhoto.set(User.getInstance().profilePicUrl)
+        vm.userName.set(User.getInstance().firstName + " "+User.getInstance().lastName )
 
 
         binding.topic.text = PubNubManager.getLiveRoomProperties().channelTopic
