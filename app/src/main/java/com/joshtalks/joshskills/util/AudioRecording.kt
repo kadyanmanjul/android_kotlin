@@ -27,10 +27,11 @@ class AudioRecording {
                     recorder = MediaRecorder()
                 }
                 recorder?.setAudioChannels(1)
-                recorder?.setAudioSamplingRate(48000)
+                recorder?.setAudioSamplingRate(32000)
+                recorder?.setAudioEncodingBitRate(48000)
                 recorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
-                recorder?.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
-                recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                recorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+                recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
                 recorder?.setOutputFile(recordFile?.absolutePath)
                 val errorListener =
                     MediaRecorder.OnErrorListener { arg0, arg1, arg2 ->

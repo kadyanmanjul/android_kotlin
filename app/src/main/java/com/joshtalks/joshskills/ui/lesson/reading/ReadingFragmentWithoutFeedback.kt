@@ -1461,12 +1461,15 @@ class ReadingFragmentWithoutFeedback :
         input1.volume = 5f
         val out2 = extractAudioFromVideo(videoDownPath!!)
         val input2 = GeneralAudioInput(requireContext(), Uri.parse(out2), null)
-        input2.volume = 5f
 
         val mergedAudioPath = getAudioFilePathMP3()
         val audioMixer = AudioMixer(mergedAudioPath)
         audioMixer.addDataSource(input1)
         audioMixer.addDataSource(input2)
+        audioMixer.setSampleRate(32000)
+        audioMixer.setBitRate(48000)
+        audioMixer.setChannelCount(2)
+        Log.d(TAG, "mergeTwoAudiosIntoOne() called ${input1.sampleRate} ${input1.bitrate} innpt2 ${input2.sampleRate} ${input2.bitrate}")
         audioMixer.mixingType = AudioMixer.MixingType.PARALLEL
         audioMixer.setProcessingListener(object : AudioMixer.ProcessingListener {
             override fun onProgress(progress: Double) {
@@ -1474,7 +1477,7 @@ class ReadingFragmentWithoutFeedback :
             }
 
             override fun onEnd() {
-                Log.d(TAG, "onEnd() called $mergedAudioPath ")
+                Log.d(TAG, "onEnd() called $mergedAudioPath $filePath")
                 muxVideoOldMethod(mergedAudioPath)
                 audioMixer.release()
             }
@@ -1726,6 +1729,11 @@ class ReadingFragmentWithoutFeedback :
             muxer.stop()
             muxer.release()
             setVideoPlayerWuthUrl(outputFile)
+           val op =  MediaExtractor()
+            op.setDataSource(outputFile)
+            for (i in 0..op.trackCount-1){
+                Log.d(TAG, "audioVideoMuxer() called with: OP = ${op.getTrackFormat(i)}")
+            }
 
         } catch (e: IOException) {
             Timber.e(e)
