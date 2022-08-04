@@ -750,11 +750,11 @@
                     android:id="@+id/container_reached_ft_limit"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginHorizontal="@dimen/_24sdp"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:background="@drawable/crd_red_border"
                     android:orientation="vertical"
-                    android:paddingVertical="@dimen/_16sdp"
+                    android:paddingVertical="@dimen/_12sdp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/txt_calls_left"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -770,13 +770,13 @@
                         android:text="@string/you_have_reached_limit_freetrial"
                         android:textAlignment="center"
                         android:textColor="@color/red"
-                        android:textSize="@dimen/_14sdp" />
+                        android:textSize="@dimen/_12sdp" />
 
                     <TextView
                         android:id="@+id/txt_buy_to_continue_calls"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
                         android:autoLink="all"
                         android:clickable="true"
                         android:focusable="true"
@@ -784,7 +784,7 @@
                         android:text="@string/buy_course_to_continue_calling"
                         android:textAlignment="center"
                         android:textColor="@color/btn_share_facebook"
-                        android:textSize="@dimen/_13sdp" />
+                        android:textSize="@dimen/_11sdp" />
                 </LinearLayout>
 
 

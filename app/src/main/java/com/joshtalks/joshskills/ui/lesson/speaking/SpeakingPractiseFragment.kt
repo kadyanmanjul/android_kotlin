@@ -98,6 +98,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var isTwentyMinFtuCallActive = false
     private var isIntroVideoEnabled = false
     private var lessonID = -1
+    private var isBlockedFT = false
+
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
@@ -359,6 +361,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 binding.btnStartTrialText.isEnabled = false
                                 binding.btnStartTrialText.alpha = 0.2F
                                 binding.infoContainer.visibility = INVISIBLE
+                                isBlockedFT = true
                             }
                          }
                         SHOW_WARNING_POPUP -> {
@@ -526,7 +529,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.txtCallsLeft.visibility = GONE
                     binding.txtLabelBecomeSeniorStudent.visibility = GONE
                     binding.btnNewStudent.visibility = GONE
-                    binding.infoContainer.visibility = VISIBLE
+                    if (!isBlockedFT){
+                        binding.infoContainer.visibility = VISIBLE
+                    }
                 }
             }
         }
