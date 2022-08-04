@@ -42,7 +42,7 @@ class RetrofitInstance {
 
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
-        private val retrofit by lazy {
+        val retrofit by lazy {
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
