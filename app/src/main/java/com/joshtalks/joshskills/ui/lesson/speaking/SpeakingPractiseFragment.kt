@@ -669,6 +669,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         favoriteUserCall: Boolean = false,
         isNewUserCall: Boolean = false,
     ) {
+        viewModel.saveImpression(P2P_CALL_BUTTON_CLICK)
         PrefManager.put(CALL_BTN_CLICKED, true)
         if (isAdded && activity != null) {
             if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
@@ -684,6 +685,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (report.isAnyPermissionPermanentlyDenied) {
                                 if (isAdded && activity!=null) {
+                                    viewModel.saveImpression(CALL_PERMISSION_DENIED)
                                     PermissionUtils.callingPermissionPermanentlyDeniedDialog(
                                         requireActivity(),
                                         message = R.string.call_start_permission_message
@@ -697,6 +699,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 startPracticeCall()
                                 return
                             } else {
+                                viewModel.saveImpression(CALL_PERMISSION_DENIED)
                                 MaterialDialog(requireActivity()).show {
                                     message(R.string.call_start_permission_message)
                                     positiveButton(R.string.ok)
