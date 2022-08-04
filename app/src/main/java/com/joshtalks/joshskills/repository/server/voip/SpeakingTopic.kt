@@ -49,40 +49,16 @@ data class SpeakingTopic(
     @Expose
     var isFromDb: Boolean = false,
 
-    @Ignore
-    @IgnoredOnParcel
     @SerializedName("is_ft_caller_blocked")
+    @ColumnInfo(name = "is_ft_caller_blocked")
     val isFtCallerBlocked: String?
 
-) : Parcelable {
-    constructor(
-        id: Int,
-        topicName: String,
-        duration: Int,
-        alreadyTalked: Int,
-        totalNewStudentCalls: Int,
-        requiredNewStudentCalls: Int,
-        isNewStudentCallsActivated: Boolean,
-        callDurationStatus: String,
-        isFromDb: Boolean
-    ) : this(
-        id,
-        topicName,
-        duration,
-        alreadyTalked,
-        totalNewStudentCalls,
-        requiredNewStudentCalls,
-        isNewStudentCallsActivated,
-        callDurationStatus,
-        isFromDb,
-        null
-    )
-}
+) : Parcelable
 
 @Dao
 interface SpeakingTopicDao {
 
-    @Query(value = "SELECT * FROM SpeakingTopic  where id=:topicId")
+    @Query(value = "SELECT * FROM SpeakingTopic where id=:topicId")
     suspend fun getTopicById(topicId: String): SpeakingTopic?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

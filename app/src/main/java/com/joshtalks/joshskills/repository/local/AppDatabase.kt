@@ -72,7 +72,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class
     ],
-    version = 51,
+    version = 52,
     exportSchema = true
 )
 @TypeConverters(
@@ -170,7 +170,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_47_48,
                                 MIGRATION_48_49,
                                 MIGRATION_49_50,
-                                MIGRATION_50_51
+                                MIGRATION_50_51,
+                                MIGRATION_51_52,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -602,6 +603,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_50_51: Migration = object : Migration(50, 51) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE `game_analytics`")
+            }
+        }
+
+        private val MIGRATION_51_52: Migration = object : Migration(51, 52) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `is_ft_caller_blocked` TEXT")
             }
         }
 
