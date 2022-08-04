@@ -131,7 +131,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:clickable="true"
             android:focusable="true"
-            android:background="@color/transparent_black"
+            android:background="@color/white"
             tools:visibility="gone">
 
             <com.pnikosis.materialishprogress.ProgressWheel

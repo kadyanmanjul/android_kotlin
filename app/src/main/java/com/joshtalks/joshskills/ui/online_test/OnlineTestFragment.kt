@@ -32,7 +32,6 @@ import com.joshtalks.joshskills.ui.online_test.vh.AtsChoiceView
 import com.joshtalks.joshskills.ui.online_test.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.online_test.vh.McqChoiceView
 import com.joshtalks.joshskills.ui.online_test.vh.SubjectiveChoiceView
-import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -58,7 +57,6 @@ class OnlineTestFragment :
     private var lessonId: Int = -1
     private var headingView: Stub<GrammarHeadingView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
-    private var errorView: Stub<ErrorView>? = null
     private var lessonActivityListener: LessonActivityListener? = null
     private var testCompletedListener: TestCompletedListener? = null
     private var ruleAssessmentQuestionId: String? = null
@@ -120,7 +118,6 @@ class OnlineTestFragment :
     fun initViews() {
         headingView = Stub(binding.choiceContainer.findViewById(R.id.heading_view))
         buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
-        errorView = Stub(binding.container.findViewById(R.id.error_view))
         atsChoiceView = Stub(binding.container.findViewById(R.id.ats_choice_view))
         mcqChoiceView = Stub(binding.container.findViewById(R.id.mcq_choice_view))
         subjectiveChoiceView = Stub(binding.container.findViewById(R.id.subjective_choice_view))
@@ -212,20 +209,10 @@ class OnlineTestFragment :
                 ApiCallStatus.FAILED -> {
                     binding.progressContainer.visibility = View.GONE
                     toggleLoading(false)
-                    errorView?.resolved()?.let {
-                        errorView!!.get().onFailure(object : ErrorView.ErrorCallback {
-                            override fun onRetryButtonClicked() {
-                                viewModel.fetchQuestionsOrPostAnswer(lessonId)
-                            }
-                        })
-                    }
                 }
                 ApiCallStatus.SUCCESS -> {
                     toggleLoading(false)
                     binding.progressContainer.visibility = View.GONE
-                    errorView?.resolved()?.let {
-                        errorView!!.get().onSuccess()
-                    }
                 }
                 else -> {
                     toggleLoading(false)

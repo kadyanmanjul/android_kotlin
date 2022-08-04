@@ -311,7 +311,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     fun openChooseLanguageFragment() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
-            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             addToBackStack(null)
             replace(
                 R.id.container,
@@ -323,7 +322,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     fun openGoalFragment() {
         supportFragmentManager.commit(true) {
-            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             addToBackStack(ChooseGoalOnBoardFragment::class.java.name)
             replace(
                 R.id.container,

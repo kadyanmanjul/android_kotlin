@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
@@ -54,6 +55,7 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     apiStatus.postValue(ApiCallStatus.FAILED)
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
+                ex.showAppropriateMsg()
             }
         }
     }
@@ -78,6 +80,7 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                 }
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
+                ex.showAppropriateMsg()
             }
         }
     }

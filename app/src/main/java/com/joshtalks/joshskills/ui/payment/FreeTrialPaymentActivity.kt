@@ -657,7 +657,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 }
 
                 if (isNewFlowActive) {
-                    it.combinedMessage?.get(0)?.let { list ->
+                    it.combinedMessage?.getOrNull(0)?.let { list ->
                         for (i in list.indices) {
                             val englishTextView: AppCompatTextView = createTextViewsDynamically()
                             englishTextView.text = list[i]
@@ -665,7 +665,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         }
                     }
 
-                    it.combinedMessage?.get(1)?.let { list ->
+                    it.combinedMessage?.getOrNull(1)?.let { list ->
                         subscriptionCard.course_info.visibility = View.VISIBLE
                         for (i in list.indices) {
                             val subscriptionTextView: AppCompatTextView = createTextViewsDynamically()

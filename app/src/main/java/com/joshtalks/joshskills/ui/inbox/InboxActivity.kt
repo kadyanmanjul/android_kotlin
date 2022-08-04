@@ -314,21 +314,21 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             courseListSet.addAll(temp)
             lifecycleScope.launch(Dispatchers.Main) {
                 inboxAdapter.addItems(temp)
-                val inboxEntityBought = temp.filter { it.isCapsuleCourse }.getOrNull(0)
-                val subscriptionCourseBought = temp.filter { it.courseId == SUBSCRIPTION_COURSE_ID }
-                var isCapsuleCourseBought = (inboxEntityBought != null && inboxEntityBought.isCourseBought)
-                subscriptionCourseBought.firstOrNull()?.let {
-                    isCapsuleCourseBought = true
+                val capsuleCourse = temp.firstOrNull { it.isCapsuleCourse }
+                val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
+                val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
+                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2) {
+                    findMoreLayout.visibility = View.VISIBLE
+                    if (isSubscriptionCourseBought)
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = true
+                    else if (isCapsuleCourseBought.not())
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = true
+                    else
+                        findMoreLayout.visibility = View.GONE
+                } else {
+                    findMoreLayout.visibility = View.GONE
                 }
-                findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible =
-                    isCapsuleCourseBought.not()
-                findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = isCapsuleCourseBought
             }
-        }
-        if (findMoreLayout.visibility != View.VISIBLE &&
-            PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
-        ) {
-            findMoreLayout.visibility = View.VISIBLE
         }
     }
 
