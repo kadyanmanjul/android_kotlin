@@ -27,6 +27,8 @@ import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.search.SearchSuggestionAdapter
 import com.joshtalks.badebhaiya.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import jp.wasabeef.recyclerview.animators.FadeInAnimator
+import jp.wasabeef.recyclerview.animators.LandingAnimator
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -97,7 +99,7 @@ class SearchFragment : Fragment(), Call {
 
         searchAdapter = SearchAdapter( this)
         binding.recyclerView.adapter = searchAdapter
-
+//        binding.recyclerView.itemAnimator = LandingAnimator()
 
         searchSuggestionAdapter = SearchSuggestionAdapter(
             onItemClick = {
