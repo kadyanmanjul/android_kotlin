@@ -348,7 +348,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                     if(!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) && PrefManager.getBoolValue(IS_FREE_TRIAL)){
                         binding.imgRecentCallsHistory.visibility = INVISIBLE
-                        binding.btnContinue.visibility = GONE
                         PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN,true)
                     }
 

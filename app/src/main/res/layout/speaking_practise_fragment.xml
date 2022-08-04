@@ -627,6 +627,7 @@
                     android:gravity="center"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
+                    android:visibility="gone"
                     android:paddingVertical="@dimen/_14sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                     android:textColor="@color/white"
@@ -639,8 +640,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/btn_container"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.7"
-                    app:rippleColor="@color/white"
-                    tools:visibility="visible" />
+                    app:rippleColor="@color/white"/>
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btn_continue_text"
@@ -770,7 +770,7 @@
                         android:text="@string/you_have_reached_limit_freetrial"
                         android:textAlignment="center"
                         android:textColor="@color/red"
-                        android:textSize="@dimen/_15sdp" />
+                        android:textSize="@dimen/_14sdp" />
 
                     <TextView
                         android:id="@+id/txt_buy_to_continue_calls"
@@ -784,7 +784,7 @@
                         android:text="@string/buy_course_to_continue_calling"
                         android:textAlignment="center"
                         android:textColor="@color/btn_share_facebook"
-                        android:textSize="@dimen/_14sdp" />
+                        android:textSize="@dimen/_13sdp" />
                 </LinearLayout>
 
 
