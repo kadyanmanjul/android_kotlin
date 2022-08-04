@@ -44,9 +44,8 @@ class ReadingFullScreenFragment : BaseFragment() {
             viewModel.cancelButton()
             binding.mergedVideo.onStop()
         }
-        binding.mergedVideo.setOnTouchListener(View.OnTouchListener { v, event ->
-            true
-        })
+        binding.mergedVideo.hideController()
+        binding.mergedVideo.seekToStart()
     }
 
     override fun initViewState() {
@@ -60,6 +59,7 @@ class ReadingFullScreenFragment : BaseFragment() {
                         binding.mergedVideo.setUrl(it.obj as String)
                         binding.mergedVideo.fitToScreen()
                         binding.mergedVideo.onStart()
+                        binding.mergedVideo.seekToStart()
                         binding.submitAnswerBtn.visibility = View.VISIBLE
                         binding.ivBack.visibility = View.VISIBLE
                         binding.ivClose.visibility = View.VISIBLE

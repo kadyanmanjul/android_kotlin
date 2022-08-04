@@ -209,10 +209,12 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun setVideoPlayerWuthUrl(fileDir: String) {
-        binding.mergedVideo.setUrl(fileDir)
-        // binding.videoPlayer.setCourseId(course_id)
-        binding.mergedVideo.fitToScreen()
-        binding.mergedVideo.onStart()
+        lifecycleScope.launch(Dispatchers.Main) {
+            binding.mergedVideo.setUrl(fileDir)
+            // binding.videoPlayer.setCourseId(course_id)
+            binding.mergedVideo.fitToScreen()
+            binding.mergedVideo.onStart()
+        }
     }
 
     private val pauseAnimationCallback by lazy {
