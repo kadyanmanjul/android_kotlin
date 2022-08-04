@@ -363,7 +363,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             }
                          }
                         SHOW_WARNING_POPUP -> {
-                            if(PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                            if(PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(HAS_SEEN_WARNING_POPUP_FT).not()) {
                                 // dialog for warning about shorter calls
                                 binding.containerReachedFtLimit.visibility = GONE
                                 AlertDialog.Builder(activity).setTitle(R.string.warning)
@@ -373,6 +373,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                     }
                                     .setMessage(R.string.shorter_calls_error_message)
                                     .show()
+                                PrefManager.put(HAS_SEEN_WARNING_POPUP_FT,true)
                             }
 
                         }
