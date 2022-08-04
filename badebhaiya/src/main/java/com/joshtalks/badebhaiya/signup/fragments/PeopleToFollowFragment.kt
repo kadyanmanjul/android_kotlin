@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -15,6 +16,7 @@ import com.joshtalks.badebhaiya.core.IS_NEW_USER
 import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import timber.log.Timber
 
 class PeopleToFollowFragment : Fragment() {
 
@@ -27,6 +29,15 @@ class PeopleToFollowFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                activity?.run {
+                    supportFragmentManager.popBackStack()
+                }
+            }
+        })
+
         return ComposeView(
             requireContext()
         ).apply {
