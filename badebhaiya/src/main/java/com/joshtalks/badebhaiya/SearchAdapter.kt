@@ -30,33 +30,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListAdapter<SearchRoomsResponse, SearchAdapter.SearchViewHolder>(SearchAdapter){
+class SearchAdapter(var call: Call): ListAdapter<Users, SearchAdapter.SearchViewHolder>(SearchDiffUtil()){
 
-    companion object DIFF_CALLBACK : DiffUtil.ItemCallback<SearchRoomsResponse>() {
-        override fun areItemsTheSame(
-            oldItem: SearchRoomsResponse,
-            newItem: SearchRoomsResponse
-        ): Boolean {
-            return oldItem.users == newItem.users
-        }
-
-        override fun areContentsTheSame(
-            oldItem: SearchRoomsResponse,
-            newItem: SearchRoomsResponse
-        ): Boolean {
-            return oldItem == newItem
-        }
-
-    }
-
-    //var speakerFollowed = false
 
     inner class SearchViewHolder(var item: LiSearchEventBinding) :
         RecyclerView.ViewHolder(item.root) {
-
     }
-
-    override fun getItemCount(): Int = searchResult?.size?:0
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -97,23 +76,24 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
 //            SearchFragment().displayNull()
 //            //holder.noresult.visibility= View.VISIBLE
 //        }
+        val searchResult = getItem(position)
         searchResult.let {
                 searchResult->
-            holder.item.tvProfileBio.text = searchResult[position].bio
-            holder.item.userName.text = searchResult[position].full_name
+            holder.item.tvProfileBio.text = searchResult.bio
+            holder.item.userName.text = searchResult.full_name
             holder.item.user.setOnClickListener {
                 com.joshtalks.badebhaiya.utils.hideKeyboard(holder.item.user.context)
-                call.itemClick(searchResult[position].user_id)
+                call.itemClick(searchResult.user_id)
             }
 
-            if (searchResult[position].profilePic.isNullOrEmpty().not())
+            if (searchResult.profilePic.isNullOrEmpty().not())
                 Glide.with(holder.itemView.getContext())
-                    .load(searchResult[position].profilePic)
+                    .load(searchResult.profilePic)
                     .into(holder.item.ivProfilePic)
             else
-                holder.item.ivProfilePic.setUserInitialInRect(searchResult[position].short_name, 24)
+                holder.item.ivProfilePic.setUserInitialInRect(searchResult.short_name, 24)
 
-            if (searchResult[position].is_speaker_followed) {
+            if (searchResult.is_speaker_followed) {
                 holder.item.user.apply {
                     holder.item.user.btnFollow.text = "Following"
                     holder.item.user.btnFollow.textSize=12F
@@ -138,11 +118,11 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                 }
             holder.item.btnFollow.setOnClickListener {
                     GlobalScope.launch {
-                        if (searchResult[position].is_speaker_followed.not()) {
+                        if (searchResult.is_speaker_followed.not()) {
                             try {
                                 val followRequest =
                                     FollowRequest(
-                                        searchResult[position].user_id,
+                                        searchResult.user_id,
                                         User.getInstance().userId,
                                         false,
                                         false,
@@ -156,7 +136,7 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                 val response =
                                     RetrofitInstance.profileNetworkService.updateFollowStatus(followRequest)
                                 if (response.isSuccessful) {
-                                    searchResult[position].is_speaker_followed=true
+                                    searchResult.is_speaker_followed=true
                                     //notifyDataSetChanged()
                                 }
                             }catch (ex:Exception){
@@ -166,7 +146,7 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                 try {
                                     val followRequest =
                                         FollowRequest(
-                                            searchResult[position].user_id,
+                                            searchResult.user_id,
                                             User.getInstance().userId,
                                             false,
                                             false,
@@ -181,7 +161,7 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
 
                                     val response = RetrofitInstance.profileNetworkService.updateUnfollowStatus(followRequest)
                                     if (response.isSuccessful) {
-                                        searchResult[position].is_speaker_followed=false
+                                        searchResult.is_speaker_followed=false
                                         //notifyDataSetChanged()
                                     }
                                 } catch (ex: Exception) {
@@ -189,7 +169,7 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                 }
                         }
                     }
-                if (searchResult[position].is_speaker_followed.not()==true) {
+                if (searchResult.is_speaker_followed.not()==true) {
                     holder.item.user.apply {
                         holder.item.user.btnFollow.setText("Following")
                         holder.item.user.btnFollow.textSize=12F
@@ -219,4 +199,15 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
             }
         }
     }
+}
+
+class SearchDiffUtil : DiffUtil.ItemCallback<Users>() {
+    override fun areItemsTheSame(oldItem: Users, newItem: Users): Boolean {
+        return oldItem.user_id == newItem.user_id
+    }
+
+    override fun areContentsTheSame(oldItem: Users, newItem: Users): Boolean {
+        return oldItem == newItem
+    }
+
 }

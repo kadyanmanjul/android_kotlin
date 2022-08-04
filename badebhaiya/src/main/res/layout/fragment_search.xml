@@ -76,6 +76,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/_6sdp"
             android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

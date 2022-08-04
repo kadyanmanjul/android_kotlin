@@ -50,6 +50,7 @@ class SearchFragment : Fragment(), Call {
     private val searchViewModel: SearchViewModel by viewModels()
 
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
+    private lateinit var searchAdapter: SearchAdapter
 
     lateinit var binding:FragmentSearchBinding
     override fun onCreateView(
@@ -93,6 +94,10 @@ class SearchFragment : Fragment(), Call {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        searchAdapter = SearchAdapter( this)
+        binding.recyclerView.adapter = searchAdapter
+
 
         searchSuggestionAdapter = SearchSuggestionAdapter(
             onItemClick = {
@@ -151,13 +156,11 @@ class SearchFragment : Fragment(), Call {
         }
 
         viewModel.searchResponse.observe(viewLifecycleOwner){
-            binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
             if(it?.users!=null ) {
                 binding.recyclerView.visibility= VISIBLE
-                binding.recyclerView.adapter = SearchAdapter(it.users, this)
+                searchAdapter.submitList(it.users)
                 if(it?.users.size>0) {
                     binding.noresult.visibility = GONE
-
                 }
                 else {
                     if(binding.searchBar.toString()=="") {

@@ -125,14 +125,6 @@ fun ItemCallRequest(callRequest: RequestData) {
                             callRequest.user.user_id,
                             myActivity.supportFragmentManager
                         )
-
-
-//                        RequestBottomSheetFragment(callRequest.user.user_id).also {
-//                            it.show(
-//                                myActivity.supportFragmentManager,
-//                                RequestBottomSheetFragment.TAG
-//                            )
-//                        }
                     }
                 },
             verticalAlignment = Alignment.CenterVertically

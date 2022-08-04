@@ -2,6 +2,8 @@ package com.joshtalks.badebhaiya.showCallRequests.model
 
 import android.os.Parcelable
 import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
+import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -14,6 +16,9 @@ data class RequestData(
 ): Parcelable {
 
     val submitTime: String
-        get() = Utils.getMessageTimeInHours(Date(created))
+        get() = if (isSubmittedToday()) Utils.getMessageTimeInHours(Date(created)) else Utils.getMessageTime(created, style = DateTimeStyle.SEMI_MEDIUM).removeRange(0..3)
 
+    private fun isSubmittedToday(): Boolean{
+        return DateTimeUtils.isToday(Date(created))
+    }
 }

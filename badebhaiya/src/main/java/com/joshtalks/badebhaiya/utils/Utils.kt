@@ -926,30 +926,32 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
 }
 
 fun ImageView.setUserInitialInRect(
-    userName: String,
+    userName: String?,
     dpToPx: Int = 16,
     radius: Int = 16,
     textColor: Int = R.color.white,
     bgColor: Int = R.color.button_color
 ) {
-    val font = Typeface.createFromAsset(
-        AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
-    )
-    val drawable: TextDrawable = TextDrawable.builder()
-        .beginConfig()
-        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, textColor))
-        .useFont(font)
-        .fontSize(Utils.dpToPx(dpToPx))
-        .toUpperCase()
-        .endConfig()
-        .buildRoundRect(
-            getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, bgColor),
-            radius
+    userName?.let {
+        val font = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/OpenSans-SemiBold.ttf"
         )
-    this.background = drawable
-    this.setImageDrawable(drawable)
+        val drawable: TextDrawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, textColor))
+            .useFont(font)
+            .fontSize(Utils.dpToPx(dpToPx))
+            .toUpperCase()
+            .endConfig()
+            .buildRoundRect(
+                getUserNameInShort(it),
+                ContextCompat.getColor(AppObjectController.joshApplication, bgColor),
+                radius
+            )
+        this.background = drawable
+        this.setImageDrawable(drawable)
+    }
 }
 
 fun String.toBitmap(context: Context, onResourceReady: (bitmap: Bitmap) -> Unit): Bitmap? {
