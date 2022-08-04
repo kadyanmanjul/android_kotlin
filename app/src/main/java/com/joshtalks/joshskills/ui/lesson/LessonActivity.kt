@@ -470,10 +470,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.spotlightCallBtn.visibility = View.GONE
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
-                    lifecycleScope.launch {
-                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT)
-                    }
                 }
                 LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
 //                    binding.overlayLayout.visibility = View.VISIBLE
@@ -492,10 +488,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.spotlightCallBtn.visibility = View.GONE
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
-                    lifecycleScope.launch {
-                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1)
-                    }
                 }
                 LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1 -> {
                     binding.overlayLayout.visibility = View.VISIBLE
@@ -514,10 +506,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.spotlightCallBtn.visibility = View.GONE
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
-                    lifecycleScope.launch {
-                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART1)
-                    }
                 }
                 LessonSpotlightState.VOCAB_SPOTLIGHT_PART1 -> {
                     binding.overlayLayout.visibility = View.VISIBLE
@@ -536,10 +524,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.spotlightCallBtn.visibility = View.GONE
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
-                    lifecycleScope.launch {
-                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART2)
-                    }
                 }
                 LessonSpotlightState.VOCAB_SPOTLIGHT_PART2 -> {
                     binding.overlayLayout.visibility = View.VISIBLE
@@ -558,10 +542,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.spotlightCallBtn.visibility = View.GONE
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
-                    lifecycleScope.launch {
-                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART3)
-                    }
                 }
                 LessonSpotlightState.VOCAB_SPOTLIGHT_PART3 -> {
                     binding.overlayLayout.visibility = View.VISIBLE
@@ -580,10 +560,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.spotlightCallBtn.visibility = View.GONE
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
-                    lifecycleScope.launch {
-                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.READING_SPOTLIGHT)
-                    }
                 }
                 LessonSpotlightState.READING_SPOTLIGHT -> {
                     binding.overlayLayout.visibility = View.VISIBLE
@@ -602,10 +578,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.spotlightCallBtn.visibility = View.GONE
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
-                    lifecycleScope.launch {
-                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART2)
-                    }
                 }
                 LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART2 -> {
                     binding.overlayLayout.visibility = View.VISIBLE
@@ -670,6 +642,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.arrowAnimation.visibility = View.GONE
                 }
             }
+
         }
 
         viewModel.introVideoLiveDataForSpeakingSection.observe(this) {
@@ -1028,6 +1001,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             tab.setCustomView(R.layout.capsule_tab_layout_view)
             when (position) {
                 SPEAKING_POSITION -> {
+                    if(PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT).not()){
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+                    }
                     setSelectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
@@ -1214,11 +1190,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
                         .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
-                    if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
-                        hideSpotlight()
-                    } else {
-                        showSpeakingSpotlight()
-                    }
                 }
                 GRAMMAR_POSITION -> {
                     tab.view.background =

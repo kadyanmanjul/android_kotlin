@@ -61,10 +61,7 @@ import com.karumi.dexter.listener.single.PermissionListener
 import com.singular.sdk.Singular
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.util.*
 
@@ -146,6 +143,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         super.onResume()
         if (topicId.isNullOrBlank().not()) {
             viewModel.getTopicDetail(topicId!!)
+        }
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+            viewModel.lessonSpotlightStateLiveData.postValue(null)
+        } else {
+            CoroutineScope(Dispatchers.Main).launch{
+                delay(100)
+                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+                PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+            }
         }
         viewModel.isFavoriteCallerExist()
         subscribeRXBus()

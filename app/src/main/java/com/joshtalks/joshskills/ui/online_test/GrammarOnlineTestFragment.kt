@@ -156,8 +156,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                     binding.startBtn.text = getContinueButtonText()
                 } else {
                     binding.startBtn.text = getStartButtonText()
-                    if (!PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION))
-                        showGrammarAnimation()
                 }
             }
             (PrefManager.getIntValue(
@@ -246,6 +244,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         ) {
             lessonId = it
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION))
+            showGrammarAnimation()
     }
 
     private fun showTooltip() {
