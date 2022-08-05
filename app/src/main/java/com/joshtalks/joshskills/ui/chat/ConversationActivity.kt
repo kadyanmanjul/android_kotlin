@@ -111,10 +111,13 @@ import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -906,14 +909,25 @@ class ConversationActivity :
     }
 
     fun callPracticePartner(v: View) {
-        startActivityForResult(
-            Intent(this, VoiceCallActivity::class.java).apply {
-                putExtra(INTENT_DATA_COURSE_ID, inboxEntity.courseId)
-                putExtra(INTENT_DATA_TOPIC_ID, FREE_TRIAL_CALL_TOPIC_ID)
-                putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
-            }, VOICE_CALL_REQUEST_CODE
-        )
+        if (getVoipState() == State.IDLE) {
+            if (checkPstnState() == com.joshtalks.joshskills.core.pstn_states.PSTNState.Idle) {
+                if (Utils.isInternetAvailable().not()) {
+                    showToast("Seems like you have no internet")
+                    return@callPracticePartner
+                }
+                startActivityForResult(
+                    Intent(this, VoiceCallActivity::class.java).apply {
+                        putExtra(INTENT_DATA_COURSE_ID, inboxEntity.courseId)
+                        putExtra(INTENT_DATA_TOPIC_ID, FREE_TRIAL_CALL_TOPIC_ID)
+                        putExtra(STARTING_POINT, FROM_ACTIVITY)
+                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+                    }, VOICE_CALL_REQUEST_CODE
+                )
+            } else {
+                showToast("Cannot make this call while on another call")
+            }
+        } else
+            showToast("Wait for last call to get disconnected")
     }
 
     fun moveToPaymentActivity(v: View) {
