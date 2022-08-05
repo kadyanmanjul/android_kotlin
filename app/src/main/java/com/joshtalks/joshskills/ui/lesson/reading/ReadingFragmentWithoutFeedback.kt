@@ -86,6 +86,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VIDEO_PLAYED_RP
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -1030,7 +1031,7 @@ class ReadingFragmentWithoutFeedback :
         override fun onCompleted(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-            videoDownPath = download.file.toString()
+            videoDownPath = download.file
             unlockDownloadLock()
             scope.launch {
                 if (videoDownPath.isNullOrEmpty().not()) {
@@ -1289,7 +1290,6 @@ class ReadingFragmentWithoutFeedback :
 
     private fun audioAttachmentInit() {
         showPracticeSubmitLayout()
-        binding.practiseSubmitLayout.visibility = VISIBLE
         if (video.isNullOrEmpty().not()) {
             observeNetwork()
             addVideoView()
@@ -1298,6 +1298,7 @@ class ReadingFragmentWithoutFeedback :
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
             binding.audioListRv.visibility = VISIBLE
+            binding.practiseSubmitLayout.visibility = VISIBLE
             initRV()
             removePreviousAddedViewHolder()
             praticAudioAdapter?.addNewItem(PracticeEngagementWrapper(null, filePath))
@@ -1442,7 +1443,21 @@ class ReadingFragmentWithoutFeedback :
                                 muxerJob = scope.launch {
                                     mutex.withLock {
                                         if (isActive && isAdded && video != null) {
-                                            mergeTwoAudiosIntoOne()
+                                            if (videoDownPath != null) {
+                                                mergeTwoAudiosIntoOne()
+                                            } else {
+                                                try {
+                                                    video = null
+                                                    withContext(Dispatchers.Main) {
+                                                        showToast(getString(R.string.generic_message_for_error))
+                                                        viewModel.closeCurrentFragment()
+                                                        binding.videoLayout.visibility = GONE
+                                                        audioAttachmentInit()
+                                                    }
+                                                } catch (ex: Exception) {
+                                                    LogException.catchException(ex)
+                                                }
+                                            }
                                             //muxVideoOldMethod()
                                         }
                                     }
