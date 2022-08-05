@@ -189,14 +189,16 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvProfileBio"
             onSingleClick="@{()->handler.showBottomSheet()}"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_104sdp"
             android:clickable="@{viewModel.isSelfProfile()}"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/profile_font_color"
             android:textSize="@dimen/_9ssp"
             android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isBioTextAvailable)? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tvFollowers"
             app:layout_constraintTop_toBottomOf="@id/tvFollowers"
             tools:text="This is Akhand Swarup’s Bio.\nHe is an IES Officer" />
