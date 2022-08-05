@@ -114,6 +114,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
             User.getInstance().userId.isNotBlank() -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {
                     SignUpActivity.start(this, REDIRECT_TO_ENTER_NAME)
+                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
                     return
                 }
 //                if (viewUserId == null) {
@@ -151,12 +152,13 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 }
             }
         }
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
             startActivity(intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
+            overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
         }
     }
 

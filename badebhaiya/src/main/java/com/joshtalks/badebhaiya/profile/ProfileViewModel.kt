@@ -172,7 +172,7 @@ class ProfileViewModel : ViewModel() {
                                     roomListResponseItem
                                 })
                             if (it.recordedRooms.isNullOrEmpty().not())
-                                list.addAll(it.recordedRooms!!.map { roomListResponseItem ->
+                                list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
                                     roomListResponseItem.conversationRoomType =
                                         ConversationRoomType.RECORDED
                                     roomListResponseItem
@@ -248,7 +248,6 @@ class ProfileViewModel : ViewModel() {
                                             ConversationRoomType.NOT_SCHEDULED
                                     roomListResponseItem
                                 })
-                            Log.i("pictureDelho", "getProfileForUser: ${it.profilePicUrl}")
                             if (list.isNullOrEmpty().not()) {
                                 list.forEach { listItem ->
                                     listItem.currentTime = it.currentTime!!
@@ -257,8 +256,6 @@ class ProfileViewModel : ViewModel() {
                             } else {
                                 speakerProfileRoomsAdapter.submitList(emptyList())
                             }
-
-                            Log.i("pictureView", "getProfileForUser: ${userProfileData.value}")
                         }
                     } else {
                         showToast("Some Error Occured")

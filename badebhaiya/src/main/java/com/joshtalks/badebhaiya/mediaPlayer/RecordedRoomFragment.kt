@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.mediaPlayer
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.os.Bundle
+import android.transition.Fade
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.transition.MaterialSharedAxis
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.NotificationChannelNames
@@ -57,8 +59,6 @@ class RecordedRoomFragment : Fragment() {
         fun open(activity: AppCompatActivity, from: String, room: RoomListResponseItem?, feedViewModel: FeedViewModel? = null) {
 //            LiveRoomFragment.removeIfFound(activity)
 
-
-
             MainScope().launch {
                 AudioPlayerService.playingRoomId?.let {
                     if (it == room!!.roomId){
@@ -93,11 +93,17 @@ class RecordedRoomFragment : Fragment() {
 
                 val fragment = RecordedRoomFragment() // replace your custom fragment class
                 val bundle = Bundle()
+                fragment?.apply {
+                    exitTransition = MaterialSharedAxis(
+                        MaterialSharedAxis.Z,
+                        /* forward= */ false
+                    ).apply {
+                        duration = 500
+                    }
+                }
                 bundle.putString("source", from) // use as per your need
                 bundle.putParcelable(ROOM_DATA,room)
                 fragment.arguments = bundle
-
-
 
             activity
                 .supportFragmentManager
@@ -234,6 +240,21 @@ class RecordedRoomFragment : Fragment() {
     private fun attachBackPressedDispatcher() {
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             handleBackPress(this)
+        }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
         }
     }
 

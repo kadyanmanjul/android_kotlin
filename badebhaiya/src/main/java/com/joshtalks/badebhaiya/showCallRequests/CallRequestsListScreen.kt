@@ -121,6 +121,7 @@ fun ItemCallRequest(callRequest: RequestData) {
                 .clickable {
                     activityObj?.let { myActivity ->
                         didRead.value = true
+                        callRequest.is_read=true
                         RequestBottomSheetFragment.open(
                             callRequest.user.user_id,
                             myActivity.supportFragmentManager
@@ -140,11 +141,11 @@ fun ItemCallRequest(callRequest: RequestData) {
                 Spacer(modifier = Modifier.height(4.dp))
                 ListBioText(
                     text = callRequest.request_submitted,
-                    textColor = if (didRead.value) colorResource(
+                    textColor = if (didRead.value && callRequest.is_read) colorResource(
                         id = R.color.gray_txt
                     ) else Color.Black,
                     fontSize = 14.sp,
-                    fontWeight = if (didRead.value) FontWeight.Normal else FontWeight.Bold
+                    fontWeight = if (didRead.value && callRequest.is_read) FontWeight.Normal else FontWeight.Bold
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -157,18 +158,18 @@ fun ItemCallRequest(callRequest: RequestData) {
                     painter = painterResource(id = R.drawable.ic_forward_arrow),
                     contentDescription = "see request",
                     colorFilter = ColorFilter.tint(
-                        if (didRead.value) colorResource(
+                        if (didRead.value && callRequest.is_read) colorResource(
                             id = R.color.gray_txt
                         ) else Color.Black
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = callRequest.submitTime, color = if (didRead.value) colorResource(
+                    text = callRequest.submitTime, color = if (didRead.value && callRequest.is_read) colorResource(
                             id = R.color.gray_txt
                             ) else Color.Black,
                     fontSize = 12.sp,
-                    fontWeight = if (didRead.value) FontWeight.Normal else FontWeight.Bold
+                    fontWeight = if (didRead.value && callRequest.is_read) FontWeight.Normal else FontWeight.Bold
                 )
             }
         }

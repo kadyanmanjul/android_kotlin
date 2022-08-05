@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
@@ -117,6 +118,22 @@ class WaitingFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
         }
     }
 
@@ -387,7 +404,14 @@ class WaitingFragment : Fragment() {
         const val TAG = "WaitingFragment"
 
         fun open(activity: AppCompatActivity) {
-
+            WaitingFragment()?.apply {
+                exitTransition = MaterialSharedAxis(
+                    MaterialSharedAxis.Z,
+                    /* forward= */ false
+                ).apply {
+                    duration = 500
+                }
+            }
                 activity.supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.fragmentContainer, WaitingFragment(), TAG)
