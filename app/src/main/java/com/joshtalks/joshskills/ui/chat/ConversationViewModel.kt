@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
+import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
@@ -76,6 +77,8 @@ class ConversationViewModel(
 
     val abTestCampaignliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }
+    val isFreeTrialCallBlocked = MutableLiveData<String>(null)
+
     fun getCampaignData(campaign: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             repository.getCampaignData(campaign)?.let { campaign ->
@@ -486,4 +489,40 @@ class ConversationViewModel(
     }
 
     suspend fun getClosedGroupCount() = appDatabase.groupListDao().getClosedGroupCount()
+
+    fun getTopicDetail(topicId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val topicDetailsFromLocal = getTopicFromDB(topicId)
+            if (topicDetailsFromLocal != null) {
+                topicDetailsFromLocal.isFromDb = true
+                isFreeTrialCallBlocked.postValue(topicDetailsFromLocal.isFtCallerBlocked)
+            }
+            if (Utils.isInternetAvailable()) {
+                val topicDetails = getTopicFromAPI(topicId)
+                isFreeTrialCallBlocked.postValue(topicDetailsFromLocal?.isFtCallerBlocked)
+            }
+        }
+    }
+
+    private suspend fun getTopicFromDB(topicId: String): SpeakingTopic? {
+        return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+            try {
+                AppObjectController.appDatabase.speakingTopicDao().getTopicById(topicId)
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    private suspend fun getTopicFromAPI(topicId: String): SpeakingTopic? {
+        return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+            try {
+                val response = AppObjectController.commonNetworkService.getTopicDetail(topicId)
+                AppObjectController.appDatabase.speakingTopicDao().updateTopic(response)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+            getTopicFromDB(topicId)
+        }
+    }
 }

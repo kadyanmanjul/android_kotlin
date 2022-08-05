@@ -92,6 +92,8 @@ import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.lesson.speaking.BLOCKED
+import com.joshtalks.joshskills.ui.lesson.speaking.SHOW_WARNING_POPUP
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
@@ -145,9 +147,11 @@ const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
 const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
+const val VOICE_CALL_REQUEST_CODE = 1110
 const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
 const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
 const val TOOLTIP_CONVERSAITON = "TOOLTIP_CONVERSAITON_"
+const val FREE_TRIAL_CALL_TOPIC_ID = "10"
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -906,13 +910,13 @@ class ConversationActivity :
     }
 
     fun callPracticePartner(v: View) {
-        startActivity(
+        startActivityForResult(
             Intent(this, VoiceCallActivity::class.java).apply {
-                putExtra(INTENT_DATA_COURSE_ID, "151")
-                putExtra(INTENT_DATA_TOPIC_ID, "10")
+                putExtra(INTENT_DATA_COURSE_ID, inboxEntity.courseId)
+                putExtra(INTENT_DATA_TOPIC_ID, FREE_TRIAL_CALL_TOPIC_ID)
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
-            }
+            }, VOICE_CALL_REQUEST_CODE
         )
     }
 
@@ -1320,6 +1324,37 @@ class ConversationActivity :
                 }
             }
         }
+        if (inboxEntity.isCourseBought.not())
+            conversationViewModel.isFreeTrialCallBlocked.observe(this) {
+                when (it) {
+                    BLOCKED -> {
+                        PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
+                        conversationBinding.isFreeTrialCallBlocked = true
+                        conversationBinding.executePendingBindings()
+                    }
+                    SHOW_WARNING_POPUP -> {
+                        if (PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(
+                                HAS_SEEN_WARNING_POPUP_FT
+                            ).not()
+                        ) {
+                            // dialog for warning about shorter calls
+                            AlertDialog.Builder(this).setTitle(R.string.warning)
+                                .setIcon(R.drawable.ic_baseline_warning_24)
+                                .setPositiveButton(R.string.got_it) { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .setMessage(R.string.shorter_calls_error_message)
+                                .show()
+                            PrefManager.put(HAS_SEEN_WARNING_POPUP_FT, true)
+                        }
+
+                    }
+                    else -> {
+                        conversationBinding.isFreeTrialCallBlocked = false
+                        conversationBinding.executePendingBindings()
+                    }
+                }
+            }
     }
 
     private fun addRVPatch(count: Int) {
@@ -2074,7 +2109,10 @@ class ConversationActivity :
                 (data?.getParcelableExtra(VIDEO_OBJECT) as ChatModel?)?.let {
                     unlockClassViewModel.canWeAddUnlockNextClass(it.chatId)
                 }
-            } else if (resultCode == RESULT_OK) {
+            } else if(requestCode == VOICE_CALL_REQUEST_CODE){
+                conversationViewModel.getTopicDetail(FREE_TRIAL_CALL_TOPIC_ID)
+            }
+            else if (resultCode == RESULT_OK) {
                 when (requestCode) {
                     ASSESSMENT_REQUEST_CODE,
                     LESSON_REQUEST_CODE,
