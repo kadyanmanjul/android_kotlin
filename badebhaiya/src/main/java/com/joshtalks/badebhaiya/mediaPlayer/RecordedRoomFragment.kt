@@ -58,8 +58,6 @@ class RecordedRoomFragment : Fragment() {
         fun open(activity: AppCompatActivity, from: String, room: RoomListResponseItem?, feedViewModel: FeedViewModel? = null) {
 //            LiveRoomFragment.removeIfFound(activity)
 
-
-
             MainScope().launch {
                 AudioPlayerService.playingRoomId?.let {
                     if (it == room!!.roomId){
@@ -157,19 +155,6 @@ class RecordedRoomFragment : Fragment() {
         binding = FragmentRecordRoomBinding.inflate(inflater, container, false)
         binding.recordedViewModel = viewModel
         binding.handler = this
-        enterTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ true
-        ).apply {
-            duration = 500
-        }
-        returnTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ false
-        ).apply {
-            duration = 500
-        }
-//        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
         viewModel.lvRoomState.value = LiveRoomState.EXPANDED
 
         var mBundle: Bundle? = Bundle()
@@ -249,6 +234,21 @@ class RecordedRoomFragment : Fragment() {
     private fun attachBackPressedDispatcher() {
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             handleBackPress(this)
+        }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
         }
     }
 

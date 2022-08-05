@@ -42,18 +42,7 @@ class SignUpEnterNameFragment: Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_name, container, false)
         binding.handler = this
         //showToast("${binding.etFirstName.toString()}")
-        enterTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ true
-        ).apply {
-            duration = 500
-        }
-        returnTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ false
-        ).apply {
-            duration = 500
-        }
+
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 viewModel.redirect="ENTER_NAME"
@@ -77,6 +66,22 @@ class SignUpEnterNameFragment: Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

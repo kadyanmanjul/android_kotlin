@@ -39,18 +39,7 @@ class SignUpAddProfilePhotoFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_add_profile_photo, container, false)
         binding.handler = this
-        enterTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ true
-        ).apply {
-            duration = 500
-        }
-        returnTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ false
-        ).apply {
-            duration = 500
-        }
+
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
@@ -65,6 +54,22 @@ class SignUpAddProfilePhotoFragment: Fragment() {
             showToast("Please Upload a Profile Pic.")
         }
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
+        }
     }
 
 

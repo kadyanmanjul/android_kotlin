@@ -27,7 +27,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
@@ -63,7 +62,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
@@ -117,18 +115,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         } catch (e: Exception){
 
         }
-        enterTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ true
-        ).apply {
-            duration = 500
-        }
-        returnTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ false
-        ).apply {
-            duration = 500
-        }
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
@@ -182,6 +169,22 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         })
         return binding.root
 
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
+        }
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -330,11 +333,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun openFansList(){
-        FansListFragment.open(supportFragmentManager =requireActivity().supportFragmentManager,R.id.room_frame)
+        FansListFragment.open(activity =(activity as AppCompatActivity),R.id.room_frame)
     }
 
     fun openFollowingList(){
-        FollowingListFragment.open(supportFragmentManager =requireActivity().supportFragmentManager,R.id.room_frame)
+        FollowingListFragment.open(activity =(activity as AppCompatActivity),R.id.room_frame)
     }
 
     fun openList(){

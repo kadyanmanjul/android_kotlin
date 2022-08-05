@@ -72,18 +72,6 @@ class WaitingFragment : Fragment() {
     ): View? {
         viewModel.waitingRoomUsers.value= emptyList()
         viewModel.getWaitingList()
-        enterTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ true
-        ).apply {
-            duration = 500
-        }
-        returnTransition = MaterialSharedAxis(
-            MaterialSharedAxis.Z,
-            /* forward= */ false
-        ).apply {
-            duration = 500
-        }
         try {
             (activity as FeedActivity).swipeRefreshLayout.isEnabled = false
         } catch (e: Exception) {
@@ -130,6 +118,22 @@ class WaitingFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
         }
     }
 
