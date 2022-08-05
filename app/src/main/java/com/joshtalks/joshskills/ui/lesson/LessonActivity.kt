@@ -607,7 +607,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                             viewModel.showHideSpeakingFragmentCallButtons(1)
                             showIntroVideoUi()
                         }
-                    } else if (PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL)) {
+                    } else if (PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) && (viewModel.lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO)) {
                         binding.overlayLayout.visibility = View.VISIBLE
                         binding.spotlightTabGrammar.visibility = View.INVISIBLE
                         binding.spotlightTabSpeaking.visibility = View.INVISIBLE
