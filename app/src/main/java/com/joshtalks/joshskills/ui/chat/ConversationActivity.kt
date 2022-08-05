@@ -903,10 +903,6 @@ class ConversationActivity :
         conversationBinding.btnNextStep.setOnClickListener {
             showNextTooltip()
         }
-        conversationBinding.trialClose.setOnClickListener {
-            conversationBinding.freeTrialContainer.visibility = GONE
-            countdownTimerBack?.stop()
-        }
     }
 
     fun callPracticePartner(v: View) {
@@ -954,8 +950,9 @@ class ConversationActivity :
         audioPlayerManager?.playerListener = this@ConversationActivity
         if (PrefManager.getBoolValue(IS_COURSE_BOUGHT))
             onlyChatView()
-        else
+        else {
             conversationBinding.bottomBar.visibility = GONE
+        }
         initSnackBar()
     }
 
@@ -2109,10 +2106,9 @@ class ConversationActivity :
                 (data?.getParcelableExtra(VIDEO_OBJECT) as ChatModel?)?.let {
                     unlockClassViewModel.canWeAddUnlockNextClass(it.chatId)
                 }
-            } else if(requestCode == VOICE_CALL_REQUEST_CODE){
+            } else if (requestCode == VOICE_CALL_REQUEST_CODE) {
                 conversationViewModel.getTopicDetail(FREE_TRIAL_CALL_TOPIC_ID)
-            }
-            else if (resultCode == RESULT_OK) {
+            } else if (resultCode == RESULT_OK) {
                 when (requestCode) {
                     ASSESSMENT_REQUEST_CODE,
                     LESSON_REQUEST_CODE,
