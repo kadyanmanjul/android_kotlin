@@ -320,6 +320,7 @@ class ConversationActivity :
         initToolbar()
         //  groupChatHintLogic()    //Group chat hint UI
         // initCourseProgressTooltip()    // course progress tooltip
+        initSharedPreferences()
         initABTest()
         initRV()
         initView()
@@ -328,8 +329,22 @@ class ConversationActivity :
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
-        if (inboxEntity.isCapsuleCourse) {
+
+    }
+
+    private fun initSharedPreferences() {
+        PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
+        if (inboxEntity.isCourseBought.not() || inboxEntity.courseId != DEFAULT_COURSE_ID)
+            PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
+        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse)
+            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
+        if (inboxEntity.isCapsuleCourse)
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
+        if (inboxEntity.isCourseBought.not() &&
+            inboxEntity.expiryDate != null &&
+            inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+        ) {
+            PrefManager.put(IS_FREE_TRIAL_ENDED, true)
         }
     }
 
@@ -366,9 +381,6 @@ class ConversationActivity :
     }
 
     private fun initFreeTrialTimer() {
-        PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
-        if (inboxEntity.isCourseBought.not() || inboxEntity.courseId != DEFAULT_COURSE_ID)
-            PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
         if (inboxEntity.isCourseBought.not() &&
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
@@ -387,9 +399,9 @@ class ConversationActivity :
             conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
+        } else {
+            conversationBinding.freeTrialExpiryLayout.visibility = GONE
         }
-        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse)
-            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
     }
 
     private fun startTimer(startTimeInMilliSeconds: Long) {
@@ -2164,8 +2176,11 @@ class ConversationActivity :
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
-        if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) > 1)
+        if (PrefManager.getBoolValue(IS_FIRST_TIME_CONVERSATION)) {
             initFreeTrialTimer()
+        } else if (PrefManager.hasKey(IS_FIRST_TIME_CONVERSATION).not()) {
+            PrefManager.put(IS_FIRST_TIME_CONVERSATION, true)
+        }
         try {
             conversationBinding.isFreeTrialCallBlocked =
                 PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED) || PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)
