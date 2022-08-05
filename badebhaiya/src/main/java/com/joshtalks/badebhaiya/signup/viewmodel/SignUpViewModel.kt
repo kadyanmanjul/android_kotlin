@@ -55,6 +55,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     private var followedSpeakers = 0
     val isNextEnabled = MutableLiveData<Boolean>(false)
 
+
     fun sendPhoneNumberForOTP(phoneNumber: String, countryCode: String) {
         viewModelScope.launch {
             try {

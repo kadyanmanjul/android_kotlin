@@ -288,6 +288,7 @@ class AudioPlayerService : MediaBrowserServiceCompat() {
 
     override fun onDestroy() {
         super.onDestroy()
+        playingRoomId = null
         serviceScope.cancel()
         Timber.tag("audioservice").d("AUDIO SERVICE IS DESTROYED")
         exoPlayer.removeListener(musicPlayerEventListener)

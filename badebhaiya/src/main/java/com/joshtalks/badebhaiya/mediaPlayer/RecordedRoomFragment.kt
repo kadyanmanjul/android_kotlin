@@ -28,6 +28,7 @@ import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
+import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
@@ -139,6 +140,8 @@ class RecordedRoomFragment : Fragment() {
 
     private val notificationChannelId = "MediaOne"
     private var notificationChannelName = NotificationChannelNames.DEFAULT.type
+    private val vm by lazy { ViewModelProvider(requireActivity()).get(LiveRoomViewModel::class.java) }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -151,7 +154,7 @@ class RecordedRoomFragment : Fragment() {
         binding.handler = this
 //        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
         viewModel.lvRoomState.value = LiveRoomState.EXPANDED
-
+        vm.deflate.value=true
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         from = mBundle?.getString("source").toString()
@@ -245,6 +248,7 @@ class RecordedRoomFragment : Fragment() {
             }
             else
             {
+                vm.deflate.value=false
                 activity?.supportFragmentManager?.popBackStack()
 //                        finishFragment()
 //                        return
@@ -278,7 +282,7 @@ class RecordedRoomFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         Timber.tag("roomdestroy").d("RECORDED ROOM ONDESTROY")
-
+        vm.deflate.value=false
         viewModel.destroyPlayer()
         Timber.tag("audioservice").d("RECORDED FRAGMENT IS ON DESTROY")
 

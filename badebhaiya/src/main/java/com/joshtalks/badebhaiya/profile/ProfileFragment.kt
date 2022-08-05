@@ -500,24 +500,24 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
 
         viewModel.updateFollowStatus(userId ?: (User.getInstance().userId),isFromBBPage,isFromDeeplink,source)
-//        if(viewModel.speakerFollowed.value == true)
-//            viewModel.userProfileData.value?.let {
-//                signUpViewModel.unfollowSpeaker()
+        if(viewModel.speakerFollowed.value == true)
+            viewModel.userProfileData.value?.let {
+                signUpViewModel.unfollowSpeaker()
 //                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_UNFOLLOW"))
-//                speakerUnfollowedUIChanges()
-//                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-//                    ("<big>"+it.followersCount.minus(1)?:0).toString()+"</big>"),
-//                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-//            }
-//        else
-//            viewModel.userProfileData.value?.let {
-//                signUpViewModel.followSpeaker()
-////                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
-//                speakerFollowedUIChanges()
-//                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-//                    ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
-//                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-//            }
+                speakerUnfollowedUIChanges()
+                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
+                    ("<big>"+it.followersCount?.minus(1)?:0).toString()+"</big>"),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
+        else
+            viewModel.userProfileData.value?.let {
+                signUpViewModel.followSpeaker()
+//                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
+                speakerFollowedUIChanges()
+                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
+                    ("<big>"+it.followersCount?.plus(1)?:0).toString()+"</big>"),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
     }
 
