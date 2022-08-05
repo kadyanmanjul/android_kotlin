@@ -32,7 +32,7 @@ class ProfileViewModel : ViewModel() {
     //val userIdForOpenedProfile = MutableLiveData<String>()
     private val service = RetrofitInstance.profileNetworkService
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
-    var profileUrl=""
+    var profileUrl= ObservableField<String>()
     val repository = BBRepository()
     val userProfileData = MutableLiveData<ProfileResponse>()
     val userFullName = ObservableField<String>()
@@ -155,8 +155,9 @@ class ProfileViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         response.body()?.let {
                             userProfileData.postValue(it)
-                            userFullName.set(it.fullName)
-                            profileUrl = it.profilePicUrl ?: ""
+                            userFullName.set(it.firstName + " "+ it.lastName)
+//                            profileUrl = it.profilePicUrl ?: ""
+                            profileUrl.set(it.profilePicUrl?:"")
                             speakerFollowed.postValue(it.isSpeakerFollowed)
                             it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
                             isSpeaker = it.isSpeaker == true
@@ -215,9 +216,10 @@ class ProfileViewModel : ViewModel() {
                     val response = repository.getProfileForUser(userId, source)
                     if (response.isSuccessful) {
                         response.body()?.let {
-                            userProfileData.postValue(it)
-                            userFullName.set(it.fullName)
-                            profileUrl = it.profilePicUrl ?: ""
+                            userProfileData.value=it
+                            userFullName.set(it.firstName + " "+ it.lastName)
+//                            profileUrl = it.profilePicUrl ?: ""
+                            profileUrl.set(it.profilePicUrl?:"")
                             speakerFollowed.postValue(it.isSpeakerFollowed)
                             it.isSpeaker?.let { it1 -> isBadeBhaiyaSpeaker.set(it1) }
                             isSpeaker = it.isSpeaker == true
@@ -246,6 +248,7 @@ class ProfileViewModel : ViewModel() {
                                             ConversationRoomType.NOT_SCHEDULED
                                     roomListResponseItem
                                 })
+                            Log.i("pictureDelho", "getProfileForUser: ${it.profilePicUrl}")
                             if (list.isNullOrEmpty().not()) {
                                 list.forEach { listItem ->
                                     listItem.currentTime = it.currentTime!!
@@ -254,6 +257,8 @@ class ProfileViewModel : ViewModel() {
                             } else {
                                 speakerProfileRoomsAdapter.submitList(emptyList())
                             }
+
+                            Log.i("pictureView", "getProfileForUser: ${userProfileData.value}")
                         }
                     } else {
                         showToast("Some Error Occured")

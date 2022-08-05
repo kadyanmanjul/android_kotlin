@@ -152,6 +152,7 @@ class RecordedRoomFragment : Fragment() {
         binding = FragmentRecordRoomBinding.inflate(inflater, container, false)
         binding.recordedViewModel = viewModel
         binding.handler = this
+        binding.user = User.getInstance()
 //        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
         viewModel.lvRoomState.value = LiveRoomState.EXPANDED
         vm.deflate.value=true
@@ -159,6 +160,7 @@ class RecordedRoomFragment : Fragment() {
         mBundle = this.arguments
         from = mBundle?.getString("source").toString()
         roomData = mBundle?.getParcelable(ROOM_DATA)
+        binding.roomData=roomData
         clickListener()
         attachBackPressedDispatcher()
         lifecycleScope.launch {
@@ -183,18 +185,18 @@ class RecordedRoomFragment : Fragment() {
 
         Timber.tag("audiostarttime").d("AUDIO START TIME DATA => ${roomData?.displayStartDateTime()}")
 
-        binding.userPhoto.apply {
-            clipToOutline = true
-            setUserImageRectOrInitials(
-                User.getInstance().profilePicUrl,
-                User.getInstance().firstName ?: DEFAULT_NAME,
-                22,
-                true,
-                16,
-                textColor = R.color.black,
-                bgColor = R.color.conversation_room_gray
-            )
-        }
+//        binding.userPhoto.apply {
+//            clipToOutline = true
+//            setUserImageRectOrInitials(
+//                User.getInstance().profilePicUrl,
+//                User.getInstance().firstName ?: DEFAULT_NAME,
+//                22,
+//                true,
+//                16,
+//                textColor = R.color.black,
+//                bgColor = R.color.conversation_room_gray
+//            )
+//        }
         trackRecordRoomState()
 
 //        createChannel()

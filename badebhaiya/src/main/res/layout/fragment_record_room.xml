@@ -10,6 +10,14 @@
             type="com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomFragment" />
 
         <variable
+            name="roomData"
+            type="com.joshtalks.badebhaiya.feed.model.RoomListResponseItem" />
+
+        <variable
+            name="user"
+            type="com.joshtalks.badebhaiya.repository.model.User" />
+
+        <variable
             name="recordedViewModel"
             type="com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomViewModel" />
 
@@ -77,12 +85,15 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
-                <com.google.android.material.imageview.ShapeableImageView
+                <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                     android:id="@+id/user_photo"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    app:dynamicImageUrl="@{user.profilePicUrl}"
+                    app:dynamicUserName="@{user.firstName}"
+                    app:cornerRadius="@dimen/_6sdp"
+                    app:textSize="@dimen/_4ssp"
                     android:layout_marginVertical="@dimen/_10sdp"
-                    android:background="@color/base_app_color"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp" />
 
@@ -139,10 +150,14 @@
                 android:background="@drawable/background_bottomsheet_24dp_corner">
 
 
-                <com.google.android.material.imageview.ShapeableImageView
+                <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                     android:id="@+id/profile_pic"
                     android:layout_width="@dimen/_200sdp"
                     android:layout_height="@dimen/_200sdp"
+                    app:dynamicImageUrl="@{roomData.speakersData.photoUrl}"
+                    app:dynamicUserName="@{roomData.speakersData.fullName}"
+                    app:cornerRadius="@dimen/_16sdp"
+                    app:textSize="@dimen/_4ssp"
                     android:layout_marginTop="@dimen/_23sdp"
                     android:scaleType="centerCrop"
                     android:foreground="@color/profile_tint"

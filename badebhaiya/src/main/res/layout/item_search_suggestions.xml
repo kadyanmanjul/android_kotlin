@@ -24,10 +24,12 @@
             android:layout_height="match_parent"
             android:paddingBottom="@dimen/_8sdp">
 
-            <com.google.android.material.imageview.ShapeableImageView
+            <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                 android:id="@+id/profilePicSuggestion"
-                imageCornerRadius="@{@dimen/_16sdp}"
-                initialsFontSize="@{24}"
+                app:textSize="@{24}"
+                app:cornerRadius="@dimen/_23sdp"
+                app:dynamicImageUrl="@{user.photo_url}"
+                app:dynamicUserName="@{user.full_name}"
                 android:layout_width="@dimen/_53sdp"
                 android:layout_height="@dimen/_53sdp"
                 android:layout_marginTop="12dp"
@@ -36,7 +38,6 @@
                 app:layout_constraintHorizontal_bias="0.046"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedCornersImageView_23dp"
                 tools:background="@color/black" />
 
             <androidx.appcompat.widget.AppCompatTextView

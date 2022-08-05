@@ -44,19 +44,8 @@ class AudienceAdapter(
                 .d("RECYCLERVIEW BIND CALLED AND LIST IS $currentList AND ITEM IS => $model")
 
             with(binding) {
+                roomData=model
                 name.text = model.name
-                userImage.apply {
-                    clipToOutline = true
-                    setUserImageRectOrInitials(
-                        model.photoUrl,
-                        model.name ?: DEFAULT_NAME,
-                        22,
-                        true,
-                        16,
-                        textColor = R.color.black,
-                        bgColor = R.color.conversation_room_gray
-                    )
-                }
                 if (isModerator && model.isHandRaised) {
                     raisedHands.visibility = View.VISIBLE
                 } else {

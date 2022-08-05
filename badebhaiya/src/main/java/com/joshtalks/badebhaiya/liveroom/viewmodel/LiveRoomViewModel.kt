@@ -3,8 +3,10 @@ package com.joshtalks.badebhaiya.liveroom.viewmodel
 import android.app.Application
 import android.os.Message
 import android.util.Log
+import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.joshtalks.badebhaiya.core.EMPTY
@@ -27,6 +29,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.*
 
 const val NOTIFICATION_ID = "notification_id"
 const val NOTIFICATION_BOOLEAN = "notification_boolean"
@@ -46,6 +49,8 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     val liveRoomState = MutableLiveData<LiveRoomState>()
     var lvRoomState: LiveRoomState? = null
     private val jobs = arrayListOf<Job>()
+    var userPhoto=ObservableField<String>()
+    var userName=ObservableField<String>()
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     private val repository by lazy {
@@ -64,6 +69,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     fun getRaisedHandAudienceSize(): Int =
         this.audienceList.value?.filter { it.isSpeaker == false && it.isHandRaised && it.isSpeakerAccepted.not() }?.size
             ?: 0
+
 
     fun joinRoom(item: RoomListResponseItem) {
         jobs += viewModelScope.launch(Dispatchers.IO) {

@@ -3,7 +3,6 @@ package com.joshtalks.badebhaiya
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Message
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -33,9 +32,18 @@ import kotlinx.coroutines.launch
 class SearchAdapter(var call: Call): ListAdapter<Users, SearchAdapter.SearchViewHolder>(SearchDiffUtil()){
 
 
-    inner class SearchViewHolder(var item: LiSearchEventBinding) :
-        RecyclerView.ViewHolder(item.root) {
-    }
+    inner class SearchViewHolder(var binding: LiSearchEventBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Users) {
+            with(binding) {
+                roomData = item
+                user.setOnClickListener {
+                    item?.let {
+                        call.itemClick(it.user_id)
+                    }
+                }
+            }
+        }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -79,44 +87,45 @@ class SearchAdapter(var call: Call): ListAdapter<Users, SearchAdapter.SearchView
         val searchResult = getItem(position)
         searchResult.let {
                 searchResult->
-            holder.item.tvProfileBio.text = searchResult.bio
-            holder.item.userName.text = searchResult.full_name
-            holder.item.user.setOnClickListener {
-                com.joshtalks.badebhaiya.utils.hideKeyboard(holder.item.user.context)
+            holder.bind(searchResult)
+            holder.binding.tvProfileBio.text = searchResult.bio
+            holder.binding.userName.text = searchResult.full_name
+            holder.binding.user.setOnClickListener {
+                com.joshtalks.badebhaiya.utils.hideKeyboard(holder.binding.user.context)
                 call.itemClick(searchResult.user_id)
             }
 
-            if (searchResult.profilePic.isNullOrEmpty().not())
-                Glide.with(holder.itemView.getContext())
-                    .load(searchResult.profilePic)
-                    .into(holder.item.ivProfilePic)
-            else
-                holder.item.ivProfilePic.setUserInitialInRect(searchResult.short_name, 24)
+//            if (searchResult.profilePic.isNullOrEmpty().not())
+//                Glide.with(holder.itemView.getContext())
+//                    .load(searchResult.profilePic)
+//                    .into(holder.item.ivProfilePic)
+//            else
+//                holder.item.ivProfilePic.setUserInitialInRect(searchResult.short_name, 24)
 
             if (searchResult.is_speaker_followed) {
-                holder.item.user.apply {
-                    holder.item.user.btnFollow.text = "Following"
-                    holder.item.user.btnFollow.textSize=12F
+                holder.binding.user.apply {
+                   user.btnFollow.text = "Following"
+                   user.btnFollow.textSize=12F
                     //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Semi_Bold)
                     btnFollow.setTextColor(resources.getColor(R.color.white))
                     btnFollow.background = AppCompatResources.getDrawable(
-                        holder.item.user.btnFollow.context,
+                        holder.binding.user.btnFollow.context,
                         R.drawable.following_button_background
                     )
                 }
             } else
-                holder.item.user.apply {
-                    holder.item.user.btnFollow.text = "Follow"
-                    holder.item.user.btnFollow.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+                holder.binding.user.apply {
+                    holder.binding.user.btnFollow.text = "Follow"
+                    holder.binding.user.btnFollow.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
                     //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Bold)
                     //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Bold)
                     btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
                     btnFollow.background = AppCompatResources.getDrawable(
-                        holder.item.user.btnFollow.context,
+                        holder.binding.user.btnFollow.context,
                         R.drawable.follow_button_background
                     )
                 }
-            holder.item.btnFollow.setOnClickListener {
+            holder.binding.btnFollow.setOnClickListener {
                     GlobalScope.launch {
                         if (searchResult.is_speaker_followed.not()) {
                             try {
@@ -126,10 +135,10 @@ class SearchAdapter(var call: Call): ListAdapter<Users, SearchAdapter.SearchView
                                         User.getInstance().userId,
                                         false,
                                         false,
-                                        "SEARCH_FRAGMENT"
+                                        "SEARCH"
                                     )
                                 try {
-//                                    RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_FOLLOW"))
+
                                 } catch (e: Exception){
 
                                 }
@@ -150,11 +159,10 @@ class SearchAdapter(var call: Call): ListAdapter<Users, SearchAdapter.SearchView
                                             User.getInstance().userId,
                                             false,
                                             false,
-                                            "SEARCH_FRAGMENT"
+                                            "SEARCH"
                                         )
 
                                     try {
-                                        RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_UNFOLLOW"))
                                     } catch (e: Exception){
 
                                     }
@@ -170,27 +178,27 @@ class SearchAdapter(var call: Call): ListAdapter<Users, SearchAdapter.SearchView
                         }
                     }
                 if (searchResult.is_speaker_followed.not()==true) {
-                    holder.item.user.apply {
-                        holder.item.user.btnFollow.setText("Following")
-                        holder.item.user.btnFollow.textSize=12F
-                        holder.item.user.btnFollow.setTextColor(resources.getColor(R.color.white))
+                    holder.binding.user.apply {
+                        user.btnFollow.setText("Following")
+                        user.btnFollow.textSize=12F
+                        user.btnFollow.setTextColor(resources.getColor(R.color.white))
                         //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Semi_Bold)
-                        holder.item.user.btnFollow.background = AppCompatResources.getDrawable(
-                            holder.item.user.btnFollow.context,
+                        user.btnFollow.background = AppCompatResources.getDrawable(
+                            holder.binding.user.btnFollow.context,
                             R.drawable.following_button_background
                         )
                     }
                 }
                 else {
-                    holder.item.user.apply {
-                        holder.item.user.btnFollow.setText("Follow")
+                    holder.binding.user.apply {
+                        user.btnFollow.setText("Follow")
                         //holder.item.user.btnFollow.textSize=11F
-                        holder.item.user.btnFollow.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+                        user.btnFollow.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
                         //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Bold)
-                        holder.item.user.btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
+                        user.btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
                         //holder.item.user.btnFollow.setBackgroundDrawable(R.drawable.follow_button_background)
-                        holder.item.user.btnFollow.background = AppCompatResources.getDrawable(
-                            holder.item.user.btnFollow.context,
+                        user.btnFollow.background = AppCompatResources.getDrawable(
+                            user.btnFollow.context,
                             R.drawable.follow_button_background
                         )
                     }

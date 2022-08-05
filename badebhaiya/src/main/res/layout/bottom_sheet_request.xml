@@ -36,12 +36,12 @@
             app:tint="@color/black"
             tools:ignore="ContentDescription" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <com.joshtalks.badebhaiya.customViews.ProfilePictureView
             android:id="@+id/requestProfilePicture"
-            imageCornerRadius="@{@dimen/_16sdp}"
-            imageUrl="@{viewModel.requestContent.user.photo_url}"
-            initialsFontSize="@{12}"
-            userName="@{viewModel.requestContent.user.short_name}"
+            app:dynamicImageUrl="@{viewModel.requestView.user.photo_url}"
+            app:textSize="@{16}"
+            app:dynamicUserName="@{viewModel.requestView.user.short_name}"
+            app:cornerRadius="@{@dimen/_12sdp}"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
             android:layout_marginTop="@dimen/_12sdp"

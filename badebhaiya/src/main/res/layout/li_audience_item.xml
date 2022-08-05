@@ -3,18 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="roomData"
+            type="com.joshtalks.badebhaiya.feed.model.LiveRoomUser" />
+
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_20sdp"
         android:layout_marginTop="@dimen/_8sdp">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <com.joshtalks.badebhaiya.customViews.ProfilePictureView
             android:id="@+id/user_image"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
             android:layout_gravity="center"
-            android:background="@color/conversation_room_gray"
+            app:dynamicImageUrl="@{roomData.photoUrl}"
+            app:dynamicUserName="@{roomData.fullName}"
+            app:textSize="@{24}"
+            app:nameLetters="one"
+            app:cornerRadius="@dimen/_18sdp"
             android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
