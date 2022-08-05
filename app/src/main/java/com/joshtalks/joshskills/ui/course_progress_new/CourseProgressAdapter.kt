@@ -121,6 +121,39 @@ class CourseProgressAdapter(
                 binding.radialProgressView.visibility = View.VISIBLE
                 val item = itemList[position]
                 val isTranslationDisabled: Int = 1
+                if (item.speakingPercentage == null) {
+                    binding.radialProgressView.hasThreeProgressView(true)
+                } else {
+                    when (SPEAKING_POSITION) {
+                        0 -> {
+                            binding.radialProgressView.setOuterProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                        1 -> {
+                            binding.radialProgressView.setCenterProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                        2 -> {
+                            binding.radialProgressView.setInnerProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                        3 -> {
+                            binding.radialProgressView.hasThreeProgressView(false)
+                            binding.radialProgressView.setInnerMostProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                        else -> {
+                            binding.radialProgressView.hasThreeProgressView(false)
+                            binding.radialProgressView.setInnerMostProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                    }
+                }
                 when (GRAMMAR_POSITION) {
                     0 -> {
                         binding.radialProgressView.setOuterProgress(
@@ -206,41 +239,6 @@ class CourseProgressAdapter(
                             item.readingPercentage.toDouble().toInt()
                         )
                     }
-                }
-
-                if (item.speakingPercentage == null) {
-                    binding.radialProgressView.hasThreeProgressView(true)
-                } else {
-                    when (SPEAKING_POSITION - isTranslationDisabled) {
-                        0 -> {
-                            binding.radialProgressView.setOuterProgress(
-                                item.speakingPercentage!!.toDouble().toInt()
-                            )
-                        }
-                        1 -> {
-                            binding.radialProgressView.setCenterProgress(
-                                item.speakingPercentage!!.toDouble().toInt()
-                            )
-                        }
-                        2 -> {
-                            binding.radialProgressView.setInnerProgress(
-                                item.speakingPercentage!!.toDouble().toInt()
-                            )
-                        }
-                        3 -> {
-                            binding.radialProgressView.hasThreeProgressView(false)
-                            binding.radialProgressView.setInnerMostProgress(
-                                item.speakingPercentage!!.toDouble().toInt()
-                            )
-                        }
-                        else -> {
-                            binding.radialProgressView.hasThreeProgressView(false)
-                            binding.radialProgressView.setInnerMostProgress(
-                                item.speakingPercentage!!.toDouble().toInt()
-                            )
-                        }
-                    }
-
                 }
                 if (item.status == LESSON_STATUS.NO.name)
                     binding.progressIv.alpha = 0.5f
