@@ -23,6 +23,9 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.singular.sdk.Singular
 import org.json.JSONObject
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import android.app.PendingIntent
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
 
 class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
@@ -114,12 +117,34 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 }
             }
         })
+        viewModel.freeTrialEntity.observe(viewLifecycleOwner) {
+            if (it != null) {
+                hideProgress()
+                moveToConversationScreen(it)
+            }
+        }
         viewModel.mentorPaymentStatus.observe(viewLifecycleOwner, {
             when (it) {
                 true -> moveToInboxScreen()
                 false -> submitForFreeTrial()
             }
         })
+    }
+
+    fun moveToConversationScreen(inboxEntity: InboxEntity) {
+        PendingIntent.getActivities(
+            activity,
+            (System.currentTimeMillis() and 0xfffffff).toInt(),
+            arrayOf(
+                Intent(requireActivity(), InboxActivity::class.java).apply {
+                    putExtra(FLOW_FROM, "free trial onboarding journey")
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                },
+                ConversationActivity.getConversationActivityIntent(requireActivity(), inboxEntity)
+            ),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        ).send()
     }
 
     fun submitProfile() {

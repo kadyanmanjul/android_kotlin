@@ -34,14 +34,15 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.singular.sdk.Singular
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -62,6 +63,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var loginViaStatus: LoginViaStatus? = null
     val service = AppObjectController.signUpNetworkService
     val abTestRepository by lazy { ABTestRepository() }
+    val freeTrialEntity: MutableLiveData<InboxEntity> = MutableLiveData()
 
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
@@ -244,11 +246,12 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
             ABTestRepository().updateAllCampaigns()
-            val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
+            val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT, false)
             val courseExpiryTime =
                 PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
-            if ((isCourseBought && User.getInstance().isVerified) ||  courseExpiryTime != 0L &&
-                courseExpiryTime >= System.currentTimeMillis()) {
+            if ((isCourseBought && User.getInstance().isVerified) || courseExpiryTime != 0L &&
+                courseExpiryTime >= System.currentTimeMillis()
+            ) {
                 val broadcastIntent = Intent().apply {
                     action = CALLING_SERVICE_ACTION
                     putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
@@ -320,7 +323,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
                 val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
-                if(response!=null) {
+                if (response != null) {
                     mentorPaymentStatus.postValue(response["payment"] as Boolean)
                 }
             } catch (e: Exception) {
@@ -338,7 +341,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     response.body()?.let {
                         it.isVerified = isUserVerified
-                        if(!phoneNumberComingFromTrueCaller.isNullOrEmpty() && it.phoneNumber.isNullOrEmpty()) {
+                        if (!phoneNumberComingFromTrueCaller.isNullOrEmpty() && it.phoneNumber.isNullOrEmpty()) {
                             it.phoneNumber = phoneNumberComingFromTrueCaller
                         }
                         User.getInstance().updateFromResponse(it)
@@ -446,14 +449,16 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                             "mentor_id" to mentorId,
                             "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
                             "event_name" to IMPRESSION_REGISTER_FREE_TRIAL,
-                            "test_id" to PrefManager.getStringValue(FREE_TRIAL_TEST_ID, false, FREE_TRIAL_DEFAULT_TEST_ID)
+                            "test_id" to PrefManager.getStringValue(
+                                FREE_TRIAL_TEST_ID,
+                                false,
+                                FREE_TRIAL_DEFAULT_TEST_ID
+                            )
                         )
                     )
-
-
                 if (resp.isSuccessful) {
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)
-                    apiStatus.postValue(ApiCallStatus.SUCCESS)
+                    getRegisteredFreeTrialCourse()
                     return@launch
                 }
             } catch (ex: Throwable) {
@@ -462,6 +467,23 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 ex.printStackTrace()
             }
             apiStatus.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun getRegisteredFreeTrialCourse() {
+        viewModelScope.launch {
+            try {
+                val response = AppObjectController.chatNetworkService.getRegisteredCourses()
+                if (response.isEmpty().not()) {
+                    AppObjectController.appDatabase.courseDao().insertRegisterCourses(response).let{
+                        AppObjectController.appDatabase.courseDao().getRegisterCourseMinimal().let{
+                            freeTrialEntity.postValue(it.firstOrNull())
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                apiStatus.postValue(ApiCallStatus.SUCCESS)
+            }
         }
     }
 
@@ -482,7 +504,12 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     fun registerSpecificCourse() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val courseData = AppObjectController.gsonMapper.fromJson(PrefManager.getStringValue(SPECIFIC_ONBOARDING, isConsistent = true), SpecificOnboardingCourseData::class.java)
+                val courseData = AppObjectController.gsonMapper.fromJson(
+                    PrefManager.getStringValue(
+                        SPECIFIC_ONBOARDING,
+                        isConsistent = true
+                    ), SpecificOnboardingCourseData::class.java
+                )
                 apiStatus.postValue(ApiCallStatus.START)
                 val requestData = hashMapOf(
                     "mentor_id" to Mentor.getInstance().getId(),

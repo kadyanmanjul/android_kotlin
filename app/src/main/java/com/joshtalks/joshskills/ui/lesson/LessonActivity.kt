@@ -1077,7 +1077,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             if (nextTabIndex == arrayFragment.size) {
                 nextTabIndex = 0
             } else {
-                Log.d("LessonActivity.kt", "YASH => openIncompleteTab:1106 $nextTabIndex")
                 viewModel.lessonLiveData.value?.let { lesson ->
                     when (nextTabIndex) {
                         SPEAKING_POSITION ->

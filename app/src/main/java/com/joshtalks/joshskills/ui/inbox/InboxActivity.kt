@@ -265,12 +265,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 //            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
 //            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
 //        }
-        if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT, false) == 1 &&
-            items.size == 1 &&
-            items.first().isCourseBought.not()
-        ) {
-            ConversationActivity.startConversionActivity(this, items.first())
-        }
         dismissProgressDialog()
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {

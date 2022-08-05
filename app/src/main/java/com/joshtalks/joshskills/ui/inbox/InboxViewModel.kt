@@ -102,11 +102,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
 //                        delay(1000)
                         _registerCourseNetworkData.emit(
-                            appDatabase.courseDao().getRegisterCourseMinimal().also{
-                                Log.d(
-                                    "InboxViewModel.kt",
-                                    "YASH => getCourseFromServer:105 ${it.first().expiryDate}")
-                            }
+                            appDatabase.courseDao().getRegisterCourseMinimal()
                         )
                     }
                 } else {
