@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.call
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
@@ -17,6 +18,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 
 private const val TAG = "CallingServiceReceiver"
@@ -44,7 +46,11 @@ class CallingServiceReceiver : BroadcastReceiver() {
                         Mentor.getInstance().getId()
                     )
                     remoteServiceIntent.putExtra(INTENT_DATA_API_HEADER, apiHeader)
-                    AppObjectController.joshApplication.startService(remoteServiceIntent)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AppObjectController.joshApplication.startForegroundService(remoteServiceIntent)
+                    } else {
+                        AppObjectController.joshApplication.startService(remoteServiceIntent)
+                    }
                 }
                 false -> {
                     Log.d(TAG, "onReceive: stop service")
@@ -54,7 +60,11 @@ class CallingServiceReceiver : BroadcastReceiver() {
                             CallingRemoteService::class.java
                         )
                     remoteServiceIntent.action = SERVICE_ACTION_STOP_SERVICE
-                    AppObjectController.joshApplication.startService(remoteServiceIntent)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AppObjectController.joshApplication.startForegroundService(remoteServiceIntent)
+                    } else {
+                        AppObjectController.joshApplication.startService(remoteServiceIntent)
+                    }
                 }
             }
         }

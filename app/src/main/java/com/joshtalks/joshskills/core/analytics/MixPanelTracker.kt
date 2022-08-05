@@ -62,10 +62,10 @@ object MixPanelTracker {
     }
 
     fun push() {
-        mixPanel.track(eventName, params)
-        mixPanel.flush()
-        params = JSONObject()
-        eventName = ""
+//        mixPanel.track(eventName, params)
+//        mixPanel.flush()
+//        params = JSONObject()
+//        eventName = ""
     }
 }
 
