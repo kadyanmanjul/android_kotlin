@@ -42,9 +42,9 @@
             android:background="@color/conversation_room_color">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="@dimen/_12sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:id="@+id/search"
@@ -65,8 +65,10 @@
                 android:id="@+id/profileIvRoot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                onSingleClick="@{() -> handler.onProfileClicked()}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginStart="@dimen/_261sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.023">
@@ -93,14 +95,12 @@
 
                 <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                     android:id="@+id/profile_iv"
-                    onSingleClick="@{() -> handler.onProfileClicked()}"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     app:dynamicImageUrl="@{user.profilePicUrl}"
                     app:dynamicUserName="@{user.firstName}"
                     app:cornerRadius="@dimen/_6sdp"
                     app:textSize="@dimen/_4ssp"
-                    android:layout_marginVertical="@dimen/_10sdp"
                     android:scaleType="centerCrop"/>
 
             </FrameLayout>

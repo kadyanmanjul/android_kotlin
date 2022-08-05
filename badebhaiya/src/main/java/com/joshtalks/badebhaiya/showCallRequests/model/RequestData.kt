@@ -11,7 +11,7 @@ import java.util.*
 data class RequestData(
     val request_submitted: String,
     val user: User,
-    val is_read: Boolean,
+    var is_read: Boolean,
     val created: Long
 ): Parcelable {
 
