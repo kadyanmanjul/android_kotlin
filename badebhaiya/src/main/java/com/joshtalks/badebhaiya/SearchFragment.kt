@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.transition.MaterialSharedAxis
 import com.joshtalks.badebhaiya.core.hideKeyboard
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
 import com.joshtalks.badebhaiya.feed.Call
@@ -57,7 +58,18 @@ class SearchFragment : Fragment(), Call {
 
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
-
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
+        }
         binding.noresult.visibility= GONE
         binding.handler = this
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -141,8 +153,6 @@ class SearchFragment : Fragment(), Call {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 searchViewModel.searchSuggestions.collectLatest {
-                    val animationController: LayoutAnimationController =
-                        AnimationUtils.loadLayoutAnimation(binding.searchSuggestionList.context, R.anim.search_animation)
                     searchSuggestionAdapter.submitData(it)
                 }
             }

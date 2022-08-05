@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
@@ -140,6 +141,18 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
+        }
         from = mBundle?.getString("source").toString()
         isSpeaker= mBundle?.getBoolean("isSpeaker") == true
         feedViewModel.isRoomCreated.value=false
@@ -1442,8 +1455,14 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
                     val fragment = LiveRoomFragment() // replace your custom fragment class
                     val bundle = Bundle()
-                    fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-                    fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+                    fragment?.apply {
+                        exitTransition = MaterialSharedAxis(
+                            MaterialSharedAxis.Z,
+                            /* forward= */ false
+                        ).apply {
+                            duration = 500
+                        }
+                    }
                     bundle.putString("source", from) // use as per your need
                     bundle.putBoolean("isSpeaker",isSpeaker)
                     fragment.arguments = bundle

@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.transition.MaterialSharedAxis
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.NotificationChannelNames
@@ -93,12 +94,18 @@ class RecordedRoomFragment : Fragment() {
 
                 val fragment = RecordedRoomFragment() // replace your custom fragment class
                 val bundle = Bundle()
+                fragment?.apply {
+                    exitTransition = MaterialSharedAxis(
+                        MaterialSharedAxis.Z,
+                        /* forward= */ false
+                    ).apply {
+                        duration = 500
+                    }
+                }
                 bundle.putString("source", from) // use as per your need
                 bundle.putParcelable(ROOM_DATA,room)
                 fragment.arguments = bundle
 
-                fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-                fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
             activity
                 .supportFragmentManager
                 .beginTransaction()
@@ -150,6 +157,18 @@ class RecordedRoomFragment : Fragment() {
         binding = FragmentRecordRoomBinding.inflate(inflater, container, false)
         binding.recordedViewModel = viewModel
         binding.handler = this
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        returnTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ false
+        ).apply {
+            duration = 500
+        }
 //        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
         viewModel.lvRoomState.value = LiveRoomState.EXPANDED
 

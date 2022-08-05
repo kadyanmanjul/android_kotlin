@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.badebhaiya.R
@@ -283,8 +284,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_OWN_PROFILE"))
 
         val bundle = Bundle()
-        fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-        fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+        fragment?.apply {
+            exitTransition = MaterialSharedAxis(
+                MaterialSharedAxis.Z,
+                /* forward= */ false
+            ).apply {
+                duration = 500
+            }
+        }
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", User.getInstance().userId) // use as per your need
         bundle.putString("source","FEED_SCREEN")
@@ -299,8 +306,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     fun onSearchPressed() {
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SEARCH"))
         val fragment=SearchFragment()
-        fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-        fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+        fragment?.apply {
+            exitTransition = MaterialSharedAxis(
+                MaterialSharedAxis.Z,
+                /* forward= */ false
+            ).apply {
+                duration = 500
+            }
+        }
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
@@ -378,11 +391,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         profileViewModel.openProfile.observe(this){
             val fragment = ProfileFragment() // replace your custom fragment class
             val bundle = Bundle()
-            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
             val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-//            fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
             bundle.putString("user", it) // use as per your need
+            fragment?.apply {
+                exitTransition = MaterialSharedAxis(
+                    MaterialSharedAxis.Z,
+                    /* forward= */ false
+                ).apply {
+                    duration = 500
+                }
+            }
                 bundle.putString("source","FANS_LIST")
             fragment.arguments = bundle
             fragmentTransaction.add(R.id.room_frame, fragment)
@@ -715,8 +733,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun viewProfile(profile: String?, deeplink: Boolean, requestDialog: Boolean) {
         val fragment = ProfileFragment() // replace your custom fragment class
         val bundle = Bundle()
-        fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-        fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+        fragment?.apply {
+            exitTransition = MaterialSharedAxis(
+                MaterialSharedAxis.Z,
+                /* forward= */ false
+            ).apply {
+                duration = 500
+            }
+        }
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
 //        fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
         bundle.putString("user", profile) // use as per your need
@@ -737,8 +761,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
-        fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-        fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+        fragment?.apply {
+            exitTransition = MaterialSharedAxis(
+                MaterialSharedAxis.Z,
+                /* forward= */ false
+            ).apply {
+                duration = 500
+            }
+        }
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
 //        fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
         bundle.putString("user", room.speakersData?.userId) // use as per your need

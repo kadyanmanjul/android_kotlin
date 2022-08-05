@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.transition.MaterialSharedAxis
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.io.AppDirectory
@@ -135,8 +136,14 @@ class SignUpActivity : AppCompatActivity(), Call {
         binding.btnWelcome.visibility = View.GONE
         supportFragmentManager.commit(true) {
             val fragment=SignUpEnterPhoneFragment()
-            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+            fragment?.apply {
+                exitTransition = MaterialSharedAxis(
+                    MaterialSharedAxis.Z,
+                    /* forward= */ false
+                ).apply {
+                    duration = 500
+                }
+            }
             addToBackStack(SignUpEnterPhoneFragment::class.java.name)
             replace(
                 R.id.container,
@@ -149,8 +156,14 @@ class SignUpActivity : AppCompatActivity(), Call {
     private fun openOTPVerificationFragment() {
         supportFragmentManager.commit(true) {
             val fragment=SignUpEnterOTPFragment()
-            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+            fragment?.apply {
+                exitTransition = MaterialSharedAxis(
+                    MaterialSharedAxis.Z,
+                    /* forward= */ false
+                ).apply {
+                    duration = 500
+                }
+            }
             replace(
                 R.id.container,
                 fragment,
@@ -162,8 +175,14 @@ class SignUpActivity : AppCompatActivity(), Call {
     private fun openEnterNameFragment() {
         supportFragmentManager.commit(true) {
             val fragment=SignUpEnterNameFragment()
-            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+            fragment?.apply {
+                exitTransition = MaterialSharedAxis(
+                    MaterialSharedAxis.Z,
+                    /* forward= */ false
+                ).apply {
+                    duration = 500
+                }
+            }
             replace(
                 R.id.container,
                 fragment,
@@ -182,8 +201,14 @@ class SignUpActivity : AppCompatActivity(), Call {
     private fun openUploadProfilePicFragment() {
         supportFragmentManager.commit(true) {
             val fragment=SignUpAddProfilePhotoFragment()
-            fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-            fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+            fragment?.apply {
+                exitTransition = MaterialSharedAxis(
+                    MaterialSharedAxis.Z,
+                    /* forward= */ false
+                ).apply {
+                    duration = 500
+                }
+            }
             replace(
                 R.id.container,
                 fragment,
@@ -202,8 +227,14 @@ class SignUpActivity : AppCompatActivity(), Call {
                 //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
                 val bundle = Bundle()
                 val fragment=ProfileFragment()
-                fragment.enterTransition = Fade(Fade.IN).apply { duration = 300 }
-                fragment.exitTransition = Fade(Fade.OUT).apply { duration = 300 }
+                fragment?.apply {
+                    exitTransition = MaterialSharedAxis(
+                        MaterialSharedAxis.Z,
+                        /* forward= */ false
+                    ).apply {
+                        duration = 500
+                    }
+                }
                 bundle.putString("user", intent.extras?.getString(USER_ID))
                 bundle.putString("request_dialog",intent.extras?.getString("request_room"))
                 supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
