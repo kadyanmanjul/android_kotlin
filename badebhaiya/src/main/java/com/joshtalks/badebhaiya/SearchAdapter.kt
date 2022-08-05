@@ -44,6 +44,7 @@ class SearchAdapter(var call: Call): ListAdapter<Users, SearchAdapter.SearchView
                 }
             }
         }
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -208,6 +209,7 @@ class SearchAdapter(var call: Call): ListAdapter<Users, SearchAdapter.SearchView
         }
     }
 }
+
 
 class SearchDiffUtil : DiffUtil.ItemCallback<Users>() {
     override fun areItemsTheSame(oldItem: Users, newItem: Users): Boolean {
