@@ -107,7 +107,7 @@ class NotificationScheduler @Inject constructor(
 
         return NotificationHelper.getNotificationIntent(
             activity, Notification(
-                title = room.speakersData?.fullName ?: "Conversation Room Reminder",
+                title = room.topic ?: "Conversation Room Reminder",
                 body = room.topic ?: "Conversation Room Reminder",
                 id = room.startedBy ?: 0,
                 userId = room.speakersData?.userId ?: "",
