@@ -33,7 +33,7 @@
                 app:dynamicImageUrl="@{roomData.photoUrl}"
                 app:dynamicUserName="@{roomData.fullName}"
                 app:textSize="@{24}"
-                app:nameLetters="two"
+                app:nameLetters="one"
                 app:cornerRadius="@dimen/_24sdp"
                 android:layout_height="@dimen/_56sdp"
                 android:layout_gravity="center"

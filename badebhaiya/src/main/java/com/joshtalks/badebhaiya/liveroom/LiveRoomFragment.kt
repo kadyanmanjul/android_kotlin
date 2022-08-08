@@ -249,7 +249,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         })
 
         vm.speakersList.observe(this, androidx.lifecycle.Observer { list ->
-            speakerAdapter?.updateFullList(list)
+
+                speakerAdapter?.updateFullList(list)
+
         })
 
         vm.liveRoomState.observe(this){
@@ -615,19 +617,19 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             }
         }
 
-        vm.audienceList.observe(viewLifecycleOwner) {
-            Timber.d("WE GOT RAISED HAND USERS => $it")
-            refreshAudienceAdapter(it)
-        }
+//        vm.audienceList.observe(viewLifecycleOwner) {
+//            Timber.d("WE GOT RAISED HAND USERS => $it")
+//            refreshAudienceAdapter(it)
+//        }
 
     }
 
-    private fun refreshAudienceAdapter(handRaisedList: List<LiveRoomUser>?) {
-        val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
-        list?.let {
-            audienceAdapter?.updateFullList(it.distinctBy { it.userId })
-        }
-    }
+//    private fun refreshAudienceAdapter(handRaisedList: List<LiveRoomUser>?) {
+//        val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
+//        list?.let {
+//            audienceAdapter?.updateFullList(it.distinctBy { it.userId })
+//        }
+//    }
 
 
 
