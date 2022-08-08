@@ -249,9 +249,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         })
 
         vm.speakersList.observe(this, androidx.lifecycle.Observer { list ->
-            lifecycleScope.launch {
+
                 speakerAdapter?.updateFullList(list)
-            }
+
         })
 
         vm.liveRoomState.observe(this){
