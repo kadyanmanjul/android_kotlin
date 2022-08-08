@@ -10,7 +10,8 @@ class JoshAppInitializer : Initializer<AppObjectController> {
         return AppObjectController.initLibrary(context)
     }
 
-    override fun dependencies(): List<Class<out Initializer<*>>> =
-        mutableListOf(JoshWorkManagerInitializer::class.java)
+    override fun dependencies(): MutableList<Class<out Initializer<*>>> {
+        return mutableListOf()
+    }
 
 }

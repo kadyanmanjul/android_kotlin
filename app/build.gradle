@@ -300,19 +300,19 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-workmanager:2.11.7'
 
 
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.11'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.12'
     implementation 'com.google.firebase:firebase-appindexing:20.0.0'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.1.0'
     implementation 'com.google.firebase:firebase-core:21.1.0'
-    implementation 'com.google.firebase:firebase-messaging:23.0.6'
+    implementation 'com.google.firebase:firebase-messaging:23.0.7'
     implementation 'com.google.firebase:firebase-perf:20.1.0'
     implementation 'com.google.firebase:firebase-config-ktx:21.1.1'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:21.0.1'
-    implementation 'com.google.firebase:firebase-auth:21.0.6'
+    implementation 'com.google.firebase:firebase-auth:21.0.7'
     implementation 'com.google.firebase:firebase-inappmessaging-ktx:20.1.2'
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.1.2'
     implementation 'com.google.firebase:firebase-installations:17.0.1'
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.2.1'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.2.2'
     implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 
 

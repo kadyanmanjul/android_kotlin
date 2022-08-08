@@ -22,6 +22,8 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import androidx.work.impl.background.greedy.GreedyScheduler
 import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
@@ -61,7 +63,7 @@ const val TAG = "JoshSkill"
 class JoshApplication :
     MultiDexApplication(),
     LifecycleEventObserver,
-    ComponentCallbacks2/*, Configuration.Provider*/ {
+    ComponentCallbacks2, Configuration.Provider {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
     }
@@ -80,6 +82,8 @@ class JoshApplication :
         base.let { ViewPumpContextWrapper.wrap(it) }
     }
 
+
+
     override fun onCreate() {
         super.onCreate()
         //enableLog(Feature.VOIP)
@@ -90,6 +94,7 @@ class JoshApplication :
         }
         Branch.getAutoInstance(this)
         if (isMainProcess()) {
+            AppObjectController.initLibrary(this)
             Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
             turnOnStrictMode()
             ANRWatchDog().setANRListener {
@@ -418,5 +423,9 @@ class JoshApplication :
     fun isMainProcess(): Boolean {
         Log.d(TAG, "onCreate: STARTING ...IS MAIN PROCESS")
         return TextUtils.equals(packageName, getProcName())
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder().setMinimumLoggingLevel(Log.VERBOSE).build()
     }
 }

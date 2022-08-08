@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.firestore
 
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -11,8 +12,12 @@ const val COLLECTION_NOTIFICATION = "NotificationsV2"
 private const val TAG = "FirestoreNotificationDB"
 
 object FirestoreNotificationDB {
-
-    private val firestore by lazy { Firebase.firestore }
+    private val settings = FirebaseFirestoreSettings.Builder()
+        .setPersistenceEnabled(false)
+        .build()
+    private val firestore by lazy {
+        Firebase.firestore.apply { firestoreSettings = settings }
+    }
     private val notificationsCollection by lazy { firestore.collection(COLLECTION_NOTIFICATION) }
     private var notificationListener: ListenerRegistration? = null
 

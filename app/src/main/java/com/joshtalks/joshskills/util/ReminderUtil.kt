@@ -100,20 +100,20 @@ class ReminderUtil(val context: Context) {
             AppObjectController.getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.NOTIFICATION_API_TIME) * 60 * 60 * 1000
         if (timeDiffConfig != 0L && timeDiff > timeDiffConfig) {
             PrefManager.put(LAST_TIME_NOTIFICATION_API, System.currentTimeMillis())
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                WorkManagerAdmin.setBackgroundNotificationWorker()
-            else if (context.applicationContext != null) {
-                val intent = Intent(context.applicationContext, BackgroundService::class.java)
-                val pendingIntent =
-                    PendingIntent.getService(context.applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                val triggerTime = System.currentTimeMillis() + (AppObjectController.getFirebaseRemoteConfig()
-                    .getLong(FirebaseRemoteConfigKey.NOTIFICATION_API_TIME) * 60 * 60 * 1000)
-                val alarmManager: AlarmManager =
-                    context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                } else {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S){
+                if (context.applicationContext != null) {
+                    val intent = Intent(context.applicationContext, BackgroundService::class.java)
+                    val pendingIntent =
+                        PendingIntent.getService(context.applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    val triggerTime = System.currentTimeMillis() + (AppObjectController.getFirebaseRemoteConfig()
+                        .getLong(FirebaseRemoteConfigKey.NOTIFICATION_API_TIME) * 60 * 60 * 1000)
+                    val alarmManager: AlarmManager =
+                        context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    } else {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+                    }
                 }
             }
         }
