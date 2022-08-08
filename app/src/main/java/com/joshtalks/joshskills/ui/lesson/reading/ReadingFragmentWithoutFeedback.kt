@@ -215,6 +215,7 @@ class ReadingFragmentWithoutFeedback :
             // binding.videoPlayer.setCourseId(course_id)
             binding.mergedVideo.fitToScreen()
             binding.mergedVideo.onStart()
+            binding.mergedVideo.downloadStreamButNotPlay()
         }
     }
 

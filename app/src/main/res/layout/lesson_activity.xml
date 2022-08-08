@@ -39,7 +39,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
-            app:tabBackground="@drawable/capsule_selection_tab"
+            app:tabBackground="@drawable/speaking_tab_bg"
             app:tabIconTint="@color/green_right_answer"
             app:tabIndicatorHeight="0dp"
             app:tabMinWidth="@dimen/_32sdp"

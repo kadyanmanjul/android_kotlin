@@ -32,8 +32,6 @@ open class CoreJoshFragment : TrackFragment() {
         try {
             if (isAdded && activity != null) {
                 return (requireActivity() as AppCompatActivity).intent.getStringExtra(CONVERSATION_ID)
-            }else{
-                showToast(getString(R.string.something_went_wrong))
             }
         }catch (ex: Exception) {
             ex.printStackTrace()
