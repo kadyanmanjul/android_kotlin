@@ -30,7 +30,6 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.transition.MaterialSharedAxis
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
-import com.joshtalks.badebhaiya.core.USER_ID
 import com.joshtalks.badebhaiya.core.models.FormRequest
 import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
@@ -39,7 +38,9 @@ import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
 import com.joshtalks.badebhaiya.databinding.FragmentProfileBinding
 import com.joshtalks.badebhaiya.databinding.RequestRoomBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
-import com.joshtalks.badebhaiya.feed.*
+import com.joshtalks.badebhaiya.feed.Call
+import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
@@ -56,8 +57,6 @@ import com.joshtalks.badebhaiya.showCallRequests.CallRequestsListFragment
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.SingleDataManager
-import com.joshtalks.badebhaiya.utils.Utils
-import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
@@ -73,11 +72,11 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
+class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
     private var isFromDeeplink = false
-    private var isFromBBPage=false
-    private lateinit var source:String
+    private var isFromBBPage = false
+    private lateinit var source: String
 
     private val liveRoomViewModel by lazy {
         ViewModelProvider(requireActivity())[LiveRoomViewModel::class.java]
@@ -98,7 +97,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     lateinit var binding: FragmentProfileBinding
 
     private var userId: String? = EMPTY
-    private var requestDialog=false
+    private var requestDialog = false
 
     @Inject
     lateinit var notificationScheduler: NotificationScheduler
@@ -111,8 +110,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         savedInstanceState: Bundle?
     ): View? {
         try {
-            (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
-        } catch (e: Exception){
+            (activity as FeedActivity).swipeRefreshLayout.isEnabled = false
+        } catch (e: Exception) {
 
         }
 
@@ -120,53 +119,56 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
-        userId=mBundle!!.getString("user")
-        requestDialog=mBundle!!.getBoolean("request_dialog")
-        isFromDeeplink=mBundle!!.getBoolean("deeplink")
-        source= mBundle.getString("source").toString()
-        isFromBBPage= mBundle.getBoolean("BBPage")
-        source= mBundle.getString("source").toString()
+        userId = mBundle!!.getString("user")
+        requestDialog = mBundle!!.getBoolean("request_dialog")
+        isFromDeeplink = mBundle!!.getBoolean("deeplink")
+        source = mBundle.getString("source").toString()
+        isFromBBPage = mBundle.getBoolean("BBPage")
+        source = mBundle.getString("source").toString()
+        viewModel.source = source
 
         handleIntent()
         viewModel.getProfileForUser(userId!!, source)
-        feedViewModel.profileUuid=userId
+        feedViewModel.profileUuid = userId
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
         binding.viewModel = viewModel
 
-        if(requestDialog){
+        if (requestDialog) {
             requestRoomPopup()
         }
-        binding.profileToolbar.iv_back.setOnClickListener{
+        binding.profileToolbar.iv_back.setOnClickListener {
             activity?.run {
                 try {
-                    (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                } catch (e: Exception){
+                    (activity as FeedActivity).swipeRefreshLayout.isEnabled = true
+                } catch (e: Exception) {
 
                 }
                 onBackPressed()
             }
         }
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                activity?.run {
-                    if (this is FeedActivity){
-                        Timber.d("back from profile and is feed activity")
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    activity?.run {
+                        if (this is FeedActivity) {
+                            Timber.d("back from profile and is feed activity")
 
-                        try {
-                            (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                        } catch (e: Exception){
+                            try {
+                                (activity as FeedActivity).swipeRefreshLayout.isEnabled = true
+                            } catch (e: Exception) {
 
+                            }
+                            supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
+                                .commitAllowingStateLoss()
+                        } else {
+                            Timber.d("back from profile")
+                            supportFragmentManager.popBackStack()
                         }
-                        supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
-                            .commitAllowingStateLoss()
-                    } else  {
-                        Timber.d("back from profile")
-                        supportFragmentManager.popBackStack()
                     }
                 }
-            }
-        })
+            })
         return binding.root
 
     }
@@ -193,11 +195,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
 
-        binding.requestCountNumber.text= callRequestCount.toString()
-        if(feedViewModel.isSpeaker.value==true && callRequestCount>0 && userId==User.getInstance().userId )
-        binding.requestCountNumber.visibility=View.VISIBLE
+        binding.requestCountNumber.text = callRequestCount.toString()
+        if (feedViewModel.isSpeaker.value == true && callRequestCount > 0 && userId == User.getInstance().userId)
+            binding.requestCountNumber.visibility = View.VISIBLE
         else
-            binding.requestCountNumber.visibility=View.GONE
+            binding.requestCountNumber.visibility = View.GONE
 
     }
 
@@ -216,7 +218,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             }
     }
 
-    fun setpadding(){
+    fun setpadding() {
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -228,11 +230,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
             }
         })
-        binding.view.visibility=View.VISIBLE
+        binding.view.visibility = View.VISIBLE
     }
 
-    fun unsetPadding(){
-        binding.view.updateLayoutParams { height=1 }
+    fun unsetPadding() {
+        binding.view.updateLayoutParams { height = 1 }
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -247,12 +249,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
 
-    var internetAvailableFlag:Boolean=false
-
+    var internetAvailableFlag: Boolean = false
 
 
     fun showBottomSheet() {
-        if(internetAvailableFlag) {
+        if (internetAvailableFlag) {
             val bottomSheet =
                 EnterBioBottomSheet.newInstance(
                     userId!!,
@@ -280,19 +281,17 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
 
             bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
-        else showToast("No internet")
+        } else showToast("No internet")
 
     }
 
     fun requestRoomPopup() {
-        if (!User.getInstance().isLoggedIn() ){
+        if (!User.getInstance().isLoggedIn()) {
             userId?.let {
                 redirectToSignUp(REQUEST_ROOM, PendingPilotEventData(pilotUserId = it), false)
             }
-        }
-        else {
-            SingleDataManager.pendingPilotAction=null
+        } else {
+            SingleDataManager.pendingPilotAction = null
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED) {
                 showToast("Can't Sent Request During Call")
             } else {
@@ -332,16 +331,16 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     }
 
-    fun openFansList(){
-        FansListFragment.open(activity =(activity as AppCompatActivity),R.id.room_frame)
+    fun openFansList() {
+        FansListFragment.open(activity = (activity as AppCompatActivity), R.id.room_frame)
     }
 
-    fun openFollowingList(){
-        FollowingListFragment.open(activity =(activity as AppCompatActivity),R.id.room_frame)
+    fun openFollowingList() {
+        FollowingListFragment.open(activity = (activity as AppCompatActivity), R.id.room_frame)
     }
 
-    fun openList(){
-        if(viewModel.isSpeaker) openFansList()
+    fun openList() {
+        if (viewModel.isSpeaker) openFansList()
         else openFollowingList()
     }
 
@@ -354,7 +353,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         alertDialog.show()
 
         dialogBinding.message.addTextChangedListener {
-            if (it.toString().trim().isEmpty()){
+            if (it.toString().trim().isEmpty()) {
                 dialogBinding.Skip.isEnabled = true
                 dialogBinding.submit.isEnabled = false
             } else {
@@ -363,17 +362,17 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             }
         }
 
-        dialogBinding.submit.setOnClickListener{
-            val msg:String
-            if(dialogBinding.message.toString().isNotBlank()) {
+        dialogBinding.submit.setOnClickListener {
+            val msg: String
+            if (dialogBinding.message.toString().isNotBlank()) {
                 msg = dialogBinding.message.text.toString()
-                val obj=FormResponse(userId,msg,roomId)
+                val obj = FormResponse(userId, msg, roomId)
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val resp= CommonRepository().sendMsg(obj)
-                        if(resp.isSuccessful)
+                        val resp = CommonRepository().sendMsg(obj)
+                        if (resp.isSuccessful)
                             showToast("response Send")
-                    } catch (e: Exception){
+                    } catch (e: Exception) {
 
                     }
                 }
@@ -395,11 +394,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         executePendingActions()
     }
 
-    private fun executePendingActions( ) {
+    private fun executePendingActions() {
         SingleDataManager.pendingPilotAction?.let {
-            when(it){
+            when (it) {
                 FOLLOW -> followPilot()
-                REQUEST_ROOM->requestRoomPopup()
+                REQUEST_ROOM -> requestRoomPopup()
             }
         }
     }
@@ -410,46 +409,51 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     private fun handleIntent() {
-        if (userId.isNullOrEmpty()) userId=User.getInstance().userId
+        if (userId.isNullOrEmpty()) userId = User.getInstance().userId
     }
 
     private fun addObserver() {
-        viewModel.roomRequestCount.observe(viewLifecycleOwner){
+        viewModel.roomRequestCount.observe(viewLifecycleOwner) {
             setBadgeDrawable(it)
         }
 
         viewModel.userProfileData.observe(viewLifecycleOwner) {
             binding.apply {
-                progressProfile.visibility=View.GONE
-                divider.visibility=View.VISIBLE
+                progressProfile.visibility = View.GONE
+                divider.visibility = View.VISIBLE
                 handleSpeakerProfile(it)
-                tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
+                tvUserName.text =
+                    getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
         viewModel.speakerFollowed.observe(requireActivity()) {
+
+            binding.followProgress.visibility = View.GONE
+            binding.btnFollow.visibility = View.VISIBLE
+
             if (it == true) {
                 speakerFollowedUIChanges()
-            }
-            else
+            } else
                 speakerUnfollowedUIChanges()
         }
 
-        feedViewModel.isBackPressed.observe(requireActivity()){
-            if(it==true) {
+        feedViewModel.isBackPressed.observe(requireActivity()) {
+            if (it == true) {
                 try {
-                    (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                } catch (e: Exception){
+                    (activity as FeedActivity).swipeRefreshLayout.isEnabled = true
+                } catch (e: Exception) {
 
                 }
-                if (isAdded){
-                    requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+                if (isAdded) {
+                    requireActivity().supportFragmentManager.beginTransaction().remove(this)
+                        .commit()
                     feedViewModel.isBackPressed.value = false
                 }
             }
 
         }
-        liveRoomViewModel.deflate.observe(viewLifecycleOwner){
-            if(it)
+        liveRoomViewModel.deflate.observe(viewLifecycleOwner) {
+            if (it)
                 setpadding()
             else
                 unsetPadding()
@@ -459,81 +463,107 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private fun handleSpeakerProfile(profileResponse: ProfileResponse) {
         binding.apply {
             if (profileResponse.isSpeaker == true) {
-                if(profileResponse.bioText.isNullOrEmpty() )
-                {
-                    tvProfileBio.visibility=View.GONE
+                if (profileResponse.bioText.isNullOrEmpty()) {
+                    tvProfileBio.visibility = View.GONE
                     val param = divider.layoutParams as ViewGroup.MarginLayoutParams
-                    param.topMargin=80
+                    param.topMargin = 80
                     divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                        topToTop = addABio.id}
-                }
-                else {
+                        topToTop = addABio.id
+                    }
+                } else {
                     tvProfileBio.text = profileResponse.bioText
                     tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
-                    tvProfileBio.textSize=16f
-                        divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                            topToBottom = tvProfileBio.id
-                        }
-                   }
-                tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, "<big>"+profileResponse.callsCount.toString()+"</big>"),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    tvProfileBio.textSize = 16f
+                    divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                        topToBottom = tvProfileBio.id
+                    }
+                }
+                tvCalls.text = HtmlCompat.fromHtml(
+                    getString(
+                        R.string.bb_calls,
+                        "<big>" + profileResponse.callsCount.toString() + "</big>"
+                    ),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
 //                tvCalls.setTextAppearance(R.style.BB_Typography_Nunito_Semi_Bold)
-                tvCalls.textSize=17f
-                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-                tvFollowers.textSize=17f
+                tvCalls.textSize = 17f
+                tvFollowers.text = HtmlCompat.fromHtml(
+                    getString(
+                        R.string.bb_followers,
+                        "<big>" + profileResponse.followersCount.toString() + "</big>"
+                    ),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+                tvFollowers.textSize = 17f
                 if (profileResponse.isSpeakerFollowed == true) {
                     speakerFollowedUIChanges()
-                }
-                else
+                } else
                     speakerUnfollowedUIChanges()
             } else {
-                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, "<big>"+profileResponse.followingCount.toString()+"</big>"),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+                tvFollowers.text = HtmlCompat.fromHtml(
+                    getString(
+                        R.string.bb_following,
+                        "<big>" + profileResponse.followingCount.toString() + "</big>"
+                    ),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
             }
         }
     }
 
-    fun navigateToRequestsList(){
+    fun navigateToRequestsList() {
 //        if (!PubNubManager.isRoomActive){
-            CallRequestsListFragment.open(requireActivity().supportFragmentManager, R.id.fragmentContainer)
+        CallRequestsListFragment.open(
+            requireActivity().supportFragmentManager,
+            R.id.fragmentContainer
+        )
 //        } else {
 //            showToast(getString(R.string.please_leave_current_room))
 //        }
     }
 
     fun updateFollowStatus() {
-        if (!User.getInstance().isLoggedIn() ){
+        if (!User.getInstance().isLoggedIn()) {
             userId?.let {
-                redirectToSignUp(FOLLOW, PendingPilotEventData(pilotUserId = it),false)
+                redirectToSignUp(FOLLOW, PendingPilotEventData(pilotUserId = it), false)
             }
             return
         }
+        binding.followProgress.visibility = View.VISIBLE
+        binding.btnFollow.visibility = View.INVISIBLE
 
-
-        viewModel.updateFollowStatus(userId ?: (User.getInstance().userId),isFromBBPage,isFromDeeplink,source)
-        if(viewModel.speakerFollowed.value == true)
+        viewModel.updateFollowStatus(
+            userId ?: (User.getInstance().userId),
+            isFromBBPage,
+            isFromDeeplink,
+            source
+        )
+        if (viewModel.speakerFollowed.value == true)
             viewModel.userProfileData.value?.let {
                 signUpViewModel.unfollowSpeaker()
 //                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_UNFOLLOW"))
-                speakerUnfollowedUIChanges()
-                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-                    ("<big>"+it.followersCount?.minus(1)?:0).toString()+"</big>"),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+//                speakerUnfollowedUIChanges()
+//                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
+//                    ("<big>"+it.followersCount?.minus(1)?:0).toString()+"</big>"),
+//                    HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         else
             viewModel.userProfileData.value?.let {
                 signUpViewModel.followSpeaker()
 //                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
-                speakerFollowedUIChanges()
-                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-                    ("<big>"+it.followersCount?.plus(1)?:0).toString()+"</big>"),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+//                speakerFollowedUIChanges()
+//                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
+//                    ("<big>"+it.followersCount?.plus(1)?:0).toString()+"</big>"),
+//                    HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
+//        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
     }
 
-    private fun redirectToSignUp(pendingPilotAction: PendingPilotEvent, pendingPilotEventData: PendingPilotEventData, requestRoom:Boolean) {
+    private fun redirectToSignUp(
+        pendingPilotAction: PendingPilotEvent,
+        pendingPilotEventData: PendingPilotEventData,
+        requestRoom: Boolean
+    ) {
         SingleDataManager.pendingPilotAction = pendingPilotAction
         SingleDataManager.pendingPilotEventData = pendingPilotEventData
         SignUpActivity.start(requireActivity(), isRedirected = true, requestRoom = requestRoom)
@@ -544,16 +574,21 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.apply {
             btnFollow.text = getString(R.string.following)
             btnFollow.setTextColor(resources.getColor(R.color.white))
-            btnFollow.background = AppCompatResources.getDrawable(requireContext(),
-                R.drawable.following_button_background)
+            btnFollow.background = AppCompatResources.getDrawable(
+                requireContext(),
+                R.drawable.following_button_background
+            )
         }
     }
+
     private fun speakerUnfollowedUIChanges() {
         binding.apply {
             btnFollow.text = getString(R.string.follow)
             btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
-            btnFollow.background = AppCompatResources.getDrawable(requireContext(),
-                R.drawable.follow_button_background)
+            btnFollow.background = AppCompatResources.getDrawable(
+                requireContext(),
+                R.drawable.follow_button_background
+            )
         }
     }
 
@@ -570,12 +605,12 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             }
         }
 
-        fun open(supportFragmentManager: FragmentManager, @IdRes containerId: Int, userId: String){
+        fun open(supportFragmentManager: FragmentManager, @IdRes containerId: Int, userId: String) {
             val fragment = ProfileFragment() // replace your custom fragment class
 
             val bundle = Bundle()
             bundle.putString(USER, userId)
-            bundle.putString("source","Unknown")
+            bundle.putString("source", "Unknown")
 
             fragment.arguments = bundle
 
@@ -586,13 +621,17 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 .commit()
         }
 
-        fun openOnTop(supportFragmentManager: FragmentManager, @IdRes containerId: Int, userId: String){
+        fun openOnTop(
+            supportFragmentManager: FragmentManager,
+            @IdRes containerId: Int,
+            userId: String
+        ) {
             val fragment = ProfileFragment() // replace your custom fragment class
 
             val bundle = Bundle()
             bundle.putString(USER, userId)
             bundle.putBoolean("BBPage", true)
-            bundle.putString("source","BB_TO_FOLLOW")
+            bundle.putString("source", "BB_TO_FOLLOW")
 
             fragment.arguments = bundle
 
@@ -605,15 +644,15 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-        feedViewModel.source="Profile"
+        feedViewModel.source = "Profile"
         takePermissions(room.roomId.toString(), room.topic.toString(), room.speakersData?.userId)
     }
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
-        feedViewModel.source="Profile"
-        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_REPLAY"))
-        feedViewModel.userRoomRecord(room.recordings?.get(0)?.id!!,User.getInstance().userId)
-        RecordedRoomFragment.open(activity as AppCompatActivity,"Profile", room)
+        feedViewModel.source = "Profile"
+        viewModel.sendEvent(Impression("PROFILE_SCREEN", "CLICKED_REPLAY"))
+        feedViewModel.userRoomRecord(room.recordings?.get(0)?.id!!, User.getInstance().userId)
+        RecordedRoomFragment.open(activity as AppCompatActivity, "Profile", room)
     }
 
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
@@ -691,25 +730,32 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        if (!User.getInstance().isLoggedIn()){
+        if (!User.getInstance().isLoggedIn()) {
             userId?.let {
-                redirectToSignUp(SET_REMINDER, PendingPilotEventData(roomId = room.roomId, pilotUserId = it),false)
+                redirectToSignUp(
+                    SET_REMINDER,
+                    PendingPilotEventData(roomId = room.roomId, pilotUserId = it),
+                    false
+                )
             }
             return
         }
-        showPopup(room.roomId,User.getInstance().userId)
+        showPopup(room.roomId, User.getInstance().userId)
 //        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_SET_REMINDER"))
-        notificationScheduler.scheduleNotificationAsListener(requireActivity() as AppCompatActivity, room)
-            feedViewModel.setReminder(
-                ReminderRequest(
-                    roomId = room.roomId.toString(),
-                    userId = User.getInstance().userId,
-                    reminderTime = room.startTimeDate,
-                    false,
-                    from="PROFILE_SCREEN",
-                )
+        notificationScheduler.scheduleNotificationAsListener(
+            requireActivity() as AppCompatActivity,
+            room
+        )
+        feedViewModel.setReminder(
+            ReminderRequest(
+                roomId = room.roomId.toString(),
+                userId = User.getInstance().userId,
+                reminderTime = room.startTimeDate,
+                false,
+                from = "PROFILE_SCREEN",
             )
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId),source)
+        )
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
 
     }
 
@@ -717,8 +763,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
 
-
-    override fun viewRoom(room: RoomListResponseItem, view: View,deeplink: Boolean) {
+    override fun viewRoom(room: RoomListResponseItem, view: View, deeplink: Boolean) {
 
     }
 
