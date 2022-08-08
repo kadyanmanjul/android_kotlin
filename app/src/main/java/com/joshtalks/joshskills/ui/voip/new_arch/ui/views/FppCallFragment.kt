@@ -26,7 +26,6 @@ import com.joshtalks.joshskills.core.isValidContextForGlide
 import com.joshtalks.joshskills.databinding.FragmentFppCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
-import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.State
@@ -129,16 +128,20 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     override fun setArguments() {}
 
     private fun setUpProximitySensor() {
+        Log.d(TAG, "onSensorChanged: 2")
+
         try {
             sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             proximity = sensorManager?.getDefaultSensor(Sensor.TYPE_PROXIMITY)
             powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
             lock = powerManager?.newWakeLock(
                 PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                "simplewakelock:wakelocktag"
+                "simplewakelock:wakelock"
             )
         }catch (ex : NullPointerException){
             ex.printStackTrace()
+            Log.d(TAG, "onSensorChanged: 3")
+
         }
     }
 
@@ -169,6 +172,19 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        proximity?.also { proximity ->
+            sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        sensorManager?.unregisterListener(this)
+        if(lock?.isHeld == true) lock?.release()
+    }
+
     override fun onStart() {
         super.onStart()
         setCurrentCallState()
@@ -191,9 +207,8 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
 
     override fun onSensorChanged(p0: SensorEvent?) {
         if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
-            if (audioController.getCurrentAudioRoute() == AudioRouteConstants.EarpieceAudio) {
+            Log.d(TAG, "onSensorChanged: 1")
                 turnScreenOff()
-            }
         } else {
             turnScreenOn()
         }
