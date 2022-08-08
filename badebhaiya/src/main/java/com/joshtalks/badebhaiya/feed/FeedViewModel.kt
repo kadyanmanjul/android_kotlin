@@ -384,18 +384,21 @@ class FeedViewModel : ViewModel() {
 
                 } else {
                     isRoomsAvailable.set(false)
-                    feedAdapter.submitList(emptyList())
+                    feedAdapter.submitList(list.toList().reversed())
                 }
             } catch (ex: Exception) {
-                feedAdapter.submitList(emptyList())
+                feedAdapter.submitList(list.toList().reversed())
                 isRoomsAvailable.set(false)
                 ex.printStackTrace()
             } finally {
                 isLoading.set(false)
+                delay(500)
+                message.what = SCROLL_TO_TOP
+                singleLiveEvent.postValue(message)
             }
-            message.what = SCROLL_TO_TOP
-            singleLiveEvent.postValue(message)
+
         }
+
     }
 
     fun getRecordRooms() {
@@ -418,7 +421,7 @@ class FeedViewModel : ViewModel() {
                         }
                         if (list.isNullOrEmpty().not()) {
                             isRoomsAvailable.set(true)
-                            feedAdapter.submitList(list.reversed())
+//                            feedAdapter.submitList(list.reversed())
                         }
 
                     }
@@ -427,6 +430,7 @@ class FeedViewModel : ViewModel() {
 
             }
             getRooms(list)
+
         }
     }
 
