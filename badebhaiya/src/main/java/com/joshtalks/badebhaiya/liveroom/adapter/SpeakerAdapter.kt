@@ -46,14 +46,14 @@ class SpeakerAdapter : RecyclerView.Adapter<SpeakerAdapter.SpeakerViewHolder>() 
             with(binding) {
                 roomData=model
                 name.text = model.name
-                userImageIv.apply {
-                    clipToOutline = true
-                    setUserImageRectOrInitials(
-                        model.photoUrl, model.name?: DEFAULT_NAME, 24, true, 16,
-                        textColor = R.color.black,
-                        bgColor = R.color.conversation_room_gray
-                    )
-                }
+//                userImageIv.apply {
+//                    clipToOutline = true
+//                    setUserImageRectOrInitials(
+//                        model.photoUrl, model.name?: DEFAULT_NAME, 24, true, 16,
+//                        textColor = R.color.black,
+//                        bgColor = R.color.conversation_room_gray
+//                    )
+//                }
                 if (model.isSpeaking && model.isSpeaker == true && model.isMicOn) {
                     userImage.setBackgroundResource(R.drawable.golden_ring_27dp_border)
                 } else {

@@ -24,7 +24,6 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.*
 import com.joshtalks.badebhaiya.network.NetworkManager
 import com.joshtalks.badebhaiya.pubnub.PubNubData._audienceList
 import com.joshtalks.badebhaiya.pubnub.PubNubData._speakersList
-import com.joshtalks.badebhaiya.pubnub.PubNubData.moderatorStatus
 import com.joshtalks.badebhaiya.pubnub.PubNubData.eventsMap
 import com.joshtalks.badebhaiya.pubnub.fallback.FallbackManager
 import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
@@ -39,6 +38,8 @@ import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.member.PNUUID
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.util.*
@@ -81,6 +82,13 @@ object PubNubManager {
     private var pubNubEventJob: Job? = null
 
     private var reconnecting = false
+
+    private lateinit var speakerListMutex: Mutex
+    private lateinit var audienceListMutex: Mutex
+    private lateinit var liveEventMutex: Mutex
+    private lateinit var pubNubEventsMutex: Mutex
+    private lateinit var pubNubStateMutex: Mutex
+
 
     @Volatile
     var isRoomActive = false
@@ -141,6 +149,11 @@ object PubNubManager {
     }
 
     fun initPubNub() {
+        speakerListMutex = Mutex()
+        audienceListMutex = Mutex()
+        liveEventMutex = Mutex()
+        pubNubEventsMutex = Mutex()
+        pubNubStateMutex = Mutex()
         reconnecting = false
         roomJoiningTime = System.currentTimeMillis()
         val pnConf = PNConfiguration(User.getInstance().userId)
@@ -185,47 +198,12 @@ object PubNubManager {
         }
     }
 
-    fun initSpeakerJoined(){
-        val pnConf = PNConfiguration(User.getInstance().userId)
-        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
-        pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
-        pnConf.uuid = User.getInstance().userId
-        pnConf.connectTimeout = 10
-        pnConf.maximumConnections = Int.MAX_VALUE
-        pnConf.isSecure = false
-        waitingCallback=WaitingCallback()
-        isJoinedPubnub = PubNub(pnConf)
-        waitingCallback?.let {
-            isJoinedPubnub.addListener(it)
-        }
-
-        jobs += CoroutineScope(Dispatchers.IO).launch {
-
-            isJoinedPubnub.subscribe().channels(
-                listOf("${channelName}waitingRoom")
-            ).withPresence().execute()
-
-        }
-    }
-
-    private fun getSpeakerStatus() {
-        jobs += CoroutineScope(Dispatchers.IO).launch {
-            try {
-                pubnub.channelMembers.channel(liveRoomProperties?.channelName+"waitingRoom")
-                    ?.includeCustom(true)
-                    ?.async { result, status ->
-                    }
-            } catch (e: Exception){
-                sendPubNubException(e)
-            }
-
-        }
-    }
-
     private fun changePubNubState(state: PubNubState){
         isRoomActive = state == PubNubState.STARTED
         jobs += CoroutineScope(Dispatchers.IO).launch{
-            PubNubData._pubNubState.emit(state)
+            pubNubStateMutex.withLock {
+                PubNubData._pubNubState.emit(state)
+            }
         }
     }
 
@@ -421,8 +399,10 @@ object PubNubManager {
         Timber.d("post to speaker list => $list")
         val distinctedList = list.reversed().distinctBy { it.userId }.reversed()
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            distinctedList.map { if (it.isModerator) it.sortOrder = Int.MAX_VALUE  }
-            _speakersList.emit(distinctedList.toList())
+            speakerListMutex.withLock {
+                distinctedList.map { if (it.isModerator) it.sortOrder = Int.MAX_VALUE  }
+                _speakersList.emit(distinctedList.toList())
+            }
         }
     }
 
@@ -439,25 +419,21 @@ object PubNubManager {
      fun postToAudienceList(list: List<LiveRoomUser>) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             try {
-                val distinctedList = list.reversed().distinctBy { it.userId }.reversed()
-                _audienceList.emit(distinctedList)
-
+                audienceListMutex.withLock {
+                    val distinctedList = list.reversed().distinctBy { it.userId }.reversed()
+                    _audienceList.emit(distinctedList)
+                }
             } catch (Ex:Exception){
 //                _audienceList.emit(emptyList())
             }
         }
     }
 
-    fun postToSpeakerStatus(message: Message) {
-        jobs+= CoroutineScope(Dispatchers.IO).launch {
-            moderatorStatus.emit(message)
-        }
-
-    }
-
     private fun postToLiveEvent(message: Message) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            PubNubData._liveEvent.emit(message)
+            liveEventMutex.withLock {
+                PubNubData._liveEvent.emit(message)
+            }
         }
     }
 
@@ -789,7 +765,9 @@ object PubNubManager {
             eventsMap[data.eventId] = data.eventId
             Timber.d("ABC Event AUR MAP HAI => ${eventsMap}")
 
-            PubNubData.pubNubEvents.emit(data)
+            pubNubEventsMutex.withLock {
+                PubNubData.pubNubEvents.emit(data)
+            }
         }
 
     }
