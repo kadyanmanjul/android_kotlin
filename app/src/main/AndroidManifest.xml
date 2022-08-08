@@ -800,9 +800,6 @@
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove"/>
-            <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
-                android:value="androidx.startup" />
         </provider>
         <provider
             android:name="androidx.core.content.FileProvider"

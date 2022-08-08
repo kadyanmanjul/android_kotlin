@@ -21,10 +21,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDex
+import androidx.work.Configuration
 import androidx.work.impl.background.greedy.GreedyScheduler
 import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
-import com.github.anrwatchdog.ANRWatchDog
 import com.google.android.play.core.splitcompat.SplitCompatApplication
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -61,7 +61,7 @@ const val TAG = "JoshSkill"
 class JoshApplication :
     SplitCompatApplication(),
     LifecycleEventObserver,
-    ComponentCallbacks2/*, Configuration.Provider*/ {
+    ComponentCallbacks2, Configuration.Provider {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
     }
@@ -91,15 +91,9 @@ class JoshApplication :
         }
         Branch.getAutoInstance(this)
         if (isMainProcess()) {
+            AppObjectController.initLibrary(this)
             Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
             turnOnStrictMode()
-            ANRWatchDog().setANRListener {
-                try {
-                    FirebaseCrashlytics.getInstance().recordException(it)
-                } catch (e : Exception) {
-                    e.printStackTrace()
-                }
-            }.start()
             ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
             AppObjectController.init(this@JoshApplication)
             VoipPref.initVoipPref(this)
@@ -431,5 +425,9 @@ class JoshApplication :
     fun isMainProcess(): Boolean {
         Log.d(TAG, "onCreate: STARTING ...IS MAIN PROCESS")
         return TextUtils.equals(packageName, getProcName())
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder().setMinimumLoggingLevel(Log.VERBOSE).build()
     }
 }
