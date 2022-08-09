@@ -4,6 +4,7 @@ import android.app.Notification
 import android.content.Intent
 import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.joshtalks.badebhaiya.core.AppObjectController
 
 class MusicPlayerNotificationListener(
     private val audioService: AudioPlayerService
@@ -27,7 +28,7 @@ class MusicPlayerNotificationListener(
         audioService.apply {
             if(ongoing && !isForegroundService) {
                 ContextCompat.startForegroundService(
-                    this,
+                    AppObjectController.joshApplication,
                     Intent(applicationContext, this::class.java)
                 )
                 startForeground(MusicNotificationManager.NOTIFICATION_ID, notification)

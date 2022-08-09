@@ -108,7 +108,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         try {
             (activity as FeedActivity).swipeRefreshLayout.isEnabled = false
         } catch (e: Exception) {
@@ -117,16 +117,14 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
         super.onCreate(savedInstanceState)
-        var mBundle: Bundle? = Bundle()
-        mBundle = this.arguments
-        userId = mBundle!!.getString("user")
-        requestDialog = mBundle!!.getBoolean("request_dialog")
-        isFromDeeplink = mBundle!!.getBoolean("deeplink")
-        source = mBundle.getString("source").toString()
-        isFromBBPage = mBundle.getBoolean("BBPage")
-        source = mBundle.getString("source").toString()
+        val mBundle: Bundle? = this.arguments
+        userId=mBundle!!.getString("user")
+        requestDialog=mBundle.getBoolean("request_dialog")
+        isFromDeeplink=mBundle.getBoolean("deeplink")
+        source= mBundle.getString("source").toString()
+        isFromBBPage= mBundle.getBoolean("BBPage")
+        source= mBundle.getString("source").toString()
         viewModel.source = source
-
         handleIntent()
         viewModel.getProfileForUser(userId!!, source)
         feedViewModel.profileUuid = userId
@@ -218,7 +216,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
             }
     }
 
-    fun setpadding() {
+    private fun setpadding(){
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -233,8 +231,8 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
         binding.view.visibility = View.VISIBLE
     }
 
-    fun unsetPadding() {
-        binding.view.updateLayoutParams { height = 1 }
+    private fun unsetPadding(){
+        binding.view.updateLayoutParams { height=1 }
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -259,7 +257,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
                     userId!!,
                     binding.tvProfileBio.text.toString(),
                     onBioUpdated = {
-                        if (!it.isEmpty()) {
+                        if (it.isNotEmpty()) {
                             binding.tvProfileBio.text = it
                             binding.tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
                             binding.tvProfileBio.textSize = 16f
@@ -303,7 +301,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
                 alertDialog.show()
 
                 dialogBinding.message.addTextChangedListener {
-                    dialogBinding.submit.isEnabled = !it.toString().trim().isEmpty()
+                    dialogBinding.submit.isEnabled = it?.toString()?.trim()?.isNotEmpty()!!
                 }
 
                 dialogBinding.submit.setOnClickListener {
@@ -331,12 +329,12 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
 
     }
 
-    fun openFansList() {
-        FansListFragment.open(activity = (activity as AppCompatActivity), R.id.room_frame)
+    private fun openFansList(){
+        FansListFragment.open(activity =(activity as AppCompatActivity),R.id.room_frame)
     }
 
-    fun openFollowingList() {
-        FollowingListFragment.open(activity = (activity as AppCompatActivity), R.id.room_frame)
+    private fun openFollowingList(){
+        FollowingListFragment.open(activity =(activity as AppCompatActivity),R.id.room_frame)
     }
 
     fun openList() {
@@ -353,7 +351,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
         alertDialog.show()
 
         dialogBinding.message.addTextChangedListener {
-            if (it.toString().trim().isEmpty()) {
+            if (it.toString().trim().isEmpty()){
                 dialogBinding.Skip.isEnabled = true
                 dialogBinding.submit.isEnabled = false
             } else {
@@ -475,40 +473,25 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
                 } else {
                     tvProfileBio.text = profileResponse.bioText
                     tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
-                    tvProfileBio.textSize = 16f
-                    divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                        topToBottom = tvProfileBio.id
-                    }
-                }
-                tvCalls.text = HtmlCompat.fromHtml(
-                    getString(
-                        R.string.bb_calls,
-                        "<big>" + profileResponse.callsCount.toString() + "</big>"
-                    ),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
+                    tvProfileBio.textSize=16f
+                        divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                            topToBottom = tvProfileBio.id
+                        }
+                   }
+                tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, "<big>"+profileResponse.callsCount+"</big>"),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
 //                tvCalls.setTextAppearance(R.style.BB_Typography_Nunito_Semi_Bold)
-                tvCalls.textSize = 17f
-                tvFollowers.text = HtmlCompat.fromHtml(
-                    getString(
-                        R.string.bb_followers,
-                        "<big>" + profileResponse.followersCount.toString() + "</big>"
-                    ),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
-                tvFollowers.textSize = 17f
+                tvCalls.textSize=17f
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount+"</big>"),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+                tvFollowers.textSize=17f
                 if (profileResponse.isSpeakerFollowed == true) {
                     speakerFollowedUIChanges()
                 } else
                     speakerUnfollowedUIChanges()
             } else {
-                tvFollowers.text = HtmlCompat.fromHtml(
-                    getString(
-                        R.string.bb_following,
-                        "<big>" + profileResponse.followingCount.toString() + "</big>"
-                    ),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, "<big>"+profileResponse.followingCount+"</big>"),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
     }
@@ -596,9 +579,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
 
     companion object {
         const val TAG = "ProfileFragment"
-        const val USER = "user"
-
-        const val FROM_DEEPLINK = "from_deeplink"
+        private const val USER = "user"
         fun openProfileActivity(context: Context, userId: String = EMPTY) {
             Intent(context, ProfileFragment::class.java).apply {
                 putExtra(USER_ID, userId)
@@ -646,8 +627,8 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-        feedViewModel.source = "Profile"
-        takePermissions(room.roomId.toString(), room.topic.toString(), room.speakersData?.userId)
+        feedViewModel.source="Profile"
+        takePermissions(room.roomId.toString(), room.topic.toString())
     }
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
@@ -657,7 +638,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
         RecordedRoomFragment.open(activity as AppCompatActivity, "Profile", room)
     }
 
-    private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
+    private fun takePermissions(room: String? = null, roomTopic: String) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireContext())) {
             if (room != null) {
                 feedViewModel.joinRoom(room, roomTopic, "PROFILE_SCREEN")
@@ -708,7 +689,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
             (requireActivity() as AppCompatActivity),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
+                    report?.areAllPermissionsGranted()?.let {
                         if (report.isAnyPermissionPermanentlyDenied) {
                             Toast.makeText(
                                 requireContext(),
@@ -742,7 +723,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
             }
             return
         }
-        showPopup(room.roomId, User.getInstance().userId)
+        showPopup(room.roomId!!,User.getInstance().userId)
 //        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_SET_REMINDER"))
         notificationScheduler.scheduleNotificationAsListener(
             requireActivity() as AppCompatActivity,

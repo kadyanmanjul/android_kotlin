@@ -136,7 +136,7 @@ class SignUpActivity : AppCompatActivity(), Call {
         binding.btnWelcome.visibility = View.GONE
         supportFragmentManager.commit(true) {
             val fragment=SignUpEnterPhoneFragment()
-            fragment?.apply {
+            fragment.apply {
                 exitTransition = MaterialSharedAxis(
                     MaterialSharedAxis.Z,
                     /* forward= */ false
@@ -156,7 +156,7 @@ class SignUpActivity : AppCompatActivity(), Call {
     private fun openOTPVerificationFragment() {
         supportFragmentManager.commit(true) {
             val fragment=SignUpEnterOTPFragment()
-            fragment?.apply {
+            fragment.apply {
                 exitTransition = MaterialSharedAxis(
                     MaterialSharedAxis.Z,
                     /* forward= */ false
@@ -175,7 +175,7 @@ class SignUpActivity : AppCompatActivity(), Call {
     private fun openEnterNameFragment() {
         supportFragmentManager.commit(true) {
             val fragment=SignUpEnterNameFragment()
-            fragment?.apply {
+            fragment.apply {
                 exitTransition = MaterialSharedAxis(
                     MaterialSharedAxis.Z,
                     /* forward= */ false
@@ -201,7 +201,7 @@ class SignUpActivity : AppCompatActivity(), Call {
     private fun openUploadProfilePicFragment() {
         supportFragmentManager.commit(true) {
             val fragment=SignUpAddProfilePhotoFragment()
-            fragment?.apply {
+            fragment.apply {
                 exitTransition = MaterialSharedAxis(
                     MaterialSharedAxis.Z,
                     /* forward= */ false
@@ -227,7 +227,7 @@ class SignUpActivity : AppCompatActivity(), Call {
                 //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
                 val bundle = Bundle()
                 val fragment=ProfileFragment()
-                fragment?.apply {
+                fragment.apply {
                     exitTransition = MaterialSharedAxis(
                         MaterialSharedAxis.Z,
                         /* forward= */ false
@@ -324,8 +324,6 @@ class SignUpActivity : AppCompatActivity(), Call {
         private const val REDIRECT = ""
         const val REDIRECT_TO_PROFILE_ACTIVITY = "redirect_to_profile_activity"
         const val REDIRECT_TO_ENTER_NAME = "REDIRECT_TO_ENTER_NAME"
-        const val REDIRECT_TO_ENTER_PROFILE_PIC = "REDIRECT_TO_ENTER_PROFILE_PIC"
-        const val REDIRECT_PROFILE_SKIPPED = "REDIRECT_WHEN_PROFILE_SKIPPED"
         const val IS_REDIRECTED = "is_redirected"
 
 

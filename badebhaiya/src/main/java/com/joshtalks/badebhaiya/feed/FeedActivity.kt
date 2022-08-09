@@ -434,17 +434,22 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
 
         viewModel.previousRoomDataForSchedule.observe(this){
-            PreviousRoomDialog(
-                this,
-                roomName = it.previousRoomTopic,
-                onPositiveButtonClick = {
-                    viewModel.joinRoom(it.previousRoomId.toString(), it.previousRoomTopic, "FEED_SCREEN", isRejoin = true)
-                },
-                onNegativeButtonClick = {
-                    viewModel.endPreviousRoomAndSchedule(it.previousRoomId, this)
+            it.previousRoomTopic?.let { it1 ->
+                PreviousRoomDialog(
+                    this,
+                    roomName = it1,
+                    onPositiveButtonClick = {
+                        it.previousRoomTopic.let { it1 ->
+                            viewModel.joinRoom(it.previousRoomId.toString(),
+                                it1, "FEED_SCREEN", isRejoin = true)
+                        }
+                    },
+                    onNegativeButtonClick = {
+                        viewModel.endPreviousRoomAndSchedule(it.previousRoomId, this)
+                    }
+                ).apply {
+                    show()
                 }
-            ).apply {
-                show()
             }
         }
 

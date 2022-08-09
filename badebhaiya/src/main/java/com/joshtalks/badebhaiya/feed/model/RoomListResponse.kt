@@ -29,7 +29,7 @@ data class RoomListResponse(
 @Parcelize
 data class RoomListResponseItem(
     @SerializedName("id")
-    val roomId: Int,
+    val roomId: Int?,
     @SerializedName("audience_count")
     var audienceCount: String?,
     @SerializedName("channel_name")
@@ -59,7 +59,7 @@ data class RoomListResponseItem(
     @SerializedName("previous_room_id")
     val previousRoomId: Int,
     @SerializedName("previous_room_topic")
-    val previousRoomTopic: String,
+    val previousRoomTopic: String?="",
     var conversationRoomQuestionId: Int? = null,
     var conversationRoomType: ConversationRoomType? = null,
     @SerializedName("users_count")
