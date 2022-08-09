@@ -29,7 +29,7 @@ data class RoomListResponse(
 @Parcelize
 data class RoomListResponseItem(
     @SerializedName("id")
-    val roomId: Int?,
+    val roomId: Int,
     @SerializedName("audience_count")
     var audienceCount: String?,
     @SerializedName("channel_name")
