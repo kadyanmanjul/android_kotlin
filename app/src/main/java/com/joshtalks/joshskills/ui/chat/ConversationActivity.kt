@@ -1343,9 +1343,9 @@ class ConversationActivity :
             conversationViewModel.isFreeTrialCallBlocked.observe(this) {
                 when (it) {
                     BLOCKED -> {
-                        PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
                         conversationBinding.isFreeTrialCallBlocked = true
                         conversationBinding.executePendingBindings()
+                        PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
                     }
                     SHOW_WARNING_POPUP -> {
                         if (PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(

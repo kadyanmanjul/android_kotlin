@@ -32,12 +32,14 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -59,7 +61,7 @@ import java.util.*
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
 
-class SignUpActivity : BaseActivity() {
+class SignUpActivity : BaseRegistrationActivity() {
 
     private lateinit var appAnalytics: AppAnalytics
     private val viewModel: SignUpViewModel by lazy {
@@ -148,14 +150,24 @@ class SignUpActivity : BaseActivity() {
                         viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
                     if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
                         viewModel.registerSpecificCourse()
-                    else {
-                        startActivity(getInboxActivityIntent())
-                        this@SignUpActivity.finishAffinity()
-                    }
+                    else
+                        viewModel.getRegisteredCourses()
+                }
+                SignUpStepStatus.ChooseLanguage -> {
+                    binding.skip.visibility = View.GONE
+                    openChooseLanguageFragment()
+                }
+                SignUpStepStatus.ChooseGoal -> {
+                    binding.skip.visibility = View.GONE
+                    openGoalFragment()
                 }
                 else -> return@Observer
             }
         })
+        viewModel.freeTrialEntity.observe(this) {
+            startActivity(getInboxActivityIntent())
+            this@SignUpActivity.finishAffinity()
+        }
         viewModel.progressBarStatus.observe(this, Observer {
             showProgressBar()
         })
@@ -204,6 +216,43 @@ class SignUpActivity : BaseActivity() {
                 }
             }
         })
+    }
+
+    override fun openChooseLanguageFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                ChooseLanguageOnBoardFragment.newInstance(true),
+                ChooseLanguageOnBoardFragment::class.java.name
+            )
+        }
+    }
+
+    override fun openChooseGoalFragment() {
+        viewModel.changeChooseLanguageStatusToChooseGoal()
+    }
+
+    private fun openGoalFragment(){
+        supportFragmentManager.commit(true) {
+            addToBackStack(ChooseGoalOnBoardFragment::class.java.name)
+            replace(
+                R.id.container,
+                ChooseGoalOnBoardFragment.newInstance(true),
+                ChooseGoalOnBoardFragment::class.java.name
+            )
+        }
+    }
+
+    override fun startFreeTrial(testId: String) {
+        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
+        PrefManager.put(FREE_TRIAL_TEST_ID, testId)
+        PrefManager.put(USER_LOCALE, testId)
+        if (testId != HINDI_TO_ENGLISH_TEST_ID && testId != ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
+            requestWorkerForChangeLanguage(Utils.getLangCodeFromlangTestId(testId), canCreateActivity = false)
+        }
+        viewModel.startFreeTrial(Mentor.getInstance().getId(), testId)
     }
 
     private fun logLoginSuccessAnalyticsEvent(from: String?) {

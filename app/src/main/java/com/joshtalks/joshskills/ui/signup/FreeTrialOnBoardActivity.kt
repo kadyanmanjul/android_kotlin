@@ -36,7 +36,7 @@ const val HINDI_TO_ENGLISH_TEST_ID = "784"
 const val ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID = "1906"
 const val USER_CREATED_SUCCESSFULLY = 1002
 
-class FreeTrialOnBoardActivity : CoreJoshActivity() {
+class FreeTrialOnBoardActivity : BaseRegistrationActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
@@ -165,7 +165,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun startFreeTrial(testId: String) {
+    override fun startFreeTrial(testId: String) {
         layout.btnStartTrial.pauseAnimation()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, testId)
@@ -296,7 +296,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         super.onBackPressed()
     }
 
-    fun openChooseLanguageFragment() {
+    override fun openChooseLanguageFragment() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
@@ -308,7 +308,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun openGoalFragment() {
+    override fun openChooseGoalFragment() {
         viewModel.saveImpression(REASON_SCREEN_OPENED)
         supportFragmentManager.commit(true) {
             addToBackStack(ChooseGoalOnBoardFragment::class.java.name)

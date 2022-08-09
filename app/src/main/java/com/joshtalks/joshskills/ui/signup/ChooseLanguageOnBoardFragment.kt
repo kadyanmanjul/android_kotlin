@@ -7,6 +7,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,7 +39,14 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
     private var errorView: Stub<ErrorView>? = null
 
     companion object {
-        fun newInstance() = ChooseLanguageOnBoardFragment()
+        private const val IS_FROM_SIGNIN = "is_from_signin"
+        fun newInstance(isFromSignUp:Boolean = false) :ChooseLanguageOnBoardFragment{
+            val args = Bundle()
+            args.putBoolean(IS_FROM_SIGNIN, isFromSignUp)
+            val fragment = ChooseLanguageOnBoardFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     override fun initViewBinding() {
@@ -67,6 +75,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
+        binding.toolbar.isVisible = arguments?.getBoolean(IS_FROM_SIGNIN)?.not() ?: true
         errorView = Stub(view.findViewById(R.id.error_view))
         if (viewModel.availableLanguages.value == null || viewModel.availableLanguages.value.isNullOrEmpty()) {
             if (isInternetAvailable()) {
@@ -151,11 +160,10 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
             viewModel.postGoal(GoalKeys.HINDI_LANG_SELECTED)
         }
         try {
-            if (language.testId == HINDI_TO_ENGLISH_TEST_ID && isGovernmentCourseActive) {
-                (requireActivity() as FreeTrialOnBoardActivity).openGoalFragment()
-            } else {
-                language.let { (requireActivity() as FreeTrialOnBoardActivity).startFreeTrial(it.testId) }
-            }
+            if (language.testId == HINDI_TO_ENGLISH_TEST_ID && isGovernmentCourseActive)
+                (requireActivity() as BaseRegistrationActivity).openChooseGoalFragment()
+            else
+                (requireActivity() as BaseRegistrationActivity).startFreeTrial(language.testId)
         } catch (e: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }
