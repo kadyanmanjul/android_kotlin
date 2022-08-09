@@ -369,7 +369,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 // dialog for warning about shorter calls
                                 binding.containerReachedFtLimit.visibility = GONE
                                 AlertDialog.Builder(activity).setTitle(R.string.warning)
-                                    .setIcon(R.drawable.ic_baseline_warning_24)
+                                    .setIcon(R.drawable.ic_warning)
                                     .setPositiveButton(R.string.got_it){dialog,_ ->
                                         dialog.dismiss()
                                     }
