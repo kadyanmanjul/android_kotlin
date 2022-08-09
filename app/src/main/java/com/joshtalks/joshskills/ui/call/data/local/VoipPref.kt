@@ -80,9 +80,10 @@ object VoipPref {
 
             // TODO: These logic shouldn't be here
 
-            if (duration != 0L && !PrefManager.getBoolValue(IS_FREE_TRIAL)) {
-                showDialogBox(duration)
-            }
+            if (duration != 0L &&
+                (PrefManager.getBoolValue(IS_FREE_TRIAL).not() ||
+                    (PrefManager.getBoolValue(IS_FREE_TRIAL) && duration > (2*60*1000)))
+            ) showDialogBox(duration)
         }
 
         // TODO: These function shouldn't be here
