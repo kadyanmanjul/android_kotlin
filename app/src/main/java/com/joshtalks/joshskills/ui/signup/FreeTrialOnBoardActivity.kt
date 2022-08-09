@@ -84,11 +84,10 @@ class FreeTrialOnBoardActivity : BaseRegistrationActivity() {
                     OnboardingCourseData::class.java
                 )
             } else {
-                OnboardingCourseData(
-                    getString(R.string.onboarding_course_heading),
-                    getString(R.string.onboarding_course_info1),
-                    getString(R.string.onboarding_course_info2),
-                    getString(R.string.onboarding_course_info3),
+                AppObjectController.gsonMapper.fromJson(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString("ONBOARDING_COURSE_DEFAULT",),
+                    OnboardingCourseData::class.java
                 )
             }
     }
