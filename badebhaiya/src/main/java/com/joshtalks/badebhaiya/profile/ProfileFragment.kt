@@ -429,7 +429,9 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
         viewModel.speakerFollowed.observe(requireActivity()) {
 
             binding.followProgress.visibility = View.GONE
-            binding.btnFollow.visibility = View.VISIBLE
+            if (viewModel.isSpeaker && !viewModel.isSelfProfile.get()){
+                binding.btnFollow.visibility = View.VISIBLE
+            }
 
             if (it == true) {
                 speakerFollowedUIChanges()
