@@ -214,13 +214,19 @@ object PrefManager {
     }
 
     fun clear() {
-        prefManagerCommon?.edit()?.clear()?.apply()
+        if (isApplicationClassInitiated()) {
+            prefManagerCommon?.edit()?.clear()?.apply()
+        }
     }
 
 
     fun hasKey(key: String, isConsistent: Boolean = false): Boolean {
-        return if (isConsistent) prefManagerConsistent.contains(key)
-        else prefManagerCommon?.contains(key)?:false
+        return if (isConsistent) {
+            if (isApplicationClassInitiated()) prefManagerConsistent.contains(key) else false
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.contains(key)?:false else false
+        }
     }
 
     @JvmStatic
@@ -229,8 +235,12 @@ object PrefManager {
         isConsistent: Boolean = false,
         defValue: Boolean = false
     ): Boolean {
-        return if (isConsistent) prefManagerConsistent.getBoolean(key, defValue)
-        else prefManagerCommon?.getBoolean(key, defValue)?:false
+        return if (isConsistent){
+            if (isApplicationClassInitiated()) prefManagerConsistent.getBoolean(key, defValue) else defValue
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.getBoolean(key, defValue)?:defValue else defValue
+        }
     }
 
     fun getStringValue(
@@ -238,24 +248,39 @@ object PrefManager {
         isConsistent: Boolean = false,
         defaultValue: String = EMPTY
     ): String {
-        return if (isConsistent) prefManagerConsistent.getString(key, EMPTY) ?: EMPTY
-        else prefManagerCommon?.getString(key, defaultValue) ?: EMPTY
+        return if (isConsistent){
+            if (isApplicationClassInitiated()) prefManagerConsistent.getString(key, defaultValue) ?: defaultValue else defaultValue
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.getString(key, defaultValue) ?: defaultValue else defaultValue
+        }
     }
 
     fun getIntValue(key: String, isConsistent: Boolean = false): Int {
-        return if (isConsistent) prefManagerConsistent.getInt(key, 0)
-        else prefManagerCommon?.getInt(key, 0)?:0
-
+        return if (isConsistent){
+            if (isApplicationClassInitiated()) prefManagerConsistent.getInt(key, 0) else 0
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.getInt(key, 0)?:0 else 0
+        }
     }
 
     fun getIntValue(key: String, isConsistent: Boolean = false, defValue: Int): Int {
-        return if (isConsistent) prefManagerConsistent.getInt(key, defValue)
-        else prefManagerCommon?.getInt(key, defValue)?:0
+        return if (isConsistent){
+            if (isApplicationClassInitiated()) prefManagerConsistent.getInt(key, defValue) else defValue
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.getInt(key, defValue)?:defValue else defValue
+        }
     }
 
     fun getSetValue(key: String, isConsistent: Boolean = false, defValue: Set<String> = setOf()): Set<String> {
-        return if (isConsistent) prefManagerConsistent.getStringSet(key, defValue) ?: defValue
-        else prefManagerCommon?.getStringSet(key, defValue) ?: defValue
+        return if (isConsistent){
+            if (isApplicationClassInitiated()) prefManagerConsistent.getStringSet(key, defValue) ?: defValue else defValue
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.getStringSet(key, defValue) ?: defValue else defValue
+        }
     }
 
     fun appendToSet(
@@ -276,48 +301,80 @@ object PrefManager {
     ): Boolean = getSetValue(key, isConsistent).contains(value)
 
     fun getLongValue(key: String, isConsistent: Boolean = false): Long {
-        return if (isConsistent) prefManagerConsistent.getLong(key, 0)
-        else prefManagerCommon?.getLong(key, 0)?:0
+        return if (isConsistent){
+            if (isApplicationClassInitiated()) prefManagerConsistent.getLong(key, 0) else 0
+        }
+        else{
+            if (isApplicationClassInitiated()) prefManagerCommon?.getLong(key, 0)?:0 else 0
+        }
     }
 
     private fun getFloatValue(key: String, isConsistent: Boolean = false): Float {
-        return if (isConsistent) prefManagerConsistent.getFloat(key, 0F)
-        else prefManagerCommon?.getFloat(key, 0F)?:0F
+        return if (isConsistent) {
+            if (isApplicationClassInitiated()) prefManagerConsistent.getFloat(key, 0f) else 0f
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.getFloat(key, 0f)?:0f else 0f
+        }
 
     }
 
     fun put(key: String, value: String, isConsistent: Boolean = false) {
-        if (isConsistent) prefManagerConsistent.edit().putString(key, value).apply()
-        else prefManagerCommon?.edit()?.putString(key, value)?.apply()
+        if (isConsistent) {
+            if (isApplicationClassInitiated()) prefManagerConsistent.edit().putString(key, value).apply()
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.edit()?.putString(key, value)?.apply()
+        }
 
     }
 
     fun put(key: String, value: Int, isConsistent: Boolean = false) {
-        if (isConsistent) prefManagerConsistent.edit().putInt(key, value).apply()
-        else prefManagerCommon?.edit()?.putInt(key, value)?.apply()
+        if (isConsistent){
+            if (isApplicationClassInitiated()) prefManagerConsistent.edit().putInt(key, value).apply()
+        }
+        else{
+            if (isApplicationClassInitiated()) prefManagerCommon?.edit()?.putInt(key, value)?.apply()
+        }
 
     }
 
     fun put(key: String, value: Long, isConsistent: Boolean = false) {
-        if (isConsistent) prefManagerConsistent.edit().putLong(key, value).apply()
-        else prefManagerCommon?.edit()?.putLong(key, value)?.apply()
+        if (isConsistent) {
+            if (isApplicationClassInitiated()) prefManagerConsistent.edit().putLong(key, value).apply()
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.edit()?.putLong(key, value)?.apply()
+        }
 
     }
 
     fun put(key: String, value: Float, isConsistent: Boolean = false) {
-        if (isConsistent) prefManagerConsistent.edit().putFloat(key, value).apply()
-        else prefManagerCommon?.edit()?.putFloat(key, value)?.apply()
+        if (isConsistent) {
+            if (isApplicationClassInitiated()) prefManagerConsistent.edit().putFloat(key, value).apply()
+        }
+        else{
+            if (isApplicationClassInitiated()) prefManagerCommon?.edit()?.putFloat(key, value)?.apply()
+        }
 
     }
 
     fun put(key: String, value: Boolean, isConsistent: Boolean = false) {
-        if (isConsistent) prefManagerConsistent.edit().putBoolean(key, value).apply()
-        else prefManagerCommon?.edit()?.putBoolean(key, value)?.apply()
+        if (isConsistent) {
+            if (isApplicationClassInitiated()) prefManagerConsistent.edit().putBoolean(key, value).apply()
+        }
+        else{
+            if (isApplicationClassInitiated()) prefManagerCommon?.edit()?.putBoolean(key, value)?.apply()
+        }
     }
 
     fun put(key: String, value: Set<String>, isConsistent: Boolean = false) {
-        if (isConsistent) prefManagerConsistent.edit().putStringSet(key, value).apply()
-        else prefManagerCommon?.edit()?.putStringSet(key, value)?.apply()
+        if (isConsistent){
+            if (isApplicationClassInitiated()) prefManagerConsistent.edit().putStringSet(key, value).apply()
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.edit()?.putStringSet(key, value)?.apply()
+        }
     }
 
     fun putPrefObject(key: String, objects: Any) {
@@ -374,7 +431,9 @@ object PrefManager {
 
     fun logoutUser() {
         sendBroadcast()
-        prefManagerCommon?.edit()?.clear()?.apply()
+        if (isApplicationClassInitiated()) {
+            prefManagerCommon?.edit()?.clear()?.apply()
+        }
         LastSyncPrefManager.clear()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
@@ -384,7 +443,9 @@ object PrefManager {
     fun clearUser() {
         sendBroadcast()
         LastSyncPrefManager.clear()
-        prefManagerCommon?.edit()?.clear()?.apply()
+        if (isApplicationClassInitiated()) {
+            prefManagerCommon?.edit()?.clear()?.apply()
+        }
         AppDatabase.clearDatabase()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
@@ -398,9 +459,12 @@ object PrefManager {
 
 
     fun removeKey(key: String, isConsistent: Boolean = false) {
-        if (isConsistent) prefManagerConsistent.edit().remove(key).apply()
-        else prefManagerCommon?.edit()?.remove(key)?.apply()
-
+        if (isConsistent) {
+            if (isApplicationClassInitiated()) prefManagerConsistent.edit().remove(key).apply()
+        }
+        else {
+            if (isApplicationClassInitiated()) prefManagerCommon?.edit()?.remove(key)?.apply()
+        }
     }
 
     private fun sendBroadcast() {
@@ -408,7 +472,9 @@ object PrefManager {
             action = CALLING_SERVICE_ACTION
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
-        LocalBroadcastManager.getInstance(AppObjectController.joshApplication).sendBroadcast(broadcastIntent)
+        if (isApplicationClassInitiated()) {
+            LocalBroadcastManager.getInstance(AppObjectController.joshApplication).sendBroadcast(broadcastIntent)
+        }
     }
 
     fun getLastSyncTime(key: String): Pair<String, String> {
@@ -422,5 +488,9 @@ object PrefManager {
         } catch (ex: Exception) {
             Pair("createdmilisecond", "0")
         }
+    }
+
+    fun isApplicationClassInitiated(): Boolean {
+        return AppObjectController.getApplication()!=null
     }
 }

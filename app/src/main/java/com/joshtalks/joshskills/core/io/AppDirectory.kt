@@ -201,9 +201,12 @@ object AppDirectory {
     }
 
 
-    val VIDEO_SENT_MIGRATED_PATH =
+    val VIDEO_SENT_MIGRATED_PATH = if (AppObjectController.getApplication() != null) {
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
+    } else {
+        ""
+    }
 
 
     val VIDEO_CACHED_RECEIVED_PATH =

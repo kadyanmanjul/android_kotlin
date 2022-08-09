@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.contentprovider.JoshContentProvider
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
@@ -112,6 +113,14 @@ class AppObjectController {
         @JvmStatic
         lateinit var appDatabase: AppDatabase
             private set
+
+        fun getApplication(): JoshApplication? {
+            return if(Companion::joshApplication.isInitialized) {
+                 joshApplication
+            } else {
+                null
+            }
+        }
 
         val gsonMapper: Gson by lazy {
             GsonBuilder()
