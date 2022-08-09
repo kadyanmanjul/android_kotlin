@@ -49,6 +49,7 @@
                 android:clickable="true"
                 android:id="@+id/search"
                 android:focusable="true"
+                android:layout_marginStart="@dimen/_2sdp"
                 android:gravity="center_vertical|start"
                 onSingleClick="@{() -> handler.onSearchPressed()}"
                 android:visibility="visible"
@@ -67,12 +68,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.023">
+                app:layout_constraintVertical_bias="0.002">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/request_count_number"
@@ -81,8 +80,8 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginVertical="@dimen/_1sdp"
                     android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="@dimen/_12sdp"
                     android:background="@drawable/request_count_badge"
                     android:elevation="@dimen/_5sdp"
                     android:gravity="right"
@@ -91,6 +90,7 @@
                     android:textAppearance="@style/BB_Typography_Nunito_Bold"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_10sdp"
+                    app:layout_constraintBottom_toBottomOf="@id/profile_iv"
                     tools:text="39"
                     tools:visibility="visible" />
 
@@ -98,6 +98,7 @@
                     android:id="@+id/profile_iv"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:scaleType="centerCrop"
                     app:cornerRadius="@dimen/_6sdp"
                     app:dynamicImageUrl="@{user.profilePicUrl}"

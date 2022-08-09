@@ -356,7 +356,7 @@ class FeedViewModel : ViewModel() {
                         isSpeaker.value=it.isSpeaker
                         User.getInstance().isSpeaker=it.isSpeaker!!
                         if (it.scheduledRoomList.isNullOrEmpty().not())
-                            list.addAll(it.scheduledRoomList!!.map { roomListResponseItem ->
+                            list.addAll(it.scheduledRoomList!!.reversed().map { roomListResponseItem ->
                                 roomListResponseItem.conversationRoomType =
                                     if (roomListResponseItem.isScheduled == true)
                                         ConversationRoomType.SCHEDULED
@@ -384,10 +384,10 @@ class FeedViewModel : ViewModel() {
 
                 } else {
                     isRoomsAvailable.set(false)
-                    feedAdapter.submitList(list.toList().reversed())
+                    feedAdapter.submitList(list.toList())
                 }
             } catch (ex: Exception) {
-                feedAdapter.submitList(list.toList().reversed())
+                feedAdapter.submitList(list.toList())
                 isRoomsAvailable.set(false)
                 ex.printStackTrace()
             } finally {
