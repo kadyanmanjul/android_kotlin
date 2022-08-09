@@ -252,8 +252,8 @@
 
         <ImageView
             android:id="@+id/cross"
-            android:layout_width="@dimen/_13sdp"
-            android:layout_height="@dimen/_13sdp"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_14sdp"
             android:layout_marginEnd="@dimen/_14sdp"
             android:src="@drawable/ic_cross_rating"

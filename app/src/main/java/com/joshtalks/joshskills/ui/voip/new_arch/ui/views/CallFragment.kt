@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -207,6 +208,9 @@ class   CallFragment : BaseFragment() , SensorEventListener {
 
     override fun onResume() {
         super.onResume()
+        /*val am =  requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val volume = am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+        showToast("$volume is your volume")*/
         proximity?.also { proximity ->
             sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
         }

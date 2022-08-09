@@ -1451,6 +1451,11 @@ class ConversationActivity :
                 // conversationBinding.userPointContainer.slideInAnimation()
                 conversationBinding.userPointContainer.visibility = VISIBLE
                 // showLeaderBoardTooltip()
+                if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                    if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
+                        showLeaderBoardSpotlight()
+                    }
+                }
                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
                     if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
                         showLeaderBoardSpotlight()
