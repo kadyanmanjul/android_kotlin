@@ -341,7 +341,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         if(callRequestCount>0 && User.getInstance().isSpeaker && viewModel.isSpeaker.value==true)
             binding.requestCountNumber.visibility=View.VISIBLE
         else
-            binding.requestCountNumber.visibility=View.GONE
+            binding.requestCountNumber.visibility=View.INVISIBLE
 //        badgeDrawable.isVisible = callRequestCount > 0
 //
 //        if (User.getInstance().isSpeaker && callRequestCount > 0) {
