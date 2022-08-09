@@ -994,7 +994,7 @@
     <string name="onboarding_course_heading" translatable="false">Spoken English Course</string>
     <string name="onboarding_course_info1" translatable="false">90 Day Course</string>
     <string name="onboarding_course_info2" translatable="false">Beginner to Advanced</string>
-    <string name="onboarding_course_info3" translatable="false">English Speaking का माहौल</string>
+    <string name="onboarding_course_info3" translatable="false">English Speaking Environment</string>
     <string name="sign_up_profile_occupation_aspiration_text">यह Information आपके Practice partners को दिखाई देगी।</string>
     <string name="pin_code" translatable="false">PIN code</string>
     <string name="house_number_building_name" translatable="false">House number, Building name</string>
