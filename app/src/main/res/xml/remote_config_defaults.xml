@@ -517,6 +517,16 @@
         </value>
     </entry>
     <entry>
+        <key>ONBOARDING_COURSE_DEFAULT</key>
+        <value>{
+            "title": "Spoken English Course",
+            "course_info_1": "90 Day Course",
+            "course_info_2": "Beginner to Advanced",
+            "course_info_3": "English Speaking Environment"
+            }
+        </value>
+    </entry>
+    <entry>
         <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1881</key>
         <value>1 दिवसासाठी मोफत प्रयोग करा.</value>
     </entry>
