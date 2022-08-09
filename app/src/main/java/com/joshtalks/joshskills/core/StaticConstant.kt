@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.core
 enum class SignUpStepStatus {
     SignUpStepFirst, SignUpStepSecond, SignUpCompleted,
     RequestForOTP, ReGeneratedOTP, ProfileCompleted,ProfilePicUploaded,StartAfterPicUploaded,ProfilePicSkipped,
-    ProfileInCompleted, SignUpResendOTP, SignUpWithoutRegister,
+    ProfileInCompleted, SignUpResendOTP, SignUpWithoutRegister, ChooseLanguage, ChooseGoal,
     WRONG_OTP, ERROR
 }
 

@@ -7,6 +7,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +35,14 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
     }
 
     companion object {
-        fun newInstance() = ChooseGoalOnBoardFragment()
+        private const val IS_FROM_SIGNIN = "is_from_signin"
+        fun newInstance(isFromSignUp: Boolean = false): ChooseGoalOnBoardFragment {
+            val args = Bundle()
+            args.putBoolean(IS_FROM_SIGNIN, isFromSignUp)
+            val fragment = ChooseGoalOnBoardFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     override fun initViewBinding() {
@@ -63,6 +71,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
+        binding.toolbar.isVisible = arguments?.getBoolean(IS_FROM_SIGNIN)?.not() ?: true
         errorView = Stub(view.findViewById(R.id.error_view))
         if (viewModel.availableGoals.value == null || viewModel.availableGoals.value.isNullOrEmpty()) {
             if (isInternetAvailable())
@@ -144,7 +153,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
             viewModel.saveImpression(REASON_OTHERS_CLICKED)
         }
         try {
-            (requireActivity() as FreeTrialOnBoardActivity).startFreeTrial(
+            (requireActivity() as BaseRegistrationActivity).startFreeTrial(
                 goalSelectionResponse.testId ?: HINDI_TO_ENGLISH_TEST_ID
             )
         } catch (e: Exception) {

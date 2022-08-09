@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -35,6 +36,7 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.singular.sdk.Singular
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
@@ -436,7 +438,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         _signUpStatus.postValue(SignUpStepStatus.ProfilePicSkipped)
     }
 
-    fun startFreeTrial(mentorId: String) {
+    fun changeChooseLanguageStatusToChooseGoal() {
+        _signUpStatus.postValue(SignUpStepStatus.ChooseGoal)
+    }
+
+    fun startFreeTrial(mentorId: String, testId: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
@@ -447,16 +453,18 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                             "mentor_id" to mentorId,
                             "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
                             "event_name" to IMPRESSION_REGISTER_FREE_TRIAL,
-                            "test_id" to PrefManager.getStringValue(
-                                FREE_TRIAL_TEST_ID,
-                                false,
-                                FREE_TRIAL_DEFAULT_TEST_ID
-                            )
+                            "test_id" to testId.ifEmpty {
+                                PrefManager.getStringValue(
+                                    FREE_TRIAL_TEST_ID,
+                                    false,
+                                    FREE_TRIAL_DEFAULT_TEST_ID
+                                )
+                            }
                         )
                     )
                 if (resp.isSuccessful) {
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)
-                    getRegisteredFreeTrialCourse()
+                    getRegisteredCourses()
                     return@launch
                 }
             } catch (ex: Throwable) {
@@ -468,16 +476,19 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun getRegisteredFreeTrialCourse() {
+    fun getRegisteredCourses() {
         viewModelScope.launch {
             try {
+                apiStatus.postValue(ApiCallStatus.START)
                 val response = AppObjectController.chatNetworkService.getRegisteredCourses()
                 if (response.isEmpty().not()) {
-                    AppObjectController.appDatabase.courseDao().insertRegisterCourses(response).let{
-                        AppObjectController.appDatabase.courseDao().getRegisterCourseMinimal().let{
+                    AppObjectController.appDatabase.courseDao().insertRegisterCourses(response).let {
+                        AppObjectController.appDatabase.courseDao().getRegisterCourseMinimal().let {
                             freeTrialEntity.postValue(it.firstOrNull())
                         }
                     }
+                } else {
+                    _signUpStatus.postValue(SignUpStepStatus.ChooseLanguage)
                 }
             } catch (e: Exception) {
                 apiStatus.postValue(ApiCallStatus.SUCCESS)
