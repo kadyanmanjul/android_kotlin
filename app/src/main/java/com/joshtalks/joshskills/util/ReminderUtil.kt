@@ -120,14 +120,14 @@ class ReminderUtil(val context: Context) {
     }
 
     fun deleteNotificationAlarms() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            WorkManagerAdmin.removeBackgroundNotificationWorker()
-        else if (context.applicationContext != null) {
-            val alarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent(context.applicationContext, BackgroundService::class.java)
-            val pendingIntent =
-                PendingIntent.getService(context.applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            alarmManager.cancel(pendingIntent)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            if (context.applicationContext != null) {
+                val alarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(context.applicationContext, BackgroundService::class.java)
+                val pendingIntent =
+                    PendingIntent.getService(context.applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                alarmManager.cancel(pendingIntent)
+            }
         }
     }
 }

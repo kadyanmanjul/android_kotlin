@@ -8,6 +8,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
@@ -78,7 +80,7 @@ object VoipPref {
 
             // TODO: These logic shouldn't be here
 
-            if (duration != 0L) {
+            if (duration != 0L && !PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                 showDialogBox(duration)
             }
         }

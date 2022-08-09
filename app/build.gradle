@@ -264,9 +264,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-service:2.5.0'
     implementation 'androidx.lifecycle:lifecycle-process:2.5.0'
 
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
-    implementation 'androidx.work:work-rxjava2:2.7.1'
-    implementation 'androidx.work:work-runtime:2.7.1'
+    implementation 'androidx.work:work-runtime-ktx:2.5.0'
+    implementation 'androidx.work:work-rxjava2:2.5.0'
+    implementation 'androidx.work:work-runtime:2.5.0'
     implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
