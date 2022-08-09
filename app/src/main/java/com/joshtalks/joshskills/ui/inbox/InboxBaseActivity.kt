@@ -224,34 +224,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
             }
         }
     }
-
-    protected fun locationFetch() {
-        if (Mentor.getInstance().getLocality() == null) {
-            AppObjectController.uiHandler.post {
-                PermissionUtils.locationPermission(
-                    this,
-                    object : MultiplePermissionsListener {
-                        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                            report?.areAllPermissionsGranted()?.let { flag ->
-                                if (flag) {
-                                    fetchUserLocation()
-                                    return
-                                }
-                            }
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                            permissions: MutableList<PermissionRequest>?,
-                            token: PermissionToken?
-                        ) {
-                            token?.continuePermissionRequest()
-                        }
-                    }
-                )
-            }
-        }
-    }
-
     abstract fun openCourseExplorer()
     abstract fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean = false)
 }
