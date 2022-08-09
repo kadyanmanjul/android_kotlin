@@ -5,7 +5,7 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 
 data class StartingLiveRoomProperties(
     val isActivityOpenFromNotification: Boolean = false,
-    var roomId: Int = 0,
+    var roomId: Int? = 0,
     var channelTopic: String = "",
     var channelName: String = "",
     var agoraUid: Int = 0,
