@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -265,6 +266,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 //            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
 //            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
 //        }
+        Log.d("InboxActivity.kt", "YASH => addCourseInRecyclerView:268 ")
         dismissProgressDialog()
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
@@ -313,10 +315,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2) {
                     findMoreLayout.visibility = View.VISIBLE
-                    if (isSubscriptionCourseBought)
+                    if (isSubscriptionCourseBought) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = true
-                    else if (isCapsuleCourseBought.not())
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = false
+                    }
+                    else if (isCapsuleCourseBought.not()) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = true
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
+                    }
                     else
                         findMoreLayout.visibility = View.GONE
                 } else {
