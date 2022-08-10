@@ -129,8 +129,10 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.getIntValue(SUBSCRIPTION_TEST_ID) == 0) {
             PrefManager.put(SUBSCRIPTION_TEST_ID, 122)
         }
-        AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
-            val disabledVersions =
+        AppObjectController.getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
+        AppObjectController.getFirebaseRemoteConfig().fetchAndActivate()
+            .addOnCompleteListener {
+                val disabledVersions =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.DISABLED_VERSION_CODES)
 
@@ -703,6 +705,7 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
             context.changeLocale(language)
             AppObjectController.isSettingUpdate = true
             AppObjectController.getFirebaseRemoteConfig().reset()
+            AppObjectController.getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
             AppObjectController.getFirebaseRemoteConfig().fetch(0)
             AppObjectController.getFirebaseRemoteConfig()
                 .fetchAndActivate()

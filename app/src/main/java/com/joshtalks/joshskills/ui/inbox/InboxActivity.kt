@@ -266,7 +266,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 //            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
 //            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
 //        }
-        Log.d("InboxActivity.kt", "YASH => addCourseInRecyclerView:268 ")
         dismissProgressDialog()
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
