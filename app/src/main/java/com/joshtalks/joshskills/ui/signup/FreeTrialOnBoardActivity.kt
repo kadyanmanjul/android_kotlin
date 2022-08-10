@@ -169,8 +169,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         layout.btnStartTrial.pauseAnimation()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, testId)
-        PrefManager.put(USER_LOCALE, testId)
-        if (PrefManager.getStringValue(USER_LOCALE) != getLangCodeFromlangTestId(testId)) {
+        if (testId == HINDI_TO_ENGLISH_TEST_ID  || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
+            requestWorkerForChangeLanguage("en", canCreateActivity = false)
+        } else{
             requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)
         }
         if (Mentor.getInstance().getId().isNotEmpty()) {
