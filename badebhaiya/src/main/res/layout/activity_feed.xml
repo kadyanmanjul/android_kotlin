@@ -73,26 +73,38 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.002">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/request_count_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginVertical="@dimen/_1sdp"
+                <androidx.cardview.widget.CardView
+                    android:layout_width="22dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="@dimen/_4sdp"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="@dimen/_12sdp"
-                    android:background="@drawable/request_count_badge"
-                    android:elevation="@dimen/_5sdp"
-                    android:gravity="right"
-                    android:paddingHorizontal="@dimen/_7sdp"
-                    android:paddingVertical="@dimen/_3sdp"
-                    android:textAppearance="@style/BB_Typography_Nunito_Bold"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_10sdp"
-                    app:layout_constraintBottom_toBottomOf="@id/profile_iv"
-                    tools:text="39"
-                    tools:visibility="visible" />
+                    android:shape="ring"
+                    app:cardCornerRadius="@dimen/_15sdp"
+                    android:id="@+id/request_count_view"
+                    app:cardBackgroundColor="#FF4963"
+                    tools:visibility="visible"
+                    >
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/request_count_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:elevation="@dimen/_5sdp"
+                        android:gravity="right"
+                        android:textAlignment="center"
+                        android:padding="@dimen/_3sdp"
+                        android:textAppearance="@style/BB_Typography_Nunito_Bold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_8sdp"
+                        app:layout_constraintBottom_toBottomOf="@id/profile_iv"
+                        tools:text="9+"
+                         />
+
+                </androidx.cardview.widget.CardView>
+
+
 
                 <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                     android:id="@+id/profile_iv"

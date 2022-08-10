@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.transition.MaterialSharedAxis
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.ProfileFragment
@@ -39,6 +40,19 @@ class CallRequestsListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        enterTransition = MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+        exitTransition= MaterialSharedAxis(
+            MaterialSharedAxis.Z,
+            /* forward= */ true
+        ).apply {
+            duration = 500
+        }
+
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 activity?.run {
@@ -50,6 +64,7 @@ class CallRequestsListFragment : Fragment() {
         return ComposeView(
             requireContext()
         ).apply {
+            isTransitionGroup=true
             setContent {
                 JoshBadeBhaiyaTheme {
                     CallRequestsListScreen(viewModel = viewModel)
@@ -64,7 +79,7 @@ class CallRequestsListFragment : Fragment() {
         fun open(supportFragmentManager: FragmentManager, @IdRes containerId: Int,){
             supportFragmentManager
                 .beginTransaction()
-                .replace(containerId, CallRequestsListFragment())
+                .add(containerId, CallRequestsListFragment())
                 .addToBackStack(TAG)
                 .commit()
         }
