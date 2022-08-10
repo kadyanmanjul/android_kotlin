@@ -193,11 +193,14 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
 
+        if(callRequestCount<100)
         binding.requestCountNumber.text = callRequestCount.toString()
-        if (feedViewModel.isSpeaker.value == true && callRequestCount > 0 && userId == User.getInstance().userId)
-            binding.requestCountNumber.visibility = View.VISIBLE
         else
-            binding.requestCountNumber.visibility = View.GONE
+            binding.requestCountNumber.text="9+"
+        if (feedViewModel.isSpeaker.value == true && callRequestCount > 0 && userId == User.getInstance().userId)
+            binding.requestCountView.visibility = View.VISIBLE
+        else
+            binding.requestCountView.visibility = View.GONE
 
     }
 
@@ -502,9 +505,6 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
             requireActivity().supportFragmentManager,
             R.id.fragmentContainer
         )
-//        } else {
-//            showToast(getString(R.string.please_leave_current_room))
-//        }
     }
 
     fun updateFollowStatus() {

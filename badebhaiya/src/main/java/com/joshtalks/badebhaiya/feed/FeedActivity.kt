@@ -337,29 +337,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
 
+        if(callRequestCount<100)
         binding.requestCountNumber.text= callRequestCount.toString()
-        if(callRequestCount>0 && User.getInstance().isSpeaker && viewModel.isSpeaker.value==true)
-            binding.requestCountNumber.visibility=View.VISIBLE
         else
-            binding.requestCountNumber.visibility=View.INVISIBLE
-//        badgeDrawable.isVisible = callRequestCount > 0
-//
-//        if (User.getInstance().isSpeaker && callRequestCount > 0) {
-//
-//            badgeDrawable.number = callRequestCount
-//
-//            badgeDrawable.horizontalOffset = 20
-//            badgeDrawable.verticalOffset = 10
-//            binding.profileIvRoot.setForeground(badgeDrawable)
-//            binding.profileIvRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-//
-//                BadgeUtils.attachBadgeDrawable(
-//                    badgeDrawable,
-//                    binding.profileIv,
-//                    binding.profileIvRoot
-//                )
-//            }
-//        }
+            binding.requestCountNumber.text="9+"
+        if(callRequestCount>0 && User.getInstance().isSpeaker && viewModel.isSpeaker.value==true)
+            binding.requestCountView.visibility=View.VISIBLE
+        else
+            binding.requestCountView.visibility=View.INVISIBLE
 
     }
 
