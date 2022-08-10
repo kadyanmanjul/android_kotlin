@@ -125,6 +125,7 @@ class AudioPlayerService : MediaBrowserServiceCompat() {
 
         Timber.tag("roomdestroy").d("RECORDED ROOM SERVICE ONCREATE CALLED")
 
+
         val activityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
             PendingIntent.getActivity(this, 0, it, 0)
         }

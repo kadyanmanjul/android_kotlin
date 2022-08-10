@@ -181,7 +181,7 @@ object PubNubManager {
         getAudienceList()
 //        collectPubNubEvents()
         changePubNubState(PubNubState.STARTED)
-
+//            listenToConnectedUsers()
         FallbackManager.start()
 
         }
@@ -252,9 +252,30 @@ object PubNubManager {
                 sendPubNubException(e)
             }
 
+
         }
 
     }
+
+    private fun listenToConnectedUsers(){
+        jobs += CoroutineScope(Dispatchers.IO).launch {
+            while (true){
+                pubnub.hereNow().channels(listOf(liveRoomProperties?.channelName))
+                    .includeState(true)
+                    .async { result, status ->
+                        val occupancy = result?.totalOccupancy
+                        Timber.tag("signal").d("total occupancy => $occupancy")
+                        result?.channels?.values?.forEach {
+                            it.occupants.forEach {
+                                Timber.tag("signal").d("MEMBER => ${it.uuid} and State => ${it.state}")
+                            }
+                        }
+                    }
+                delay(2000)
+            }
+        }
+    }
+
 
     fun postDataToNetworkFlow(isSlow:Boolean){
         jobs+= CoroutineScope(Dispatchers.IO).launch {
