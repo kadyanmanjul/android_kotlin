@@ -854,28 +854,28 @@ object PubNubManager {
 
     }
 
-    fun removeUserUsingAgoraUid(
-        uid: Int,
-        speakerAdapter: SpeakerAdapter?,
-        audienceAdapter: AudienceAdapter?
-    ) {
-        if (speakersList.any { it.id == uid }) {
-            val user = speakersList.filter { it.id == uid }
-            speakersList.removeAll(user)
-            CoroutineScope(Dispatchers.Main).launch {
-                speakerAdapter?.updateFullList(ArrayList(speakersList))
-            }
-        } else if (audienceList.any { it.id == uid }) {
-            val user = audienceList.filter { it.id == uid }
-            audienceList.removeAll(user)
-            CoroutineScope(Dispatchers.Main).launch {
-                audienceAdapter?.submitList(ArrayList(audienceList))
-            }
-            postToAudienceList(audienceList)
-        }
-        message.what = LIST_UPDATE
-        postToLiveEvent(message)
-    }
+//    fun removeUserUsingAgoraUid(
+//        uid: Int,
+//        speakerAdapter: SpeakerAdapter?,
+//        audienceAdapter: AudienceAdapter?
+//    ) {
+//        if (speakersList.any { it.id == uid }) {
+//            val user = speakersList.filter { it.id == uid }
+//            speakersList.removeAll(user)
+//            CoroutineScope(Dispatchers.Main).launch {
+//                speakerAdapter?.updateFullList(ArrayList(speakersList))
+//            }
+//        } else if (audienceList.any { it.id == uid }) {
+//            val user = audienceList.filter { it.id == uid }
+//            audienceList.removeAll(user)
+//            CoroutineScope(Dispatchers.Main).launch {
+//                audienceAdapter?.submitList(ArrayList(audienceList))
+//            }
+//            postToAudienceList(audienceList)
+//        }
+//        message.what = LIST_UPDATE
+//        postToLiveEvent(message)
+//    }
 
 
     fun callWebRtcService() {

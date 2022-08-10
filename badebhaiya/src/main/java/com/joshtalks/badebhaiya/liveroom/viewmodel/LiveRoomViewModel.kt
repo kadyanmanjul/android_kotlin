@@ -128,7 +128,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
             PubNubData.audienceList
 //                .map { it.reversed().distinctBy { it.userId }.reversed()}
                 .map { it.sortedBy { it.sortOrder } }
-                .collect {
+                .collectLatest {
                     Log.d("sahil", "audience list => $it")
 
                     audienceList.postValue(it)
