@@ -285,14 +285,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_OWN_PROFILE"))
 
         val bundle = Bundle()
-        fragment?.apply {
-            exitTransition = MaterialSharedAxis(
-                MaterialSharedAxis.Z,
-                /* forward= */ false
-            ).apply {
-                duration = 500
-            }
-        }
+//        fragment?.apply {
+//            exitTransition = MaterialSharedAxis(
+//                MaterialSharedAxis.Z,
+//                /* forward= */ false
+//            ).apply {
+//                duration = 500
+//            }
+//        }
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", User.getInstance().userId) // use as per your need
         bundle.putString("source","FEED_SCREEN")
