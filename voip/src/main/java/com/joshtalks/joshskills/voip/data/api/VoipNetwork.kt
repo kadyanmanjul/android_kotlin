@@ -3,27 +3,19 @@ package com.joshtalks.joshskills.voip.data.api
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.joshtalks.joshskills.base.constants.KEY_APP_ACCEPT_LANGUAGE
-import com.joshtalks.joshskills.base.constants.KEY_APP_USER_AGENT
-import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_CODE
-import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_NAME
-import com.joshtalks.joshskills.base.constants.KEY_AUTHORIZATION
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.voipanalytics.data.network.VoipAnalyticsService
 import okhttp3.*
 import java.util.concurrent.TimeUnit
 import okhttp3.ResponseBody.Companion.toResponseBody
-import okhttp3.internal.http2.ConnectionShutdownException
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-import java.io.File
-import java.io.IOException
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
-import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.text.DateFormat
 import java.util.*
@@ -110,7 +102,12 @@ object HeaderInterceptor : Interceptor {
                 .addHeader(KEY_APP_VERSION_CODE, Utils.apiHeader?.versionCode ?: "")
                 .addHeader(KEY_APP_USER_AGENT, Utils.apiHeader?.userAgent ?: "")
                 .addHeader(KEY_APP_ACCEPT_LANGUAGE, Utils.apiHeader?.acceptLanguage ?: "")
-            chain.proceed(newRequest.build())
+            val response = chain.proceed(newRequest.build())
+            if(response.code == 403) {
+                val newResponse = response.newBuilder().code(203).message(response.message)
+                newResponse.build()
+            } else
+                response
         }
     }
 }

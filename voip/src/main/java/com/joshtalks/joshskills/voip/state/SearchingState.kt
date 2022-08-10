@@ -104,7 +104,7 @@ class SearchingState(val context: CallContext) : VoipState {
             } catch (e: Exception) {
                 e.printStackTrace()
                 when (e) {
-                    is HttpException, is SocketTimeoutException -> {
+                    is HttpException,is UserBlockedException, is SocketTimeoutException -> {
                         Log.d(TAG, " Exception : API failed")
                         e.printStackTrace()
                         ensureActive()

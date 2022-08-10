@@ -92,10 +92,10 @@ fun Context.updateStartTime(startTime : Long) {
     contentResolver.insert(Uri.parse(CONTENT_URI + START_CALL_TIME_URI), values)
 }
 
-suspend fun showToast(msg: String) {
+suspend fun showToast(msg: String,length:Int=Toast.LENGTH_SHORT) {
     withContext(Dispatchers.Main) {
         currentToast?.cancel()
-        currentToast =  Toast.makeText(Utils.context, msg, Toast.LENGTH_SHORT)
+        currentToast =  Toast.makeText(Utils.context, msg, length)
         currentToast?.show()
     }
 }
