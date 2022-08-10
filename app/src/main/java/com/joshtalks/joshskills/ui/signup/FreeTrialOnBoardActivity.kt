@@ -1,28 +1,17 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
@@ -36,7 +25,6 @@ import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingC
 import com.joshtalks.joshskills.repository.server.signup.LastLoginType
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.singular.sdk.Singular
 import com.truecaller.android.sdk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -132,8 +120,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             moveToInboxScreen()
             PrefManager.put(IS_GUEST_ENROLLED, true)
             PrefManager.put(IS_PAYMENT_DONE, false)
-        }
-        else if (languageActive)
+        } else if (languageActive)
             openChooseLanguageFragment()
         else
             startFreeTrial(language.testId)
@@ -183,7 +170,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, testId)
         PrefManager.put(USER_LOCALE, testId)
-        if (testId != HINDI_TO_ENGLISH_TEST_ID && testId != ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
+        if (PrefManager.getStringValue(USER_LOCALE) != getLangCodeFromlangTestId(testId)) {
             requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)
         }
         if (Mentor.getInstance().getId().isNotEmpty()) {
