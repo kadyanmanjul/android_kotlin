@@ -176,8 +176,12 @@ class AudioPlayerService : MediaBrowserServiceCompat() {
                     Timber.tag("roomdestroy").d("RECORDED ROOM SERVICE DESTROY CALLED")
 //                    exoPlayer.stop()
 //                    initPlayer()
-                    stopForeground(true)
-                    stopSelf()
+                    try {
+                        stopForeground(true)
+                        stopSelf()
+                    } catch (e: Exception){
+
+                    }
 //                    onDestroy()
 
                 }
