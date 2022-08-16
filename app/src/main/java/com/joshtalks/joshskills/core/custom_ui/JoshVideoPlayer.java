@@ -118,6 +118,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private PlayerFullScreenListener playerFullScreenListener;
     private PlayerEventCallback playerEventCallback;
     private PlayerCompletionCallback playerCompletionCallback;
+    private ControllerButtonCallback  controllerButtonCallback;
     private String videoId;
     @Nullable
     private Graph graph;
@@ -475,6 +476,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             } else if (v.getId() == R.id.exo_play) {
                 if (!player.isPlaying()) {
                     onResume();
+                    if (controllerButtonCallback != null)
+                        controllerButtonCallback.onPlay();
                 }
             } else if (v.getId() == R.id.ivFullScreenToggleOp) {
                 if (playerFullScreenListener != null) {
@@ -487,6 +490,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                     player.seekTo(0);
                     player.setPlayWhenReady(true);
                     isVideoEnded = false;
+                    if (controllerButtonCallback != null)
+                        controllerButtonCallback.onWatchAgain();
                 }
             } else if (v.getId() == R.id.playbackSpeed) {
                 if (player != null) {
@@ -544,6 +549,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         this.playerCompletionCallback = playerCompletionCallback;
     }
 
+    public void setControllerButtonCallback(ControllerButtonCallback controllerButtonCallback) {
+        this.controllerButtonCallback = controllerButtonCallback;
+    }
+
     public long getSecondsWatched() {
         return (long) (countUpTimer.getTime() * playbackSpeed) / 1000;
     }
@@ -594,6 +603,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         return player.getCurrentPosition();
     }
 
+    public void setClickListners() {
+        findViewById(R.id.playAgain).setOnClickListener(this);
+        findViewById(R.id.exo_play).setOnClickListener(this);
+    }
+
     enum ScreenOrientation {
         PORTRAIT,
         LANDSCAPE
@@ -614,6 +628,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     public interface PlayerCompletionCallback {
         void onCompleted();
+    }
+
+    public interface ControllerButtonCallback {
+        void onPlay();
+        void onWatchAgain();
     }
 
     private class PlayerEventListener implements Player.EventListener {

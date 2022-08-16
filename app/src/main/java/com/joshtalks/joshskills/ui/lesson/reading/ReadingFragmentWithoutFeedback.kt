@@ -81,6 +81,7 @@ import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.READING_SHARED_WHATSAPP
+import com.joshtalks.joshskills.core.RECORD_READING_VIDEO
 import com.joshtalks.joshskills.core.SUBMIT_READING_VIDEO
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VIDEO_PLAYED_RP
@@ -90,6 +91,7 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -216,6 +218,16 @@ class ReadingFragmentWithoutFeedback :
             binding.mergedVideo.fitToScreen()
             binding.mergedVideo.onStart()
             binding.mergedVideo.downloadStreamButNotPlay()
+            binding.mergedVideo.setClickListners()
+            binding.mergedVideo.setControllerButtonCallback(object :JoshVideoPlayer.ControllerButtonCallback{
+                override fun onPlay() {
+                    playVideoEvent()
+                }
+                override fun onWatchAgain() {
+                    playVideoEvent()
+                }
+
+            })
         }
     }
 
@@ -1440,7 +1452,12 @@ class ReadingFragmentWithoutFeedback :
                                     )
                                     showRecordHintAnimation()
                                 }
-
+                                if (video.isNullOrEmpty().not()) {
+                                    viewModel.saveReadingPracticeImpression(
+                                        RECORD_READING_VIDEO,
+                                        lessonID.toString()
+                                    )
+                                }
                                 muxerJob = scope.launch {
                                     mutex.withLock {
                                         if (isActive && isAdded && video != null) {
@@ -1475,7 +1492,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun mergeTwoAudiosIntoOne() {
-        showToast("Audio Muxer : Video mixing")
         val input1 = GeneralAudioInput(requireContext(), Uri.parse(filePath), null)
         input1.volume = 5f
         val out2 = extractAudioFromVideo(videoDownPath!!)
@@ -1591,7 +1607,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun muxVideoOldMethod(audio:String) {
-        showToast("Media Muxer : Video mixing")
         if (File(outputFile).exists()) {
             File(outputFile).delete()
         }
@@ -1780,14 +1795,13 @@ class ReadingFragmentWithoutFeedback :
         disableSubmitButton()
     }
 
-    fun playVideo() {
+    fun playVideoEvent() {
         if (video.isNullOrEmpty().not()) {
             viewModel.saveReadingPracticeImpression(
                 VIDEO_PLAYED_RP,
                 lessonID.toString()
             )
         }
-        binding.mergedVideo.onStart()
     }
 
     private fun gainAudioFocus() {

@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLOSE_VIDEO_VIEW
 import com.joshtalks.joshskills.constants.SEND_OUTPUT_FILE
 import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MUX_FAILED
+import com.joshtalks.joshskills.core.VIDEO_PLAYED_RP
+import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.databinding.FragmentReadingFullScreenBinding
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 
@@ -63,7 +65,22 @@ class ReadingFullScreenFragment : BaseFragment() {
                         binding.submitAnswerBtn.visibility = View.VISIBLE
                         binding.ivBack.visibility = View.VISIBLE
                         binding.ivClose.visibility = View.VISIBLE
+                        binding.mergedVideo.setClickListners()
+                        binding.mergedVideo.setControllerButtonCallback(object : JoshVideoPlayer.ControllerButtonCallback{
+                            override fun onPlay() {
 
+                            }
+                            override fun onWatchAgain() {
+                                arguments?.let {
+                                    val lessonId = it.getInt(LESSON_ID,-1)
+                                    viewModel.saveReadingPracticeImpression(
+                                        VIDEO_PLAYED_RP,
+                                        lessonId.toString()
+                                    )
+                                }
+                            }
+
+                        })
                     }
                     VIDEO_AUDIO_MUX_FAILED -> {
                         viewModel.closeCurrentFragment()
@@ -88,5 +105,17 @@ class ReadingFullScreenFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         binding.mergedVideo.onPause()
+    }
+
+    companion object {
+        const val LESSON_ID = "lesson_id"
+        @JvmStatic
+        fun newInstance(lessonId: Int) =
+            ReadingFullScreenFragment()
+                .apply {
+                    arguments = Bundle().apply {
+                        putInt(LESSON_ID, lessonId)
+                    }
+                }
     }
 }
