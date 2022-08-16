@@ -80,8 +80,8 @@ import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
 import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.READING_SHARED_WHATSAPP
 import com.joshtalks.joshskills.core.RECORD_READING_VIDEO
+import com.joshtalks.joshskills.core.REEL_SHARED_RP
 import com.joshtalks.joshskills.core.SUBMIT_READING_VIDEO
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VIDEO_PLAYED_RP
@@ -147,6 +147,7 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -554,6 +555,8 @@ class ReadingFragmentWithoutFeedback :
             super.onDestroy()
             try {
                 binding.videoPlayer.onStop()
+                scope.cancel()
+                muxerJob?.cancel()
             } catch (ex: Exception) {
             }
 
@@ -894,7 +897,7 @@ class ReadingFragmentWithoutFeedback :
                         }
                         binding.btnWhatsapp.setOnClickListener {
                             viewModel.saveReadingPracticeImpression(
-                                READING_SHARED_WHATSAPP,
+                                REEL_SHARED_RP,
                                 lessonID.toString()
                             )
                             scope.launch {
@@ -1146,7 +1149,7 @@ class ReadingFragmentWithoutFeedback :
             binding.btnWhatsapp.setOnClickListener {
                 viewModel.shareVideoForAudio(outputFile)
                 viewModel.saveReadingPracticeImpression(
-                    READING_SHARED_WHATSAPP,
+                    REEL_SHARED_RP,
                     lessonID.toString()
                 )
             }

@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson.reading
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,7 +54,6 @@ class ReadingFullScreenFragment : BaseFragment() {
             if (this.isVisible) {
                 when (it.what) {
                     SEND_OUTPUT_FILE -> {
-                        Log.d("Manjul", "initViewState() called")
                         binding.loadingGroup.visibility = View.GONE
                         binding.mergedVideo.visibility = View.VISIBLE
                         binding.mergedVideo.setUrl(it.obj as String)
@@ -68,16 +66,11 @@ class ReadingFullScreenFragment : BaseFragment() {
                         binding.mergedVideo.setClickListners()
                         binding.mergedVideo.setControllerButtonCallback(object : JoshVideoPlayer.ControllerButtonCallback{
                             override fun onPlay() {
+                                pushPlayedEvent()
 
                             }
                             override fun onWatchAgain() {
-                                arguments?.let {
-                                    val lessonId = it.getInt(LESSON_ID,-1)
-                                    viewModel.saveReadingPracticeImpression(
-                                        VIDEO_PLAYED_RP,
-                                        lessonId.toString()
-                                    )
-                                }
+                                pushPlayedEvent()
                             }
 
                         })
@@ -91,6 +84,16 @@ class ReadingFullScreenFragment : BaseFragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun pushPlayedEvent() {
+        arguments?.let {
+            val lessonId = it.getInt(LESSON_ID,-1)
+            viewModel.saveReadingPracticeImpression(
+                VIDEO_PLAYED_RP,
+                lessonId.toString()
+            )
         }
     }
 
