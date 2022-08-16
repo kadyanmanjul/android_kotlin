@@ -2,7 +2,13 @@ package com.joshtalks.badebhaiya.deeplink
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.joshtalks.badebhaiya.core.showToast
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Branch
@@ -18,42 +24,35 @@ import java.util.*
 */
 
 class DeeplinkGenerator {
+
+
     companion object {
 
         const val APP_LINK = "https://play.google.com/store/apps/details?id=com.joshtalks.badebhaiya&hl=en"
 
-        fun shareRecordedRoom(context: Activity, roomId: String){
+        fun shareRecordedRoom(context: Activity, roomId: String, onSharingLaunch: () -> Unit = {}) {
             val buo = BranchUniversalObject()
 
             buo.canonicalIdentifier = "referral_code${System.currentTimeMillis()}"
 
-//            val ss = ShareSheetStyle(context, "Check this out!", "This stuff is awesome: ")
-//                .setCopyUrlStyle(ContextCompat.getDrawable(context, android.R.drawable.ic_menu_send), "Copy", "Added to clipboard")
-//                .setMoreOptionStyle(ContextCompat.getDrawable(context, android.R.drawable.ic_menu_search), "Show more")
-//                .addPreferredSharingOption(SharingHelper.SHARE_WITH.WHATS_APP)
-//                .addPreferredSharingOption(SharingHelper.SHARE_WITH.EMAIL)
-//                .addPreferredSharingOption(SharingHelper.SHARE_WITH.MESSAGE)
-//                .addPreferredSharingOption(SharingHelper.SHARE_WITH.HANGOUT)
-//                .setAsFullWidthStyle(true)
-//                .setSharingTitle("Share With")
-
-//            buo.showShareSheet(context, getLinkProperties(roomId), ss, object : Branch.BranchLinkShareListener {
-//                override fun onShareLinkDialogLaunched() {}
-//                override fun onShareLinkDialogDismissed() {}
-//                override fun onLinkShareResponse(sharedLink: String?, sharedChannel: String?, error: BranchError?) {}
-//                override fun onChannelSelected(channelName: String) {}
-//            })
-
             buo.generateShortUrl(context, getLinkProperties(roomId)) { url, error ->
                 when (error) {
-                    null -> showSharingBottomSheet(url)
+                    null -> showSharingBottomSheet(context, url, onSharingLaunch)
                     else -> showToast("Something Went Wrong")
                 }
             }
         }
 
-        private fun showSharingBottomSheet(content: String){
+        private fun showSharingBottomSheet(context: Activity, content: String, onSharingLaunch: () -> Unit = {}){
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, content)
+                type = "text/plain"
+            }
 
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            onSharingLaunch()
+            context.startActivity(shareIntent)
         }
 
         private fun getLinkProperties(roomId: String): LinkProperties {
@@ -68,4 +67,5 @@ class DeeplinkGenerator {
                 .addControlParameter("recorded_room_id", roomId)
         }
     }
+
 }

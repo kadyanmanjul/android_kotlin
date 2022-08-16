@@ -21,6 +21,7 @@ import com.google.android.material.transition.MaterialSharedAxis
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.NotificationChannelNames
+import com.joshtalks.badebhaiya.core.setOnSingleClickListener
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
 import com.joshtalks.badebhaiya.deeplink.DeeplinkGenerator
@@ -477,8 +478,11 @@ class RecordedRoomFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.shareBtn.setOnClickListener {
-            DeeplinkGenerator.shareRecordedRoom(requireActivity(), roomData!!.roomId.toString())
+        binding.shareBtn.setOnSingleClickListener {
+            binding.progressBar.visibility = View.VISIBLE
+            DeeplinkGenerator.shareRecordedRoom(requireActivity(), roomData!!.roomId.toString()) {
+                binding.progressBar.visibility = View.GONE
+            }
         }
         addObserver()
     }
