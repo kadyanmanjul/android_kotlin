@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.NotificationChannelNames
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
+import com.joshtalks.badebhaiya.deeplink.DeeplinkGenerator
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.model.Room
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
@@ -476,6 +477,9 @@ class RecordedRoomFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.shareBtn.setOnClickListener {
+            DeeplinkGenerator.shareRecordedRoom(requireActivity(), roomData!!.roomId.toString())
+        }
         addObserver()
     }
 
