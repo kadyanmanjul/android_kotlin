@@ -70,11 +70,9 @@ class JoshContentProvider : ContentProvider() {
                 return cursor
             }
             MENTOR_ID -> {
-                if (AppObjectController.getApplication()!=null){
-                    val cursor = MatrixCursor(arrayOf(MENTOR_ID_COLUMN))
-                    cursor.addRow(arrayOf(Mentor.getInstance().getId()))
-                    return cursor
-                }
+                val cursor = MatrixCursor(arrayOf(MENTOR_ID_COLUMN))
+                cursor.addRow(arrayOf(Mentor.getInstance().getId()))
+                return cursor
             }
             COURSE_ID -> {
                 val cursor = MatrixCursor(arrayOf(COURSE_ID_COLUMN))

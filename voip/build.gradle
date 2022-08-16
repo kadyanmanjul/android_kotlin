@@ -90,6 +90,4 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     api 'com.intuit.sdp:sdp-android:1.0.6'
-//    implementation "androidx.work:work-runtime-ktx:2.7.1"
-//    implementation "androidx.work:work-multiprocess:2.7.1"
 }

@@ -114,14 +114,6 @@ class AppObjectController {
         lateinit var appDatabase: AppDatabase
             private set
 
-        fun getApplication(): JoshApplication? {
-            return if(Companion::joshApplication.isInitialized) {
-                 joshApplication
-            } else {
-                null
-            }
-        }
-
         val gsonMapper: Gson by lazy {
             GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -318,7 +310,9 @@ class AppObjectController {
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
         fun initLibrary(context: Context): AppObjectController {
+            Log.e("SukeshTest", "initLibrary")
             CoroutineScope(Dispatchers.IO).launch {
+                Log.e("SukeshTest", "context given")
                 joshApplication = context as JoshApplication
                 appDatabase = AppDatabase.getDatabase(context)!!
                 firebaseAnalytics = FirebaseAnalytics.getInstance(context)
@@ -341,6 +335,7 @@ class AppObjectController {
         }
 
         fun init(context: JoshApplication) {
+            Log.e("SukeshTest", "in init")
             joshApplication = context
             CoroutineScope(Dispatchers.IO).launch {
                 // TODO: *** Needed to be checked, Do we need this? ***
@@ -355,7 +350,6 @@ class AppObjectController {
 
         fun observeFirestore() {
             try {
-                //FirestoreNotificationDB.getNotification ()
                 FirestoreNotificationDB.setNotificationListener(listener = object :
                     NotificationListener {
                     override fun onReceived(fNotification: FirestoreNewNotificationObject) {
@@ -709,7 +703,7 @@ class StatusCodeInterceptor : Interceptor {
                         AppObjectController.joshApplication.packageName
                     )
                 ) {
-                    if (IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
+                    if (!IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
                         PrefManager.logoutUser()
                         LastSyncPrefManager.clear()
                         WorkManagerAdmin.instanceIdGenerateWorker()

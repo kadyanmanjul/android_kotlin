@@ -91,10 +91,10 @@ class JoshApplication :
         Branch.getAutoInstance(this)
         if (isMainProcess()) {
             AppObjectController.initLibrary(this)
+            AppObjectController.init(this@JoshApplication)
             Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
             turnOnStrictMode()
             ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
-            AppObjectController.init(this@JoshApplication)
             VoipPref.initVoipPref(this)
             PstnObserver
             registerBroadcastReceiver()
