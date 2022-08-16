@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.contentprovider.JoshContentProvider
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
@@ -310,9 +309,7 @@ class AppObjectController {
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
         fun initLibrary(context: Context): AppObjectController {
-            Log.e("SukeshTest", "initLibrary")
             CoroutineScope(Dispatchers.IO).launch {
-                Log.e("SukeshTest", "context given")
                 joshApplication = context as JoshApplication
                 appDatabase = AppDatabase.getDatabase(context)!!
                 firebaseAnalytics = FirebaseAnalytics.getInstance(context)
@@ -335,7 +332,6 @@ class AppObjectController {
         }
 
         fun init(context: JoshApplication) {
-            Log.e("SukeshTest", "in init")
             joshApplication = context
             CoroutineScope(Dispatchers.IO).launch {
                 // TODO: *** Needed to be checked, Do we need this? ***
