@@ -148,15 +148,27 @@ class ConvoWebRtcService : Service() {
     private var conversationRoomEventListener: IRtcEngineEventHandler? =
         object : IRtcEngineEventHandler() {
 
+            override fun onConnectionStateChanged(state: Int, reason: Int) {
+                Log.d("signal", "COnnection state changed => $state")
+                super.onConnectionStateChanged(state, reason)
+            }
+
+            override fun onNetworkQuality(uid: Int, txQuality: Int, rxQuality: Int) {
+                Log.d("signal", "Network quality changed=> $uid and tx quality => $txQuality and rxQuality => $rxQuality")
+
+                super.onNetworkQuality(uid, txQuality, rxQuality)
+            }
+
             override fun onAudioRouteChanged(routing: Int) {
+                Log.d("signal", "IRtcEngineEventHandler onAudioRouteChanged() and routing => $routing")
+
                 super.onAudioRouteChanged(routing)
                 rtcEngine?.setDefaultAudioRoutetoSpeakerphone(true)
-                Log.d(TAG, "IRtcEngineEventHandler onAudioRouteChanged() and routing => $routing")
             }
 
             override fun onUserJoined(uid: Int, elapsed: Int) {
+                Log.d("signal", "IRtcEngineEventHandler onUserJoined() called with: uid = $uid, elapsed = $elapsed")
                 super.onUserJoined(uid, elapsed)
-                Log.d(TAG, "IRtcEngineEventHandler onUserJoined() called with: uid = $uid, elapsed = $elapsed")
             }
 
             override fun onWarning(warn: Int) {
@@ -184,8 +196,9 @@ class ConvoWebRtcService : Service() {
             }
 
             override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
+                Log.d("signal", "IRtcEngineEventHandler onJoinChannelSuccess uuid $uid  moderatorUid $moderatorUid")
+
                 super.onJoinChannelSuccess(channel, uid, elapsed)
-                Log.d(TAG, "IRtcEngineEventHandler onJoinChannelSuccess uuid $uid  moderatorUid $moderatorUid")
 
             }
 
@@ -203,6 +216,8 @@ class ConvoWebRtcService : Service() {
             }
 
             override fun onUserOffline(uid: Int, reason: Int) {
+                Timber.tag("signal").d("AGORA USER OFFLINE IS => $uid AND REASON => $reason")
+
                 super.onUserOffline(uid, reason)
                 Timber.tag("signal").d("AGORA USER OFFLINE IS => $uid AND REASON => $reason")
 
