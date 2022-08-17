@@ -209,4 +209,5 @@
     <color name="payment_status_red">#F03636</color>
     <color name="green_payment">#57CC02</color>
     <color name="green_payment_text">#179549</color>
+    <color name="prompt_turn_on_speaker">#C6CBDF</color>
 </resources>
