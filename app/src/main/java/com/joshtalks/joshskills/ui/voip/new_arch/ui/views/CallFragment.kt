@@ -63,7 +63,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         .setBackgroundColorResource(R.color.prompt_turn_on_speaker).setPadding(12).setCornerRadius(8f)
         .setHeight(BalloonSizeSpec.WRAP).setTextColorResource(R.color.pure_black)
         .setDismissWhenTouchOutside(false)
-        .setAutoDismissDuration(15000)
+        .setAutoDismissDuration(3000)
         .build()
         }
     }
@@ -138,7 +138,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                     val am =  requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
                     val volume = am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
                     if (volume < 3){
-                        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,5,0)
+                        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,4,0)
                     }
                 }
             }
