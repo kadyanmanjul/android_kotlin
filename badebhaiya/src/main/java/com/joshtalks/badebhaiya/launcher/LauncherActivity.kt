@@ -109,7 +109,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         }.withData(this.intent.data).init()*/
     }
 
-    private fun startActivityForState(viewUserId: String? = null, request_dialog: Boolean?=false) {
+    private fun startActivityForState(viewUserId: String? = null, request_dialog: Boolean?=false, room_id:Int?=null) {
         val intent: Intent = when {
             User.getInstance().userId.isNotBlank() -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {
@@ -129,18 +129,20 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
 //                val intent = Intent(this@LauncherActivity, ProfileViewTestActivity::class.java)
                 intent.putExtra("userId", viewUserId)
                 intent.putExtra("request_dialog",request_dialog)
+                intent.putExtra("room_id", room_id)
                 intent
             }
             else -> {
                 // User is not logged in.
 
-                if (viewUserId != null) {
+                if (viewUserId != null || room_id!=null) {
                     // came by deeplink.. redirect to profile
                     val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
 //                    val intent = Intent(this@LauncherActivity, ProfileViewTestActivity::class.java)
                     intent.putExtra("userId", viewUserId)
                     intent.putExtra("profile_deeplink", true)
                     intent.putExtra("request_dialog",request_dialog)
+                    intent.putExtra("room_id", room_id)
                     intent
 
                 } else {
@@ -184,12 +186,19 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
             referringParams?.let {
                 Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
 
+                if(it.has("is_recorded_room")) {//TODO:-identification for type of deeplink
+                     }
+
                 startActivityForState(
                     if (it.has("user_id"))
                         it.getString("user_id")
                     else null,
                     if (it.has("request_dialog"))
                         it.getBoolean("request_dialog")
+                    else null,
+                    if (it.has("room_id")) {
+                        it.get("room_id").toString().toInt()
+                    }
                     else null
                 )
 

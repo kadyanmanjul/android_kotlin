@@ -78,6 +78,9 @@
                     android:host="joshbadebhaiya.app.link"
                     android:scheme="https" />
                 <data
+                    android:host="joshbadebhaiya.test-app.link"
+                    android:scheme="https" />
+                <data
                     android:host="joshbadebhaiya.app.link-alternate.app.link"
                     android:scheme="https" />
             </intent-filter>

@@ -165,7 +165,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private lateinit var binding: ActivityFeedBinding
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("sahil", "onCreate of feed activity ")
         super.onCreate(savedInstanceState)
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -176,6 +175,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         var user = intent.getStringExtra("userId")
         var requestDialog=intent.getBooleanExtra("request_dialog",false)
         val mUserId = intent.getStringExtra(USER_ID)
+        val roomId=intent.getIntExtra("room_id",0)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         binding.lifecycleOwner = this
@@ -189,7 +189,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         val roomRequestId = intent.getStringExtra(ROOM_REQUEST_ID)
 
         viewModel.roomRequestCount.value=0
-         if(!roomRequestId.isNullOrEmpty()){
+        if(roomId!=0)
+        {
+            viewModel.getRecordRoomData(roomId)
+        }
+        else  if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
 
         } else if (user != null) {
@@ -349,6 +353,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun addObserver() {
+
+        viewModel.recordingData.observe(this){
+            playRoom(it)
+        }
 
         viewModel.isSpeaker.observe(this){
             if(it)
@@ -562,7 +570,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         takePermissions(room.roomId.toString(), room.topic,moderatorId)
     }
 
-    override fun playRoom(room: RoomListResponseItem, view: View) {
+    override fun playRoom(room: RoomListResponseItem) {
         viewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_REPLAY"))
         viewModel.userRoomRecord(room.recordings?.get(0)?.id!!,User.getInstance().userId)
 //        RecordedRoomFragment.open(this,"Feed", room)

@@ -17,7 +17,6 @@ import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
-import com.joshtalks.badebhaiya.impressions.Records
 import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
@@ -33,21 +32,14 @@ import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
-import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.utils.Utils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Response
 import timber.log.Timber
 import java.io.File
-import kotlinx.coroutines.async
 import java.net.SocketTimeoutException
 
 const val ROOM_ITEM = "room_item"
@@ -83,6 +75,7 @@ class FeedViewModel : ViewModel() {
     val scheduleRoomStartTime = ObservableField<String>()
     val signUpRepository = BBRepository()
     var pubNubState = PubNubState.ENDED
+    var recordingData : MutableLiveData<RoomListResponseItem> =MutableLiveData()
     var isModerator = false
     val waitingRoomUsers = MutableLiveData<List<Waiting>>(emptyList())
     var speakerName = ""
@@ -254,6 +247,17 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    fun getRecordRoomData(roomId: Int){
+        viewModelScope.launch{
+            try {
+                val res = repository.getRecordsList(roomId)
+                recordingData.value=res.body()?.recordings?.get(0)
+            } catch (ex: Exception) {
+
+            }
+        }
+    }
+
     fun joinRoom(roomId: String, topic: String, source: String, isRejoin: Boolean = false) {
         Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
 //        pubChannelName = moderatorId
@@ -409,8 +413,6 @@ class FeedViewModel : ViewModel() {
                 val res=repository.getRecordsList()
                 if(res.isSuccessful){
                     res.body()?.let {
-
-//                        val recordList= mutableListOf<RoomListResponseItem>()
                         if(it.recordings.isNullOrEmpty().not())
                         {
                             list.addAll(it.recordings.map { recordListResponseItem ->
@@ -421,7 +423,6 @@ class FeedViewModel : ViewModel() {
                         }
                         if (list.isNullOrEmpty().not()) {
                             isRoomsAvailable.set(true)
-//                            feedAdapter.submitList(list.reversed())
                         }
 
                     }

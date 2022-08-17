@@ -250,7 +250,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
     }
 
 
-    var internetAvailableFlag: Boolean = false
+    private var internetAvailableFlag: Boolean = false
 
 
     fun showBottomSheet() {
@@ -345,7 +345,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
         else openFollowingList()
     }
 
-    fun showPopup(roomId: Int, userId: String) {
+    private fun showPopup(roomId: Int, userId: String) {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val dialogBinding = WhyRoomBinding.inflate(layoutInflater)
         dialogBuilder.setView(dialogBinding.root)
@@ -631,7 +631,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
         takePermissions(room.roomId.toString(), room.topic.toString())
     }
 
-    override fun playRoom(room: RoomListResponseItem, view: View) {
+    override fun playRoom(room: RoomListResponseItem) {
         feedViewModel.source = "Profile"
         viewModel.sendEvent(Impression("PROFILE_SCREEN", "CLICKED_REPLAY"))
         feedViewModel.userRoomRecord(room.recordings?.get(0)?.id!!, User.getInstance().userId)

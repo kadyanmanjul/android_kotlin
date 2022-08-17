@@ -80,4 +80,7 @@ interface ConversationRoomNetworkService {
     @GET("$DIR/conversation_room/record_room/")
     suspend fun getRecordsList(): Response<RecordedResponseList>
 
+    @GET("$DIR/conversation_room/record_room/")
+    suspend fun getRecordList(@Query("room_id") room_id: Int?=null): Response<RecordedResponseList>
+
 }
