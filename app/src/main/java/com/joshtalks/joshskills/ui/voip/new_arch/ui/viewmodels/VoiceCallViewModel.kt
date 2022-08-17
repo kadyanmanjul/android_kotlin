@@ -433,10 +433,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
             )
             repository.turnOnSpeaker()
-            val msg = Message.obtain().apply {
-                what = SPEAKER_TURNED_ON
+            CoroutineScope(Dispatchers.Main).launch {
+                val msg = Message.obtain().apply {
+                    what = SPEAKER_TURNED_ON
+                }
+                singleLiveEvent.value = msg
             }
-            singleLiveEvent.value = msg
         }
     }
 
