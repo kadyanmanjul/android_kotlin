@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.skydoves.balloon.createBalloon
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.ArrayDeque
@@ -432,6 +433,10 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
             )
             repository.turnOnSpeaker()
+            val msg = Message.obtain().apply {
+                what = SPEAKER_TURNED_ON
+            }
+            singleLiveEvent.value = msg
         }
     }
 

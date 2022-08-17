@@ -18,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -32,10 +31,12 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.GET_FRAGMENT_BITMAP
+import com.joshtalks.joshskills.voip.constant.SPEAKER_TURNED_ON
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.skydoves.balloon.Balloon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,6 +57,9 @@ class   CallFragment : BaseFragment() , SensorEventListener {
     private val audioManager by lazy {
         requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
+
+    private val promptTurnOnSpeaker by lazy { context?.let { Balloon.Builder(it).setText("Turn on speaker").setBackgroundColor(R.color.prompt_turn_on_speaker).build() } }
+
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
     }
@@ -120,6 +124,15 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 GET_FRAGMENT_BITMAP -> {
                     val imageFile = getBitMapFromView(callBinding.container).toFile(requireContext())
                     vm.saveImageAudioToFolder(imageFile)
+                }
+                SPEAKER_TURNED_ON ->{
+                    promptTurnOnSpeaker?.dismiss()
+                    val am =  requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                    val volume = am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                    showToast("$volume is your volume")
+                    if (volume < 3){
+                        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,5,0)
+                    }
                 }
             }
         }
@@ -208,9 +221,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        /*val am =  requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val volume = am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
-        showToast("$volume is your volume")*/
         proximity?.also { proximity ->
             sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
         }
@@ -246,6 +256,12 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         } else {
             turnScreenOn()
         }
+        if(p0?.values?.get(0)?.toInt()!! >= 2){
+            if (!audioManager.isSpeakerphoneOn){
+                promptTurnOnSpeaker?.showAlignTop(callBinding.btnSpeaker)
+            }
+        }
+
     }
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 

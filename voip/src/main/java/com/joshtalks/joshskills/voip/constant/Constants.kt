@@ -31,6 +31,8 @@ const val CONNECTED = 121 // Remote User Joined the Channel and can Talk
 const val LEAVING = 122 // LeaveChannel Called but haven't left the channel
 const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining New Channel
 
+const val SPEAKER_TURNED_ON = 127
+
 // Content Provider Voip State
 const val CONTENT_VOIP_STATE_AUTHORITY = "content://com.joshtalks.joshskills.voipstate"
 const val VOIP_STATE_PATH = "/current_voip_state"
