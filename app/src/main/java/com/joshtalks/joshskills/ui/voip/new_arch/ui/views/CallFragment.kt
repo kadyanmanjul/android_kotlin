@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonSizeSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +59,14 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
-    private val promptTurnOnSpeaker by lazy { context?.let { Balloon.Builder(it).setText("Turn on speaker").setBackgroundColor(R.color.prompt_turn_on_speaker).build() } }
+    private val promptTurnOnSpeaker by lazy { context?.let { Balloon.Builder(it).setText("Turn on speaker")
+        .setBackgroundColorResource(R.color.prompt_turn_on_speaker).setPadding(12).setCornerRadius(8f)
+        .setHeight(BalloonSizeSpec.WRAP).setTextColorResource(R.color.pure_black)
+        .setDismissWhenTouchOutside(false)
+        .setAutoDismissDuration(15000)
+        .build()
+        }
+    }
 
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
@@ -129,7 +137,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                     promptTurnOnSpeaker?.dismiss()
                     val am =  requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
                     val volume = am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
-                    showToast("$volume is your volume")
                     if (volume < 3){
                         am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,5,0)
                     }
