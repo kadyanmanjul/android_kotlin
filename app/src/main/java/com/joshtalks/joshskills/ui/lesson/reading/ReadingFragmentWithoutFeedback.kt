@@ -1495,6 +1495,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun mergeTwoAudiosIntoOne() {
+        try {
         val input1 = GeneralAudioInput(requireContext(), Uri.parse(filePath), null)
         input1.volume = 5f
         val out2 = extractAudioFromVideo(videoDownPath!!)
@@ -1524,6 +1525,9 @@ class ReadingFragmentWithoutFeedback :
 
         audioMixer.start()
         audioMixer.processAsync()
+        } catch (ex:Exception){
+            muxVideoOldMethod(filePath!!)
+        }
     }
 
     fun mux(audioFile: String, videoFile: String) {
