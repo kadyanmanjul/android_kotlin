@@ -9,6 +9,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.joshtalks.badebhaiya.core.COUPON_CODE
+import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.showToast
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Branch
@@ -33,7 +35,7 @@ class DeeplinkGenerator {
         fun shareRecordedRoom(context: Activity, roomId: String, onSharingLaunch: () -> Unit = {}) {
             val buo = BranchUniversalObject()
 
-            buo.canonicalIdentifier = "referral_code${System.currentTimeMillis()}"
+            buo.canonicalIdentifier = "${PrefManager.getStringValue(COUPON_CODE)}${System.currentTimeMillis()}"
 
             buo.generateShortUrl(context, getLinkProperties(roomId)) { url, error ->
                 when (error) {
@@ -57,11 +59,11 @@ class DeeplinkGenerator {
 
         private fun getLinkProperties(roomId: String): LinkProperties {
             return LinkProperties()
-                .setChannel("refferal_code")
-                .setCampaign("Referral")
-                .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "Referral")
-                .addControlParameter(Defines.Jsonkey.ReferralCode.key, "referral_code")
-                .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral_code${System.currentTimeMillis()}")
+                .setChannel(PrefManager.getStringValue(COUPON_CODE))
+                .setCampaign("referral")
+                .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
+                .addControlParameter(Defines.Jsonkey.ReferralCode.key, PrefManager.getStringValue(COUPON_CODE))
+                .addControlParameter(Defines.Jsonkey.UTMMedium.key, "${PrefManager.getStringValue(COUPON_CODE)}${System.currentTimeMillis()}")
                 .addControlParameter("\$desktop_url", APP_LINK)
                 .addControlParameter("is_recorded_room", true.toString())
                 .addControlParameter("recorded_room_id", roomId)
