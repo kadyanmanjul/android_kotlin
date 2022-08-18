@@ -22,7 +22,6 @@ import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.FirebaseApp
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController.Companion.getLocalBroadcastManager
 import com.joshtalks.joshskills.core.AppObjectController.Companion.restoreIdReceiver
 import com.joshtalks.joshskills.core.AppObjectController.Companion.unreadCountChangeReceiver
@@ -32,16 +31,8 @@ import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.Utils
-import com.moengage.core.DataCenter
-import com.moengage.core.MoEngage
-import com.moengage.core.config.MiPushConfig
-import com.moengage.core.config.NotificationConfig
-import com.moengage.core.enableAdIdTracking
-import com.vanniktech.emoji.EmojiManager
-import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
@@ -50,7 +41,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Method
 import java.util.*
-
 
 /**
  * 1. Remove Process for P2P Call
@@ -63,7 +53,7 @@ const val TAG = "JoshSkill"
 class JoshApplication :
     MultiDexApplication(),
     LifecycleEventObserver,
-    ComponentCallbacks2/*, Configuration.Provider*/ {
+    ComponentCallbacks2, Configuration.Provider {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
     }
@@ -85,18 +75,15 @@ class JoshApplication :
     override fun onCreate() {
         super.onCreate()
         //enableLog(Feature.VOIP)
-        Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
+        AppObjectController.joshApplication = this
         if (BuildConfig.DEBUG) {
             Branch.enableTestMode()
             Branch.enableLogging()
         }
         Branch.getAutoInstance(this)
-            AppObjectController.joshApplication = this
-            Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
-            turnOnStrictMode()
-            ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
-            Utils.initUtils(this)
-            Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
+        turnOnStrictMode()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
+        Utils.initUtils(this)
     }
 
     override fun onTerminate() {
@@ -255,7 +242,6 @@ class JoshApplication :
             Lifecycle.Event.ON_DESTROY -> {
                 onAppDestroy()
             }
-
         }
     }
 
@@ -317,7 +303,7 @@ class JoshApplication :
         return TextUtils.equals(packageName, getProcName())
     }
 
-//    override fun getWorkManagerConfiguration(): Configuration {
-//        return Configuration.Builder().setMinimumLoggingLevel(Log.VERBOSE).build()
-//    }
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder().setMinimumLoggingLevel(Log.VERBOSE).build()
+    }
 }

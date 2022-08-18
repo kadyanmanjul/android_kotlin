@@ -22,9 +22,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
-import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -39,8 +37,6 @@ import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -65,9 +61,11 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
         AppObjectController.configureCrashlytics()
         viewModel.initApp()
+        AppObjectController.initFonts()
         initiateLibraries()
         WorkManagerAdmin.runMemoryManagementWorker()
         LogSaver.startSavingLog() // to save logs in external storage
@@ -78,7 +76,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         AppObjectController.getNewArchVoipFlag()
         AppObjectController.initObjectInThread()
         VoipPref.initVoipPref(this)
-        PstnObserver
         AppObjectController.initMoEngage()
         AppObjectController.initGroups()
         AppObjectController.registerBroadcastReceiver()
