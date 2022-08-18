@@ -9,6 +9,8 @@ import androidx.work.WorkManager
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.appUpdater.JoshAppUpdater
+import com.joshtalks.badebhaiya.core.COUPON_CODE
+import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.customViews.ProfileViewTestActivity
 import com.joshtalks.badebhaiya.feed.FeedActivity
@@ -28,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -39,7 +42,6 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
-
         appUpdater.checkAndUpdate(this)
 
 

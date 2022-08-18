@@ -1,5 +1,7 @@
 package com.joshtalks.badebhaiya.repository
 
+import com.joshtalks.badebhaiya.core.COUPON_CODE
+import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.models.FormRequest
 import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
@@ -89,5 +91,22 @@ class CommonRepository {
 //            }
 //        }
 //        return null
+    }
+
+    fun getCouponCode(){
+        CoroutineScope(Dispatchers.IO).launch {
+            if (User.getInstance().isLoggedIn()){
+                try {
+                    val response = service.getCouponCode()
+                    if (response.isSuccessful){
+                        response.body()?.let {
+                            PrefManager.put(COUPON_CODE,it.referral_code)
+                        }
+                    }
+                } catch (e: Exception){
+
+                }
+            }
+        }
     }
 }

@@ -120,6 +120,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
 
                     response.body()?.let {
                         PrefManager.put(IS_NEW_USER, it.isUserExist.not())
+
                         updateUserFromLoginResponse(it)
                     }
 //                    sendEvent(Impression("SIGNUP_VIEW_MODEL","OTP_LOGIN"))
@@ -144,6 +145,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         user.userId = loginResponse.userId
         user.token = loginResponse.token
         PrefManager.put(API_TOKEN, loginResponse.token)
+        PrefManager.put(COUPON_CODE, loginResponse.couponCode)
+        Timber.tag("coupon").d("coupon code updated at truecaller => ${loginResponse.couponCode}")
         user.update()
         fetchUser()
     }

@@ -8,6 +8,7 @@ import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.showCallRequests.model.RequestContent
 import com.joshtalks.badebhaiya.showCallRequests.model.RequestsList
 import com.joshtalks.badebhaiya.showCallRequests.model.RoomRequestCount
+import com.joshtalks.badebhaiya.signup.model.CouponCode
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -64,4 +65,9 @@ interface CommonNetworkService {
         @Query("room_id") roomId: Int,
         @Query("page") pageNo: Int
     ): Response<RecordedRoomListener>
+
+
+    @GET("$DIR/user/get_coupon/")
+    suspend fun getCouponCode(): Response<CouponCode>
+
 }

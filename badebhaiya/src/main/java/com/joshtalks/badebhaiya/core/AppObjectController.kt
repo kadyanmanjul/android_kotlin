@@ -12,6 +12,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.gson.*
 import com.joshtalks.badebhaiya.BuildConfig
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.service.initStethoLibrary
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import io.agora.rtc.IRtcEngineEventHandler
@@ -59,6 +60,11 @@ class AppObjectController {
             initUtils()
             initTimber()
             initCrashlytics()
+            getCouponCode()
+        }
+
+        private fun getCouponCode() {
+            CommonRepository().getCouponCode()
         }
 
         private fun initCrashlytics() {

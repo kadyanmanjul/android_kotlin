@@ -15,6 +15,7 @@ const val PREF_IS_CONVERSATION_ROOM_ACTIVE = "is_conversation_room_active"
 const val IS_CONVERSATION_ROOM_ACTIVE_FOR_USER = "is_conversation_room_active_for_user"
 const val IS_TC_INSTALLED = "is_tc_installed"
 const val ROOM_RECORDING = "josh_pref_key_agora_room_recording"
+const val COUPON_CODE = "coupon_code"
 
 
 object PrefManager {

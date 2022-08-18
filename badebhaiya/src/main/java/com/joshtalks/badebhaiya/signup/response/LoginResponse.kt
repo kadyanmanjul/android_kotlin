@@ -10,5 +10,7 @@ data class LoginResponse(
     @SerializedName("token")
     val token: String,
     @SerializedName("is_user_exist")
-    val isUserExist : Boolean
+    val isUserExist : Boolean,
+    @SerializedName("referral_code")
+    val couponCode: String,
 )
