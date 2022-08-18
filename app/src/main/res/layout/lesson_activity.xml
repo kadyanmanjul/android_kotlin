@@ -670,7 +670,7 @@
                 android:layout_marginVertical="@dimen/_50sdp"
                 android:layout_marginTop="@dimen/_62ssp"
                 android:layout_marginBottom="@dimen/_42ssp"
-                android:background="#000"
+                android:background="@color/pure_black"
                 android:focusable="true"
                 app:controller_layout_id="@layout/layout_live_player_controller"
                 app:layout_constraintBottom_toTopOf="@id/video_call_btn"

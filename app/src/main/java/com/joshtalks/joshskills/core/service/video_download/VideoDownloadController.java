@@ -250,23 +250,30 @@ public class VideoDownloadController {
     }
 
     public MediaSource getMediaSource(Uri uri) {
-        int type = Util.inferContentType(uri, null);
-        DownloadRequest downloadRequest = getDownloadTracker().getDownloadRequest(uri);
-        if (downloadRequest != null) {
-            return createMediaSource(downloadRequest, buildDataSourceFactory());
-        }
+        try {
+            if (uri == null) {
+                return null;
+            }
+            int type = Util.inferContentType(uri, null);
+            DownloadRequest downloadRequest = getDownloadTracker().getDownloadRequest(uri);
+            if (downloadRequest != null) {
+                return createMediaSource(downloadRequest, buildDataSourceFactory());
+            }
 
-        switch (type) {
-            case C.TYPE_DASH:
-                return new DashMediaSource.Factory(buildDataSourceFactory()).createMediaSource(uri);
-            case C.TYPE_SS:
-                return new SsMediaSource.Factory(buildDataSourceFactory()).createMediaSource(uri);
-            case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(buildDataSourceFactory()).createMediaSource(uri);
-            case C.TYPE_OTHER:
-                return new ProgressiveMediaSource.Factory(buildDataSourceFactory()).createMediaSource(uri);
-            default:
-                throw new IllegalStateException("Unsupported type: " + type);
+            switch (type) {
+                case C.TYPE_DASH:
+                    return new DashMediaSource.Factory(buildDataSourceFactory()).createMediaSource(uri);
+                case C.TYPE_SS:
+                    return new SsMediaSource.Factory(buildDataSourceFactory()).createMediaSource(uri);
+                case C.TYPE_HLS:
+                    return new HlsMediaSource.Factory(buildDataSourceFactory()).createMediaSource(uri);
+                case C.TYPE_OTHER:
+                    return new ProgressiveMediaSource.Factory(buildDataSourceFactory()).createMediaSource(uri);
+                default:
+                    throw new IllegalStateException("Unsupported type: " + type);
+            }
+        }catch (Exception ex){
+            return null;
         }
     }
 
