@@ -42,8 +42,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
 
         appUpdater.checkAndUpdate(this)
 
-
-        if (User.getInstance().isLoggedIn())
+        if (!User.getInstance().isGuestUser)
             BBRepository().lastLogin()
 
         UserExperior.startRecording(getApplicationContext(), BuildConfig.USER_EXPERIOR_API_KEY)
@@ -110,8 +109,9 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
     }
 
     private fun startActivityForState(viewUserId: String? = null, request_dialog: Boolean?=false, room_id:Int?=null) {
+        Log.i("CHECKGUEST", "startActivityForState: $viewUserId ------$room_id")
         val intent: Intent = when {
-            User.getInstance().userId.isNotBlank() -> {
+            !User.getInstance().isGuestUser -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {
                     SignUpActivity.start(this, REDIRECT_TO_ENTER_NAME)
                     overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
@@ -136,6 +136,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 // User is not logged in.
 
                 if (viewUserId != null || room_id!=null) {
+                    Log.i("CHECKGUEST", "startActivityForState: checkpint 1")
                     // came by deeplink.. redirect to profile
                     val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
 //                    val intent = Intent(this@LauncherActivity, ProfileViewTestActivity::class.java)
@@ -184,7 +185,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 "YASH => onInitFinished: $referringParams"
             )
             referringParams?.let {
-                Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
+                Log.d("CHECKGUEST", "branch json data => ${it}")
 
                 if(it.has("is_recorded_room")) {//TODO:-identification for type of deeplink
                      }
@@ -196,8 +197,8 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                     if (it.has("request_dialog"))
                         it.getBoolean("request_dialog")
                     else null,
-                    if (it.has("room_id")) {
-                        it.get("room_id").toString().toInt()
+                    if (it.has("recorded_room_id")) {
+                        it.get("recorded_room_id").toString().toInt()
                     }
                     else null
                 )

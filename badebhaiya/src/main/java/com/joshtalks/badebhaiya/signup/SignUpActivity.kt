@@ -224,6 +224,7 @@ class SignUpActivity : AppCompatActivity(), Call {
                 PeopleToFollowFragment.open(supportFragmentManager, R.id.container)
             }
             intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY -> {
+                Log.i("CHECKGUEST", "openNextActivity: wapas profile Pe")
                 //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
                 val bundle = Bundle()
                 val fragment=ProfileFragment()
@@ -329,6 +330,7 @@ class SignUpActivity : AppCompatActivity(), Call {
 
         @JvmStatic
         fun start(context: Context, redirect: String? = null, userId: String? = null, isRedirected: Boolean = false, requestRoom:Boolean?=false) {
+            Log.i("CHECKGUEST", "start: $redirect")
             val starter = Intent(context, SignUpActivity::class.java)
                 .putExtra(IS_REDIRECTED, isRedirected)
                 .putExtra(REDIRECT, redirect)

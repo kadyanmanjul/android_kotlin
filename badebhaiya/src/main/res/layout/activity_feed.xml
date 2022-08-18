@@ -74,6 +74,7 @@
                 app:layout_constraintVertical_bias="0.002">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/request_count_view"
                     android:layout_width="22dp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="@dimen/_4sdp"
@@ -81,9 +82,8 @@
                     android:layout_marginEnd="5dp"
                     android:shape="ring"
                     app:cardCornerRadius="@dimen/_15sdp"
-                    android:id="@+id/request_count_view"
                     app:cardBackgroundColor="#FF4963"
-                    tools:visibility="visible"
+                    android:visibility="invisible"
                     >
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -92,7 +92,6 @@
                         android:layout_height="match_parent"
                         android:layout_alignParentEnd="true"
                         android:elevation="@dimen/_5sdp"
-                        android:gravity="right"
                         android:textAlignment="center"
                         android:padding="@dimen/_3sdp"
                         android:textAppearance="@style/BB_Typography_Nunito_Bold"
@@ -105,13 +104,13 @@
                 </androidx.cardview.widget.CardView>
 
 
-
                 <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                     android:id="@+id/profile_iv"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:scaleType="centerCrop"
+                    android:src="@drawable/ic_avatar"
                     app:cornerRadius="@dimen/_6sdp"
                     app:dynamicImageUrl="@{user.profilePicUrl}"
                     app:dynamicUserName="@{user.firstName}"

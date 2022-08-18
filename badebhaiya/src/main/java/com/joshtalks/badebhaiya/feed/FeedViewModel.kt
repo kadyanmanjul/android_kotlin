@@ -251,7 +251,29 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch{
             try {
                 val res = repository.getRecordsList(roomId)
-                recordingData.value=res.body()?.recordings?.get(0)
+                if(res.isSuccessful) {
+                    recordingData.value = res.body()?.recordings?.get(0)
+                }
+            } catch (ex: Exception) {
+            }
+        }
+    }
+
+    fun createGuestUser(roomId: Int) {
+        viewModelScope.launch{
+            try {
+                val res = repository.createGuestUser()
+                if(res.isSuccessful){
+                    res.body().let {
+                        Log.i("CHECKGUEST", "createGuestUser: inside ${it?.userId}")
+//                        User.getInstance().userId= it?.userId.toString()
+                        it?.userId?.let { it1 -> User(userId = it1, isGuestUser = true) }
+                            ?.let { it2 -> User.getInstance().updateFromResponse(it2) }
+                        it?.token?.let { it1 -> PrefManager.put(API_TOKEN, it1) }
+                    }
+                    Log.i("CHECKGUEST", "createGuestUser: userid->${User.getInstance().userId}  ")
+                    getRecordRoomData(roomId)
+                }
             } catch (ex: Exception) {
 
             }

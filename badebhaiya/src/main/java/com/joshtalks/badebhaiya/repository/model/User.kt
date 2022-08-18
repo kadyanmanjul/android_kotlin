@@ -35,6 +35,7 @@ data class User(
     @SerializedName("photo_url") var profilePicUrl: String? = null,
     @SerializedName("mobile") var mobile: String = EMPTY,
     @SerializedName("is_speaker") var isSpeaker: Boolean = false,
+    var isGuestUser:Boolean=true
 ) {
     companion object {
         @JvmStatic
@@ -175,6 +176,7 @@ data class User(
         if (this.profilePicUrl.isNullOrEmpty()) this.profilePicUrl = user.profilePicUrl
         if (this.userId.isEmpty()) this.userId = user.userId
         if (this.token.isEmpty()) this.token = user.token
+        this.isGuestUser=user.isGuestUser
         update()
     }
 }

@@ -287,10 +287,11 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
     }
 
     fun requestRoomPopup() {
-        if (!User.getInstance().isLoggedIn()) {
+        if (User.getInstance().isGuestUser) {
             userId?.let {
                 redirectToSignUp(REQUEST_ROOM, PendingPilotEventData(pilotUserId = it), false)
             }
+//            feedViewModel.isGuestUser=false
         } else {
             SingleDataManager.pendingPilotAction = null
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED) {
@@ -508,10 +509,11 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
     }
 
     fun updateFollowStatus() {
-        if (!User.getInstance().isLoggedIn()) {
+        if (User.getInstance().isGuestUser) {
             userId?.let {
                 redirectToSignUp(FOLLOW, PendingPilotEventData(pilotUserId = it), false)
             }
+//            feedViewModel.isGuestUser=false
             return
         }
         binding.followProgress.visibility = View.VISIBLE
@@ -713,7 +715,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        if (!User.getInstance().isLoggedIn()) {
+        if (User.getInstance().isGuestUser) {
             userId?.let {
                 redirectToSignUp(
                     SET_REMINDER,
@@ -721,6 +723,7 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
                     false
                 )
             }
+//            feedViewModel.isGuestUser=false
             return
         }
         showPopup(room.roomId!!,User.getInstance().userId)

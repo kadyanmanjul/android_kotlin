@@ -8,10 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Message
-import android.transition.Fade
-import android.transition.Slide
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.widget.Toast
@@ -24,12 +21,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.transition.MaterialSharedAxis
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.models.FormResponse
+import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
+import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
@@ -52,6 +49,7 @@ import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.showCallRequests.RequestBottomSheetFragment
+import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setImage
 import com.karumi.dexter.MultiplePermissionsReport
@@ -183,6 +181,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.viewModel = viewModel
         binding.user = User.getInstance()
 
+        Log.i("CHECKGUEST", "onCreate: Feed create")
+
 
         Timber.d("FEED INTENT ${intent.extras}")
 
@@ -191,7 +191,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.roomRequestCount.value=0
         if(roomId!=0)
         {
-            viewModel.getRecordRoomData(roomId)
+            if(User.getInstance().isLoggedIn())
+                viewModel.getRecordRoomData(roomId)
+            else {
+                viewModel.createGuestUser(roomId)
+
+            }
         }
         else  if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
@@ -203,6 +208,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         } else if (SingleDataManager.pendingPilotAction != null) {
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true, requestDialog)
         }
+
+        executePendingActions()
+        observerWithoutLogin()
         requestDialog=false
         if (User.getInstance().isLoggedIn()) {
             viewModel.setIsBadeBhaiyaSpeaker()
@@ -352,11 +360,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     }
 
-    private fun addObserver() {
-
+    private fun observerWithoutLogin(){
         viewModel.recordingData.observe(this){
             playRoom(it)
         }
+    }
+    private fun addObserver() {
 
         viewModel.isSpeaker.observe(this){
             if(it)
@@ -577,15 +586,40 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         RecordedRoomFragment.open(this,"Feed", room, viewModel)
     }
 
+    private fun executePendingActions() {
+        SingleDataManager.pendingPilotAction?.let {
+            when (it) {
+
+                PendingPilotEvent.JOIN_ROOM -> takePermissions(
+                    SingleDataManager.pendingPilotEventData?.roomId.toString(),
+                    SingleDataManager.pendingPilotEventData?.roomTopic,
+                    SingleDataManager.pendingPilotEventData?.pilotUserId
+                )
+            }
+        }
+    }
+
     private fun takePermissions(
         roomId: String? = null,
         roomTopic: String? = null,
         moderatorId: String?
     ) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
+
             if (roomId == null) {
                 openCreateRoomDialog()
-            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN",)
+            } else {
+                if(User.getInstance().isGuestUser)
+                {
+                    redirectToSignUp(
+                        PendingPilotEvent.JOIN_ROOM,
+                        PendingPilotEventData(roomId = roomId.toString().toInt(), roomTopic =roomTopic, pilotUserId = moderatorId.toString()),
+                        false
+                        )
+//                    User.getInstance().isGuestUser=false
+                }
+                else viewModel.joinRoom(roomId, roomTopic!!, "FEED_SCREEN")
+            }
             return
         }
 
@@ -595,7 +629,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            if (roomId == null) {
+                            if(User.getInstance().isGuestUser)
+                            {
+                                redirectToSignUp(
+                                    PendingPilotEvent.JOIN_ROOM,
+                                    PendingPilotEventData(roomId = roomId.toString().toInt(), roomTopic =roomTopic, pilotUserId = moderatorId.toString()),
+                                    false
+                                )
+//                                User.getInstance().isGuestUser=false
+                            }
+                            else if (roomId == null) {
                                 openCreateRoomDialog()
                             } else viewModel.joinRoom(
                                 roomId,
@@ -669,9 +712,30 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         )
     }
 
+
+    private fun redirectToSignUp(
+        pendingPilotAction: PendingPilotEvent,
+        pendingPilotEventData: PendingPilotEventData,
+        requestRoom: Boolean
+    ) {
+        SingleDataManager.pendingPilotAction = pendingPilotAction
+        SingleDataManager.pendingPilotEventData = pendingPilotEventData
+        SignUpActivity.start(this, isRedirected = true, requestRoom = requestRoom)
+        this.finish()
+    }
+
     override fun setReminder(room: RoomListResponseItem, view: View) {
-//        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SET_REMINDER"))
-//        showPopup(room.roomId,User.getInstance().userId)
+        if (User.getInstance().isGuestUser) {
+            room.speakersData?.userId?.let {
+                redirectToSignUp(
+                    PendingPilotEvent.SET_REMINDER,
+                    PendingPilotEventData(roomId = room.roomId, pilotUserId = it),
+                    false
+                )
+            }
+//            User.getInstance().isGuestUser=false
+            return
+        }
         Timber.d("ROOM KA STARTING TIME => ${room.currentTime}")
 
         notificationScheduler.scheduleNotificationAsListener(this, room)

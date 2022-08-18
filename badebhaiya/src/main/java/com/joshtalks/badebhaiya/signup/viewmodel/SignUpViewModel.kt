@@ -154,6 +154,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 val response = repository.getUserDetailsForSignUp(User.getInstance().userId)
                 if (response.isSuccessful) {
                     response.body()?.let {
+                        it.isGuestUser=false
                         User.getInstance().updateFromResponse(it)
                         WorkManagerAdmin.requiredTaskAfterLoginComplete()
                         analyzeUserProfile()
@@ -183,6 +184,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
                 if (response.isSuccessful) {
                     response.body()?.let {
+                        it.isGuestUser=false
                         User.getInstance().updateFromResponse(it)
                         signUpStatus.postValue(SignUpStepStatus.NameEntered)
                     }
@@ -270,6 +272,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
                 if (response.isSuccessful) {
                     response.body()?.let {
+                        it.isGuestUser=false
                         User.getInstance().updateFromResponse(it)
                         signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
                     }

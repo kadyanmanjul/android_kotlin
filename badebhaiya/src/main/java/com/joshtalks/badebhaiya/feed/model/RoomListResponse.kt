@@ -110,6 +110,14 @@ data class RecordedResponseList(
     @SerializedName("recorded_data")
     val recordings:List<RoomListResponseItem>
 )
+
+data class GuestUser(
+    @SerializedName("user_id")
+    val userId:String,
+    @SerializedName("token")
+    val token:String
+)
+
 @Parcelize
 data class RecordedResponse(
     @SerializedName("id")
