@@ -221,7 +221,6 @@
             android:showForAllUsers="true"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
-            android:process=":joshSkillsCallingService"
             android:screenOrientation="portrait"
             android:noHistory="true"
             android:theme="@style/AppNoBarTheme" />
@@ -500,7 +499,6 @@
         <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
         <activity android:name=".ui.invite_call.InviteFriendActivity" />
         <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
-            android:process=":joshSkillsCallingService"
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"/>
