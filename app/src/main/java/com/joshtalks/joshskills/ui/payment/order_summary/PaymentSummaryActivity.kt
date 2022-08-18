@@ -1002,7 +1002,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             if (viewModel.getCourseDiscountedAmount() <= 0) {
                 return@submit
             }
-            AppObjectController.firebaseAnalytics.resetAnalyticsData()
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).resetAnalyticsData()
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, viewModel.getPaymentTestId())
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, viewModel.getCourseName())
@@ -1011,7 +1011,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             )
             bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
-            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = viewModel.getPaymentTestId()

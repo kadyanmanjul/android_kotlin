@@ -23,6 +23,9 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.FirebaseApp
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController.Companion.getLocalBroadcastManager
+import com.joshtalks.joshskills.core.AppObjectController.Companion.restoreIdReceiver
+import com.joshtalks.joshskills.core.AppObjectController.Companion.unreadCountChangeReceiver
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
@@ -47,6 +50,13 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Method
 import java.util.*
+
+
+/**
+ * 1. Remove Process for P2P Call
+ * 2. Remove WorkManager Init from StartupLibrary
+ * 3. Check if Internet is Off then also RemoteConfig is working
+ */
 
 const val TAG = "JoshSkill"
 
@@ -82,16 +92,10 @@ class JoshApplication :
         }
         Branch.getAutoInstance(this)
         if (isMainProcess()) {
-            AppObjectController.initLibrary(this)
-            AppObjectController.init(this@JoshApplication)
+            AppObjectController.joshApplication = this
             Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
             turnOnStrictMode()
             ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
-            VoipPref.initVoipPref(this)
-            PstnObserver
-            registerBroadcastReceiver()
-            initMoEngage()
-            initGroups()
         } else {
             FirebaseApp.initializeApp(this)
             Timber.plant(Timber.DebugTree())
@@ -100,17 +104,6 @@ class JoshApplication :
         }
 
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
-    }
-
-    private fun initMoEngage() {
-        val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
-            .setDataCenter(DataCenter.DATA_CENTER_3)
-            .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
-            .configureNotificationMetaData(NotificationConfig(R.drawable.ic_status_bar_notification, R.mipmap.ic_launcher_round))
-            .build()
-
-        MoEngage.initialiseDefaultInstance(moEngage)
-        enableAdIdTracking(this)
     }
 
     override fun onTerminate() {
@@ -138,76 +131,6 @@ class JoshApplication :
             )
             Timber.plant(Timber.DebugTree())
         }
-    }
-
-    private fun registerBroadcastReceiver() {
-        val intentFilter = IntentFilter()
-//        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
-        intentFilter.addAction(Intent.ACTION_USER_PRESENT)
-        intentFilter.addAction(Intent.ACTION_SCREEN_ON)
-        intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intentFilter.addAction(Intent.ACTION_USER_UNLOCKED)
-        }
-//        registerReceiver(ServiceStartReceiver(), intentFilter)
-
-        JoshSkillExecutors.BOUNDED.submit {
-            if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
-                val intentFilterRestoreID =
-                    IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED)
-                getLocalBroadcastManager().registerReceiver(
-                    restoreIdReceiver,
-                    intentFilterRestoreID
-                )
-            }
-        }
-        JoshSkillExecutors.BOUNDED.submit {
-            val intentFilterUnreadMessages =
-                IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
-            getLocalBroadcastManager().registerReceiver(
-                unreadCountChangeReceiver,
-                intentFilterUnreadMessages
-            )
-        }
-    }
-
-    private var restoreIdReceiver: BroadcastReceiver =
-        object : BroadcastReceiver() {
-            override fun onReceive(
-                context: Context,
-                intent: Intent
-            ) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val restoreId = AppObjectController.freshChat?.user?.restoreId ?: EMPTY
-                        if (restoreId.isBlank().not()) {
-                            PrefManager.put(RESTORE_ID, restoreId)
-                            val requestMap = mutableMapOf<String, String?>()
-                            requestMap["restore_id"] = restoreId
-                            AppObjectController.commonNetworkService.postFreshChatRestoreIDAsync(
-                                PrefManager.getStringValue(USER_UNIQUE_ID),
-                                requestMap
-                            )
-                        }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                }
-            }
-        }
-
-    private var unreadCountChangeReceiver: BroadcastReceiver =
-        object : BroadcastReceiver() {
-            override fun onReceive(
-                context: Context,
-                intent: Intent
-            ) {
-                AppObjectController.getUnreadFreshchatMessages()
-            }
-        }
-
-    private fun getLocalBroadcastManager(): LocalBroadcastManager {
-        return LocalBroadcastManager.getInstance(this@JoshApplication)
     }
 
     fun onAppForegrounded() {
@@ -326,11 +249,6 @@ class JoshApplication :
                 return
             }
         }
-    }
-
-    fun initGroups() {
-        EmojiManager.install(IosEmojiProvider())
-        //GroupRepository().subscribeNotifications()
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
