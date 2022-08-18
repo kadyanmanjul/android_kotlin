@@ -483,8 +483,9 @@ class RecordedRoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.shareBtn.setOnSingleClickListener {
+            viewModel.playOrToggleSong()
             binding.progressBar.visibility = View.VISIBLE
-            DeeplinkGenerator.shareRecordedRoom(requireActivity(), roomData!!.roomId.toString()) {
+            DeeplinkGenerator.shareRecordedRoom(requireActivity(), roomData!!) {
                 binding.progressBar.visibility = View.GONE
             }
         }

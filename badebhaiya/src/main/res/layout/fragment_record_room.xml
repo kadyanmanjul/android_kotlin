@@ -80,6 +80,7 @@
                 android:paddingEnd="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_avatar"
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -89,7 +90,6 @@
                     android:id="@+id/user_photo"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_avatar"
                     app:dynamicImageUrl="@{user.profilePicUrl}"
                     app:dynamicUserName="@{user.firstName}"
                     app:cornerRadius="@dimen/_6sdp"
