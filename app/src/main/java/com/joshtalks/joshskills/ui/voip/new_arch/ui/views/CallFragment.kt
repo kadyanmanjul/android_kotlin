@@ -59,7 +59,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
-    private val promptTurnOnSpeaker by lazy { context?.let { Balloon.Builder(it).setText("Turn on speaker")
+    private val promptTurnOnSpeaker by lazy { context?.let { Balloon.Builder(it).setText(getString(R.string.turn_on_speaker))
         .setBackgroundColorResource(R.color.prompt_turn_on_speaker).setPadding(12).setCornerRadius(8f)
         .setHeight(BalloonSizeSpec.WRAP).setTextColorResource(R.color.pure_black)
         .setDismissWhenTouchOutside(false)
@@ -135,10 +135,9 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 }
                 SPEAKER_TURNED_ON ->{
                     promptTurnOnSpeaker?.dismiss()
-                    val am =  requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                    val volume = am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                    val volume = audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
                     if (volume < 3){
-                        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,4,0)
+                        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,4,0)
                     }
                 }
             }
@@ -244,7 +243,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
     }
 
 
-
     private fun setCurrentCallState() {
         if(isFragmentRestarted) {
             if(vm.source == FROM_INCOMING_CALL && (PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING))
@@ -264,7 +262,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
             turnScreenOn()
         }
         if(p0?.values?.get(0)?.toInt()!! >= 2){
-            if (!audioManager.isSpeakerphoneOn){
+            if (!audioManager.isSpeakerphoneOn && audioManager.isWiredHeadsetOn.not() && audioManager.isBluetoothScoOn.not()){
                 promptTurnOnSpeaker?.showAlignTop(callBinding.btnSpeaker)
             }
         }
