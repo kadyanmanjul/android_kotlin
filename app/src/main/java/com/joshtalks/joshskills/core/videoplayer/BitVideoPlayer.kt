@@ -576,20 +576,26 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     }
 
     private fun preparePlayer() {
-        uri?.let {
-            if (player == null) {
-                initPlayer()
+        try {
+            uri?.let {
+                if (player == null) {
+                    initPlayer()
+                }
+                player?.run {
+                    val audioSource = VideoDownloadController.getInstance().getMediaSource(uri)
+                    if (audioSource != null) {
+                        setHandleAudioBecomingNoisy(true)
+                        playWhenReady = true
+                        //  setWakeMode(C.WAKE_MODE_NETWORK)
+                        prepare(audioSource, true, false)
+                    }
+                }
             }
-            player?.run {
-                val audioSource = VideoDownloadController.getInstance().getMediaSource(uri)
-                setHandleAudioBecomingNoisy(true)
-                playWhenReady = true
-                //  setWakeMode(C.WAKE_MODE_NETWORK)
-                prepare(audioSource, true, false)
-            }
+            seekTo(lastPosition)
+            timeHandler.post(timeRunnable)
+        }catch (e:Exception){
+            e.printStackTrace()
         }
-        seekTo(lastPosition)
-        timeHandler.post(timeRunnable)
     }
 
 

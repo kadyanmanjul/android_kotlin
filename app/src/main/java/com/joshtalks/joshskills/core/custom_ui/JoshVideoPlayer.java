@@ -309,8 +309,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void play() {
         if (uri == null || player == null)
             return;
-        player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false);
-
+        try {
+            if (VideoDownloadController.getInstance().getMediaSource(uri)!=null){
+                player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void supportFullScreen() {
@@ -401,11 +406,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 if (haveStartPosition) {
                     player.seekTo(startWindow, currentPosition);
                 }
-                MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
 
-                player.setHandleAudioBecomingNoisy(true);
-                player.prepare(audioSource, true, false);
-                player.setPlayWhenReady(true);
+                MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
+                if (audioSource!=null){
+                    player.setHandleAudioBecomingNoisy(true);
+                    player.prepare(audioSource, true, false);
+                    player.setPlayWhenReady(true);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -425,16 +432,22 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public void downloadStreamButNotPlay() {
-        if (player != null) {
-            boolean haveStartPosition = startWindow != C.INDEX_UNSET;
-            if (haveStartPosition) {
-                player.seekTo(startWindow, currentPosition);
-            }
+        try {
+            if (player != null) {
+                boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+                if (haveStartPosition) {
+                    player.seekTo(startWindow, currentPosition);
+                }
 
-            MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
-            player.setHandleAudioBecomingNoisy(true);
-            player.prepare(audioSource, true, false);
-            player.setPlayWhenReady(false);
+                MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
+                if (audioSource!=null){
+                    player.setHandleAudioBecomingNoisy(true);
+                    player.prepare(audioSource, true, false);
+                    player.setPlayWhenReady(false);
+                }
+            }
+        }catch (Exception ex){
+
         }
     }
 

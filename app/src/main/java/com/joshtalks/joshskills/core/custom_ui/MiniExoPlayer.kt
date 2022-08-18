@@ -321,17 +321,23 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     }
 
     private fun initVideo() {
-        uri?.let {
-            player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri))
-            logVideoPlayedEvent(false)
+        try {
+            if (VideoDownloadController.getInstance().getMediaSource(uri)!=null){
+                uri?.let {
+                    player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri))
+                    logVideoPlayedEvent(false)
+                }
+                player?.playWhenReady = true
+                player?.playbackState
+                duration[tag]?.run {
+                    lastPosition = this
+                    seekTo(lastPosition)
+                }
+                timeHandler.post(timeRunnable)
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
         }
-        player?.playWhenReady = true
-        player?.playbackState
-        duration[tag]?.run {
-            lastPosition = this
-            seekTo(lastPosition)
-        }
-        timeHandler.post(timeRunnable)
     }
 
     private fun logVideoPlayedEvent(videoResumed: Boolean) {
