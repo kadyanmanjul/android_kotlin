@@ -770,19 +770,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="replace">
-            <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
-                android:value="androidx.startup" />
-            <meta-data
-                android:name="androidx.work.WorkManagerInitializer"
-                android:value="androidx.startup"
-                tools:node="remove" />
-        </provider>
-        <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${file_provider}.provider"
             android:exported="false"

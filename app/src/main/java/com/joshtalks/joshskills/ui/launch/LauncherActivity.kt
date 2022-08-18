@@ -25,11 +25,13 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
+import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -38,6 +40,8 @@ import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -60,16 +64,26 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel.initApp()
-        initiateLibraries()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        AppObjectController.initFirebaseRemoteConfig()
+        AppObjectController.configureCrashlytics()
+        viewModel.initApp()
+        initiateLibraries()
+        WorkManagerAdmin.runMemoryManagementWorker()
         LogSaver.startSavingLog() // to save logs in external storage
         animatedProgressBar()
         handleIntent()
         setObservers()
         initSingularSDK()
         viewModel.addAnalytics()
+        AppObjectController.getNewArchVoipFlag()
+        AppObjectController.initObjectInThread()
+        VoipPref.initVoipPref(this)
+        PstnObserver
+        AppObjectController.initMoEngage()
+        AppObjectController.initGroups()
+        AppObjectController.registerBroadcastReceiver()
     }
 
     @Synchronized

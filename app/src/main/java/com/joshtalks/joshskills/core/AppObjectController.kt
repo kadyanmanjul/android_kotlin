@@ -1,13 +1,18 @@
 package com.joshtalks.joshskills.core
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.work.ListenableWorker
 import com.airbnb.lottie.L
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -51,6 +56,11 @@ import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
+import com.moengage.core.DataCenter
+import com.moengage.core.MoEngage
+import com.moengage.core.config.MiPushConfig
+import com.moengage.core.config.NotificationConfig
+import com.moengage.core.enableAdIdTracking
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -58,12 +68,15 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.userexperior.UserExperior
+import com.vanniktech.emoji.EmojiManager
+import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -103,15 +116,11 @@ class AppObjectController {
     companion object {
 
         @JvmStatic
-        var INSTANCE: AppObjectController = AppObjectController()
-
-        @JvmStatic
         lateinit var joshApplication: JoshApplication
         //private set
 
         @JvmStatic
-        lateinit var appDatabase: AppDatabase
-            private set
+        val appDatabase: AppDatabase by lazy { AppDatabase.getDatabase(joshApplication)!! }
 
         val gsonMapper: Gson by lazy {
             GsonBuilder()
@@ -135,6 +144,14 @@ class AppObjectController {
                 .serializeNulls()
                 .create()
         }
+
+        private var isRemoteConfigInitialize = false
+        private var isCrashAnalyticsInitialize = false
+        private var isFontsInitialize = false
+        private var isMoEngageInitialize = false
+        private var isGroupInitialize = false
+        private var isObservingFirestore = false
+        private var isListeningBroadCast = false
 
         @JvmStatic
         val gsonMapperForLocal: Gson by lazy {
@@ -283,10 +300,6 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        lateinit var firebaseAnalytics: FirebaseAnalytics
-            private set
-
-        @JvmStatic
         var freshChat: Freshchat? = null
             private set
 
@@ -308,28 +321,45 @@ class AppObjectController {
 
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
-        fun initLibrary(context: Context): AppObjectController {
-            CoroutineScope(Dispatchers.IO).launch {
-                joshApplication = context as JoshApplication
-                appDatabase = AppDatabase.getDatabase(context)!!
-                firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-                firebaseAnalytics.setAnalyticsCollectionEnabled(true)
-                // TODO: Should run once
-                initFirebaseRemoteConfig()
-                // TODO: ***Needed***
-                configureCrashlytics()
-                initFonts()
+        fun initMoEngage() {
+            if(isMoEngageInitialize.not()) {
+                val moEngage = MoEngage.Builder(joshApplication, "DU9ICNBN2A9TTT38BS59KEU6")
+                    .setDataCenter(DataCenter.DATA_CENTER_3)
+                    .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
+                    .configureNotificationMetaData(
+                        NotificationConfig(
+                            R.drawable.ic_status_bar_notification,
+                            R.mipmap.ic_launcher_round
+                        )
+                    )
+                    .build()
 
-                // TODO: No need of worker - We need it just to fire an API so get it before that
-                WorkManagerAdmin.deviceIdGenerateWorker()
-                // TODO: Can Differ
-                WorkManagerAdmin.runMemoryManagementWorker()
-
-                getNewArchVoipFlag()
-                initObjectInThread(context)
+                MoEngage.initialiseDefaultInstance(moEngage)
+                enableAdIdTracking(joshApplication)
+                isMoEngageInitialize = true
             }
-            return INSTANCE
         }
+
+        fun generateDeviceId() {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    if (PrefManager.getStringValue(USER_UNIQUE_ID).isBlank()) {
+                        delay(200)
+                    }
+                    if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
+                        val response = signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
+                        if (response.isSuccessful && response.body() != null) {
+                            PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
+                            Branch.getInstance().setIdentity(response.body()!!.gaID)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    LogException.catchException(e)
+                    e.printStackTrace()
+                }
+            }
+        }
+
 
         fun init(context: JoshApplication) {
             joshApplication = context
@@ -344,35 +374,120 @@ class AppObjectController {
             }
         }
 
+        fun registerBroadcastReceiver() {
+            if(isListeningBroadCast.not()) {
+                val intentFilter = IntentFilter()
+//        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+                intentFilter.addAction(Intent.ACTION_USER_PRESENT)
+                intentFilter.addAction(Intent.ACTION_SCREEN_ON)
+                intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    intentFilter.addAction(Intent.ACTION_USER_UNLOCKED)
+                }
+//        registerReceiver(ServiceStartReceiver(), intentFilter)
+
+                JoshSkillExecutors.BOUNDED.submit {
+                    if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
+                        val intentFilterRestoreID =
+                            IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED)
+                        getLocalBroadcastManager().registerReceiver(
+                            restoreIdReceiver,
+                            intentFilterRestoreID
+                        )
+                    }
+                }
+                JoshSkillExecutors.BOUNDED.submit {
+                    val intentFilterUnreadMessages =
+                        IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
+                    getLocalBroadcastManager().registerReceiver(
+                        unreadCountChangeReceiver,
+                        intentFilterUnreadMessages
+                    )
+                }
+                isListeningBroadCast = true
+            }
+        }
+
+
+
+        var unreadCountChangeReceiver: BroadcastReceiver =
+            object : BroadcastReceiver() {
+                override fun onReceive(
+                    context: Context,
+                    intent: Intent
+                ) {
+                    getUnreadFreshchatMessages()
+                }
+            }
+
+        var restoreIdReceiver: BroadcastReceiver =
+            object : BroadcastReceiver() {
+                override fun onReceive(
+                    context: Context,
+                    intent: Intent
+                ) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val restoreId = AppObjectController.freshChat?.user?.restoreId ?: EMPTY
+                            if (restoreId.isBlank().not()) {
+                                PrefManager.put(RESTORE_ID, restoreId)
+                                val requestMap = mutableMapOf<String, String?>()
+                                requestMap["restore_id"] = restoreId
+                                AppObjectController.commonNetworkService.postFreshChatRestoreIDAsync(
+                                    PrefManager.getStringValue(USER_UNIQUE_ID),
+                                    requestMap
+                                )
+                            }
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+                }
+            }
+
+        fun getLocalBroadcastManager(): LocalBroadcastManager {
+            return LocalBroadcastManager.getInstance(joshApplication)
+        }
+
         fun observeFirestore() {
             try {
-                FirestoreNotificationDB.setNotificationListener(listener = object :
-                    NotificationListener {
-                    override fun onReceived(fNotification: FirestoreNewNotificationObject) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val isFistTimeNotification = NotificationAnalytics().addAnalytics(
-                                notificationId = fNotification.id.toString(),
-                                mEvent = NotificationAnalytics.Action.RECEIVED,
-                                channel = NotificationAnalytics.Channel.FIRESTORE
-                            )
-                            if (isFistTimeNotification) {
-                                try {
-                                    val nc =
-                                        fNotification.toNotificationObject(fNotification.id.toString())
-                                    NotificationUtils(joshApplication).sendNotification(nc)
-                                } catch (ex: java.lang.Exception) {
-                                    ex.printStackTrace()
+                if(isObservingFirestore.not()) {
+                    FirestoreNotificationDB.setNotificationListener(listener = object :
+                        NotificationListener {
+                        override fun onReceived(fNotification: FirestoreNewNotificationObject) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val isFistTimeNotification = NotificationAnalytics().addAnalytics(
+                                    notificationId = fNotification.id.toString(),
+                                    mEvent = NotificationAnalytics.Action.RECEIVED,
+                                    channel = NotificationAnalytics.Channel.FIRESTORE
+                                )
+                                if (isFistTimeNotification) {
+                                    try {
+                                        val nc =
+                                            fNotification.toNotificationObject(fNotification.id.toString())
+                                        NotificationUtils(joshApplication).sendNotification(nc)
+                                    } catch (ex: java.lang.Exception) {
+                                        ex.printStackTrace()
+                                    }
                                 }
                             }
                         }
-                    }
-                })
+                    })
+                    isObservingFirestore = true
+                }
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
         }
 
-        private fun getNewArchVoipFlag() {
+        fun initGroups() {
+            if(isGroupInitialize.not()) {
+                EmojiManager.install(IosEmojiProvider())
+                isGroupInitialize = true
+            }
+        }
+
+        fun getNewArchVoipFlag() {
             try {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
@@ -452,18 +567,21 @@ class AppObjectController {
             }
         }
 
-        private fun initFonts() {
+        fun initFonts() {
             CoroutineScope(Dispatchers.IO).launch {
-                ViewPump.init(
-                    ViewPump.builder().addInterceptor(
-                        CalligraphyInterceptor(
-                            CalligraphyConfig.Builder()
-                                .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
-                                .setFontAttrId(R.attr.fontPath)
-                                .build()
-                        )
-                    ).build()
-                )
+                if(isFontsInitialize.not()) {
+                    isFontsInitialize = true
+                    ViewPump.init(
+                        ViewPump.builder().addInterceptor(
+                            CalligraphyInterceptor(
+                                CalligraphyConfig.Builder()
+                                    .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                                    .setFontAttrId(R.attr.fontPath)
+                                    .build()
+                            )
+                        ).build()
+                    )
+                }
             }
         }
 
@@ -472,19 +590,27 @@ class AppObjectController {
             return aURL.host
         }
 
-        private fun initFirebaseRemoteConfig() {
+        // TODO: Need to be test the logic if internet is offline
+        fun initFirebaseRemoteConfig() {
             CoroutineScope(Dispatchers.IO).launch {
-                val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder()
-                    .setMinimumFetchIntervalInSeconds(60 * 3600)
-                getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
-                getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
-                getFirebaseRemoteConfig().fetchAndActivate()
+                if(isRemoteConfigInitialize.not()) {
+                    isRemoteConfigInitialize = true
+                    val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(60 * 3600)
+                    getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
+                    getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
+                    getFirebaseRemoteConfig().fetchAndActivate().addOnFailureListener {
+                        isRemoteConfigInitialize = false
+                    }
+                }
             }
         }
 
-        private fun configureCrashlytics() {
+        fun configureCrashlytics() {
             CoroutineScope(Dispatchers.IO).launch {
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+                if(isCrashAnalyticsInitialize.not()) {
+                    isCrashAnalyticsInitialize = true
+                    FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+                }
             }
         }
 
@@ -606,7 +732,7 @@ class AppObjectController {
             return "${joshApplication.cacheDir}/${JOSH_SKILLS_CACHE}"
         }
 
-        private fun initObjectInThread(context: Context) {
+        fun initObjectInThread() {
             Log.i(TAG, "initObjectInThread: ")
             Thread {
                 DateTimeUtils.setTimeZone("UTC")
@@ -616,7 +742,7 @@ class AppObjectController {
                 } catch (ex: Exception) {
                     Log.e("AppObjectController", "initObjectInThread: referrer")
                 }
-                InstallReferralUtil.installReferrer(context)
+                InstallReferralUtil.installReferrer(joshApplication)
             }.start()
         }
 
@@ -669,12 +795,6 @@ inline fun Request.safeCall(block: (Request) -> Response): Response {
         return block(this)
     } catch (e: Exception) {
         e.printStackTrace()
-        try {
-            FirebaseCrashlytics.getInstance().log(this.toString())
-            FirebaseCrashlytics.getInstance().recordException(e)
-        } catch (t: Throwable) {
-            t.printStackTrace()
-        }
         if (e is IOException) {
             val msg = "Unable to make a connection. Please check your internet"
             return Response.Builder()

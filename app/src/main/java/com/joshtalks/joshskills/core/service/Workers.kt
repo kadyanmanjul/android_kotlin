@@ -22,6 +22,7 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
@@ -117,7 +118,8 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         AppObjectController.facebookEventLogger.flush()
-        AppObjectController.firebaseAnalytics.resetAnalyticsData()
+
+        FirebaseAnalytics.getInstance(AppObjectController.joshApplication).resetAnalyticsData()
         AppObjectController.getFetchObject().awaitFinish()
         AppObjectController.isSettingUpdate = false
         if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {

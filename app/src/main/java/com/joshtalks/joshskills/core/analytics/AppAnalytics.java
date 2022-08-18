@@ -49,6 +49,7 @@ public class AppAnalytics {
             try {
                 if (firebaseAnalytics == null) {
                     firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
+                    firebaseAnalytics.setAnalyticsCollectionEnabled(true);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
