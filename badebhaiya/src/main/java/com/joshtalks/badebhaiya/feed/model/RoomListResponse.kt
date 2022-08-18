@@ -59,7 +59,7 @@ data class RoomListResponseItem(
     @SerializedName("previous_room_id")
     val previousRoomId: Int,
     @SerializedName("previous_room_topic")
-    val previousRoomTopic: String,
+    val previousRoomTopic: String?="",
     var conversationRoomQuestionId: Int? = null,
     var conversationRoomType: ConversationRoomType? = null,
     @SerializedName("users_count")
@@ -110,6 +110,14 @@ data class RecordedResponseList(
     @SerializedName("recorded_data")
     val recordings:List<RoomListResponseItem>
 )
+
+data class GuestUser(
+    @SerializedName("user_id")
+    val userId:String,
+    @SerializedName("token")
+    val token:String
+)
+
 @Parcelize
 data class RecordedResponse(
     @SerializedName("id")

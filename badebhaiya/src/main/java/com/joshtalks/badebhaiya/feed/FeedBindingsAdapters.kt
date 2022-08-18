@@ -120,7 +120,7 @@ fun setConversationRoomCardActionButton(
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.record_play_button_color))
             view.setOnSingleClickListener() {
-                callback?.playRoom(roomListResponseItem, view)
+                callback?.playRoom(roomListResponseItem)
             }
         }
 

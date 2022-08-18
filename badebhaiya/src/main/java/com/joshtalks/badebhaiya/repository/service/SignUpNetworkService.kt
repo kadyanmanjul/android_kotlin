@@ -1,15 +1,12 @@
 package com.joshtalks.badebhaiya.repository.service
 
-import com.joshtalks.badebhaiya.feed.model.Users
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.repository.model.LastLoginRequest
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.signup.response.BBtoFollow
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
 import com.joshtalks.badebhaiya.signup.response.OTPResponse
-import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
 

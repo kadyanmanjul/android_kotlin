@@ -37,7 +37,6 @@
                 app:cornerRadius="@dimen/_24sdp"
                 android:layout_height="@dimen/_56sdp"
                 android:layout_gravity="center"
-                android:background="@color/conversation_room_gray"
                 android:scaleType="fitXY"
                 app:shapeAppearanceOverlay="@style/roundedCornersImageView_26dp" />
 

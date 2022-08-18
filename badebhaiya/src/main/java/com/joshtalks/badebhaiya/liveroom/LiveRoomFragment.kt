@@ -238,6 +238,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             val list = it.toList()
             Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IS => $list")
             audienceAdapter?.submitList(list)
+
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()
@@ -249,9 +250,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         })
 
         vm.speakersList.observe(this, androidx.lifecycle.Observer { list ->
-            lifecycleScope.launch {
+
                 speakerAdapter?.updateFullList(list)
-            }
+
         })
 
         vm.liveRoomState.observe(this){
@@ -789,11 +790,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         handRaiseBtn.visibility = View.VISIBLE
                         handUnraiseBtn.visibility = View.GONE
 
-                        for(i in audienceAdapter!!.currentList)
-                            if(i.userId==User.getInstance().userId) {
-                                val pos=audienceAdapter!!.currentList.indexOf(i)
-                                listener__recycler_view[pos].raised_hands.visibility= View.VISIBLE
-                            }
+//                        for(i in audienceAdapter!!.currentList)
+//                            if(i.userId==User.getInstance().userId) {
+//                                val pos=audienceAdapter!!.currentList.indexOf(i)
+//                                listener__recycler_view[pos].raised_hands.visibility= View.VISIBLE
+//                            }
 
 
                     }
@@ -809,11 +810,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     binding.apply {
                         handRaiseBtn.visibility = View.GONE
                         handUnraiseBtn.visibility = View.VISIBLE
-                        for(i in audienceAdapter!!.currentList)
-                            if(i.userId==User.getInstance().userId) {
-                                 val pos=audienceAdapter!!.currentList.indexOf(i)
-                                listener__recycler_view[pos].raised_hands.visibility=View.GONE
-                            }
+//                        for(i in audienceAdapter!!.currentList)
+//                            if(i.userId==User.getInstance().userId) {
+//                                 val pos=audienceAdapter!!.currentList.indexOf(i)
+//                                listener__recycler_view[pos].raised_hands.visibility=View.GONE
+//                            }
                     }
                 }
             }

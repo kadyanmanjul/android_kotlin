@@ -9,9 +9,11 @@ enum class PendingPilotEvent {
     FOLLOW,
     REQUEST_ROOM,
     SET_REMINDER,
+    JOIN_ROOM
 }
 
 data class PendingPilotEventData(
     val roomId: Int? = null,
-    val pilotUserId: String
+    val pilotUserId: String,
+    val roomTopic:String? =null
 )

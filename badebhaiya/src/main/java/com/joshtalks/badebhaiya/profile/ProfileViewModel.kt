@@ -29,6 +29,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ProfileViewModel : ViewModel() {
+    var source = ""
+
     //val userIdForOpenedProfile = MutableLiveData<String>()
     private val service = RetrofitInstance.profileNetworkService
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
@@ -101,9 +103,10 @@ class ProfileViewModel : ViewModel() {
                         if (response.isSuccessful) {
                             speakerFollowed.value = true
                             userProfileData.value?.followersCount = userProfileData.value?.followersCount?.plus(1) ?: 0
+                            getProfileForUser(userId)
                         }
                     } catch (ex: Exception) {
-
+                        speakerFollowed.postValue(false)
                     }
                 }
             }
@@ -118,9 +121,12 @@ class ProfileViewModel : ViewModel() {
                         {
                             speakerFollowed.value=false
                             userProfileData.value?.followersCount=userProfileData.value?.followersCount?.minus(1)?:0
+                            getProfileForUser(userId)
+
                         }
                     }
                     catch (ex:Exception){
+                        speakerFollowed.postValue(true)
 
                     }
 
@@ -145,7 +151,7 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun getProfileForUser(userId: String, source: String) {
+    fun getProfileForUser(userId: String, source: String = this.source) {
         if(!User.getInstance().isLoggedIn()){
             CoroutineScope(Dispatchers.IO).launch {
                 try {

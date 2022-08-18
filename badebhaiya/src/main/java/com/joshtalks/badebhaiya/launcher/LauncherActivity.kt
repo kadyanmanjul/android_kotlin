@@ -44,8 +44,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         setContentView(R.layout.activity_launcher)
         appUpdater.checkAndUpdate(this)
 
-
-        if (User.getInstance().isLoggedIn())
+        if (!User.getInstance().isGuestUser)
             BBRepository().lastLogin()
 
         UserExperior.startRecording(getApplicationContext(), BuildConfig.USER_EXPERIOR_API_KEY)
@@ -111,9 +110,10 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         }.withData(this.intent.data).init()*/
     }
 
-    private fun startActivityForState(viewUserId: String? = null, request_dialog: Boolean?=false) {
+    private fun startActivityForState(viewUserId: String? = null, request_dialog: Boolean?=false, room_id:Int?=null) {
+        Log.i("CHECKGUEST", "startActivityForState: $viewUserId ------$room_id")
         val intent: Intent = when {
-            User.getInstance().userId.isNotBlank() -> {
+            !User.getInstance().isGuestUser -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {
                     SignUpActivity.start(this, REDIRECT_TO_ENTER_NAME)
                     overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
@@ -131,18 +131,21 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
 //                val intent = Intent(this@LauncherActivity, ProfileViewTestActivity::class.java)
                 intent.putExtra("userId", viewUserId)
                 intent.putExtra("request_dialog",request_dialog)
+                intent.putExtra("room_id", room_id)
                 intent
             }
             else -> {
                 // User is not logged in.
 
-                if (viewUserId != null) {
+                if (viewUserId != null || room_id!=null) {
+                    Log.i("CHECKGUEST", "startActivityForState: checkpint 1")
                     // came by deeplink.. redirect to profile
                     val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
 //                    val intent = Intent(this@LauncherActivity, ProfileViewTestActivity::class.java)
                     intent.putExtra("userId", viewUserId)
                     intent.putExtra("profile_deeplink", true)
                     intent.putExtra("request_dialog",request_dialog)
+                    intent.putExtra("room_id", room_id)
                     intent
 
                 } else {
@@ -184,7 +187,10 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 "YASH => onInitFinished: $referringParams"
             )
             referringParams?.let {
-                Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
+                Log.d("CHECKGUEST", "branch json data => ${it}")
+
+                if(it.has("is_recorded_room")) {//TODO:-identification for type of deeplink
+                     }
 
                 startActivityForState(
                     if (it.has("user_id"))
@@ -192,6 +198,10 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                     else null,
                     if (it.has("request_dialog"))
                         it.getBoolean("request_dialog")
+                    else null,
+                    if (it.has("recorded_room_id")) {
+                        it.get("recorded_room_id").toString().toInt()
+                    }
                     else null
                 )
 

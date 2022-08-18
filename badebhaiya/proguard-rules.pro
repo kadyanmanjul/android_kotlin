@@ -176,3 +176,7 @@
 ##---------------End: proguard configuration for Gson  ----------
 
 -keep class info.jasonni.retrofitdemo.bean.** { *; }
+
+-keepclassmembers class com.dd.StrokeGradientDrawable {
+    public void setStrokeColor(int);
+}

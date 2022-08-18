@@ -72,7 +72,6 @@
             android:gravity="center"
             android:onClick="@{() -> handler.updateFollowStatus()}"
             android:text="@string/follow"
-            android:elevation="@dimen/_4sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/follow_button_stroke"
             android:textSize="@dimen/_12ssp"
@@ -84,25 +83,69 @@
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:layout_constraintVertical_bias="1.0" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/request_count_number"
-            android:layout_width="wrap_content"
+        <ProgressBar
+            android:id="@+id/followProgress"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/btnFollow"
+            app:layout_constraintEnd_toEndOf="@+id/btnFollow"
+            app:layout_constraintStart_toStartOf="@+id/btnFollow"
+            app:layout_constraintTop_toTopOf="@+id/btnFollow" />
+
+
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/request_count_number"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginHorizontal="@dimen/_2sdp"-->
+<!--            android:background="@drawable/request_count_badge"-->
+<!--            android:elevation="@dimen/_5sdp"-->
+<!--            android:gravity="right"-->
+<!--            android:paddingHorizontal="@dimen/_7sdp"-->
+<!--            android:layout_marginBottom="@dimen/_15sdp"-->
+<!--            android:layout_marginStart="@dimen/_107sdp"-->
+<!--            android:paddingVertical="@dimen/_3sdp"-->
+<!--            android:textAppearance="@style/BB_Typography_Nunito_Bold"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="@dimen/_10sdp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/btnFollow"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/callRequestsBtnRoot"-->
+<!--            tools:text="39"-->
+<!--            tools:visibility="visible" />-->
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="22dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/_107sdp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="@dimen/_15sdp"
+            android:shape="ring"
             android:layout_marginHorizontal="@dimen/_2sdp"
-            android:layout_marginVertical="@dimen/_8sdp"
-            android:background="@drawable/request_count_badge"
-            android:elevation="@dimen/_5sdp"
-            android:gravity="right"
-            android:paddingHorizontal="@dimen/_7sdp"
-            android:paddingVertical="@dimen/_3sdp"
-            android:textAppearance="@style/BB_Typography_Nunito_Bold"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_10sdp"
-            app:layout_constraintBottom_toTopOf="@+id/btnFollow"
-            app:layout_constraintEnd_toEndOf="@+id/callRequestsBtnRoot"
-            tools:text="39"
-            tools:visibility="visible" />
+            app:cardCornerRadius="@dimen/_15sdp"
+            android:id="@+id/request_count_view"
+            app:layout_constraintStart_toStartOf="@id/callRequestsBtnRoot"
+            app:layout_constraintBottom_toBottomOf="@id/btnFollow"
+            app:cardBackgroundColor="#FF4963"
+            tools:visibility="visible"
+            >
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/request_count_number"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:elevation="@dimen/_5sdp"
+                android:textAlignment="center"
+                android:padding="@dimen/_3sdp"
+                android:textAppearance="@style/BB_Typography_Nunito_Bold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_8sdp"
+                tools:text="9+"
+                />
+
+        </androidx.cardview.widget.CardView>
 
         <ProgressBar
             android:id="@+id/progress_profile"

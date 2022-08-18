@@ -36,9 +36,6 @@ class WaitingCallback: SubscribeCallback() {
                 )
                 var mess=Message()
                 mess.what=JOINED
-                PubNubManager.postToSpeakerStatus(
-                    mess
-                )
             }
         } catch (ex: Exception) {
             LogException.catchException(ex)

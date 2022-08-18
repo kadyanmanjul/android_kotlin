@@ -1,13 +1,18 @@
 package com.joshtalks.badebhaiya.repository
 
+import android.util.Log
+import com.joshtalks.badebhaiya.feed.model.RecordedResponseList
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.impressions.Records
 import com.joshtalks.badebhaiya.impressions.UserRecords
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
+import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
+import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.ConversationRoomNetworkService
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import retrofit2.Response
 
 class ConversationRoomRepository {
 
@@ -16,7 +21,7 @@ class ConversationRoomRepository {
     suspend fun getRoomList() =
         service.getRoomList()
 
-    suspend fun getRecordsList()=service.getRecordsList()
+    suspend fun getRecordsList(roomId: Int?=null)=service.getRecordList(roomId)
 
     suspend fun userRoomRecord(id:Int, user:String)=service.userRoomRecord(UserRecords(id, user))
 
@@ -54,5 +59,7 @@ class ConversationRoomRepository {
     suspend fun sendEvent(impression:Impression)=service.sendEvent(impression)
 
     suspend fun requestUploadRoomRecording( record:Records)=service.requestUploadRoomRecording(record)
+
+    suspend fun createGuestUser()=service.createGuestUser()
 
 }

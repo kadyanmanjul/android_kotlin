@@ -107,12 +107,16 @@ class RecordedRoomFragment : Fragment() {
                 bundle.putParcelable(ROOM_DATA,room)
                 fragment.arguments = bundle
 
-            activity
-                .supportFragmentManager
-                .beginTransaction()
-                .add(R.id.feedRoot, fragment, TAG)
-                .addToBackStack(TAG)
-                .commit()
+//           try {
+               activity
+                   .supportFragmentManager
+                   .beginTransaction()
+                   .replace(R.id.feedRoot, fragment, TAG)
+                   .addToBackStack(TAG)
+                   .commit()
+//           } catch (e: Exception){
+//               showToast("Something Went Wrong")
+//           }
         }
     }
 
@@ -505,7 +509,7 @@ class RecordedRoomFragment : Fragment() {
     }
 
     fun openListenersList(){
-        ListenersListFragment.open(supportFragmentManager = requireActivity().supportFragmentManager, R.id.fragmentContainer, roomData!!.roomId)
+        ListenersListFragment.open(supportFragmentManager = requireActivity().supportFragmentManager, R.id.fragmentContainer, roomData?.roomId!!)
     }
 
 }

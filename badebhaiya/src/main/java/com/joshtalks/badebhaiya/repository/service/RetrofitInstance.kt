@@ -26,10 +26,10 @@ import java.util.concurrent.TimeUnit
 import timber.log.Timber
 
 const val KEY_AUTHORIZATION = "Authorization"
-private const val READ_TIMEOUT = 50L
-private const val WRITE_TIMEOUT = 30L
-private const val CONNECTION_TIMEOUT = 30L
-private const val CALL_TIMEOUT = 60L
+private const val READ_TIMEOUT = 500L
+private const val WRITE_TIMEOUT = 300L
+private const val CONNECTION_TIMEOUT = 300L
+private const val CALL_TIMEOUT = 600L
 
 class RetrofitInstance {
 
@@ -90,7 +90,7 @@ class RetrofitInstance {
                 builder.addNetworkInterceptor(getStethoInterceptor())
             }
             Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
+                .baseUrl("http://bbapp-stg.joshtalks.org:9013")
                 .client(builder.build())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gsonMapper))
@@ -118,9 +118,9 @@ class RetrofitInstance {
 
         val mediaDUNetworkService by lazy {
             val mediaOkhttpBuilder = OkHttpClient().newBuilder()
-            mediaOkhttpBuilder.connectTimeout(320L, TimeUnit.SECONDS)
-                .writeTimeout(320L, TimeUnit.SECONDS)
-                .readTimeout(320L, TimeUnit.SECONDS)
+            mediaOkhttpBuilder.connectTimeout(500L, TimeUnit.SECONDS)
+                .writeTimeout(500L, TimeUnit.SECONDS)
+                .readTimeout(500L, TimeUnit.SECONDS)
                 .followRedirects(true)
             //                .addInterceptor(StatusCodeInterceptor())
 

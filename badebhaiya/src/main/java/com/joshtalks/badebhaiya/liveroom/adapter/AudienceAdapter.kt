@@ -23,17 +23,17 @@ class AudienceAdapter(
         Timber.tag("localuser").d("AUDIENCE ADAPTER INIT CALLED")
     }
     private var listenerUserAction: OnUserItemClickListener? = null
-    val handRaisedList: ArrayList<LiveRoomUser> = arrayListOf()
-    fun updateFullList(newList: List<LiveRoomUser>) {
-        Timber.d("AUDIENCE LIST IN ADAPTER => $newList")
-        val diffCallback = ConversationUserDiffCallback(handRaisedList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        handRaisedList.clear()
-        handRaisedList.addAll(newList)
-        Timber.d("AUDEN")
-        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER AFTER DOING DIFFUTIL CALCULATION => $newList")
-        diffResult.dispatchUpdatesTo(this)
-    }
+//    val handRaisedList: ArrayList<LiveRoomUser> = arrayListOf()
+//    fun updateFullList(newList: List<LiveRoomUser>) {
+//        Timber.d("AUDIENCE LIST IN ADAPTER => $newList")
+//        val diffCallback = ConversationUserDiffCallback(handRaisedList, newList)
+//        val diffResult = DiffUtil.calculateDiff(diffCallback)
+//        handRaisedList.clear()
+//        handRaisedList.addAll(newList)
+//        Timber.d("AUDEN")
+//        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER AFTER DOING DIFFUTIL CALCULATION => $newList")
+//        diffResult.dispatchUpdatesTo(this)
+//    }
 
 
     inner class SpeakerViewHolder(val binding: LiAudienceItemBinding) :
@@ -92,26 +92,14 @@ class AudienceAdapter(
 
 class AudienceDiffUtil : DiffUtil.ItemCallback<LiveRoomUser>() {
     override fun areItemsTheSame(oldItem: LiveRoomUser, newItem: LiveRoomUser): Boolean {
-        val itemSame = oldItem.id == newItem.id
+        val itemSame = oldItem.userId == newItem.userId
         Timber.d("IS ITEM SAME => $itemSame")
         return itemSame
     }
 
     override fun areContentsTheSame(oldItem: LiveRoomUser, newItem: LiveRoomUser): Boolean {
-        val contentSame = oldItem.id == newItem.id &&
-                oldItem.userId == newItem.userId &&
-                oldItem.isSpeaker == newItem.isSpeaker &&
-                oldItem.name == newItem.name &&
-                oldItem.fullName == newItem.fullName &&
-                oldItem.photoUrl == newItem.photoUrl &&
-                oldItem.isModerator == newItem.isModerator &&
-                oldItem.isMicOn == newItem.isMicOn &&
-                oldItem.isSpeaking == newItem.isSpeaking &&
-                oldItem.isHandRaised.xor(newItem.isHandRaised) &&
-                oldItem.isInviteSent == newItem.isInviteSent &&
-                oldItem.isSpeakerAccepted == newItem.isSpeakerAccepted
-
+        val contentSame = oldItem == newItem
         Timber.d("IS CONTENT SAME => $contentSame")
-        return contentSame
+        return false
     }
 }
