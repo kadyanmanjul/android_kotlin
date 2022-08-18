@@ -5,11 +5,9 @@ import android.app.ActivityManager
 import android.app.AlarmManager
 import android.app.Application
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.Process
 import android.os.StrictMode
@@ -19,18 +17,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
 import androidx.work.impl.background.greedy.GreedyScheduler
 import com.facebook.stetho.Stetho
-import com.freshchat.consumer.sdk.Freshchat
-import com.google.android.play.core.splitcompat.SplitCompatApplication
-import com.google.firebase.FirebaseApp
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController.Companion.getLocalBroadcastManager
 import com.joshtalks.joshskills.core.AppObjectController.Companion.restoreIdReceiver
 import com.joshtalks.joshskills.core.AppObjectController.Companion.unreadCountChangeReceiver
@@ -40,25 +31,13 @@ import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.Utils
-import com.moengage.core.DataCenter
-import com.moengage.core.MoEngage
-import com.moengage.core.config.MiPushConfig
-import com.moengage.core.config.NotificationConfig
-import com.moengage.core.enableAdIdTracking
-import com.vanniktech.emoji.EmojiManager
-import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.reflect.Method
-import java.util.Calendar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
-
+import java.lang.reflect.Method
+import java.util.*
 
 /**
  * 1. Remove Process for P2P Call
@@ -93,18 +72,15 @@ class JoshApplication :
     override fun onCreate() {
         super.onCreate()
         //enableLog(Feature.VOIP)
-        Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
+        AppObjectController.joshApplication = this
         if (BuildConfig.DEBUG) {
             Branch.enableTestMode()
             Branch.enableLogging()
         }
         Branch.getAutoInstance(this)
-            AppObjectController.joshApplication = this
-            Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
-            turnOnStrictMode()
-            ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
-            Utils.initUtils(this)
-            Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
+        turnOnStrictMode()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
+        Utils.initUtils(this)
     }
 
     override fun onTerminate() {
@@ -263,7 +239,6 @@ class JoshApplication :
             Lifecycle.Event.ON_DESTROY -> {
                 onAppDestroy()
             }
-
         }
     }
 

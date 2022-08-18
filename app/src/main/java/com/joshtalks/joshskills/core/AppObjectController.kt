@@ -12,7 +12,6 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.work.ListenableWorker
 import com.airbnb.lottie.L
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -21,7 +20,6 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.freshchat.consumer.sdk.FreshchatConfig
 import com.freshchat.consumer.sdk.FreshchatNotificationConfig
 import com.freshchat.consumer.sdk.j.af
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -163,7 +161,7 @@ class AppObjectController {
                 .create()
         }
 
-        val builder : OkHttpClient.Builder by lazy {
+        val builder: OkHttpClient.Builder by lazy {
             val builder = OkHttpClient().newBuilder()
                 .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
@@ -322,7 +320,7 @@ class AppObjectController {
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
         fun initMoEngage() {
-            if(isMoEngageInitialize.not()) {
+            if (isMoEngageInitialize.not()) {
                 val moEngage = MoEngage.Builder(joshApplication, "DU9ICNBN2A9TTT38BS59KEU6")
                     .setDataCenter(DataCenter.DATA_CENTER_3)
                     .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
@@ -360,22 +358,18 @@ class AppObjectController {
             }
         }
 
-
-        fun init(context: JoshApplication) {
-            joshApplication = context
+        fun init() {
             CoroutineScope(Dispatchers.IO).launch {
-                // TODO: *** Needed to be checked, Do we need this? ***
                 ActivityLifecycleCallback.register(joshApplication)
                 AppEventsLogger.activateApp(joshApplication)
                 initUserExperionCam()
                 initFacebookService(joshApplication)
-                // TODO: **** Needed ****
                 observeFirestore()
             }
         }
 
         fun registerBroadcastReceiver() {
-            if(isListeningBroadCast.not()) {
+            if (isListeningBroadCast.not()) {
                 val intentFilter = IntentFilter()
 //        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
                 intentFilter.addAction(Intent.ACTION_USER_PRESENT)
@@ -408,24 +402,16 @@ class AppObjectController {
             }
         }
 
-
-
         var unreadCountChangeReceiver: BroadcastReceiver =
             object : BroadcastReceiver() {
-                override fun onReceive(
-                    context: Context,
-                    intent: Intent
-                ) {
+                override fun onReceive(context: Context, intent: Intent) {
                     getUnreadFreshchatMessages()
                 }
             }
 
         var restoreIdReceiver: BroadcastReceiver =
             object : BroadcastReceiver() {
-                override fun onReceive(
-                    context: Context,
-                    intent: Intent
-                ) {
+                override fun onReceive(context: Context, intent: Intent) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val restoreId = AppObjectController.freshChat?.user?.restoreId ?: EMPTY
@@ -451,7 +437,7 @@ class AppObjectController {
 
         fun observeFirestore() {
             try {
-                if(isObservingFirestore.not()) {
+                if (isObservingFirestore.not()) {
                     FirestoreNotificationDB.setNotificationListener(listener = object :
                         NotificationListener {
                         override fun onReceived(fNotification: FirestoreNewNotificationObject) {
@@ -481,7 +467,7 @@ class AppObjectController {
         }
 
         fun initGroups() {
-            if(isGroupInitialize.not()) {
+            if (isGroupInitialize.not()) {
                 EmojiManager.install(IosEmojiProvider())
                 isGroupInitialize = true
             }
@@ -492,7 +478,10 @@ class AppObjectController {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         val resp = p2pNetworkService.getVoipNewArchFlag()
-                        PrefManager.put(SPEED_TEST_FILE_URL, resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg")
+                        PrefManager.put(
+                            SPEED_TEST_FILE_URL,
+                            resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg"
+                        )
                         PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                         PrefManager.put(SPEED_TEST_FILE_SIZE, resp.testFileSize ?: 100)
                         PrefManager.put(IS_GAME_ON, resp.isGameOn ?: 1)
@@ -569,7 +558,7 @@ class AppObjectController {
 
         fun initFonts() {
             CoroutineScope(Dispatchers.IO).launch {
-                if(isFontsInitialize.not()) {
+                if (isFontsInitialize.not()) {
                     isFontsInitialize = true
                     ViewPump.init(
                         ViewPump.builder().addInterceptor(
@@ -593,7 +582,7 @@ class AppObjectController {
         // TODO: Need to be test the logic if internet is offline
         fun initFirebaseRemoteConfig() {
             CoroutineScope(Dispatchers.IO).launch {
-                if(isRemoteConfigInitialize.not()) {
+                if (isRemoteConfigInitialize.not()) {
                     isRemoteConfigInitialize = true
                     val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(60 * 3600)
                     getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
@@ -607,7 +596,7 @@ class AppObjectController {
 
         fun configureCrashlytics() {
             CoroutineScope(Dispatchers.IO).launch {
-                if(isCrashAnalyticsInitialize.not()) {
+                if (isCrashAnalyticsInitialize.not()) {
                     isCrashAnalyticsInitialize = true
                     FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
                 }
@@ -618,9 +607,9 @@ class AppObjectController {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val config = FreshchatConfig(
-                            BuildConfig.FRESH_CHAT_APP_ID,
-                            BuildConfig.FRESH_CHAT_APP_KEY
-                        )
+                        BuildConfig.FRESH_CHAT_APP_ID,
+                        BuildConfig.FRESH_CHAT_APP_KEY
+                    )
                     af.eK()?.let {
                         Freshchat.setImageLoader(
                             it
@@ -808,7 +797,6 @@ inline fun Request.safeCall(block: (Request) -> Response): Response {
     }
 }
 
-
 class StatusCodeInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         return chain.request().safeCall {
@@ -865,4 +853,3 @@ fun getOkhhtpToolInterceptor(): Interceptor {
     val ctor: Constructor<*> = clazz.getConstructor()
     return ctor.newInstance() as Interceptor
 }
-
