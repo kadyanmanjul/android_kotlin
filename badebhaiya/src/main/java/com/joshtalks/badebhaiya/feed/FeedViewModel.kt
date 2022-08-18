@@ -259,27 +259,6 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun createGuestUser(roomId: Int) {
-        viewModelScope.launch{
-            try {
-                val res = repository.createGuestUser()
-                if(res.isSuccessful){
-                    res.body().let {
-                        Log.i("CHECKGUEST", "createGuestUser: inside ${it?.userId}")
-//                        User.getInstance().userId= it?.userId.toString()
-                        it?.userId?.let { it1 -> User(userId = it1, isGuestUser = true) }
-                            ?.let { it2 -> User.getInstance().updateFromResponse(it2) }
-                        it?.token?.let { it1 -> PrefManager.put(API_TOKEN, it1) }
-                    }
-                    Log.i("CHECKGUEST", "createGuestUser: userid->${User.getInstance().userId}  ")
-                    getRecordRoomData(roomId)
-                }
-            } catch (ex: Exception) {
-
-            }
-        }
-    }
-
     fun joinRoom(roomId: String, topic: String, source: String, isRejoin: Boolean = false) {
         Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
 //        pubChannelName = moderatorId

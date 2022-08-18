@@ -191,12 +191,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.roomRequestCount.value=0
         if(roomId!=0)
         {
-            if(User.getInstance().isLoggedIn())
                 viewModel.getRecordRoomData(roomId)
-            else {
-                viewModel.createGuestUser(roomId)
-
-            }
         }
         else  if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
@@ -208,8 +203,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         } else if (SingleDataManager.pendingPilotAction != null) {
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true, requestDialog)
         }
-
-        executePendingActions()
         observerWithoutLogin()
         requestDialog=false
         if (User.getInstance().isLoggedIn()) {
@@ -233,6 +226,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             })
             checkAndOpenLiveRoom()
         }
+        executePendingActions()
 
 
     }
@@ -589,7 +583,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     private fun executePendingActions() {
         SingleDataManager.pendingPilotAction?.let {
             when (it) {
-
                 PendingPilotEvent.JOIN_ROOM -> takePermissions(
                     SingleDataManager.pendingPilotEventData?.roomId.toString(),
                     SingleDataManager.pendingPilotEventData?.roomTopic,

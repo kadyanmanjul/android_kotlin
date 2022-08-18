@@ -118,6 +118,18 @@ data class GuestUser(
     val token:String
 )
 
+data class LinkUser(
+    @SerializedName("user")
+    val userId: String,
+    @SerializedName("utm_term")
+    val term:String,
+    @SerializedName("utm_medium")
+    val medium:String,
+    @SerializedName("utm_source")
+    val source:String
+
+)
+
 @Parcelize
 data class RecordedResponse(
     @SerializedName("id")

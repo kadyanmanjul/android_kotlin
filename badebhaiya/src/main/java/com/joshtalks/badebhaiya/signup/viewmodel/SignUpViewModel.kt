@@ -121,6 +121,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                     response.body()?.let {
                         PrefManager.put(IS_NEW_USER, it.isUserExist.not())
                         updateUserFromLoginResponse(it)
+                        repository.guestUserId(it.userId)
                     }
 //                    sendEvent(Impression("SIGNUP_VIEW_MODEL","OTP_LOGIN"))
 
@@ -293,6 +294,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 requestTrueUser["device_id"] = Utils.getDeviceId()
                 val response = repository.trueCallerLogin(requestTrueUser)
                 if(response.isSuccessful) {
+                    repository.guestUserId(User.getInstance().userId)
                     response.body()?.let {
                         firstName = user.firstName
                         lastName = user.lastName
