@@ -14,6 +14,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.REASON_GOVT_EXAM_CLICKED
+import com.joshtalks.joshskills.core.REASON_OTHERS_CLICKED
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
@@ -79,7 +81,11 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
                         viewModel.getAvailableCourseGoals()
                     } else {
                         errorView?.get()?.enableRetryBtn()
-                        Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.internet_not_available_msz),
+                            Snackbar.LENGTH_SHORT
+                        )
                             .setAction(getString(R.string.settings)) {
                                 startActivity(
                                     Intent(
@@ -132,7 +138,10 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
 
     fun onGoalSelected(goalSelectionResponse: GoalSelectionResponse) {
         if (goalSelectionResponse.testId != null) {
+            viewModel.saveImpression(REASON_GOVT_EXAM_CLICKED)
             viewModel.postGoal(GoalKeys.GOVT_EXAMS_SELECTED)
+        } else {
+            viewModel.saveImpression(REASON_OTHERS_CLICKED)
         }
         try {
             (requireActivity() as FreeTrialOnBoardActivity).startFreeTrial(

@@ -298,7 +298,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             binding.overlayTooltipLayout.setOnClickListener { showVideoToolTip(false) }
             binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
         }
-        viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
+        viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
         binding.imageViewClose.setOnClickListener {
             closeVideoPopUpUi()
         }
