@@ -5,11 +5,7 @@ import android.app.ActivityManager
 import android.app.AlarmManager
 import android.app.Application
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.ComponentCallbacks2
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Build
 import android.os.Process
 import android.os.StrictMode
@@ -20,15 +16,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
-import androidx.work.Configuration
 import androidx.work.impl.background.greedy.GreedyScheduler
 import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
-import com.google.android.play.core.splitcompat.SplitCompatApplication
 import com.google.firebase.FirebaseApp
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
@@ -49,19 +41,19 @@ import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.reflect.Method
-import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.reflect.Method
+import java.util.*
 
 const val TAG = "JoshSkill"
 
 class JoshApplication :
     MultiDexApplication(),
     LifecycleEventObserver,
-    ComponentCallbacks2, Configuration.Provider {
+    ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
     }
@@ -414,7 +406,7 @@ class JoshApplication :
         return TextUtils.equals(packageName, getProcName())
     }
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder().setMinimumLoggingLevel(Log.VERBOSE).build()
-    }
+//    override fun getWorkManagerConfiguration(): Configuration {
+//        return Configuration.Builder().setMinimumLoggingLevel(Log.VERBOSE).build()
+//    }
 }

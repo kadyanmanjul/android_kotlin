@@ -13,6 +13,6 @@ class JoshWorkManagerInitializer : Initializer<WorkManager> {
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> {
-        return mutableListOf(JoshAppInitializer::class.java)
+        return emptyList()
     }
 }

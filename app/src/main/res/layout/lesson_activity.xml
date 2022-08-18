@@ -657,7 +657,7 @@
                 android:layout_marginTop="@dimen/_minus12sdp"
                 android:layout_marginEnd="@dimen/_minus12sdp"
                 android:elevation="@dimen/_10sdp"
-                android:src="@drawable/ic_cancel_black_24dp__4__1"
+                app:srcCompat="@drawable/ic_cancel_black_24dp__4__1"
                 app:layout_constraintEnd_toEndOf="@id/video_view"
                 app:layout_constraintTop_toTopOf="@id/video_view" />
 

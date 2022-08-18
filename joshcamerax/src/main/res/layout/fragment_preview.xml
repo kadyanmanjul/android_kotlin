@@ -90,7 +90,7 @@
             android:fitsSystemWindows="false"
             android:onClick="@{()->fragment.deleteImage()}"
             android:padding="@dimen/half_margin"
-            android:src="@drawable/ic_delete"
+            app:srcCompat="@drawable/ic_delete"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/imageShare"
             app:layout_constraintEnd_toEndOf="parent"
