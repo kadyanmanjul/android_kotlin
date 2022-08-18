@@ -777,6 +777,10 @@
             <meta-data
                 android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
                 android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
         <provider
             android:name="androidx.core.content.FileProvider"
