@@ -90,7 +90,7 @@ class RetrofitInstance {
                 builder.addNetworkInterceptor(getStethoInterceptor())
             }
             Retrofit.Builder()
-                .baseUrl("http://bbapp-stg.joshtalks.org:9013")
+                .baseUrl(BuildConfig.BASE_URL)
                 .client(builder.build())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gsonMapper))
