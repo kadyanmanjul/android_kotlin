@@ -113,13 +113,9 @@ class CallingRemoteService : Service() {
                 ioScope.launch { mediator.handleIncomingCall(map) }
             }
             SERVICE_ACTION_STOP_SERVICE -> {
-                // TODO: Might Need to refactor
-                if (PrefManager.getVoipState() == State.CONNECTED) {
-                    disconnectCall()
+                CoroutineScope(Dispatchers.IO).launch {
+                    stopService()
                 }
-                ioScope.cancel()
-                syncScope.cancel()
-                stopSelf()
                 return START_NOT_STICKY
             }
             ANALYTICS_EVENT ->{
@@ -165,6 +161,16 @@ class CallingRemoteService : Service() {
             START_STICKY
         else
             intent.initService()
+    }
+
+    private suspend fun stopService() {
+        if (PrefManager.getVoipState() == State.CONNECTED) {
+            disconnectCall()
+        }
+        delay(5000)
+        ioScope.cancel()
+        syncScope.cancel()
+        stopSelf()
     }
 
     fun getUserDetails(): StateFlow<UIState> = mediator.observerUIState()
