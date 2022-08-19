@@ -56,6 +56,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import com.joshtalks.joshskills.base.model.NotificationData as Data
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
@@ -94,7 +95,7 @@ class CallingRemoteService : Service() {
         }
         registerReceivers()
         observerPstnService()
-        observeAudio()
+        resetAudioRoute()
         showNotification()
         Log.d(TAG, "onCreate: Creating Service")
     }
@@ -288,18 +289,19 @@ class CallingRemoteService : Service() {
         }
     }
 
-    private fun observeAudio() {
+    private fun resetAudioRoute() {
+        Log.d(TAG, "observeAudio: called now")
         ioScope.launch {
             try {
-                audioController.observeAudioRoute().collect {
+                audioController.observeAudioRoute().collectLatest {
                     try{
                         Log.d(TAG, "observeAudio: $it")
                         when (it) {
-                            AudioRouteConstants.BluetoothAudio -> {}
-                            AudioRouteConstants.Default -> {}
-                            AudioRouteConstants.EarpieceAudio -> {}
-                            AudioRouteConstants.HeadsetAudio -> {}
-                            AudioRouteConstants.SpeakerAudio -> {}
+                            AudioRouteConstants.BluetoothAudio -> {Log.d(TAG, "observeAudioRoute BluetoothAudio")}
+                            AudioRouteConstants.Default -> {Log.d(TAG, "observeAudioRoute Default" )}
+                            AudioRouteConstants.EarpieceAudio -> {Log.d(TAG, "observeAudioRoute EarpieceAudio")}
+                            AudioRouteConstants.HeadsetAudio -> {Log.d(TAG, "observeAudioRoute HeadsetAudio")}
+                            AudioRouteConstants.SpeakerAudio -> {Log.d(TAG, "observeAudioRoute  SpeakerAudio")}
                         }
                     }
                     catch (e : Exception){
@@ -308,6 +310,8 @@ class CallingRemoteService : Service() {
                         e.printStackTrace()
                     }
                 }
+
+                audioController.resetAudioRoute()
             } catch (e: Exception) {
                 e.printStackTrace()
                 if(e is CancellationException)
@@ -343,6 +347,7 @@ class CallingRemoteService : Service() {
             audioController.switchAudioToSpeaker()
         else
             audioController.switchAudioToDefault()
+
         mediator.userAction(if(isSpeakerOn) Action.SPEAKER_ON else Action.SPEAKER_OFF)
     }
 
