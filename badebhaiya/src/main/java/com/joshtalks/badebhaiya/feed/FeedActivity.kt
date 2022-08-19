@@ -247,6 +247,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun onResume() {
         super.onResume()
+        binding.profileIv.setUrlAndName(User.getInstance().profilePicUrl, User.getInstance().firstName)
 //        viewModel.getRoomRequestCount()
         PendingActionsManager.performPendingAction()
 

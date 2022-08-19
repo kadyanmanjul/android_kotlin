@@ -75,28 +75,29 @@
                 android:id="@+id/userPhotoRoot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:paddingEnd="@dimen/_4sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:src="@drawable/ic_avatar"
-                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintBottom_toBottomOf="@+id/hallway"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.03"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="@+id/hallway">
 
 
                 <com.joshtalks.badebhaiya.customViews.ProfilePictureView
                     android:id="@+id/user_photo"
+                    onSingleClick="@{()->handler.onProfileClicked()}"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    app:dynamicImageUrl="@{user.profilePicUrl}"
-                    app:dynamicUserName="@{user.firstName}"
-                    app:cornerRadius="@dimen/_6sdp"
-                    app:textSize="@dimen/_4ssp"
                     android:layout_marginVertical="@dimen/_10sdp"
                     android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp" />
+                    android:src="@drawable/ic_avatar"
+                    app:cornerRadius="@dimen/_6sdp"
+                    app:dynamicImageUrl="@{user.profilePicUrl}"
+                    app:dynamicUserName="@{user.firstName}"
+                    app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp"
+                    app:textSize="@dimen/_4ssp" />
 
             </FrameLayout>
 

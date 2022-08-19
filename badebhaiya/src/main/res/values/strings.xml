@@ -21,7 +21,7 @@
     <string name="country_code">+91</string>
     <string name="phone_number">Phone Number</string>
     <string name="enter_otp_prompt">Please verify your OTP</string>
-    <string name="verify_otp_for_phone_text">Enter the OTP your received on \n+91 %s</string>
+    <string name="verify_otp_for_phone_text">Enter the OTP you received on \n+91 %s</string>
     <string name="skip">Skip</string>
     <string name="add_profile_photo_prompt">Add a profile photo!</string>
     <string name="raised_hand">Raised Hands</string>

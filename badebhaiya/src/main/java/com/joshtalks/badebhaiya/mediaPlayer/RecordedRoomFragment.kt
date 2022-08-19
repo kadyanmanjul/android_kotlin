@@ -14,6 +14,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +36,7 @@ import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService
 import com.joshtalks.badebhaiya.profile.ProfileFragment
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
 import com.joshtalks.badebhaiya.recordedRoomPlayer.PlayerData
 import com.joshtalks.badebhaiya.recordedRoomPlayer.isPlaying
@@ -147,6 +149,10 @@ class RecordedRoomFragment : Fragment() {
 
     private val feedViewModel by lazy {
         ViewModelProvider(requireActivity())[FeedViewModel::class.java]
+    }
+
+    private val profileViewModel by lazy {
+        ViewModelProvider(this)[ProfileViewModel::class.java]
     }
 
 
@@ -263,6 +269,38 @@ class RecordedRoomFragment : Fragment() {
             /* forward= */ false
         ).apply {
             duration = 500
+        }
+    }
+
+    override fun onResume() {
+        binding.userPhoto.setUrlAndName(User.getInstance().profilePicUrl, User.getInstance().firstName)
+        super.onResume()
+    }
+
+    fun onProfileClicked() {
+        requireActivity().doForLoggedInUser {
+            binding.recordedRoomRootView.transitionToEnd()
+            val fragment = ProfileFragment() // replace your custom fragment class
+            profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_OWN_PROFILE"))
+
+            val bundle = Bundle()
+//        fragment?.apply {
+//            exitTransition = MaterialSharedAxis(
+//                MaterialSharedAxis.Z,
+//                /* forward= */ false
+//            ).apply {
+//                duration = 500
+//            }
+//        }
+            val fragmentTransaction: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+            bundle.putString("user", User.getInstance().userId) // use as per your need
+            bundle.putString("source","FEED_SCREEN")
+
+            fragment.arguments = bundle
+//        fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
+            fragmentTransaction.replace(R.id.fragmentContainer, fragment)
+            fragmentTransaction.addToBackStack(ProfileFragment.TAG)
+            fragmentTransaction.commit()
         }
     }
 
