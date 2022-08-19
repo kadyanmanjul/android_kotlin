@@ -291,10 +291,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     fun onProfileClicked() {
-        val fragment = ProfileFragment() // replace your custom fragment class
-        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_OWN_PROFILE"))
+        doForLoggedInUser {
+            val fragment = ProfileFragment() // replace your custom fragment class
+            profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_OWN_PROFILE"))
 
-        val bundle = Bundle()
+            val bundle = Bundle()
 //        fragment?.apply {
 //            exitTransition = MaterialSharedAxis(
 //                MaterialSharedAxis.Z,
@@ -303,15 +304,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //                duration = 500
 //            }
 //        }
-        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        bundle.putString("user", User.getInstance().userId) // use as per your need
-        bundle.putString("source","FEED_SCREEN")
+            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+            bundle.putString("user", User.getInstance().userId) // use as per your need
+            bundle.putString("source","FEED_SCREEN")
 
-        fragment.arguments = bundle
+            fragment.arguments = bundle
 //        fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
-        fragmentTransaction.replace(R.id.fragmentContainer, fragment)
-        fragmentTransaction.addToBackStack(ProfileFragment.TAG)
-        fragmentTransaction.commit()
+            fragmentTransaction.replace(R.id.fragmentContainer, fragment)
+            fragmentTransaction.addToBackStack(ProfileFragment.TAG)
+            fragmentTransaction.commit()
+        }
     }
 
     fun onSearchPressed() {

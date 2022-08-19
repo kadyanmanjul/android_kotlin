@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.utils.pendingActions
 
+import com.joshtalks.badebhaiya.repository.model.User
 import timber.log.Timber
 
 class PendingActionsManager {
@@ -8,11 +9,13 @@ class PendingActionsManager {
         var universalPendingAction: (() -> Unit?)? = null
 
         fun performPendingAction(){
-            universalPendingAction?.let {
-                Timber.tag("pendingaction").d("PERFORMING PENDING ACTION")
-                it()
+            if (!User.getInstance().isGuestUser && universalPendingAction != null){
+                universalPendingAction?.let {
+                    Timber.tag("pendingaction").d("PERFORMING PENDING ACTION")
+                    it()
+                }
+                universalPendingAction = null
             }
-            universalPendingAction = null
         }
     }
 }
