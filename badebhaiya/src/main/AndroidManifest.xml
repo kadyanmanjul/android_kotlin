@@ -31,6 +31,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+
+        <receiver
+            android:name=".recordedRoomPlayer.RoomSharingReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedReceiver" />
+
         <activity
             android:name=".customViews.ProfileViewTestActivity"
             android:exported="false" />
