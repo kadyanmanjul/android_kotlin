@@ -83,4 +83,7 @@ interface ConversationRoomNetworkService {
     @GET("$DIR/conversation_room/record_room/")
     suspend fun getRecordList(@Query("room_id") room_id: Int?=null): Response<RecordedResponseList>
 
+    @POST("$DIR/link_attribution/user_deeplink/")
+    suspend fun userDeeplink(@Body deeplink: UserDeeplink):Response<UserDeeplink>
+
 }

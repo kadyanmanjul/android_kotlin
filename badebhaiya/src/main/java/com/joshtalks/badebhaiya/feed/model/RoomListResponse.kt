@@ -111,6 +111,18 @@ data class RecordedResponseList(
     val recordings:List<RoomListResponseItem>
 )
 
+
+data class UserDeeplink(
+    @SerializedName("id")
+    val id:Int?,
+    @SerializedName("user")
+    val user:String,
+    @SerializedName("content_id")
+    val contentId:String,
+    @SerializedName("deep_link")
+    val deeplink:String
+)
+
 data class GuestUser(
     @SerializedName("user_id")
     val userId:String,

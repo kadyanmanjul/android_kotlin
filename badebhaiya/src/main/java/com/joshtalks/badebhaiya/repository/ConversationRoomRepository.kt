@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.repository
 
 import android.util.Log
 import com.joshtalks.badebhaiya.feed.model.RecordedResponseList
+import com.joshtalks.badebhaiya.feed.model.UserDeeplink
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.impressions.Records
 import com.joshtalks.badebhaiya.impressions.UserRecords
@@ -12,7 +13,9 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.ConversationRoomNetworkService
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import kotlinx.coroutines.*
 import retrofit2.Response
+import timber.log.Timber
 
 class ConversationRoomRepository {
 
@@ -59,5 +62,16 @@ class ConversationRoomRepository {
     suspend fun sendEvent(impression:Impression)=service.sendEvent(impression)
 
     suspend fun requestUploadRoomRecording( record:Records)=service.requestUploadRoomRecording(record)
+
+    fun userDeeplink(user:UserDeeplink){
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val res=service.userDeeplink(user)
+                Timber.d("API OutCome ${res.body()}")
+            }catch (ex:Exception){
+                Timber.d("Deeplink API error ${ex.message}")
+            }
+        }
+    }
 
 }
