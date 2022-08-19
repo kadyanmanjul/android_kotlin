@@ -145,7 +145,9 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                     val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
 //                    val intent = Intent(this@LauncherActivity, ProfileViewTestActivity::class.java)
                     intent.putExtra("userId", viewUserId)
-                    intent.putExtra("profile_deeplink", true)
+                    if(room_id==null) intent.putExtra("profile_deeplink", true)
+                    else
+                        intent.putExtra("profile_deeplink", false)
                     intent.putExtra("request_dialog",request_dialog)
                     intent.putExtra("room_id", room_id)
                     intent
