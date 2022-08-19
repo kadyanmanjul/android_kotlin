@@ -1,5 +1,7 @@
 package com.joshtalks.badebhaiya.repository.service
 
+import com.joshtalks.badebhaiya.feed.model.GuestUser
+import com.joshtalks.badebhaiya.feed.model.LinkUser
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.repository.model.LastLoginRequest
 import com.joshtalks.badebhaiya.repository.model.User
@@ -18,6 +20,9 @@ interface SignUpNetworkService {
 
     @POST("$DIR/user/verify_otp/")
     suspend fun verityOTP(@Body verifyOTPRequest: VerifyOTPRequest): Response<LoginResponse>
+
+    @PATCH("$DIR/user/guest_user/{id}/")
+    suspend fun guestUserid(@Path("id")userId:String):Response<Void>
 
     @GET("$DIR/user/{id}/")
     suspend fun getUserProfile(@Path("id")userId: String): Response<User>
@@ -43,6 +48,12 @@ interface SignUpNetworkService {
     suspend fun lastLogin(
         @Body body: LastLoginRequest
     ): Response<Void>
+
+    @POST("$DIR/user/create_guest_user/")
+    suspend fun createGuestUser():Response<GuestUser>
+
+    @POST("$DIR/user/link_user/")
+    suspend fun linkUser(@Body userLink:LinkUser):Response<Void>
 
 
 

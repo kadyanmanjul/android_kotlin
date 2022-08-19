@@ -60,6 +60,4 @@ class ConversationRoomRepository {
 
     suspend fun requestUploadRoomRecording( record:Records)=service.requestUploadRoomRecording(record)
 
-    suspend fun createGuestUser()=service.createGuestUser()
-
 }

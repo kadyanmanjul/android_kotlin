@@ -14,6 +14,7 @@ import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.customViews.ProfileViewTestActivity
 import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.feed.model.LinkUser
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
@@ -191,7 +192,14 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 Log.d("CHECKGUEST", "branch json data => ${it}")
 
                 if(it.has("is_recorded_room")) {//TODO:-identification for type of deeplink
-                     }
+                    BBRepository().createGuestUser()
+                    val user=LinkUser(medium=it.get("utm_campaign").toString(),
+                        term=it.get("utm_medium").toString(),
+                        source = it.get("referral_code").toString(),
+                        userId = User.getInstance().userId
+                    )
+                    BBRepository().linkUser(user)
+                }
 
                 startActivityForState(
                     if (it.has("user_id"))

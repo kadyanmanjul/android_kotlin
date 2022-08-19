@@ -166,8 +166,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     private lateinit var binding: ActivityFeedBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.tag("coupon").d(PrefManager.getStringValue(COUPON_CODE))
-
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             this.window.statusBarColor =
@@ -188,20 +186,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         Log.i("CHECKGUEST", "onCreate: Feed create")
 
 
-
         Timber.d("FEED INTENT ${intent.extras}")
 
         val roomRequestId = intent.getStringExtra(ROOM_REQUEST_ID)
 
-        viewModel.roomRequestCount.value = 0
-        if (roomId != 0) {
-            if (User.getInstance().isLoggedIn())
+        viewModel.roomRequestCount.value=0
+        if(roomId!=0)
+        {
                 viewModel.getRecordRoomData(roomId)
-            else {
-                viewModel.createGuestUser(roomId)
-
-            }
-        } else if (!roomRequestId.isNullOrEmpty()) {
+        }
+        else  if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
 
         } else if (user != null) {
@@ -211,9 +205,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         } else if (SingleDataManager.pendingPilotAction != null) {
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true, requestDialog)
         }
-
-
-        executePendingActions()
         observerWithoutLogin()
         requestDialog = false
         if (User.getInstance().isLoggedIn()) {
@@ -237,6 +228,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             })
             checkAndOpenLiveRoom()
         }
+        executePendingActions()
 
 
     }
@@ -299,15 +291,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     fun onProfileClicked() {
+        val fragment = ProfileFragment() // replace your custom fragment class
+        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_OWN_PROFILE"))
 
-//        if (!User.getInstance().isGuestUser){
-//            // Launch Sign Up Activity
-//        }
-//        doForLoggedInUser {
-            val fragment = ProfileFragment() // replace your custom fragment class
-            profileViewModel.sendEvent(Impression("FEED_SCREEN", "CLICKED_OWN_PROFILE"))
-
-            val bundle = Bundle()
+        val bundle = Bundle()
 //        fragment?.apply {
 //            exitTransition = MaterialSharedAxis(
 //                MaterialSharedAxis.Z,
@@ -316,16 +303,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //                duration = 500
 //            }
 //        }
-            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-            bundle.putString("user", User.getInstance().userId) // use as per your need
-            bundle.putString("source", "FEED_SCREEN")
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        bundle.putString("user", User.getInstance().userId) // use as per your need
+        bundle.putString("source","FEED_SCREEN")
 
-            fragment.arguments = bundle
+        fragment.arguments = bundle
 //        fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
-            fragmentTransaction.replace(R.id.fragmentContainer, fragment)
-            fragmentTransaction.addToBackStack(ProfileFragment.TAG)
-            fragmentTransaction.commit()
-//        }
+        fragmentTransaction.replace(R.id.fragmentContainer, fragment)
+        fragmentTransaction.addToBackStack(ProfileFragment.TAG)
+        fragmentTransaction.commit()
     }
 
     fun onSearchPressed() {
@@ -616,7 +602,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     private fun executePendingActions() {
         SingleDataManager.pendingPilotAction?.let {
             when (it) {
-
                 PendingPilotEvent.JOIN_ROOM -> takePermissions(
                     SingleDataManager.pendingPilotEventData?.roomId.toString(),
                     SingleDataManager.pendingPilotEventData?.roomTopic,
@@ -647,18 +632,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            if (User.getInstance().isGuestUser) {
-                                redirectToSignUp(
-                                    PendingPilotEvent.JOIN_ROOM,
-                                    PendingPilotEventData(
-                                        roomId = roomId.toString().toInt(),
-                                        roomTopic = roomTopic,
-                                        pilotUserId = moderatorId.toString()
-                                    ),
-                                    false
-                                )
-//                                User.getInstance().isGuestUser=false
-                            } else if (roomId == null) {
+                             if (roomId == null) {
                                 openCreateRoomDialog()
                             } else viewModel.joinRoom(
                                 roomId,
