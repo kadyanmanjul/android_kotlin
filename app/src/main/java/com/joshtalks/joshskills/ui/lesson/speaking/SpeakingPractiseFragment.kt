@@ -45,6 +45,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.recording_gallery.views.RecordingGalleryActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
@@ -817,13 +818,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             if (PrefManager.getCallCount() == 3)
                 viewModel.getRating()
 
-            val callIntent = Intent(requireActivity(), VoiceCallActivity::class.java)
-            callIntent.apply {
-                putExtra(INTENT_DATA_COURSE_ID, courseId)
-                putExtra(INTENT_DATA_TOPIC_ID, topicId)
-                putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
-            }
+            val callIntent = Intent(requireActivity(), RecordingGalleryActivity::class.java)
+//            callIntent.apply {
+//                putExtra(INTENT_DATA_COURSE_ID, courseId)
+//                putExtra(INTENT_DATA_TOPIC_ID, topicId)
+//                putExtra(STARTING_POINT, FROM_ACTIVITY)
+//                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+//            }
             startActivity(callIntent)
         }
     }
