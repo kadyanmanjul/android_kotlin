@@ -180,7 +180,9 @@ data class SpeakerData(
     @SerializedName("full_name")
     val fullName: String?,
     @SerializedName("short_name")
-    val shortName: String?
+    val shortName: String?,
+    @SerializedName("bio")
+    val bio:String?
 )  : Parcelable
 
 @Parcelize

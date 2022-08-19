@@ -48,8 +48,9 @@ class DeeplinkGenerator {
         }
 
         private fun showSharingBottomSheet(context: Activity, content: String, room: RoomListResponseItem, onSharingLaunch: () -> Unit = {}){
+            val modBio= if(room.speakersData?.bio == null) "" else "(${room.speakersData.bio})"
             val sharingMessage = "Hello दोस्त,\n" +
-                    "मैं Josh Talks BB App पर ये Session सुन रहा हूँ : ${room.topic} by ${room.speakersData?.fullName}\n" +
+                    "मैं Josh Talks BB App पर ये Session सुन रहा हूँ : ${room.topic} by ${room.speakersData?.fullName}$modBio\n" +
                     "सोचा तुम्हारे साथ इसे Share करूँ ताकि तुम भी इसे सुन सको. \n" +
                     content
             val sendIntent = Intent().apply {
