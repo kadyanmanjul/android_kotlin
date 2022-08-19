@@ -121,6 +121,10 @@ class RecordedRoomViewModel @Inject constructor(
         musicServiceConnection.setPlaybackSpeed(speed)
     }
 
+    fun pausePlayback(){
+        musicServiceConnection.transportControls.pause()
+    }
+
     fun playOrToggleSong() {
 //        musicServiceConnection.transportControls.play()
         val isPrepared = playbackState.value?.isPrepared ?: false

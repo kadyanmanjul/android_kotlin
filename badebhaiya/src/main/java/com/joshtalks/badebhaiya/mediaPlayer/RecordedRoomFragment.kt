@@ -42,6 +42,8 @@ import com.joshtalks.badebhaiya.recordedRoomPlayer.listeners.ListenersListFragme
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
+import com.joshtalks.badebhaiya.utils.doForLoggedInUser
+import com.joshtalks.badebhaiya.utils.pendingActions.PendingActionsManager
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_record_room.view.*
@@ -439,8 +441,8 @@ class RecordedRoomFragment : Fragment() {
             }
 
             moderatorName.setOnClickListener {
-                collapseLiveRoom()
-                itemClick()
+                        collapseLiveRoom()
+                        itemClick()
             }
 
             downArrow.setOnClickListener {
@@ -483,7 +485,7 @@ class RecordedRoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.shareBtn.setOnSingleClickListener {
-            viewModel.playOrToggleSong()
+            viewModel.pausePlayback()
             binding.progressBar.visibility = View.VISIBLE
             DeeplinkGenerator.shareRecordedRoom(requireActivity(), roomData!!) {
                 binding.progressBar.visibility = View.GONE

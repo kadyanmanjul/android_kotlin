@@ -51,6 +51,8 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.showCallRequests.RequestBottomSheetFragment
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.utils.SingleDataManager
+import com.joshtalks.badebhaiya.utils.doForLoggedInUser
+import com.joshtalks.badebhaiya.utils.pendingActions.PendingActionsManager
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -186,6 +188,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         Log.i("CHECKGUEST", "onCreate: Feed create")
 
 
+
         Timber.d("FEED INTENT ${intent.extras}")
 
         val roomRequestId = intent.getStringExtra(ROOM_REQUEST_ID)
@@ -208,6 +211,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         } else if (SingleDataManager.pendingPilotAction != null) {
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true, requestDialog)
         }
+
 
         executePendingActions()
         observerWithoutLogin()
@@ -252,6 +256,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun onResume() {
         super.onResume()
 //        viewModel.getRoomRequestCount()
+        PendingActionsManager.performPendingAction()
+
         if (User.getInstance().isLoggedIn()) {
             viewModel.getRecordRooms()
         }
@@ -294,10 +300,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     fun onProfileClicked() {
 
-        val fragment = ProfileFragment() // replace your custom fragment class
-        profileViewModel.sendEvent(Impression("FEED_SCREEN", "CLICKED_OWN_PROFILE"))
+//        if (!User.getInstance().isGuestUser){
+//            // Launch Sign Up Activity
+//        }
+//        doForLoggedInUser {
+            val fragment = ProfileFragment() // replace your custom fragment class
+            profileViewModel.sendEvent(Impression("FEED_SCREEN", "CLICKED_OWN_PROFILE"))
 
-        val bundle = Bundle()
+            val bundle = Bundle()
 //        fragment?.apply {
 //            exitTransition = MaterialSharedAxis(
 //                MaterialSharedAxis.Z,
@@ -306,15 +316,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //                duration = 500
 //            }
 //        }
-        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        bundle.putString("user", User.getInstance().userId) // use as per your need
-        bundle.putString("source", "FEED_SCREEN")
+            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+            bundle.putString("user", User.getInstance().userId) // use as per your need
+            bundle.putString("source", "FEED_SCREEN")
 
-        fragment.arguments = bundle
+            fragment.arguments = bundle
 //        fragmentTransaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
-        fragmentTransaction.replace(R.id.fragmentContainer, fragment)
-        fragmentTransaction.addToBackStack(ProfileFragment.TAG)
-        fragmentTransaction.commit()
+            fragmentTransaction.replace(R.id.fragmentContainer, fragment)
+            fragmentTransaction.addToBackStack(ProfileFragment.TAG)
+            fragmentTransaction.commit()
+//        }
     }
 
     fun onSearchPressed() {
@@ -625,18 +636,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             if (roomId == null) {
                 openCreateRoomDialog()
             } else {
-                if (User.getInstance().isGuestUser) {
-                    redirectToSignUp(
-                        PendingPilotEvent.JOIN_ROOM,
-                        PendingPilotEventData(
-                            roomId = roomId.toString().toInt(),
-                            roomTopic = roomTopic,
-                            pilotUserId = moderatorId.toString()
-                        ),
-                        false
-                    )
-//                    User.getInstance().isGuestUser=false
-                } else viewModel.joinRoom(roomId, roomTopic!!, "FEED_SCREEN")
+                viewModel.joinRoom(roomId, roomTopic!!, "FEED_SCREEN")
             }
             return
         }
@@ -745,17 +745,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        if (User.getInstance().isGuestUser) {
-            room.speakersData?.userId?.let {
-                redirectToSignUp(
-                    PendingPilotEvent.SET_REMINDER,
-                    PendingPilotEventData(roomId = room.roomId, pilotUserId = it),
-                    false
-                )
-            }
-//            User.getInstance().isGuestUser=false
-            return
-        }
+
         Timber.d("ROOM KA STARTING TIME => ${room.currentTime}")
 
         notificationScheduler.scheduleNotificationAsListener(this, room)

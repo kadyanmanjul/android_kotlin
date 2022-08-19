@@ -20,9 +20,7 @@ import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType.*
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.utils.ALLOWED_JOIN_ROOM_TIME
-import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
-import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import com.joshtalks.badebhaiya.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.Runnable
@@ -66,53 +64,61 @@ fun setConversationRoomCardActionButton(
 ) {
     when (type) {
         LIVE -> {
-            view.text = view.context.getString(R.string.join_now)
-            view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
-            view.backgroundTintList =
-                ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-            view.setOnSingleClickListener() { callback?.joinRoom(roomListResponseItem, view) }
+
+                view.text = view.context.getString(R.string.join_now)
+                view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
+                view.backgroundTintList =
+                    ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
+                view.setOnSingleClickListener() {
+                    view.context.getActivity()?.doForLoggedInUser {
+                    callback?.joinRoom(roomListResponseItem, view)
+                }
+            }
         }
         NOT_SCHEDULED -> {
-            view.text = view.context.getString(R.string.set_reminder)
-            view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
-            view.backgroundTintList =
-                ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-            view.setOnSingleClickListener() {
-                roomListResponseItem.conversationRoomType = SCHEDULED
+                view.text = view.context.getString(R.string.set_reminder)
+                view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
+                view.backgroundTintList =
+                    ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
+                view.setOnSingleClickListener() {
+                    view.context.getActivity()?.doForLoggedInUser {
+
+                    roomListResponseItem.conversationRoomType = SCHEDULED
+                    view.text = view.context.getString(R.string.reminder_on)
+                    view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color)))
+                    view.backgroundTintList =
+                        ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
+                    callback?.setReminder(roomListResponseItem, view)
+                    view.setOnClickListener {
+                        Timber.d("room type is => $type")
+//                    callback?.viewRoom(roomListResponseItem, view)
+                    }
+                }
+                roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
+            }
+        }
+        SCHEDULED -> {
+                Timber.d("room is scheduled already")
+
                 view.text = view.context.getString(R.string.reminder_on)
                 view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color)))
                 view.backgroundTintList =
                     ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
-                callback?.setReminder(roomListResponseItem, view)
-                view.setOnClickListener {
-                    Timber.d("room type is => $type")
-//                    callback?.viewRoom(roomListResponseItem, view)
-                }
-            }
-            roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
-        }
-        SCHEDULED -> {
-            Timber.d("room is scheduled already")
-
-            view.text = view.context.getString(R.string.reminder_on)
-            view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color)))
-            view.backgroundTintList =
-                ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
-            if (roomListResponseItem.speakersData != null && User.getInstance().userId == roomListResponseItem.speakersData.userId) {
+                if (roomListResponseItem.speakersData != null && User.getInstance().userId == roomListResponseItem.speakersData.userId) {
 //                val startTime = roomListResponseItem.startTime ?: Long.MAX_VALUE
-                if (roomListResponseItem.startTime!! <= System.currentTimeMillis()) {
+                    if (roomListResponseItem.startTime!! <= System.currentTimeMillis()) {
                         Timber.d("JOIN ROOM BUTTOn")
-                    (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
+                        (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
+                    } else {
+                        Timber.d("JOIN ROOM TIMING GALAT")
+
+                        setAlarmForLiveRoom(viewHolder, roomListResponseItem, adapter)
+                    }
+                    view.setOnClickListener(null)
                 } else {
-                    Timber.d("JOIN ROOM TIMING GALAT")
 
-                    setAlarmForLiveRoom(viewHolder, roomListResponseItem, adapter)
                 }
-                view.setOnClickListener(null)
-            } else {
-
-            }
-            roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
+                roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
         }
         RECORDED -> {
             view.text = view.context.getString(R.string.play_now)

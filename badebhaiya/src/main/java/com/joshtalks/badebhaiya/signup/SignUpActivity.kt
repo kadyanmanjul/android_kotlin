@@ -55,6 +55,7 @@ class SignUpActivity : AppCompatActivity(), Call {
         ViewModelProvider(this).get(SignUpViewModel::class.java)
     }
 
+    private var isForResult: Boolean? = null
 //    @Inject
 //    lateinit var impressionsManager: ImpressionsManager
 
@@ -64,14 +65,14 @@ class SignUpActivity : AppCompatActivity(), Call {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
         binding.handler = this
         binding.viewModel = viewModel
-        //handleIntent()
+        handleIntent()
         addObservers()
         setSpanText()
         //setOnClickListeners()
 
     }
 
-//    private fun handleIntent() {
+    private fun handleIntent() {
 //        if (intent.getStringExtra(REDIRECT) == REDIRECT_TO_ENTER_NAME) {
 //            binding.btnWelcome.visibility = View.GONE
 //            openEnterNameFragment()
@@ -80,7 +81,10 @@ class SignUpActivity : AppCompatActivity(), Call {
 //            binding.btnWelcome.visibility = View.GONE
 //            openUploadProfilePicFragment()
 //        }
-//    }
+
+        isForResult = intent.getBooleanExtra(IS_FOR_RESULT, false)
+
+    }
 
 
     private fun setSpanText() {
@@ -247,11 +251,14 @@ class SignUpActivity : AppCompatActivity(), Call {
 
             }
             else -> Intent(this, FeedActivity::class.java).also { it ->
-                startActivity(it)
-                overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
+                if (!isForResult!!){
+                    startActivity(it)
+                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
 
-                this@SignUpActivity.finishAffinity()
-
+                    this@SignUpActivity.finishAffinity()
+                } else {
+                    this@SignUpActivity.finish()
+                }
             }
         }
     }
@@ -326,15 +333,17 @@ class SignUpActivity : AppCompatActivity(), Call {
         const val REDIRECT_TO_PROFILE_ACTIVITY = "redirect_to_profile_activity"
         const val REDIRECT_TO_ENTER_NAME = "REDIRECT_TO_ENTER_NAME"
         const val IS_REDIRECTED = "is_redirected"
+        const val IS_FOR_RESULT = "is_for_result"
 
 
         @JvmStatic
-        fun start(context: Context, redirect: String? = null, userId: String? = null, isRedirected: Boolean = false, requestRoom:Boolean?=false) {
+        fun start(context: Context, redirect: String? = null, userId: String? = null, isRedirected: Boolean = false, requestRoom:Boolean?=false, isForResult: Boolean = false) {
             Log.i("CHECKGUEST", "start: $redirect")
             val starter = Intent(context, SignUpActivity::class.java)
                 .putExtra(IS_REDIRECTED, isRedirected)
                 .putExtra(REDIRECT, redirect)
                 .putExtra(USER_ID, userId)
+                .putExtra(IS_FOR_RESULT, isForResult)
                 .putExtra("request_dialog", requestRoom)
             context.startActivity(starter)
         }

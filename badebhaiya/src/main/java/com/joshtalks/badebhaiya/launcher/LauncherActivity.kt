@@ -163,6 +163,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
+            finish()
             overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
         }
     }

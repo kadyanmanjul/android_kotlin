@@ -394,32 +394,32 @@
                             app:layout_constraintStart_toStartOf="parent" />
 
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/notificationRoot"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/notificationRoot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
 
-                            <com.joshtalks.badebhaiya.feed.NotificationView
-                                android:id="@+id/notification_bar"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:visibility="visible" />
+            <com.joshtalks.badebhaiya.feed.NotificationView
+                android:id="@+id/notification_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
-                            <ProgressBar
-                                android:id="@+id/progressBar"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                android:visibility="@{recordedViewModel.isLoading ? View.VISIBLE : View.GONE}"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{recordedViewModel.isLoading ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                     </com.joshtalks.badebhaiya.custom_ui.SingleViewTouchableMotionLayout>

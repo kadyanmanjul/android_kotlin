@@ -57,6 +57,7 @@ import com.joshtalks.badebhaiya.showCallRequests.CallRequestsListFragment
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.SingleDataManager
+import com.joshtalks.badebhaiya.utils.doForLoggedInUser
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
@@ -287,12 +288,8 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
     }
 
     fun requestRoomPopup() {
-        if (User.getInstance().isGuestUser) {
-            userId?.let {
-                redirectToSignUp(REQUEST_ROOM, PendingPilotEventData(pilotUserId = it), false)
-            }
-//            feedViewModel.isGuestUser=false
-        } else {
+        requireActivity().doForLoggedInUser {
+
             SingleDataManager.pendingPilotAction = null
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED) {
                 showToast("Can't Sent Request During Call")
@@ -329,8 +326,8 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
                     }
                 }
             }
-        }
 
+        }
     }
 
     private fun openFansList(){
@@ -509,41 +506,37 @@ class ProfileFragment : Fragment(), Call, FeedAdapter.ConversationRoomItemCallba
     }
 
     fun updateFollowStatus() {
-        if (User.getInstance().isGuestUser) {
-            userId?.let {
-                redirectToSignUp(FOLLOW, PendingPilotEventData(pilotUserId = it), false)
-            }
-//            feedViewModel.isGuestUser=false
-            return
-        }
-        binding.followProgress.visibility = View.VISIBLE
-        binding.btnFollow.visibility = View.INVISIBLE
+        requireActivity().doForLoggedInUser {
 
-        viewModel.updateFollowStatus(
-            userId ?: (User.getInstance().userId),
-            isFromBBPage,
-            isFromDeeplink,
-            source
-        )
-        if (viewModel.speakerFollowed.value == true)
-            viewModel.userProfileData.value?.let {
-                signUpViewModel.unfollowSpeaker()
+            binding.followProgress.visibility = View.VISIBLE
+            binding.btnFollow.visibility = View.INVISIBLE
+
+            viewModel.updateFollowStatus(
+                userId ?: (User.getInstance().userId),
+                isFromBBPage,
+                isFromDeeplink,
+                source
+            )
+            if (viewModel.speakerFollowed.value == true)
+                viewModel.userProfileData.value?.let {
+                    signUpViewModel.unfollowSpeaker()
 //                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_UNFOLLOW"))
 //                speakerUnfollowedUIChanges()
 //                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
 //                    ("<big>"+it.followersCount?.minus(1)?:0).toString()+"</big>"),
 //                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-            }
-        else
-            viewModel.userProfileData.value?.let {
-                signUpViewModel.followSpeaker()
+                }
+            else
+                viewModel.userProfileData.value?.let {
+                    signUpViewModel.followSpeaker()
 //                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
 //                speakerFollowedUIChanges()
 //                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
 //                    ("<big>"+it.followersCount?.plus(1)?:0).toString()+"</big>"),
 //                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-            }
+                }
 //        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
+        }
     }
 
     private fun redirectToSignUp(
