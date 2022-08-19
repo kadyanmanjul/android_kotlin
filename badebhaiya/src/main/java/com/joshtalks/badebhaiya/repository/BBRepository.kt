@@ -58,8 +58,7 @@ class BBRepository {
         }
     }
 
-    fun createGuestUser() {
-        CoroutineScope(Dispatchers.IO).launch{
+    suspend fun createGuestUser() {
             try {
                 val res = service.createGuestUser()
                 if(res.isSuccessful){
@@ -73,10 +72,10 @@ class BBRepository {
             } catch (ex: Exception) {
 
             }
-        }
+
     }
 
-    fun linkUser(user:LinkUser){
+    suspend fun linkUser(user:LinkUser){
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 service.linkUser(user)

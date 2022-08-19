@@ -27,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -192,13 +193,15 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 Log.d("CHECKGUEST", "branch json data => ${it}")
 
                 if(it.has("is_recorded_room")) {//TODO:-identification for type of deeplink
-                    BBRepository().createGuestUser()
-                    val user=LinkUser(medium=it.get("utm_campaign").toString(),
-                        term=it.get("utm_medium").toString(),
-                        source = it.get("referral_code").toString(),
-                        userId = User.getInstance().userId
-                    )
-                    BBRepository().linkUser(user)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        BBRepository().createGuestUser()
+                        val user=LinkUser(medium=it.get("utm_campaign").toString(),
+                            term=it.get("utm_medium").toString(),
+                            source = it.get("referral_code").toString(),
+                            userId = User.getInstance().userId
+                        )
+                        BBRepository().linkUser(user)
+                    }
                 }
 
                 startActivityForState(
