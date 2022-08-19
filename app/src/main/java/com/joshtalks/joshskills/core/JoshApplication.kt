@@ -76,14 +76,17 @@ class JoshApplication :
         super.onCreate()
         //enableLog(Feature.VOIP)
         AppObjectController.joshApplication = this
+        Utils.initUtils(this)
         if (BuildConfig.DEBUG) {
             Branch.enableTestMode()
             Branch.enableLogging()
         }
+        // TODO: Need to be removed
         Branch.getAutoInstance(this)
         turnOnStrictMode()
+
+
         ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
-        Utils.initUtils(this)
     }
 
     override fun onTerminate() {
@@ -207,28 +210,6 @@ class JoshApplication :
 
     private fun isActivityVisible(): String {
         return ProcessLifecycleOwner.get().lifecycle.currentState.name
-    }
-
-    override fun onTrimMemory(level: Int) {
-        super.onTrimMemory(level)
-        when (level) {
-            ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE,
-            ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW,
-            ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> {
-                System.runFinalization()
-                Runtime.getRuntime().gc()
-                System.gc()
-            }
-
-            ComponentCallbacks2.TRIM_MEMORY_BACKGROUND,
-            ComponentCallbacks2.TRIM_MEMORY_MODERATE,
-            ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {
-                return
-            }
-            else -> {
-                return
-            }
-        }
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
