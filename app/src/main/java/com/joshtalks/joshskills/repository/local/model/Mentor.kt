@@ -31,7 +31,6 @@ import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.singular.sdk.Singular
 import com.userexperior.UserExperior
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -88,7 +87,6 @@ class Mentor {
                     .update()
                 AppAnalytics.updateUser()
                 UserExperior.setUserIdentifier(getInstance().getId())
-                Singular.setCustomUserId(getInstance().getId())
             }
         }
 

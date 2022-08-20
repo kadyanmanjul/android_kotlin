@@ -26,10 +26,7 @@ import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -94,6 +91,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         //showInAppReview()
         viewModel.handleGroupTimeTokens()
         viewModel.handleBroadCastEvents()
+        MarketingAnalytics.openInboxPage()
     }
 
     private fun initABTest() {

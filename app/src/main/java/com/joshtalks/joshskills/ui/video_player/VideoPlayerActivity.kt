@@ -262,11 +262,13 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     } else {
                         Utils.fileUrl(this.downloadedLocalPath, this.url)?.run {
                             videoUrl = this
-                            AppObjectController.videoDownloadTracker.download(
-                                chatObject,
-                                Uri.parse(chatObject?.url),
-                                VideoDownloadController.getInstance().buildRenderersFactory(true)
-                            )
+                            if (AppObjectController.getVideoTracker()!=null){
+                                AppObjectController.videoDownloadTracker.download(
+                                    chatObject,
+                                    Uri.parse(chatObject?.url),
+                                    VideoDownloadController.getInstance().buildRenderersFactory(true)
+                                )
+                            }
                         }
                     }
                 } else {
@@ -291,11 +293,13 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                         videoUrl = this.url?.split("$")?.get(0)
                     } else {
                         Utils.fileUrl(this.downloadedLocalPath, videoUrl)?.run {
-                            AppObjectController.videoDownloadTracker.download(
-                                chatObject,
-                                Uri.parse(videoUrl),
-                                VideoDownloadController.getInstance().buildRenderersFactory(true)
-                            )
+                            if (AppObjectController.getVideoTracker()!=null) {
+                                AppObjectController.videoDownloadTracker.download(
+                                    chatObject,
+                                    Uri.parse(videoUrl),
+                                    VideoDownloadController.getInstance().buildRenderersFactory(true)
+                                )
+                            }
                         }
                     }
                 }

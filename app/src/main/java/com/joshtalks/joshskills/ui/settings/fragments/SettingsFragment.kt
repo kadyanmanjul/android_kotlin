@@ -262,12 +262,16 @@ class SettingsFragment : Fragment() {
         try {
             startActivity(goToMarket)
         } catch (e: ActivityNotFoundException) {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("http://play.google.com/store/apps/details?id=${AppObjectController.joshApplication.packageName}")
+            try {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("http://play.google.com/store/apps/details?id=${AppObjectController.joshApplication.packageName}")
+                    )
                 )
-            )
+            }catch (ex:Exception){
+                showToast("No application found that can handle this link")
+            }
         }
 
         logEvent(AnalyticsEvent.RATE_US_CLICKED.name)

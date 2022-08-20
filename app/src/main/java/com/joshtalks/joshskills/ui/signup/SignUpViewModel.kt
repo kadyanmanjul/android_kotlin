@@ -35,7 +35,6 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.singular.sdk.Singular
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
@@ -241,7 +240,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             Mentor.getInstance().updateUser(user)
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
-            Singular.setCustomUserId(Mentor.getInstance().getId())
             fetchMentor()
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()

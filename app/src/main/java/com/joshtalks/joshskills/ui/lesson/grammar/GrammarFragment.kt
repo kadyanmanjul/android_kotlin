@@ -238,13 +238,15 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                                                 )
                                             } else if (it.type == LessonMaterialType.VI) {
                                                 // TODO - Start downloading video
-                                                AppObjectController.videoDownloadTracker.download(
-                                                    null,
-                                                    Uri.parse(it.url),
-                                                    VideoDownloadController.getInstance()
-                                                        .buildRenderersFactory(true),
-                                                    it.lessonQuestion
-                                                )
+                                                if (AppObjectController.getVideoTracker() != null) {
+                                                    AppObjectController.videoDownloadTracker.download(
+                                                        null,
+                                                        Uri.parse(it.url),
+                                                        VideoDownloadController.getInstance()
+                                                            .buildRenderersFactory(true),
+                                                        it.lessonQuestion
+                                                    )
+                                                }
                                             }
                                             return
                                         }

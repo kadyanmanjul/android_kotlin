@@ -299,7 +299,9 @@ class VideoViewHolder(
     fun downloadCancel() {
         appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Cancelled")
         message?.question?.videoList?.getOrNull(0)?.video_url?.run {
-            AppObjectController.videoDownloadTracker.cancelDownload(Uri.parse(this))
+            if (AppObjectController.getVideoTracker()!= null) {
+                AppObjectController.videoDownloadTracker.cancelDownload(Uri.parse(this))
+            }
         }
         fileNotDownloadView()
         message?.downloadStatus = DOWNLOAD_STATUS.NOT_START

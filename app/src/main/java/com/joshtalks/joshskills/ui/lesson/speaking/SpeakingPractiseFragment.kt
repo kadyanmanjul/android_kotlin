@@ -58,7 +58,6 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
-import com.singular.sdk.Singular
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
@@ -222,10 +221,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnStartTrialText.setOnSingleClickListener {
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            val jsonData = JSONObject()
-            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-            Singular.eventJSON(SingularEvent.CALL_INITIATED.name, jsonData)
-            AppAnalytics.create(SingularEvent.CALL_INITIATED.name).addDeviceId().push()
+            MarketingAnalytics.callInitiated()
             MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)

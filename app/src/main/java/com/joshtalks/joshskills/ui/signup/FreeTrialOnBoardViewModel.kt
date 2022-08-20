@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.singular.sdk.Singular
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
@@ -129,7 +128,6 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             Mentor.getInstance().updateUser(user)
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
-            Singular.setCustomUserId(Mentor.getInstance().getId())
             fetchMentor()
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()

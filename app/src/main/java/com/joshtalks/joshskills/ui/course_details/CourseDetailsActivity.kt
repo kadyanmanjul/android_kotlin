@@ -2,11 +2,7 @@ package com.joshtalks.joshskills.ui.course_details
 
 import android.app.Activity
 import android.app.DownloadManager
-import android.content.ActivityNotFoundException
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.location.Location
@@ -60,14 +56,12 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
-import com.singular.sdk.Singular
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 const val ENGLISH_COURSE_TEST_ID = 102
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
@@ -163,10 +157,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         }
         subscribeLiveData()
 
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.TEST_ID.name, testId)
-        jsonData.put(ParamKeys.VIA.name, flowFrom)
-        Singular.eventJSON(SingularEvent.OPENED_PRE_CHECKOUT_PAGE.name, jsonData)
+        MarketingAnalytics.openPreCheckoutPage()
     }
     private fun initABTest() {
         viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, testId.toString())

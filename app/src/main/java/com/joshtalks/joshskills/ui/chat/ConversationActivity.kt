@@ -335,7 +335,7 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        addIssuesToSharedPref()
+        //addIssuesToSharedPref()
 
     }
 
@@ -1664,12 +1664,14 @@ class ConversationActivity :
                                                     it.url
                                                 )
                                             } else if (it.type == BASE_MESSAGE_TYPE.VI) {
-                                                AppObjectController.videoDownloadTracker.download(
-                                                    it.chatModel,
-                                                    Uri.parse(it.url),
-                                                    VideoDownloadController.getInstance()
-                                                        .buildRenderersFactory(true)
-                                                )
+                                                if (AppObjectController.getVideoTracker()!=null){
+                                                    AppObjectController.videoDownloadTracker.download(
+                                                        it.chatModel,
+                                                        Uri.parse(it.url),
+                                                        VideoDownloadController.getInstance()
+                                                            .buildRenderersFactory(true)
+                                                    )
+                                                }
                                             }
                                             return
                                         }

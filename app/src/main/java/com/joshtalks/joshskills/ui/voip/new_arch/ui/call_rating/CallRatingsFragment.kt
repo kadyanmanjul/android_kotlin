@@ -33,9 +33,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.analytics.SingularEvent
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
@@ -46,14 +44,10 @@ import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
-import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.getDeviceId
-import com.singular.sdk.Singular
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.util.*
 
 class CallRatingsFragment : BottomSheetDialogFragment() {
@@ -80,7 +74,6 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
     private var count = 0
     private var isRatingSubmittedCount = 0
     private var isRatingSubmittedCountBilkul = 0
-    val jsonData = JSONObject()
 
     val vm: CallRatingsViewModel by lazy {
         ViewModelProvider(requireActivity())[CallRatingsViewModel::class.java]
@@ -121,14 +114,10 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
         if (vm.getDurationInMin() >= 5) {
-            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.context?.getDeviceId())
-            Singular.eventJSON(SingularEvent.CALL_COMPLETED_5MIN.name, jsonData)
-            AppAnalytics.create(SingularEvent.CALL_COMPLETED_5MIN.name).addDeviceId().push()
+           MarketingAnalytics.callComplete5Min()
         }
         if (vm.getDurationInMin() >= 20) {
-            jsonData.put(ParamKeys.DEVICE_ID.name, Utils.context?.getDeviceId())
-            Singular.eventJSON(SingularEvent.CALL_COMPLETED_20MIN.name, jsonData)
-            AppAnalytics.create(SingularEvent.CALL_COMPLETED_20MIN.name).addDeviceId().push()
+            MarketingAnalytics.callComplete20Min()
         }
         binding.howCallTxt.text = getString(R.string.how_was_your_call_name, callerName)
         binding.callDurationText.text = getString(R.string.you_spoke_for_minutes, vm.getCallDurationString())

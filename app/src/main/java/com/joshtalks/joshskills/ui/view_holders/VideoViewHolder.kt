@@ -228,11 +228,13 @@ class VideoViewHolder(
 
 
     private fun download(url: String) {
-        AppObjectController.videoDownloadTracker.download(
-            message,
-            Uri.parse(url),
-            VideoDownloadController.getInstance().buildRenderersFactory(true)
-        )
+        if (AppObjectController.getVideoTracker()!=null) {
+            AppObjectController.videoDownloadTracker.download(
+                message,
+                Uri.parse(url),
+                VideoDownloadController.getInstance().buildRenderersFactory(true)
+            )
+        }
         appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Downloading")
     }
 
@@ -334,7 +336,9 @@ class VideoViewHolder(
     fun downloadCancel() {
         appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Cancelled")
         message.question?.videoList?.getOrNull(0)?.video_url?.run {
-            AppObjectController.videoDownloadTracker.cancelDownload(Uri.parse(this))
+            if (AppObjectController.getVideoTracker()!=null) {
+                AppObjectController.videoDownloadTracker.cancelDownload(Uri.parse(this))
+            }
         }
         fileNotDownloadView()
         message.downloadStatus = DOWNLOAD_STATUS.NOT_START

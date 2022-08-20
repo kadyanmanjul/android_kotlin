@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +30,6 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -52,8 +52,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
-import com.singular.sdk.Singular
 import com.tonyodev.fetch2core.isNetworkAvailable
+import io.branch.referral.util.BRANCH_STANDARD_EVENT
+import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -169,13 +170,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             e.printStackTrace()
         }
         setObservers()
-        logNewPaymentPageOpened()
+        MarketingAnalytics.openPreCheckoutPage()
         setListeners()
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-        jsonData.put(ParamKeys.TEST_ID.name, testId)
-        Singular.eventJSON(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, jsonData)
-        AppAnalytics.create(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name).addDeviceId().push()
     }
 
     private fun dynamicCardCreation() {
@@ -903,16 +899,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 )
                 .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                 .push()
-
-            val jsonData = JSONObject()
-            jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-            jsonData.put(
-                ParamKeys.COURSE_PRICE.name,
-                viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
-            )
-            jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
-            Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
-            AppAnalytics.create(SingularEvent.INITIATED_PAYMENT.name).addDeviceId().push()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -981,19 +967,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                 .push()
 
-            val jsonData = JSONObject()
-            jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-            jsonData.put(
-                ParamKeys.AMOUNT_PAID.name,
-                viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
-            )
-            jsonData.put(
-                ParamKeys.IS_COUPON_APPLIED.name,
-                viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode
-            )
-            jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
-            Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
-            AppAnalytics.create(SingularEvent.PAYMENT_FAILED.name).addDeviceId().push()
+            MarketingAnalytics.paymentFail(razorpayOrderId, testId)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1001,7 +975,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
         if (viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
             if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED))
                 viewModel.postGoal("ICP_COURSE_BOUGHT", CampaignKeys.INCREASE_COURSE_PRICE.name)
@@ -1072,17 +1045,14 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL, isPointsScoredMoreThanEqualTo100)
                 .push()
 
-            Singular.customRevenue(
-                SingularEvent.PAYMENT_SUCCESSFUL.name,
-                "INR",
-                viewModel.orderDetailsLiveData.value?.amount ?: 0.0,
-                mapOf(
-                    Pair(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId),
-                    Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode),
-                    Pair(ParamKeys.PAYMENT_ID.name, razorpayPaymentId),
-                    Pair(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-                )
-            )
+            val extras: HashMap<String, String> = HashMap()
+            extras["test_id"] = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId.toString()
+            extras["payment_id"] = razorpayPaymentId
+            extras["currency"] = CurrencyType.INR.name
+            extras["amount"] = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount?.replace("₹", "").toString()
+            extras["course_name"] = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName.toString()
+            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
+
         } catch (e: Exception) {
             e.printStackTrace()
         }

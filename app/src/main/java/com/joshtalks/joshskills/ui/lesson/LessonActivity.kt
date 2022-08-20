@@ -964,12 +964,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         lesson.speakingStatus = status
                     }
                     GRAMMAR_POSITION -> {
-                        if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
-                            MarketingAnalytics.logGrammarSectionCompleted()
-                            if (isWhatsappRemarketingActive) {
-                                MarketingAnalytics.logWhatsappRemarketing()
-                            }
-                        }
                         lesson.grammarStatus = status
                     }
                     VOCAB_POSITION -> lesson.vocabStatus = status

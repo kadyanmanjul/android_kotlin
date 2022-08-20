@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.signup
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,13 +20,10 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.singular.sdk.Singular
-import org.json.JSONObject
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import android.app.PendingIntent
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 
 class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
@@ -148,10 +146,6 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     }
 
     fun submitProfile() {
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-        Singular.eventJSON(SingularEvent.REGISTER_FREE_TRIAL_NAME.name, jsonData)
-        AppAnalytics.create(SingularEvent.REGISTER_FREE_TRIAL_NAME.name).addDeviceId().push()
         if (Utils.isInternetAvailable().not()){
             showToast(getString(R.string.internet_not_available_msz))
             return

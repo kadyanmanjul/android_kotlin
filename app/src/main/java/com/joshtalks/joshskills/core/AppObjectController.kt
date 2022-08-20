@@ -331,6 +331,14 @@ class AppObjectController {
             return INSTANCE
         }
 
+        fun getVideoTracker():DownloadTracker?{
+            return if(Companion::videoDownloadTracker.isInitialized) {
+                videoDownloadTracker
+            } else {
+                null
+            }
+        }
+
         fun init(context: JoshApplication) {
             joshApplication = context
             CoroutineScope(Dispatchers.IO).launch {

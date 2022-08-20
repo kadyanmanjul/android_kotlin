@@ -427,9 +427,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             when (tabPosition) {
                 GRAMMAR_POSITION -> {
-                    if (lessonLiveData.value?.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
-                        MarketingAnalytics.logGrammarSectionCompleted()
-                    }
                     appDatabase.lessonDao().updateGrammarSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {

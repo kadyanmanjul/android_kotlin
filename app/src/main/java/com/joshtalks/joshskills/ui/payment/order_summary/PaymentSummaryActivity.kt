@@ -17,6 +17,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.IconMarginSpan
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -67,10 +68,8 @@ import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.voip.getDeviceId
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
-import com.singular.sdk.Singular
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -178,11 +177,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         subscribeObservers()
         initCountryCode()
         logPaymentAnalyticsEvents()
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-        jsonData.put(ParamKeys.TEST_ID.name, testId)
-        Singular.eventJSON(SingularEvent.OPENED_CHECKOUT_PAGE.name, jsonData)
-        AppAnalytics.create(SingularEvent.OPENED_CHECKOUT_PAGE.name).addDeviceId().push()
     }
 
     private fun initViewModel() {
@@ -461,9 +455,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         viewModel.isFreeOrderCreated.observe(this, androidx.lifecycle.Observer
         {
             if (it) {
-                if (intent.hasExtra(HAS_FREE_7_DAY_TRIAL)) {
-                    MarketingAnalytics.sevenDayFreeTrialStart(testId)
-                }
                 PrefManager.put(IS_PAYMENT_DONE, true)
                 if (isFromNewFreeTrial) {
                     if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
@@ -836,13 +827,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             else -> viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
         }
 
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
-        jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
-        jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
-        Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
-        AppAnalytics.create(SingularEvent.INITIATED_PAYMENT.name).addDeviceId().push()
-
         if(!loginStartFreeTrial) {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_STARTED)
                 .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
@@ -926,14 +910,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
                 .push()
 
-            val jsonData = JSONObject()
-            jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
-            jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
-            jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-            jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
-            jsonData.put(ParamKeys.DEVICE_ID.name,Utils.getDeviceId())
-            Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
-            AppAnalytics.create(SingularEvent.PAYMENT_FAILED.name).addDeviceId().push()
+            MarketingAnalytics.paymentFail(razorpayOrderId,testId)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -949,7 +926,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
@@ -1006,18 +982,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL, is100PointsObtained)
                 .push()
 
-            Singular.customRevenue(
-                SingularEvent.PAYMENT_SUCCESSFUL.name,
-                "INR",
-                viewModel.getCourseDiscountedAmount(),
-                mapOf(
-                    Pair(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId()),
-                    Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode),
-                    Pair(ParamKeys.PAYMENT_ID.name, razorpayPaymentId),
-                    Pair(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-                )
-            )
-            AppAnalytics.create(SingularEvent.PAYMENT_SUCCESSFUL.name).addDeviceId().push()
+            AppAnalytics.create(BranchEventName.PAYMENT_SUCCESSFUL.name).addDeviceId().push()
         } catch (e: Exception) {
             e.printStackTrace()
         }

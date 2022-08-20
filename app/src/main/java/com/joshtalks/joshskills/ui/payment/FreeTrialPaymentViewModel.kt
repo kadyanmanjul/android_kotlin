@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
@@ -104,9 +106,11 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
 
                 val orderDetailsResponse: Response<OrderDetailResponse> =
                     AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
+                Log.e("sagar", "getOrderDetails: ${orderDetailsResponse.code()}")
                 if (orderDetailsResponse.code() == 201) {
                     val response: OrderDetailResponse = orderDetailsResponse.body()!!
                     orderDetailsLiveData.postValue(response)
+                    MarketingAnalytics.initPurchaseEvent(data, response)
                 } else {
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }

@@ -170,8 +170,12 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun onTooltipClick(view: View) {
-        PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, true)
-        adapter.peek(0)?.let { onItemClick.invoke(it) }
+        try {
+            PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, true)
+            adapter.peek(0)?.let { onItemClick.invoke(it) }
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     fun openTypeChooser(view: View) {
