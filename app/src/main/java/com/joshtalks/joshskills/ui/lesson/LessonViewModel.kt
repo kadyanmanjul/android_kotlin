@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
@@ -574,6 +575,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 return@withContext null
             }
             return@withContext null
+        }
+    }
+
+    fun getFakeCallSpeakingScreen(){
+        viewModelScope.launch(Dispatchers.IO) {
+            WorkManagerAdmin.setFakeCallSpeakingScreenNotifWorker()
         }
     }
 

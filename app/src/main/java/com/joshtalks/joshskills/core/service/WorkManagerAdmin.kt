@@ -259,6 +259,17 @@ object WorkManagerAdmin {
         }
     }
 
+    fun setFakeCallSpeakingScreenNotifWorker(){
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .cancelAllWorkByTag(FakeCallSpeakingScreenNotifWorker::class.java.name)
+
+        val workRequest = OneTimeWorkRequestBuilder<FakeCallSpeakingScreenNotifWorker>()
+            .setInputData(workDataOf())
+            .addTag(FakeCallSpeakingScreenNotifWorker::class.java.name)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
+
     fun setLocalNotificationWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .cancelAllWorkByTag(LocalNotificationWorker::class.java.name)

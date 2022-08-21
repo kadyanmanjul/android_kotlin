@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -101,7 +102,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
 
     private val viewModel: LessonViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
+        ViewModelProvider(requireActivity())[LessonViewModel::class.java]
     }
 
     private var currentTooltipIndex = 0
@@ -169,6 +170,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             ex.printStackTrace()
         }
         return null
+    }
+
+    override fun onPause() {
+        if(viewModel.lessonLiveData.value?.speakingStatus == LESSON_STATUS.NO && PrefManager.getBoolValue(IS_FREE_TRIAL)){
+            viewModel.getFakeCallSpeakingScreen()
+        }
+        super.onPause()
     }
 
     override fun onStop() {
