@@ -63,6 +63,9 @@ interface P2PNetworkService {
     @GET("$DIR/voicecall/agora_fake_call/")
     suspend fun getFakeCall(): FirestoreNotificationObject
 
+    @POST("$DIR/voicecall/agora_fake_call/")
+    suspend fun getFakeCallConnect(@Body params: Map<String, String>): FirestoreNotificationObject
+
     @JvmSuppressWildcards
     @POST("$DIR/voicecall/agora_call_feedback_submit/")
     suspend fun sendP2pCallReportSubmit(@Body params: Map<String, Any>):Response<Unit>

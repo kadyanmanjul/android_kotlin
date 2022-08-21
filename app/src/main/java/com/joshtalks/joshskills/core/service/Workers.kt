@@ -60,6 +60,7 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.voip.getCourseId
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.Date
@@ -937,6 +938,24 @@ class FakeCallNotificationWorker(
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+class FakeCallSpeakingScreenNotifWorker(
+    val context: Context,
+    workerParams: WorkerParameters
+): CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try{
+            val map = HashMap<String,String>()
+            map["course_id"] = context.getCourseId()
+            val resp = AppObjectController.p2pNetworkService.getFakeCallConnect(map)
+            val nc = resp.toNotificationObject(null)
+            NotificationUtils(context).sendNotification(nc)
+        }catch (e:Exception){
+            e.printStackTrace()
         }
         return Result.success()
     }
