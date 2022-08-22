@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -81,14 +82,40 @@ class VoiceCallActivity : BaseActivity() {
 //        }
 
         if (shouldLaunchPermission) {
-            requestPermissionsLauncher.launch(
-                arrayOf(
-                    Manifest.permission.RECORD_AUDIO,
-                    Manifest.permission.READ_PHONE_STATE,
-                    Manifest.permission.ACCESS_NETWORK_STATE,
-                    Manifest.permission.MODIFY_AUDIO_SETTINGS,
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                requestPermissionsLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.ACCESS_NETWORK_STATE,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    )
                 )
-            )
+            }else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && Build.VERSION.SDK_INT <= Build.VERSION_CODES.R ){
+                requestPermissionsLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.ACCESS_NETWORK_STATE,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+
+                        )
+                )
+            }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                requestPermissionsLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.ACCESS_NETWORK_STATE,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    )
+                )
+            }
         }else{
             callingPermissionPermanentlyDeniedDialog(
                 this,

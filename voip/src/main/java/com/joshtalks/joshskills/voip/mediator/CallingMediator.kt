@@ -6,8 +6,6 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.context
-import com.joshtalks.joshskills.voip.audiocontroller.AudioController
-import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
@@ -61,9 +59,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
     private val fallbackEventChannel: EventChannel by lazy {
         FirebaseChannelService(scope)
-    }
-    private val audioRouteController : AudioController by lazy {
-        AudioController(scope)
     }
 
     var calling: CallCategory = PeerToPeerCall()

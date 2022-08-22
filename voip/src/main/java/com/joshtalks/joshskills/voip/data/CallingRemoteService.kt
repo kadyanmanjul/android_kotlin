@@ -290,12 +290,10 @@ class CallingRemoteService : Service() {
     }
 
     private fun resetAudioRoute() {
-        Log.d(TAG, "observeAudio: called now")
         ioScope.launch {
             try {
                 audioController.observeAudioRoute().collectLatest {
                     try{
-                        Log.d(TAG, "observeAudio: $it")
                         when (it) {
                             AudioRouteConstants.BluetoothAudio -> {Log.d(TAG, "observeAudioRoute BluetoothAudio")}
                             AudioRouteConstants.Default -> {Log.d(TAG, "observeAudioRoute Default" )}
@@ -473,7 +471,7 @@ enum class ServiceEvents {
     CALL_RECORDING_ACCEPT,
     CALL_RECORDING_REJECT,
     CANCEL_RECORDING_REQUEST,
-    PROCESS_AGORA_CALL_RECORDING
+    PROCESS_AGORA_CALL_RECORDING,
 }
 
 enum class RecordingButtonState {

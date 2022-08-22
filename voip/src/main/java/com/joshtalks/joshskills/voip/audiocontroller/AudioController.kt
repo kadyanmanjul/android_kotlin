@@ -9,6 +9,7 @@ import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -100,6 +101,12 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
             }
 
         }
+        setAudioRoutes()
+    }
+
+    private fun setAudioRoutes() {
+        isHeadsetOn = audioManager?.isWiredHeadsetOn?:false
+        isBluetoothOn = audioManager?.isBluetoothScoOn?:false
     }
 
     override fun registerAudioControllerReceivers() {
@@ -131,9 +138,11 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
             return AudioRouteConstants.SpeakerAudio
         }
         if (isBluetoothOn) {
-            audioManager?.mode = AudioManager.MODE_IN_COMMUNICATION
-            audioManager?.startBluetoothSco()
-            audioManager?.isBluetoothScoOn = true
+            CoroutineScope(Dispatchers.Main).launch {
+                audioManager?.mode = AudioManager.MODE_IN_COMMUNICATION
+                audioManager?.startBluetoothSco()
+                audioManager?.isBluetoothScoOn = true
+            }
             return AudioRouteConstants.BluetoothAudio
         }
 

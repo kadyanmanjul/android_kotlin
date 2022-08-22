@@ -381,9 +381,10 @@ object PermissionUtils {
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
+
                 )
                 .withListener(multiplePermissionsListener).check()
-        } else {
+        } else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && Build.VERSION.SDK_INT <= Build.VERSION_CODES.R ){
             Dexter.withContext(activity)
                 .withPermissions(
                     Manifest.permission.RECORD_AUDIO,
@@ -394,7 +395,17 @@ object PermissionUtils {
                 )
                 .withListener(multiplePermissionsListener).check()
 
-        }
+        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                Dexter.withContext(activity)
+                    .withPermissions(
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.ACCESS_NETWORK_STATE,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.BLUETOOTH_CONNECT, )
+                    .withListener(multiplePermissionsListener).check()
+            }
     }
 
 
