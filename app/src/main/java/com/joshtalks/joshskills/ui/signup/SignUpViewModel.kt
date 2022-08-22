@@ -35,8 +35,6 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.singular.sdk.Singular
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
