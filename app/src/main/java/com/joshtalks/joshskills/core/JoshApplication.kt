@@ -5,7 +5,9 @@ import android.app.ActivityManager
 import android.app.AlarmManager
 import android.app.Application
 import android.app.PendingIntent
-import android.content.*
+import android.content.ComponentCallbacks2
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Process
 import android.os.StrictMode
@@ -15,12 +17,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
+import androidx.work.Configuration
 import androidx.work.impl.background.greedy.GreedyScheduler
-import com.facebook.stetho.Stetho
-import com.freshchat.consumer.sdk.Freshchat
-import com.google.firebase.FirebaseApp
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController.Companion.getLocalBroadcastManager
 import com.joshtalks.joshskills.core.AppObjectController.Companion.restoreIdReceiver
@@ -35,9 +34,6 @@ import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.Utils
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Method
 import java.util.*
