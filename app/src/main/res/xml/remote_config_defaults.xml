@@ -131,10 +131,6 @@
         <value>जो student एक हफ्ते में सबसे ज़्यादा मेहनत करता है वह Student of the Week बनता है</value>
     </entry>
     <entry>
-        <key>MINIMUM_NPS_IN_A_DAY_COUNT</key>
-        <value>-1</value>
-    </entry>
-    <entry>
         <key>REMINDERS_SCREEN_DESCRIPTION</key>
         <value>Note : Students with 5 Reminders have higher probability of completing a course</value>
     </entry>

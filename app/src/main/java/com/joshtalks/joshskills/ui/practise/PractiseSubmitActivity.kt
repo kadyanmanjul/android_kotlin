@@ -6,13 +6,22 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -39,17 +48,26 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.isCallOngoing
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPraticeSubmitBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -65,6 +83,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
@@ -72,7 +91,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.io.File
 
 const val PRACTISE_OBJECT = "practise_object"
 const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
@@ -504,9 +522,6 @@ class PractiseSubmitActivity :
             Observer {
                 if (it) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        chatModel.question?.interval?.run {
-                            WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
-                        }
                         delay(250)
                         val resultIntent = Intent().apply {
                             putExtra(PRACTISE_OBJECT, chatModel)

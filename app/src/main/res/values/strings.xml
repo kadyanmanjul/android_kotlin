@@ -111,7 +111,6 @@
     <!-- Payment process-->
     <string name="practice">Practice</string>
 
-    <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">Submit Answer</string>
     <string name="improve_answer">Improve Answer</string>
@@ -215,10 +214,6 @@
 
 
     <string name="bilkul_nahi">No</string>
-    <string name="abhi_shuru_karein">Yes</string>
-    <string name="hint_apni_baat">Apni baat yahan likhe</string>
-    <string name="npr_thank_you">Thank you \n for your feedback</string>
-
 
     <!-- Signup V2 Screen  -->
     <string name="otp_verify_label">Apna OTP verify kare</string>
@@ -1015,13 +1010,16 @@
     <string name="wait_for_your_partner_to_click_next" translatable="false">Wait for your partner to click next</string>
     <string name="image_button_to_move_left" translatable="false">Image button to move left</string>
     <string name="image_button_to_move_right" translatable="false">Image button to move right</string>
-    <string name="warning">WARNING</string>
-    <string name="got_it">GOT IT</string>
-    <string name="shorter_calls_error_message">Dear student, आपकी calls बहुत छोटी जा रही हैं. \n
+    <string name="warning" translatable="false">WARNING</string>
+    <string name="got_it" translatable="false">GOT IT</string>
+    <string name="shorter_calls_error_message" translatable="false">Dear student, आपकी calls बहुत छोटी जा रही हैं. \n
         \n मेरी आप से request हैं कि, आप जिससे भी connect हो, उनसे दिल लगा कर बात करें और लम्बी बात करें.
         यह application उन serious students के लिए बनाई गयी है जिनके दिल में Josh है English सीखने का और आगे बढ़ने का.
         अगर आपकी future की calls भी बहुत छोटी जाती हैं, तो आपकी calling को बंद भी किया जा सकता है.\n
         \n Thank you. Best of luck! </string>
+    <string name="you_have_reached_limit_freetrial" translatable="false">You have reached your calling limit in Free Trial</string>
+    <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
+    <string name="grammar_completed" translatable="false">Grammar Completed!</string>
     <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
     <string name="buy_course_to_continue_calling"><u>Buy course to continue calling</u></string>
     <string name="grammar_completed">Grammar Completed!</string>

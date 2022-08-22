@@ -10,15 +10,15 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
-import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.model.User
 import java.util.UUID
 import java.util.concurrent.TimeUnit
-import timber.log.Timber
 
 object WorkManagerAdmin {
 
@@ -180,14 +180,6 @@ object WorkManagerAdmin {
             .cancelAllWorkByTag(BackgroundNotificationWorker::class.java.name)
     }
 
-    fun getQuestionNPA(eventName: String): UUID {
-        val data = workDataOf("event" to eventName)
-        val workRequest = OneTimeWorkRequestBuilder<NPAQuestionViaEventWorker>()
-            .setInputData(data)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
-        return workRequest.id
-    }
 
     fun getLanguageChangeWorker(language: String): UUID {
         val data = workDataOf(LANGUAGE_CODE to language)
@@ -201,23 +193,6 @@ object WorkManagerAdmin {
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         return workRequest.id
-    }
-
-    fun determineNPAEvent(
-        event: NPSEvent = NPSEvent.STANDARD_TIME_EVENT,
-        interval: Int = -1,
-        id: String? = EMPTY
-    ) {
-        val data =
-            workDataOf(
-                "event" to AppObjectController.gsonMapper.toJson(event),
-                "day" to interval,
-                "id" to id
-            )
-        val workRequest = OneTimeWorkRequestBuilder<DeterminedNPSEvent>()
-            .setInputData(data)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
     fun clearMediaOfConversation(conversationId: String, isTimeDelete: Boolean = false): UUID {

@@ -44,7 +44,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
@@ -80,7 +79,6 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
 import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
-import github.nisrulz.easydeviceinfo.base.EasyConfigMod
 import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
@@ -489,36 +487,6 @@ object Utils {
         }
     }
 
-    private fun openInApplicationBrowser(url: String, activity: Activity) {
-        val updateUrl: String = if (url.trim().startsWith("http://").not()) {
-            "http://" + url.replace("https://", "").trim()
-        } else {
-            url.trim()
-        }
-        val builder = CustomTabsIntent.Builder()
-        builder.setToolbarColor(
-            ContextCompat.getColor(
-                AppObjectController.joshApplication,
-                R.color.colorPrimary
-            )
-        )
-        builder.setShowTitle(true)
-        builder.setExitAnimations(activity, android.R.anim.fade_in, android.R.anim.fade_out)
-        val packageName = CustomTabHelper.getPackageNameToUse(activity, updateUrl)
-        val customTabsIntent = builder.build()
-        if (packageName == null) {
-            val intent = Intent(ACTION_VIEW)
-            intent.apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            intent.data = Uri.parse(updateUrl)
-            activity.startActivity(intent)
-        } else {
-            customTabsIntent.intent.setPackage(packageName)
-            customTabsIntent.launchUrl(activity, Uri.parse(updateUrl))
-        }
-    }
-
     fun isInternetAvailable(): Boolean {
         val connectivityManager =
             AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -576,58 +544,6 @@ object Utils {
             return bitmap
         } else {
             throw IllegalArgumentException("unsupported drawable type")
-        }
-    }
-
-    fun openWbView(activityContext: Activity, url: String) {
-        try {
-            val updateUrl: String = if (url.trim().startsWith("http://").not()) {
-                "http://" + url.replace("https://", "").trim()
-            } else {
-                url.trim()
-            }
-            val builder = CustomTabsIntent.Builder()
-            builder.setToolbarColor(
-                ContextCompat.getColor(
-                    AppObjectController.joshApplication,
-                    R.color.colorPrimary
-                )
-            )
-            builder.setShowTitle(true)
-            val actionIntent = Intent(Intent.ACTION_DIAL).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            val phoneNumber =
-                AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
-            actionIntent.data = Uri.parse("tel:$phoneNumber")
-
-            val pi =
-                PendingIntent.getActivity(activityContext, 0, actionIntent, 0)
-            val icon = getBitmapFromDrawable(
-                AppObjectController.joshApplication,
-                R.drawable.ic_local_phone
-            )
-            builder.setActionButton(icon, "Call helpline", pi, true)
-
-            builder.setStartAnimations(
-                AppObjectController.joshApplication,
-                R.anim.slide_in_right,
-                R.anim.slide_out_left
-            )
-            builder.setExitAnimations(
-                AppObjectController.joshApplication,
-                R.anim.slide_in_left,
-                R.anim.slide_out_right
-            )
-
-            val customTabsIntent = builder.build()
-            com.joshtalks.joshskills.core.chrome.CustomTabsHelper.addKeepAliveExtra(
-                activityContext,
-                customTabsIntent.intent
-            )
-            customTabsIntent.launchUrl(activityContext, Uri.parse(updateUrl))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
     }
 
@@ -786,10 +702,6 @@ object Utils {
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return intent
-    }
-
-    fun getDeviceInfo() {
-        var easyConfigMod = EasyConfigMod(AppObjectController.joshApplication)
     }
 
     fun getExpectedLines(textSize: Float, value: String): Int {

@@ -64,7 +64,6 @@
     <string name="attach_image">ഫോട്ടോ ചേർക്കുക</string>
 
     <string name="practice">പ്രാക്ടീസ്</string>
-    <string name="complaint_message">ഞങ്ങളിൽ എത്തിയതിന് നന്ദി. നിങ്ങളുടെ അഭ്യർത്ഥന ടിക്കറ്റ് നമ്പരിനെതിരെ രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്. ഞങ്ങളുടെ ടീം 24-72 മണിക്കൂറിനുള്ളിൽ നിങ്ങളെ ബന്ധപ്പെടും.</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">ഉത്തരം സമർപ്പിക്കുക</string>
     <string name="improve_answer">ഉത്തരം മെച്ചപ്പെടുത്തുക</string>
@@ -145,9 +144,6 @@
     <string name="dont_close">ഈ വിൻഡോ അടയ്ക്കരുത്</string>
     <string name="processing">ഞങ്ങൾ നിങ്ങളുടെ പേയ്‌മെന്റ് പ്രോസസ്സ് ചെയ്യുകയാണ്. കുറച്ച് സമയമെടുത്തേക്കാം</string>
     <string name="bilkul_nahi">"ഇല്ല"</string>
-    <string name="abhi_shuru_karein">"അതെ"</string>
-    <string name="hint_apni_baat">"നിങ്ങളുടെ ചിന്തകൾ  ഇവിടെ എഴുതുക"</string>
-    <string name="npr_thank_you">"താങ്കളുടെ പ്രതികരണത്തിന് നന്ദി"</string>
     <string name="otp_verify_label">"നിങ്ങളുടെ OTP പരിശോധിക്കുക"</string>
     <string name="otp_received_message">%s-ന് ലഭിച്ച OTP നൽകുക</string>
     <string name="edit_number">"എഡിറ്റ് നമ്പർ"</string>

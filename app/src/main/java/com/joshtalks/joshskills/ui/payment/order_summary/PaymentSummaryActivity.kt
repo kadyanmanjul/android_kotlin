@@ -17,7 +17,6 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.IconMarginSpan
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -43,18 +42,47 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_PAYMENT_BTN_TXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
+import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER_STARTED
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_ENDED
+import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
+import com.joshtalks.joshskills.core.POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.RC_HINT
+import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
+import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.BranchEventName
+import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.getDefaultCountryIso
+import com.joshtalks.joshskills.core.getPhoneNumber
+import com.joshtalks.joshskills.core.isValidFullNumber
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -75,16 +103,16 @@ import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
-import java.math.BigDecimal
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.*
-import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
 const val ENGLISH_COURSE_TEST_ID = "102"
@@ -921,7 +949,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         uiHandler.post {
             showPaymentFailedDialog()
         }
-        NPSEventModel.setCurrentNPA(NPSEvent.PAYMENT_FAILED)
     }
 
     @Synchronized
@@ -957,9 +984,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         razorpayOrderId.verifyPayment()
         MarketingAnalytics.coursePurchased(BigDecimal(viewModel.mPaymentDetailsResponse.value?.amount ?: 0.0))
         //viewModel.updateSubscriptionStatus()
-        NPSEventModel.setCurrentNPA(
-            NPSEvent.PAYMENT_SUCCESS
-        )
         if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
             PrefManager.put(
                 PAYMENT_MOBILE_NUMBER,
