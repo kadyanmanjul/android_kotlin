@@ -317,7 +317,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     }
 
-    override fun onDestroy() {
+    override suspend fun onDestroy() {
         Log.d(TAG, "onDestroy : Destroying channel and services")
         if (this@CallingMediator::incomingCallNotificationHandler.isInitialized) {
             incomingCallNotificationHandler.removeNotification()

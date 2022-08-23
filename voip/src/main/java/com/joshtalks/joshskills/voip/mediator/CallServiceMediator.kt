@@ -28,7 +28,7 @@ internal interface CallServiceMediator {
     // Needed to receive User Action
     fun userAction(action: UserAction)
     // Used to destroy Mediator
-    fun onDestroy()
+    suspend fun onDestroy()
     fun stopAgoraCallRecording()
     fun startAgoraCallRecording()
 }

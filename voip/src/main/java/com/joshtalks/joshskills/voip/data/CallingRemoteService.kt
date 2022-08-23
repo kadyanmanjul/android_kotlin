@@ -70,6 +70,7 @@ class CallingRemoteService : Service() {
         e.printStackTrace()
     }
     private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
+    private val destroyScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
     private val syncScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private var isMediatorInitialise = false
@@ -385,10 +386,13 @@ class CallingRemoteService : Service() {
     override fun onDestroy() {
         Log.d(TAG, "onDestroy: ")
         unregisterReceivers()
-        mediator.onDestroy()
+        destroyScope.launch {
+            mediator.onDestroy()
+            destroyScope.cancel()
+            super.onDestroy()
+        }
         ioScope.cancel()
         syncScope.cancel()
-        super.onDestroy()
     }
 
     private fun showNotification() {
