@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 
 class CallWithExpertViewModel : ViewModel() {
 
-    private val _creditsCount = MutableLiveData<String>()
+    private val _creditsCount = MutableLiveData<String>("₹ 0")
 
     val creditsCount: LiveData<String>
         get() = _creditsCount

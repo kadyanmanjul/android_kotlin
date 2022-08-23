@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.databinding.FragmentWalletBinding
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.AmountAdapter
 import com.joshtalks.joshskills.ui.callWithExpert.constant.getAmountList
@@ -35,7 +36,9 @@ class WalletFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding){
+            amountList.addItemDecoration(GridSpacingItemDecoration(2, 20, false))
             amountList.adapter = AmountAdapter(resources.getStringArray(R.array.amount_list).toList()){ amount ->
+                viewModel?.updateAddedAmount(amount)
                 openCheckoutScreen(amount)
             }
         }

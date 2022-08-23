@@ -9,7 +9,7 @@ import com.joshtalks.joshskills.R
 
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _availableBalance = MutableLiveData<String>()
+    private val _availableBalance = MutableLiveData<String>("₹ 0")
 
     val availableBalance: LiveData<String>
         get() = _availableBalance
@@ -19,6 +19,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     val addedAmount: LiveData<String>
         get() = _addedAmount
 
-
+    fun updateAddedAmount(amount: String){
+        _addedAmount.value = amount
+    }
 
 }

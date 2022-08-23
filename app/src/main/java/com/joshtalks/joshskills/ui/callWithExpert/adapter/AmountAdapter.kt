@@ -26,7 +26,7 @@ class AmountAdapter(
         fun setData(amount: String) {
             with(binding) {
                 this.amount = amount
-                itemAmount.setOnClickListener {
+                root.setOnClickListener {
                     onItemClick.invoke(amount)
                 }
             }
