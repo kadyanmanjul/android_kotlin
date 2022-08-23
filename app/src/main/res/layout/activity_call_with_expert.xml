@@ -2,6 +2,17 @@
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel" />
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity" />
+    </data>
+
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,9 +22,30 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:title="@string/call_with_expert"
+        android:titleTextColor="@color/white"
+        android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute">
+
+        <TextView
+            android:id="@+id/walletCredits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/white"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            onSingleClick="@{() -> handler.openWalletScreen()}"
+            android:textStyle="bold"
+            android:text="@{viewModel.creditsCount}"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:background="@drawable/rounded_border_bg"
+            tools:text="₹ 78"/>
+
+    </Toolbar>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainer"

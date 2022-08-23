@@ -1025,4 +1025,7 @@
     <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
     <string name="buy_course_to_continue_calling"><u>Buy course to continue calling</u></string>
     <string name="grammar_completed">Grammar Completed!</string>
+    <string name="call_with_expert">Call With Expert</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
