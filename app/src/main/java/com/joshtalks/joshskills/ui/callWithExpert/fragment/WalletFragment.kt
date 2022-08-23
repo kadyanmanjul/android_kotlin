@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentWalletBinding
+import com.joshtalks.joshskills.ui.callWithExpert.adapter.AmountAdapter
+import com.joshtalks.joshskills.ui.callWithExpert.constant.getAmountList
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel
 
 class WalletFragment : Fragment() {
@@ -31,6 +34,16 @@ class WalletFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        with(binding){
+            amountList.adapter = AmountAdapter(resources.getStringArray(R.array.amount_list).toList()){ amount ->
+                openCheckoutScreen(amount)
+            }
+        }
+
+    }
+
+    private fun openCheckoutScreen(amount: String){
+        // TODO: Open Checkout Fragment to enter coupon code.
     }
 
 }
