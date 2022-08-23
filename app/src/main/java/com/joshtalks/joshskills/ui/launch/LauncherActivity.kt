@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity

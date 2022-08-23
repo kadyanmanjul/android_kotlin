@@ -1039,18 +1039,19 @@
     <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
 
     <string-array name="amount_list">
-        <item>50</item>
-        <item>100</item>
-        <item>200</item>
-        <item>300</item>
-        <item>500</item>
-        <item>1000</item>
-        <item>2000</item>
-        <item>3000</item>
-        <item>4000</item>
-        <item>8000</item>
-        <item>15000</item>
-        <item>50000</item>
-        <item>100000</item>
+        <item>₹ 50</item>
+        <item>₹ 100</item>
+        <item>₹ 200</item>
+        <item>₹ 300</item>
+        <item>₹ 500</item>
+        <item>₹ 1000</item>
+        <item>₹ 2000</item>
+        <item>₹ 3000</item>
+        <item>₹ 4000</item>
+        <item>₹ 8000</item>
+        <item>₹ 15000</item>
+        <item>₹ 12000</item>
+        <item>₹ 50000</item>
+        <item>₹ 100000</item>
     </string-array>
 </resources>

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.callWithExpert
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
@@ -26,5 +27,13 @@ class CallWithExpertActivity : AppCompatActivity() {
 
     fun openWalletScreen(){
         // TODO: Open Wallet Screen.
+    }
+
+    companion object {
+        fun open(activity: AppCompatActivity){
+            Intent(activity, CallWithExpertActivity::class.java).also {
+                activity.startActivity(it)
+            }
+        }
     }
 }
