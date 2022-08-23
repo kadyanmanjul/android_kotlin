@@ -6,22 +6,16 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import android.view.View
-import androidx.fragment.app.commit
+import android.widget.TextView
+import androidx.navigation.findNavController
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
-import com.joshtalks.joshskills.ui.callWithExpert.view.ExpertListFragment
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
-import com.joshtalks.joshskills.ui.group.GroupChatFragment
-import com.joshtalks.joshskills.ui.group.NewGroupFragment
-import com.joshtalks.joshskills.ui.group.constants.ADD_GROUP_FRAGMENT
-import com.joshtalks.joshskills.ui.group.constants.CHAT_FRAGMENT
-import com.joshtalks.joshskills.ui.group.constants.GROUPS_STACK
-import com.joshtalks.joshskills.ui.group.constants.IS_FROM_GROUP_INFO
 
 class CallWithExpertActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCallWithExpertBinding
+    private lateinit var balanceTv: TextView
 
     private val viewModel by lazy {
         ViewModelProvider(this)[CallWithExpertViewModel::class.java]
@@ -34,11 +28,20 @@ class CallWithExpertActivity : AppCompatActivity() {
         binding.handler = this
         binding.viewModel = this.viewModel
         initToolbar()
-        openExpertList()
+        balanceTv.setOnClickListener {
+            openWalletScreen()
+        }
+        attachObservers()
+    }
+
+    private fun attachObservers() {
+        viewModel.creditsCount.observe(this){
+            balanceTv.text = it
+        }
     }
 
     fun openWalletScreen(){
-        // TODO: Open Wallet Screen.
+//        findNavController().navigate(R.id.)
     }
 
     companion object {
@@ -49,6 +52,8 @@ class CallWithExpertActivity : AppCompatActivity() {
         }
     }
     private fun initToolbar() {
+        balanceTv = findViewById<TextView>(R.id.iv_earn)
+        findViewById<TextView>(R.id.iv_earn)
         with(findViewById<View>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
@@ -57,10 +62,4 @@ class CallWithExpertActivity : AppCompatActivity() {
         }
     }
 
-    fun openExpertList(){
-        supportFragmentManager.commit {
-            val fragment = ExpertListFragment()
-            replace(R.id.fragmentContainer, fragment, "CALL WITH EXPERT")
-        }
-    }
 }

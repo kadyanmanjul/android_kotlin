@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/call_expert_nav_graph"
-    app:startDestination="@id/walletFragment">
+    app:startDestination="@id/expertListFragment">
 
     <fragment
         android:id="@+id/walletFragment"
@@ -19,4 +19,13 @@
         android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.WalletCheckoutFragment"
         android:label="WalletCheckoutFragment"
         tools:layout="@layout/fragment_wallet_checkout"/>
+    <fragment
+        android:id="@+id/expertListFragment"
+        android:name="com.joshtalks.joshskills.ui.callWithExpert.view.ExpertListFragment"
+        android:label="ExpertListFragment"
+        tools:layout="@layout/fragment_expert_list">
+        <action
+            android:id="@+id/action_expertListFragment_to_walletFragment"
+            app:destination="@id/walletFragment" />
+    </fragment>
 </navigation>

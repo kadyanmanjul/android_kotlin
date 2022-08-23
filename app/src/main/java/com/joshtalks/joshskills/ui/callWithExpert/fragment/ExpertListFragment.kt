@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentExpertListBinding
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.ExpertListViewModel
 
@@ -28,7 +31,10 @@ class ExpertListFragment:Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        expertListViewModel.getListOfExpert()
+//        expertListViewModel.getListOfExpert()
+        requireActivity().findViewById<TextView>(R.id.iv_earn).setOnClickListener {
+            findNavController().navigate(R.id.action_expertListFragment_to_walletFragment)
+        }
     }
 
 }

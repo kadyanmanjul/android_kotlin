@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
 import com.joshtalks.joshskills.ui.fpp.constants.SCROLL_TO_POSITION
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -21,6 +22,9 @@ class ExpertListViewModel : ViewModel() {
     val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val adapter = ExpertListAdapter()
 
+    init {
+        getListOfExpert()
+    }
 
     fun getListOfExpert() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -38,5 +42,7 @@ class ExpertListViewModel : ViewModel() {
 
         }
     }
+
+
 
 }
