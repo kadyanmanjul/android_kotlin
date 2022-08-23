@@ -16,3 +16,5 @@ fun getAmountList() = listOf<String>(
     "50000",
     "100000",
 )
+
+const val AMOUNT = "amount"

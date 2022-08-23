@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
@@ -460,4 +461,7 @@ dependencies {
 
     // Anr-watchdog
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
+
+    // Datastore for reactive shared pref
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 }
