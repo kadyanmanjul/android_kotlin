@@ -98,6 +98,7 @@
         android:includeFontPadding="false"
         android:textSize="@dimen/_12ssp"
         android:paddingHorizontal="@dimen/_17sdp"
+        onSingleClick="@{() -> handler.openCheckoutScreen()}"
         android:paddingVertical="@dimen/_7sdp"
         app:layout_constraintBottom_toBottomOf="@+id/view7"
         app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
