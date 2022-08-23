@@ -1028,6 +1028,7 @@
     <string name="call_with_expert">Call With Expert</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="rup">\u20B9</string>
     <string name="available_balance">Available Balance</string>
     <string name="enter_amount_in_inr">Enter Amount in INR</string>
     <string name="proceed">Proceed</string>

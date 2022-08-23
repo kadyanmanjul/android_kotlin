@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_236sdp"
+        android:layout_marginLeft="@dimen/_32sdp"
+        android:layout_marginRight="@dimen/_32sdp"
+        app:cardCornerRadius="@dimen/_8sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:fontFamily="@font/open_sans"
+                android:paddingLeft="@dimen/_12sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:text="Your Recharge is successful!"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                android:textColor="@color/pure_black"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:gravity="center_horizontal"
+                android:textAlignment="center"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/expert_image"
+                android:layout_width="@dimen/_74sdp"
+                android:layout_height="@dimen/_74sdp"
+                android:src="@drawable/remote_user_image"
+                app:civ_border_color="@color/expert_border_color"
+                app:civ_border_width="1.5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="@dimen/_23sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                tools:src="@drawable/remote_user_image" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNahi"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_8sdp"
+                android:backgroundTint="@color/transparent"
+                android:paddingHorizontal="@dimen/_39sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:stateListAnimator="@null"
+                android:text="No"
+                android:textColor="@color/blue"
+                app:cornerRadius="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:strokeColor="@color/colorAccent"
+                app:strokeWidth="@dimen/_1sdp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHaBilkul"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_8sdp"
+                android:backgroundTint="@color/colorAccent"
+                android:paddingVertical="@dimen/_8sdp"
+                android:text="Yes"
+                app:cornerRadius="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnNahi" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>
