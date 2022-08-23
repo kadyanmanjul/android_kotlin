@@ -1018,9 +1018,12 @@
         यह application उन serious students के लिए बनाई गयी है जिनके दिल में Josh है English सीखने का और आगे बढ़ने का.
         अगर आपकी future की calls भी बहुत छोटी जाती हैं, तो आपकी calling को बंद भी किया जा सकता है.\n
         \n Thank you. Best of luck! </string>
-    <string name="you_have_reached_limit_freetrial" translatable="false">You have reached your calling limit in Free Trial</string>
-    <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
-    <string name="grammar_completed" translatable="false">Grammar Completed!</string>
+    <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
+    <string name="buy_course_to_continue_calling"><u>Buy course to continue calling</u></string>
+    <string name="grammar_completed">Grammar Completed!</string>
+    <string name="call_with_expert">Call With Expert</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="success_payment_text" translatable="false">Payment Successful</string>
     <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting \n (Note : Please Restart your App)</string>
     <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
