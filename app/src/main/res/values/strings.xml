@@ -1054,4 +1054,6 @@
         <item>₹ 50000</item>
         <item>₹ 100000</item>
     </string-array>
+    <string name="rup">\u20B9</string>
+
 </resources>

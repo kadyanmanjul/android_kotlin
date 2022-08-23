@@ -73,6 +73,7 @@
     <color name="green">#20BA70</color>
     <color name="green_quiz">#13B673</color>
     <color name="green_snackbar">#48A429</color>
+    <color name="green_border_color">#319065</color>
     <color name="transparent">#00000000</color>
     <color name="artboard_color">#F1F2F4</color>
     <color name="green_right_answer">#129E88</color>
@@ -207,6 +208,7 @@
     <color name="p2p_game_call_recording_grey">#EAEAEA</color>
 
     <color name="btn_call_disable_color">#8F107BE5</color>
+    <color name="expert_border_color">#F0DF20</color>
     <color name="payment_status_red">#F03636</color>
     <color name="green_payment">#57CC02</color>
     <color name="green_payment_text">#179549</color>

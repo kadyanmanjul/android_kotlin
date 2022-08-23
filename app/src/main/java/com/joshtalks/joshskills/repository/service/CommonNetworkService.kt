@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
+import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListResponse
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
@@ -395,6 +396,9 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/track_reading_practice_impression/")
     suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
+
+    @GET("$DIR/micro_payment/get_experts/")
+    suspend fun getExpertList() :Response<ExpertListResponse>
 
     @GET("$DIR/fpp/call_popup/")
     suspend fun getPurchasePopUpResponse(@Query("duration") duration: String) :Response<PurchasePopUp>

@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
@@ -558,40 +559,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             else
                 showToast("Wait for last call to get disconnected")
         }
-        binding.btnInviteFriend.isVisible =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.IS_INVITATION_FOR_CALL_ENABLED) &&
-                    PrefManager.getBoolValue(IS_COURSE_BOUGHT) &&
-                    PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+        binding.btnInviteFriend.visibility = VISIBLE
         binding.btnInviteFriend.setOnClickListener {
-            viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
-            if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
-                InviteFriendActivity.start(requireActivity())
-            } else {
-                PermissionUtils.requestReadContactPermission(
-                    requireActivity(),
-                    object : PermissionListener {
-                        override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-                            viewModel.saveVoiceCallImpression(IMPRESSION_CONTACT_PERM_ACCEPTED)
-                            InviteFriendActivity.start(requireActivity())
-                        }
-
-                        override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
-                            viewModel.saveVoiceCallImpression(IMPRESSION_CONTACT_PERM_DENIED)
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                R.string.permission_denied_contacts
-                            )
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                            p0: PermissionRequest?,
-                            p1: PermissionToken?,
-                        ) {
-                            p1?.continuePermissionRequest()
-                        }
-                    })
-            }
+           Intent(requireActivity(), CallWithExpertActivity::class.java).also {
+               startActivity(it)
+           }
         }
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
