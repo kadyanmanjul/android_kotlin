@@ -1024,6 +1024,9 @@
     <string name="call_with_expert">Call With Expert</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="available_balance">Available Balance</string>
+    <string name="enter_amount_in_inr">Enter Amount in INR</string>
+    <string name="proceed">Proceed</string>
     <string name="success_payment_text" translatable="false">Payment Successful</string>
     <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting \n (Note : Please Restart your App)</string>
     <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
@@ -1034,4 +1037,20 @@
     <string name="turn_on_speaker" translatable="false">Turn on speaker</string>
     <string name="important_info" translatable="false">जरुरी जानकारी</string>
     <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
+
+    <string-array name="amount_list">
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>300</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>2000</item>
+        <item>3000</item>
+        <item>4000</item>
+        <item>8000</item>
+        <item>15000</item>
+        <item>50000</item>
+        <item>100000</item>
+    </string-array>
 </resources>
