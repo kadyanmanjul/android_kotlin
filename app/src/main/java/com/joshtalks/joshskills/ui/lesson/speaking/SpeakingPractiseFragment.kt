@@ -150,6 +150,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.lessonSpotlightStateLiveData.postValue(null)
         } else {
             CoroutineScope(Dispatchers.Main).launch{
+                // TODO: Why Delay?
                 delay(100)
                 viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
                 PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)

@@ -69,7 +69,7 @@ class SpokenHistoryActivity : CoreJoshActivity() {
             Observer {
                 binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalMinutesSpoken)
                 binding.userScoreText.text = it.totalMinutesSpokenText
-
+                // TODO: Run on Different Thread/Coroutine
                 it.spokenHistoryDateList?.forEachIndexed { index, list ->
                     if (list.SpokenSum != null) {
                         binding.recyclerView.addView(

@@ -52,6 +52,7 @@ import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -205,8 +206,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun workInBackground() {
         lifecycleScope.launchWhenResumed {
-            processIntent(intent)
-            checkInAppUpdate()
+            withContext(Dispatchers.IO) {
+                processIntent(intent)
+                checkInAppUpdate()
+            }
         }
     }
 
@@ -341,10 +344,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             findMoreLayout.visibility = View.VISIBLE
         }
         try {
+            // TODO: Refresh the first item in the RV - Timer
             inboxAdapter.notifyDataSetChanged()
         } catch (ex: Exception) {
         }
-        Runtime.getRuntime().gc()
         initABTest()
         initMoEngage()
         viewModel.getRegisterCourses()

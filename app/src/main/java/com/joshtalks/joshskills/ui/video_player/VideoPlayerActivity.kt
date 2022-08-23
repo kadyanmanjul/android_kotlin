@@ -731,6 +731,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     private fun startProgress() {
+        // TODO: Use Coroutine
         Thread {
             binding.progressHorizontal.progress = 0
             while (binding.progressHorizontal.progress < 100) {

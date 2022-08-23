@@ -203,6 +203,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
         }
     }
 
+    // TODO: Used notifyDataSetChanged - have to remove
     fun deleteFavoriteUserFromList() {
         showToast(getDeleteMessage())
         adapter.removeAndUpdated()

@@ -255,6 +255,7 @@ class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerPa
 }
 */
 
+// TODO: Remove this worker
 class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
