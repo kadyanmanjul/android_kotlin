@@ -4,12 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class CallWithExpertViewModel : ViewModel() {
+
+    private val expertListRepo by lazy {
+        ExpertListRepo()
+    }
 
     private val _creditsCount = MutableLiveData<String>("₹ 0")
 
@@ -18,6 +23,7 @@ class CallWithExpertViewModel : ViewModel() {
 
     init {
         getWalletCredits()
+        expertListRepo.updateWalletBalance()
     }
 
     private fun getWalletCredits() {
@@ -27,5 +33,6 @@ class CallWithExpertViewModel : ViewModel() {
             }
         }
     }
+
 
 }
