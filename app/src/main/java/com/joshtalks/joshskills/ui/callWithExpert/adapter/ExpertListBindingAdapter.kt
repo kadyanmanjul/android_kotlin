@@ -9,14 +9,17 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 
-@BindingAdapter("expertListAdapter")
+@BindingAdapter("expertListAdapter", "onExpertItemClick")
 fun expertListAdapter(
     view: RecyclerView,
     adapter: ExpertListAdapter,
+    function: ((ExpertListModel, Int, Int) -> Unit)?
 ) {
     view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.setHasFixedSize(false)
     view.adapter = adapter
+
+    adapter.setItemClickFunction(function)
 }
 
 @BindingAdapter(value = ["expertImage"], requireAll = false)
