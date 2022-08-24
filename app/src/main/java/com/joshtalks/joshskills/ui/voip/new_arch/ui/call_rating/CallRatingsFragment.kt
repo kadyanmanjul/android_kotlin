@@ -372,26 +372,6 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState).apply {
-            setOnKeyListener { dialogInterface, keyCode, keyEvent ->
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (count >= 3) {
-                        vm.submitCallRatings(
-                            VoipPref.getLastCallId().toString(),
-                            null,
-                            VoipPref.getLastRemoteUserAgoraId().toString(),
-                            null
-                        )
-                        closeSheet()
-                    }
-                    count += 1
-                }
-                true
-            }
-        }
-    }
-
     override fun show(manager: FragmentManager, tag: String?) {
         val ft = manager.beginTransaction()
         ft.add(this, tag)
