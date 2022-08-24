@@ -1,20 +1,28 @@
 package com.joshtalks.joshskills.ui.callWithExpert.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ItemExpertListBinding
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 
 class ExpertListAdapter(var items: List<ExpertListModel> = listOf()) :
     RecyclerView.Adapter<ExpertListAdapter.ExpertViewHolder>() {
+    private var itemClickFunction: ((ExpertListModel, Int, Int) -> Unit)? = null
 
     inner class ExpertViewHolder(val itemExpertListBinding: ItemExpertListBinding) :
         RecyclerView.ViewHolder(itemExpertListBinding.root) {
         fun bind(item: ExpertListModel) {
-            itemExpertListBinding.item = item
+            with(itemExpertListBinding) {
+                itemExpertListBinding.item = item
+
+                expertCallButton.setOnClickListener {
+                    itemClickFunction?.invoke(item, FAV_CLICK_ON_CALL, bindingAdapterPosition)
+                }
+            }
         }
+
     }
 
 
@@ -23,7 +31,12 @@ class ExpertListAdapter(var items: List<ExpertListModel> = listOf()) :
         return ExpertViewHolder(binding)
     }
 
-    fun addRecentCallToList(members: List<ExpertListModel>) {
+
+    fun setItemClickFunction(function: ((ExpertListModel, Int, Int) -> Unit)?) {
+        itemClickFunction = function
+    }
+
+    fun addExpertToList(members: List<ExpertListModel>) {
         items = members
         notifyDataSetChanged()
     }

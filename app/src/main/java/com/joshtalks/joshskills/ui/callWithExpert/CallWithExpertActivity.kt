@@ -7,16 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 import android.view.View
 import androidx.fragment.app.commit
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
-import com.joshtalks.joshskills.ui.callWithExpert.view.ExpertListFragment
+import com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertListFragment
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
-import com.joshtalks.joshskills.ui.group.GroupChatFragment
-import com.joshtalks.joshskills.ui.group.NewGroupFragment
-import com.joshtalks.joshskills.ui.group.constants.ADD_GROUP_FRAGMENT
-import com.joshtalks.joshskills.ui.group.constants.CHAT_FRAGMENT
-import com.joshtalks.joshskills.ui.group.constants.GROUPS_STACK
-import com.joshtalks.joshskills.ui.group.constants.IS_FROM_GROUP_INFO
 
 class CallWithExpertActivity : AppCompatActivity() {
 

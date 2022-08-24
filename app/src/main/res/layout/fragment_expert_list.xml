@@ -14,10 +14,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.callWithExpert.view.ExpertListFragment">
+        tools:context=".ui.callWithExpert.fragment.ExpertListFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recent_list_rv"
+            onExpertItemClick="@{vm.onItemClick}"
             expertListAdapter="@{vm.adapter}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

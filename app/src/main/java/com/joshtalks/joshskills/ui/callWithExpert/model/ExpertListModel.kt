@@ -11,7 +11,7 @@ data class ExpertListModel(
     @SerializedName("experience") val expertExperience: Int,
     @SerializedName("price") val expertPricePerMinute: Int,
     @SerializedName("bio") val expertBio:String,
-    @SerializedName("rating") val expertRating:Int,
-    @SerializedName("agora_user_id") val agoraId:Double,
+    @SerializedName("rating") val expertRating:Float,
+    @SerializedName("agora_user_id") val agoraId:Int,
     @SerializedName("mentor") val mentorId:String
 )
