@@ -22,6 +22,8 @@ data class UpdateLessonResponse(
     val outrankedData: OutrankedDataResponse?,
     @SerializedName("points_list")
     val pointsList: List<String>?,
+    @SerializedName("pop_up")
+    val popUpText: String?
     )
 
 @Parcelize
