@@ -118,6 +118,7 @@ import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -559,6 +560,12 @@ class ConversationActivity :
             inboxEntity.expiryDate?.time
         )
         // finish()
+    }
+
+    fun openExpertList() {
+        Intent(this, CallWithExpertActivity::class.java).also {
+            startActivity(it)
+        }
     }
 
     private fun initToolbar() {
