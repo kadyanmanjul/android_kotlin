@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,6 +27,9 @@ class ExpertListViewModel : BaseViewModel() {
     val adapter = ExpertListAdapter()
     var selectedUser: ExpertListModel? = null
 
+    init {
+        getListOfExpert()
+    }
 
     fun getListOfExpert() {
         viewModelScope.launch(Dispatchers.IO) {

@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
@@ -464,4 +465,7 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
 
     implementation 'com.github.ZeroOneZeroR:android_audio_mixer:v1.1'
+
+    // Datastore for reactive shared pref
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 }

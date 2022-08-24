@@ -18,10 +18,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.callWithExpert.fragment.WalletFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
@@ -44,6 +40,83 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="@dimen/_20sdp" />
 
+    <TextView
+        android:id="@+id/availableBalanceHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray_8B"
+        android:textSize="@dimen/_13ssp"
+        android:text="@string/available_balance"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
+
+    <TextView
+        android:id="@+id/availableBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="@dimen/_21ssp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:text="@{viewModel.availableBalance}"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/availableBalanceHeading"
+        tools:text="₹ 128" />
+
+    <View
+        android:id="@+id/view7"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_38sdp"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:background="@drawable/ic_amount_bg"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/availableBalance" />
+
+    <TextView
+        android:id="@+id/enteredAmountTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@{viewModel.addedAmount}"
+        android:layout_marginStart="@dimen/_12sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/view7"
+        android:textSize="@dimen/_14ssp"
+        android:textColor="@color/grey_7A"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@+id/view7"
+        tools:text="@string/enter_amount_in_inr" />
+
+    <Button
+        android:id="@+id/proceedBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="0dp"
+        android:text="@string/proceed"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:textAllCaps="false"
+        android:fontFamily="@font/open_sans"
+        android:includeFontPadding="false"
+        android:textSize="@dimen/_12ssp"
+        android:paddingHorizontal="@dimen/_17sdp"
+        onSingleClick="@{() -> handler.openCheckoutScreen()}"
+        android:paddingVertical="@dimen/_7sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/view7"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintTop_toTopOf="@+id/view7" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/amountList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:paddingBottom="@dimen/_20sdp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/view7"
+        app:spanCount="2"
+        tools:listitem="@layout/item_amount" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
