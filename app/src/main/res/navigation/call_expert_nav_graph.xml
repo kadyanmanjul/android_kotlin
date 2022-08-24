@@ -9,16 +9,7 @@
         android:id="@+id/walletFragment"
         android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.WalletFragment"
         android:label="Add money to wallet"
-        tools:layout="@layout/fragment_wallet">
-        <action
-            android:id="@+id/action_walletFragment_to_walletCheckoutFragment"
-            app:destination="@id/walletCheckoutFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/walletCheckoutFragment"
-        android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.WalletCheckoutFragment"
-        android:label="WalletCheckoutFragment"
-        tools:layout="@layout/fragment_wallet_checkout"/>
+        tools:layout="@layout/fragment_wallet"/>
     <fragment
         android:id="@+id/expertListFragment"
         android:name="com.joshtalks.joshskills.ui.callWithExpert.view.ExpertListFragment"
