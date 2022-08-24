@@ -30,7 +30,8 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:layout_marginRight="@dimen/_15sdp"
                 android:orientation="vertical"
-                android:weightSum="3"
+                android:weightSum="2"
+                android:gravity="center_vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -55,18 +56,6 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     style="@style/Widget.AppCompat.RatingBar.Small"
                    android:layout_gravity="center_horizontal"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/expert_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:text="New"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-                    android:textColor="@color/red_color"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/expert_image" />
 
             </LinearLayout>
 

@@ -1032,6 +1032,9 @@
     <string name="available_balance">Available Balance</string>
     <string name="enter_amount_in_inr">Enter Amount in INR</string>
     <string name="proceed">Proceed</string>
+    <string name="your_recharge_is_successful">Your Recharge is successful!</string>
+    <string name="continue_call_with_suman_sharma">Continue call with Suman Sharma?</string>
+    <string name="talk_to_expert">Talk To Expert</string>
 
     <string-array name="amount_list">
         <item>₹ 50</item>

@@ -1,14 +1,13 @@
-package com.joshtalks.joshskills.ui.callWithExpert.view
+package com.joshtalks.joshskills.ui.callWithExpert.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 
-class RechargeSuccessDialog : BaseDialogFragment() {
+class RechargeSuccessFragment : BaseDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,13 +21,13 @@ class RechargeSuccessDialog : BaseDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recharge_success_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_recharge_success, container, false)
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RechargeSuccessDialog().apply {
+        fun newInstance() =
+            RechargeSuccessFragment().apply {
                 arguments = Bundle().apply {
 
                 }

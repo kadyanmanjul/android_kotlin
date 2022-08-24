@@ -40,7 +40,6 @@ import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
-import com.joshtalks.joshskills.ui.invite_call.InviteFriendActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -559,8 +558,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             else
                 showToast("Wait for last call to get disconnected")
         }
-        binding.btnInviteFriend.visibility = VISIBLE
-        binding.btnInviteFriend.setOnClickListener {
+
+        binding.btnCallWithExpert.setOnClickListener {
            Intent(requireActivity(), CallWithExpertActivity::class.java).also {
                startActivity(it)
            }
