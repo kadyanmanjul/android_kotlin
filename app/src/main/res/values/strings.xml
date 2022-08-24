@@ -1032,6 +1032,7 @@
     <string name="available_balance">Available Balance</string>
     <string name="enter_amount_in_inr">Enter Amount in INR</string>
     <string name="proceed">Proceed</string>
+    <string name="add_money_to_wallet">Add money to wallet</string>
 
     <string-array name="amount_list">
         <item>₹ 50</item>

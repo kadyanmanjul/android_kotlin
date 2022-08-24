@@ -16,14 +16,29 @@ class CallWithExpertViewModel : ViewModel() {
         ExpertListRepo()
     }
 
+    var addedAmount: String? = null
+
     private val _creditsCount = MutableLiveData<String>("₹ 0")
 
     val creditsCount: LiveData<String>
         get() = _creditsCount
 
+    private val _proceedPayment = MutableLiveData<Boolean>()
+
+    val proceedPayment: LiveData<Boolean>
+        get() = _proceedPayment
+
     init {
         getWalletCredits()
         expertListRepo.updateWalletBalance()
+    }
+
+    fun proceedPayment(){
+        _proceedPayment.value = true
+    }
+
+    fun updateAmount(amount: String){
+        addedAmount = amount
     }
 
     private fun getWalletCredits() {
