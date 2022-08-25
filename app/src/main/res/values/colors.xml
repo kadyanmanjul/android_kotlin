@@ -210,4 +210,5 @@
     <color name="green_payment">#57CC02</color>
     <color name="green_payment_text">#179549</color>
     <color name="prompt_turn_on_speaker">#C6CBDF</color>
+    <color name="color_free_trial_ends">#E98F3D</color>
 </resources>
