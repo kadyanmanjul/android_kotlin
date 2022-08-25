@@ -39,6 +39,7 @@ class ExpertListFragment:BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        expertListViewModel.getListOfExpert()
+        requireActivity().findViewById<TextView>(R.id.text_message_title).text = getString(R.string.call_with_expert)
         requireActivity().findViewById<TextView>(R.id.iv_earn).setOnClickListener {
             findNavController().navigate(R.id.action_expertListFragment_to_walletFragment)
         }

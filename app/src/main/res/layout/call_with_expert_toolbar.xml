@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -80,7 +82,7 @@
                 android:id="@+id/iv_earn"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_24sdp"
-                android:text="\u20B9 78"
+                tools:text="\u20B9 78"
                 android:textAllCaps="false"
                 android:textSize="@dimen/_11ssp"
                 android:textColor="@color/white"
@@ -96,3 +98,4 @@
     </com.google.android.material.appbar.MaterialToolbar>
 
 </LinearLayout>
+</layout>
