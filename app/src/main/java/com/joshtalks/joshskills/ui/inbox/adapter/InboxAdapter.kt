@@ -12,6 +12,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -106,7 +107,7 @@ class InboxAdapter(
                 tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                 tvName.text = inboxEntity.course_name
                 courseProgressBar.progress = 0
-                horizontalLine.visibility = android.view.View.VISIBLE
+                horizontalLine.visibility = View.VISIBLE
                 imageUrl(binding.profileImage, inboxEntity.course_icon)
                 if (PrefManager.getBoolValue(IS_FREE_TRIAL) && inboxEntity.created == null && inboxEntity.isCapsuleCourse) {
                     unseenMsgCount.visibility = ViewGroup.VISIBLE
@@ -125,8 +126,8 @@ class InboxAdapter(
                  }*/
 
                 if (progressBarStatus) {
-                    courseProgressBar.visibility = android.view.View.VISIBLE
-                    tvLastMessage.visibility = android.view.View.GONE
+                    courseProgressBar.visibility = View.VISIBLE
+                    tvLastMessage.visibility = View.GONE
                     if (inboxEntity.batchStarted.isNullOrEmpty().not()) {
                         val todayDate = YYYY_MM_DD.format(Date()).toLowerCase(Locale.getDefault())
                         val diff =
@@ -154,8 +155,8 @@ class InboxAdapter(
                         Timber.d("Batch Created not found")
                     }
                 } else {
-                    courseProgressBar.visibility = android.view.View.GONE
-                    tvLastMessage.visibility = android.view.View.VISIBLE
+                    courseProgressBar.visibility = View.GONE
+                    tvLastMessage.visibility = View.VISIBLE
                     inboxEntity.type?.let {
                         if (BASE_MESSAGE_TYPE.Q == it) {
                             inboxEntity.material_type?.let { messageType ->
@@ -173,9 +174,9 @@ class InboxAdapter(
                     onClickView(inboxEntity)
                 }
                 if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
-                    horizontalLine.visibility = android.view.View.GONE
+                    horizontalLine.visibility = View.GONE
                 }
-                freeTrialTimer.visibility = View.INVISIBLE
+                //freeTrialTimer.visibility = View.INVISIBLE
                 if (inboxEntity.isCourseBought) {
                     freeTrialTimer.visibility = View.INVISIBLE
                     tvLastMessage.visibility = View.VISIBLE
@@ -185,8 +186,7 @@ class InboxAdapter(
                     freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                     countdownTimerBack?.stop()
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
-                    freeTrialTimer.visibility = View.VISIBLE
-                    tvLastMessage.visibility = View.INVISIBLE
+                    //tvLastMessage.visibility = View.INVISIBLE
                     if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
                         freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                         countdownTimerBack?.stop()
@@ -210,15 +210,27 @@ class InboxAdapter(
             countdownTimerBack = null
             countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
                 override fun onTimerTick(millis: Long) {
-                    AppObjectController.uiHandler.post {
-                        freeTrialTimer.text = getAppContext().getString(
-                            R.string.free_trial_end_in,
-                            UtilTime.timeFormatted(millis)
-                        )
+                    if (millis < 86400000){  // i.e less than 24hrs
+                        AppObjectController.uiHandler.post {
+                            freeTrialTimer.visibility = View.VISIBLE
+                            binding.tvLastMessage.visibility = View.GONE
+                            freeTrialTimer.text = getAppContext().getString(
+                                R.string.free_trial_end_in,
+                                UtilTime.timeFormatted(millis)
+                            )
+                        }
+                    }else{
+                        if (freeTrialTimer.isVisible) {
+                            freeTrialTimer.visibility = View.GONE
+                        }
+                        if (binding.tvLastMessage.isVisible.not()) {
+                            binding.tvLastMessage.visibility = View.VISIBLE
+                        }
                     }
                 }
 
                 override fun onTimerFinish() {
+                    freeTrialTimer.visibility = View.VISIBLE
                     freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                     countdownTimerBack?.stop()
                 }

@@ -605,16 +605,21 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private fun startTimer(startTimeInMilliSeconds: Long) {
         countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
             override fun onTimerTick(millis: Long) {
-                AppObjectController.uiHandler.post {
-                    binding.freeTrialTimer
-                    binding.freeTrialTimer.text = getString(
-                        R.string.free_trial_end_in,
-                        UtilTime.timeFormatted(millis)
-                    )
+                if (millis < 86400000){  // i.e less than 24hrs
+                    AppObjectController.uiHandler.post {
+                        binding.freeTrialTimer.visibility = View.VISIBLE
+                        binding.freeTrialTimer.text = getString(
+                            R.string.free_trial_end_in,
+                            UtilTime.timeFormatted(millis)
+                        )
+                    }
+                }else{
+                    binding.freeTrialTimer.visibility = View.GONE
                 }
             }
 
             override fun onTimerFinish() {
+                binding.freeTrialTimer.visibility = View.VISIBLE
                 PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                 binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
             }
