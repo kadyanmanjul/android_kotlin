@@ -13,6 +13,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -66,12 +67,10 @@ class InboxAdapter(
     private fun getDrawablePadding() = Utils.dpToPx(getAppContext(), 4f)
 
     fun addItems(newList: List<InboxEntity>) {
-        if (newList.isEmpty()) {
-            return
-        }
+        val diffResult = DiffUtil.calculateDiff(InboxDiffCallback(this.items, newList))
         items.clear()
         items.addAll(newList)
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(
@@ -134,8 +133,7 @@ class InboxAdapter(
                                 inboxEntity.batchStarted!!,
                                 todayDate,
                                 YYYY_MM_DD
-                            )
-                                .toInt()
+                            ).toInt()
 
                         inboxEntity.duration.run {
                             courseProgressBar.max = this * 100
@@ -360,5 +358,24 @@ class InboxAdapter(
                 .addParam(ParamKeys.COURSE_ID,inboxEntity.courseId)
                 .push()
         }
+    }
+}
+
+
+class InboxDiffUtilsCallback(val inboxData : List<InboxEntity>, val newInboxData : List<InboxEntity>) : DiffUtil.Callback() {
+    override fun getOldListSize(): Int {
+        return inboxData.size
+    }
+
+    override fun getNewListSize(): Int {
+        return newInboxData.size
+    }
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return inboxData[oldItemPosition].courseId == inboxData[newItemPosition].courseId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return inboxData[oldItemPosition].course_name == inboxData[newItemPosition].course_name && inboxData[oldItemPosition].isSeen == inboxData[newItemPosition].isSeen
     }
 }

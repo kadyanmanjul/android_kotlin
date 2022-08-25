@@ -343,11 +343,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         ) {
             findMoreLayout.visibility = View.VISIBLE
         }
-        try {
-            // TODO: Refresh the first item in the RV - Timer
-            inboxAdapter.notifyDataSetChanged()
-        } catch (ex: Exception) {
-        }
+
         initABTest()
         initMoEngage()
         viewModel.getRegisterCourses()
