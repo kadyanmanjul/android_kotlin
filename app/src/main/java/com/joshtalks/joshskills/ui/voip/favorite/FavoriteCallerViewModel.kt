@@ -18,10 +18,7 @@ import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 class FavoriteCallerViewModel : BaseViewModel() {
@@ -35,6 +32,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
     val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val deleteRecords: MutableSet<FavoriteCaller> = mutableSetOf()
     var selectedUser: FavoriteCaller? = null
+    val scope = CoroutineScope(Dispatchers.IO)
 
 
     fun getFavorites() {
@@ -194,8 +192,10 @@ class FavoriteCallerViewModel : BaseViewModel() {
         if (deleteRecords.isEmpty()) {
             message.what = FINISH_ACTION_MODE
             singleLiveEvent.value = message
-            deleteRecords.clear()
-            adapter.clearSelections()
+            scope.launch {
+                deleteRecords.clear()
+                adapter.clearSelections()
+            }
         } else {
             message.what = SET_TEXT_ON_ENABLE_ACTION_MODE
             message.obj = deleteRecords.size.toString()
@@ -203,13 +203,14 @@ class FavoriteCallerViewModel : BaseViewModel() {
         }
     }
 
-    // TODO: Used notifyDataSetChanged - have to remove
     fun deleteFavoriteUserFromList() {
         showToast(getDeleteMessage())
-        adapter.removeAndUpdated()
-        deleteUsersFromFavoriteList(deleteRecords.toMutableList())
-        if (adapter.getItemSize() <= 0) {
-            isEmptyCardShow.set(true)
+        scope.launch {
+            adapter.removeAndUpdated()
+            deleteUsersFromFavoriteList(deleteRecords.toMutableList())
+            if (adapter.getItemSize() <= 0) {
+                isEmptyCardShow.set(true)
+            }
         }
     }
 

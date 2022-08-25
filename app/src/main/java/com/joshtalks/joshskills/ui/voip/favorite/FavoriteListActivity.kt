@@ -18,12 +18,16 @@ import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FavoriteListActivity : BaseFppActivity() {
 
     private var conversationId1: String = EMPTY
 
     private var actionMode: ActionMode? = null
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     private val binding by lazy<FavoriteListActivityBinding> {
         DataBindingUtil.setContentView(this, R.layout.favorite_list_activity)
@@ -52,9 +56,11 @@ class FavoriteListActivity : BaseFppActivity() {
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-            viewModel.deleteRecords.clear()
-            viewModel.adapter.clearSelections()
-            actionMode = null
+            scope.launch {
+                viewModel.deleteRecords.clear()
+                viewModel.adapter.clearSelections()
+                actionMode = null
+            }
         }
     }
 

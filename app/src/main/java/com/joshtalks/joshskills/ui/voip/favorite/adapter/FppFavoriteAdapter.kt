@@ -15,6 +15,9 @@ import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_USER_LONG_PRESS_CLICK
 import com.joshtalks.joshskills.ui.inbox.adapter.FavoriteCallerDiffCallback
+import com.joshtalks.joshskills.ui.inbox.adapter.InboxDiffCallback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemViewHolder>() {
     private var items: ArrayList<FavoriteCaller> = arrayListOf()
@@ -37,16 +40,22 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
         notifyItemChanged(position)
     }
 
-    fun clearSelections() {
+    suspend fun clearSelections() {
+        val oldItem = items.clone() as List<FavoriteCaller>
         items.stream().forEach { it.selected = false }
-        notifyDataSetChanged()
+        withContext(Dispatchers.Main) {
+            val diffResult = DiffUtil.calculateDiff(FavoriteDiffUtilCallback(oldItem, items))
+            diffResult.dispatchUpdatesTo(this@FppFavoriteAdapter)
+        }
     }
 
-    fun removeAndUpdated() {
-        val list = items.filter { it.selected.not() }
-        items.clear()
-        items.addAll(list)
-        notifyDataSetChanged()
+    suspend fun removeAndUpdated() {
+        val oldItem = items.clone() as List<FavoriteCaller>
+        val newList = items.filter { it.selected.not() }
+        withContext(Dispatchers.Main) {
+            val diffResult = DiffUtil.calculateDiff(FavoriteDiffUtilCallback(oldItem, newList))
+            diffResult.dispatchUpdatesTo(this@FppFavoriteAdapter)
+        }
     }
 
     fun setListener(function: ((FavoriteCaller, Int, Int) -> Unit)?) {
@@ -145,4 +154,23 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
              e.printStackTrace()
          }
     }
+}
+
+class FavoriteDiffUtilCallback(val favoriteList : List<FavoriteCaller>, val newFavoriteList : List<FavoriteCaller>) : DiffUtil.Callback() {
+    override fun getOldListSize(): Int {
+        return favoriteList.size
+    }
+
+    override fun getNewListSize(): Int {
+        return newFavoriteList.size
+    }
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return favoriteList[oldItemPosition].mentorId == newFavoriteList[newItemPosition].mentorId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return favoriteList[oldItemPosition].name == newFavoriteList[newItemPosition].name && favoriteList[oldItemPosition].image == newFavoriteList[newItemPosition].image && favoriteList[oldItemPosition].selected == newFavoriteList[newItemPosition].selected
+    }
+
 }
