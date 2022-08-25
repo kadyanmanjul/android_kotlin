@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
@@ -16,7 +17,7 @@ class CallWithExpertViewModel : ViewModel() {
         ExpertListRepo()
     }
 
-    var addedAmount: String? = null
+    var addedAmount: Amount? = null
 
     private val _creditsCount = MutableLiveData<String>("₹ 0")
 
@@ -37,7 +38,7 @@ class CallWithExpertViewModel : ViewModel() {
         _proceedPayment.value = true
     }
 
-    fun updateAmount(amount: String){
+    fun updateAmount(amount: Amount){
         addedAmount = amount
     }
 

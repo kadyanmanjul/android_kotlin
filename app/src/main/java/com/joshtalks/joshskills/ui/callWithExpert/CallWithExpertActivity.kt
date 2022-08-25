@@ -85,13 +85,6 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
         }
     }
 
-    companion object {
-        fun open(activity: AppCompatActivity) {
-            Intent(activity, CallWithExpertActivity::class.java).also {
-                activity.startActivity(it)
-            }
-        }
-    }
 
     private fun initToolbar() {
         balanceTv = findViewById<TextView>(R.id.iv_earn)
@@ -123,6 +116,14 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
         }
         error?.let {
             showToast(it)
+        }
+    }
+
+    companion object {
+        fun open(activity: AppCompatActivity) {
+            Intent(activity, CallWithExpertActivity::class.java).also {
+                activity.startActivity(it)
+            }
         }
     }
 }

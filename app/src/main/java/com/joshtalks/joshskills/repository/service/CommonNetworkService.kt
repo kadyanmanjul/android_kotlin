@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
+import com.joshtalks.joshskills.ui.callWithExpert.model.AvailableAmount
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListResponse
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletBalance
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
@@ -403,6 +404,11 @@ interface CommonNetworkService {
 
     @GET("$DIR/micro_payment/get_wallet_amount/")
     suspend fun getWalletBalance() :Response<WalletBalance>
+
+    @GET("$DIR/micro_payment/get_amount_list/")
+    suspend fun getAvailableAmounts() :Response<AvailableAmount>
+
+
 
     @GET("$DIR/fpp/call_popup/")
     suspend fun getPurchasePopUpResponse(@Query("duration") duration: String) :Response<PurchasePopUp>

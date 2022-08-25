@@ -946,6 +946,11 @@ fun getPhoneNumber() =
             EMPTY
     }
 
+fun getPhoneNumberOrDefault(): String {
+    val ph = getPhoneNumber()
+    return ph.ifEmpty { "+919999999999" }
+}
+
 fun getCountryIsoCode(number: String, countryRegion: String): String {
     val validatedNumber = if (number.startsWith("+")) number else "+$number"
     val phoneNumberUtil: PhoneNumberUtil =

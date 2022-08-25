@@ -4,7 +4,7 @@
     <data>
         <variable
             name="amount"
-            type="String" />
+            type="com.joshtalks.joshskills.ui.callWithExpert.model.Amount" />
     </data>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,7 +16,7 @@
         android:id="@+id/itemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@{amount}"
+        android:text="@{amount.amountInRupees()}"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:textSize="@dimen/_14ssp"

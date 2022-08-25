@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ItemAmountBinding
+import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 
 class AmountAdapter(
-    private val amountList: List<String>,
-    private val onItemClick: (String) -> Unit
+    private val amountList: List<Amount>,
+    private val onItemClick: (Amount) -> Unit
 ): RecyclerView.Adapter<AmountAdapter.AmountViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AmountViewHolder {
@@ -23,7 +24,7 @@ class AmountAdapter(
 
     inner class AmountViewHolder(private val binding: ItemAmountBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun setData(amount: String) {
+        fun setData(amount: Amount) {
             with(binding) {
                 this.amount = amount
                 root.setOnClickListener {
