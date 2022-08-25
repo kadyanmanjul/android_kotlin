@@ -17,6 +17,10 @@ import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleV
 import com.joshtalks.joshskills.ui.points_history.viewholder.SpokenSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
 import kotlinx.android.synthetic.main.base_toolbar.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 
 class SpokenHistoryActivity : CoreJoshActivity() {
@@ -25,6 +29,7 @@ class SpokenHistoryActivity : CoreJoshActivity() {
     }
     private lateinit var binding: ActivitySpokenHistoryBinding
     private var mentorId: String? = null
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,25 +74,30 @@ class SpokenHistoryActivity : CoreJoshActivity() {
             Observer {
                 binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalMinutesSpoken)
                 binding.userScoreText.text = it.totalMinutesSpokenText
-                // TODO: Run on Different Thread/Coroutine
-                it.spokenHistoryDateList?.forEachIndexed { index, list ->
-                    if (list.SpokenSum != null) {
-                        binding.recyclerView.addView(
-                            PointsSummaryTitleViewHolder(
-                                list.date!!,
-                                list.SpokenSum.toInt(),
-                                arrayListOf(),
-                                index
-                            )
-                        )
-                        list.spokenHistoryList?.forEachIndexed { index, spokenHistory ->
-                            binding.recyclerView.addView(
-                                SpokenSummaryDescViewHolder(
-                                    spokenHistory,
-                                    index,
-                                    list.spokenHistoryList.size
+                scope.launch {
+                    it.spokenHistoryDateList?.forEachIndexed { index, list ->
+                        if (list.SpokenSum != null) {
+                            withContext(Dispatchers.Main) {
+                                binding.recyclerView.addView(
+                                    PointsSummaryTitleViewHolder(
+                                        list.date!!,
+                                        list.SpokenSum.toInt(),
+                                        arrayListOf(),
+                                        index
+                                    )
                                 )
-                            )
+                            }
+                            list.spokenHistoryList?.forEachIndexed { index, spokenHistory ->
+                                withContext(Dispatchers.Main) {
+                                    binding.recyclerView.addView(
+                                        SpokenSummaryDescViewHolder(
+                                            spokenHistory,
+                                            index,
+                                            list.spokenHistoryList.size
+                                        )
+                                    )
+                                }
+                            }
                         }
                     }
                 }
