@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.callWithExpert.repository
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +34,15 @@ class ExpertListRepo {
             SkillsDatastore.updateWalletCredits(response.body()!!.amount)
         } else {
             throw Exception("Something Went Wrong")
+        }
+    }.flowOn(Dispatchers.IO)
+
+    val walletAmounts = flow<List<Amount>> {
+        val response = AppObjectController.commonNetworkService.getAvailableAmounts()
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!.amount_list)
+        } else {
+            throw Throwable("Something Went Wrong")
         }
     }.flowOn(Dispatchers.IO)
 

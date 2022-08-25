@@ -214,8 +214,8 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 navigateToCourseDetailsScreen()
             } else {
                 getIntentForNextActivity()?.let {
-                    CallWithExpertActivity.open(this@LauncherActivity)
-//                    startActivity(it)
+//                    CallWithExpertActivity.open(this@LauncherActivity)
+                    startActivity(it)
                 }
                 finish()
             }

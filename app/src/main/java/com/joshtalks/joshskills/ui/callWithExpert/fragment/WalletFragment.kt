@@ -43,17 +43,24 @@ class WalletFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().findViewById<TextView>(R.id.text_message_title).text = getString(R.string.add_money_to_wallet)
 
         with(binding) {
             amountList.addItemDecoration(GridSpacingItemDecoration(2, 20, false))
-            amountList.adapter =
-                AmountAdapter(resources.getStringArray(R.array.amount_list).toList()) { amount ->
-                    this@WalletFragment.viewModel.updateAddedAmount(amount)
+
+        }
+
+        attachObservers()
+
+    }
+
+    private fun attachObservers() {
+        viewModel.availableAmount.observe(viewLifecycleOwner){
+            binding.amountList.adapter =
+                AmountAdapter(it) { amount ->
+                    this@WalletFragment.viewModel.updateAddedAmount(amount.amountInRupees())
                     callWithExpertViewModel.updateAmount(amount)
                 }
         }
-
     }
 
     fun openCheckoutScreen() {
