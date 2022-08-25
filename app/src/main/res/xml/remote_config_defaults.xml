@@ -1810,4 +1810,8 @@
         <key>NOTIFICATION_API_TIME</key>
         <value>0</value>
     </entry>
+    <entry>
+        <key>IS_CALL_WITH_EXPERT_ENABLED</key>
+        <value>yes</value>
+    </entry>
 </defaults>

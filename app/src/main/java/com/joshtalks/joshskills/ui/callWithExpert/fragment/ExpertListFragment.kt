@@ -13,7 +13,10 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.AppObjectController
 import androidx.navigation.fragment.findNavController
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.CLICKED_CALL_BUTTON
+import com.joshtalks.joshskills.core.CLICKED_CONTINUE_TO_CALL
 import com.joshtalks.joshskills.databinding.FragmentExpertListBinding
+import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.ExpertListViewModel
 import com.joshtalks.joshskills.ui.fpp.constants.START_FPP_CALL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
@@ -23,6 +26,10 @@ class ExpertListFragment:BaseFragment() {
     private lateinit var binding: FragmentExpertListBinding
     val expertListViewModel by lazy {
         ViewModelProvider(requireActivity())[ExpertListViewModel::class.java]
+    }
+
+    private val viewModel by lazy {
+        ViewModelProvider(this)[CallWithExpertViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -52,16 +59,23 @@ class ExpertListFragment:BaseFragment() {
         liveData.observe(this) {
             when (it.what) {
                 START_FPP_CALL ->{
-                    val callIntent = Intent(AppObjectController.joshApplication, VoiceCallActivity::class.java)
-                    callIntent.apply {
-                        putExtra(STARTING_POINT, FROM_ACTIVITY)
-                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
-                        putExtra(INTENT_DATA_FPP_MENTOR_ID, expertListViewModel.selectedUser?.mentorId)
-                        putExtra(INTENT_DATA_FPP_NAME, expertListViewModel.selectedUser?.expertName)
-                        putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)
+                    viewModel.creditsCount.observe(this) {
+                        if (it.toInt() >= expertListViewModel.selectedUser?.expertPricePerMinute?:0){
+                            viewModel.saveMicroPaymentImpression(eventName = CLICKED_CALL_BUTTON)
+                            val callIntent = Intent(AppObjectController.joshApplication, VoiceCallActivity::class.java)
+                            callIntent.apply {
+                                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                                putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                                putExtra(INTENT_DATA_FPP_MENTOR_ID, expertListViewModel.selectedUser?.mentorId)
+                                putExtra(INTENT_DATA_FPP_NAME, expertListViewModel.selectedUser?.expertName)
+                                putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)
 
+                            }
+                            startActivity(callIntent)
+                        }else{
+                            showToast("You don't have amount")
+                        }
                     }
-                    startActivity(callIntent)
                 }
 
             }

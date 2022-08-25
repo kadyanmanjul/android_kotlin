@@ -336,8 +336,8 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
+        conversationBinding.btnOpenExpertList.isVisible = AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED)
         //addIssuesToSharedPref()
-
     }
 
     private fun initSharedPreferences() {
@@ -563,6 +563,7 @@ class ConversationActivity :
     }
 
     fun openExpertList() {
+        conversationViewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = FT_EXPIRED_PAGE)
         Intent(this, CallWithExpertActivity::class.java).also {
             startActivity(it)
         }

@@ -13,6 +13,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.OPEN_EXPERT
+import com.joshtalks.joshskills.core.OPEN_WALLET
+import com.joshtalks.joshskills.core.SPEAKING_PAGE
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
 import com.joshtalks.joshskills.ui.callWithExpert.utils.PaymentStatusListener
@@ -92,6 +95,11 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
             visibility = View.VISIBLE
             setOnClickListener {
                 onBackPressed()
+            }
+        }
+        with(findViewById<View>(R.id.iv_earn)){
+            setOnClickListener {
+                viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = SPEAKING_PAGE)
             }
         }
     }
