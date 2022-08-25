@@ -19,4 +19,8 @@
             android:id="@+id/action_expertListFragment_to_walletFragment"
             app:destination="@id/walletFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/paymentProcessingFragment"
+        android:name="com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment"
+        android:label="Processing Payment" />
 </navigation>

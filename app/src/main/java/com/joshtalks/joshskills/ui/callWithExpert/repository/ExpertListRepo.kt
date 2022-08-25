@@ -28,15 +28,6 @@ class ExpertListRepo {
         }
     }
 
-    val orderDetails = flow<String> {
-        val response = AppObjectController.commonNetworkService.getWalletBalance()
-        if (response.isSuccessful && response.body() != null) {
-            SkillsDatastore.updateWalletCredits(response.body()!!.amount)
-        } else {
-            throw Exception("Something Went Wrong")
-        }
-    }.flowOn(Dispatchers.IO)
-
     val walletAmounts = flow<List<Amount>> {
         val response = AppObjectController.commonNetworkService.getAvailableAmounts()
         if (response.isSuccessful && response.body() != null) {

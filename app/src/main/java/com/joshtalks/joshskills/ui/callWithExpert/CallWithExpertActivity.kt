@@ -60,6 +60,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
                         .setSelectedAmount(it)
                         .setCoroutineScope(viewModel.viewModelScope)
                         .setPaymentListener(this)
+                        .setNavController(navController)
                         .build()
 
                     walletPaymentManager.startPayment()
@@ -117,6 +118,9 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
         error?.let {
             showToast(it)
         }
+    }
+
+    override fun onPaymentFinished(isPaymentSuccessful: Boolean) {
     }
 
     companion object {
