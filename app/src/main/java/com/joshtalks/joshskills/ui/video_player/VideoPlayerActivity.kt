@@ -56,6 +56,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.random.Random
@@ -74,6 +75,7 @@ const val IS_SHARABLE_VIDEO = "is_sharable_video"
 const val SHARED_ITEM = "shared_item"
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventListener {
+    val scope = CoroutineScope(Dispatchers.IO)
     val vm by lazy {
         ViewModelProvider(this)[VideoPlayerViewModel::class.java]
     }
@@ -731,8 +733,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     private fun startProgress() {
-        // TODO: Use Coroutine
-        Thread {
+        scope.launch {
             binding.progressHorizontal.progress = 0
             while (binding.progressHorizontal.progress < 100) {
                 handler.post {
@@ -740,7 +741,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 }
                 try {
                     // Sleep for 100 milliseconds.
-                    Thread.sleep(50)
+                    delay(50)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
@@ -750,7 +751,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     playNextVideo()
                 }
             }
-        }.start()
+        }
     }
 
     private fun playNextVideo() {
