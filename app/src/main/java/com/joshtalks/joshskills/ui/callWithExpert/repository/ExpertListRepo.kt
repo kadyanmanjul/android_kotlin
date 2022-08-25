@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.callWithExpert.repository
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -18,7 +19,7 @@ class ExpertListRepo {
     fun updateWalletBalance() {
         CoroutineScope(Dispatchers.IO).launch {
            try {
-               val response = AppObjectController.commonNetworkService.getWalletBalance()
+               val response = AppObjectController.commonNetworkService.getWalletBalance(Mentor.getInstance().getId())
                if (response.isSuccessful && response.body() != null) {
                    SkillsDatastore.updateWalletCredits(response.body()!!.amount)
                }
@@ -27,6 +28,15 @@ class ExpertListRepo {
            }
         }
     }
+
+    val orderDetails = flow<String> {
+        val response = AppObjectController.commonNetworkService.getWalletBalance(Mentor.getInstance().getId())
+        if (response.isSuccessful && response.body() != null) {
+            SkillsDatastore.updateWalletCredits(response.body()!!.amount)
+        } else {
+            throw Exception("Something Went Wrong")
+        }
+    }.flowOn(Dispatchers.IO)
 
     val walletAmounts = flow<List<Amount>> {
         val response = AppObjectController.commonNetworkService.getAvailableAmounts()

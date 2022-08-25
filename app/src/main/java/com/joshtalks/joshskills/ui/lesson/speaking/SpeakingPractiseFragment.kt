@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
+import com.google.firebase.remoteconfig.ktx.get
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
@@ -559,10 +560,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 showToast("Wait for last call to get disconnected")
         }
 
+        binding.btnCallWithExpert.isVisible = AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED)
+
         binding.btnCallWithExpert.setOnClickListener {
-           Intent(requireActivity(), CallWithExpertActivity::class.java).also {
-               startActivity(it)
-           }
+            viewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = SPEAKING_PAGE)
+            Intent(requireActivity(), CallWithExpertActivity::class.java).also {
+                startActivity(it)
+            }
         }
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()

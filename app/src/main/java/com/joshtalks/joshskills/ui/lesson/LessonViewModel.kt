@@ -861,6 +861,21 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun saveMicroPaymentImpression(eventName: String, eventId:String = EMPTY, previousPage:String = EMPTY) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("event_name",eventName),
+                    Pair("expert_id", eventId),
+                    Pair("previous_page",previousPage)
+                )
+                AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
     fun saveIntroVideoFlowImpression(eventName: String, eventDuration: Long = 0L) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

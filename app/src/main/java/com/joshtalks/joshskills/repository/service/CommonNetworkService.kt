@@ -405,12 +405,14 @@ interface CommonNetworkService {
     @GET("$DIR/micro_payment/get_experts/")
     suspend fun getExpertList() :Response<ExpertListResponse>
 
-    @GET("$DIR/micro_payment/get_wallet_amount/")
-    suspend fun getWalletBalance() :Response<WalletBalance>
+    @GET("$DIR/micro_payment/user_wallet/")
+    suspend fun getWalletBalance(@Query("mentor_id") mentorId: String) :Response<WalletBalance>
 
     @GET("$DIR/micro_payment/get_amount_list/")
     suspend fun getAvailableAmounts() :Response<AvailableAmount>
 
+    @POST("$DIR/impression/track_micro_payment_impression/")
+    suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)
 
 
     @GET("$DIR/fpp/call_popup/")
