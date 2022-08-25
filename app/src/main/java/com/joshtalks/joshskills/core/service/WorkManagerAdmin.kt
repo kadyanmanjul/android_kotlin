@@ -104,29 +104,29 @@ object WorkManagerAdmin {
         )
     }
 
-    fun readMessageUpdating() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val workRequest = PeriodicWorkRequest.Builder(
-            MessageReadPeriodicWorker::class.java,
-            30,
-            TimeUnit.MINUTES,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-            TimeUnit.MILLISECONDS
-        )
-            .setConstraints(constraints)
-            .setInitialDelay(1, TimeUnit.MINUTES)
-            .addTag(MessageReadPeriodicWorker::class.java.simpleName)
-            .build()
-
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueueUniquePeriodicWork(
-                MessageReadPeriodicWorker::class.java.simpleName,
-                ExistingPeriodicWorkPolicy.KEEP,
-                workRequest
-            )
-    }
+//    fun readMessageUpdating() {
+//        val constraints = Constraints.Builder()
+//            .setRequiredNetworkType(NetworkType.CONNECTED)
+//            .build()
+//        val workRequest = PeriodicWorkRequest.Builder(
+//            MessageReadPeriodicWorker::class.java,
+//            30,
+//            TimeUnit.MINUTES,
+//            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+//            TimeUnit.MILLISECONDS
+//        )
+//            .setConstraints(constraints)
+//            .setInitialDelay(1, TimeUnit.MINUTES)
+//            .addTag(MessageReadPeriodicWorker::class.java.simpleName)
+//            .build()
+//
+//        WorkManager.getInstance(AppObjectController.joshApplication)
+//            .enqueueUniquePeriodicWork(
+//                MessageReadPeriodicWorker::class.java.simpleName,
+//                ExistingPeriodicWorkPolicy.KEEP,
+//                workRequest
+//            )
+//    }
 
     fun syncAppCourseUsage() {
         val constraints = Constraints.Builder()

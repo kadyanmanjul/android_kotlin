@@ -256,25 +256,25 @@ class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerPa
 */
 
 // TODO: Remove this worker
-class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            val chatIdList = AppObjectController.appDatabase.chatDao().getSeenByUserMessages()
-            if (chatIdList.isNullOrEmpty().not()) {
-                val messageStatusRequestList = mutableListOf<MessageStatusRequest>()
-                chatIdList.forEach {
-                    messageStatusRequestList.add(MessageStatusRequest(it))
-                }
-                AppObjectController.chatNetworkService.updateMessagesStatus(messageStatusRequestList)
-            }
-            return Result.success()
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-            return Result.retry()
-        }
-    }
-}
+//class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
+//    CoroutineWorker(context, workerParams) {
+//    override suspend fun doWork(): Result {
+//        try {
+//            val chatIdList = AppObjectController.appDatabase.chatDao().getSeenByUserMessages()
+//            if (chatIdList.isNullOrEmpty().not()) {
+//                val messageStatusRequestList = mutableListOf<MessageStatusRequest>()
+//                chatIdList.forEach {
+//                    messageStatusRequestList.add(MessageStatusRequest(it))
+//                }
+//                AppObjectController.chatNetworkService.updateMessagesStatus(messageStatusRequestList)
+//            }
+//            return Result.success()
+//        } catch (ex: Throwable) {
+//            LogException.catchException(ex)
+//            return Result.retry()
+//        }
+//    }
+//}
 
 class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -356,7 +356,7 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         WorkManagerAdmin.syncNotificationEngagement()
         AppObjectController.clearDownloadMangerCallback()
-        WorkManagerAdmin.readMessageUpdating()
+        //WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.syncAppCourseUsage()
         AppAnalytics.updateUser()
         return Result.success()
