@@ -187,7 +187,7 @@ class VoiceCallActivity : BaseActivity() {
         }
     }
 
-    private fun openFragment(fragment: () -> Unit) {
+    private inline fun openFragment(fragment: () -> Unit) {
         if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
             fragment.invoke()
         } else if (vm.source == FROM_ACTIVITY) {

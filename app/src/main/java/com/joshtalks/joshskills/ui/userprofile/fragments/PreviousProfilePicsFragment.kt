@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
@@ -22,6 +23,9 @@ import com.joshtalks.joshskills.ui.userprofile.models.ProfilePicture
 import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
 import com.joshtalks.joshskills.ui.userprofile.adapters.PreviousPicsAdapter
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class PreviousProfilePicsFragment : DialogFragment() {
@@ -29,6 +33,7 @@ class PreviousProfilePicsFragment : DialogFragment() {
     lateinit var mentorId:String
     private var startTime = 0L
     private var impressionId : String? =null
+    private val scope = CoroutineScope(Dispatchers.IO)
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(
             UserProfileViewModel::class.java
@@ -124,40 +129,46 @@ class PreviousProfilePicsFragment : DialogFragment() {
     }
 
     private fun initView(previousProfilePics: PreviousProfilePictures) {
-        var imagesUrls : Array<String> = Array(previousProfilePics.profilePictures.size){""}
-        var count=0
-        previousProfilePics?.profilePictures?.forEach{
-            imagesUrls[count] = it.photoUrl
-            count++
-        }
-        var imageIds : Array<String> = Array(previousProfilePics.profilePictures.size){""}
-        count=0
-        previousProfilePics?.profilePictures?.forEach{
-            imageIds[count] = it.id.toString()
-            count++
-        }
-        previousProfilePics?.profilePictures?.sortedBy { it.timestamp?.time }
-            ?.let { picsList ->
-                val recyclerView: RecyclerView = binding.rvPreviousPics
-                val layoutManager = GridLayoutManager(context, 3)
-                recyclerView.layoutManager = layoutManager
-                recyclerView.setHasFixedSize(true)
-                    recyclerView.adapter = PreviousPicsAdapter(
-                    picsList,
-                    object : PreviousPicsAdapter.OnPreviousPicClickListener {
-                        override fun onPreviousPicClick(profilePicture: ProfilePicture,position:Int) {
-                            ProfileImageShowFragment.newInstance(
-                                mentorId,
-                                true,
-                                imagesUrls,
-                                position,
-                                imageIds
-                            )
-                                .show(activity!!.supportFragmentManager, "ImageShow")
-                        }
-                    },
-                    mentorId)
+        scope.launch {
+            val imagesUrls : Array<String> = Array(previousProfilePics.profilePictures.size){""}
+            var count=0
+            previousProfilePics.profilePictures.forEach{
+                imagesUrls[count] = it.photoUrl
+                count++
             }
+            val imageIds : Array<String> = Array(previousProfilePics.profilePictures.size){""}
+            count=0
+            previousProfilePics.profilePictures.forEach{
+                imageIds[count] = it.id.toString()
+                count++
+            }
+            previousProfilePics.profilePictures.sortedBy { it.timestamp?.time }
+                .let { picsList ->
+                    val recyclerView: RecyclerView = binding.rvPreviousPics
+                    val layoutManager = GridLayoutManager(context, 3)
+                    recyclerView.layoutManager = layoutManager
+                    recyclerView.setHasFixedSize(true)
+                    recyclerView.adapter = PreviousPicsAdapter(
+                        picsList,
+                        object : PreviousPicsAdapter.OnPreviousPicClickListener {
+                            override fun onPreviousPicClick(profilePicture: ProfilePicture,position:Int) {
+                                ProfileImageShowFragment.newInstance(
+                                    mentorId,
+                                    true,
+                                    imagesUrls,
+                                    position,
+                                    imageIds
+                                )
+                                    .show(activity!!.supportFragmentManager, "ImageShow")
+                            }
+                        },
+                        mentorId)
+                }
+        }
+    }
+
+    private suspend fun setImageUrls(previousProfilePics: PreviousProfilePictures) {
+
     }
 
     private fun showProgressBar() {
