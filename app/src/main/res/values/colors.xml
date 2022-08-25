@@ -207,4 +207,5 @@
 
     <color name="btn_call_disable_color">#8F107BE5</color>
     <color name="prompt_turn_on_speaker">#C6CBDF</color>
+    <color name="color_free_trial_ends">#E98F3D</color>
 </resources>

@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="@+id/btn_cancel">
 
         <TextView
-            android:id="@+id/textView18"
+            android:id="@+id/txt_pop_up_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
@@ -38,7 +38,7 @@ Bolne se aati hai!"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView19"
+            android:id="@+id/txt_pop_up_body"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_24sdp"
@@ -47,7 +47,7 @@ Bolne se aati hai!"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Regular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView18" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_pop_up_title" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_buy"
@@ -56,7 +56,6 @@ Bolne se aati hai!"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_24sdp"
             android:layout_marginTop="@dimen/_18sdp"
-            android:layout_marginBottom="@dimen/_16sdp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_24sdp"
@@ -66,10 +65,23 @@ Bolne se aati hai!"
             android:textColor="@color/white"
             android:textSize="@dimen/_16ssp"
             app:cornerRadius="@dimen/_36sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_pop_up_body" />
+
+        <TextView
+            android:id="@+id/txt_ft_ends_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Free trial ends in 24:00"
+            android:textColor="@color/color_free_trial_ends"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:textSize="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/btn_buy"
+            app:layout_constraintStart_toStartOf="@+id/btn_buy"
+            app:layout_constraintTop_toBottomOf="@+id/btn_buy" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
