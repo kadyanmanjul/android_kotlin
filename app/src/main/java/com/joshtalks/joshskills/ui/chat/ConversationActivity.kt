@@ -471,28 +471,28 @@ class ConversationActivity :
         }
     }
 
-    private fun showCohortBaseCourse() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
-            conversationBinding.cbcTooltip.visibility = VISIBLE
-            conversationBinding.overlayLayout.visibility = VISIBLE
-            groupAndFppButtonElevation()
+//    private fun showCohortBaseCourse() {
+//        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
+//            conversationBinding.cbcTooltip.visibility = VISIBLE
+//            conversationBinding.overlayLayout.visibility = VISIBLE
+//            groupAndFppButtonElevation()
+//
+//            conversationBinding.overlayLayout.setOnClickListener {
+//                conversationBinding.welcomeContainer.visibility = INVISIBLE
+//                conversationBinding.cbcTooltip.visibility = GONE
+//                conversationBinding.overlayLayout.visibility = GONE
+//                conversationBinding.overlayLayout.setOnClickListener(null)
+//            }
+//        }
+//    }
 
-            conversationBinding.overlayLayout.setOnClickListener {
-                conversationBinding.welcomeContainer.visibility = INVISIBLE
-                conversationBinding.cbcTooltip.visibility = GONE
-                conversationBinding.overlayLayout.visibility = GONE
-                conversationBinding.overlayLayout.setOnClickListener(null)
-            }
-        }
-    }
-
-    fun hideCohortCourseTooltip() {
-        conversationBinding.welcomeContainer.visibility = INVISIBLE
-        conversationBinding.cbcTooltip.visibility = GONE
-        conversationBinding.overlayLayout.visibility = GONE
-        conversationBinding.overlayLayout.setOnClickListener(null)
-        PrefManager.put(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP, true)
-    }
+//    fun hideCohortCourseTooltip() {
+//        conversationBinding.welcomeContainer.visibility = INVISIBLE
+//        conversationBinding.cbcTooltip.visibility = GONE
+//        conversationBinding.overlayLayout.visibility = GONE
+//        conversationBinding.overlayLayout.setOnClickListener(null)
+//        PrefManager.put(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP, true)
+//    }
 
     fun hideLeaderboardTooltip() {
         conversationBinding.leaderboardTooltipLayout.visibility = GONE
@@ -539,7 +539,7 @@ class ConversationActivity :
         conversationBinding.overlayLeaderboardContainer.visibility = GONE
         conversationBinding.labelTapToDismiss.visibility = GONE
         conversationBinding.overlayLeaderboardTooltip.visibility = GONE
-        conversationBinding.cbcTooltip.visibility = GONE
+//        conversationBinding.cbcTooltip.visibility = GONE
 
     }
 
@@ -811,7 +811,7 @@ class ConversationActivity :
         }
 
         conversationBinding.imgGroupChatBtn.setOnSingleClickListener {
-            hideCohortCourseTooltip()
+            //hideCohortCourseTooltip()
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -1438,12 +1438,9 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
-        if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION) && !PrefManager.getBoolValue(
-                HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP
-            ) && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse
-        ) {
-            showCohortBaseCourse()
-        }
+//        if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION) && !PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP) && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+//            showCohortBaseCourse()
+//        }
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
@@ -1457,11 +1454,7 @@ class ConversationActivity :
                     }
                 }
                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
-                    if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
                         showLeaderBoardSpotlight()
-                    } else {
-
-                    }
                 } else {
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(1000)
@@ -1613,22 +1606,22 @@ class ConversationActivity :
                 )
         )
 
-        compositeDisposable.add(
-            RxBus2.listen(TextTooltipEvent::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        withContext(Dispatchers.Main) {
-                            if (inboxEntity.isCourseBought && !inboxEntity.formSubmitted)
-                                setOverlayAnimationOnText(it.chatModel)
-                        }
-                    }
-                }, {
-                    showToast(it.message.toString())
-                    it.printStackTrace()
-                })
-        )
+//        compositeDisposable.add(
+//            RxBus2.listen(TextTooltipEvent::class.java)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({
+//                    lifecycleScope.launch(Dispatchers.IO) {
+//                        withContext(Dispatchers.Main) {
+//                            if (inboxEntity.isCourseBought && !inboxEntity.formSubmitted)
+//                                setOverlayAnimationOnText(it.chatModel)
+//                        }
+//                    }
+//                }, {
+//                    showToast(it.message.toString())
+//                    it.printStackTrace()
+//                })
+//        )
 
         compositeDisposable.add(
             RxBus2.listen(DownloadMediaEventBus::class.java)
@@ -2281,11 +2274,11 @@ class ConversationActivity :
                 conversationBinding.overlayView.visibility = INVISIBLE
                 return
             }
-            conversationBinding.welcomeContainer.visibility == VISIBLE -> {
-                conversationBinding.welcomeContainer.visibility = INVISIBLE
-                conversationBinding.overlayView.visibility = INVISIBLE
-                return
-            }
+//            conversationBinding.welcomeContainer.visibility == VISIBLE -> {
+//                conversationBinding.welcomeContainer.visibility = INVISIBLE
+//                conversationBinding.overlayView.visibility = INVISIBLE
+//                return
+//            }
             else -> {
                 val resultIntent = Intent()
                 setResult(RESULT_OK, resultIntent)
@@ -2591,32 +2584,32 @@ class ConversationActivity :
         }
     }
 
-    private suspend fun setOverlayAnimationOnText(chatModel: ChatModel) {
-        conversationBinding.overlayView.visibility = INVISIBLE
-        withContext(Dispatchers.Main) {
-            conversationBinding.chatRv.scrollToPosition(conversationAdapter.getLastItemPosition())
-            val welcomeTextView =
-                conversationBinding.chatRv.findViewHolderForAdapterPosition(conversationAdapter.getLastItemPosition())
-                    ?: return@withContext
-            val STATUS_BAR_HEIGHT = getStatusBarHeight()
-            conversationBinding.welcomeContainer.visibility = VISIBLE
-            val overlayImageView =
-                conversationBinding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
-            val overlayItem = TooltipUtils.getOverlayItemFromView(welcomeTextView.itemView)
-            conversationBinding.welcomeContainer.setOnClickListener {
-                conversationBinding.welcomeContainer.visibility = INVISIBLE
-                showCohortBaseCourse()
-            }
-            PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, true)
-            overlayItem?.let {
-                overlayImageView.setImageBitmap(it.viewBitmap)
-                overlayImageView.x = it.x.toFloat()
-                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT
-                overlayImageView.requestLayout()
-                conversationBinding.welcomeContainer.visibility = VISIBLE
-            }
-        }
-    }
+//    private suspend fun setOverlayAnimationOnText(chatModel: ChatModel) {
+//        conversationBinding.overlayView.visibility = INVISIBLE
+//        withContext(Dispatchers.Main) {
+//            conversationBinding.chatRv.scrollToPosition(conversationAdapter.getLastItemPosition())
+//            val welcomeTextView =
+//                conversationBinding.chatRv.findViewHolderForAdapterPosition(conversationAdapter.getLastItemPosition())
+//                    ?: return@withContext
+//            val STATUS_BAR_HEIGHT = getStatusBarHeight()
+//            conversationBinding.welcomeContainer.visibility = VISIBLE
+//            val overlayImageView =
+//                conversationBinding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
+//            val overlayItem = TooltipUtils.getOverlayItemFromView(welcomeTextView.itemView)
+//            conversationBinding.welcomeContainer.setOnClickListener {
+//                conversationBinding.welcomeContainer.visibility = INVISIBLE
+//                showCohortBaseCourse()
+//            }
+//            PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, true)
+//            overlayItem?.let {
+//                overlayImageView.setImageBitmap(it.viewBitmap)
+//                overlayImageView.x = it.x.toFloat()
+//                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT
+//                overlayImageView.requestLayout()
+//                conversationBinding.welcomeContainer.visibility = VISIBLE
+//            }
+//        }
+//    }
 
     fun groupAndFppButtonElevation() {
         conversationBinding.imgGroupChatBtn.elevation = 24f
