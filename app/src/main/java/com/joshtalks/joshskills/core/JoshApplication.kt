@@ -69,6 +69,21 @@ class JoshApplication :
     }
 
     override fun onCreate() {
+        if(BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build()
+            )
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build()
+            )
+        }
         super.onCreate()
         //enableLog(Feature.VOIP)
         AppObjectController.joshApplication = this
