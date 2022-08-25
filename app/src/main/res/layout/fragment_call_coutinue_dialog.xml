@@ -3,11 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.callWithExpert.fragment.CallContinueDialog" />
+
+        <import type="android.view.View"/>
+    </data>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_236sdp"
-        android:layout_marginLeft="@dimen/_32sdp"
-        android:layout_marginRight="@dimen/_32sdp"
+        android:layout_height="@dimen/_250sdp"
+        android:layout_marginLeft="@dimen/_20sdp"
+        android:layout_marginRight="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_8sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,7 +23,7 @@
             android:layout_height="match_parent">
 
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -23,17 +31,17 @@
                 android:fontFamily="@font/open_sans"
                 android:paddingLeft="@dimen/_12sdp"
                 android:paddingRight="@dimen/_8sdp"
-                android:text="Your Recharge is successful!"
+                android:text="@string/your_recharge_is_successful"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
                 android:textColor="@color/pure_black"
                 android:textStyle="bold"
                 android:textSize="@dimen/_14ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/expert_image"
                 android:gravity="center_horizontal"
                 android:textAlignment="center"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/expert_image"
@@ -48,36 +56,62 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView"
                 tools:src="@drawable/remote_user_image" />
 
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnNahi"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_continue_call"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:fontFamily="@font/open_sans"
+                android:paddingLeft="@dimen/_12sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:text="@string/continue_call_with_suman_sharma"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                android:textColor="@color/pure_black"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/expert_image"
+                app:layout_constraintBottom_toTopOf="@+id/btn_no"
+                android:gravity="center_horizontal"
+                android:textAlignment="center" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_no"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_10sdp"
                 android:backgroundTint="@color/transparent"
-                android:paddingHorizontal="@dimen/_39sdp"
-                android:paddingVertical="@dimen/_8sdp"
                 android:stateListAnimator="@null"
-                android:text="No"
-                android:textColor="@color/blue"
-                app:cornerRadius="@dimen/_4sdp"
+                android:text="@string/no"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:textColor="@color/pure_black"
+                app:cornerRadius="@dimen/_7sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:strokeColor="@color/colorAccent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_yes"
+                app:layout_constraintTop_toBottomOf="@+id/text_continue_call"
+                app:strokeColor="@color/pure_black"
                 app:strokeWidth="@dimen/_1sdp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnHaBilkul"
+                android:id="@+id/btn_yes"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_8sdp"
+                android:layout_margin="@dimen/_10sdp"
                 android:backgroundTint="@color/colorAccent"
-                android:paddingVertical="@dimen/_8sdp"
-                android:text="Yes"
-                app:cornerRadius="@dimen/_4sdp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/yes"
+                app:cornerRadius="@dimen/_7sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btnNahi" />
+                app:layout_constraintStart_toEndOf="@+id/btn_no"
+                app:strokeColor="@color/pure_black"
+                app:layout_constraintTop_toBottomOf="@+id/text_continue_call"
+                app:strokeWidth="@dimen/_1sdp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

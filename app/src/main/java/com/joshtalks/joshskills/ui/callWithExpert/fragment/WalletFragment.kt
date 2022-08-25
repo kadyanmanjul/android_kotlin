@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.CLICKED_PROCEED
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.databinding.FragmentWalletBinding
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.AmountAdapter
@@ -64,6 +65,7 @@ class WalletFragment : Fragment() {
     }
 
     fun openCheckoutScreen() {
+        callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
         callWithExpertViewModel.proceedPayment()
     }
 

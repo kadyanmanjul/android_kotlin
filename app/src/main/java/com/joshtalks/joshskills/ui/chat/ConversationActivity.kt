@@ -118,6 +118,7 @@ import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -335,8 +336,8 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
+        conversationBinding.btnOpenExpertList.isVisible = AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED)
         //addIssuesToSharedPref()
-
     }
 
     private fun initSharedPreferences() {
@@ -559,6 +560,13 @@ class ConversationActivity :
             inboxEntity.expiryDate?.time
         )
         // finish()
+    }
+
+    fun openExpertList() {
+        conversationViewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = FT_EXPIRED_PAGE)
+        Intent(this, CallWithExpertActivity::class.java).also {
+            startActivity(it)
+        }
     }
 
     private fun initToolbar() {

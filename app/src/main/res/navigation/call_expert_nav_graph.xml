@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_wallet"/>
     <fragment
         android:id="@+id/expertListFragment"
-        android:name="com.joshtalks.joshskills.ui.callWithExpert.view.ExpertListFragment"
+        android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertListFragment"
         android:label="ExpertListFragment"
         tools:layout="@layout/fragment_expert_list">
         <action
