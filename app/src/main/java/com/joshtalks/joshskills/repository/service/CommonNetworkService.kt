@@ -374,8 +374,8 @@ interface CommonNetworkService {
     @GET("$DIR/micro_payment/get_experts/")
     suspend fun getExpertList() :Response<ExpertListResponse>
 
-    @GET("$DIR/micro_payment/user_wallet/")
-    suspend fun getWalletBalance(@Query("mentor_id") mentorId: String) :Response<WalletBalance>
+    @GET("$DIR/micro_payment/user_wallet/{pk}/")
+    suspend fun getWalletBalance(@Path("pk") mentorId: String) :Response<WalletBalance>
 
     @GET("$DIR/micro_payment/get_amount_list/")
     suspend fun getAvailableAmounts() :Response<AvailableAmount>

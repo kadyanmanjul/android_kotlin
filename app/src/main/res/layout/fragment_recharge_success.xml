@@ -23,7 +23,7 @@
                 android:fontFamily="@font/open_sans"
                 android:paddingLeft="@dimen/_12sdp"
                 android:paddingRight="@dimen/_8sdp"
-                android:text="@string/your_recharge_is_successful"
+                tools:text="@string/added_to_your_account"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
                 android:textColor="@color/pure_black"
                 android:textStyle="bold"
@@ -54,7 +54,7 @@
                 android:fontFamily="@font/open_sans"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
-                android:text="Sumit, gift के तौर पर मैं आपको ₹50 दे रहा हूँ ताकि आप अपनी पहली Expert Call बिल्कुल मुफ्त में try कर पायें"
+                tools:text="@string/wallet_gift_description"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
                 android:textColor="@color/pure_black"
                 android:textStyle="bold"
@@ -62,46 +62,29 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/expert_image"
-                app:layout_constraintBottom_toTopOf="@+id/btn_no"
+                app:layout_constraintBottom_toTopOf="@+id/btn_yes"
                 android:gravity="center_horizontal"
                 android:textAlignment="center" />
 
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_no"
-                android:layout_width="0dp"
+                android:id="@+id/btn_yes"
+                android:layout_width="@dimen/_180sdp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_10sdp"
-                android:backgroundTint="@color/transparent"
                 android:stateListAnimator="@null"
-                android:text="@string/no"
+                tools:text="@string/thankyou_sir"
+                android:textAllCaps="false"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:textColor="@color/pure_black"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/white"
                 app:cornerRadius="@dimen/_7sdp"
+                android:backgroundTint="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btn_yes"
-                app:layout_constraintTop_toBottomOf="@+id/text_continue_call"
-                app:strokeColor="@color/pure_black"
-                app:strokeWidth="@dimen/_1sdp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_yes"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_10sdp"
-                android:backgroundTint="@color/colorAccent"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:text="@string/yes"
-                app:cornerRadius="@dimen/_7sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btn_no"
-                app:strokeColor="@color/pure_black"
-                app:layout_constraintTop_toBottomOf="@+id/text_continue_call"
-                app:strokeWidth="@dimen/_1sdp"/>
+                app:layout_constraintTop_toBottomOf="@+id/text_continue_call" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

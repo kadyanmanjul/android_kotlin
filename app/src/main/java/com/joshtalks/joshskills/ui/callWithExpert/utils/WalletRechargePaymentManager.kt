@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.callWithExpert.utils
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -11,9 +10,10 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseData
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
-import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
+import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.razorpay.Checkout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Response
-import java.math.BigDecimal
 
 /**
 This class is responsible to process payment for wallet recharge payment.
@@ -66,11 +65,14 @@ class WalletRechargePaymentManager private constructor(
                 val response = signupNetwork.getFreeTrialPaymentData(data)
                 if (response.isSuccessful && response.body() != null) {
                     courseData = response.body()!!.courseData!![0]
+//                    selectedAmount =
+//                        Amount(courseData.actualAmount!!.removePrefix("₹").toFloat().toInt(), courseData.testId.toInt(),)
                     getOrderDetails(courseData)
                 } else {
                     throwError()
                 }
             } catch (e: Exception) {
+                e.printStackTrace()
                 throwError()
             }
         }
@@ -94,7 +96,7 @@ class WalletRechargePaymentManager private constructor(
                 if (orderDetailsResponse.code() == 201) {
                     val response: OrderDetailResponse = orderDetailsResponse.body()!!
                     startPaymentGateway(response)
-                    MarketingAnalytics.initPurchaseEvent(data, response)
+//                    MarketingAnalytics.initPurchaseEvent(data, response)
                 } else {
                     throwError()
                 }
@@ -163,7 +165,15 @@ class WalletRechargePaymentManager private constructor(
         Log.d(TAG, "onPaymentSuccess: and status => $status")
 //        onPaymentSuccess: and status => pay_K9qXHKpQIrvIqT
 //        showToast("Payment Successful")
-        navController?.navigate(R.id.paymentProcessingFragment)
+//        navController?.navigate(R.id.paymentProcessingFragment)
+//        activity.supportFragmentManager
+//            .beginTransaction()
+//            .add(
+//                R.id.navHost,
+//                PaymentProcessingFragment.newInstance(),
+//                "Payment Processing"
+//            )
+//            .commit()
         verifyPayment()
         viewModelScope.launch {
             delay(5000)
@@ -172,8 +182,10 @@ class WalletRechargePaymentManager private constructor(
         updateWalletBalance()
     }
 
-    fun updateWalletBalance(){
-        expertListRepo.updateWalletBalance()
+    fun updateWalletBalance() {
+        viewModelScope.launch {
+            expertListRepo.updateWalletBalance()
+        }
     }
 
     fun onPaymentFailed(status: Int, message: String?) {
@@ -193,14 +205,16 @@ class WalletRechargePaymentManager private constructor(
 
     }
 
-    fun onPaymentFinished(isPaymentSuccessful: Boolean){
+    fun onPaymentFinished(isPaymentSuccessful: Boolean) {
         navController?.let {
-            if (isPaymentSuccessful){
+            if (isPaymentSuccessful) {
                 activity.onBackPressed()
+                RechargeSuccessFragment.open(activity.supportFragmentManager, amount = selectedAmount.amount)
             }
         }
         paymentStatusListener?.onPaymentFinished(isPaymentSuccessful)
         // TODO: Show Dialog
+
     }
 
     fun throwError() {

@@ -16,16 +16,20 @@ import kotlinx.coroutines.launch
 class ExpertListRepo {
     suspend fun getExpertList() = AppObjectController.commonNetworkService.getExpertList()
 
-    fun updateWalletBalance() {
-        CoroutineScope(Dispatchers.IO).launch {
-           try {
-               val response = AppObjectController.commonNetworkService.getWalletBalance(Mentor.getInstance().getId())
-               if (response.isSuccessful && response.body() != null) {
-                   SkillsDatastore.updateWalletCredits(response.body()!!.amount)
-               }
-           } catch (e: Exception){
-               e.printStackTrace()
-           }
+    suspend fun updateWalletBalance(): FirstTimeAmount {
+        return try {
+            val response = AppObjectController.commonNetworkService.getWalletBalance(Mentor.getInstance().getId())
+            if (response.code() == 200 && response.body() != null) {
+                SkillsDatastore.updateWalletCredits(response.body()!!.amount)
+                FirstTimeAmount(false, response.body()!!.amount)
+            } else if (response.code() == 201){
+                FirstTimeAmount(true, response.body()!!.amount)
+            } else {
+                FirstTimeAmount(false, response.body()!!.amount)
+            }
+        } catch (e: Exception){
+            e.printStackTrace()
+            FirstTimeAmount(false, 0)
         }
     }
 
@@ -39,3 +43,5 @@ class ExpertListRepo {
     }.flowOn(Dispatchers.IO)
 
 }
+
+data class FirstTimeAmount(val isFirstTime: Boolean, val amount: Int)
