@@ -818,13 +818,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             if (PrefManager.getCallCount() == 3)
                 viewModel.getRating()
 
-            val callIntent = Intent(requireActivity(), RecordingGalleryActivity::class.java)
-//            callIntent.apply {
-//                putExtra(INTENT_DATA_COURSE_ID, courseId)
-//                putExtra(INTENT_DATA_TOPIC_ID, topicId)
-//                putExtra(STARTING_POINT, FROM_ACTIVITY)
-//                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
-//            }
+            val callIntent = Intent(requireActivity(), VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(INTENT_DATA_COURSE_ID, courseId)
+                putExtra(INTENT_DATA_TOPIC_ID, topicId)
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            }
             startActivity(callIntent)
         }
     }

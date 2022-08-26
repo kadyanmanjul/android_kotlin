@@ -19,7 +19,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
-import android.widget.Toast
 import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -31,7 +30,6 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewMode
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
-import com.joshtalks.joshskills.voip.constant.SAVE_SCREENSHOT
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -119,22 +117,8 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                     stopAnimation()
                     callBinding.incomingTimerContainer.visibility = View.INVISIBLE
                 }
-                SAVE_SCREENSHOT->{
-                    saveBitmap()
-                }
 
             }
-        }
-    }
-
-    private fun saveBitmap() {
-        try {
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(2000)
-                PrefManager.putBitmap(callBinding.root.drawToBitmap(Bitmap.Config.RGB_565))
-            }
-        }catch (ex:Exception) {
-            ex.printStackTrace()
         }
     }
 

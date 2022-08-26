@@ -5,10 +5,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
-import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.text.TextUtils
@@ -31,25 +28,20 @@ import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
-import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.format
-import id.zelory.compressor.constraint.quality
-import id.zelory.compressor.constraint.resolution
-import id.zelory.compressor.constraint.size
-import kotlinx.coroutines.*
+import java.io.File
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import org.jcodec.api.android.AndroidSequenceEncoder
-import org.jcodec.common.io.FileChannelWrapper
-import org.jcodec.common.io.NIOUtils
-import org.jcodec.common.model.Rational
 import timber.log.Timber
-import java.io.File
-import java.io.FileOutputStream
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
 
 class ProcessCallRecordingService : Service() {
     private val fileQueue: BlockingQueue<InputFiles> = ArrayBlockingQueue(100)
@@ -80,13 +72,8 @@ class ProcessCallRecordingService : Service() {
                                 val audioPath = intent.getStringExtra(AUDIO_PATH)
                                 val callId = intent.getStringExtra(CALL_ID)
                                 val agoraMentorId = intent.getStringExtra(AGORA_MENTOR_ID)
-                                val duration = intent.getIntExtra(RECORD_DURATION, 0)
-                                val bitmap = intent.getByteArrayExtra(BITMAP_SCREENSHOT)
-                                generateVideoFromImage(InputFiles(callId,
-                                    agoraMentorId,
-                                    videoPath,
-                                    audioPath,
-                                    duration = duration), bitmap!!)
+                                val duration = intent.getIntExtra(RECORD_DURATION,0)
+                                startProcessingAudioVideoMixing(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration))
                             }
                     }
                     UPLOAD_ALL_CALL_RECORDING -> {}
@@ -98,69 +85,8 @@ class ProcessCallRecordingService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun generateVideoFromImage(inputFiles: InputFiles, bitmap: ByteArray) {
-        Log.d(TAG, "GAME observe: generateVideoFromImage 0 $inputFiles")
-
-        val file1 = File(applicationContext.cacheDir, "test_img" + "${System.currentTimeMillis()}")
-        file1.createNewFile()
-        val fos = FileOutputStream(file1)
-        fos.write(bitmap)
-        fos.flush()
-        fos.close()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val compressedImageFile = Compressor.compress(applicationContext, file1) {
-                quality(40)
-                resolution(200, 400)
-                format(Bitmap.CompressFormat.JPEG)
-                size(50000)
-            }
-            proceedFurther(BitmapFactory.decodeFile(compressedImageFile.path), inputFiles)
-        }
-    }
-
-    private fun proceedFurther(screenshot1: Bitmap, inputFiles: InputFiles) {
-        Log.d(TAG, "GAME observe: proceedFurther ")
-        var screenshot = screenshot1
-        if (screenshot.height % 2 != 0) {
-            screenshot = editMyBitmap(screenshot, screenshot.height - 1, screenshot.width)
-        }
-        if (screenshot.width % 2 != 0) {
-            screenshot = editMyBitmap(screenshot, screenshot.height, screenshot.width - 1)
-        }
-
-        var out: FileChannelWrapper? = null
-        val dir = application.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-        val file = File(dir, "roughVideo" + "${System.currentTimeMillis()}" + ".mp4")
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                out = NIOUtils.writableFileChannel(file.absolutePath)
-                val encoder = AndroidSequenceEncoder(out, Rational.R(25, 1))
-
-                Log.d(TAG, "GAME observe: generateVideoFromImage details ${screenshot?.height} ${screenshot?.width}  ${inputFiles.duration!!}  ${screenshot.allocationByteCount}")
-
-                for (a in 0..((inputFiles.duration!!) / 1000) * 25) {
-                    encoder.encodeImage(screenshot)
-                }
-                encoder.finish()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            } finally {
-                inputFiles.videoPath = file.absolutePath
-                startProcessingAudioVideoMixing(inputFiles)
-                Log.d(TAG, "GAME observe: generateVideoFromImage output ready")
-                NIOUtils.closeQuietly(out)
-            }
-        }
-    }
-
-    fun editMyBitmap(myBitmap: Bitmap, newHeight: Int, newWidth: Int): Bitmap {
-        return Bitmap.createScaledBitmap(myBitmap, newWidth, newHeight, false)
-
-    }
-
     private fun startProcessingAudioVideoMixing(inputFiles: InputFiles) {
+        Log.d(TAG, "processRecording: $inputFiles")
         if (inputFiles.callId.isNullOrBlank() || inputFiles.audioPath.isNullOrBlank() || inputFiles.videoPath.isNullOrBlank()) {
             return
         }
@@ -246,7 +172,7 @@ class ProcessCallRecordingService : Service() {
                             agoraCallId = inputFiles.callId,
                             agoraMentorId = inputFiles.agoraMentorId,
                             recording_url = inputFiles.serverUrl!!,
-                            duration = inputFiles.duration ?: 0
+                            duration = inputFiles.duration?:0
                         )
                     )
                 if (resp.isSuccessful && resp.body() != null) {
@@ -254,7 +180,7 @@ class ProcessCallRecordingService : Service() {
                         contentTitle = "Processed Call Recording"
                         contentText = "Well done!, Here is your call recording"
                         action = NotificationAction.CALL_RECORDING_NOTIFICATION
-                        extraData = requestEngage.outputFile?.absolutePath ?: EMPTY
+                        extraData = requestEngage.outputFile?.absolutePath?: EMPTY
                     }
                     NotificationUtils(applicationContext).sendNotification(nc)
                 } else {
@@ -270,7 +196,7 @@ class ProcessCallRecordingService : Service() {
 
     private suspend fun uploadOnS3Server(
         responseObj: AmazonPolicyResponse,
-        mediaPath: String,
+        mediaPath: String
     ): Int {
         return CoroutineScope(Dispatchers.IO).async {
             val parameters = emptyMap<String, RequestBody>().toMutableMap()
@@ -327,8 +253,6 @@ class ProcessCallRecordingService : Service() {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_MIN)
         }
-
-
         startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
     }
 
@@ -340,7 +264,6 @@ class ProcessCallRecordingService : Service() {
         const val RECORD_DURATION = "RECORD_DURATION"
         const val CALL_ID = "CALL_ID"
         const val AGORA_MENTOR_ID = "AGORA_MENTOR_ID"
-        const val BITMAP_SCREENSHOT = "BITMAP_SCREENSHOT"
         val TAG = "RecordingService"
         const val CHANNEL_ID = "VIDEO_PROCESSING"
         const val NOTIFICATION_ID = 1201
@@ -361,18 +284,15 @@ class ProcessCallRecordingService : Service() {
             agoraMentorId: String?,
             videoPath: String,
             audioPath: String,
-            recordDuration: Int,
-            bitmap: ByteArray,
-
-            ) {
+            recordDuration: Int
+        ) {
             val intent = Intent(context, ProcessCallRecordingService::class.java)
             intent.action = START_VIDEO_AUDIO_PROCESSING
             intent.putExtra(CALL_ID, callId)
             intent.putExtra(AGORA_MENTOR_ID, agoraMentorId)
             intent.putExtra(VIDEO_PATH, videoPath)
             intent.putExtra(AUDIO_PATH, audioPath)
-            intent.putExtra(RECORD_DURATION, recordDuration)
-            intent.putExtra(BITMAP_SCREENSHOT, bitmap)
+            intent.putExtra(RECORD_DURATION,recordDuration)
             context?.startService(intent)
         }
     }
@@ -381,9 +301,9 @@ class ProcessCallRecordingService : Service() {
 data class InputFiles(
     val callId: String?,
     val agoraMentorId: String?,
-    var videoPath: String?,
+    val videoPath: String?,
     val audioPath: String?,
     var outputFile: File? = null,
     var serverUrl: String? = null,
-    var duration: Int? = null,
+    var duration: Int? = null
 )
