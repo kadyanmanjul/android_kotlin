@@ -349,6 +349,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         val description = paymentStatusView.findViewById<AppCompatTextView>(R.id.description)
         val tryAgain = paymentStatusView.findViewById<AppCompatTextView>(R.id.try_again)
         val callText = paymentStatusView.findViewById<AppCompatTextView>(R.id.call)
+        val number = paymentStatusView.findViewById<AppCompatTextView>(R.id.number)
 
         paymentStatusView.visibility = VISIBLE
         findMoreLayout.visibility = GONE
@@ -385,12 +386,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (isHelpLineVisible) {
             val helpLine = "+91 8634503202"
             callText.visibility = View.VISIBLE
-            callText.text = getString(R.string.failed_payment_call_text, helpLine)
+            number.visibility = View.VISIBLE
+            callText.text = getString(R.string.failed_payment_call_text)
+            number.text = helpLine
             callText.setOnClickListener {
+                Utils.call(this, helpLine)
+            }
+            number.setOnClickListener {
                 Utils.call(this, helpLine)
             }
         } else {
             callText.visibility = View.GONE
+            number.visibility = View.GONE
         }
     }
 

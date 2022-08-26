@@ -46,6 +46,7 @@
         android:layout_marginVertical="@dimen/_6sdp"
         android:layout_marginStart="@dimen/_6sdp"
         android:layout_marginEnd="@dimen/_6sdp"
+        android:textAlignment="viewStart"
         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
         android:textColor="@color/grey_68"
         app:layout_constraintBottom_toTopOf="@id/try_again"
@@ -70,7 +71,7 @@
         android:paddingEnd="@dimen/_30sdp"
         android:paddingBottom="@dimen/_8sdp"
         android:text="@string/try_again"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
         android:textColor="@color/white"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -82,19 +83,37 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/call"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_6sdp"
         android:layout_marginBottom="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_2sdp"
         android:gravity="center"
         android:text="@string/failed_payment_call_text"
+        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
         android:textColor="@color/grey_68"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/try_again"
-        app:layout_constraintStart_toStartOf="@id/try_again"
+        app:layout_constraintEnd_toStartOf="@id/number"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/try_again"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/call"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/call"
+        app:layout_constraintTop_toTopOf="@id/call"
+        tools:text="9999999999"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1024,22 +1024,11 @@
     <string name="success_payment_text" translatable="false">Payment Successful</string>
     <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting \n (Note : Please Restart your App)</string>
     <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
-    <string name="failed_payment_desc" translatable="false">Sorry for the inconvenience.\n
-        Any money deducted will be refunded within 3-5 working days\n
-        You can try again. Any additional money deducted will also be refunded within 3-5 working days.\n\n
-        Inconvenience के लिए माफ़ी माँगना चाहेंगे\n
-        कोई amount अगर deduct हुआ हो, उसका Refund आपके पास 3-5 working days में पहुँच जायेगा\n
-        आगे होने वाली किसी भी unsuccessful transaction को भी refund कर दिया जायेगा\n</string>
+    <string name="failed_payment_desc" translatable="false">Sorry for the inconvenience. Any money deducted will be refunded within 3-5 working days. You can try again. Any additional money deducted will also be refunded within 3-5 working days.\n\nInconvenience के लिए माफ़ी माँगना चाहेंगे कोई amount अगर deduct हुआ हो, उसका Refund आपके पास 3-5 working days में पहुँच जायेगा आगे होने वाली किसी भी unsuccessful transaction को भी refund कर दिया जायेगा\n</string>
     <string name="processing_payment_text" translatable="false">Processing Payment</string>
-    <string name="processing_payment_desc" translatable="false">Your payment confirmation is taking longer than usual.\n
-                                    Status will be updated within 3-4  hours. \n
-                                    If unsuccessful,  any money deducted will be refunded within 3-5 working days\n \n
-                                    आपकी payment की confirmation ज़रूरत से थोड़ा ज़्यादा time ले रही हैं\n
-                                    3-4 hours में आपकी payment का status update कर दिया जायेगा \n
-                                    अगर payment unsuccessful रहती हैं, तो वह amount आप तक 3-5 working days में पहुँच जायेगा \n
-                                    आप दोबारा try कर सकते है \n</string>
-    <string name="failed_payment_call_text" translatable="false">In case of any queries contact support:  <u>%s</u></string>
+    <string name="processing_payment_desc" translatable="false">Your payment confirmation is taking longer than usual. Status will be updated within 3-4 hours. If unsuccessful,  any money deducted will be refunded within 3-5 working days\n\nआपकी payment की confirmation ज़रूरत से थोड़ा ज़्यादा time ले रही हैं 3-4 hours में आपकी payment का status update कर दिया जायेगा अगर payment unsuccessful रहती हैं, तो वह amount आप तक 3-5 working days में पहुँच जायेगा आप दोबारा try कर सकते है \n</string>
+    <string name="failed_payment_call_text" translatable="false">In case of any queries contact support:</string>
     <string name="turn_on_speaker" translatable="false">Turn on speaker</string>
     <string name="important_info" translatable="false">जरुरी जानकारी</string>
-    <string name="zaruri_jankari">Zaruri jaankaari</string>
+    <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
 </resources>
