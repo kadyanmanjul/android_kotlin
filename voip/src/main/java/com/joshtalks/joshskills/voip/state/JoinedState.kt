@@ -371,10 +371,11 @@ class JoinedState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(
                                 UI(
                                     channelName = context.channelData.getChannel(),
-                                    type = ServerConstants.UI_STATE_UPDATED,
+                                    type = ServerConstants.ACK_UI_STATE_UPDATED,
                                     isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                     isMute = if (context.currentUiState.isOnMute) 1 else 0,
-                                    address = context.channelData.getPartnerMentorId()
+                                    address = context.channelData.getPartnerMentorId(),
+                                    isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                 )
                             )
                         }
@@ -388,12 +389,14 @@ class JoinedState(val context: CallContext) : VoipState {
                                         type = ServerConstants.ACK_UI_STATE_UPDATED,
                                         isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                         isMute = if (context.currentUiState.isOnMute) 1 else 0,
-                                        address = context.channelData.getPartnerMentorId()
+                                        address = context.channelData.getPartnerMentorId(),
+                                        isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                     )
                                 )
                             val uiState = context.currentUiState.copy(
                                 isRemoteUserMuted = uiData.isMute(),
-                                isOnHold = uiData.isHold()
+                                isOnHold = uiData.isHold(),
+                                isRemoteUserGameStarted = uiData.isPlayBtnClick()
                             )
                             context.updateUIState(uiState = uiState)
                         }

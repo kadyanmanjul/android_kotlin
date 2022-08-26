@@ -332,6 +332,10 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     }
                 }
 
+                if(state.isRemoteUserGameStarted && uiState.isStartGameClicked && state.nextGameWord.equals("")){
+                    repository.nextGameWord()
+                }
+
                 if (state.isReconnecting) {
                     uiState.currentState = "Reconnecting"
                 } else if (state.isOnHold) {
