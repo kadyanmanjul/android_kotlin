@@ -1017,12 +1017,9 @@
         यह application उन serious students के लिए बनाई गयी है जिनके दिल में Josh है English सीखने का और आगे बढ़ने का.
         अगर आपकी future की calls भी बहुत छोटी जाती हैं, तो आपकी calling को बंद भी किया जा सकता है.\n
         \n Thank you. Best of luck! </string>
-    <string name="you_have_reached_limit_freetrial" translatable="false">You have reached your calling limit in Free Trial</string>
     <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
     <string name="grammar_completed" translatable="false">Grammar Completed!</string>
     <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
-    <string name="buy_course_to_continue_calling"><u>Buy course to continue calling</u></string>
-    <string name="grammar_completed">Grammar Completed!</string>
     <string name="turn_on_speaker">Turn on speaker</string>
     <string name="important_info">जरुरी जानकारी</string>
 </resources>

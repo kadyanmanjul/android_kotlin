@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.launch
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
@@ -11,7 +10,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -37,8 +35,6 @@ import com.joshtalks.joshskills.util.DeepLinkData
 import com.joshtalks.joshskills.util.DeepLinkImpression
 import com.joshtalks.joshskills.util.DeepLinkRedirect
 import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
-import com.singular.sdk.Singular
-import com.singular.sdk.SingularConfig
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
