@@ -699,7 +699,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 if (it.expireTime != null) {
                     binding.freeTrialTimer.visibility = View.VISIBLE
                     if (it.expireTime.time >= System.currentTimeMillis()) {
-                        startTimer(it.expireTime.time - System.currentTimeMillis())
+                        if (it.expireTime.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
+                            binding.freeTrialTimer.visibility = View.GONE
+                        }else{
+                            startTimer(it.expireTime.time - System.currentTimeMillis())
+                        }
                     } else {
                         binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                         PrefManager.put(IS_FREE_TRIAL_ENDED, true)

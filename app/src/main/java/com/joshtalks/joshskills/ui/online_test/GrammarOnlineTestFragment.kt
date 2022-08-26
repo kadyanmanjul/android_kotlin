@@ -43,10 +43,15 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
+
+    private val viewModelOnlineTest: OnlineTestViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(OnlineTestViewModel::class.java)
+    }
     private var lessonNumber: Int = -1
     private var lessonId: Int = -1
     private var scoreText: Int = -1
     private var pointsList: String? = null
+    private var timerPopText = EMPTY
 
     private var currentTooltipIndex = 0
     private var grammarAnimationListener: GrammarAnimation? = null
@@ -243,6 +248,15 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             viewLifecycleOwner
         ) {
             lessonId = it
+        }
+
+        viewModelOnlineTest.grammarAssessmentLiveData.observe(
+            viewLifecycleOwner
+        ) {
+            timerPopText = it.popUpText?.body?: EMPTY
+            if ( timerPopText!= EMPTY){
+                PurchaseDialog.newInstance(timerPopText,it.popUpText?.title?: EMPTY, it.popUpText?.price?: EMPTY).show(requireActivity().supportFragmentManager,"PurchaseDialog")
+            }
         }
     }
 

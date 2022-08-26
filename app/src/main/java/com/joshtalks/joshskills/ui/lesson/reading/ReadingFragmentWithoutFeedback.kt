@@ -122,6 +122,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -244,6 +245,7 @@ class ReadingFragmentWithoutFeedback :
             hideRecordHindAnimation()
         }
     }
+    private var timerPopText = EMPTY
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
@@ -840,6 +842,14 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun addObserver() {
+        viewModel.updatedLessonResponseLiveData.observe(
+            viewLifecycleOwner
+        ) {
+            timerPopText = it.popUpText?.body?: EMPTY
+            if (timerPopText!= EMPTY){
+                PurchaseDialog.newInstance(timerPopText, it.popUpText?.title?: EMPTY, it.popUpText?.price?: EMPTY).show(requireActivity().supportFragmentManager,"PurchaseDialog")
+            }
+        }
         viewModel.lessonQuestionsLiveData.observe(
             viewLifecycleOwner
         ) {

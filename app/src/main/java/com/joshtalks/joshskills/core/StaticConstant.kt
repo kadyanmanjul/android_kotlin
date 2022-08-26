@@ -269,6 +269,8 @@ class FirebaseRemoteConfigKey {
         const val POSTAL_ADDRESS_SUBHEADING_CERT_FORM = "POSTAL_ADDRESS_SUBHEADING_CERT_FORM"
 
         const val NOTIFICATION_API_TIME = "NOTIFICATION_API_TIME"
+        const val CALL_RATING = "CALL_RATING"
+        const val PURCHASE_POPUP = "PURCHASE_POPUP"
     }
 }
 

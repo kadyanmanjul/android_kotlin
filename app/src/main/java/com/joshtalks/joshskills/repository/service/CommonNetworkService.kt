@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.voip.analytics.data.network.PurchasePopUp
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -364,4 +365,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/track_reading_practice_impression/")
     suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
+
+    @GET("$DIR/fpp/call_popup/")
+    suspend fun getPurchasePopUpResponse() :Response<PurchasePopUp>
 }

@@ -53,14 +53,6 @@ data class SpeakingTopic(
     @ColumnInfo(name = "is_ft_caller_blocked")
     val isFtCallerBlocked: String?,
 
-    @SerializedName("call_target_type")
-    @ColumnInfo(name = "call_target_type")
-    val type: String,
-
-    @SerializedName("last_call")
-    @ColumnInfo(name = "last_call")
-    val lastCall : Int
-
 ) : Parcelable
 
 @Dao

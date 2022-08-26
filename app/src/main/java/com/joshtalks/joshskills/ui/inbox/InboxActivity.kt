@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
+import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -272,6 +273,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }
                 .let { courseList ->
                     courseList.forEach { inboxEntity ->
+                        PrefManager.put(CONVERSATION_ID,inboxEntity.conversation_id)
                         // User is Free Trail
                         if (isServiceStarted.not()) {
                             isServiceStarted = true
