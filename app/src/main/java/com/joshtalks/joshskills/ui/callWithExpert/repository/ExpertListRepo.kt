@@ -4,6 +4,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
+import com.joshtalks.joshskills.ui.callWithExpert.model.WalletBalance
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,7 @@ class ExpertListRepo {
                 SkillsDatastore.updateWalletCredits(response.body()!!.amount)
                 FirstTimeAmount(false, response.body()!!.amount)
             } else if (response.code() == 201){
+                SkillsDatastore.updateWalletCredits(response.body()!!.amount)
                 FirstTimeAmount(true, response.body()!!.amount)
             } else {
                 FirstTimeAmount(false, response.body()!!.amount)
@@ -41,6 +43,8 @@ class ExpertListRepo {
             throw Throwable("Something Went Wrong")
         }
     }.flowOn(Dispatchers.IO)
+
+    suspend fun getCallStatus(expertId: String) = AppObjectController.commonNetworkService.getCallNowStatus(expertId)
 
 }
 

@@ -209,4 +209,6 @@
 
     <color name="btn_call_disable_color">#8F107BE5</color>
     <color name="expert_border_color">#F0DF20</color>
+
+    <color name="txt_red">#8B1A1C</color>
 </resources>

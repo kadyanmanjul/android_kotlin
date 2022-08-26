@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
+import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.model.AvailableAmount
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListResponse
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletBalance
@@ -379,6 +380,9 @@ interface CommonNetworkService {
 
     @GET("$DIR/micro_payment/get_amount_list/")
     suspend fun getAvailableAmounts() :Response<AvailableAmount>
+
+    @GET("$DIR/micro_payment/check_wallet_balance/")
+    suspend fun getCallNowStatus(@Query("expert_id") expertId: String): Response<WalletBalance>
 
     @POST("$DIR/impression/track_micro_payment_impression/")
     suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)

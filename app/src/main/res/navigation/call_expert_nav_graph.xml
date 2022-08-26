@@ -13,7 +13,7 @@
     <fragment
         android:id="@+id/expertListFragment"
         android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertListFragment"
-        android:label="ExpertListFragment"
+        android:label="Call With Expert"
         tools:layout="@layout/fragment_expert_list">
         <action
             android:id="@+id/action_expertListFragment_to_walletFragment"

@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.ui.callWithExpert.viewModel
 
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
@@ -11,9 +13,11 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.ExpertListAdapter
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
+import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.ui.fpp.constants.START_FPP_CALL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +30,11 @@ class ExpertListViewModel : BaseViewModel() {
     val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val adapter = ExpertListAdapter()
     var selectedUser: ExpertListModel? = null
+    private val _canBeCalled = MutableLiveData<Boolean>()
+     lateinit var clickedSpeakerName: String
+      var neededAmount: Int = 0
+    val canBeCalled: LiveData<Boolean>
+        get() = _canBeCalled
 
     init {
         getListOfExpert()
@@ -51,7 +60,8 @@ class ExpertListViewModel : BaseViewModel() {
     val onItemClick: (ExpertListModel, Int, Int) -> Unit = { it, type, position ->
         when (type) {
             FAV_CLICK_ON_CALL -> {
-                clickOnPhoneCall(it)
+                getCallStatus(it)
+//                clickOnPhoneCall(it)
             }
         }
     }
@@ -74,6 +84,31 @@ class ExpertListViewModel : BaseViewModel() {
                 "You can't place a new call while you're already in a call.",
                 Toast.LENGTH_LONG
             )
+        }
+    }
+
+    fun getCallStatus(expert: ExpertListModel){
+        clickedSpeakerName = expert.expertName
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = expertListRepo.getCallStatus(expert.mentorId)
+                when(response.code()){
+                    200 -> {
+                        clickOnPhoneCall(expert)
+                        _canBeCalled.postValue(true)
+                        SkillsDatastore.updateWalletCredits(response.body()!!.amount)
+                    }
+                    202 -> {
+                        neededAmount = response.body()!!.amount
+                        _canBeCalled.postValue(false)
+                    }
+                    else -> {
+                        showToast("Something Went Wrong")
+                    }
+                }
+            } catch (e: Exception){
+                e.showAppropriateMsg()
+            }
         }
     }
 
