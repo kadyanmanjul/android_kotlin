@@ -457,4 +457,7 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
 
     implementation 'com.github.ZeroOneZeroR:android_audio_mixer:v1.1'
+
+    // Anr-watchdog
+    implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
 }

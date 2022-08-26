@@ -20,7 +20,9 @@ import androidx.multidex.MultiDexApplication
 import androidx.work.impl.background.greedy.GreedyScheduler
 import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
+import com.github.anrwatchdog.ANRWatchDog
 import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
@@ -86,6 +88,17 @@ class JoshApplication :
             AppObjectController.init(this@JoshApplication)
             Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
             turnOnStrictMode()
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                ANRWatchDog().setReportMainThreadOnly().setANRListener {
+                    try {
+                        val crashAnalytics = FirebaseCrashlytics.getInstance()
+                            crashAnalytics.setCustomKey("type", "watchdog")
+                            crashAnalytics.recordException(it)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }.start()
+            }
             ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
             VoipPref.initVoipPref(this)
             PstnObserver
