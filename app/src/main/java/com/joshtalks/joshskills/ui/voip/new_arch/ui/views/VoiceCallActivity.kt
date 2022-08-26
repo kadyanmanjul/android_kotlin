@@ -334,6 +334,8 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
                 recordResultCode = resultCode
                 showDialog = false
                 proceedToRecord()
+            }else{
+               vm.endGameFromRepo()
             }
         }
     }
@@ -351,6 +353,8 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
     }
 
     private fun proceedToRecord() {
+        vm.isRecordPermissionGiven.set(true)
+
         hbRecorder.setOutputPath(getFileDirectory().absolutePath)
         hbRecorder.isAudioEnabled(false)
         hbRecorder.recordHDVideo(false)

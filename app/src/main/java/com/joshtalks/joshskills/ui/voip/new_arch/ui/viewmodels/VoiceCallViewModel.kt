@@ -67,6 +67,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     val toastText  = Utils.context?.getRecordingText()?:""
     var isPermissionGranted: ObservableBoolean = ObservableBoolean(false)
     var isGameEnabled: ObservableBoolean = ObservableBoolean(false)
+    var isRecordPermissionGiven: ObservableBoolean = ObservableBoolean(false)
 
 
     private val connectCallJob by lazy {
@@ -310,7 +311,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                                 uiState.isRecordingEnabled = state.isRecordingEnabled
 
                                 if(timer?.isActive == true || timer?.isCompleted == true){
-                                    delay(1000)
+                                    delay(1500)
                                     repository.startCallRecording()
                                 }
                             }
@@ -330,6 +331,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             uiState.isRecordingEnabled = state.isRecordingEnabled
                         }
                     }
+                    else -> {}
                 }
 
                 if(state.isRemoteUserGameStarted && uiState.isStartGameClicked && state.nextGameWord.equals("")){
@@ -355,7 +357,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     withContext(Dispatchers.Main) {
                         singleLiveEvent.value = msg
                     }
-
+                    CallAnalytics.addAnalytics(
+                        event = EventName.GAME_STARTED,
+                        agoraCallId = PrefManager.getAgraCallId().toString(),
+                        agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                    )
                 }
 
                 if(!state.isStartGameClicked || state.nextGameWord.equals("")){

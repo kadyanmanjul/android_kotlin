@@ -467,7 +467,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/black_quiz"
-            android:visibility='@{vm.uiState.startGameClicked &amp;&amp; !vm.uiState.gameWord.equals("")  ? View.VISIBLE : View.GONE}'
+            android:visibility='@{vm.uiState.startGameClicked &amp;&amp; !vm.uiState.gameWord.equals("")  &amp;&amp; vm.isRecordPermissionGiven  ? View.VISIBLE : View.GONE}'
             app:layout_constraintBottom_toTopOf="@id/bottom_card_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
