@@ -58,6 +58,7 @@ import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_start_course.*
 import kotlinx.android.synthetic.main.price_card.view.*
 import kotlinx.android.synthetic.main.syllabus_pdf_layout.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -934,7 +935,17 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     }
                     // isBackPressDisabled = true
                     razorpayOrderId.verifyPayment()
-                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0), true)
+                    try {
+                        MarketingAnalytics.coursePurchased(
+                            BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0),
+                            true,
+                            testId = freeTrialTestId,
+                            courseName = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName ?: EMPTY,
+                            razorpayPaymentId = razorpayOrderId
+                        )
+                    }catch (ex:Exception){
+
+                    }
                     //viewModel.updateSubscriptionStatus()
 
                     uiHandler.post {
@@ -1025,9 +1036,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
         MarketingAnalytics.coursePurchased(
-            BigDecimal(
-                viewModel.orderDetailsLiveData.value?.amount ?: 0.0
-            )
+            BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0),
+            true,
+            testId = freeTrialTestId,
+            courseName = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName ?: EMPTY,
+            razorpayPaymentId = razorpayOrderId
         )
         //viewModel.updateSubscriptionStatus()
         try {

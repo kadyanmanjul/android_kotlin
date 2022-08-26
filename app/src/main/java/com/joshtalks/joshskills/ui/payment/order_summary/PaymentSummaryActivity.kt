@@ -1006,9 +1006,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, viewModel.getPaymentTestId())
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, viewModel.getCourseName())
-            bundle.putDouble(
-                FirebaseAnalytics.Param.PRICE, viewModel.getCourseDiscountedAmount()
-            )
+            bundle.putDouble(FirebaseAnalytics.Param.VALUE, viewModel.getCourseDiscountedAmount())
             bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
             AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
