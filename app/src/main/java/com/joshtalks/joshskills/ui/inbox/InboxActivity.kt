@@ -58,8 +58,6 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.help.Action
-import com.joshtalks.joshskills.repository.server.help.HelpCenterOptions
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -388,14 +386,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             tryAgain.visibility = View.GONE
         }
         if (isHelpLineVisible) {
-            var helpLine = "+91 9999999999"
-            HelpCenterOptions.getHelpOptionsModelObject()?.let { helpCenterOptionsModel ->
-                helpCenterOptionsModel.options.forEach {
-                    if (it.action == Action.CALL) {
-                        helpLine = it.actionData.toString()
-                    }
-                }
-            }
+            val helpLine = "+91 8634503202"
             callText.visibility = View.VISIBLE
             callText.text = getString(R.string.failed_payment_call_text, helpLine)
             callText.setOnClickListener {

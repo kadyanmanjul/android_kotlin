@@ -1022,13 +1022,14 @@
     <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
     <string name="grammar_completed" translatable="false">Grammar Completed!</string>
     <string name="success_payment_text" translatable="false">Payment Successful</string>
-    <string name="success_payment_desc" translatable="false">Sorry for the inconvenience. Please Restart your App</string>
+    <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting</string>
     <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
-    <string name="failed_payment_desc" translatable="false">Sorry for the inconvenience. Refund has been initiated.\n
-                                It may take 3-5 business days for the bank to process the refund. \n
-                                You can try again. Any additional money deducted will be refunded within 3-5 working days. \n \n
-                                Inconvenience के लिए माफ़ी माँगना चाहेंगे \n आपका Refund आपके पास 3-5 working days में पहुँच जायेगा\n
-                                आप फिर से try कर सकते हैं, अगर कोई additional amount deduct होता हैं, तो वह amount आप तक 3-5 working days में पहुँच जायेगा</string>
+    <string name="failed_payment_desc" translatable="false">Sorry for the inconvenience.\n
+        Any money deducted will be refunded within 3-5 working days\n
+        You can try again. Any additional money deducted will also be refunded within 3-5 working days.\n\n
+        Inconvenience के लिए माफ़ी माँगना चाहेंगे\n
+        कोई amount अगर deduct हुआ हो, उसका Refund आपके पास 3-5 working days में पहुँच जायेगा\n
+        आगे होने वाली किसी भी unsuccessful transaction को भी refund कर दिया जायेगा\n</string>
     <string name="processing_payment_text" translatable="false">Processing Payment</string>
     <string name="processing_payment_desc" translatable="false">Your payment confirmation is taking longer than usual.\n
                                     Status will be updated within 3-4  hours. \n
