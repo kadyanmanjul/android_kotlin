@@ -143,7 +143,6 @@ object VoipPref {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             try {
                 val resp =  AppObjectController.commonNetworkService.getPurchasePopUpResponse()
-                showToast("Call6${resp.body()}")
                 if (resp.body()?.popUpBody?: EMPTY != EMPTY) {
                     PurchaseDialog.newInstance(
                         timerPopText = resp.body()?.popUpBody ?: EMPTY,
