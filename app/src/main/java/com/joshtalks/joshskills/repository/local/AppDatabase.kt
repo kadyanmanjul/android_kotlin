@@ -106,6 +106,9 @@ import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
+import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentDao
+import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
@@ -128,7 +131,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class
+        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class , Payment::class
     ],
     version = 53,
     exportSchema = true
@@ -162,7 +165,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     ConverterForLessonMaterialType::class,
     AwardTypeConverter::class,
     BigDecimalConverters::class,
-    VariableMapConverters::class
+    VariableMapConverters::class,
+    PaymentStatusConverters::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -672,6 +676,7 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_52_53: Migration = object : Migration(52,53) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE `nps_event_table`")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `payment_table` (`amount` REAL NOT NULL, `joshtalks_order_id` INTEGER NOT NULL, `razorpay_key_id` TEXT NOT NULL, `razorpay_order_id` TEXT NOT NULL, `status` TEXT, `time_stamp` INTEGER NOT NULL, `is_sync` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, `response` TEXT NOT NULL, PRIMARY KEY(`razorpay_order_id`))")
             }
         }
 
@@ -722,6 +727,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun phonebookDao(): PhonebookDao
     abstract fun notificationEventDao(): NotificationEventDao
     abstract fun broadcastDao(): BroadCastDao
+    abstract fun paymentDao(): PaymentDao
 }
 
 class MessageTypeConverters {
@@ -1127,5 +1133,23 @@ class VariableMapConverters {
     @TypeConverter
     fun fromVariableMapType(variableMap: VariableMap): String {
         return AppObjectController.gsonMapper.toJson(variableMap)
+    }
+}
+
+class PaymentStatusConverters {
+    @TypeConverter
+    fun toVariableMapType(value: String): PaymentStatus {
+        return try {
+            val type = object : TypeToken<PaymentStatus>() {}.type
+            AppObjectController.gsonMapper.fromJson(value, type)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            PaymentStatus.CREATED
+        }
+    }
+
+    @TypeConverter
+    fun fromVariableMapType(paymentStatus: PaymentStatus): String {
+        return AppObjectController.gsonMapper.toJson(paymentStatus)
     }
 }

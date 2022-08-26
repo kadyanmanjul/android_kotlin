@@ -949,6 +949,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         uiHandler.post {
             showPaymentFailedDialog()
         }
+        viewModel.removeEntryFromPaymentTable(razorpayOrderId)
     }
 
     @Synchronized
@@ -982,6 +983,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
+        viewModel.removeEntryFromPaymentTable(razorpayOrderId)
         MarketingAnalytics.coursePurchased(BigDecimal(viewModel.mPaymentDetailsResponse.value?.amount ?: 0.0))
         //viewModel.updateSubscriptionStatus()
         if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())

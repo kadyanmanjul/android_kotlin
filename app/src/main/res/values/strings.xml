@@ -467,7 +467,6 @@
     <string name="call_back" translatable="false">CALL BACK</string>
     <string name="finding_practise_partner" translatable="false">Finding a Practice Partner</string>
     <string name="searching_info_text" translatable="false">1. Make sure you do longer calls, English bolne se aati hai. \n2. Strict action will be taken against Inappropriate behavior. \n3. Frequent short calls may lead to calling suspension.</string>
-
     <string name="rating" translatable="false">Rating</string>
     <string name="rate_your_practise_partner" translatable="false">Rate Your  Practice Partner</string>
     <string name="confidence" translatable="false">Confidence: </string>
@@ -1019,10 +1018,27 @@
         यह application उन serious students के लिए बनाई गयी है जिनके दिल में Josh है English सीखने का और आगे बढ़ने का.
         अगर आपकी future की calls भी बहुत छोटी जाती हैं, तो आपकी calling को बंद भी किया जा सकता है.\n
         \n Thank you. Best of luck! </string>
+    <string name="you_have_reached_limit_freetrial" translatable="false">You have reached your calling limit in Free Trial</string>
     <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
     <string name="grammar_completed" translatable="false">Grammar Completed!</string>
-    <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
-    <string name="turn_on_speaker">Turn on speaker</string>
-    <string name="important_info">जरुरी जानकारी</string>
+    <string name="success_payment_text" translatable="false">Payment Successful</string>
+    <string name="success_payment_desc" translatable="false">Sorry for the inconvenience. Please Restart your App</string>
+    <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
+    <string name="failed_payment_desc" translatable="false">Sorry for the inconvenience. Refund has been initiated.\n
+                                It may take 3-5 business days for the bank to process the refund. \n
+                                You can try again. Any additional money deducted will be refunded within 3-5 working days. \n \n
+                                Inconvenience के लिए माफ़ी माँगना चाहेंगे \n आपका Refund आपके पास 3-5 working days में पहुँच जायेगा\n
+                                आप फिर से try कर सकते हैं, अगर कोई additional amount deduct होता हैं, तो वह amount आप तक 3-5 working days में पहुँच जायेगा</string>
+    <string name="processing_payment_text" translatable="false">Processing Payment</string>
+    <string name="processing_payment_desc" translatable="false">Your payment confirmation is taking longer than usual.\n
+                                    Status will be updated within 3-4  hours. \n
+                                    If unsuccessful,  any money deducted will be refunded within 3-5 working days\n \n
+                                    आपकी payment की confirmation ज़रूरत से थोड़ा ज़्यादा time ले रही हैं\n
+                                    3-4 hours में आपकी payment का status update कर दिया जायेगा \n
+                                    अगर payment unsuccessful रहती हैं, तो वह amount आप तक 3-5 working days में पहुँच जायेगा \n
+                                    आप दोबारा try कर सकते है \n</string>
+    <string name="failed_payment_call_text" translatable="false">In case of any queries contact support:  <u>%s</u></string>
+    <string name="turn_on_speaker" translatable="false">Turn on speaker</string>
+    <string name="important_info" translatable="false">जरुरी जानकारी</string>
     <string name="zaruri_jankari">Zaruri jaankaari</string>
 </resources>

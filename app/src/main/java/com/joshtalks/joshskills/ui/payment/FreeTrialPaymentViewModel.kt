@@ -7,17 +7,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
+import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
@@ -111,6 +115,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                     val response: OrderDetailResponse = orderDetailsResponse.body()!!
                     orderDetailsLiveData.postValue(response)
                     MarketingAnalytics.initPurchaseEvent(data, response)
+                    addPaymentEntry(response)
                 } else {
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
@@ -164,4 +169,23 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             }
         }
     }
+
+    fun removeEntryFromPaymentTable(razorpayOrderId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
+        }
+    }
+
+     private fun addPaymentEntry(response: OrderDetailResponse) {
+        AppObjectController.appDatabase.paymentDao().inertPaymentEntry(
+            Payment(
+                response.amount,
+                response.joshtalksOrderId,
+                response.razorpayKeyId,
+                response.razorpayOrderId,
+                PaymentStatus.CREATED
+            )
+        )
+    }
+
 }

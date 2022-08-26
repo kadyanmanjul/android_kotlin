@@ -37,15 +37,15 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/info_icon"
         app:layout_constraintTop_toTopOf="@+id/info_icon"
-        tools:text="@string/title" />
+        tools:text="@string/processing_payment_text" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_6sdp"
         android:layout_marginStart="@dimen/_6sdp"
         android:layout_marginEnd="@dimen/_6sdp"
-        android:layout_marginVertical="@dimen/_6sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
         android:textColor="@color/grey_68"
         app:layout_constraintBottom_toTopOf="@id/try_again"
@@ -53,15 +53,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/info_icon"
         app:layout_constraintTop_toBottomOf="@+id/info_icon"
-        tools:text="Your payment confirmation is taking longer than usual.
-Status will be updated within 3-4  hours.
-If unsuccessful,  any money deducted will be refunded within 3-5 working days
- (IN HINDI)  Your payment confirmation is taking longer than usual.
-Status will be updated within 3-4 hours.
-If unsuccessful,  any money deducted will be refunded within 3-5 working days.
-
-You can try again.
-" />
+        tools:text="@string/failed_payment_desc" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/try_again"
@@ -86,7 +78,7 @@ You can try again.
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/description"
         app:rippleColor="@color/white"
-        tools:visibility="gone" />
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/call"
@@ -95,13 +87,14 @@ You can try again.
         android:layout_marginHorizontal="@dimen/_6sdp"
         android:layout_marginBottom="@dimen/_5sdp"
         android:gravity="center"
+        android:text="@string/failed_payment_call_text"
         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
         android:textColor="@color/grey_68"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/try_again"
         app:layout_constraintStart_toStartOf="@id/try_again"
         app:layout_constraintTop_toBottomOf="@+id/try_again"
-        android:visibility="gone"
-        android:text="In case of any queries contact support: +91 9999999999" />
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

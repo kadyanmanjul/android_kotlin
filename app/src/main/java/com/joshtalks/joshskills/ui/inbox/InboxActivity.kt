@@ -6,12 +6,17 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -23,19 +28,43 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
+import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
+import com.joshtalks.joshskills.core.IS_APP_RESTARTED
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
+import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.help.Action
+import com.joshtalks.joshskills.repository.server.help.HelpCenterOptions
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
+import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_COMMITMENT_FORM_SUBMITTED
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
@@ -47,9 +76,13 @@ import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.util.FileUploadService
 import com.moengage.core.analytics.MoEAnalyticsHelper
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.inbox_toolbar.*
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
+import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -68,6 +101,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private var popupMenu: PopupMenu? = null
     private var compositeDisposable = CompositeDisposable()
     private lateinit var findMoreLayout: View
+    private lateinit var paymentStatusView: View
     var isPermissionRequired: Boolean = true
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
@@ -118,6 +152,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         findMoreLayout = findViewById(R.id.parent_layout)
+        paymentStatusView = findViewById(R.id.payment_layout)
         recycler_view_inbox.apply {
             itemAnimator = null
             layoutManager = LinearLayoutManager(applicationContext).apply {
@@ -252,7 +287,123 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         }
+        viewModel.paymentStatus.observe(this, Observer {
+            if (it.isNotEmpty()) {
+                it.sortedBy { it.timeStamp }
+                when (it[0].status) {
+                    PaymentStatus.SUCCESS -> {
+                        PrefManager.put(IS_APP_RESTARTED, false)
+                        initPaymentStatusView(
+                            R.drawable.green_rectangle_with_green_stroke,
+                            R.drawable.ic_payment_small_tick,
+                            R.color.green_payment,
+                            R.color.green_payment_text,
+                            R.string.success_payment_text,
+                            R.string.success_payment_desc,
+                            isTryAgainVisible = false,
+                            isHelpLineVisible = false
+                        )
+                        PrefManager.put(IS_PAYMENT_DONE, true)
+                    }
+                    PaymentStatus.FAILED -> {
+                        initPaymentStatusView(
+                            R.drawable.pink_rectangle_with_red_stroke,
+                            R.drawable.ic_payment_exclamation,
+                            R.color.payment_status_red,
+                            R.color.payment_status_red,
+                            R.string.failed_payment_text,
+                            R.string.failed_payment_desc,
+                            isTryAgainVisible = true,
+                            isHelpLineVisible = true
+                        )
+                    }
+                    PaymentStatus.PROCESSING -> {
+                        initPaymentStatusView(
+                            R.drawable.yellow_rectangle_with_orange_stroke,
+                            R.drawable.ic_payment_exclamation,
+                            R.color.but_button_color,
+                            R.color.but_button_color,
+                            R.string.processing_payment_text,
+                            R.string.processing_payment_desc,
+                            isTryAgainVisible = true,
+                            isHelpLineVisible = false
+                        )
+                    }
+                    else -> {
+                        paymentStatusView.visibility = GONE
+                        findMoreLayout.visibility = VISIBLE
 
+                    }
+                }
+            }
+        })
+    }
+
+    private fun initPaymentStatusView(
+        bgDrawableId: Int,
+        iconDrawable: Int,
+        colorTintIcon: Int,
+        textColor: Int,
+        titleTextID: Int,
+        descTextId: Int,
+        isTryAgainVisible: Boolean,
+        isHelpLineVisible: Boolean
+    ) {
+        val icon = paymentStatusView.findViewById<AppCompatImageView>(R.id.info_icon)
+        val title = paymentStatusView.findViewById<AppCompatTextView>(R.id.title)
+        val description = paymentStatusView.findViewById<AppCompatTextView>(R.id.description)
+        val tryAgain = paymentStatusView.findViewById<AppCompatTextView>(R.id.try_again)
+        val callText = paymentStatusView.findViewById<AppCompatTextView>(R.id.call)
+
+        paymentStatusView.visibility = VISIBLE
+        findMoreLayout.visibility = GONE
+        paymentStatusView.background = ContextCompat.getDrawable(
+            AppObjectController.joshApplication,
+            bgDrawableId
+        )
+
+        icon.setImageDrawable(
+            ResourcesCompat.getDrawable(
+                AppObjectController.joshApplication.resources,
+                iconDrawable,
+                null
+            )
+        )
+        icon.imageTintList = ContextCompat.getColorStateList(this, colorTintIcon)
+
+        title.setTextColor(ContextCompat.getColor(this, textColor))
+        title.text = getString(titleTextID)
+        description.text = getString(descTextId)
+        if (isTryAgainVisible) {
+            tryAgain.visibility = View.VISIBLE
+            tryAgain.setOnClickListener {
+                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                    this,
+                    AppObjectController.getFirebaseRemoteConfig().getString(
+                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                    )
+                )
+            }
+        } else {
+            tryAgain.visibility = View.GONE
+        }
+        if (isHelpLineVisible) {
+            var helpLine = "+91 9999999999"
+            HelpCenterOptions.getHelpOptionsModelObject()?.let { helpCenterOptionsModel ->
+                helpCenterOptionsModel.options.forEach {
+                    if (it.action == Action.CALL) {
+                        helpLine = it.actionData.toString()
+                    }
+                }
+            }
+            callText.visibility = View.VISIBLE
+            callText.text = getString(R.string.failed_payment_call_text, helpLine)
+            callText.setOnClickListener {
+                Utils.call(this, helpLine)
+            }
+        } else {
+            callText.visibility = View.GONE
+        }
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>) {
@@ -312,6 +463,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2) {
                     findMoreLayout.visibility = View.VISIBLE
+                    paymentStatusView.visibility = View.GONE
                     if (isSubscriptionCourseBought) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = true
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = false
@@ -320,11 +472,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = true
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
                     }
-                    else
+                    else {
                         findMoreLayout.visibility = View.GONE
+                        paymentStatusView.visibility = View.GONE
+                    }
                 } else {
                     findMoreLayout.visibility = View.GONE
+                    paymentStatusView.visibility = View.GONE
                 }
+                viewModel.checkForPendingPayments()
             }
         }
     }
