@@ -1025,4 +1025,6 @@
     <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
     <string name="buy_course_to_continue_calling"><u>Buy course to continue calling</u></string>
     <string name="grammar_completed">Grammar Completed!</string>
+    <string name="turn_on_speaker">Turn on speaker</string>
+    <string name="important_info">जरुरी जानकारी</string>
 </resources>
