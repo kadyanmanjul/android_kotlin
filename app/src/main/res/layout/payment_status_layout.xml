@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/payment_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="@dimen/_8sdp"
+    android:background="@drawable/yellow_rectangle_with_orange_stroke"
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/info_icon"
+        android:layout_width="@dimen/_11sdp"
+        android:layout_height="@dimen/_11sdp"
+        android:layout_marginStart="@dimen/_11sdp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:tint="@color/but_button_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_payment_exclamation" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+        android:textColor="@color/grey_68"
+        app:layout_constraintBottom_toBottomOf="@+id/info_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/info_icon"
+        app:layout_constraintTop_toTopOf="@+id/info_icon"
+        tools:text="@string/title" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:layout_marginEnd="@dimen/_6sdp"
+        android:layout_marginVertical="@dimen/_6sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+        android:textColor="@color/grey_68"
+        app:layout_constraintBottom_toTopOf="@id/try_again"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/info_icon"
+        app:layout_constraintTop_toBottomOf="@+id/info_icon"
+        tools:text="Your payment confirmation is taking longer than usual.
+Status will be updated within 3-4  hours.
+If unsuccessful,  any money deducted will be refunded within 3-5 working days
+ (IN HINDI)  Your payment confirmation is taking longer than usual.
+Status will be updated within 3-4 hours.
+If unsuccessful,  any money deducted will be refunded within 3-5 working days.
+
+You can try again.
+" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/try_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:background="@drawable/round_rectangle"
+        android:backgroundTint="@color/button_color"
+        android:gravity="center"
+        android:paddingStart="@dimen/_30sdp"
+        android:paddingTop="@dimen/_8sdp"
+        android:paddingEnd="@dimen/_30sdp"
+        android:paddingBottom="@dimen/_8sdp"
+        android:text="@string/try_again"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description"
+        app:rippleColor="@color/white"
+        tools:visibility="gone" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/call"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_6sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+        android:textColor="@color/grey_68"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/try_again"
+        app:layout_constraintStart_toStartOf="@id/try_again"
+        app:layout_constraintTop_toBottomOf="@+id/try_again"
+        android:visibility="gone"
+        android:text="In case of any queries contact support: +91 9999999999" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

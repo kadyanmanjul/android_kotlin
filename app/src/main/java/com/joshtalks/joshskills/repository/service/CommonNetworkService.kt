@@ -45,6 +45,7 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
+import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
@@ -358,6 +359,9 @@ interface CommonNetworkService {
 
     @POST("$DIR/payment/verify_payment/")
     suspend fun checkMentorPayStatus(@Body params: Map<String, String>): Map<String, Any>
+
+    @GET("$DIR/payment/verify_razorpay_order/")
+    suspend fun syncPaymentStatus(@Query("order_id") orderId: String): Response<VerifyPaymentStatus>
 
     @POST("$DIR/link_attribution/deep_link/")
     suspend fun getDeepLink(@Body params: LinkAttribution): Response<Any>
