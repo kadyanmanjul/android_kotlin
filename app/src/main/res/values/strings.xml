@@ -1034,6 +1034,9 @@
     <string name="added_to_your_account">%1$s Added To Your Account</string>
     <string name="wallet_gift_description">%1$s gift के तौर पर मैं आपको ₹%2$s दे रहा हूँ ताकि आप अपनी पहली Expert Call बिल्कुल मुफ्त में try कर पायें</string>
     <string name="thankyou_sir">Thank you Sir</string>
+    <string name="minimum_balance_of_5_minutes_inr_210_0_is_required_to_start_call_with_expert">Minimum balance of 5 minutes (INR %1$s) is required to start call with %2$s</string>
+    <string name="recharge_now">Recharge Now</string>
+    <string name="tip_90_users_recharge_for_10_mins_or_more">Tip: 90% users recharge for 10 mins or more.</string>
     <string name="success_payment_text" translatable="false">Payment Successful</string>
     <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting \n (Note : Please Restart your App)</string>
     <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
