@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
+import com.joshtalks.joshskills.ui.callWithExpert.repository.FirstTimeAmount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
 import kotlinx.coroutines.Dispatchers
@@ -33,16 +34,35 @@ class CallWithExpertViewModel : ViewModel() {
     val proceedPayment: LiveData<Boolean>
         get() = _proceedPayment
 
+    private val _isFirstAmount = MutableLiveData<FirstTimeAmount>()
+
+    val isFirstAmount: LiveData<FirstTimeAmount>
+        get() = _isFirstAmount
+
+    private val _paymentSuccessful = MutableLiveData<Boolean>()
+
+    val paymentSuccessful: LiveData<Boolean>
+        get() = _paymentSuccessful
+
     init {
         getWalletCredits()
-        expertListRepo.updateWalletBalance()
+        getWalletCreditsFromNetwork()
     }
 
-    fun proceedPayment(){
+    fun getWalletCreditsFromNetwork() {
+        viewModelScope.launch {
+            val firstTimeAmount = expertListRepo.updateWalletBalance()
+            if (firstTimeAmount.isFirstTime) {
+                _isFirstAmount.postValue(firstTimeAmount)
+            }
+        }
+    }
+
+    fun proceedPayment() {
         _proceedPayment.value = true
     }
 
-    fun updateAmount(amount: Amount){
+    fun updateAmount(amount: Amount) {
         addedAmount = amount
     }
 
@@ -54,18 +74,26 @@ class CallWithExpertViewModel : ViewModel() {
         }
     }
 
-    fun saveMicroPaymentImpression(eventName: String, eventId:String = EMPTY, previousPage:String = EMPTY) {
+    fun saveMicroPaymentImpression(
+        eventName: String,
+        eventId: String = EMPTY,
+        previousPage: String = EMPTY
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
-                    Pair("event_name",eventName),
+                    Pair("event_name", eventName),
                     Pair("expert_id", eventId),
-                    Pair("previous_page",previousPage)
+                    Pair("previous_page", previousPage)
                 )
                 AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
         }
+    }
+
+    fun paymentSuccess(isSuccess: Boolean) {
+        _paymentSuccessful.postValue(isSuccess)
     }
 }

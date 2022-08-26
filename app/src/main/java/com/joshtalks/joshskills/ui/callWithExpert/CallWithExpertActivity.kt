@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.SPEAKING_PAGE
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertListFragment
+import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
 import com.joshtalks.joshskills.ui.callWithExpert.utils.PaymentStatusListener
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
@@ -71,6 +72,12 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
                 }
             }
         }
+
+        viewModel.isFirstAmount.observe(this){
+            if (it.isFirstTime){
+                RechargeSuccessFragment.open(supportFragmentManager, it.amount, isGifted = true)
+            }
+        }
     }
 
     private fun attachNavigationChangedListener() {
@@ -83,10 +90,10 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
     }
 
     private fun manageBalanceIndicator(destination: NavDestination) {
-        if (destination.id == R.id.walletFragment) {
-            binding.toolbarContainer.ivEarn.gone()
-        } else {
+        if (destination.id == R.id.expertListFragment) {
             binding.toolbarContainer.ivEarn.visible()
+        } else {
+            binding.toolbarContainer.ivEarn.gone()
         }
     }
 
@@ -107,6 +114,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
     }
 
     override fun onPaymentSuccess(p0: String?) {
+        viewModel.paymentSuccess(true)
         walletPaymentManager.onPaymentSuccess(p0)
     }
 

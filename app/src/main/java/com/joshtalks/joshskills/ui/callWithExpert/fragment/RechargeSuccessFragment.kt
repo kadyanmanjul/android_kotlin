@@ -1,18 +1,31 @@
 package com.joshtalks.joshskills.ui.callWithExpert.fragment
 
 import android.os.Bundle
+import android.os.UserManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
+import com.joshtalks.joshskills.databinding.FragmentRechargeSuccessBinding
+import com.joshtalks.joshskills.repository.local.entity.User
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
+import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 
 class RechargeSuccessFragment : BaseDialogFragment() {
+
+    private var amount: Int = 0
+    private var isGifted: Boolean = false
+    private lateinit var binding: FragmentRechargeSuccessBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-
+            amount = it.getInt(AMOUNT)
+            isGifted = it.getBoolean(IS_GIFTED)
         }
     }
 
@@ -21,16 +34,44 @@ class RechargeSuccessFragment : BaseDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recharge_success, container, false)
+        binding = FragmentRechargeSuccessBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.textView.text = getString(R.string.added_to_your_account, amount.toRupees())
+        if (isGifted) {
+            binding.textContinueCall.visible()
+            binding.textContinueCall.text = getString(R.string.wallet_gift_description, "${Mentor.getInstance().getUser()?.firstName},", amount.toString())
+            binding.btnYes.text = getString(R.string.thankyou_sir)
+        } else {
+            binding.textContinueCall.gone()
+            binding.btnYes.text = getString(R.string.ok)
+        }
+
+        binding.btnYes.setOnClickListener {
+            dismiss()
+        }
     }
 
     companion object {
+        const val TAG = ""
+        const val AMOUNT = "amount"
+        const val IS_GIFTED = "is_gifted"
+
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(amount: Int, isGifted: Boolean = false) =
             RechargeSuccessFragment().apply {
                 arguments = Bundle().apply {
-
+                    putInt(AMOUNT, amount)
+                    putBoolean(IS_GIFTED, isGifted)
                 }
             }
+
+        fun open(supportFragmentManager: FragmentManager, amount: Int, isGifted: Boolean = false){
+            newInstance(amount, isGifted).show(supportFragmentManager, "RechargeSuccessFragment")
+        }
+
     }
 }
