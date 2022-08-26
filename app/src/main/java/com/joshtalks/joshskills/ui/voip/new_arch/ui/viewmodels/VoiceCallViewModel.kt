@@ -329,6 +329,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     withContext(Dispatchers.Main) {
                         singleLiveEvent.value = msg
                     }
+                    CallAnalytics.addAnalytics(
+                        event = EventName.GAME_STARTED,
+                        agoraCallId = PrefManager.getAgraCallId().toString(),
+                        agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                    )
                 }
 
                 if(!state.isStartGameClicked || state.nextGameWord.equals("")){
