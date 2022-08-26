@@ -229,10 +229,13 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
                     finishAndRemoveTask()
                 }
                 START_SCREEN_RECORDING->{
-                    startScreenRecording()
+                    proceedToRecord()
                 }
                 STOP_SCREEN_RECORDING->{
                     stopScreenRecording()
+                }
+                RECORDING_PERMISSION_DIALOG->{
+                    startScreenRecording()
                 }
                 CHANGE_APP_THEME_T0_BLACK->{
                     window.statusBarColor  = ContextCompat.getColor(this,R.color.black_quiz)
@@ -333,9 +336,8 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
                 recordData = data
                 recordResultCode = resultCode
                 showDialog = false
-                proceedToRecord()
-            }else{
-               vm.endGameFromRepo()
+                vm.startGameFromRepo()
+                vm.isRecordPermissionGiven.set(true)
             }
         }
     }
@@ -348,12 +350,12 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
         if(showDialog){
             initiateRecording()
         }else{
-            proceedToRecord()
+            vm.startGameFromRepo()
+            vm.isRecordPermissionGiven.set(true)
         }
     }
 
     private fun proceedToRecord() {
-        vm.isRecordPermissionGiven.set(true)
 
         hbRecorder.setOutputPath(getFileDirectory().absolutePath)
         hbRecorder.isAudioEnabled(false)

@@ -334,7 +334,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     else -> {}
                 }
 
-                if(state.isRemoteUserGameStarted && uiState.isStartGameClicked && state.nextGameWord.equals("")){
+                Log.d(TAG, "listenUIState: ${state.isRemoteUserGameStarted}")
+                if(state.isRemoteUserGameStarted && uiState.isStartGameClicked && uiState.gameWord.equals("")){
                     repository.nextGameWord()
                 }
 
@@ -350,7 +351,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     if (voipState == State.CONNECTED || voipState == State.RECONNECTING)
                         uiState.currentState = "Timer"
                 }
-                if(state.isStartGameClicked && !state.nextGameWord.equals("")){
+                if(state.isStartGameClicked && !state.nextGameWord.equals("") && isRecordPermissionGiven.get()){
                     val msg = Message.obtain().apply {
                         what = CHANGE_APP_THEME_T0_BLACK
                     }
@@ -532,7 +533,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             agoraCallId = PrefManager.getAgraCallId().toString(),
             agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
         )
-        repository.startGame()
+
+            val msg = Message.obtain().apply {
+                what = RECORDING_PERMISSION_DIALOG
+            }
+            singleLiveEvent.value = msg
+
     }
 
     fun endGame(v:View){
@@ -541,6 +547,10 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             return
         }
        endGameFromRepo()
+    }
+
+    fun startGameFromRepo(){
+        repository.startGame()
     }
 
     fun endGameFromRepo(){

@@ -27,7 +27,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
-        setCallBackground='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked  ? true : false}'
+        setCallBackground='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked  &amp;&amp; vm.isRecordPermissionGiven ? true : false}'
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
@@ -256,7 +256,7 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/bottom_card_view"
             style="@style/CustomCardViewStyleNoBottomCorner"
-            setBottomCardBackground='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked ? true : false}'
+            setBottomCardBackground='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked &amp;&amp; vm.isRecordPermissionGiven ? true : false}'
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -473,7 +473,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:elevation="1dp"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="invisible">
+            tools:visibility="visible">
 
             <LinearLayout
                 android:id="@+id/photo_frames_layout"
