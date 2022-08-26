@@ -466,6 +466,8 @@
     <string name="answer" translatable="false">Answer</string>
     <string name="call_back" translatable="false">CALL BACK</string>
     <string name="finding_practise_partner" translatable="false">Finding a Practice Partner</string>
+    <string name="searching_info_text" translatable="false">1. Make sure you do longer calls, English bolne se aati hai. \n2. Strict action will be taken against Inappropriate behavior. \n3. Frequent short calls may lead to calling suspension.</string>
+
     <string name="rating" translatable="false">Rating</string>
     <string name="rate_your_practise_partner" translatable="false">Rate Your  Practice Partner</string>
     <string name="confidence" translatable="false">Confidence: </string>
@@ -1022,4 +1024,5 @@
     <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
     <string name="turn_on_speaker">Turn on speaker</string>
     <string name="important_info">जरुरी जानकारी</string>
+    <string name="zaruri_jankari">Zaruri jaankaari</string>
 </resources>
