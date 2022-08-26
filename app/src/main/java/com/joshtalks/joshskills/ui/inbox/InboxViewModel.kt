@@ -40,7 +40,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
-    val paymentStatus: MutableLiveData<List<Payment>> = MutableLiveData()
+    val paymentStatus: MutableLiveData<Payment> = MutableLiveData()
 
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
@@ -272,25 +272,23 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     fun checkForPendingPayments() {
         viewModelScope.launch(Dispatchers.IO) {
-            val list = appDatabase.paymentDao().getAllPaymentEntry()
-            val listOfPayments = mutableListOf<Payment>()
-            if (list.isNotEmpty()) {
-                val last = list.last()
-                    if (last.isSync && (last.status == PaymentStatus.SUCCESS || last.status == PaymentStatus.FAILED)) {
-                        when (last.status) {
+            val lastPaymentEntry = appDatabase.paymentDao().getLastPaymentEntry()
+            if (lastPaymentEntry!=null && lastPaymentEntry.isdeleted.not()) {
+                    if (lastPaymentEntry.isSync && (lastPaymentEntry.status == PaymentStatus.SUCCESS || lastPaymentEntry.status == PaymentStatus.FAILED)) {
+                        when (lastPaymentEntry.status) {
                             PaymentStatus.SUCCESS -> {
                                 if (PrefManager.getBoolValue(IS_APP_RESTARTED,false)){
-                                    appDatabase.paymentDao().deletePaymentEntry(last.razorpayOrderId)
+                                    appDatabase.paymentDao().deletePaymentEntry(lastPaymentEntry.razorpayOrderId)
                                 }else {
-                                    listOfPayments.add(last)
+                                    paymentStatus.postValue(lastPaymentEntry)
                                 }
                             }
                             PaymentStatus.FAILED -> {
-                                if (last.timeStamp.plus(1000 * 60 * 60 * 4) < System.currentTimeMillis()) {
+                                if (lastPaymentEntry.timeStamp.plus(1000 * 60 * 60 * 4) < System.currentTimeMillis()) {
                                     appDatabase.paymentDao()
-                                        .deletePaymentEntry(last.razorpayOrderId)
+                                        .deletePaymentEntry(lastPaymentEntry.razorpayOrderId)
                                 }else{
-                                    listOfPayments.add(last)
+                                    paymentStatus.postValue(lastPaymentEntry)
                                 }
                             }
                             else -> {
@@ -299,11 +297,11 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     } else {
                         val res =
-                            AppObjectController.commonNetworkService.syncPaymentStatus(last.razorpayOrderId)
+                            AppObjectController.commonNetworkService.syncPaymentStatus(lastPaymentEntry.razorpayOrderId)
                         val response = res.body()?.toString()
-                        last.response = last.response.plus(response)
+                        lastPaymentEntry.response = lastPaymentEntry.response.plus(response)
                         appDatabase.paymentDao()
-                            .updatePayment(last)
+                            .updatePayment(lastPaymentEntry)
 
                         if (res.isSuccessful && res.body() != null) {
                             if (res.body()!!.payment == null){
@@ -311,14 +309,13 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                                     .deletePaymentEntry(it.razorpayOrderId)*/
                             } else {
                                 appDatabase.paymentDao()
-                                    .updatePaymentStatus(last.razorpayOrderId, res.body()!!.payment!!)
-                                last.status = res.body()!!.payment
-                                listOfPayments.add(last)
+                                    .updatePaymentStatus(lastPaymentEntry.razorpayOrderId, res.body()!!.payment!!)
+                                lastPaymentEntry.status = res.body()!!.payment
+                                paymentStatus.postValue(lastPaymentEntry)
                             }
                         }
                     }
             }
-            paymentStatus.postValue(listOfPayments)
         }
     }
 

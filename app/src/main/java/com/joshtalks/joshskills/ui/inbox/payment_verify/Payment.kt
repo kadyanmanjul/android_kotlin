@@ -61,6 +61,9 @@ interface PaymentDao {
     @Query(value = "SELECT * FROM payment_table WHERE is_deleted = 0")
     suspend fun getAllPaymentEntry() : List<Payment>
 
+    @Query(value = "SELECT * FROM payment_table ORDER BY time_stamp DESC LIMIT 1")
+    suspend fun getLastPaymentEntry() : Payment?
+
     @Query(value = "UPDATE payment_table SET status = :status , is_sync = 1 where razorpay_order_id= :id ")
     suspend fun updatePaymentStatus(id: String, status: PaymentStatus)
 

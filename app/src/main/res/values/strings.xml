@@ -1022,7 +1022,7 @@
     <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
     <string name="grammar_completed" translatable="false">Grammar Completed!</string>
     <string name="success_payment_text" translatable="false">Payment Successful</string>
-    <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting</string>
+    <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting \n (Note : Please Restart your App)</string>
     <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
     <string name="failed_payment_desc" translatable="false">Sorry for the inconvenience.\n
         Any money deducted will be refunded within 3-5 working days\n

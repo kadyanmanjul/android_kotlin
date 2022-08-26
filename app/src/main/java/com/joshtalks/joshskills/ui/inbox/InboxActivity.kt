@@ -286,52 +286,49 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
         viewModel.paymentStatus.observe(this, Observer {
-            if (it.isNotEmpty()) {
-                it.sortedBy { it.timeStamp }
-                when (it[0].status) {
-                    PaymentStatus.SUCCESS -> {
-                        PrefManager.put(IS_APP_RESTARTED, false)
-                        initPaymentStatusView(
-                            R.drawable.green_rectangle_with_green_stroke,
-                            R.drawable.ic_payment_small_tick,
-                            R.color.green_payment,
-                            R.color.green_payment_text,
-                            R.string.success_payment_text,
-                            R.string.success_payment_desc,
-                            isTryAgainVisible = false,
-                            isHelpLineVisible = false
-                        )
-                        PrefManager.put(IS_PAYMENT_DONE, true)
-                    }
-                    PaymentStatus.FAILED -> {
-                        initPaymentStatusView(
-                            R.drawable.pink_rectangle_with_red_stroke,
-                            R.drawable.ic_payment_exclamation,
-                            R.color.payment_status_red,
-                            R.color.payment_status_red,
-                            R.string.failed_payment_text,
-                            R.string.failed_payment_desc,
-                            isTryAgainVisible = true,
-                            isHelpLineVisible = true
-                        )
-                    }
-                    PaymentStatus.PROCESSING -> {
-                        initPaymentStatusView(
-                            R.drawable.yellow_rectangle_with_orange_stroke,
-                            R.drawable.ic_payment_exclamation,
-                            R.color.but_button_color,
-                            R.color.but_button_color,
-                            R.string.processing_payment_text,
-                            R.string.processing_payment_desc,
-                            isTryAgainVisible = true,
-                            isHelpLineVisible = false
-                        )
-                    }
-                    else -> {
-                        paymentStatusView.visibility = GONE
-                        findMoreLayout.visibility = VISIBLE
+            when (it.status) {
+                PaymentStatus.SUCCESS -> {
+                    PrefManager.put(IS_APP_RESTARTED, false)
+                    initPaymentStatusView(
+                        R.drawable.green_rectangle_with_green_stroke,
+                        R.drawable.ic_payment_small_tick,
+                        R.color.green_payment,
+                        R.color.green_payment_text,
+                        R.string.success_payment_text,
+                        R.string.success_payment_desc,
+                        isTryAgainVisible = false,
+                        isHelpLineVisible = false
+                    )
+                    PrefManager.put(IS_PAYMENT_DONE, true)
+                }
+                PaymentStatus.FAILED -> {
+                    initPaymentStatusView(
+                        R.drawable.pink_rectangle_with_red_stroke,
+                        R.drawable.ic_payment_exclamation,
+                        R.color.payment_status_red,
+                        R.color.payment_status_red,
+                        R.string.failed_payment_text,
+                        R.string.failed_payment_desc,
+                        isTryAgainVisible = true,
+                        isHelpLineVisible = true
+                    )
+                }
+                PaymentStatus.PROCESSING -> {
+                    initPaymentStatusView(
+                        R.drawable.yellow_rectangle_with_orange_stroke,
+                        R.drawable.ic_payment_exclamation,
+                        R.color.but_button_color,
+                        R.color.but_button_color,
+                        R.string.processing_payment_text,
+                        R.string.processing_payment_desc,
+                        isTryAgainVisible = true,
+                        isHelpLineVisible = false
+                    )
+                }
+                else -> {
+                    paymentStatusView.visibility = GONE
+                    findMoreLayout.visibility = VISIBLE
 
-                    }
                 }
             }
         })
@@ -453,8 +450,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
                 val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2) {
-                    findMoreLayout.visibility = View.VISIBLE
-                    paymentStatusView.visibility = View.GONE
+                    if (paymentStatusView.visibility != View.VISIBLE){
+                        findMoreLayout.visibility = View.VISIBLE
+                        paymentStatusView.visibility = View.GONE
+                    }
                     if (isSubscriptionCourseBought) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = true
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = false
@@ -464,12 +463,16 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
                     }
                     else {
+                        if (paymentStatusView.visibility != View.VISIBLE){
+                            findMoreLayout.visibility = View.GONE
+                            paymentStatusView.visibility = View.GONE
+                        }
+                    }
+                } else {
+                    if (paymentStatusView.visibility != View.VISIBLE){
                         findMoreLayout.visibility = View.GONE
                         paymentStatusView.visibility = View.GONE
                     }
-                } else {
-                    findMoreLayout.visibility = View.GONE
-                    paymentStatusView.visibility = View.GONE
                 }
                 viewModel.checkForPendingPayments()
             }
