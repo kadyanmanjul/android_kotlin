@@ -130,10 +130,10 @@
             app:layout_constraintBottom_toTopOf="@+id/bottom_card_view"
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/play_game_group"
-            android:visibility="@{(vm.uiState.startTime &gt;= 0) &amp;&amp; vm.isGameEnabled()  ? View.VISIBLE : View.GONE}"
+            android:visibility="@{(vm.uiState.startTime > 0) &amp;&amp; vm.isGameEnabled()  ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/call_time1"
-            tools:visibility ="gone">
+            tools:visibility ="visible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/gues_game_text"
