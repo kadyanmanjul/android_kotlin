@@ -85,18 +85,26 @@ class PurchaseDialog: BaseDialogFragment()  {
     private fun startTimer(startTimeInMilliSeconds: Long) {
         countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
             override fun onTimerTick(millis: Long) {
-                AppObjectController.uiHandler.post {
-                    binding.txtFtEndsIn.text = getString(
-                        R.string.free_trial_end_in,
-                        UtilTime.timeFormatted(millis)
-                    )
+                try {
+                    AppObjectController.uiHandler.post {
+                        binding.txtFtEndsIn.text = getString(
+                            R.string.free_trial_end_in,
+                            UtilTime.timeFormatted(millis)
+                        )
+                    }
+                }catch (ex:Exception){
+
                 }
             }
 
             override fun onTimerFinish() {
-                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
-                binding.txtFtEndsIn.visibility = View.VISIBLE
-                binding.txtFtEndsIn.text = getString(R.string.free_trial_ended)
+                try {
+                    PrefManager.put(IS_FREE_TRIAL_ENDED, true)
+                    binding.txtFtEndsIn.visibility = View.VISIBLE
+                    binding.txtFtEndsIn.text = getString(R.string.free_trial_ended)
+                }catch (ex:Exception){
+
+                }
             }
         }
         countdownTimerBack?.startTimer()
@@ -124,6 +132,7 @@ class PurchaseDialog: BaseDialogFragment()  {
     }
 
     fun closeDialog() {
+        countdownTimerBack?.stop()
         super.dismiss()
     }
 

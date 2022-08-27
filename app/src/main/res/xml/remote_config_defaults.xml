@@ -1806,4 +1806,8 @@
         <key>NOTIFICATION_API_TIME</key>
         <value>0</value>
     </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1923</key>
+        <value>आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</value>
+    </entry>
 </defaults>

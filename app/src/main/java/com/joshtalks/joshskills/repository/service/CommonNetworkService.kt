@@ -397,5 +397,5 @@ interface CommonNetworkService {
     suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
 
     @GET("$DIR/fpp/call_popup/")
-    suspend fun getPurchasePopUpResponse() :Response<PurchasePopUp>
+    suspend fun getPurchasePopUpResponse(@Query("duration") duration: String) :Response<PurchasePopUp>
 }

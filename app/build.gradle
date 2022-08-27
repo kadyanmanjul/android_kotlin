@@ -11,7 +11,7 @@ if (!project.hasProperty("devBuild")) {
 //-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 5
 def minorVersion = 1
-def patchVersion = 78
+def patchVersion = 79
 
 android {
     compileSdkVersion 31
@@ -101,7 +101,7 @@ android {
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             ext.enableCrashlytics = true
-            minifyEnabled true
+            minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

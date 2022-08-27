@@ -89,15 +89,19 @@ class JoshApplication :
             Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
             turnOnStrictMode()
             if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                ANRWatchDog().setReportMainThreadOnly().setANRListener {
-                    try {
-                        val crashAnalytics = FirebaseCrashlytics.getInstance()
+                try {
+                    ANRWatchDog().setReportMainThreadOnly().setANRListener {
+                        try {
+                            val crashAnalytics = FirebaseCrashlytics.getInstance()
                             crashAnalytics.setCustomKey("type", "watchdog")
                             crashAnalytics.recordException(it)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }.start()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }.start()
+                }catch (ex:Exception){
+
+                }
             }
             ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
             VoipPref.initVoipPref(this)

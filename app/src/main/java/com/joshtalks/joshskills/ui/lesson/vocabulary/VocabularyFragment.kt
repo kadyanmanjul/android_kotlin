@@ -156,14 +156,14 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             lessonID = it
         }
 
-        viewModel.updatedLessonResponseLiveData.observe(
-            viewLifecycleOwner
-        ) {
-            timerPopText = it.popUpText?.body?: EMPTY
-            if (timerPopText!= EMPTY){
-                PurchaseDialog.newInstance(timerPopText,it.popUpText?.title?: EMPTY, it.popUpText?.price?: EMPTY).show(requireActivity().supportFragmentManager,"PurchaseDialog")
-            }
-        }
+//        viewModel.updatedLessonResponseLiveData.observe(
+//            viewLifecycleOwner
+//        ) {
+//            timerPopText = it.popUpText?.body?: EMPTY
+//            if (timerPopText!= EMPTY){
+//                PurchaseDialog.newInstance(timerPopText,it.popUpText?.title?: EMPTY, it.popUpText?.price?: EMPTY).show(requireActivity().supportFragmentManager,"PurchaseDialog")
+//            }
+//        }
 
         viewModel.lessonQuestionsLiveData.observe(
             viewLifecycleOwner,

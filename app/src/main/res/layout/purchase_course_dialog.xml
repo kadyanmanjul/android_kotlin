@@ -27,10 +27,11 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/btn_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="fitXY"
                 app:srcCompat="@drawable/ic_outline_cancel_24"
                 android:elevation="@dimen/_10sdp"/>
 
@@ -54,7 +55,7 @@
                 android:layout_marginHorizontal="@dimen/_15sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:text="Get Unlimited Calls 24 hrs Practice Partner Practice partners with different English levels "
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/black_0.7_alpha"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

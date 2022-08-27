@@ -142,7 +142,7 @@ object VoipPref {
     private fun showPurchaseDialog(fragmentActivity: FragmentActivity) {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             try {
-                val resp =  AppObjectController.commonNetworkService.getPurchasePopUpResponse()
+                val resp =  AppObjectController.commonNetworkService.getPurchasePopUpResponse(getLastCallDurationInSec().toString())
                 if (resp.body()?.popUpBody?: EMPTY != EMPTY) {
                     PurchaseDialog.newInstance(
                         timerPopText = resp.body()?.popUpBody ?: EMPTY,

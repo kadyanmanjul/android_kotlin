@@ -35,7 +35,7 @@ class ChooseGoalAdapter : RecyclerView.Adapter<ChooseGoalAdapter.ChooseLanguageI
     override fun getItemCount(): Int = differ.currentList.size
 
     fun setData(updatedGoalList: List<GoalSelectionResponse>) {
-        differ.submitList(updatedGoalList.sortedByDescending { it.testId?.toInt() ?: 0 })
+        differ.submitList(updatedGoalList)
     }
 
     inner class ChooseLanguageItemViewHolder(val binding: LiLanguageItemBinding) :
