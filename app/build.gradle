@@ -11,7 +11,7 @@ if (!project.hasProperty("devBuild")) {
 //-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 5
 def minorVersion = 1
-def patchVersion = 78
+def patchVersion = 79
 
 android {
     compileSdkVersion 31
@@ -110,7 +110,7 @@ android {
             resValue("bool", "branch_test", "false")
             resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
             debuggable false
-            minifyEnabled true
+            minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
@@ -301,7 +301,6 @@ dependencies {
 
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.11'
-    implementation 'com.google.firebase:firebase-appindexing:20.0.0'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.1.0'
     implementation 'com.google.firebase:firebase-core:21.1.0'
     implementation 'com.google.firebase:firebase-messaging:23.0.6'
@@ -313,7 +312,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.1.2'
     implementation 'com.google.firebase:firebase-installations:17.0.1'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.2.1'
-    implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 
 
     implementation 'com.google.android.gms:play-services-ads:20.4.0'
@@ -328,7 +326,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:13.0.0'
     implementation 'com.facebook.stetho:stetho:1.6.0'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
-    implementation 'com.facebook.android:facebook-login:13.0.0'
+    implementation 'com.facebook.android:facebook-login:14.1.0'
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
@@ -336,7 +334,6 @@ dependencies {
     implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.pnikosis:materialish-progress:1.7'
 
     // Fonts utils
@@ -349,7 +346,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3'
-
+    // TODO remove this lib
     implementation 'com.mindorks.android:placeholderview:1.0.3'
     kapt 'com.mindorks.android:placeholderview-compiler:1.0.3'
 
@@ -361,17 +358,15 @@ dependencies {
 
     implementation 'com.karumi:dexter:6.2.2'
     //   implementation 'com.patloew.rxlocation:rxlocation:1.0.5'
+    // TODO delete this one as well
     implementation 'com.patloew.colocation:colocation:1.0.0'
 
-    implementation 'com.daimajia.easing:library:2.4@aar'
-    implementation 'com.daimajia.androidanimations:library:2.4@aar'
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
-    implementation 'saschpe.android:customtabs:2.0.0'
     implementation('com.futuremind.recyclerfastscroll:fastscroll:0.2.5', {
         exclude group: 'com.android.support'
     })
 
-    implementation 'io.michaelrocks:libphonenumber-android:8.12.3'
+    implementation 'io.michaelrocks:libphonenumber-android:8.12.52'
     implementation 'com.github.razir.progressbutton:progressbutton:2.1.0'
 
     implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8'
@@ -382,15 +377,14 @@ dependencies {
 
     //Payment Razor pay
     implementation 'com.razorpay:checkout:1.6.21'
-    implementation 'com.github.nisrulz:easydeviceinfo-base:2.4.1'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.github.vipulasri:timelineview:1.1.5'
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.3.0'
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
+    // delete with logic removed
     implementation 'com.github.beksomega:loopinglayout:0.4.0'
 
     implementation 'com.google.android:flexbox:2.0.1'
-    implementation 'com.sdsmdg.harjot:materialshadows:1.2.5'
     implementation "com.truecaller.android.sdk:truecaller-sdk:2.6.0"
     //pdf viewer
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
@@ -417,12 +411,11 @@ dependencies {
 
     implementation 'com.airbnb.android:lottie:3.7.0'
     implementation 'info.kimjihyok:voice-ripple-record-button:0.1.3'
-    implementation 'com.gauravk.audiovisualizer:audiovisualizer:0.9.2'
 
     debugImplementation 'com.itkacher.okhttpprofiler:okhttpprofiler:1.0.7'
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
     implementation 'com.github.dhaval2404:imagepicker:2.1'
-    //ScrollingPagerIndicator
+    //ScrollingPagerIndicator can remide this indicator
     implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.2.1"
     implementation "com.github.skydoves:balloon:1.3.3"
 
@@ -464,4 +457,7 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
 
     implementation 'com.github.ZeroOneZeroR:android_audio_mixer:v1.1'
+
+    // Anr-watchdog
+    implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
 }

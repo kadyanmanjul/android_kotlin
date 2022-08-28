@@ -11,20 +11,44 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.IS_APP_OPENED_FOR_FIRST_TIME
+import com.joshtalks.joshskills.core.IS_APP_RESTARTED
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.LAST_FAKE_CALL_INVOKE_TIME
+import com.joshtalks.joshskills.core.LAST_LOGIN_TYPE
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SERVER_GID_ID
+import com.joshtalks.joshskills.core.TAG
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.signup.LastLoginType
 import io.branch.referral.Branch
 import io.branch.referral.Defines
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
 
 class LauncherViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -189,6 +213,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             if (PrefManager.hasKey(IS_FREE_TRIAL).not() && User.getInstance().isVerified.not()) {
                 PrefManager.put(IS_FREE_TRIAL, value = true, isConsistent = false)
             }
+            PrefManager.put(IS_APP_RESTARTED, true)
         }
     }
 

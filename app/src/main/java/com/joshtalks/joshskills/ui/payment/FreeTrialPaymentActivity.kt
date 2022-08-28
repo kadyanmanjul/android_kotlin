@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -24,13 +23,42 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.D2P_COURSE_SYLLABUS_OPENED
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.ENG_GOVT_EXAM_COURSE_ID
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
+import com.joshtalks.joshskills.core.IMPRESSION_APPLY_COUPON_SUCCESS
+import com.joshtalks.joshskills.core.IMPRESSION_CLICKED_APPLY_COUPON
+import com.joshtalks.joshskills.core.IMPRESSION_PAY_DISCOUNT
+import com.joshtalks.joshskills.core.IMPRESSION_PAY_FULL_FEES
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.IS_ENGLISH_SYLLABUS_PDF_OPENED
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_ENDED
+import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
+import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
+import com.joshtalks.joshskills.core.POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SEE_COURSE_LIST_BUTTON_CLICKED
+import com.joshtalks.joshskills.core.SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
+import com.joshtalks.joshskills.core.getPhoneNumber
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
@@ -58,15 +86,28 @@ import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.price_card.view.*
-import kotlinx.android.synthetic.main.syllabus_pdf_layout.view.*
+import java.io.File
+import java.math.BigDecimal
+import kotlinx.android.synthetic.main.price_card.view.card
+import kotlinx.android.synthetic.main.price_card.view.course_info
+import kotlinx.android.synthetic.main.price_card.view.course_rating
+import kotlinx.android.synthetic.main.price_card.view.iv_expand
+import kotlinx.android.synthetic.main.price_card.view.iv_minimise
+import kotlinx.android.synthetic.main.price_card.view.per_course_text
+import kotlinx.android.synthetic.main.price_card.view.see_course_list_new
+import kotlinx.android.synthetic.main.price_card.view.syllabus_layout_new
+import kotlinx.android.synthetic.main.price_card.view.title
+import kotlinx.android.synthetic.main.price_card.view.txt_currency
+import kotlinx.android.synthetic.main.price_card.view.txt_final_price
+import kotlinx.android.synthetic.main.price_card.view.txt_og_price
+import kotlinx.android.synthetic.main.price_card.view.txt_saving
+import kotlinx.android.synthetic.main.price_card.view.txt_total_reviews
+import kotlinx.android.synthetic.main.syllabus_pdf_layout.view.english_syllabus_pdf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
-import java.io.File
-import java.math.BigDecimal
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val SUBSCRIPTION_TEST_ID = "10"
@@ -699,7 +740,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 if (it.expireTime != null) {
                     binding.freeTrialTimer.visibility = View.VISIBLE
                     if (it.expireTime.time >= System.currentTimeMillis()) {
-                        startTimer(it.expireTime.time - System.currentTimeMillis())
+                        if (it.expireTime.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
+                            binding.freeTrialTimer.visibility = View.GONE
+                        }else{
+                            startTimer(it.expireTime.time - System.currentTimeMillis())
+                        }
                     } else {
                         binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                         PrefManager.put(IS_FREE_TRIAL_ENDED, true)
@@ -930,7 +975,17 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     }
                     // isBackPressDisabled = true
                     razorpayOrderId.verifyPayment()
-                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0), true)
+                    try {
+                        MarketingAnalytics.coursePurchased(
+                            BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0),
+                            true,
+                            testId = freeTrialTestId,
+                            courseName = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName ?: EMPTY,
+                            razorpayPaymentId = razorpayOrderId
+                        )
+                    }catch (ex:Exception){
+
+                    }
                     //viewModel.updateSubscriptionStatus()
 
                     uiHandler.post {
@@ -968,6 +1023,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 .push()
 
             MarketingAnalytics.paymentFail(razorpayOrderId, testId)
+            viewModel.removeEntryFromPaymentTable(razorpayOrderId)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1020,10 +1076,13 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
+        viewModel.removeEntryFromPaymentTable(razorpayOrderId)
         MarketingAnalytics.coursePurchased(
-            BigDecimal(
-                viewModel.orderDetailsLiveData.value?.amount ?: 0.0
-            )
+            BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0),
+            true,
+            testId = freeTrialTestId,
+            courseName = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName ?: EMPTY,
+            razorpayPaymentId = razorpayOrderId
         )
         //viewModel.updateSubscriptionStatus()
         try {

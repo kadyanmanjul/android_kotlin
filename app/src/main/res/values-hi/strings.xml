@@ -62,7 +62,6 @@
     <string name="email_address">ईमेल पता</string>
     <string name="attach_image">फोटो जोड़ें</string>
     <string name="practice">प्रैक्टिस</string>
-    <string name="complaint_message">हम तक पहुंचने के लिए धन्यवाद। आपका अनुरोध टिकट नंबर के प्रतिकूल दर्ज किया गया है। हमारी टीम 24–72 घंटों के बीच आपसे संपर्क करेगी।</string>
     <string name="status_with_colon">स्थिति :</string>
     <string name="submit_answer">उत्तर सबमिट करें</string>
     <string name="improve_answer">उत्तर में सुधार करें</string>
@@ -141,9 +140,6 @@
     <string name="dont_close">और इस विंडो को बंद न करें</string>
     <string name="processing">हम आपका पेमेंट प्रोसेस कर रहे हैं। इसमें कुछ समय लग सकता है</string>
     <string name="bilkul_nahi">"नहीं "</string>
-    <string name="abhi_shuru_karein">"हाँ "</string>
-    <string name="hint_apni_baat">"अपनी बात यहाँ लिखें "</string>
-    <string name="npr_thank_you">"आपके फीडबैक के लिए धन्यवाद "</string>
     <string name="otp_verify_label">"अपना ओटीपी वेरीफाई करें "</string>
     <string name="otp_received_message">%s पर प्राप्त ओटीपी दर्ज करें</string>
     <string name="edit_number">"नंबर एडिट करें "</string>

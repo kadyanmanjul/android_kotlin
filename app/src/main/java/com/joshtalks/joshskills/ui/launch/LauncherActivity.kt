@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.launch
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
@@ -18,7 +19,6 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
@@ -32,7 +32,10 @@ import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.util.*
+import com.joshtalks.joshskills.util.DeepLinkData
+import com.joshtalks.joshskills.util.DeepLinkImpression
+import com.joshtalks.joshskills.util.DeepLinkRedirect
+import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
@@ -42,7 +45,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
-
+    var APP_PACKAGE_COUNT = 2
     private var testId: String? = null
     private val viewModel: LauncherViewModel by lazy {
         ViewModelProvider(this).get(LauncherViewModel::class.java)
@@ -136,14 +139,17 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     }
 
     private fun analyzeAppRequirement() {
-        when {
-            PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> {
-                if (intent.data == null)
-                    viewModel.initGaid(testId)
+            when {
+                PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> {
+                    if (intent.data == null)
+                        viewModel.initGaid(testId)
+                }
+                Mentor.getInstance().hasId() -> startNextActivity()
+                else -> viewModel.getMentorForUser(
+                    PrefManager.getStringValue(USER_UNIQUE_ID),
+                    testId
+                )
             }
-            Mentor.getInstance().hasId() -> startNextActivity()
-            else -> viewModel.getMentorForUser(PrefManager.getStringValue(USER_UNIQUE_ID), testId)
-        }
     }
 
     private fun handleIntent() {
@@ -216,18 +222,29 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     }
 
     private fun startNextActivity() {
-        WorkManagerAdmin.appStartWorker()
-        lifecycleScope.launch {
-            viewModel.updateABTestCampaigns()
-            AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-            if (testId.isNullOrEmpty().not()) {
-                navigateToCourseDetailsScreen()
-            } else {
-                getIntentForNextActivity()?.let {
-                    startActivity(it)
+        if(canRunApplication()) {
+            WorkManagerAdmin.appStartWorker()
+            lifecycleScope.launch {
+                viewModel.updateABTestCampaigns()
+                AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                if (testId.isNullOrEmpty().not()) {
+                    navigateToCourseDetailsScreen()
+                } else {
+                    getIntentForNextActivity()?.let {
+                        startActivity(it)
+                    }
+                    finish()
                 }
-                finish()
             }
+        } else {
+            AlertDialog.Builder(this)
+                .setTitle("Alert!!!")
+                .setMessage("App will not run on VM Environment")
+                .setPositiveButton("OK"
+                ) { p0, p1 -> finishAndRemoveTask() }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false)
+                .show()
         }
     }
 
@@ -380,5 +397,28 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
             ex.printStackTrace()
         }
         this@LauncherActivity.finish()
+    }
+
+    private fun canRunApplication() : Boolean {
+        val path = this.filesDir.absolutePath
+        val count = getDotCount(path)
+        return count <= APP_PACKAGE_COUNT
+    }
+
+    private fun getDotCount(path: String): Int {
+        var count = 0
+        for (i in 0 until path.length) {
+            if (count > APP_PACKAGE_COUNT) {
+                break
+            }
+            if (path[i] == '.') {
+                count++
+            }
+        }
+        return count
+    }
+
+    private fun showDialog() {
+
     }
 }

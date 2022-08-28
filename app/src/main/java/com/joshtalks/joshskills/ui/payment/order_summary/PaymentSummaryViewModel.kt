@@ -11,7 +11,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.JoshApplication
@@ -22,13 +21,14 @@ import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
@@ -36,11 +36,11 @@ import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
+import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
+import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -257,6 +257,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     val response: OrderDetailResponse = paymentDetailsResponse.body()!!
                     mPaymentDetailsResponse.postValue(response)
                     MarketingAnalytics.initPurchaseEvent(data, response)
+                    addPaymentEntry(response)
                 } else if (paymentDetailsResponse.code() == 400) {
                     showToast("Course already exists with this mobile number. Please login with the entered phone number!", Toast.LENGTH_LONG)
                 } else {
@@ -420,6 +421,24 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 Timber.e(ex)
             }
         }
+    }
+
+    fun removeEntryFromPaymentTable(razorpayOrderId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
+        }
+    }
+
+    private fun addPaymentEntry(response: OrderDetailResponse) {
+        AppObjectController.appDatabase.paymentDao().inertPaymentEntry(
+            Payment(
+                response.amount,
+                response.joshtalksOrderId,
+                response.razorpayKeyId,
+                response.razorpayOrderId,
+                PaymentStatus.CREATED
+            )
+        )
     }
 
 }

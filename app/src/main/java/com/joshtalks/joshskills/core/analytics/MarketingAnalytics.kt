@@ -4,10 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.RegistrationMethods
-import com.joshtalks.joshskills.core.Utils
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import io.branch.indexing.BranchUniversalObject
@@ -156,7 +154,13 @@ object MarketingAnalytics {
             .push()
     }
 
-    fun coursePurchased(amount : BigDecimal, logFacebook: Boolean = false) {
+    fun coursePurchased(
+        amount: BigDecimal,
+        logFacebook: Boolean = false,
+        testId: String = EMPTY,
+        courseName: String = EMPTY,
+        razorpayPaymentId: String = EMPTY,
+    ) {
         val context = AppObjectController.joshApplication
         val params = Bundle().apply {
             putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
@@ -169,6 +173,14 @@ object MarketingAnalytics {
             )
             putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
         }
+
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
+        bundle.putDouble(FirebaseAnalytics.Param.VALUE, amount.toDouble())
+        bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
+        bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
+        AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
         // Facebook Event
         if (logFacebook) {

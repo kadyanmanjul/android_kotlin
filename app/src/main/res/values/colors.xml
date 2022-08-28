@@ -206,4 +206,7 @@
     <color name="p2p_game_call_recording_grey">#EAEAEA</color>
 
     <color name="btn_call_disable_color">#8F107BE5</color>
+    <color name="payment_status_red">#F03636</color>
+    <color name="green_payment">#57CC02</color>
+    <color name="green_payment_text">#179549</color>
 </resources>

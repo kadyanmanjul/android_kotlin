@@ -69,6 +69,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/>
     <permission

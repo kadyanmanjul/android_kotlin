@@ -26,7 +26,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_0_3_face" />
+            app:srcCompat="@drawable/josh_skill" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_value"

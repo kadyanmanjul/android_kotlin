@@ -66,7 +66,6 @@
 
 
     <string name="practice">অনুশীলন করা</string>
-    <string name="complaint_message">আমাদের সংযোগ করার জন্য আপনাকে ধন্যবাদ। আপনার অনুরোধ টিকিটের বিরুদ্ধে নিবন্ধিত করা হয়েছে। আমাদের দল, 24-72 ঘন্টার মধ্যে আপনার সাথে যোগাযোগ করবে।</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">উত্তর সাবমিট করো</string>
     <string name="improve_answer">উত্তর টি কে উন্নত করুন </string>
@@ -147,9 +146,6 @@
     <string name="dont_close">এবং এই উইন্ডোটি বন্ধ করবেন না</string>
     <string name="processing">আমরা আপনার পেমেন্ট প্রসেস করছি। কিছু সময় লাগতে পারে</string>
     <string name="bilkul_nahi">"না"</string>
-    <string name="abhi_shuru_karein">"হ্যাঁ "</string>
-    <string name="hint_apni_baat">"আপনার কথা এখানে লিখুন"</string>
-    <string name="npr_thank_you">"আপনার প্রতিক্রিয়ার জন্য ধন্যবাদ"</string>
     <string name="otp_verify_label">"আপনার ওটিপি যাচাই করুন"</string>
     <string name="otp_received_message">%s এ প্রাপ্ত OTP লিখুন</string>
     <string name="edit_number">"নম্বর এডিট করুন"</string>

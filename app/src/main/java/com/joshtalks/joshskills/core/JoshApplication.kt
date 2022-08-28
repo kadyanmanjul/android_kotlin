@@ -20,6 +20,11 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
 import androidx.work.impl.background.greedy.GreedyScheduler
+import com.facebook.stetho.Stetho
+import com.freshchat.consumer.sdk.Freshchat
+import com.github.anrwatchdog.ANRWatchDog
+import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController.Companion.getLocalBroadcastManager
 import com.joshtalks.joshskills.core.AppObjectController.Companion.restoreIdReceiver
@@ -38,18 +43,12 @@ import timber.log.Timber
 import java.lang.reflect.Method
 import java.util.*
 
-/**
- * 1. Remove Process for P2P Call
- * 2. Remove WorkManager Init from StartupLibrary
- * 3. Check if Internet is Off then also RemoteConfig is working
- */
-
 const val TAG = "JoshSkill"
 
 class JoshApplication :
     MultiDexApplication(),
     LifecycleEventObserver,
-    ComponentCallbacks2, Configuration.Provider {
+    ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
     }

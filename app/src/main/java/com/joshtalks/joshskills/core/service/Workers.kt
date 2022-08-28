@@ -6,18 +6,15 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
 import android.os.Build
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import androidx.work.workDataOf
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
@@ -28,20 +25,13 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
-import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
-import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
@@ -54,10 +44,8 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.util.ReminderUtil
@@ -403,33 +391,6 @@ class FeedbackRatingWorker(context: Context, workerParams: WorkerParameters) :
     }
 }
 
-class NPAQuestionViaEventWorker(
-    context: Context,
-    private var workerParams: WorkerParameters
-) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            val event = workerParams.inputData.getString("event")
-            if (event.isNullOrEmpty().not()) {
-                val response =
-                    AppObjectController.commonNetworkService.getQuestionNPSEvent(event!!)
-                if (response.isSuccessful) {
-                    val outputData = workDataOf(
-                        "nps_question_list" to AppObjectController.gsonMapperForLocal.toJson(
-                            response.body()
-                        )
-                    )
-                    return Result.success(outputData)
-                }
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return Result.failure()
-    }
-}
-
 class BackgroundNotificationWorker(val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
@@ -487,49 +448,6 @@ class BackgroundNotificationWorker(val context: Context, workerParams: WorkerPar
         notificationManager.cancel(NOTIF_ID)
     }
 }
-
-class DeterminedNPSEvent(context: Context, private var workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            val conversationId = workerParams.inputData.getString("id") ?: EMPTY
-            var day: Int = workerParams.inputData.getInt("day", -1)
-
-            val event: NPSEvent = AppObjectController.gsonMapperForLocal.fromJson(
-                workerParams.inputData.getString("event"),
-                NPSEvent::class.java
-            )
-
-            if (day < 0) {
-                val time = PrefManager.getLongValue(LOGIN_ON)
-                if (time > 0) {
-                    val temp = Utils.diffFromToday(Date(time))
-                    day = if (temp == 0) {
-                        -1
-                    } else {
-                        temp
-                    }
-                }
-            }
-            NPSEventModel.getAllNpaList()?.filter { it.enable }
-                ?.find { it.day == day }?.run {
-                    if (event == NPSEvent.STANDARD_TIME_EVENT && this.day == 0) {
-                        return@run
-                    }
-                    val exist = AppObjectController.appDatabase.npsEventModelDao()
-                        .isEventExist(this.eventName, this.day, conversationId)
-                    if (exist == 0L) {
-                        NPSEventModel.setCurrentNPA(this.event)
-                        RxBus2.publish(NPSEventGenerateEventBus())
-                    }
-                }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-}
-
 
 class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

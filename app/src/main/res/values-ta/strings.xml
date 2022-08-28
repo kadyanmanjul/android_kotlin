@@ -65,7 +65,6 @@
 
 
     <string name="practice">பயிற்சி</string>
-    <string name="complaint_message">எங்களை அடைந்ததற்கு நன்றி. உங்கள் கோரிக்கை டிக்கெட் எண்ணுக்கு எதிராக பதிவு செய்யப்பட்டுள்ளது. எங்கள் குழு உங்களை 24-72 மணி நேரத்திற்குள் தொடர்பு கொள்ளும்.</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">பதில் சமர்ப்பிக்க</string>
     <string name="improve_answer">பதில் மேம்படுத்த</string>
@@ -146,9 +145,6 @@
     <string name="dont_close">இந்த சாளரத்தை மூட வேண்டாம்</string>
     <string name="processing">உங்கள் கட்டணத்தைச் செயல்படுத்துகிறோம். சிறிது நேரம் ஆகலாம்</string>
     <string name="bilkul_nahi">இல்லை </string>
-    <string name="abhi_shuru_karein">ஆம் </string>
-    <string name="hint_apni_baat">உங்கள் கருத்தை இங்கே எழுதுங்கள்</string>
-    <string name="npr_thank_you">உங்கள் கருத்துக்கு நன்றி</string>
     <string name="otp_verify_label">உங்கள் OTPயைச் சரிபார்க்கவும்</string>
     <string name="otp_received_message">%s இல் பெற்ற OTP ஐ உள்ளிடவும்</string>
     <string name="edit_number">எண்ணைத் திருத்து</string>

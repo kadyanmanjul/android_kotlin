@@ -66,7 +66,6 @@
 
 
     <string name="practice">ਅਭਿਆਸ</string>
-    <string name="complaint_message">ਸਾਨੂੰ ਮਿਲਣ ਲਈ ਤੁਹਾਡਾ ਧੰਨਵਾਦ। ਤੁਹਾਡੀ ਬੇਨਤੀ ਟਿਕਟ ਨੰਬਰ ਦਰਜ ਕੀਤੀ ਗਈ ਹੈ। ਸਾਡੀ ਟੀਮ 24-72 ਘੰਟਿਆਂ ਦੇ ਅੰਦਰ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">ਜਵਾਬ ਦਾਖਲ ਕਰੋ</string>
     <string name="improve_answer">ਜਵਾਬ ਵਿੱਚ ਸੁਧਾਰ ਕਰੋ</string>
@@ -147,9 +146,6 @@
     <string name="dont_close">ਅਤੇ ਇਸ ਵਿੰਡੋ ਨੂੰ ਬੰਦ ਨਾ ਕਰੋ</string>
     <string name="processing">ਅਸੀਂ ਤੁਹਾਡੇ ਭੁਗਤਾਨ ਦੀ ਪ੍ਰਕਿਰਿਆ ਕਰ ਰਹੇ ਹਾਂ। ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ</string>
     <string name="bilkul_nahi">"ਨਹੀਂ"</string>
-    <string name="abhi_shuru_karein">"ਹਾਂ"</string>
-    <string name="hint_apni_baat">"ਆਪਣੀ ਗੱਲ ਇੱਥੇ ਲਿਖੋ"</string>
-    <string name="npr_thank_you">"ਤੁਹਾਡੇ ਫੀਡਬੈਕ ਲਈ ਧੰਨਵਾਦ"</string>
     <string name="otp_verify_label">"ਆਪਣੇ OTP ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ"</string>
     <string name="otp_received_message">%s ਨੂੰ ਪ੍ਰਾਪਤ ਹੋਇਆ OTP ਦਾਖਲ ਕਰੋ</string>
     <string name="edit_number">"ਨੰਬਰ ਸੰਪਾਦਿਤ ਕਰੋ"</string>

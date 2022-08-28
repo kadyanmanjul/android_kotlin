@@ -26,17 +26,30 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.CountUpTimer
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.UsbEventReceiver
+import com.joshtalks.joshskills.core.getExtension
 import com.joshtalks.joshskills.core.interfaces.UsbEventListener
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.messaging.RxBus2.publish
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.entity.VideoEngage
+import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -54,12 +67,12 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.io.File
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
-import kotlin.random.Random
 
 const val VIDEO_OBJECT = "video_"
 const val VIDEO_WATCH_TIME = "video_watch_time"
@@ -251,12 +264,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 }
                 videoId = this.question?.videoList?.getOrNull(0)?.id
                 DatabaseUtils.updateLastUsedModification(this.chatId)
-                chatObject?.question?.interval?.let {
-                    WorkManagerAdmin.determineNPAEvent(
-                        NPSEvent.WATCH_VIDEO,
-                        it, chatObject?.question?.questionId
-                    )
-                }
 
                 if (chatObject?.url != null) {
                     if (chatObject?.downloadedLocalPath.isNullOrEmpty()) {
