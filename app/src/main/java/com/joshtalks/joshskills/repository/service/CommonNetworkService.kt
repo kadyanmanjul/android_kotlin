@@ -387,4 +387,6 @@ interface CommonNetworkService {
     @POST("$DIR/impression/track_micro_payment_impression/")
     suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)
 
+    @POST("$DIR/micro_payment/user_wallet/")
+    suspend fun deductAmountAfterCall(@Body params:Map<String,String>) : Response<WalletBalance>
 }

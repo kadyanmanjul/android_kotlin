@@ -693,5 +693,9 @@
         <item name="android:height">20dp</item>
     </style>
 
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">#03A9F4</item>
+        <item name="colorControlActivated">#000000</item>
+    </style>
 
 </resources>

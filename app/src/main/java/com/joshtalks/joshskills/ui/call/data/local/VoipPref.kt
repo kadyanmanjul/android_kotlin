@@ -6,11 +6,9 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.core.ActivityLifecycleCallback
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
@@ -83,9 +81,53 @@ object VoipPref {
             if (duration != 0L && !PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                 showDialogBox(duration)
             }
+
+            deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId)
         }
 
-        // TODO: These function shouldn't be here
+    private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String) {
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            try {
+                delay(500)
+                val currentActivity = ActivityLifecycleCallback.currentActivity
+                if (currentActivity.isDestroyed || currentActivity.isFinishing) {
+                    delay(500)
+                    val newCurrentActivity = ActivityLifecycleCallback.currentActivity
+                    val newFragmentActivity = newCurrentActivity as? FragmentActivity
+                    val map = HashMap<String, String>()
+                    map["time_spoken_in_seconds"] = duration
+                    map["connected_user_id"] = remoteUserMentorId
+                   val response =  AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                    when(response.code()){
+                        200->{
+                            SkillsDatastore.updateWalletCredits(response.body()?.amount?:0)
+                        }
+                        406->{
+
+                        }
+                    }
+                } else if (currentActivity != null) {
+                    val newFragmentActivity = currentActivity as? FragmentActivity
+                    val map = HashMap<String, String>()
+                    map["time_spoken_in_seconds"] = duration
+                    map["connected_user_id"] = remoteUserMentorId
+                    val response = AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                    when (response.code()) {
+                        200 -> {
+                            SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
+                        }
+                        406 -> {
+
+                        }
+                    }
+                }
+            }catch (ex:Exception){
+                showToast("Something went wrong")
+            }
+        }
+    }
+
+    // TODO: These function shouldn't be here
         private fun showDialogBox(totalSecond: Long) {
             CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
                         delay(500)

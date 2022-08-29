@@ -16,7 +16,7 @@
         android:layout_marginHorizontal="@dimen/_7sdp"
         android:layout_marginTop="@dimen/_6sdp"
         app:cardCornerRadius="@dimen/_8sdp"
-        app:cardElevation="@dimen/_3sdp">
+        app:cardElevation="@dimen/_6sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -51,11 +51,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:numStars="5"
-                    android:stepSize="1.0"
+                    android:stepSize="0.5"
                     android:rating="@{item.expertRating}"
                     android:layout_marginTop="@dimen/_8sdp"
                     style="@style/Widget.AppCompat.RatingBar.Small"
-                   android:layout_gravity="center_horizontal"/>
+                    android:theme="@style/RatingBar"
+                    android:layout_gravity="center_horizontal"/>
 
             </LinearLayout>
 
