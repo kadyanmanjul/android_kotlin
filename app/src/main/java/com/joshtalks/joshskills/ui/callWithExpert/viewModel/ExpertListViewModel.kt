@@ -115,5 +115,8 @@ class ExpertListViewModel : BaseViewModel() {
         }
     }
 
+    fun updateCanBeCalled(canBe: Boolean){
+        _canBeCalled.postValue(canBe)
+    }
 
 }
