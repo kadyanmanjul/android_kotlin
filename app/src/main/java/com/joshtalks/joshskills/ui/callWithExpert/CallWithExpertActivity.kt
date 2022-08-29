@@ -73,7 +73,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
 
         viewModel.isFirstAmount.observe(this){
             if (it.isFirstTime){
-                RechargeSuccessFragment.open(supportFragmentManager, it.amount, isGifted = true)
+                RechargeSuccessFragment.open(supportFragmentManager, it.amount, isGifted = true,  type = "FirstTime")
             }
         }
     }

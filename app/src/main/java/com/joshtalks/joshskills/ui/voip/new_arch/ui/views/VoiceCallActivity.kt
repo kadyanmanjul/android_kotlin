@@ -163,10 +163,13 @@ class VoiceCallActivity : BaseActivity() {
             Category.FPP ->{
                 val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
                 vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
-
+                Log.d("sagar", "SAGAR => setCallData:139 ${intent?.getStringExtra(IS_EXPERT_CALLING).toString()}")
+                Log.d("sagar", "SAGAR => setCallData:139 ${intent?.getStringExtra(IS_EXPERT_CALLING)}")
+                Log.d("sagar", "SAGAR => setCallData:141 ${intent?.getStringExtra(INTENT_DATA_TOTAL_AMOUNT).toString()}")
                 vm.callData[INTENT_DATA_EXPERT_PRICE_PER_MIN] = intent?.getStringExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN).toString()
                 vm.callData[INTENT_DATA_TOTAL_AMOUNT] = intent?.getStringExtra(INTENT_DATA_TOTAL_AMOUNT).toString()
                 vm.callData[IS_EXPERT_CALLING] = intent?.getStringExtra(IS_EXPERT_CALLING).toString()
+                vm.callData[INTENT_DATA_FPP_NAME] = intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
             }
             Category.GROUP -> {
                 val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)

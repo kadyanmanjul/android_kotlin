@@ -6,7 +6,7 @@
     <data>
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.callWithExpert.fragment.CallContinueDialog" />
+            type="com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel" />
 
         <import type="android.view.View"/>
     </data>
@@ -47,14 +47,14 @@
                 android:id="@+id/expert_image"
                 android:layout_width="@dimen/_74sdp"
                 android:layout_height="@dimen/_74sdp"
-                android:src="@{handler.expertImage}"
+                expertImage="@{handler}"
+                android:src="@drawable/img_5"
                 app:civ_border_color="@color/expert_border_color"
                 app:civ_border_width="1.5dp"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="@dimen/_23sdp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                tools:src="@drawable/remote_user_image" />
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_continue_call"

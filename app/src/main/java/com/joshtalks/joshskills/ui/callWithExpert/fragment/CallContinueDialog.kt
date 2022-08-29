@@ -11,15 +11,12 @@ import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.CLICKED_CONTINUE_TO_CALL
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentCallCoutinueDialogBinding
+import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.ExpertListViewModel
 
 class CallContinueDialog : BaseDialogFragment() {
-
-     var expertId: String = EMPTY
-     var expertName: String = EMPTY
-     var expertImage: String = EMPTY
 
     private val callWithExpertViewModel by lazy {
         ViewModelProvider(requireActivity())[CallWithExpertViewModel::class.java]
@@ -29,13 +26,14 @@ class CallContinueDialog : BaseDialogFragment() {
         ViewModelProvider(requireActivity())[ExpertListViewModel::class.java]
     }
 
+    var selectedUser: ExpertListModel? = null
+
     lateinit var binding: FragmentCallCoutinueDialogBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        selectedUser = WalletRechargePaymentManager.selectedExpertForCall
         arguments?.let {
-            expertId = it.getString(EXPERT_ID) ?: EMPTY
-            expertName = it.getString(EXPERT_NAME) ?: EMPTY
-            expertImage = it.getString(EXPERT_IMAGE) ?: EMPTY
+
         }
     }
 
@@ -45,16 +43,17 @@ class CallContinueDialog : BaseDialogFragment() {
     ): View {
         binding = FragmentCallCoutinueDialogBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
-        binding.handler = this
+        binding.handler = selectedUser
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textContinueCall.text = getString(R.string.continue_call_with_suman_sharma, expertName)
+
+        binding.textContinueCall.text = getString(R.string.continue_call_with_suman_sharma, selectedUser?.expertName)
         binding.btnYes.setOnClickListener {
             callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_CONTINUE_TO_CALL)
-            WalletRechargePaymentManager.selectedExpertForCall?.let { it1 -> expertListViewModel.getCallStatus(it1) }
+            selectedUser?.let { it1 -> expertListViewModel.getCallStatus(it1) }
             dismiss()
         }
 
@@ -64,22 +63,16 @@ class CallContinueDialog : BaseDialogFragment() {
     }
 
     companion object {
-        const val EXPERT_ID = "mentor_id"
-        const val EXPERT_NAME = "mentor_name"
-        const val EXPERT_IMAGE = "mentor_image"
-
         @JvmStatic
-        fun newInstance(mentorId: String, expertName: String, expertImage: String) =
+        fun newInstance() =
             CallContinueDialog().apply {
                 arguments = Bundle().apply {
-                    putString(EXPERT_ID, mentorId)
-                    putString(EXPERT_NAME, expertName)
-                    putString(EXPERT_IMAGE, expertImage)
+
                 }
             }
 
-        fun open(supportFragmentManager: FragmentManager, mentorId: String, expertName: String, expertImage: String) {
-            newInstance(mentorId, expertName, expertImage).show(supportFragmentManager, "CallContinueDialog")
+        fun open(supportFragmentManager: FragmentManager, ) {
+            newInstance().show(supportFragmentManager, "CallContinueDialog")
         }
     }
 

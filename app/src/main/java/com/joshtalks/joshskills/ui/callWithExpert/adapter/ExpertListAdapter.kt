@@ -3,7 +3,9 @@ package com.joshtalks.joshskills.ui.callWithExpert.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ItemExpertListBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 
@@ -16,9 +18,12 @@ class ExpertListAdapter(var items: List<ExpertListModel> = listOf()) :
         fun bind(item: ExpertListModel) {
             with(itemExpertListBinding) {
                 itemExpertListBinding.item = item
-
                 expertCallButton.setOnClickListener {
-                    itemClickFunction?.invoke(item, FAV_CLICK_ON_CALL, bindingAdapterPosition)
+                    if (item.mentorId != Mentor.getInstance().getId()) {
+                        itemClickFunction?.invoke(item, FAV_CLICK_ON_CALL, bindingAdapterPosition)
+                    } else {
+                        showToast("You are an expert")
+                    }
                 }
             }
         }

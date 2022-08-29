@@ -196,7 +196,7 @@ class WalletRechargePaymentManager private constructor(
         navController?.let {
             if (isPaymentSuccessful) {
                 activity.onBackPressed()
-                RechargeSuccessFragment.open(activity.supportFragmentManager, amount = selectedAmount.amount)
+                RechargeSuccessFragment.open(activity.supportFragmentManager, amount = selectedAmount.amount, type = "Wallet")
             }
         }
         paymentStatusListener?.onPaymentFinished(isPaymentSuccessful)
