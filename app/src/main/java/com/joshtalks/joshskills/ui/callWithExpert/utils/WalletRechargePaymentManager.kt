@@ -163,17 +163,6 @@ class WalletRechargePaymentManager private constructor(
 
     fun onPaymentSuccess(status: String?) {
         Log.d(TAG, "onPaymentSuccess: and status => $status")
-//        onPaymentSuccess: and status => pay_K9qXHKpQIrvIqT
-//        showToast("Payment Successful")
-//        navController?.navigate(R.id.paymentProcessingFragment)
-//        activity.supportFragmentManager
-//            .beginTransaction()
-//            .add(
-//                R.id.navHost,
-//                PaymentProcessingFragment.newInstance(),
-//                "Payment Processing"
-//            )
-//            .commit()
         verifyPayment()
         viewModelScope.launch {
             delay(5000)
@@ -189,9 +178,7 @@ class WalletRechargePaymentManager private constructor(
     }
 
     fun onPaymentFailed(status: Int, message: String?) {
-        // TODO: Do Network Call\
         Log.d(TAG, "onPaymentFailed and status => $status and message => $message")
-//      onPaymentFailed and status => 0 and message => {"error":{"code":"BAD_REQUEST_ERROR","description":"Payment processing cancelled by user","source":"customer","step":"payment_authentication","reason":"payment_cancelled","metadata":{"payment_id":"pay_K9qYbitGKSkfO4"}}}
         if (status != 0) {
             // payment not cancelled by user but failed.
             showToast("Payment Failed... Please Try Again")
@@ -208,7 +195,7 @@ class WalletRechargePaymentManager private constructor(
     fun onPaymentFinished(isPaymentSuccessful: Boolean) {
         navController?.let {
             if (isPaymentSuccessful) {
-                //activity.onBackPressed()
+                activity.onBackPressed()
                 RechargeSuccessFragment.open(activity.supportFragmentManager, amount = selectedAmount.amount)
             }
         }

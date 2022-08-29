@@ -51,15 +51,16 @@ class RechargeSuccessFragment : BaseDialogFragment() {
             binding.btnThanksAndOk.text = getString(R.string.ok)
         }
 
-        binding.btnThanksAndOk.setOnClickListener {
-            dismiss()
-        }
+//        binding.btnThanksAndOk.setOnClickListener {
+//            dismiss()
+//        }
 
         binding.btnThanksAndOk.setOnClickListener {
             if (binding.btnThanksAndOk.text == getString(R.string.ok)) {
-                dismiss()
                 CallContinueDialog.open(requireActivity().supportFragmentManager,"618ed044-d5da-4fe4-b7bf-325a89d4fcdb", "Vishes", EMPTY)
             }
+            dismiss()
+
         }
     }
 
