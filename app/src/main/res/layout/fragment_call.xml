@@ -494,10 +494,12 @@
 
                     <ImageView
                         android:id="@+id/bck_img"
+                        setBackgroundForLocalUser="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.localUserProfile}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:alpha="0.4"
-                        android:scaleType="fitXY" />
+                        android:scaleType="fitXY"
+                        android:src="@drawable/local_user_default_image"/>
 
                     <FrameLayout
                         android:layout_width="@dimen/_86sdp"
@@ -536,17 +538,6 @@
                         android:visibility="visible"
                         tools:text="Shobhit" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:background="@color/white" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:background="@color/white"
-                        android:layout_alignParentBottom="true" />
-
 
                 </RelativeLayout>
 
@@ -556,24 +547,12 @@
                     android:layout_weight="1">
 
                     <ImageView
+                        setBackgroundForRemoteUser="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.profileImage}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:alpha="0.4"
-                        android:scaleType="fitXY" />
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:background="@color/white"/>
-
-                    <View
-                        android:layout_width="@dimen/_2sdp"
-                        android:layout_height="match_parent"
-                        android:background="@color/white" />
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:background="@color/white"
-                        android:layout_alignParentBottom="true" />
+                        android:scaleType="fitXY"
+                        android:src="@drawable/remote_user_image"/>
 
                     <FrameLayout
                         android:layout_width="@dimen/_86sdp"
