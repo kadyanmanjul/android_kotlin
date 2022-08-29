@@ -211,8 +211,6 @@ class CallingRemoteService : Service() {
                                 CLOSE_CALL_SCREEN -> {
                                     serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
                                     notification.idle(getNotificationData())
-                                    countdownTimerBack?.cancel()
-                                    timerScope.cancel()
                                 }
                                 RECONNECTING_FAILED -> {
                                     serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.callWithExpert.fragment
 
 import android.os.Bundle
 import android.os.UserManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentRechargeSuccessBinding
 import com.joshtalks.joshskills.repository.local.entity.User
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
+import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
@@ -21,9 +24,11 @@ class RechargeSuccessFragment : BaseDialogFragment() {
     private var amount: Int = 0
     private var isGifted: Boolean = false
     private lateinit var binding: FragmentRechargeSuccessBinding
+    private var selectedUser :ExpertListModel?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        selectedUser = WalletRechargePaymentManager.selectedExpertForCall
         arguments?.let {
             amount = it.getInt(AMOUNT)
             isGifted = it.getBoolean(IS_GIFTED)
@@ -51,16 +56,16 @@ class RechargeSuccessFragment : BaseDialogFragment() {
             binding.btnThanksAndOk.text = getString(R.string.ok)
         }
 
-//        binding.btnThanksAndOk.setOnClickListener {
-//            dismiss()
-//        }
-
         binding.btnThanksAndOk.setOnClickListener {
-            if (binding.btnThanksAndOk.text == getString(R.string.ok)) {
-                CallContinueDialog.open(requireActivity().supportFragmentManager,"618ed044-d5da-4fe4-b7bf-325a89d4fcdb", "Vishes", EMPTY)
+            if (binding.btnThanksAndOk.text == getString(R.string.ok) && selectedUser!=null) {
+                CallContinueDialog.open(requireActivity().supportFragmentManager)
+            }else{
+                if (binding.btnThanksAndOk.text != getString(R.string.thankyou_sir)) {
+                    activity?.onBackPressed()
+                }
+                dismiss()
             }
             dismiss()
-
         }
     }
 
@@ -78,7 +83,7 @@ class RechargeSuccessFragment : BaseDialogFragment() {
                 }
             }
 
-        fun open(supportFragmentManager: FragmentManager, amount: Int, isGifted: Boolean = false){
+        fun open(supportFragmentManager: FragmentManager, amount: Int, isGifted: Boolean = false, type: String = EMPTY){
             newInstance(amount, isGifted).show(supportFragmentManager, "RechargeSuccessFragment")
         }
 

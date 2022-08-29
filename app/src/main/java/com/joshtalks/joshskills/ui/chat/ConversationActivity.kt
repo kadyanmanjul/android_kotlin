@@ -336,7 +336,12 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        conversationBinding.btnOpenExpertList.isVisible = AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED)
+        if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED) && PrefManager.getStringValue(
+                CURRENT_COURSE_ID
+            ) == DEFAULT_COURSE_ID //&& User.getInstance().isVerified
+        ) {
+            conversationBinding.btnOpenExpertList.isVisible = true
+        }
         //addIssuesToSharedPref()
     }
 

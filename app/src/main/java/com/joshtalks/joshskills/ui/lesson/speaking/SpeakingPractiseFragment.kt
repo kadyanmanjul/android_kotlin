@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
-import com.google.firebase.remoteconfig.ktx.get
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
@@ -69,7 +69,7 @@ const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
 const val ATTEMPTED = "AT"
 const val UPGRADED_USER = "NFT"
-const val BLOCKED ="BLOCKED"
+const val BLOCKED = "BLOCKED"
 const val SHOW_WARNING_POPUP = "SHOW_WARNING_POPUP"
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
@@ -150,7 +150,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
             viewModel.lessonSpotlightStateLiveData.postValue(null)
         } else {
-            CoroutineScope(Dispatchers.Main).launch{
+            CoroutineScope(Dispatchers.Main).launch {
                 delay(100)
                 viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
                 PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
@@ -345,14 +345,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                     }
 
-                    if(!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) && PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                    if (!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) && PrefManager.getBoolValue(
+                            IS_FREE_TRIAL
+                        )
+                    ) {
                         binding.imgRecentCallsHistory.visibility = INVISIBLE
-                        PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN,true)
+                        PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN, true)
                     }
 
-                    when(response.isFtCallerBlocked){
-                         BLOCKED -> {
-                            if(PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                    when (response.isFtCallerBlocked) {
+                        BLOCKED -> {
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                                 PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
                                 binding.containerReachedFtLimit.visibility = VISIBLE
                                 binding.btnStartTrialText.isEnabled = false
@@ -360,24 +363,26 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 binding.infoContainer.visibility = INVISIBLE
                                 isBlockedFT = true
                             }
-                         }
+                        }
                         SHOW_WARNING_POPUP -> {
-                            if(PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(HAS_SEEN_WARNING_POPUP_FT).not()) {
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(HAS_SEEN_WARNING_POPUP_FT)
+                                    .not()
+                            ) {
                                 // dialog for warning about shorter calls
                                 binding.containerReachedFtLimit.visibility = GONE
                                 AlertDialog.Builder(activity).setTitle(R.string.warning)
                                     .setIcon(R.drawable.ic_warning)
-                                    .setPositiveButton(R.string.got_it){dialog,_ ->
+                                    .setPositiveButton(R.string.got_it) { dialog, _ ->
                                         dialog.dismiss()
                                     }
                                     .setMessage(R.string.shorter_calls_error_message)
                                     .show()
-                                PrefManager.put(HAS_SEEN_WARNING_POPUP_FT,true)
+                                PrefManager.put(HAS_SEEN_WARNING_POPUP_FT, true)
                             }
 
                         }
-                        else->{
-                            if(PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                        else -> {
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                                 binding.infoContainer.visibility = VISIBLE
                                 binding.containerReachedFtLimit.visibility = GONE
                             }
@@ -526,7 +531,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.txtCallsLeft.visibility = GONE
                     binding.txtLabelBecomeSeniorStudent.visibility = GONE
                     binding.btnNewStudent.visibility = GONE
-                    if (!isBlockedFT){
+                    if (!isBlockedFT) {
                         binding.infoContainer.visibility = VISIBLE
                     }
                 }
@@ -560,7 +565,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 showToast("Wait for last call to get disconnected")
         }
 
-        binding.btnCallWithExpert.isVisible = AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED)
+        if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED) && PrefManager.getStringValue(
+                CURRENT_COURSE_ID
+            ) == DEFAULT_COURSE_ID //&& User.getInstance().isVerified
+        ) {
+            binding.btnCallWithExpert.isVisible = true
+        }
 
         binding.btnCallWithExpert.setOnClickListener {
             viewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = SPEAKING_PAGE)
@@ -719,14 +729,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                if (isAdded && activity!=null) {
+                                if (isAdded && activity != null) {
                                     viewModel.saveImpression(CALL_PERMISSION_DENIED)
                                     PermissionUtils.callingPermissionPermanentlyDeniedDialog(
                                         requireActivity(),
                                         message = R.string.call_start_permission_message
                                     )
                                     return
-                                }else{
+                                } else {
                                     showToast(getString(R.string.something_went_wrong))
                                 }
                             }

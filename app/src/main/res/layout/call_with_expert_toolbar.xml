@@ -82,7 +82,7 @@
                 android:id="@+id/iv_earn"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_24sdp"
-                tools:text="\u20B9 78"
+                tools:text="\u20B9 0"
                 android:textAllCaps="false"
                 android:textSize="@dimen/_11ssp"
                 android:textColor="@color/white"

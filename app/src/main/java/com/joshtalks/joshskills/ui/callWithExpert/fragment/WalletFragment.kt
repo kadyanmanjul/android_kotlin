@@ -9,9 +9,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CLICKED_PROCEED
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWalletBinding
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.AmountAdapter
+import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel
 
@@ -26,6 +29,8 @@ class WalletFragment : Fragment() {
     private val callWithExpertViewModel by lazy {
         ViewModelProvider(requireActivity())[CallWithExpertViewModel::class.java]
     }
+
+    var amountToAdd = EMPTY
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +59,7 @@ class WalletFragment : Fragment() {
         viewModel.availableAmount.observe(viewLifecycleOwner) {
             binding.amountList.adapter =
                 AmountAdapter(it) { amount ->
+                    amountToAdd = amount.amountInRupees()
                     this@WalletFragment.viewModel.updateAddedAmount(amount.amountInRupees())
                     callWithExpertViewModel.updateAmount(amount)
                 }
@@ -70,8 +76,13 @@ class WalletFragment : Fragment() {
     }
 
     fun openCheckoutScreen() {
-        callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
-        callWithExpertViewModel.proceedPayment()
+        if (amountToAdd != EMPTY) {
+            WalletRechargePaymentManager.selectedExpertForCall = null
+            callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
+            callWithExpertViewModel.proceedPayment()
+        }else{
+            showToast("Please select amount to add")
+        }
     }
 
 }

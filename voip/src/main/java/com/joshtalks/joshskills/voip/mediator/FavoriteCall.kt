@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.constant.TOAST_MESSAGE
+import com.joshtalks.joshskills.voip.data.api.ExpertConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.FavoriteCallActionRequest
 import com.joshtalks.joshskills.voip.data.api.FavoriteConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
@@ -45,16 +46,27 @@ class FavoriteCall : CallCategory {
             if (response.isSuccessful)
                 Log.d(TAG, "onPreCallConnect: Successful")
         } else {
-            Log.d(TAG, "onPreCallConnect: OUTGOING")
-            val request = FavoriteConnectionRequest(
-                mentorId = callData[INTENT_DATA_FPP_MENTOR_ID] as String,
-                courseId = Utils.courseId?.toInt()
-            )
-            val response = voipNetwork.startFavouriteCall(request)
-            Log.d(TAG, "onPreCallConnect: $response")
+            var response: HashMap<String, Any?>? = null
+            Log.d("sagar", "onPreCallConnect: OUTGOING ${callData[IS_EXPERT_CALLING]}")
+            if (callData[IS_EXPERT_CALLING] == "true") {
+                val request = ExpertConnectionRequest(
+                    mentorId = callData[INTENT_DATA_FPP_MENTOR_ID] as String,
+                    courseId = Utils.courseId?.toInt(),
+                    mentorName = callData[INTENT_DATA_FPP_NAME] as String
+                )
+                response = voipNetwork.startExpertCall(request)
+                Log.d(TAG, "onPreCallConnect:  Expert$response")
+            } else {
+                val request = FavoriteConnectionRequest(
+                    mentorId = callData[INTENT_DATA_FPP_MENTOR_ID] as String,
+                    courseId = Utils.courseId?.toInt()
+                )
+                response = voipNetwork.startFavouriteCall(request)
+                Log.d(TAG, "onPreCallConnect: Fpp call$response")
 
+            }
             if (response[TOAST_MESSAGE] != null && response[TOAST_MESSAGE]?.equals("") != true) {
-                showToast(response[TOAST_MESSAGE] .toString())
+                response[TOAST_MESSAGE]?.let { showToast(it.toString()) }
             }
 
         }
