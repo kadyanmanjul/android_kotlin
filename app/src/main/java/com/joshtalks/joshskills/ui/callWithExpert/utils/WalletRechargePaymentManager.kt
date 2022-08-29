@@ -12,8 +12,8 @@ import com.joshtalks.joshskills.repository.server.CourseData
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
+import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
-import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.razorpay.Checkout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -208,7 +208,7 @@ class WalletRechargePaymentManager private constructor(
     fun onPaymentFinished(isPaymentSuccessful: Boolean) {
         navController?.let {
             if (isPaymentSuccessful) {
-                activity.onBackPressed()
+                //activity.onBackPressed()
                 RechargeSuccessFragment.open(activity.supportFragmentManager, amount = selectedAmount.amount)
             }
         }
@@ -261,6 +261,7 @@ class WalletRechargePaymentManager private constructor(
 
     companion object {
         const val TAG = "WalletPaymentManager"
+        var selectedExpertForCall: ExpertListModel? = null
     }
 
 }

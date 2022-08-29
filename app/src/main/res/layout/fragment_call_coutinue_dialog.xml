@@ -25,7 +25,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_18sdp"
                 android:fontFamily="@font/open_sans"
@@ -47,7 +47,7 @@
                 android:id="@+id/expert_image"
                 android:layout_width="@dimen/_74sdp"
                 android:layout_height="@dimen/_74sdp"
-                android:src="@drawable/remote_user_image"
+                android:src="@{handler.expertImage}"
                 app:civ_border_color="@color/expert_border_color"
                 app:civ_border_width="1.5dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_continue_call"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_18sdp"
                 android:fontFamily="@font/open_sans"

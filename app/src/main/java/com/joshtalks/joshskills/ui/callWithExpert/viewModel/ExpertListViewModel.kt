@@ -14,8 +14,9 @@ import com.joshtalks.joshskills.ui.callWithExpert.adapter.ExpertListAdapter
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
+import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
-import com.joshtalks.joshskills.ui.fpp.constants.START_FPP_CALL
+import com.joshtalks.joshskills.ui.fpp.constants.START_FPP_CALL_FROM_WALLET
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.constant.State
@@ -75,9 +76,8 @@ class ExpertListViewModel : BaseViewModel() {
             return
         }
         if (AppObjectController.joshApplication.getVoipState() == State.IDLE) {
-            Log.d("naa", "clickOnPhoneCall: ${expertListModel.mentorId}")
             selectedUser = expertListModel
-            message.what = START_FPP_CALL
+            message.what = START_FPP_CALL_FROM_WALLET
             singleLiveEvent.value = message
         } else {
             showToast(
@@ -89,12 +89,15 @@ class ExpertListViewModel : BaseViewModel() {
 
     fun getCallStatus(expert: ExpertListModel){
         clickedSpeakerName = expert.expertName
+        WalletRechargePaymentManager.selectedExpertForCall = expert
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = expertListRepo.getCallStatus(expert.mentorId)
                 when(response.code()){
                     200 -> {
-                        clickOnPhoneCall(expert)
+                        withContext(Dispatchers.Main){
+                            clickOnPhoneCall(expert)
+                        }
                         _canBeCalled.postValue(true)
                         SkillsDatastore.updateWalletCredits(response.body()!!.amount)
                     }

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentRechargeSuccessBinding
 import com.joshtalks.joshskills.repository.local.entity.User
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -44,14 +45,21 @@ class RechargeSuccessFragment : BaseDialogFragment() {
         if (isGifted) {
             binding.textContinueCall.visible()
             binding.textContinueCall.text = getString(R.string.wallet_gift_description, "${Mentor.getInstance().getUser()?.firstName},", amount.toString())
-            binding.btnYes.text = getString(R.string.thankyou_sir)
+            binding.btnThanksAndOk.text = getString(R.string.thankyou_sir)
         } else {
             binding.textContinueCall.gone()
-            binding.btnYes.text = getString(R.string.ok)
+            binding.btnThanksAndOk.text = getString(R.string.ok)
         }
 
-        binding.btnYes.setOnClickListener {
+        binding.btnThanksAndOk.setOnClickListener {
             dismiss()
+        }
+
+        binding.btnThanksAndOk.setOnClickListener {
+            if (binding.btnThanksAndOk.text == getString(R.string.ok)) {
+                dismiss()
+                CallContinueDialog.open(requireActivity().supportFragmentManager,"618ed044-d5da-4fe4-b7bf-325a89d4fcdb", "Vishes", EMPTY)
+            }
         }
     }
 

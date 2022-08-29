@@ -7,13 +7,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.OPEN_EXPERT
 import com.joshtalks.joshskills.core.OPEN_WALLET
 import com.joshtalks.joshskills.core.SPEAKING_PAGE
 import com.joshtalks.joshskills.core.showToast
@@ -138,6 +136,9 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
     }
 
     override fun onPaymentFinished(isPaymentSuccessful: Boolean) {
+        if (isPaymentSuccessful){
+
+        }
     }
 
     companion object {

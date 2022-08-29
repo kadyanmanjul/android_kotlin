@@ -44,6 +44,7 @@ class CallWithExpertViewModel : ViewModel() {
     val paymentSuccessful: LiveData<Boolean>
         get() = _paymentSuccessful
 
+
     init {
         getWalletCredits()
         getWalletCreditsFromNetwork()
