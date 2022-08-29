@@ -83,6 +83,10 @@ class CallingRemoteService : Service() {
     private val notification by lazy { VoipNotification(notificationData, NotificationPriority.Low) }
     private val binder = RemoteServiceBinder()
 
+    var countdownTimerBack: Job? = null
+    var expertCallData = HashMap<String, Any>()
+    private val timerScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
+
     override fun onCreate() {
         Log.d(TAG, "onCreate: ")
         super.onCreate()
@@ -161,6 +165,9 @@ class CallingRemoteService : Service() {
 
                 return START_NOT_STICKY
             }
+            START_EXPERT_CALL_TIMER ->{
+            }
+
         }
         return if (isServiceInitialize)
             START_STICKY
@@ -196,10 +203,17 @@ class CallingRemoteService : Service() {
                                         getHangUpIntent()
                                     )
                                     serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
+                                    Log.d(TAG, "SAGAR => observeNetworkEvents:206 ${expertCallData[IS_EXPERT_CALLING]}")
+                                    if (expertCallData[IS_EXPERT_CALLING] == "true") {
+                                        Log.d(TAG, "SAGAR => observeNetworkEvents:206")
+                                        startCallTimer()
+                                    }
                                 }
                                 CLOSE_CALL_SCREEN -> {
                                     serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
                                     notification.idle(getNotificationData())
+                                    countdownTimerBack?.cancel()
+                                    timerScope.cancel()
                                 }
                                 RECONNECTING_FAILED -> {
                                     serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
@@ -325,6 +339,7 @@ class CallingRemoteService : Service() {
         if (callData != null) {
             mediator.connectCall(category, callData)
             notification.searching()
+            expertCallData = callData
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
             Log.d(TAG, "connectCall: Call Data is Null")
@@ -403,6 +418,39 @@ class CallingRemoteService : Service() {
     private fun unregisterReceivers() {
         pstnController.unregisterPstnReceiver()
         audioController.unregisterAudioControllerReceivers()
+    }
+
+    fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
+        try {
+            val timeInMillSec :Long= (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
+            Log.v("sagar", "timeInSec: $timeInMillSec")
+            countdownTimerBack = timerScope.launch {
+                delay(timeInMillSec)
+                disconnectCall()
+            }
+        }catch (ex:Exception){
+            countdownTimerBack?.cancel()
+        }
+        return countdownTimerBack
+    }
+
+    fun startCallTimer(){
+        Log.v("sagar", "startCallTimer: ${Integer.parseInt(expertCallData[INTENT_DATA_TOTAL_AMOUNT].toString())}")
+        Log.v("sagar", "startCallTimer: ${Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString())}")
+        if (countdownTimerBack == null || countdownTimerBack?.isActive == false) {
+            countdownTimerBack = startTimer(
+                Integer.parseInt(expertCallData[INTENT_DATA_TOTAL_AMOUNT].toString()),
+                Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString())
+            )
+            countdownTimerBack?.start()
+        }
+    }
+
+    fun stopCallTimer(){
+        if(countdownTimerBack == null || countdownTimerBack?.isActive == false) {
+            countdownTimerBack?.cancel()
+            timerScope.cancel()
+        }
     }
 }
 
