@@ -4,9 +4,26 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
-import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
-import com.joshtalks.joshskills.repository.server.*
-import com.joshtalks.joshskills.repository.server.certification_exam.*
+import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
+import com.joshtalks.joshskills.repository.server.BaseResponse
+import com.joshtalks.joshskills.repository.server.CertificateDetail
+import com.joshtalks.joshskills.repository.server.FAQ
+import com.joshtalks.joshskills.repository.server.FAQCategory
+import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
+import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardMentor
+import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardType
+import com.joshtalks.joshskills.repository.server.LinkAttribution
+import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
+import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
+import com.joshtalks.joshskills.repository.server.RestartCourseResponse
+import com.joshtalks.joshskills.repository.server.SuccessResponse
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
+import com.joshtalks.joshskills.repository.server.certification_exam.PostalDetails
+import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
@@ -28,13 +45,30 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
+import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
-import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.userprofile.models.AwardHeader
+import com.joshtalks.joshskills.ui.userprofile.models.CourseHeader
+import com.joshtalks.joshskills.ui.userprofile.models.FppStatusInProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.GroupsHeader
+import com.joshtalks.joshskills.ui.userprofile.models.PictureHeader
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
+import com.joshtalks.joshskills.ui.voip.analytics.data.network.PurchasePopUp
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -76,12 +110,6 @@ interface CommonNetworkService {
 
     @POST("$DIR/feedback/response/")
     suspend fun postUserFeedback(@Body userFeedbackRequest: UserFeedbackRequest): Response<Any>
-
-    @GET("$DIR/feedback/nps/details/")
-    suspend fun getQuestionNPSEvent(@Query("event_name") eventName: String): Response<List<NPSQuestionModel>>
-
-    @POST("$DIR/feedback/nps/response/")
-    suspend fun submitNPSResponse(@Body npsByUserRequest: NPSByUserRequest): Any
 
     @GET("$DIR/support/faq/")
     suspend fun getFaqList(): List<FAQ>
@@ -332,6 +360,9 @@ interface CommonNetworkService {
     @POST("$DIR/payment/verify_payment/")
     suspend fun checkMentorPayStatus(@Body params: Map<String, String>): Map<String, Any>
 
+    @GET("$DIR/payment/verify_razorpay_order/")
+    suspend fun syncPaymentStatus(@Query("order_id") orderId: String): Response<VerifyPaymentStatus>
+
     @POST("$DIR/link_attribution/deep_link/")
     suspend fun getDeepLink(@Body params: LinkAttribution): Response<Any>
 
@@ -364,4 +395,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/track_reading_practice_impression/")
     suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
+
+    @GET("$DIR/fpp/call_popup/")
+    suspend fun getPurchasePopUpResponse(@Query("duration") duration: String) :Response<PurchasePopUp>
 }

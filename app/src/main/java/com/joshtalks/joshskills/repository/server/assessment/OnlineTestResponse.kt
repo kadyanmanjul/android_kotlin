@@ -4,6 +4,7 @@ package com.joshtalks.joshskills.repository.server.assessment
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import kotlinx.android.parcel.Parcelize
 
@@ -42,6 +43,9 @@ data class OnlineTestResponse(
 
     @SerializedName("total_answered")
     var totalAnswered: Int? = null,
+
+    @SerializedName("pop_up")
+    val popUpText: PurchaseDataResponse?
 
 ) : Parcelable
 

@@ -191,7 +191,12 @@ class InboxAdapter(
                         freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                         countdownTimerBack?.stop()
                     } else {
-                        startTimer(inboxEntity.expiryDate.time - System.currentTimeMillis(), freeTrialTimer)
+                        if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
+                            freeTrialTimer.visibility = View.INVISIBLE
+                            tvLastMessage.visibility = View.VISIBLE
+                        }else{
+                            startTimer(inboxEntity.expiryDate.time - System.currentTimeMillis(), freeTrialTimer)
+                        }
                     }
                 } else {
                     freeTrialTimer.visibility = View.INVISIBLE

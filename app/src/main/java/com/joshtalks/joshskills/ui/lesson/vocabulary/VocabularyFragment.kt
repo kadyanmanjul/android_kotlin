@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -71,6 +72,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     private var lessonID = -1
+    private var timerPopText = EMPTY
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -153,6 +155,15 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         ){
             lessonID = it
         }
+
+//        viewModel.updatedLessonResponseLiveData.observe(
+//            viewLifecycleOwner
+//        ) {
+//            timerPopText = it.popUpText?.body?: EMPTY
+//            if (timerPopText!= EMPTY){
+//                PurchaseDialog.newInstance(timerPopText,it.popUpText?.title?: EMPTY, it.popUpText?.price?: EMPTY).show(requireActivity().supportFragmentManager,"PurchaseDialog")
+//            }
+//        }
 
         viewModel.lessonQuestionsLiveData.observe(
             viewLifecycleOwner,

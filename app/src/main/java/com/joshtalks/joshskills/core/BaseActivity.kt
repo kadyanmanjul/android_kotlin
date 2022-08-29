@@ -47,11 +47,8 @@ import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
@@ -72,7 +69,6 @@ import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
-import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.points_history.PointsHistoryActivity
 import com.joshtalks.joshskills.ui.points_history.SpokenHistoryActivity
@@ -352,94 +348,6 @@ abstract class BaseActivity :
 
     protected fun isUserHaveNotPersonalDetails(): Boolean {
         return User.getInstance().dateOfBirth.isNullOrEmpty()
-    }
-
-    protected fun showNetPromoterScoreDialog(nps: NPSEvent? = null) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            canShowNPSDialog(nps)
-        }
-    }
-
-    protected suspend fun canShowNPSDialog(nps: NPSEvent? = null, id: String = EMPTY): Boolean {
-        return lifecycleScope.async(Dispatchers.IO) {
-            val currentState: NPSEvent? = getCurrentNpsState(nps) ?: return@async false
-            val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
-                .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
-            val totalCountToday =
-                AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
-            if (totalCountToday >= minNpsInADay) {
-                return@async false
-            }
-            val npsEventModel =
-                NPSEventModel.getAllNpaList()?.filter { it.enable }
-                    ?.find { it.event == currentState }
-                    ?: return@async false
-            npsEventModel.eventId = id
-            getQuestionForNPS(npsEventModel)
-            return@async true
-        }.await()
-    }
-
-    private fun getCurrentNpsState(nps: NPSEvent? = null): NPSEvent? {
-        var currentState = nps
-        if (currentState == null) {
-            currentState = NPSEventModel.getCurrentNPA()
-        }
-        return currentState
-    }
-
-    private fun getQuestionForNPS(
-        eventModel: NPSEventModel
-    ) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val observer = Observer<WorkInfo> { workInfo ->
-                lifecycleScope.launch(Dispatchers.IO) {
-                    try {
-                        val currentState: NPSEvent? = getCurrentNpsState()
-                        if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED && currentState != null) {
-                            val output = workInfo.outputData.getString("nps_question_list")
-                            if (output.isNullOrEmpty().not()) {
-                                NPSEventModel.removeCurrentNPA()
-                                val questionList =
-                                    NPSQuestionModel.getNPSQuestionModelList(output!!)
-                                if (questionList.isNullOrEmpty().not()) {
-                                    lifecycleScope.launch(Dispatchers.Main) {
-                                        showNPSFragment(eventModel, questionList!!)
-                                    }
-                                    AppObjectController.appDatabase.npsEventModelDao()
-                                        .insertNPSEvent(eventModel)
-                                }
-                            }
-                        }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-
-                    WorkManager.getInstance(applicationContext)
-                        .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
-                        .removeObservers(this@BaseActivity)
-                }
-            }
-            WorkManager.getInstance(applicationContext)
-                .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
-                .observe(this@BaseActivity, observer)
-        }
-    }
-
-    private fun showNPSFragment(
-        npsModel: NPSEventModel,
-        questionList: List<NPSQuestionModel>
-    ) {
-        if (isFinishing) {
-            return
-        }
-        val prev =
-            supportFragmentManager.findFragmentByTag(NetPromoterScoreFragment::class.java.name)
-        if (prev != null) {
-            return
-        }
-        val bottomSheetFragment = NetPromoterScoreFragment.newInstance(npsModel, questionList)
-        bottomSheetFragment.show(supportFragmentManager, NetPromoterScoreFragment::class.java.name)
     }
 
     fun showSignUpDialog() {

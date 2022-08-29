@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:background="@color/transparent_blue_alpha_75"
+        android:paddingBottom="@dimen/_5sdp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_5sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btn_cancel"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_outline_cancel_24"
+                android:elevation="@dimen/_10sdp"/>
+
+
+            <TextView
+                android:id="@+id/txt_pop_up_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:text="@string/important_info"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@color/pure_black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txt_pop_up_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:text="Get Unlimited Calls 24 hrs Practice Partner Practice partners with different English levels "
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/black_0.7_alpha"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_pop_up_title" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_buy"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_24sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:backgroundTint="@color/colorAccent"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_24sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:text="Buy now ₹499"
+                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                app:cornerRadius="@dimen/_36sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_pop_up_body" />
+
+            <TextView
+                android:id="@+id/txt_ft_ends_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:text="Free trial ends in 24:00"
+                android:textColor="#FF0000"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/btn_buy"
+                app:layout_constraintStart_toStartOf="@+id/btn_buy"
+                app:layout_constraintTop_toBottomOf="@+id/btn_buy" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

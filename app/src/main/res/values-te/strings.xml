@@ -64,7 +64,6 @@
     <string name="attach_image">ఫోటోను అప్‌లోడ్ చేయండి</string>
 
     <string name="practice">సాధన</string>
-    <string name="complaint_message">మమ్మల్ని చేరుకున్నందుకు ధన్యవాదాలు. మీ అభ్యర్థన టిక్కెట్ నంబర్‌కి వ్యతిరేకంగా నమోదు చేయబడింది. మా బృందం 24-72 గంటల్లో మిమ్మల్ని సంప్రదిస్తుంది.</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">సమాధానం సమర్పించండి</string>
     <string name="improve_answer">సమాధానాన్ని మెరుగుపరచండి</string>
@@ -145,9 +144,6 @@
     <string name="dont_close">మరియు ఈ విండోను మూసివేయవద్దు</string>
     <string name="processing">మేము మీ పేమెంట్ ను ప్రాసెస్ చేస్తున్నాము. కొంత సమయం పట్టవచ్చు</string>
     <string name="bilkul_nahi">లేదు</string>
-    <string name="abhi_shuru_karein">అవును</string>
-    <string name="hint_apni_baat">మీ అభిప్రాయాన్ని ఇక్కడ వ్రాయండి</string>
-    <string name="npr_thank_you">మీ అభిప్రాయానికి ధన్యవాదాలు</string>
     <string name="otp_verify_label">మీ OTPని ధృవీకరించండి</string>
     <string name="otp_received_message">%sలో అందుకున్న OTPని నమోదు చేయండి</string>
     <string name="edit_number">సంఖ్యను సవరించు</string>

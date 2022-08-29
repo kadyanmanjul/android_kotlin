@@ -296,14 +296,7 @@ enum class AnalyticsEvent(val NAME: String) {
     REGISTRATION_COMPLETED("Registration_completed V3"),
     COURSE_STARTED("Course_Started V3"),
     PURCHASE_COURSE("Purchase Course V3"),
-
     TEST_ID_OPENED("Test ID Opened V3"),
-    NPS_INITIATED("NPS Initiated V3"),
-    NPS_SCORE_SUBMITTED("NPS Score Submitted V3"),
-    NPS_FEEDBACK_SUBMITTED("NPS Feedback Submitted V3"),
-    NPS_IGNORE("NPS Ignore V3"),
-
-
     RAZORPAY_SDK("Razorpay SDK V3"),
     PAYMENT_COMPLETED("Payment Completed V3"),
     PAYMENT_FAILED("Payment Fail V3"),

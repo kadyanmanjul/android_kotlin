@@ -232,9 +232,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
 
     override fun onSensorChanged(p0: SensorEvent?) {
         if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
-            if (audioController.getCurrentAudioRoute() == AudioRouteConstants.EarpieceAudio) {
                 turnScreenOff()
-            }
         } else {
             turnScreenOn()
         }

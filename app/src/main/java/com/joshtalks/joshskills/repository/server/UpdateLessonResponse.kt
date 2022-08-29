@@ -22,6 +22,8 @@ data class UpdateLessonResponse(
     val outrankedData: OutrankedDataResponse?,
     @SerializedName("points_list")
     val pointsList: List<String>?,
+    @SerializedName("pop_up")
+    val popUpText: PurchaseDataResponse?
     )
 
 @Parcelize
@@ -30,6 +32,16 @@ data class OutrankedDataResponse(
     val new: RankData?,
     @SerializedName("old")
     val old: RankData?
+) :Parcelable
+
+@Parcelize
+data class PurchaseDataResponse(
+    @SerializedName("title")
+    val title: String?,
+    @SerializedName("body")
+    val body: String?,
+    @SerializedName("price")
+    val price:String?
 ) :Parcelable
 
 @Parcelize

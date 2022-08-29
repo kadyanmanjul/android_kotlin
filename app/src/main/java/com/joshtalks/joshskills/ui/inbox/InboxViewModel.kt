@@ -1,24 +1,33 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
+import com.joshtalks.joshskills.core.IS_APP_RESTARTED
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.MY_COLOR_CODE
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
+import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
+import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -31,6 +40,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
+    val paymentStatus: MutableLiveData<Payment> = MutableLiveData()
 
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
@@ -258,5 +268,58 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 LogException.catchException(ex)
             }
         }
+    }
+
+    fun checkForPendingPayments() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val lastPaymentEntry = appDatabase.paymentDao().getLastPaymentEntry()
+            if (lastPaymentEntry!=null && lastPaymentEntry.isdeleted.not()) {
+                    if (lastPaymentEntry.isSync && (lastPaymentEntry.status == PaymentStatus.SUCCESS || lastPaymentEntry.status == PaymentStatus.FAILED)) {
+                        when (lastPaymentEntry.status) {
+                            PaymentStatus.SUCCESS -> {
+                                if (PrefManager.getBoolValue(IS_APP_RESTARTED,false)){
+                                    appDatabase.paymentDao().deletePaymentEntry(lastPaymentEntry.razorpayOrderId)
+                                }else {
+                                    paymentStatus.postValue(lastPaymentEntry)
+                                }
+                            }
+                            PaymentStatus.FAILED -> {
+                                if (lastPaymentEntry.timeStamp.plus(1000 * 60 * 60 * 4) < System.currentTimeMillis()) {
+                                    appDatabase.paymentDao()
+                                        .deletePaymentEntry(lastPaymentEntry.razorpayOrderId)
+                                }else{
+                                    paymentStatus.postValue(lastPaymentEntry)
+                                }
+                            }
+                            else -> {
+
+                            }
+                        }
+                    } else {
+                        val res =
+                            AppObjectController.commonNetworkService.syncPaymentStatus(lastPaymentEntry.razorpayOrderId)
+                        val response = res.body()?.toString()
+                        lastPaymentEntry.response = lastPaymentEntry.response.plus(response)
+                        appDatabase.paymentDao()
+                            .updatePayment(lastPaymentEntry)
+
+                        if (res.isSuccessful && res.body() != null) {
+                            if (res.body()!!.payment == null){
+                               /* appDatabase.paymentDao()
+                                    .deletePaymentEntry(it.razorpayOrderId)*/
+                            } else {
+                                appDatabase.paymentDao()
+                                    .updatePaymentStatus(lastPaymentEntry.razorpayOrderId, res.body()!!.payment!!)
+                                lastPaymentEntry.status = res.body()!!.payment
+                                paymentStatus.postValue(lastPaymentEntry)
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    suspend fun syncPaymentStatus(razorpayOrderId: String,status:PaymentStatus) {
+        appDatabase.paymentDao().updatePaymentStatus(razorpayOrderId,status)
     }
 }

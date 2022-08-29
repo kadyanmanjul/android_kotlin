@@ -9,4 +9,5 @@ internal interface AudioControllerInterface {
     fun getCurrentAudioRoute() : AudioRouteConstants
     fun switchAudioToSpeaker()
     fun switchAudioToDefault()
+    fun resetAudioRoute()
 }

@@ -6,11 +6,11 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.core.ActivityLifecycleCallback
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_RATING
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PURCHASE_POPUP
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
@@ -22,6 +22,7 @@ private const val TAG = "VoipPref"
 
 object VoipPref {
         lateinit var preferenceManager: SharedPreferences
+
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
             e.printStackTrace()
         }
@@ -80,37 +81,49 @@ object VoipPref {
 
             // TODO: These logic shouldn't be here
 
-            if (duration != 0L && !PrefManager.getBoolValue(IS_FREE_TRIAL)) {
-                showDialogBox(duration)
+            if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not()))
+                showDialogBox(duration, CALL_RATING)
+            else if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                showDialogBox(duration, PURCHASE_POPUP)
             }
         }
 
-        // TODO: These function shouldn't be here
-        private fun showDialogBox(totalSecond: Long) {
-            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-                        delay(500)
-                        val currentActivity = ActivityLifecycleCallback.currentActivity
-                        if(currentActivity.isDestroyed || currentActivity.isFinishing){
-                            delay(500)
-                            val newCurrentActivity = ActivityLifecycleCallback.currentActivity
-                            val newFragmentActivity = newCurrentActivity as? FragmentActivity
-                            withContext(Dispatchers.Main) {
-                                newFragmentActivity?.showVoipDialog(totalSecond)
-                            }
-                        }
-                        else if (currentActivity != null) {
-                            val newFragmentActivity = currentActivity as? FragmentActivity
-                           withContext(Dispatchers.Main) {
-                            newFragmentActivity?.showVoipDialog(totalSecond)
+    // TODO: These function shouldn't be here
+    private fun showDialogBox(totalSecond: Long, type: String) {
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            delay(500)
+            val currentActivity = ActivityLifecycleCallback.currentActivity
+            if (currentActivity.isDestroyed || currentActivity.isFinishing) {
+                delay(500)
+                val newCurrentActivity = ActivityLifecycleCallback.currentActivity
+                val newFragmentActivity = newCurrentActivity as? FragmentActivity
+                withContext(Dispatchers.Main) {
+                    if (type == CALL_RATING)
+                        newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                    else {
+                        newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
-
-                        }
+                }
+            } else if (currentActivity != null) {
+                val newFragmentActivity = currentActivity as? FragmentActivity
+                withContext(Dispatchers.Main) {
+                    if (type == CALL_RATING)
+                        newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                    else {
+                        newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
+                    }
+                }
             }
         }
+    }
 
         // TODO: These function shouldn't be here
-        private fun FragmentActivity.showVoipDialog(totalSecond: Long) {
+        private fun FragmentActivity.showVoipDialog(totalSecond: Long,type: String) {
+            if(type == CALL_RATING)
                 showCallRatingDialog(this)
+            else{
+                showPurchaseDialog(this)
+            }
         }
 
     private fun showCallRatingDialog(fragmentActivity: FragmentActivity) {
@@ -123,6 +136,27 @@ object VoipPref {
             getLocalUserAgoraId().toString()
         ).show(fragmentActivity.supportFragmentManager, "CallRatingsFragment")
     }
+
+
+
+    private fun showPurchaseDialog(fragmentActivity: FragmentActivity) {
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            try {
+                val resp =  AppObjectController.commonNetworkService.getPurchasePopUpResponse(getLastCallDurationInSec().toString())
+                if (resp.body()?.popUpBody?: EMPTY != EMPTY) {
+                    PurchaseDialog.newInstance(
+                        timerPopText = resp.body()?.popUpBody ?: EMPTY,
+                        timerTitlePopText = resp.body()?.popUpTitle ?: EMPTY,
+                        pricePopUpText = resp.body()?.popUpPrice ?: EMPTY,
+                        expireTime = resp.body()?.expireTime
+                    ).show(fragmentActivity.supportFragmentManager, "PurchaseDialog")
+                }
+            }catch (ex:Exception){
+                Log.d("sagar", "showPurchaseDialog: ${ex.message}")
+            }
+        }
+    }
+
     private fun showReportDialog(fragmentActivity: FragmentActivity) {
 
             val function = fun() {

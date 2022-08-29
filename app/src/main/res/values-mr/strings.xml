@@ -65,7 +65,6 @@
 
 
     <string name="practice">सराव</string>
-    <string name="complaint_message">आमच्यापर्यंत पोहोचल्याबद्दल धन्यवाद. तुमची विनंती तिकीट क्र. आमची टीम तुमच्याशी २४-७२ तासांच्या आत संपर्क करेल.</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">उत्तर सबमिट करा</string>
     <string name="improve_answer">उत्तर सुधारा</string>
@@ -146,9 +145,6 @@
     <string name="dont_close">आणि ही विंडो बंद करू नका</string>
     <string name="processing">आम्ही तुमच्या पेमेंटवर प्रक्रिया करत आहोत. काही वेळ लागू शकतो</string>
     <string name="bilkul_nahi">"नाही"</string>
-    <string name="abhi_shuru_karein">"हो"</string>
-    <string name="hint_apni_baat">"तुमचा मुद्दा इथे लिहा"</string>
-    <string name="npr_thank_you">"तुमच्या अभिप्रायाबद्दल धन्यवाद"</string>
     <string name="otp_verify_label">"तुमचा OTP वेरीफाई करा"</string>
     <string name="otp_received_message">%s वर मिळालेला OTP एंटर करा</string>
     <string name="edit_number">"फोन नंबर संपादित करा"</string>
