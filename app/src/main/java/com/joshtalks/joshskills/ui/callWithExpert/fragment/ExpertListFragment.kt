@@ -29,7 +29,7 @@ class ExpertListFragment:BaseFragment() {
     }
 
     private val viewModel by lazy {
-        ViewModelProvider(this)[CallWithExpertViewModel::class.java]
+        ViewModelProvider(requireActivity())[CallWithExpertViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -93,6 +93,14 @@ class ExpertListFragment:BaseFragment() {
                     expertListViewModel.neededAmount,
                     expertListViewModel.clickedSpeakerName
                 ).show(requireActivity().supportFragmentManager, WalletBottomSheet.TAG)
+                expertListViewModel.updateCanBeCalled(true)
+            }
+        }
+
+        viewModel.paymentSuccessful.observe(viewLifecycleOwner) {
+            if (it) {
+                findNavController().navigate(R.id.paymentProcessingFragment)
+                viewModel.paymentSuccess(false)
             }
         }
     }
