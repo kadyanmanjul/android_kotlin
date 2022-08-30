@@ -8,42 +8,18 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
-import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
-import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
-import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.constant.Event.*
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
-import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
 import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
 import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
-import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
-import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
-import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.mediator.CallCategory
-import com.joshtalks.joshskills.voip.getHangUpIntent
-import com.joshtalks.joshskills.voip.getNotificationData
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
-import com.joshtalks.joshskills.voip.notification.IncomingCallNotificationHandler
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
@@ -57,7 +33,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import okhttp3.internal.cacheGet
 import timber.log.Timber
 import com.joshtalks.joshskills.base.model.NotificationData as Data
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
@@ -86,7 +61,6 @@ class CallingRemoteService : Service() {
 
     var countdownTimerBack: Job? = null
     var expertCallData = HashMap<String, Any>()
-    var categoryExpert :Category? = null
     private val timerScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
 
     override fun onCreate() {
@@ -341,7 +315,6 @@ class CallingRemoteService : Service() {
             mediator.connectCall(category, callData)
             notification.searching()
             expertCallData = callData
-            categoryExpert = category
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
             Log.d(TAG, "connectCall: Call Data is Null")
@@ -425,8 +398,6 @@ class CallingRemoteService : Service() {
 
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
         try {
-            Log.d("saagr", "SAGAR => startCallTimer:428 ${countdownTimerBack?.isActive}  ${timerScope.isActive}")
-            Log.d("saagr", "SAGAR => startCallTimer:429 ${countdownTimerBack == null}  ${timerScope.isActive}")
             val timeInMillSec :Long= (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
             Log.v("sagar", "timeInSec: $timeInMillSec")
             countdownTimerBack = timerScope.launch {
@@ -435,33 +406,23 @@ class CallingRemoteService : Service() {
             }
         }catch (ex:Exception){
             stopCallTimer()
-            disconnectCall()
-            Log.v("sagar", "startTimer111: ${ex.message} ${timerScope.isActive}" )
         }
         return countdownTimerBack
     }
 
     fun startCallTimer(){
-        Log.d("sagar", "SAGAR => startCallTimer:443 ${countdownTimerBack?.isActive}  ${timerScope.isActive}")
-        Log.d("sagar", "SAGAR => startCallTimer:443 ${countdownTimerBack == null}  ${timerScope.isActive}")
-        Log.v("sagar", "startCallTimer: ${Integer.parseInt(expertCallData[INTENT_DATA_TOTAL_AMOUNT].toString())}")
-        Log.v("sagar", "startCallTimer: ${Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString())}")
         if (countdownTimerBack == null || countdownTimerBack?.isActive == false) {
-            Log.d("sagar", "SAGAR => startCallTimer:448 ")
             countdownTimerBack = startTimer(
                 Integer.parseInt(expertCallData[INTENT_DATA_TOTAL_AMOUNT].toString()),
                 Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString())
             )
-            Log.e("sagar", "startCallTimer: ${countdownTimerBack?.isActive}  ${timerScope.isActive}")
             countdownTimerBack?.start()
-            Log.d("sagar", "SAGAR => startCallTimer:453 ${countdownTimerBack?.isActive} ${timerScope.isActive}")
         }
     }
 
     fun stopCallTimer() {
         countdownTimerBack?.cancel()
         countdownTimerBack = null
-        Log.d("saagr", "SAGAR => startCallTimer:453 ${countdownTimerBack?.isActive}  ${timerScope.isActive}")
     }
 }
 
