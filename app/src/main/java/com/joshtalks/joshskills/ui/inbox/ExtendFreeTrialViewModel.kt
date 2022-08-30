@@ -75,6 +75,7 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 val courseListResponse =
                     repository.getCourseData()
                 if (courseListResponse != null && courseListResponse.isEmpty().not()) {
+                    PrefManager.put(CURRENT_COURSE_ID,courseListResponse[0].courseId)
                     withContext(Dispatchers.Main){
                         message.what= OPEN_EFT_CONVERSATION_ACTIVITY
                         message.obj=courseListResponse[0]

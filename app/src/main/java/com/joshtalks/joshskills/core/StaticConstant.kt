@@ -271,6 +271,9 @@ class FirebaseRemoteConfigKey {
         const val NOTIFICATION_API_TIME = "NOTIFICATION_API_TIME"
         const val CALL_RATING = "CALL_RATING"
         const val PURCHASE_POPUP = "PURCHASE_POPUP"
+        const val CALL_POPUP_SEEN = "CALL_POPUP_SEEN"
+        const val CALL_POPUP_IGNORED = "CALL_POPUP_IGNORED"
+        const val CALL_POPUP_CLICKED = "CALL_POPUP_CLICKED"
     }
 }
 

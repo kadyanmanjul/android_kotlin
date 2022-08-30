@@ -69,7 +69,7 @@ class ExpertListFragment:BaseFragment() {
                             putExtra(IS_EXPERT_CALLING, "true")
                             putExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN, expertListViewModel.selectedUser?.expertPricePerMinute.toString())
                             putExtra(INTENT_DATA_TOTAL_AMOUNT,viewModel.creditsCount.value?.removeRupees())
-                            putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                            putExtra(INTENT_DATA_CALL_CATEGORY, Category.EXPERT.ordinal)
                             putExtra(INTENT_DATA_FPP_MENTOR_ID, expertListViewModel.selectedUser?.mentorId)
                             putExtra(INTENT_DATA_FPP_NAME, expertListViewModel.selectedUser?.expertName)
                             putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)

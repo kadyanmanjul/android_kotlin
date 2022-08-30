@@ -136,9 +136,9 @@ class SearchingState(val context: CallContext) : VoipState {
          5. Cancel timeout timer  (Just to make sure if last timer didn't canceled)
          6. Checking is Incoming Call
          7. If its outgoing Call then start timeout timer*/
-        if (context.direction == CallDirection.OUTGOING && context.callType != Category.FPP)
+        if (context.direction == CallDirection.OUTGOING && (context.callType != Category.FPP || context.callType != Category.EXPERT))
             timeoutTimer.start()
-        else if(context.callType == Category.FPP)
+        else if(context.callType == Category.FPP || context.callType == Category.EXPERT)
             favTimeoutTimer.start()
         apiCallJob.start()
     }
@@ -189,7 +189,7 @@ class SearchingState(val context: CallContext) : VoipState {
 
     private fun sendDataToServer() {
         if (context.direction == CallDirection.OUTGOING) {
-            if(context.callType == Category.FPP)
+            if(context.callType == Category.FPP || context.callType == Category.EXPERT)
             favTimeoutTimer.cancel()
             else
                 timeoutTimer.cancel()
@@ -240,7 +240,7 @@ class SearchingState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState)
                             if (context.direction == CallDirection.OUTGOING) {
-                                if(context.callType == Category.FPP)
+                                if(context.callType == Category.FPP || context.callType == Category.EXPERT)
                                 favTimeoutTimer.cancel()
                                 else
                                     timeoutTimer.cancel()

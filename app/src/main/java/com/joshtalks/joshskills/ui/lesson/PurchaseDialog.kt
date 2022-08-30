@@ -5,10 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_CLICKED
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_IGNORED
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_SEEN
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
@@ -23,6 +27,10 @@ class PurchaseDialog: BaseDialogFragment()  {
     var expireDate:Date? = null
     private var countdownTimerBack: CountdownTimerBack? = null
 
+    private val vm by lazy {
+        ViewModelProvider(requireActivity())[LessonViewModel::class.java]
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,6 +44,7 @@ class PurchaseDialog: BaseDialogFragment()  {
         @JvmStatic
         fun newInstance(timerPopText:String = EMPTY, timerTitlePopText:String = EMPTY, pricePopUpText:String = EMPTY, expireTime:Date? = null): PurchaseDialog {
             val fragment = PurchaseDialog().apply {
+                vm.saveImpression(CALL_POPUP_SEEN)
                 arguments = Bundle().apply {
                     putString(POP_TEXT, timerPopText)
                     putString(TITLE_TEXT, timerTitlePopText)
@@ -52,10 +61,12 @@ class PurchaseDialog: BaseDialogFragment()  {
         initView()
         binding.btnCancel.setOnClickListener {
             closeDialog()
+            vm.saveImpression(CALL_POPUP_IGNORED)
         }
 
         binding.btnBuy.setOnClickListener {
             showFreeTrialPaymentScreen()
+            vm.saveImpression(CALL_POPUP_CLICKED)
         }
     }
 

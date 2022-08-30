@@ -57,6 +57,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import okhttp3.internal.cacheGet
 import timber.log.Timber
 import com.joshtalks.joshskills.base.model.NotificationData as Data
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
@@ -85,6 +86,7 @@ class CallingRemoteService : Service() {
 
     var countdownTimerBack: Job? = null
     var expertCallData = HashMap<String, Any>()
+    var categoryExpert :Category? = null
     private val timerScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
 
     override fun onCreate() {
@@ -210,6 +212,7 @@ class CallingRemoteService : Service() {
                                     }
                                 }
                                 CLOSE_CALL_SCREEN -> {
+                                    stopCallTimer()
                                     serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
                                     notification.idle(getNotificationData())
                                 }
@@ -338,12 +341,14 @@ class CallingRemoteService : Service() {
             mediator.connectCall(category, callData)
             notification.searching()
             expertCallData = callData
+            categoryExpert = category
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
             Log.d(TAG, "connectCall: Call Data is Null")
     }
 
     fun disconnectCall() {
+        stopCallTimer()
         notification.idle(getNotificationData())
         mediator.userAction(Action.STOP_RECORDING)
         mediator.userAction(Action.DISCONNECT)
@@ -420,6 +425,8 @@ class CallingRemoteService : Service() {
 
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
         try {
+            Log.d("saagr", "SAGAR => startCallTimer:428 ${countdownTimerBack?.isActive}  ${timerScope.isActive}")
+            Log.d("saagr", "SAGAR => startCallTimer:429 ${countdownTimerBack == null}  ${timerScope.isActive}")
             val timeInMillSec :Long= (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
             Log.v("sagar", "timeInSec: $timeInMillSec")
             countdownTimerBack = timerScope.launch {
@@ -427,28 +434,34 @@ class CallingRemoteService : Service() {
                 disconnectCall()
             }
         }catch (ex:Exception){
-            countdownTimerBack?.cancel()
+            stopCallTimer()
+            disconnectCall()
+            Log.v("sagar", "startTimer111: ${ex.message} ${timerScope.isActive}" )
         }
         return countdownTimerBack
     }
 
     fun startCallTimer(){
+        Log.d("sagar", "SAGAR => startCallTimer:443 ${countdownTimerBack?.isActive}  ${timerScope.isActive}")
+        Log.d("sagar", "SAGAR => startCallTimer:443 ${countdownTimerBack == null}  ${timerScope.isActive}")
         Log.v("sagar", "startCallTimer: ${Integer.parseInt(expertCallData[INTENT_DATA_TOTAL_AMOUNT].toString())}")
         Log.v("sagar", "startCallTimer: ${Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString())}")
         if (countdownTimerBack == null || countdownTimerBack?.isActive == false) {
+            Log.d("sagar", "SAGAR => startCallTimer:448 ")
             countdownTimerBack = startTimer(
                 Integer.parseInt(expertCallData[INTENT_DATA_TOTAL_AMOUNT].toString()),
                 Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString())
             )
+            Log.e("sagar", "startCallTimer: ${countdownTimerBack?.isActive}  ${timerScope.isActive}")
             countdownTimerBack?.start()
+            Log.d("sagar", "SAGAR => startCallTimer:453 ${countdownTimerBack?.isActive} ${timerScope.isActive}")
         }
     }
 
-    fun stopCallTimer(){
-        if(countdownTimerBack == null || countdownTimerBack?.isActive == false) {
-            countdownTimerBack?.cancel()
-            timerScope.cancel()
-        }
+    fun stopCallTimer() {
+        countdownTimerBack?.cancel()
+        countdownTimerBack = null
+        Log.d("saagr", "SAGAR => startCallTimer:453 ${countdownTimerBack?.isActive}  ${timerScope.isActive}")
     }
 }
 

@@ -123,6 +123,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         Category.PEER_TO_PEER -> PeerToPeerCall()
                         Category.FPP -> FavoriteCall()
                         Category.GROUP -> GroupCall()
+                        Category.EXPERT -> ExpertCall()
                     }
                     PrefManager.setCallCategory(callCategory)
                     /**
@@ -606,6 +607,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     Category.GROUP.category -> {
                         callCategory = Category.GROUP
                         calling = GroupCall()
+                    }
+                    Category.EXPERT.category -> {
+                        callCategory = Category.EXPERT
+                        calling = ExpertCall()
                     }
                 }
                 PrefManager.setCallCategory(callCategory)

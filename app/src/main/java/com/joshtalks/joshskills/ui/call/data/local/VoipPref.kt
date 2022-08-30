@@ -82,8 +82,10 @@ object VoipPref {
 
             // TODO: These logic shouldn't be here
 
-            if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not()))
+            if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
+                Log.d("sagar", "SAGAR => updateLastCallDetails:86 ")
                 showDialogBox(duration, CALL_RATING)
+            }
             else if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                 showDialogBox(duration, PURCHASE_POPUP)
             }
@@ -143,8 +145,10 @@ object VoipPref {
                 val newCurrentActivity = ActivityLifecycleCallback.currentActivity
                 val newFragmentActivity = newCurrentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
-                    if (type == CALL_RATING)
+                    if (type == CALL_RATING) {
+                        Log.d("sagar", "SAGAR => showDialogBox:147 ")
                         newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                    }
                     else {
                         newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
@@ -152,8 +156,10 @@ object VoipPref {
             } else if (currentActivity != null) {
                 val newFragmentActivity = currentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
-                    if (type == CALL_RATING)
+                    if (type == CALL_RATING) {
+                        Log.d("sagar", "SAGAR => showDialogBox:156 ")
                         newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                    }
                     else {
                         newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
@@ -164,14 +170,17 @@ object VoipPref {
 
         // TODO: These function shouldn't be here
         private fun FragmentActivity.showVoipDialog(totalSecond: Long,type: String) {
-            if(type == CALL_RATING)
+            if(type == CALL_RATING) {
+                Log.d("sagar", "SAGAR => showVoipDialog:168 ")
                 showCallRatingDialog(this)
+            }
             else{
                 showPurchaseDialog(this)
             }
         }
 
     private fun showCallRatingDialog(fragmentActivity: FragmentActivity) {
+        Log.d("sagar", "SAGAR => showCallRatingDialog:175 ")
         CallRatingsFragment.newInstance(
             getLastRemoteUserName(),
             getLastCallDurationInSec().toInt(),

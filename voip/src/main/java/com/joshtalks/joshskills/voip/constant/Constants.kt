@@ -118,4 +118,5 @@ enum class Category(val category : String) {
     PEER_TO_PEER("PEER_TO_PEER"),
     FPP("FPP"),
     GROUP("GROUP"),
+    EXPERT("EXPERT")
 }

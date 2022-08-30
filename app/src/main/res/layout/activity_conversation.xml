@@ -725,7 +725,7 @@
                     android:gravity="center"
                     android:onClick="@{() -> handler.openExpertList()}"
                     android:padding="@dimen/_10sdp"
-                    android:text="Talk To Expert"
+                    android:text="Talk To Expert (₹10/min)"
                     android:visibility="gone"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/black" />

@@ -7,13 +7,13 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.constant.TOAST_MESSAGE
+import com.joshtalks.joshskills.voip.data.api.ExpertConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.FavoriteCallActionRequest
-import com.joshtalks.joshskills.voip.data.api.FavoriteConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 
-private const val TAG = "FavoriteCall"
+private const val TAG = "ExpertCall"
 
-class FavoriteCall : CallCategory {
+class ExpertCall : CallCategory {
     val voipNetwork = VoipNetwork.getVoipApi()
 
     override fun notificationLayout(map: HashMap<String, String>): RemoteViews? {
@@ -46,12 +46,15 @@ class FavoriteCall : CallCategory {
                 Log.d(TAG, "onPreCallConnect: Successful")
         } else {
             var response: HashMap<String, Any?>? = null
-            val request = FavoriteConnectionRequest(
+            Log.d("sagar", "onPreCallConnect: OUTGOING ${callData[IS_EXPERT_CALLING]}")
+
+            val request = ExpertConnectionRequest(
                 mentorId = callData[INTENT_DATA_FPP_MENTOR_ID] as String,
-                courseId = Utils.courseId?.toInt()
+                courseId = Utils.courseId?.toInt(),
+                mentorName = callData[INTENT_DATA_FPP_NAME] as String
             )
-            response = voipNetwork.startFavouriteCall(request)
-            Log.d(TAG, "onPreCallConnect: Fpp call$response")
+            response = voipNetwork.startExpertCall(request)
+            Log.d(TAG, "onPreCallConnect:  Expert$response")
 
             if (response[TOAST_MESSAGE] != null && response[TOAST_MESSAGE]?.equals("") != true) {
                 response[TOAST_MESSAGE]?.let { showToast(it.toString()) }
