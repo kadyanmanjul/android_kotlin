@@ -180,7 +180,7 @@ object MarketingAnalytics {
         bundle.putDouble(FirebaseAnalytics.Param.VALUE, amount.toDouble())
         bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
         bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
-        AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
+        FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
         // Facebook Event
         if (logFacebook) {

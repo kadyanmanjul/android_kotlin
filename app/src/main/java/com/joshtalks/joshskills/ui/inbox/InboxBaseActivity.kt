@@ -27,12 +27,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppUpdateHandler {
     private var isFromOnBoarding: Boolean = true
@@ -125,7 +122,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
         }
     }
 
-    protected fun checkInAppUpdate() {
+    protected suspend fun checkInAppUpdate() {
         val forceUpdateMinVersion =
             AppObjectController.getFirebaseRemoteConfig().getLong("force_upgrade_after_version")
         val forceUpdateFlag =
@@ -136,15 +133,14 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
         if (currentAppVersion <= forceUpdateMinVersion && forceUpdateFlag) {
             updateMode = Constants.UpdateMode.IMMEDIATE
         }
-        inAppUpdateManager = InAppUpdateManager.Builder(activityRef.get(), REQ_CODE_VERSION_UPDATE)
-            .resumeUpdates(true)
-            .mode(updateMode)
-            .useCustomNotification(false)
-            .snackBarMessage(getString(R.string.update_message))
-            .snackBarAction(getString(R.string.restart))
-            .handler(this)
-
-        inAppUpdateManager?.checkForAppUpdate()
+            inAppUpdateManager = InAppUpdateManager.Builder(activityRef.get(), REQ_CODE_VERSION_UPDATE)
+                .resumeUpdates(true)
+                .mode(updateMode)
+                .useCustomNotification(false)
+                .snackBarMessage(getString(R.string.update_message))
+                .snackBarAction(getString(R.string.restart))
+                .handler(this@InboxBaseActivity)
+                inAppUpdateManager?.checkForAppUpdate()
     }
 
     protected fun logEvent(eventName: String) {

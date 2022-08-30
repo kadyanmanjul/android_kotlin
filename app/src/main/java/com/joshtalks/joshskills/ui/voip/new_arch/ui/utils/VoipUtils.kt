@@ -11,6 +11,9 @@ import com.joshtalks.joshskills.voip.constant.CONTENT_VOIP_STATE_AUTHORITY
 import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.constant.VOIP_STATE_PATH
+import com.joshtalks.joshskills.voip.data.local.PrefManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 
 
@@ -31,18 +34,9 @@ private fun Cursor?.getStringData(columnName : String) : String {
 }
 
 
-fun Context.getVoipState(): State {
-    val stateCursor = contentResolver.query(
-        Uri.parse(CONTENT_VOIP_STATE_AUTHORITY + VOIP_STATE_PATH),
-        null,
-        null,
-        null,
-        null
-    )
-    stateCursor?.moveToFirst()
-    val state = stateCursor.getStringData(CURRENT_VOIP_STATE)
-    stateCursor?.close()
-    return State.values()[state.toInt()]
+fun getVoipState(): State {
+        val state = PrefManager.getVoipState().ordinal
+        return State.values()[state]
 }
 
 

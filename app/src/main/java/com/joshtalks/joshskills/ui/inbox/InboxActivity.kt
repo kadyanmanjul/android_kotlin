@@ -234,10 +234,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun workInBackground() {
         lifecycleScope.launchWhenResumed {
-            withContext(Dispatchers.IO) {
                 processIntent(intent)
                 checkInAppUpdate()
-            }
         }
     }
 

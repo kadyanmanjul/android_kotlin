@@ -18,13 +18,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
-import androidx.work.Configuration
 import androidx.work.impl.background.greedy.GreedyScheduler
-import com.facebook.stetho.Stetho
-import com.freshchat.consumer.sdk.Freshchat
-import com.github.anrwatchdog.ANRWatchDog
-import com.google.firebase.FirebaseApp
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController.Companion.getLocalBroadcastManager
 import com.joshtalks.joshskills.core.AppObjectController.Companion.restoreIdReceiver
@@ -68,21 +62,21 @@ class JoshApplication :
     }
 
     override fun onCreate() {
-        if(BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(
-                StrictMode.ThreadPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .build()
-            )
-            StrictMode.setVmPolicy(
-                StrictMode.VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .penaltyDeath()
-                    .build()
-            )
-        }
+//        if(BuildConfig.DEBUG) {
+//            StrictMode.setThreadPolicy(
+//                StrictMode.ThreadPolicy.Builder()
+//                    .detectAll()
+//                    .penaltyLog()
+//                    .build()
+//            )
+//            StrictMode.setVmPolicy(
+//                StrictMode.VmPolicy.Builder()
+//                    .detectAll()
+//                    .penaltyLog()
+//                    .penaltyDeath()
+//                    .build()
+//            )
+//        }
         super.onCreate()
         //enableLog(Feature.VOIP)
         AppObjectController.joshApplication = this
@@ -290,9 +284,5 @@ class JoshApplication :
     fun isMainProcess(): Boolean {
         Log.d(TAG, "onCreate: STARTING ...IS MAIN PROCESS")
         return TextUtils.equals(packageName, getProcName())
-    }
-
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder().setMinimumLoggingLevel(Log.VERBOSE).build()
     }
 }
