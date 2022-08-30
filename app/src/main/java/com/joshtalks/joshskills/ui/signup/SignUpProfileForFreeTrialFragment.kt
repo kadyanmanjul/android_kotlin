@@ -130,6 +130,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     }
 
     fun moveToConversationScreen(inboxEntity: InboxEntity) {
+        PrefManager.put(CURRENT_COURSE_ID,inboxEntity.courseId)
         PendingIntent.getActivities(
             activity,
             (System.currentTimeMillis() and 0xfffffff).toInt(),

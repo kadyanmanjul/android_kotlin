@@ -18,6 +18,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.joshtalks.joshskills.repository.local.model.User
@@ -47,6 +48,8 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
@@ -567,7 +570,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
         if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED) && PrefManager.getStringValue(
                 CURRENT_COURSE_ID
-            ) == DEFAULT_COURSE_ID //&& User.getInstance().isVerified
+            ) == DEFAULT_COURSE_ID
         ) {
             binding.btnCallWithExpert.isVisible = true
         }
@@ -596,6 +599,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
         initDemoViews(lessonNo)
+    }
+
+    private fun navigateToLoginActivity() {
+        val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(FLOW_FROM, "payment journey")
+        }
+        startActivity(intent)
+        val broadcastIntent=Intent().apply {
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        }
+        LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(broadcastIntent)
     }
 
     private fun postSpeakingScreenSeenGoal() {
