@@ -36,6 +36,8 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.quality
+import id.zelory.compressor.constraint.resolution
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -203,11 +205,10 @@ class ConversationViewModel(
         return viewModelScope.async(Dispatchers.IO) {
             try {
                 AppDirectory.copy(
-                    Compressor(getApplication()).setQuality(75).setMaxWidth(720).setMaxHeight(
-                        1280
-                    ).compressToFile(File(path)).absolutePath,
-                    path
-                )
+                        Compressor.compress(getApplication(),File(path)){
+                            quality(75)
+                            resolution(720,1280)}.absolutePath, path
+                    )
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

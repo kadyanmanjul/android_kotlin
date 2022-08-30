@@ -207,11 +207,11 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 )
                                 context.sendMessageToServer(userAction)
                             }else{
-                                val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST)
+                                val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST, isRecordingEnabled = false)
                                 context.updateUIState(uiState = uiState)
                                 context.sendEventToUI(event)
                             }
-                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
+                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "", isRemoteUserGameStarted = false)
                             context.updateUIState(uiState = uiState)
                         }
                         NEXT_WORD_REQUEST -> {
@@ -238,10 +238,11 @@ class ConnectedState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(
                                 UI(
                                     channelName = context.channelData.getChannel(),
-                                    type = ServerConstants.UI_STATE_UPDATED,
+                                    type = ServerConstants.ACK_UI_STATE_UPDATED,
                                     isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                     isMute = if (context.currentUiState.isOnMute) 1 else 0,
-                                    address = context.channelData.getPartnerMentorId()
+                                    address = context.channelData.getPartnerMentorId(),
+                                    isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                 )
                             )
                         }
@@ -255,12 +256,14 @@ class ConnectedState(val context: CallContext) : VoipState {
                                         type = ServerConstants.ACK_UI_STATE_UPDATED,
                                         isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                         isMute = if (context.currentUiState.isOnMute) 1 else 0,
-                                        address = context.channelData.getPartnerMentorId()
+                                        address = context.channelData.getPartnerMentorId(),
+                                        isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                     )
                                 )
                             val uiState = context.currentUiState.copy(
                                 isRemoteUserMuted = uiData.isMute(),
-                                isOnHold = uiData.isHold()
+                                isOnHold = uiData.isHold(),
+                                isRemoteUserGameStarted = uiData.isPlayBtnClick()
                             )
                             context.updateUIState(uiState = uiState)
                         }
@@ -438,14 +441,15 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val startTime = SystemClock.elapsedRealtime()
                                 val uiState = context.currentUiState.copy(
                                     recordingButtonState = RecordingButtonState.RECORDING,
-                                    recordingStartTime = startTime
+                                    recordingStartTime = startTime,
+                                    isRecordingEnabled = true
                                 )
                                 context.updateUIState(uiState = uiState)
                                 context.startRecording()
                             }
                         }
                         STOP_GAME_RECORDING ->{
-                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST)
+                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST, isRecordingEnabled = false)
                                 context.updateUIState(uiState = uiState)
                                 context.sendEventToUI(event)
                         }

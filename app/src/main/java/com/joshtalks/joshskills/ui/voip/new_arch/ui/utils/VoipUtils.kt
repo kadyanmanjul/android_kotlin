@@ -5,8 +5,10 @@ import android.app.Application
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.CONTENT_VOIP_STATE_AUTHORITY
 import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE
 import com.joshtalks.joshskills.voip.constant.State

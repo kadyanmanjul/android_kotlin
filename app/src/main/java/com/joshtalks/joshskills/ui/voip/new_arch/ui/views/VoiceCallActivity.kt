@@ -2,10 +2,12 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.media.projection.MediaProjectionManager
+import android.os.Environment
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,7 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.hbisoft.hbrecorder.HBRecorder
+import com.hbisoft.hbrecorder.HBRecorderListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.*
@@ -27,22 +30,34 @@ import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.sync.Mutex
+import java.io.File
 
 private const val TAG = "VoiceCallActivity"
 
-class VoiceCallActivity : BaseActivity() {
+class VoiceCallActivity : BaseActivity(),HBRecorderListener {
     private val backPressMutex = Mutex(false)
     private var isServiceBounded = false
+    private val SCREEN_RECORD_REQUEST_CODE = 1
     var recordingPermissionAlert: AlertDialog? = null
+    var file : File? = null
+    var currentFileName : String? = null
+
+    companion object{
+        var showDialog = true
+        var recordData : Intent? = null
+        var recordResultCode : Int? = null
+    }
+
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
-
+    private val hbRecorder by lazy {
+        HBRecorder(this,this)
+    }
     val vm by lazy {
         ViewModelProvider(this)[VoiceCallViewModel::class.java]
     }
@@ -240,22 +255,20 @@ class VoiceCallActivity : BaseActivity() {
                 CLOSE_CALL_SCREEN -> {
                     finishAndRemoveTask()
                 }
+                START_SCREEN_RECORDING->{
+                    proceedToRecord()
+                }
+                STOP_SCREEN_RECORDING->{
+                    stopScreenRecording()
+                }
+                RECORDING_PERMISSION_DIALOG->{
+                    startScreenRecording()
+                }
                 CHANGE_APP_THEME_T0_BLACK->{
                     window.statusBarColor  = ContextCompat.getColor(this,R.color.black_quiz)
                 }
                 CHANGE_APP_THEME_T0_BLUE->{
                     window.statusBarColor  = ContextCompat.getColor(this,R.color.colorPrimaryDark)
-                }
-                SHOW_RECORDING_PERMISSION_DIALOG -> {
-                    vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
-                }
-                SHOW_RECORDING_PERMISSION_DIALOG -> vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
-                SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
-                HIDE_RECORDING_PERMISSION_DIALOG -> {
-                    hideRecordingPermissionDialog()
-                    if (it.obj == true){
-                        vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
-                    }
                 }
                 else -> {
                     if (it.what < 0) {
@@ -265,44 +278,6 @@ class VoiceCallActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    private fun showRecordingRejectedDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Recording request rejected")
-            .setMessage("User declined your request to start recording")
-            .setPositiveButton("Dismiss") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
-    private fun showRecordingPermissionDialog() {
-        recordingPermissionAlert = AlertDialog.Builder(this).apply {
-            setView(
-                LayoutInflater.from(this@VoiceCallActivity)
-                    .inflate(R.layout.dialog_record_call, null)
-            )
-            setPositiveButton("ACCEPT") { dialog, _ ->
-                vm.recordingStartedUIChanges()
-                vm.acceptCallRecording(this@VoiceCallActivity.window.decorView)
-                dialog.dismiss()
-            }
-            setNegativeButton("DECLINE") { dialog, which ->
-                vm.rejectCallRecording()
-                dialog.dismiss()
-            }
-            setOnCancelListener {
-                    vm.rejectCallRecording()
-            }
-        }.create()
-        recordingPermissionAlert?.setCanceledOnTouchOutside(false)
-        recordingPermissionAlert?.show()
-    }
-
-    private fun hideRecordingPermissionDialog() {
-        Log.i(TAG, "hideRecordingPermissionDialog: ")
-        recordingPermissionAlert?.dismiss()
     }
 
     private fun addSearchingUserFragment() {
@@ -345,7 +320,6 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-
         if(isCallingPermissionEnabled(this)) {
             if(!isServiceBounded) {
                 vm.boundService(this)
@@ -372,11 +346,73 @@ class VoiceCallActivity : BaseActivity() {
             }
         else {
             super.onBackPressed()
-            if (vm.uiState.recordingButtonState == RecordingButtonState.SENTREQUEST)
-                vm.cancelRecording()
-            val v = View(this)
-            vm.endGame(v)
             vm.backPress()
         }
+    }
+
+    private fun initiateRecording() {
+        val mediaProjectionManager: MediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        val permissionIntent: Intent? = mediaProjectionManager.createScreenCaptureIntent()
+        startActivityForResult(permissionIntent, SCREEN_RECORD_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                recordData = data
+                recordResultCode = resultCode
+                showDialog = false
+                vm.startGameFromRepo()
+                vm.isRecordPermissionGiven.set(true)
+            }
+        }
+    }
+
+    fun stopScreenRecording(){
+        hbRecorder.stopScreenRecording()
+    }
+
+    fun startScreenRecording(){
+        if(showDialog){
+            initiateRecording()
+        }else{
+            vm.startGameFromRepo()
+            vm.isRecordPermissionGiven.set(true)
+        }
+    }
+
+    private fun proceedToRecord() {
+
+        hbRecorder.setOutputPath(getFileDirectory().absolutePath)
+        hbRecorder.isAudioEnabled(false)
+        hbRecorder.recordHDVideo(false)
+        currentFileName = "recordVideo" + "${System.currentTimeMillis()}"
+        hbRecorder.fileName = currentFileName
+        recordResultCode?.let { hbRecorder.startScreenRecording(recordData, it)
+        }
+    }
+
+    private fun getFileDirectory(): File {
+        val dir = application.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+        file = File(dir?.path + "/JoshSkills")
+        if(file?.exists()==false){
+            file?.mkdirs()
+        }
+        return file as File
+    }
+
+    override fun HBRecorderOnStart() {
+    }
+
+    override fun HBRecorderOnComplete() {
+        val file1 = File(file, "$currentFileName.mp4")
+        vm.processRecording(videoFile = file1)
+        file = null
+        currentFileName = null
+    }
+
+    override fun HBRecorderOnError(errorCode: Int, reason: String?) {
+        Log.d(TAG, "HBRecorderOnError: $errorCode $reason")
     }
 }

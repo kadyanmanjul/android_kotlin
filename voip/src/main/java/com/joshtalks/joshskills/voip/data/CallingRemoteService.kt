@@ -339,7 +339,6 @@ class CallingRemoteService : Service() {
 
     fun disconnectCall() {
         notification.idle(getNotificationData())
-        mediator.userAction(Action.STOP_RECORDING)
         mediator.userAction(Action.DISCONNECT)
     }
 
@@ -465,6 +464,7 @@ data class UIState(
     val isStartGameClicked: Boolean = false,
     val nextGameWord: String = "",
     val nextGameWordColor: String = "",
+    val isRemoteUserGameStarted : Boolean = false
     ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")

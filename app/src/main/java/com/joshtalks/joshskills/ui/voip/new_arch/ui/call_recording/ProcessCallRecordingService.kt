@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.text.TextUtils
+import android.util.Log
 import androidx.annotation.Nullable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -43,15 +44,11 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
 
 class ProcessCallRecordingService : Service() {
-    private val MAX_NUMBER_OF_RETRIES = 5
     private val fileQueue: BlockingQueue<InputFiles> = ArrayBlockingQueue(100)
     private val mFileUploadHandler = Handler()
     private var mFileUploadTask: VideoMuxingTask? = null
     private var isMuxingRunning = false
     private var mNotificationManager: NotificationManager? = null
-    private val callApiService by lazy {
-        VoipNetwork.getVoipApi()
-    }
 
     @Nullable
     override fun onBind(intent: Intent): IBinder? {
@@ -88,21 +85,8 @@ class ProcessCallRecordingService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun cancelFileUpload() {
-        CoroutineScope(Dispatchers.IO).launch {
-            fileQueue.clear()
-            if (mFileUploadTask != null) {
-                mFileUploadHandler.removeCallbacks(mFileUploadTask!!)
-                isMuxingRunning = false
-                mFileUploadTask = null
-                AppObjectController.uiHandler.post {
-                    hideNotification()
-                }
-            }
-        }
-    }
-
     private fun startProcessingAudioVideoMixing(inputFiles: InputFiles) {
+        Log.d(TAG, "processRecording: $inputFiles")
         if (inputFiles.callId.isNullOrBlank() || inputFiles.audioPath.isNullOrBlank() || inputFiles.videoPath.isNullOrBlank()) {
             return
         }
@@ -269,8 +253,6 @@ class ProcessCallRecordingService : Service() {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_MIN)
         }
-
-
         startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
     }
 

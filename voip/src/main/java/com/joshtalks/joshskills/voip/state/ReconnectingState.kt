@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.voip.state
 
+import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
@@ -7,7 +8,6 @@ import com.joshtalks.joshskills.voip.communication.model.IncomingGameNextWord
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
@@ -99,10 +99,11 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(
                                 UI(
                                     channelName = context.channelData.getChannel(),
-                                    type = ServerConstants.UI_STATE_UPDATED,
+                                    type = ServerConstants.ACK_UI_STATE_UPDATED,
                                     isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                     isMute = if (context.currentUiState.isOnMute) 1 else 0,
-                                    address = context.channelData.getPartnerMentorId()
+                                    address = context.channelData.getPartnerMentorId(),
+                                    isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                 )
                             )
                             PrefManager.setVoipState(State.CONNECTED)
@@ -119,12 +120,14 @@ class ReconnectingState(val context: CallContext) : VoipState {
                                         type = ServerConstants.ACK_UI_STATE_UPDATED,
                                         isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                         isMute = if (context.currentUiState.isOnMute) 1 else 0,
-                                        address = context.channelData.getPartnerMentorId()
+                                        address = context.channelData.getPartnerMentorId(),
+                                        isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                     )
                                 )
                             val uiState = context.currentUiState.copy(
                                 isRemoteUserMuted = uiData.isMute(),
-                                isOnHold = uiData.isHold()
+                                isOnHold = uiData.isHold(),
+                                isRemoteUserGameStarted = uiData.isPlayBtnClick()
                             )
                             context.updateUIState(uiState = uiState)
                         }
@@ -132,10 +135,11 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(
                                 UI(
                                     channelName = context.channelData.getChannel(),
-                                    type = ServerConstants.UI_STATE_UPDATED,
+                                    type = ServerConstants.ACK_UI_STATE_UPDATED,
                                     isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                     isMute = if (context.currentUiState.isOnMute) 1 else 0,
-                                    address = context.channelData.getPartnerMentorId()
+                                    address = context.channelData.getPartnerMentorId(),
+                                    isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                 )
                             )
                         }
@@ -254,7 +258,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                                 )
                                 context.sendMessageToServer(userAction)
                             }
-                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
+                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "", isRemoteUserGameStarted = false)
                             context.updateUIState(uiState = uiState)
                         }
                         NEXT_WORD_REQUEST -> {
@@ -312,6 +316,23 @@ class ReconnectingState(val context: CallContext) : VoipState {
                                 extra = msg
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $RECONNECTED")
+                        }
+                        START_GAME_RECORDING->{
+                            if(context.currentUiState.isStartGameClicked) {
+                                val startTime = SystemClock.elapsedRealtime()
+                                val uiState = context.currentUiState.copy(
+                                    recordingButtonState = RecordingButtonState.RECORDING,
+                                    recordingStartTime = startTime,
+                                    isRecordingEnabled = true
+                                )
+                                context.updateUIState(uiState = uiState)
+                                context.startRecording()
+                            }
+                        }
+                        STOP_GAME_RECORDING ->{
+                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST, isRecordingEnabled = false)
+                            context.updateUIState(uiState = uiState)
+                            context.sendEventToUI(event)
                         }
                         START_RECORDING, STOP_RECORDING, CALL_RECORDING_ACCEPT, CALL_RECORDING_REJECT, CANCEL_RECORDING_REQUEST -> {
                             showToast("Can't process call recording request right now")

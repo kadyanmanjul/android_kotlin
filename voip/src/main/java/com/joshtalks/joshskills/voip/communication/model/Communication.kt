@@ -36,6 +36,7 @@ sealed interface OutgoingData : Communication {
 sealed interface UIState : UserActionData {
     fun isHold() : Boolean
     fun isMute() : Boolean
+    fun isPlayBtnClick() : Boolean
 }
 
 sealed interface IncomingCallData : Communication {

@@ -2,6 +2,9 @@ package com.joshtalks.joshskills.voip.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.util.Log
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.constant.Category
@@ -11,6 +14,7 @@ import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import java.io.ByteArrayOutputStream
 
 const val LATEST_PUBNUB_MESSAGE_TIME = "josh_pref_key_latest_pubnub_message_time"
 const val VOIP_STATE = "josh_pref_key_voip_state"
@@ -127,6 +131,26 @@ class PrefManager {
         fun getLastRecordingPath(): String {
             Log.d(TAG, "Getting getLastRecordingPath")
             return preferenceManager.getString(LAST_RECORDING, "").toString()
+        }
+
+        fun putBitmap(bitmap: Bitmap){
+            preferenceManager.edit().remove("bitmap")?.apply()
+            val editor = preferenceManager.edit()
+            val baos = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            val compressImage: ByteArray = baos.toByteArray()
+            val sEncodedImage: String = Base64.encodeToString(compressImage, Base64.DEFAULT)
+            editor.putString("bitmap", sEncodedImage)
+            editor.commit()
+        }
+
+        fun getBitmap(): ByteArray?{
+            if (preferenceManager.contains("bitmap")) {
+                val encodedImage: String? = preferenceManager.getString("bitmap",null)
+                val b: ByteArray = Base64.decode(encodedImage, Base64.DEFAULT)
+                return b
+            }
+            return null
         }
     }
 }

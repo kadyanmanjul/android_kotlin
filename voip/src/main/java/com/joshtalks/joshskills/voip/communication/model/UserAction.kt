@@ -41,6 +41,9 @@ data class UI(
 	@field:SerializedName("is_mute")
 	private val isMute: Int,
 
+	@field:SerializedName("is_play_btn_click")
+	private val isPlayButtonClick: Int,
+
 	private val address : String
 
 ) : UIState {
@@ -52,6 +55,7 @@ data class UI(
 				type =  map?.get("type").toString().toInt(),
 				isHold = map?.get("is_hold").toString().toInt(),
 				isMute = map?.get("is_mute").toString().toInt(),
+				isPlayButtonClick = map?.get("is_play_btn_click").toString().toInt(),
 				address = ""
 			)
 		}
@@ -67,6 +71,10 @@ data class UI(
 
 	override fun isMute(): Boolean {
 		return isMute == 1
+	}
+
+	override fun isPlayBtnClick(): Boolean {
+		return isPlayButtonClick == 1
 	}
 
 	override fun getChannelName(): String {

@@ -118,12 +118,12 @@ class WebrtcRepository(scope : CoroutineScope) {
     }
 
     fun startAgoraRecording(){
-        Log.d(TAG, "acceptCallRecording: ")
+        Log.d(TAG, "startAgoraRecording: ")
         mService?.startAgoraRecording()
     }
 
     fun stopAgoraClientCallRecording(){
-        Log.d(TAG, "acceptCallRecording: ")
+        Log.d(TAG, "stopAgoraClientCallRecording: ")
         mService?.stopAgoraCallRecording()
     }
 
@@ -150,10 +150,6 @@ class WebrtcRepository(scope : CoroutineScope) {
     fun backPress() {
         Log.d(TAG, "backPress: ")
         mService?.backPress()
-    }
-
-    fun clearRepository() {
-        //ioScope.cancel()
     }
 
     fun getNewTopicImage() {
