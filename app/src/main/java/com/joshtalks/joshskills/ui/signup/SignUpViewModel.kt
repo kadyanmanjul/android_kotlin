@@ -308,9 +308,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun getPath(loginViaStatus: LoginViaStatus): String {
-        if (LoginViaStatus.FACEBOOK == loginViaStatus) {
-            return "facebook"
-        } else if (LoginViaStatus.GMAIL == loginViaStatus) {
+         if (LoginViaStatus.GMAIL == loginViaStatus) {
             return "gmail"
         }
         return EMPTY

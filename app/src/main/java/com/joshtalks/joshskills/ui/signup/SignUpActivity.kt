@@ -235,7 +235,6 @@ class SignUpActivity : BaseActivity() {
     private fun initLoginFeatures() {
         auth = FirebaseAuth.getInstance()
         setupGoogleLogin()
-        setupFacebookLogin()
     }
 
     private fun setupGoogleLogin() {
@@ -245,37 +244,7 @@ class SignUpActivity : BaseActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
-    private fun setupFacebookLogin() {
-        LoginManager.getInstance().logOut()
-        LoginManager.getInstance().setLoginBehavior(LoginBehavior.NATIVE_WITH_FALLBACK)
-        LoginManager.getInstance().registerCallback(
-            fbCallbackManager,
-            object : FacebookCallback<LoginResult> {
-                override fun onSuccess(result: LoginResult) {
-                    MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
-                        .addParam(ParamKeys.IS_SUCCESS, true)
-                        .push()
-                    getUserDetailsFromFB(result.accessToken)
-                }
 
-                override fun onCancel() {
-                    MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
-                        .addParam(ParamKeys.IS_SUCCESS, false)
-                        .push()
-                    hideProgressBar()
-                }
-
-                override fun onError(error: FacebookException) {
-                    error.printStackTrace()
-                    LogException.catchException(error)
-                    hideProgressBar()
-                    MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
-                        .addParam(ParamKeys.IS_SUCCESS, false)
-                        .push()
-                }
-            })
-
-    }
 
     private fun setupTrueCaller() {
         var isSuccess = false
@@ -456,37 +425,6 @@ class SignUpActivity : BaseActivity() {
             .push()
     }
 
-    fun getUserDetailsFromFB(accessToken: AccessToken) {
-        val request: GraphRequest = GraphRequest.newMeRequest(accessToken) { jsonObject, _ ->
-            try {
-                jsonObject?.let {
-                    val id = jsonObject.getString("id")
-                    var name: String? = null
-                    if (jsonObject.has("name")) {
-                        name = jsonObject.getString("name")
-                    }
-                    var email: String? = null
-                    if (jsonObject.has("email")) {
-                        email = jsonObject.getString("email")
-                    }
-                    viewModel.signUpUsingSocial(
-                        LoginViaStatus.FACEBOOK,
-                        id,
-                        name,
-                        email,
-                        getFBProfilePicture(id)
-                    )
-                }
-            } catch (ex: Exception) {
-                LogException.catchException(ex)
-            }
-        }
-        val parameters = Bundle()
-        parameters.putString("fields", "id,name,email")
-        request.parameters = parameters
-        request.executeAsync()
-    }
-
     private fun handleGoogleSignInResult(account: GoogleSignInAccount) {
         if (account.idToken.isNullOrEmpty().not()) {
             val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
@@ -540,10 +478,6 @@ class SignUpActivity : BaseActivity() {
                 .subscribe({
                     viewModel.loginViaStatus = it.loginViaStatus
                     when (it.loginViaStatus) {
-                        LoginViaStatus.FACEBOOK -> {
-                            showProgressBar()
-                            facebookLogin()
-                        }
                         LoginViaStatus.GMAIL -> {
                             showProgressBar()
                             gmailLogin()
