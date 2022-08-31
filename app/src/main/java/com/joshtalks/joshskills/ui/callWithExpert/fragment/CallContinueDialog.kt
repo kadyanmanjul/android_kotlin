@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.CLICKED_CONTINUE_TO_CALL
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentCallCoutinueDialogBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
@@ -50,7 +51,8 @@ class CallContinueDialog : BaseDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.textContinueCall.text = getString(R.string.continue_call_with_suman_sharma, selectedUser?.expertName)
+        binding.textContinueCall.text = Mentor.getInstance().getUser()?.firstName  +  " Continue call with " + selectedUser?.expertName
+
         binding.btnYes.setOnClickListener {
             callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_CONTINUE_TO_CALL)
             selectedUser?.let { it1 -> expertListViewModel.getCallStatus(it1) }

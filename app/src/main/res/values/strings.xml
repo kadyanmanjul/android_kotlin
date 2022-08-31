@@ -1028,7 +1028,7 @@
     <string name="enter_amount_in_inr">Select Amount in INR</string>
     <string name="proceed">Proceed</string>
     <string name="your_recharge_is_successful">Your Recharge is successful!</string>
-    <string name="continue_call_with_suman_sharma">%1$s Continue call with Suman Sharma?</string>
+    <string name="continue_call_with_suman_sharma">%1$s Continue call with %1$s?</string>
     <string name="talk_to_expert">Talk To Expert</string>
     <string name="add_money_to_wallet">Add money to wallet</string>
     <string name="added_to_your_account">%1$s Added To Your Account</string>

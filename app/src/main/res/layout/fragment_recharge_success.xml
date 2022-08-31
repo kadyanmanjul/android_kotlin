@@ -6,9 +6,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="@dimen/_270sdp"
-        android:layout_marginLeft="@dimen/_10sdp"
-        app:cardUseCompatPadding="true"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
         app:cardCornerRadius="@dimen/_8sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +16,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_18sdp"
                 android:fontFamily="@font/open_sans"
@@ -49,11 +47,10 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_continue_call"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_14sdp"
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginHorizontal="@dimen/_10sdp"
                 tools:text="@string/wallet_gift_description"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
                 android:textColor="@color/pure_black"
