@@ -27,10 +27,6 @@ class PurchaseDialog: BaseDialogFragment()  {
     var expireDate:Date? = null
     private var countdownTimerBack: CountdownTimerBack? = null
 
-    private val vm by lazy {
-        ViewModelProvider(requireActivity())[LessonViewModel::class.java]
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,7 +40,6 @@ class PurchaseDialog: BaseDialogFragment()  {
         @JvmStatic
         fun newInstance(timerPopText:String = EMPTY, timerTitlePopText:String = EMPTY, pricePopUpText:String = EMPTY, expireTime:Date? = null): PurchaseDialog {
             val fragment = PurchaseDialog().apply {
-                vm.saveImpression(CALL_POPUP_SEEN)
                 arguments = Bundle().apply {
                     putString(POP_TEXT, timerPopText)
                     putString(TITLE_TEXT, timerTitlePopText)
@@ -61,12 +56,10 @@ class PurchaseDialog: BaseDialogFragment()  {
         initView()
         binding.btnCancel.setOnClickListener {
             closeDialog()
-            vm.saveImpression(CALL_POPUP_IGNORED)
         }
 
         binding.btnBuy.setOnClickListener {
             showFreeTrialPaymentScreen()
-            vm.saveImpression(CALL_POPUP_CLICKED)
         }
     }
 
