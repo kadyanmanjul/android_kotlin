@@ -1307,7 +1307,7 @@ class VocabularyPracticeAdapter(
 
             binding.recordTransparentContainer.setOnTouchListener { _, event ->
                 Log.d(TAG, "setAudioRecordTouchListener: START")
-                if (isCallOngoing() || context.getVoipState() != State.IDLE) {
+                if (isCallOngoing() || getVoipState() != State.IDLE) {
                     showToast("Cannot submit answer while on a call")
                     return@setOnTouchListener false
                 }

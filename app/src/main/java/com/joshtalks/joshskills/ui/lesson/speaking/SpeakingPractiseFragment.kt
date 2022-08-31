@@ -165,7 +165,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun getVoipState(): State? {
         try {
-            return requireActivity().getVoipState()
+            return getVoipState()
         } catch (ex: java.lang.Exception) {
             showToast("Please retry again later")
             ex.printStackTrace()

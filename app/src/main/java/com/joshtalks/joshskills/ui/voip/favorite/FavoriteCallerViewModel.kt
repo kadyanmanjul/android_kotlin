@@ -155,7 +155,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
             )
             return
         }
-        if (AppObjectController.joshApplication.getVoipState() == State.IDLE) {
+        if (getVoipState() == State.IDLE) {
             Log.d("naa", "clickOnPhoneCall: ${favoriteCaller.mentorId}")
             selectedUser = favoriteCaller
             message.what = START_FPP_CALL

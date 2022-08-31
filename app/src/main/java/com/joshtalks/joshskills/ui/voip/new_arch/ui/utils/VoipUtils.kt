@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.CONTENT_VOIP_STATE_AUTHORITY
 import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE
 import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.constant.VOIP_STATE_PATH
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
