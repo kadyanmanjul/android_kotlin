@@ -9,7 +9,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @BindingAdapter(value = ["inflateRecyclerView", "itemClickListener"], requireAll = false)
-fun RecyclerView.inflateRecyclerView(recordingList: ArrayList<RecordingModel>?, function: (() -> Unit)?) {
+fun RecyclerView.inflateRecyclerView(recordingList: ArrayList<RecordingModel>?, function: ((recording:RecordingModel) -> Unit)?) {
     val adapter = RecordingAdapter()
 
     if (recordingList != null) {
@@ -43,7 +43,11 @@ fun getModifiedList(recordingList: ArrayList<RecordingModel>?): Any {
                     }
                 }
                 for (i in 1..3) {
-                    list.add(RecordingModel(imgUrl = "break", timestamp = recording.timestamp))
+                    if(i==1)
+                    list.add(RecordingModel(imgUrl = "break", timestamp = recording.timestamp, videoUrl = recording.timestamp?.toDateString()))
+                    else
+                        list.add(RecordingModel(imgUrl = "break", timestamp = recording.timestamp, videoUrl = " "))
+
                 }
                 currentDate = recording.timestamp?.toDateString().toString()
                 listCount = 0

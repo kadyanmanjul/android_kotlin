@@ -301,6 +301,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 CONVERSATION_ID
             )
         }
+        binding.imgRecentCallsRecording.setOnSingleClickListener {
+            val callIntent = Intent(requireActivity(), RecordingGalleryActivity::class.java)
+            startActivity(callIntent)
+        }
         // redirect to buy screen
         binding.txtBuyToContinueCalls.setOnClickListener {
             activity?.let { it1 ->

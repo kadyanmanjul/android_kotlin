@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.recording_gallery.viewmodels.RecordingGalleryViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.recording_gallery.views.GameRecordingShareActivity">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical|start"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            android:tint="@color/black"
+
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/_4sdp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_back"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Harsh Gupta"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/vdo_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="10"
+            android:layout_marginTop="@dimen/_2sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_back"
+            app:layout_constraintTop_toBottomOf="@+id/username">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/duration"
+                tools:text="1 min 45 sec"
+                android:layout_weight="4.8"
+                android:textColor="#45494C"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:gravity="end"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.04"
+                android:background="#45494C" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/_10sdp"
+                tools:text="1:45"
+                android:layout_weight="4.8"
+                android:id="@+id/time"
+                android:textColor="#45494C"
+                android:gravity="start"/>
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/video_view"
+            android:layout_margin="@dimen/_40sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            app:layout_constraintBottom_toTopOf="@+id/vdo_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintTop_toBottomOf="@+id/vdo_info"
+            app:layout_constraintStart_toStartOf="parent">
+        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:id="@+id/video_payer"
+            android:visibility="visible"
+            app:controller_layout_id="@layout/layout_live_player_controller" />
+        </com.google.android.material.card.MaterialCardView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_2sdp"
+            android:id="@+id/vdo_margin"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="#E2E2E2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/video_view" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/share_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/_4sdp"
+            android:singleLine="true"
+            android:textColor="#45494C"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            android:text="Share to"
+            app:layout_constraintBottom_toTopOf="@+id/share_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vdo_margin"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/share_container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/share_text"
+            android:weightSum="10">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btn_whatsapp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:text="WhatsApp"
+                android:layout_weight="2.5"
+                android:textSize="@dimen/_10ssp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:drawableTop="@drawable/ic_whatsapp"
+                tools:src="@drawable/ic_whatsapp" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btn_share_insta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:text="Instagram"
+                android:layout_weight="2.5"
+                android:textSize="@dimen/_10ssp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:drawableTop="@drawable/ic_instagram"
+                tools:src="@drawable/ic_facebook" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btn_facebook"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:text="Facebook"
+                android:layout_weight="2.5"
+                android:textSize="@dimen/_10ssp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:drawableTop="@drawable/ic_facebook"
+                tools:src="@drawable/ic_whatsapp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btn_others"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:text="Others"
+                android:layout_weight="2.5"
+                android:textSize="@dimen/_10ssp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:drawableTop="@drawable/ic_instagram"
+                tools:src="@drawable/ic_whatsapp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

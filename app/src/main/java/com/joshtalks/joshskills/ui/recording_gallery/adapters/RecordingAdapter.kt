@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.recording_gallery.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -14,29 +13,43 @@ import com.joshtalks.joshskills.databinding.ItemGalleryBreakBinding
 import com.joshtalks.joshskills.databinding.ItemRecordingGalleryBinding
 import com.joshtalks.joshskills.ui.recording_gallery.RecordingModel
 import com.joshtalks.joshskills.ui.recording_gallery.toDateString
-import java.io.File
 
 
 class RecordingAdapter : ListAdapter<RecordingModel, RecordingAdapter.ViewHolder>(DiffCallback) {
-    private var itemClickFunction: (() -> Unit)? = null
+    private var itemClickFunction: ((recording : RecordingModel) -> Unit)? = null
     private var currentDate : String?=null
 
-     class ViewHolder(val binding: ItemRecordingGalleryBinding?,val bindingBreak: ItemGalleryBreakBinding?,val bindingBlank: ItemGalleryBlankBinding?=null) : RecyclerView.ViewHolder(
+     class ViewHolder(val binding: ItemRecordingGalleryBinding?, val bindingBreak: ItemGalleryBreakBinding?, val bindingBlank: ItemGalleryBlankBinding?=null) : RecyclerView.ViewHolder(
          ((binding?.root ?:bindingBreak?.root)?:bindingBlank?.root)!!) {
 
          fun bind(item : RecordingModel,shouldSetText : Boolean = false) {
-             binding?.duration?.text = item.duration.toString()
-//            binding?.ssImg?.let {
-//                Glide.with(AppObjectController.joshApplication.applicationContext)
-//                    .load(Uri.fromFile(item.imgUrl?.let { File(it) }))
-//                    .into(it)
-//            }
+             binding?.duration?.text = timeConversion(item.duration?.toLong())
+            binding?.ssImg?.let {
+                Glide.with(AppObjectController.joshApplication.applicationContext)
+                    .load(item.videoUrl)
+                    .into(it)
+            }
              Log.d("naman", "bind: ${shouldSetText}")
 
              if (shouldSetText && bindingBreak?.breakText?.text.isNullOrBlank()) {
-                 Log.d("naman", "bind: ${bindingBreak}")
+                 Log.d("naman", "bind: ${bindingBreak} ${item.timestamp?.toDateString()}")
+                 bindingBreak?.breakText?.text = item.videoUrl.toString()
+             }
+         }
 
-                 bindingBreak?.breakText?.text = item.timestamp?.toDateString()
+         fun timeConversion(millie: Long?): String? {
+             return if (millie != null) {
+                 val seconds = millie / 1000
+                 val sec = seconds % 60
+                 val min = seconds / 60 % 60
+                 val hrs = seconds / (60 * 60) % 24
+                 if (hrs > 0) {
+                     String.format("%02d:%02d:%02d", hrs, min, sec)
+                 } else {
+                     String.format("%02d:%02d", min, sec)
+                 }
+             } else {
+                 null
              }
          }
     }
@@ -67,17 +80,20 @@ class RecordingAdapter : ListAdapter<RecordingModel, RecordingAdapter.ViewHolder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.setIsRecyclable(false)
-        if(currentDate!=getItem(position).timestamp?.toDateString() &&getItem(position).imgUrl.equals("break") ){
-            holder.bind(getItem(position),true)
-            currentDate = getItem(position).timestamp?.toDateString()
-        }else{
-            holder.bind(getItem(position))
+        Log.d("naman", "bind: ${getItem(position).videoUrl} ")
 
+        if(getItem(position).imgUrl.equals("break")){
+            Log.d("naman", "bind: ${holder.bindingBreak?.breakText?.text} ")
+            holder.bind(getItem(position),true)
+            holder.setIsRecyclable(false)
+//            currentDate = getItem(position).timestamp?.toDateString()
+        }
+        else{
+            holder.bind(getItem(position))
         }
 
         holder.itemView.setOnClickListener {
-            itemClickFunction?.invoke()
+            itemClickFunction?.invoke(getItem(position))
         }
     }
 
@@ -96,9 +112,11 @@ class RecordingAdapter : ListAdapter<RecordingModel, RecordingAdapter.ViewHolder
         }
     }
 
-    fun setItemClickFunction(function: () -> Unit) {
+    fun setItemClickFunction(function: (recording:RecordingModel) -> Unit) {
         itemClickFunction = function
     }
+
+
 }
 
 object DiffCallback : DiffUtil.ItemCallback<RecordingModel>() {

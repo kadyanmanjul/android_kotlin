@@ -5,9 +5,13 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.media.ThumbnailUtils
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.Nullable
@@ -19,6 +23,7 @@ import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.copy
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
@@ -26,22 +31,20 @@ import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.ui.recording_gallery.RecordingModel
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
-import com.joshtalks.joshskills.voip.data.api.VoipNetwork
-import java.io.File
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.sql.Timestamp
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
+
 
 class ProcessCallRecordingService : Service() {
     private val fileQueue: BlockingQueue<InputFiles> = ArrayBlockingQueue(100)
@@ -183,6 +186,15 @@ class ProcessCallRecordingService : Service() {
                         extraData = requestEngage.outputFile?.absolutePath?: EMPTY
                     }
                     NotificationUtils(applicationContext).sendNotification(nc)
+                    val thumb: Bitmap? = inputFiles.outputFile?.absolutePath?.let {
+                        ThumbnailUtils.createVideoThumbnail(it,
+                            MediaStore.Images.Thumbnails.MINI_KIND)
+                    }
+                    PrefManager.saveRecordingModelToList(RecordingModel(
+                        duration = inputFiles.duration,
+                        videoUrl = inputFiles.outputFile?.absolutePath,
+                        timestamp = Timestamp(System.currentTimeMillis()),
+                        imgUrl = getImageUri(this@ProcessCallRecordingService,thumb).toString()))
                 } else {
                     handleRetry(inputFiles)
                 }
@@ -192,11 +204,18 @@ class ProcessCallRecordingService : Service() {
         }
     }
 
+    fun getImageUri(inContext: Context, inImage: Bitmap?): Uri? {
+        val bytes = ByteArrayOutputStream()
+        inImage?.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
+        return Uri.parse(path)
+    }
+
     private suspend fun handleRetry(pendingTaskModel: InputFiles) {}
 
     private suspend fun uploadOnS3Server(
         responseObj: AmazonPolicyResponse,
-        mediaPath: String
+        mediaPath: String,
     ): Int {
         return CoroutineScope(Dispatchers.IO).async {
             val parameters = emptyMap<String, RequestBody>().toMutableMap()
@@ -284,7 +303,7 @@ class ProcessCallRecordingService : Service() {
             agoraMentorId: String?,
             videoPath: String,
             audioPath: String,
-            recordDuration: Int
+            recordDuration: Int,
         ) {
             val intent = Intent(context, ProcessCallRecordingService::class.java)
             intent.action = START_VIDEO_AUDIO_PROCESSING
@@ -305,5 +324,5 @@ data class InputFiles(
     val audioPath: String?,
     var outputFile: File? = null,
     var serverUrl: String? = null,
-    var duration: Int? = null
+    var duration: Int? = null,
 )

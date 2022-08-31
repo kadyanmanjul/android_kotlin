@@ -11,6 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#F5F5F5"
         tools:context=".ui.recording_gallery.views.RecordingGalleryActivity">
 
         <include
@@ -30,7 +31,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
             app:layout_constraintVertical_bias="0.0"
-            app:spanCount="3" />
+            itemClickListener="@{vm.openRecordSharingActivity}"
+            app:spanCount="3"
+            tools:listitem="@layout/item_recording_gallery"
+            android:paddingBottom="@dimen/_50sdp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -6,10 +6,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.provider.Settings.Global.putString
 import android.util.Base64
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
@@ -20,6 +22,7 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
+import com.joshtalks.joshskills.ui.recording_gallery.RecordingModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import java.io.ByteArrayOutputStream
@@ -188,6 +191,8 @@ const val IS_FIRST_TIME_SPEAKING_SCREEN = "IS_FIRST_TIME_SPEAKING_SCREEN"
 const val IS_FIRST_TIME_CONVERSATION = "IS_FIRST_TIME_CONVERSATION"
 const val HAS_SEEN_WARNING_POPUP_FT = "HAS_SEEN_WARNING_POPUP_FT"
 const val IS_APP_RESTARTED = "IS_APP_RESTARTED"
+const val RECORDING_LIST = "RECORDING_ARRAYLIST"
+
 
 object PrefManager {
 
@@ -384,6 +389,26 @@ object PrefManager {
             put(P2P_CALL_COUNT, 0)
         else
             put(P2P_CALL_COUNT, callCount + 1)
+    }
+
+    fun saveRecordingModelToList(record:RecordingModel){
+        val arrayList = getRecordingList()
+        arrayList.add(record)
+        val gson = Gson()
+        val jsonString = gson.toJson(arrayList)
+        put(key = RECORDING_LIST, value = jsonString)
+    }
+
+    fun getRecordingList():ArrayList<RecordingModel>{
+        val gson = Gson()
+        val json: String = getStringValue(key = RECORDING_LIST, defaultValue = "") as String
+
+        val type = object : TypeToken<ArrayList<RecordingModel>>() {}.type
+
+        if(json == ""){
+            return ArrayList<RecordingModel>()
+        }
+        return gson.fromJson(json, type)
     }
 
     fun getClientToken(): String {

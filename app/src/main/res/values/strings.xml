@@ -1031,4 +1031,5 @@
     <string name="turn_on_speaker" translatable="false">Turn on speaker</string>
     <string name="important_info" translatable="false">जरुरी जानकारी</string>
     <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
+    <string name="recent_recordings">Recordings</string>
 </resources>
