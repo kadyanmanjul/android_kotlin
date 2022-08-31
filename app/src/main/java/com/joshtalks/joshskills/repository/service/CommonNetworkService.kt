@@ -4,26 +4,8 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
-import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.repository.server.BaseResponse
-import com.joshtalks.joshskills.repository.server.CertificateDetail
-import com.joshtalks.joshskills.repository.server.FAQ
-import com.joshtalks.joshskills.repository.server.FAQCategory
-import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
-import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
-import com.joshtalks.joshskills.repository.server.LeaderboardMentor
-import com.joshtalks.joshskills.repository.server.LeaderboardResponse
-import com.joshtalks.joshskills.repository.server.LeaderboardType
-import com.joshtalks.joshskills.repository.server.LinkAttribution
-import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
-import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
-import com.joshtalks.joshskills.repository.server.RestartCourseResponse
-import com.joshtalks.joshskills.repository.server.SuccessResponse
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
-import com.joshtalks.joshskills.repository.server.certification_exam.PostalDetails
-import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
+import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.certification_exam.*
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
@@ -44,7 +26,6 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
-import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.model.AvailableAmount
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListResponse
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletBalance
@@ -53,26 +34,11 @@ import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
-import com.joshtalks.joshskills.ui.userprofile.models.AwardHeader
-import com.joshtalks.joshskills.ui.userprofile.models.CourseHeader
-import com.joshtalks.joshskills.ui.userprofile.models.FppStatusInProfileResponse
-import com.joshtalks.joshskills.ui.userprofile.models.GroupsHeader
-import com.joshtalks.joshskills.ui.userprofile.models.PictureHeader
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
+import com.joshtalks.joshskills.ui.userprofile.models.*
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.PurchasePopUp
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -209,7 +175,7 @@ interface CommonNetworkService {
     suspend fun getCertificateUserDetails(): Response<CertificationUserDetail?>
 
     @GET("http://www.postalpincode.in/api/pincode/{pin}")
-    suspend fun getInfoFromPinCode(@Path("pin")pin:Int): PostalDetails
+    suspend fun getInfoFromPinCode(@Path("pin") pin: Int): PostalDetails
 
     @POST("$DIR/certificateexam/user_details")
     suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>?
@@ -404,13 +370,13 @@ interface CommonNetworkService {
     suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
 
     @GET("$DIR/micro_payment/get_experts/")
-    suspend fun getExpertList() :Response<ExpertListResponse>
+    suspend fun getExpertList(): Response<ExpertListResponse>
 
     @GET("$DIR/micro_payment/user_wallet/{pk}/")
-    suspend fun getWalletBalance(@Path("pk") mentorId: String) :Response<WalletBalance>
+    suspend fun getWalletBalance(@Path("pk") mentorId: String): Response<WalletBalance>
 
     @GET("$DIR/micro_payment/get_amount_list/")
-    suspend fun getAvailableAmounts() :Response<AvailableAmount>
+    suspend fun getAvailableAmounts(): Response<AvailableAmount>
 
     @GET("$DIR/micro_payment/check_wallet_balance/")
     suspend fun getCallNowStatus(@Query("expert_id") expertId: String): Response<WalletBalance>
@@ -419,8 +385,11 @@ interface CommonNetworkService {
     suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)
 
     @POST("$DIR/micro_payment/user_wallet/")
-    suspend fun deductAmountAfterCall(@Body params:Map<String,String>) : Response<WalletBalance>
+    suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
 
     @GET("$DIR/fpp/call_popup/")
-    suspend fun getPurchasePopUpResponse(@Query("duration") duration: String) :Response<PurchasePopUp>
+    suspend fun getPurchasePopUpResponse(
+        @Query("duration") duration: String,
+        @Query("remote_user_id") remoteUserId: String,
+    ): Response<PurchasePopUp>
 }
