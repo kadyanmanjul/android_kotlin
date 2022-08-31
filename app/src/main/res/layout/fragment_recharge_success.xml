@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_270sdp"
         android:layout_marginLeft="@dimen/_10sdp"
+        app:cardUseCompatPadding="true"
         android:layout_marginRight="@dimen/_10sdp"
         app:cardCornerRadius="@dimen/_8sdp">
 
@@ -51,11 +52,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_14sdp"
-                android:fontFamily="@font/open_sans"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
                 tools:text="@string/wallet_gift_description"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
                 android:textColor="@color/pure_black"
                 android:textSize="@dimen/_14ssp"
                 app:layout_constraintEnd_toEndOf="parent"
