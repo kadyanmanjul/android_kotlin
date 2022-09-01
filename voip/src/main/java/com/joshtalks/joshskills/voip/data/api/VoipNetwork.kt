@@ -103,8 +103,11 @@ object HeaderInterceptor : Interceptor {
                 .addHeader(KEY_APP_USER_AGENT, Utils.apiHeader?.userAgent ?: "")
                 .addHeader(KEY_APP_ACCEPT_LANGUAGE, Utils.apiHeader?.acceptLanguage ?: "")
             val response = chain.proceed(newRequest.build())
-            if(response.code == 403) {
+            if(response.code == 403 ) {
                 val newResponse = response.newBuilder().code(203).message(response.message)
+                newResponse.build()
+            }else if(response.code == 409 ){
+                val newResponse = response.newBuilder().code(209).message(response.message)
                 newResponse.build()
             } else
                 response
