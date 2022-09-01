@@ -6,14 +6,18 @@ import androidx.annotation.Keep
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
 
-open class BaseDialogFragment : DialogFragment() {
+open class BaseDialogFragment(private val isBackGroundTransparent: Boolean = false) : DialogFragment() {
 
     @Keep
     public class BaseDialogFragment(){}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.dialog_theme)
+        if (isBackGroundTransparent){
+            setStyle(STYLE_NORMAL, R.style.dialog_transparent_theme)
+        } else {
+            setStyle(STYLE_NORMAL, R.style.dialog_theme)
+        }
     }
 
     override fun onStart() {

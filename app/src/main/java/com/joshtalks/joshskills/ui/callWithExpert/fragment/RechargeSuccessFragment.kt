@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 
-class RechargeSuccessFragment : BaseDialogFragment() {
+class RechargeSuccessFragment : BaseDialogFragment(isBackGroundTransparent = true) {
 
     private var amount: Int = 0
     private var isGifted: Boolean = false

@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentMan
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.ExpertListViewModel
 
-class CallContinueDialog : BaseDialogFragment() {
+class CallContinueDialog : BaseDialogFragment(true) {
 
     private val callWithExpertViewModel by lazy {
         ViewModelProvider(requireActivity())[CallWithExpertViewModel::class.java]

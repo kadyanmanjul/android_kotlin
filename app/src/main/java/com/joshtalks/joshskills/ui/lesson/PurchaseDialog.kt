@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import java.util.*
 
-class PurchaseDialog: BaseDialogFragment()  {
+class PurchaseDialog: BaseDialogFragment(true)  {
 
     private lateinit var binding: PurchaseCourseDialogBinding
     val POP_TEXT = "POP_TEXT"
