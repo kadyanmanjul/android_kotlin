@@ -402,7 +402,8 @@ class JoinedState(val context: CallContext) : VoipState {
                         }
                         REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT ,
                                 Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT,
-                                Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST -> {
+                                Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST , Event.STOP_GAME_RECORDING, Event.START_GAME_RECORDING
+                        -> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
                             CallAnalytics.addAnalytics(

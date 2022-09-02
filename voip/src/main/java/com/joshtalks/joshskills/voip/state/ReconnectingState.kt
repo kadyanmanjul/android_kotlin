@@ -334,7 +334,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             context.updateUIState(uiState = uiState)
                             context.sendEventToUI(event)
                         }
-                        START_RECORDING, STOP_RECORDING, CALL_RECORDING_ACCEPT, CALL_RECORDING_REJECT, CANCEL_RECORDING_REQUEST -> {
+                        START_RECORDING, STOP_RECORDING, CALL_RECORDING_ACCEPT, CALL_RECORDING_REJECT, CANCEL_RECORDING_REQUEST-> {
                             showToast("Can't process call recording request right now")
                         }
 

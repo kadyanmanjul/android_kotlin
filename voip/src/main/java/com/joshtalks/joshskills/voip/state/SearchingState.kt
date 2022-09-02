@@ -253,7 +253,7 @@ class SearchingState(val context: CallContext) : VoipState {
                         TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE,
                         REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT,
                         Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT,
-                        Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST,START_GAME,END_GAME,NEXT_WORD_RECEIVED,NEXT_WORD_REQUEST  -> {
+                        Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST,START_GAME,END_GAME,NEXT_WORD_RECEIVED,NEXT_WORD_REQUEST,STOP_GAME_RECORDING,START_GAME_RECORDING  -> {
 
                             val msg =
                                 "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
