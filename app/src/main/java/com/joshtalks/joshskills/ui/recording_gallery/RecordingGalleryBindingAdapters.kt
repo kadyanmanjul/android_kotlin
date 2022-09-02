@@ -1,12 +1,77 @@
 package com.joshtalks.joshskills.ui.recording_gallery
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.text.format.DateUtils
+import android.util.Log
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.ui.recording_gallery.adapters.RecordingAdapter
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
+
+
+@BindingAdapter(value = ["shareVideoToSocial"], requireAll = false)
+fun AppCompatTextView.shareVideoToSocial(recording: RecordingModel?) {
+
+    this.setOnClickListener {
+        Log.d("naman", "shareVideoToSocial: ${this.text}")
+
+        try {
+            when (this.text) {
+                "WhatsApp" -> {
+                    val uri = recording?.videoUrl?.toUri()
+                    Log.d("naman", "shareVideoToSocial: $uri")
+                    val videoShare = Intent(Intent.ACTION_SEND)
+                    videoShare.type = "*/*"
+                    videoShare.setPackage("com.whatsapp")
+                    videoShare.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    videoShare.putExtra(Intent.EXTRA_STREAM, uri)
+                    context.startActivity(videoShare)
+                }
+                "Instagram" -> {
+                    val uri = recording?.videoUrl?.toUri()
+                    val videoShare = Intent(Intent.ACTION_SEND)
+                    videoShare.type = "*/*"
+                    videoShare.setPackage("com.instagram.android")
+                    videoShare.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    videoShare.putExtra(Intent.EXTRA_STREAM, uri)
+                    context.startActivity(videoShare)
+                }
+                "Facebook" -> {
+                    val uri = recording?.videoUrl?.toUri()
+                    val videoShare = Intent(Intent.ACTION_SEND)
+                    videoShare.type = "*/*"
+                    videoShare.setPackage("com.facebook.katana")
+                    videoShare.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    videoShare.putExtra(Intent.EXTRA_STREAM, uri)
+                    context.startActivity(videoShare)
+                }
+                else -> {
+                    val uri = recording?.videoUrl?.toUri()
+                    val videoShare = Intent(Intent.ACTION_SEND)
+                    videoShare.type = "*/*"
+                    videoShare.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    videoShare.putExtra(Intent.EXTRA_STREAM, uri)
+                    context.startActivity(videoShare)
+                }
+
+            }
+        }catch(e:ActivityNotFoundException){
+            val uri = recording?.videoUrl?.toUri()
+            val videoShare = Intent(Intent.ACTION_SEND)
+            videoShare.type = "*/*"
+            videoShare.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            videoShare.putExtra(Intent.EXTRA_STREAM, uri)
+            context.startActivity(videoShare)
+        }
+
+    }
+
+}
+
 
 @BindingAdapter(value = ["inflateRecyclerView", "itemClickListener"], requireAll = false)
 fun RecyclerView.inflateRecyclerView(recordingList: ArrayList<RecordingModel>?, function: ((recording:RecordingModel) -> Unit)?) {
