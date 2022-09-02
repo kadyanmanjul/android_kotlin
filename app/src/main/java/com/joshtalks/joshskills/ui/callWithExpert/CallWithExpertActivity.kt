@@ -47,7 +47,6 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
         initToolbar()
         attachObservers()
         attachNavigationChangedListener()
-        RechargeSuccessFragment.open(supportFragmentManager, 50, true)
     }
 
     private fun attachObservers() {
