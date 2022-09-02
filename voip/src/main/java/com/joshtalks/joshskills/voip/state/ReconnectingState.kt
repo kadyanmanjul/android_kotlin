@@ -313,7 +313,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $RECONNECTED")
                         }
-                        START_RECORDING, STOP_RECORDING, CALL_RECORDING_ACCEPT, CALL_RECORDING_REJECT, CANCEL_RECORDING_REQUEST -> {
+                        START_RECORDING, STOP_RECORDING, CALL_RECORDING_ACCEPT, CALL_RECORDING_REJECT, CANCEL_RECORDING_REQUEST,STOP_GAME_RECORDING,START_GAME_RECORDING -> {
                             showToast("Can't process call recording request right now")
                         }
 
