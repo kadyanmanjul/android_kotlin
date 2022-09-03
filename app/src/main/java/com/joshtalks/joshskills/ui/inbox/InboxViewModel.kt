@@ -272,8 +272,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     fun checkForPendingPayments() {
         viewModelScope.launch(Dispatchers.IO) {
-            val lastPaymentEntry = appDatabase.paymentDao().getLastPaymentEntry()
-            if (lastPaymentEntry!=null && lastPaymentEntry.isdeleted.not()) {
+            try {
+                val lastPaymentEntry = appDatabase.paymentDao().getLastPaymentEntry()
+                if (lastPaymentEntry!=null && lastPaymentEntry.isdeleted.not()) {
                     if (lastPaymentEntry.isSync && (lastPaymentEntry.status == PaymentStatus.SUCCESS || lastPaymentEntry.status == PaymentStatus.FAILED)) {
                         when (lastPaymentEntry.status) {
                             PaymentStatus.SUCCESS -> {
@@ -305,8 +306,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
                         if (res.isSuccessful && res.body() != null) {
                             if (res.body()!!.payment == null){
-                               /* appDatabase.paymentDao()
-                                    .deletePaymentEntry(it.razorpayOrderId)*/
+                                /* appDatabase.paymentDao()
+                                     .deletePaymentEntry(it.razorpayOrderId)*/
                             } else {
                                 appDatabase.paymentDao()
                                     .updatePaymentStatus(lastPaymentEntry.razorpayOrderId, res.body()!!.payment!!)
@@ -315,6 +316,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                     }
+                }
+            }catch (ex:Exception){
+
             }
         }
     }
