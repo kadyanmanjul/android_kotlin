@@ -25,22 +25,13 @@ object MarketingAnalytics {
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.LOGIN)
             } else {
                 val params = Bundle().apply {
-                    putString(
-                        AppEventsConstants.EVENT_PARAM_REGISTRATION_METHOD,
-                        registrationMethod.type
-                    )
-                    putString(
-                        AppEventsConstants.EVENT_PARAM_SUCCESS,
-                        AppEventsConstants.EVENT_PARAM_VALUE_YES
-                    )
                     putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-                    putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
                 }
                 AppObjectController.facebookEventLogger.logEvent(
                     AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION,
                     params
                 )
-                AppAnalytics.create(AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION).addDeviceId().push()
+                AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP,params)
                 BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION).addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION)
             }
@@ -61,7 +52,7 @@ object MarketingAnalytics {
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
 
-            AppAnalytics.create(BRANCH_STANDARD_EVENT.VIEW_ITEM.name).addDeviceId().push()
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM,params)
         }
     }
 
@@ -110,6 +101,8 @@ object MarketingAnalytics {
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .addContentItems(buo)
                 .logEvent(context)
+
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_PAYMENT_INFO,params)
         }
     }
 
@@ -127,7 +120,7 @@ object MarketingAnalytics {
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
 
-            AppAnalytics.create(AppEventsConstants.EVENT_NAME_CONTACT).addDeviceId().push()
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE,params)
         }
     }
 
@@ -147,11 +140,7 @@ object MarketingAnalytics {
             .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             .logEvent(context)
 
-        // Firebase Events
-        AppAnalytics.create(AppEventsConstants.EVENT_NAME_SCHEDULE)
-            .addBasicParam()
-            .addUserDetails()
-            .push()
+        AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN,params)
     }
 
     fun coursePurchased(
@@ -181,23 +170,7 @@ object MarketingAnalytics {
         bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
         bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
         AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
-
-        // Facebook Event
-        if (logFacebook) {
-            AppEventsLogger.activateApp(context)
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logPurchase(
-                amount,
-                Currency.getInstance(CurrencyType.INR.name),
-                params
-            )
-        }
-
-        // Firebase Events
-        AppAnalytics.create(BRANCH_STANDARD_EVENT.PURCHASE.name)
-            .addBasicParam()
-            .addUserDetails()
-            .push()
+        AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_PURCHASED,params)
     }
 
     fun logAchievementLevelEvent(achievementLevel: Int) {
@@ -215,11 +188,7 @@ object MarketingAnalytics {
                 .addCustomDataProperty("level", achievementLevel.toString())
                 .logEvent(context)
 
-            AppAnalytics.create(BRANCH_STANDARD_EVENT.ACHIEVE_LEVEL.name)
-                .addBasicParam()
-                .addUserDetails()
-                .addParam("achieve_level", achievementLevel)
-                .push()
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.UNLOCK_ACHIEVEMENT,params)
         }
     }
 
@@ -243,34 +212,28 @@ object MarketingAnalytics {
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
 
-            AppAnalytics.create(AnalyticsEvent.LESSON_COMPLETED.name)
-                .addBasicParam()
-                .addUserDetails()
-                .addParam("lesson_number", lessonNumber)
-                .addDeviceId()
-                .push()
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_COMPLETE,params)
         }
     }
 
     fun callInitiated() {
         JoshSkillExecutors.BOUNDED.submit {
+            //Facebook event
             val context = AppObjectController.joshApplication
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
             val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_PARAM_SEARCH_STRING,params)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_SEARCHED,params)
 
-            BranchEvent(AppEventsConstants.EVENT_PARAM_SEARCH_STRING)
-                .setDescription(BranchEventName.CALL_INITIATED.name)
+            //Branch event
+            BranchEvent(BRANCH_STANDARD_EVENT.SEARCH)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
 
-            AppAnalytics.create(AppEventsConstants.EVENT_PARAM_SEARCH_STRING)
-                .addBasicParam()
-                .addUserDetails()
-                .addDeviceId()
-                .push()
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Event.SEARCH, Utils.getDeviceId())
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
         }
     }
 
@@ -283,16 +246,12 @@ object MarketingAnalytics {
             val facebookEventLogger = AppEventsLogger.newLogger(context)
             facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP,params)
 
-            BranchEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
+            BranchEvent(BRANCH_STANDARD_EVENT.VIEW_CART)
                 .setDescription(BranchEventName.APP_OPENED_FIRST_TIME.name)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(AppObjectController.joshApplication)
 
-            AppAnalytics.create(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
-                .addBasicParam()
-                .addUserDetails()
-                .addDeviceId()
-                .push()
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, params)
         }
     }
 
@@ -305,18 +264,12 @@ object MarketingAnalytics {
             val facebookEventLogger = AppEventsLogger.newLogger(context)
             facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT,params)
 
-            BranchEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
+            BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_STREAM)
                 .setDescription(BranchEventName.SPEAKING_COMPLETED.name)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
 
-            AppAnalytics.create(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
-                .addBasicParam()
-                .addUserDetails()
-                .addDeviceId()
-                .push()
-
-            AppAnalytics.create(BranchEventName.SPEAKING_COMPLETED.name).addDeviceId().push()
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LEVEL_UP,params)
         }
     }
 
@@ -334,62 +287,58 @@ object MarketingAnalytics {
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
 
-            AppAnalytics.create(AppEventsConstants.EVENT_NAME_DONATE)
-                .addBasicParam()
-                .addUserDetails()
-                .addDeviceId()
-                .push()
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.BEGIN_CHECKOUT,params)
+
         }
     }
 
+//    fun viewContentEvent(context: Context, courseExploreModel: CourseExploreModel) {
+////        JoshSkillExecutors.BOUNDED.submit {
+////            //Fb view event
+////                val params = Bundle()
+////                params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, "E-learning")
+////                params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, courseExploreModel.toString())
+////                params.putString(
+////                    AppEventsConstants.EVENT_PARAM_CONTENT_ID,
+////                    courseExploreModel.id?.toString()
+////                )
+////                params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
+////                params.putString(
+////                    ParamKeys.DEVICE_ID.name,
+////                    Utils.getDeviceId()
+////                )
+////                val facebookEventLogger = AppEventsLogger.newLogger(context)
+////                facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACHIEVED_LEVEL, params)
+////
+////                AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.UNLOCK_ACHIEVEMENT,params)
+////
+////            //Branch view event
+////            val buo = BranchUniversalObject()
+////                .setCanonicalIdentifier(courseExploreModel.id?.toString() ?: "")
+////                .setTitle(courseExploreModel.courseName)
+////                .setContentDescription(courseExploreModel.testName)
+////                .setContentImageUrl(courseExploreModel.imageUrl)
+////                .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+////                .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+////            BranchEvent(BRANCH_STANDARD_EVENT.ACHIEVE_LEVEL).addContentItems(buo).logEvent(context)
+////        }
+//    }
 
-    fun paymentFail(razorpayOrderId: String, testId: String) {
+    fun freeTrialEndEvent(){
         JoshSkillExecutors.BOUNDED.submit {
             val context = AppObjectController.joshApplication
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
             val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(BRANCH_STANDARD_EVENT.SEARCH.name,params)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_START_TRIAL,params)
 
-            BranchEvent(BRANCH_STANDARD_EVENT.SEARCH)
-                .setDescription(BranchEventName.PAYMENT_FAILED.name)
+            BranchEvent(BRANCH_STANDARD_EVENT.START_TRIAL)
+                .setDescription(BranchEventName.START_TRIAL.name)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-                .addCustomDataProperty(ParamKeys.TEST_ID.name,testId)
-                .addCustomDataProperty("RAZORPAY_ORDER_ID",razorpayOrderId)
                 .logEvent(context)
 
-            AppAnalytics.create(BRANCH_STANDARD_EVENT.SEARCH.name).addDeviceId().push()
-        }
-    }
-
-    fun viewContentEvent(context: Context, courseExploreModel: CourseExploreModel) {
-        JoshSkillExecutors.BOUNDED.submit {
-            //Fb view event
-                val params = Bundle()
-                params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, "E-learning")
-                params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, courseExploreModel.toString())
-                params.putString(
-                    AppEventsConstants.EVENT_PARAM_CONTENT_ID,
-                    courseExploreModel.id?.toString()
-                )
-                params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
-                params.putString(
-                    ParamKeys.DEVICE_ID.name,
-                    Utils.getDeviceId()
-                )
-                val facebookEventLogger = AppEventsLogger.newLogger(context)
-                facebookEventLogger.logEvent(BRANCH_STANDARD_EVENT.VIEW_CART.name, params)
-
-            //Branch view event
-            val buo = BranchUniversalObject()
-                .setCanonicalIdentifier(courseExploreModel.id?.toString() ?: "")
-                .setTitle(courseExploreModel.courseName)
-                .setContentDescription(courseExploreModel.testName)
-                .setContentImageUrl(courseExploreModel.imageUrl)
-                .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-                .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            BranchEvent(BRANCH_STANDARD_EVENT.VIEW_CART).addContentItems(buo).logEvent(context)
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LEVEL_START,params)
         }
     }
 }

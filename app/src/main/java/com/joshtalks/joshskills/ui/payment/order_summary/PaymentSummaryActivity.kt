@@ -42,29 +42,10 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_PAYMENT_BTN_TXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
-import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER_STARTED
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL_ENDED
-import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
-import com.joshtalks.joshskills.core.POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.RC_HINT
-import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
-import com.joshtalks.joshskills.core.SINGLE_SPACE
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -77,10 +58,6 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.getDefaultCountryIso
-import com.joshtalks.joshskills.core.getPhoneNumber
-import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
@@ -938,7 +915,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
                 .push()
 
-            MarketingAnalytics.paymentFail(razorpayOrderId,testId)
+           // MarketingAnalytics.paymentFail(razorpayOrderId,testId)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1025,6 +1002,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     private fun addECommerceEvent(razorpayPaymentId: String) {
         JoshSkillExecutors.BOUNDED.submit {
+            var guestMentorId = EMPTY
             if (viewModel.getCourseDiscountedAmount() <= 0) {
                 return@submit
             }
@@ -1037,12 +1015,18 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
             AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                guestMentorId = Mentor.getInstance().getId()
+            }
+
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = viewModel.getPaymentTestId()
             extras["payment_id"] = razorpayPaymentId
             extras["currency"] = CurrencyType.INR.name
             extras["amount"] = viewModel.getCourseDiscountedAmount().toString()
             extras["course_name"] = viewModel.getCourseName()
+            extras["device_id"] = Utils.getDeviceId()
+            extras["guest_mentor_id"] = guestMentorId
             BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
         }
     }

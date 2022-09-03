@@ -297,10 +297,10 @@ class CourseExploreActivity : CoreJoshActivity() {
                     .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseExploreModel.courseName)
                     .addParam(AnalyticsEvent.COURSE_PRICE.NAME, courseExploreModel.amount)
                     .push()
-                MarketingAnalytics.viewContentEvent(
-                    applicationContext,
-                    courseExploreModel
-                )
+//                MarketingAnalytics.viewContentEvent(
+//                    applicationContext,
+//                    courseExploreModel
+//                )
                 if (isClickable) {
                     when (courseExploreModel.cardType) {
 

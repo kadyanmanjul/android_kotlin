@@ -23,31 +23,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.D2P_COURSE_SYLLABUS_OPENED
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.ENG_GOVT_EXAM_COURSE_ID
-import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
-import com.joshtalks.joshskills.core.IMPRESSION_APPLY_COUPON_SUCCESS
-import com.joshtalks.joshskills.core.IMPRESSION_CLICKED_APPLY_COUPON
-import com.joshtalks.joshskills.core.IMPRESSION_PAY_DISCOUNT
-import com.joshtalks.joshskills.core.IMPRESSION_PAY_FULL_FEES
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.IS_ENGLISH_SYLLABUS_PDF_OPENED
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL_ENDED
-import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
-import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
-import com.joshtalks.joshskills.core.POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SEE_COURSE_LIST_BUTTON_CLICKED
-import com.joshtalks.joshskills.core.SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -57,11 +34,10 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
-import com.joshtalks.joshskills.core.getPhoneNumber
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -80,6 +56,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import com.skydoves.balloon.textForm
 import com.tonyodev.fetch2core.isNetworkAvailable
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
@@ -975,17 +952,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     }
                     // isBackPressDisabled = true
                     razorpayOrderId.verifyPayment()
-                    try {
-                        MarketingAnalytics.coursePurchased(
-                            BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0),
-                            true,
-                            testId = freeTrialTestId,
-                            courseName = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName ?: EMPTY,
-                            razorpayPaymentId = razorpayOrderId
-                        )
-                    }catch (ex:Exception){
-
-                    }
                     //viewModel.updateSubscriptionStatus()
 
                     uiHandler.post {
@@ -1022,7 +988,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                 .push()
 
-            MarketingAnalytics.paymentFail(razorpayOrderId, testId)
+            //MarketingAnalytics.paymentFail(razorpayOrderId, testId)
             viewModel.removeEntryFromPaymentTable(razorpayOrderId)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -1105,11 +1071,17 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 .push()
 
             val extras: HashMap<String, String> = HashMap()
+            var guestMentorId = EMPTY
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                guestMentorId = Mentor.getInstance().getId()
+            }
             extras["test_id"] = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId.toString()
             extras["payment_id"] = razorpayPaymentId
             extras["currency"] = CurrencyType.INR.name
             extras["amount"] = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount?.replace("₹", "").toString()
             extras["course_name"] = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName.toString()
+            extras["device_id"] = Utils.getDeviceId()
+            extras["guest_mentor_id"] = guestMentorId
             BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
 
         } catch (e: Exception) {
