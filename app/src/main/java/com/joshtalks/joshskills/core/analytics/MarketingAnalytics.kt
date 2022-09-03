@@ -28,12 +28,12 @@ object MarketingAnalytics {
                     putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 }
                 AppObjectController.facebookEventLogger.logEvent(
-                    AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION,
+                    AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT,
                     params
                 )
                 AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP,params)
-                BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION).addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-                BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION)
+                BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_STREAM).addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+                BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_STREAM)
             }
         }
     }
@@ -113,9 +113,9 @@ object MarketingAnalytics {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
             val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CONTACT,params)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACHIEVED_LEVEL,params)
 
-            BranchEvent(AppEventsConstants.EVENT_NAME_CONTACT)
+            BranchEvent(AppEventsConstants.EVENT_NAME_ACHIEVED_LEVEL)
                 .setDescription(BranchEventName.CALL_COMPLETED_5MIN.name)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
@@ -181,9 +181,9 @@ object MarketingAnalytics {
             params.putString(AppEventsConstants.EVENT_PARAM_LEVEL, achievementLevel.toString())
             params.putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACHIEVED_LEVEL, params)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CONTACT, params)
 
-            BranchEvent(BRANCH_STANDARD_EVENT.ACHIEVE_LEVEL)
+            BranchEvent(AppEventsConstants.EVENT_NAME_CONTACT)
                 .setCustomerEventAlias("achieve_level")
                 .addCustomDataProperty("level", achievementLevel.toString())
                 .logEvent(context)
@@ -262,9 +262,9 @@ object MarketingAnalytics {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
             val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT,params)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION,params)
 
-            BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_STREAM)
+            BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION)
                 .setDescription(BranchEventName.SPEAKING_COMPLETED.name)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
