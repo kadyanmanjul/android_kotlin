@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.voip.state
 
 import android.os.SystemClock
 import android.util.Log
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_EXPERT_PRICE_PER_MIN
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOTAL_AMOUNT
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.IncomingGameNextWord
@@ -18,13 +20,7 @@ import com.joshtalks.joshskills.voip.mediator.ActionDirection
 import com.joshtalks.joshskills.voip.updateLastCallDetails
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 // Remote User Joined the Channel and can talk
 class ConnectedState(val context: CallContext) : VoipState {
@@ -32,17 +28,39 @@ class ConnectedState(val context: CallContext) : VoipState {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var listenerJob: Job? = null
     private var audioListenerJob: Job? = null
+    private var paymentJob: Job? = null
 
     init {
         Log.d("Call State", TAG)
         observe()
         observeSpeakerVolumes()
+        //startPaymentTimer(context.request[INTENT_DATA_TOTAL_AMOUNT] as Int, context.request[INTENT_DATA_EXPERT_PRICE_PER_MIN] as Int)
     }
 
     // Red Button Pressed
     override fun disconnect() {
         Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
         moveToLeavingState()
+    }
+
+    fun startPaymentTimer(coin : Int, rate : Int) {
+        paymentJob = scope.launch {
+            // TODO: Coin Logic
+            var secondsLeft :Long= (((coin / rate) * 60) * 1000).toLong()
+            //var secondsLeft = coin * rate
+            while (true) {
+                delay(secondsLeft)
+                secondsLeft--
+
+                // TODO: Save to Local (Reverse operation of line 121)
+                if(secondsLeft <= 0)
+                    break
+            }
+        }
+    }
+
+    fun stopPaymentTimer() {
+        paymentJob?.cancel()
     }
 
 
@@ -535,6 +553,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                 audioListenerJob?.cancel()
                 context.closeCallScreen()
                 context.stopRecording()
+               // stopPaymentTimer()
                 Log.d(TAG, "moveToLeavingState: after close screen")
                 val networkAction = NetworkAction(
                     channelName = context.channelData.getChannel(),

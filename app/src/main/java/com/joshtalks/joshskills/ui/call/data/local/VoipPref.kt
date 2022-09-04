@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_RATING
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PURCHASE_POPUP
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
@@ -81,12 +82,58 @@ object VoipPref {
 
             // TODO: These logic shouldn't be here
 
-            if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not()))
+            if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
+                Log.d("sagar", "SAGAR => updateLastCallDetails:86 ")
                 showDialogBox(duration, CALL_RATING)
+            }
             else if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                 showDialogBox(duration, PURCHASE_POPUP)
             }
+
+            deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId)
         }
+
+    private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String) {
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            try {
+                delay(500)
+                val currentActivity = ActivityLifecycleCallback.currentActivity
+                if (currentActivity.isDestroyed || currentActivity.isFinishing) {
+                    delay(500)
+                    val newCurrentActivity = ActivityLifecycleCallback.currentActivity
+                    val newFragmentActivity = newCurrentActivity as? FragmentActivity
+                    val map = HashMap<String, String>()
+                    map["time_spoken_in_seconds"] = duration
+                    map["connected_user_id"] = remoteUserMentorId
+                   val response =  AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                    when(response.code()){
+                        200->{
+                            SkillsDatastore.updateWalletCredits(response.body()?.amount?:0)
+                        }
+                        406->{
+
+                        }
+                    }
+                } else if (currentActivity != null) {
+                    val newFragmentActivity = currentActivity as? FragmentActivity
+                    val map = HashMap<String, String>()
+                    map["time_spoken_in_seconds"] = duration
+                    map["connected_user_id"] = remoteUserMentorId
+                    val response = AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                    when (response.code()) {
+                        200 -> {
+                            SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
+                        }
+                        406 -> {
+
+                        }
+                    }
+                }
+            }catch (ex:Exception){
+                showToast("Something went wrong")
+            }
+        }
+    }
 
     // TODO: These function shouldn't be here
     private fun showDialogBox(totalSecond: Long, type: String) {
@@ -98,8 +145,10 @@ object VoipPref {
                 val newCurrentActivity = ActivityLifecycleCallback.currentActivity
                 val newFragmentActivity = newCurrentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
-                    if (type == CALL_RATING)
+                    if (type == CALL_RATING) {
+                        Log.d("sagar", "SAGAR => showDialogBox:147 ")
                         newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                    }
                     else {
                         newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
@@ -107,8 +156,10 @@ object VoipPref {
             } else if (currentActivity != null) {
                 val newFragmentActivity = currentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
-                    if (type == CALL_RATING)
+                    if (type == CALL_RATING) {
+                        Log.d("sagar", "SAGAR => showDialogBox:156 ")
                         newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                    }
                     else {
                         newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
@@ -119,14 +170,17 @@ object VoipPref {
 
         // TODO: These function shouldn't be here
         private fun FragmentActivity.showVoipDialog(totalSecond: Long,type: String) {
-            if(type == CALL_RATING)
+            if(type == CALL_RATING) {
+                Log.d("sagar", "SAGAR => showVoipDialog:168 ")
                 showCallRatingDialog(this)
+            }
             else{
                 showPurchaseDialog(this)
             }
         }
 
     private fun showCallRatingDialog(fragmentActivity: FragmentActivity) {
+        Log.d("sagar", "SAGAR => showCallRatingDialog:175 ")
         CallRatingsFragment.newInstance(
             getLastRemoteUserName(),
             getLastCallDurationInSec().toInt(),
@@ -142,7 +196,7 @@ object VoipPref {
     private fun showPurchaseDialog(fragmentActivity: FragmentActivity) {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             try {
-                val resp =  AppObjectController.commonNetworkService.getPurchasePopUpResponse(getLastCallDurationInSec().toString())
+                val resp =  AppObjectController.commonNetworkService.getPurchasePopUpResponse(getLastCallDurationInSec().toString(), getLastRemoteUserMentorId())
                 if (resp.body()?.popUpBody?: EMPTY != EMPTY) {
                     PurchaseDialog.newInstance(
                         timerPopText = resp.body()?.popUpBody ?: EMPTY,

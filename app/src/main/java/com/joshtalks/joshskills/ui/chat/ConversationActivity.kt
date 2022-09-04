@@ -27,6 +27,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -118,6 +119,9 @@ import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -335,8 +339,13 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
+        if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED) && PrefManager.getStringValue(
+                CURRENT_COURSE_ID
+            ) == DEFAULT_COURSE_ID
+        ) {
+            conversationBinding.btnOpenExpertList.isVisible = true
+        }
         //addIssuesToSharedPref()
-
     }
 
     private fun initSharedPreferences() {
@@ -565,6 +574,32 @@ class ConversationActivity :
         // finish()
     }
 
+    fun openExpertList() {
+        conversationViewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = FT_EXPIRED_PAGE)
+        if (User.getInstance().isVerified) {
+            Intent(this, CallWithExpertActivity::class.java).also {
+                startActivity(it)
+            }
+        } else {
+            navigateToLoginActivity()
+        }
+
+    }
+
+    private fun navigateToLoginActivity() {
+        val intent = Intent(this, SignUpActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(FLOW_FROM, "payment journey")
+        }
+        startActivity(intent)
+        val broadcastIntent=Intent().apply {
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent)
+    }
+
     private fun initToolbar() {
         MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
@@ -580,14 +615,12 @@ class ConversationActivity :
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE
-            if (inboxEntity.isCapsuleCourse) {
-                conversationBinding.imageViewLogo.setOnClickListener {
-                    openCourseProgressListingScreen()
-                }
-                conversationBinding.textMessageTitle.setOnClickListener {
-                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
-                    openCourseProgressListingScreen()
-                }
+            conversationBinding.imageViewLogo.setOnClickListener {
+                openCourseProgressListingScreen()
+            }
+            conversationBinding.textMessageTitle.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
+                openCourseProgressListingScreen()
             }
 
             conversationBinding.ivBack.setOnClickListener {

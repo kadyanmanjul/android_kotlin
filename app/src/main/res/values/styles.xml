@@ -663,6 +663,13 @@
         <item name="android:colorBackground">@color/report_black</item>
     </style>
 
+    <style name="dialog_transparent_theme" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:colorBackground">@color/transparent</item>
+    </style>
+
     <style name="Widget.ProgressBar">
         <item name="android:indeterminateOnly">true</item>
         <item name="android:indeterminateBehavior">repeat</item>
@@ -693,5 +700,9 @@
         <item name="android:height">20dp</item>
     </style>
 
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/dark_grey</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
 
 </resources>

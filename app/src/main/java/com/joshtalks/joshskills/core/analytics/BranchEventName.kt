@@ -15,7 +15,8 @@ enum class BranchEventName(override val value: String) : Event {
     APP_OPENED_FIRST_TIME("APP_OPENED_FIRST_TIME"), // App opened //AppEventsConstants.EVENT_NAME_ACTIVATED_APP
     SPEAKING_COMPLETED("SPEAKING_COMPLETED"), // Speaking completed //EVENT_NAME_CUSTOMIZE_PRODUCT
     OPENED_PRE_CHECKOUT_PAGE("OPENED_PRE_CHECKOUT_PAGE"), // Opened pre-checkout page means when user go by course explore //EVENT_NAME_DONATE
-    VIEW_CART("VIEW_CART") //OPEN COURSE EXPLOER
+    VIEW_CART("VIEW_CART"), //OPEN COURSE EXPLOER
+    START_TRIAL("START_TRIAL") //FREE TRIAL EXPIRED
 }
 
 // EVENT_NAME_ACHIEVED_LEVEL = > Viewed course

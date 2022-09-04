@@ -526,4 +526,18 @@ class ConversationViewModel(
             getTopicFromDB(topicId)
         }
     }
+    fun saveMicroPaymentImpression(eventName: String, eventId:String = EMPTY, previousPage:String = EMPTY) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("event_name",eventName),
+                    Pair("expert_id", eventId),
+                    Pair("previous_page",previousPage)
+                )
+                AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
 }

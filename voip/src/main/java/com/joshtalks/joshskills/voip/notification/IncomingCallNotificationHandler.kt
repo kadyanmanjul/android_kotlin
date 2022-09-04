@@ -43,6 +43,10 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
                 callCategory = Category.GROUP
                 calling = GroupCall()
             }
+            Category.EXPERT.category -> {
+                callCategory = Category.EXPERT
+                calling = ExpertCall()
+            }
         }
         if(!isShowingIncomingCall && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState() == PSTN_STATE_IDLE) {
             val remoteView = calling.notificationLayout(map) ?: return

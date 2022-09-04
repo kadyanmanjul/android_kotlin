@@ -197,11 +197,6 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         RxBus2.publish(LoginViaEventBus(LoginViaStatus.GMAIL))
     }
 
-    fun loginViaFacebook() {
-        viewModel.loginAnalyticsEvent(LoginViaStatus.FACEBOOK.name)
-        RxBus2.publish(LoginViaEventBus(LoginViaStatus.FACEBOOK))
-    }
-
     fun loginViaPhoneNumber() {
         if (binding.mobileEt.text.isNullOrEmpty() || isValidFullNumber(
                 prefix,

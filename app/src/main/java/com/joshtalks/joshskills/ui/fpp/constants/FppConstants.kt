@@ -39,6 +39,8 @@ const val FPP_SEE_ALL_BACK_PRESSED = 18
 const val FPP_OPEN_USER_PROFILE = 19
 const val FPP_RECENT_CALL_ON_BACK_PRESS = 20
 const val START_FPP_CALL = 21
+const val START_FPP_CALL_FROM_WALLET = 21
+const val CAN_BE_CALL = 222
 
 
 

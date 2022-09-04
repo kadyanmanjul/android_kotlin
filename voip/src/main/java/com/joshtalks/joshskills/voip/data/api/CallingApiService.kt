@@ -27,6 +27,9 @@ interface CallingApiService {
     @POST("${BuildConfig.MS_BASE_URL}/$DIR_FPP_GROUP/fpp/call")
     suspend fun startFavouriteCall(@Body request : FavoriteConnectionRequest) : HashMap<String, Any?>
 
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR_FPP_GROUP/expert/call")
+    suspend fun startExpertCall(@Body request: ExpertConnectionRequest) : HashMap<String,Any?>
+
     @POST("${BuildConfig.MS_BASE_URL}/$DIR_FPP_GROUP/call_response")
     suspend fun favouriteCallAccept(@Body request : FavoriteCallActionRequest) : Response<Unit>
 

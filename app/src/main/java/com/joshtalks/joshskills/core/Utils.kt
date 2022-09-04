@@ -189,6 +189,14 @@ const val REASON_SCREEN_OPENED = "REASON_SCREEN_OPENED"
 const val REASON_GOVT_EXAM_CLICKED = "REASON_GOVT_EXAM_CLICKED"
 const val REASON_OTHERS_CLICKED = "REASON_OTHERS_CLICKED"
 
+const val OPEN_EXPERT = "OPEN_EXPERT"
+const val SPEAKING_PAGE = "SPEAKING_PAGE"
+const val FT_EXPIRED_PAGE= "FT_EXPIRED_PAGE"
+const val OPEN_WALLET = "OPEN_WALLET"
+const val CLICKED_PROCEED = "CLICKED_PROCEED"
+const val CLICKED_CONTINUE_TO_CALL = "CLICKED_CONTINUE_TO_CALL"
+const val CLICKED_CALL_BUTTON = "CLICKED_CALL_BUTTON"
+const val IS_CALL_WITH_EXPERT_ENABLED = "IS_CALL_WITH_EXPERT_ENABLED"
 
 object Utils {
 
@@ -945,6 +953,11 @@ fun getPhoneNumber() =
         else ->
             EMPTY
     }
+
+fun getPhoneNumberOrDefault(): String {
+    val ph = getPhoneNumber()
+    return ph.ifEmpty { "+919999999999" }
+}
 
 fun getCountryIsoCode(number: String, countryRegion: String): String {
     val validatedNumber = if (number.startsWith("+")) number else "+$number"

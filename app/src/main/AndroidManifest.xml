@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.joshtalks.joshskills">
 
+    <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk" />
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -71,11 +73,15 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
-    <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/>
     <permission
         android:name="com.joshtalks.joshskills.permission.MIPUSH_RECEIVE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.joshtalks.joshskills.permission.MIPUSH_RECEIVE" />
+
+    <queries>
+        <provider android:authorities="com.joshtalks.joshskills.contentprovider" />
+    </queries>
 
     <application
         android:name=".core.JoshApplication"
@@ -86,8 +92,8 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:persistent="true"
-        android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"
+        android:requestLegacyExternalStorage="true"
         android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
@@ -95,6 +101,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
+        <activity
+            android:name=".ui.callWithExpert.CallWithExpertActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.recording_gallery.views.RecordingGalleryActivity"
             android:exported="false" />
@@ -161,10 +170,10 @@
         <activity
             android:name=".ui.launch.LauncherActivity"
             android:alwaysRetainTaskState="true"
+            android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Splash"
-            android:exported="true">
+            android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -216,12 +225,13 @@
         <activity
             android:name=".ui.voip.new_arch.ui.views.IncomingNotificationActivity"
             android:launchMode="singleTop"
+            android:noHistory="true"
+            android:process=":joshSkillsCallingService"
+            android:screenOrientation="portrait"
             android:showForAllUsers="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:screenOrientation="portrait"
-            android:noHistory="true"
-            android:theme="@style/AppNoBarTheme" />
+            android:theme="@style/AppNoBarTheme"
+            android:turnScreenOn="true" />
         <activity
             android:name=".ui.payment.order_summary.PaymentSummaryActivity"
             android:alwaysRetainTaskState="true"
@@ -237,10 +247,10 @@
         <activity
             android:name=".ui.chat.ConversationActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:exported="false"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme"
-            android:exported="false">
+            android:theme="@style/AppNoBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.inbox.InboxActivity" />
@@ -279,10 +289,10 @@
         <activity
             android:name=".ui.referral.ReferralActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:exported="false"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme"
-            android:exported="false">
+            android:theme="@style/AppNoBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.inbox.InboxActivity" />
@@ -328,10 +338,10 @@
             android:name=".ui.course_details.CourseDetailsActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:exported="true"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.explore.CourseExploreActivity"
-            android:theme="@style/AppNoBarTheme"
-            android:exported="true">
+            android:theme="@style/AppNoBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.explore.CourseExploreActivity" />
@@ -428,10 +438,10 @@
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.voip.favorite.FavoriteListActivity"
+            android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction"
-            android:exported="false"/>
+            android:theme="@style/AppThemeNoAction" />
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -499,10 +509,12 @@
         <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
-            android:showWhenLocked="true"/>
-        <activity android:name=".ui.cohort_based_course.views.CommitmentFormActivity"
+            android:showWhenLocked="true" />
+        <activity
+            android:name=".ui.cohort_based_course.views.CommitmentFormActivity"
             android:noHistory="true"
             android:screenOrientation="portrait" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_places_api_key" />
@@ -535,7 +547,7 @@
             android:value="@string/facebook_app_id" />
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token"/>
+            android:value="@string/facebook_client_token" />
         <meta-data
             android:name="com.facebook.accountkit.ApplicationName"
             android:value="@string/app_name" />
@@ -625,33 +637,33 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
-        </receiver>
-<!--        <receiver-->
-<!--            android:name=".core.service.ServiceStartReceiver"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.ACTION_LOCKED_BOOT_COMPLETED" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
+        </receiver> <!-- <receiver -->
+        <!-- android:name=".core.service.ServiceStartReceiver" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.ACTION_LOCKED_BOOT_COMPLETED" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
         <!-- Audio Control Module Receivers -->
         <receiver
-            android:name="com.joshtalks.joshskills.voip.audiocontroller.HeadsetReceiver"
+            android:name=".voip.audiocontroller.HeadsetReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.HEADSET_PLUG" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.joshtalks.joshskills.voip.audiocontroller.BluetoothReceiver"
+            android:name=".voip.audiocontroller.BluetoothReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".ui.call.CallingServiceReceiver"
+        <receiver
+            android:name=".ui.call.CallingServiceReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.joshtalks.joshskills.CALLING_SERVICE"/>
+                <action android:name="com.joshtalks.joshskills.CALLING_SERVICE" />
             </intent-filter>
         </receiver>
 
@@ -737,9 +749,8 @@
                 <action android:name="com.xiaomi.push.PING_TIMER" />
             </intent-filter>
         </receiver>
-
         <receiver
-            android:name="com.joshtalks.joshskills.core.notification.MiPushReceiver"
+            android:name=".core.notification.MiPushReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE" />
@@ -783,24 +794,20 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <provider
-            android:authorities="com.joshtalks.joshskills.contentprovider"
             android:name=".core.contentprovider.JoshContentProvider"
-            android:permission="com.joshtalks.permission.READ_WRITE_CONTENT"
+            android:authorities="com.joshtalks.joshskills.contentprovider"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true"
+            android:permission="com.joshtalks.permission.READ_WRITE_CONTENT" />
 
         <service
             android:name=".core.service.BackgroundService"
             android:enabled="true"
             android:exported="false" />
-
         <service
             android:name=".ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService"
             android:enabled="true"
             android:exported="false" />
-
     </application>
-    <queries>
-        <provider android:authorities="com.joshtalks.joshskills.contentprovider" />
-    </queries>
+
 </manifest>

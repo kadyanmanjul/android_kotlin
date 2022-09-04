@@ -18,8 +18,10 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
@@ -35,11 +37,11 @@ import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
-import com.joshtalks.joshskills.ui.invite_call.InviteFriendActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -47,6 +49,8 @@ import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.recording_gallery.views.RecordingGalleryActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
@@ -151,7 +155,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.lessonSpotlightStateLiveData.postValue(null)
         } else {
             CoroutineScope(Dispatchers.Main).launch{
-                // TODO: Why Delay?
                 delay(100)
                 viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
                 PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
@@ -560,41 +563,25 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             else
                 showToast("Wait for last call to get disconnected")
         }
-        binding.btnInviteFriend.isVisible =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.IS_INVITATION_FOR_CALL_ENABLED) &&
-                    PrefManager.getBoolValue(IS_COURSE_BOUGHT) &&
-                    PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
-        binding.btnInviteFriend.setOnClickListener {
-            viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
-            if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
-                InviteFriendActivity.start(requireActivity())
+
+        if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED) && PrefManager.getStringValue(
+                CURRENT_COURSE_ID
+            ) == DEFAULT_COURSE_ID
+        ) {
+            binding.btnCallWithExpert.isVisible = true
+        }
+
+        binding.btnCallWithExpert.setOnClickListener {
+            viewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = SPEAKING_PAGE)
+            if (User.getInstance().isVerified) {
+                Intent(requireActivity(), CallWithExpertActivity::class.java).also {
+                    startActivity(it)
+                }
             } else {
-                PermissionUtils.requestReadContactPermission(
-                    requireActivity(),
-                    object : PermissionListener {
-                        override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-                            viewModel.saveVoiceCallImpression(IMPRESSION_CONTACT_PERM_ACCEPTED)
-                            InviteFriendActivity.start(requireActivity())
-                        }
-
-                        override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
-                            viewModel.saveVoiceCallImpression(IMPRESSION_CONTACT_PERM_DENIED)
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                R.string.permission_denied_contacts
-                            )
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                            p0: PermissionRequest?,
-                            p1: PermissionToken?,
-                        ) {
-                            p1?.continuePermissionRequest()
-                        }
-                    })
+                navigateToLoginActivity()
             }
         }
+
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
         }
@@ -613,6 +600,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
         initDemoViews(lessonNo)
+    }
+
+    private fun navigateToLoginActivity() {
+        val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(FLOW_FROM, "payment journey")
+        }
+        startActivity(intent)
+        val broadcastIntent=Intent().apply {
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        }
+        LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(broadcastIntent)
     }
 
     private fun postSpeakingScreenSeenGoal() {
@@ -746,14 +747,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                if (isAdded && activity!=null) {
+                                if (isAdded && activity != null) {
                                     viewModel.saveImpression(CALL_PERMISSION_DENIED)
                                     PermissionUtils.callingPermissionPermanentlyDeniedDialog(
                                         requireActivity(),
                                         message = R.string.call_start_permission_message
                                     )
                                     return
-                                }else{
+                                } else {
                                     showToast(getString(R.string.something_went_wrong))
                                 }
                             }

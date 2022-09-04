@@ -1018,9 +1018,25 @@
         यह application उन serious students के लिए बनाई गयी है जिनके दिल में Josh है English सीखने का और आगे बढ़ने का.
         अगर आपकी future की calls भी बहुत छोटी जाती हैं, तो आपकी calling को बंद भी किया जा सकता है.\n
         \n Thank you. Best of luck! </string>
-    <string name="you_have_reached_limit_freetrial" translatable="false">You have reached your calling limit in Free Trial</string>
-    <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
-    <string name="grammar_completed" translatable="false">Grammar Completed!</string>
+    <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
+    <string name="buy_course_to_continue_calling"><u>Buy course to continue calling</u></string>
+    <string name="grammar_completed">Grammar Completed!</string>
+    <string name="call_with_expert">Call With Expert</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="available_balance">Available Balance</string>
+    <string name="enter_amount_in_inr">Select Amount in INR</string>
+    <string name="proceed">Proceed</string>
+    <string name="your_recharge_is_successful">Your Recharge is successful!</string>
+    <string name="continue_call_with_suman_sharma">%1$s Continue call with %1$s?</string>
+    <string name="talk_to_expert">Talk To Expert</string>
+    <string name="add_money_to_wallet">Add money to wallet</string>
+    <string name="added_to_your_account">%1$s Added To Your Account</string>
+    <string name="wallet_gift_description">%1$s gift के तौर पर मैं आपको ₹%2$s दे रहा हूँ ताकि आप अपनी पहली Expert Call बिल्कुल मुफ्त में try कर पायें</string>
+    <string name="thankyou_sir">Thank you Sir</string>
+    <string name="minimum_balance_of_5_minutes_inr_210_0_is_required_to_start_call_with_expert">Minimum balance of 5 minutes (INR %1$s) is required to start call with %2$s</string>
+    <string name="recharge_now">Recharge Now</string>
+    <string name="tip_90_users_recharge_for_10_mins_or_more">Tip: 90% users recharge for 10 mins or more.</string>
     <string name="success_payment_text" translatable="false">Payment Successful</string>
     <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting \n (Note : Please Restart your App)</string>
     <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
@@ -1031,4 +1047,23 @@
     <string name="turn_on_speaker" translatable="false">Turn on speaker</string>
     <string name="important_info" translatable="false">जरुरी जानकारी</string>
     <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
+
+    <string-array name="amount_list">
+        <item>₹ 50</item>
+        <item>₹ 100</item>
+        <item>₹ 200</item>
+        <item>₹ 300</item>
+        <item>₹ 500</item>
+        <item>₹ 1000</item>
+        <item>₹ 2000</item>
+        <item>₹ 3000</item>
+        <item>₹ 4000</item>
+        <item>₹ 8000</item>
+        <item>₹ 15000</item>
+        <item>₹ 12000</item>
+        <item>₹ 50000</item>
+        <item>₹ 100000</item>
+    </string-array>
+    <string name="rup">\u20B9</string>
+
 </resources>

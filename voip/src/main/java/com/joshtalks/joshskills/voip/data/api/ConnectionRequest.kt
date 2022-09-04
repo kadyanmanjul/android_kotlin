@@ -64,6 +64,15 @@ data class FavoriteConnectionRequest(
     val courseId: Int? = null,
     )
 
+data class ExpertConnectionRequest(
+    @field:SerializedName("mentor_id")
+    val mentorId: String? = null,
+    @field:SerializedName("course_id")
+    val courseId: Int? = null,
+    @field:SerializedName("expert_name")
+    val mentorName: String?=null,
+)
+
 data class FavoriteCallActionRequest(
     @field:SerializedName("response")
     val response: String? = null,

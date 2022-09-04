@@ -10,6 +10,7 @@ import android.view.View
 import androidx.core.net.toUri
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -67,6 +68,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     val toastText  = Utils.context?.getRecordingText()?:""
     var isPermissionGranted: ObservableBoolean = ObservableBoolean(false)
     var isGameEnabled: ObservableBoolean = ObservableBoolean(false)
+    var isExpertCallData = ObservableField(false)
     var isRecordPermissionGiven: ObservableBoolean = ObservableBoolean(false)
 
 
@@ -77,7 +79,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     Log.d(TAG, " connectCallJob : Inside - $callData  $callType")
                     repository.connectCall(callData,callType)
                     isConnectionRequestSent = true
-                    if(callType==Category.FPP && source == FROM_ACTIVITY){
+                    if((callType==Category.FPP || callType==Category.EXPERT)&& source == FROM_ACTIVITY){
                         uiState.currentState = "Ringing..."
                     }
                 }

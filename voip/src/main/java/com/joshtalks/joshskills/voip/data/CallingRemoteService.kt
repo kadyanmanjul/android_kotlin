@@ -8,42 +8,18 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
-import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
-import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
-import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.constant.Event.*
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
-import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
 import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
 import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
-import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
-import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
-import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.mediator.CallCategory
-import com.joshtalks.joshskills.voip.getHangUpIntent
-import com.joshtalks.joshskills.voip.getNotificationData
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
-import com.joshtalks.joshskills.voip.notification.IncomingCallNotificationHandler
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
@@ -83,6 +59,10 @@ class CallingRemoteService : Service() {
     private val notificationData by lazy { TestNotification(getNotificationData()) }
     private val notification by lazy { VoipNotification(notificationData, NotificationPriority.Low) }
     private val binder = RemoteServiceBinder()
+
+    var countdownTimerBack: Job? = null
+    var expertCallData = HashMap<String, Any>()
+    private val timerScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
 
     override fun onCreate() {
         Log.d(TAG, "onCreate: ")
@@ -158,6 +138,9 @@ class CallingRemoteService : Service() {
 
                 return START_NOT_STICKY
             }
+            START_EXPERT_CALL_TIMER ->{
+            }
+
         }
         return if (isServiceInitialize)
             START_STICKY
@@ -203,8 +186,14 @@ class CallingRemoteService : Service() {
                                         getHangUpIntent()
                                     )
                                     serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
+                                    Log.d(TAG, "SAGAR => observeNetworkEvents:206 ${expertCallData[IS_EXPERT_CALLING]}")
+                                    if (expertCallData[IS_EXPERT_CALLING] == "true") {
+                                        Log.d(TAG, "SAGAR => observeNetworkEvents:206")
+                                        startCallTimer()
+                                    }
                                 }
                                 CLOSE_CALL_SCREEN -> {
+                                    stopCallTimer()
                                     serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
                                     notification.idle(getNotificationData())
                                 }
@@ -332,12 +321,14 @@ class CallingRemoteService : Service() {
         if (callData != null) {
             mediator.connectCall(category, callData)
             notification.searching()
+            expertCallData = callData
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
             Log.d(TAG, "connectCall: Call Data is Null")
     }
 
     fun disconnectCall() {
+        stopCallTimer()
         notification.idle(getNotificationData())
         mediator.userAction(Action.DISCONNECT)
     }
@@ -412,6 +403,35 @@ class CallingRemoteService : Service() {
     private fun unregisterReceivers() {
         pstnController.unregisterPstnReceiver()
         audioController.unregisterAudioControllerReceivers()
+    }
+
+    fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
+        try {
+            val timeInMillSec :Long= (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
+            Log.v("sagar", "timeInSec: $timeInMillSec")
+            countdownTimerBack = timerScope.launch {
+                delay(timeInMillSec)
+                disconnectCall()
+            }
+        }catch (ex:Exception){
+            stopCallTimer()
+        }
+        return countdownTimerBack
+    }
+
+    fun startCallTimer(){
+        if (countdownTimerBack == null || countdownTimerBack?.isActive == false) {
+            countdownTimerBack = startTimer(
+                Integer.parseInt(expertCallData[INTENT_DATA_TOTAL_AMOUNT].toString()),
+                Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString())
+            )
+            countdownTimerBack?.start()
+        }
+    }
+
+    fun stopCallTimer() {
+        countdownTimerBack?.cancel()
+        countdownTimerBack = null
     }
 }
 

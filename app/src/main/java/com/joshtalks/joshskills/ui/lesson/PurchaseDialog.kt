@@ -5,16 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_CLICKED
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_IGNORED
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_SEEN
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import java.util.*
 
-class PurchaseDialog: BaseDialogFragment()  {
+class PurchaseDialog: BaseDialogFragment(true)  {
 
     private lateinit var binding: PurchaseCourseDialogBinding
     val POP_TEXT = "POP_TEXT"
@@ -83,31 +87,35 @@ class PurchaseDialog: BaseDialogFragment()  {
     }
 
     private fun startTimer(startTimeInMilliSeconds: Long) {
-        countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
-            override fun onTimerTick(millis: Long) {
-                try {
-                    AppObjectController.uiHandler.post {
-                        binding.txtFtEndsIn.text = getString(
-                            R.string.free_trial_end_in,
-                            UtilTime.timeFormatted(millis)
-                        )
+        try {
+            countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
+                override fun onTimerTick(millis: Long) {
+                    try {
+                        AppObjectController.uiHandler.post {
+                            binding.txtFtEndsIn.text = getString(
+                                R.string.free_trial_end_in,
+                                UtilTime.timeFormatted(millis)
+                            )
+                        }
+                    }catch (ex:Exception){
+
                     }
-                }catch (ex:Exception){
+                }
 
+                override fun onTimerFinish() {
+                    try {
+                        PrefManager.put(IS_FREE_TRIAL_ENDED, true)
+                        binding.txtFtEndsIn.visibility = View.VISIBLE
+                        binding.txtFtEndsIn.text = getString(R.string.free_trial_ended)
+                    }catch (ex:Exception){
+
+                    }
                 }
             }
+            countdownTimerBack?.startTimer()
+        }catch (ex:Exception){
 
-            override fun onTimerFinish() {
-                try {
-                    PrefManager.put(IS_FREE_TRIAL_ENDED, true)
-                    binding.txtFtEndsIn.visibility = View.VISIBLE
-                    binding.txtFtEndsIn.text = getString(R.string.free_trial_ended)
-                }catch (ex:Exception){
-
-                }
-            }
         }
-        countdownTimerBack?.startTimer()
     }
 
     fun showFreeTrialPaymentScreen() {

@@ -45,18 +45,17 @@ class FavoriteCall : CallCategory {
             if (response.isSuccessful)
                 Log.d(TAG, "onPreCallConnect: Successful")
         } else {
-            Log.d(TAG, "onPreCallConnect: OUTGOING")
+            var response: HashMap<String, Any?>? = null
             val request = FavoriteConnectionRequest(
                 mentorId = callData[INTENT_DATA_FPP_MENTOR_ID] as String,
                 courseId = Utils.courseId?.toInt()
             )
-            val response = voipNetwork.startFavouriteCall(request)
-            Log.d(TAG, "onPreCallConnect: $response")
+            response = voipNetwork.startFavouriteCall(request)
+            Log.d(TAG, "onPreCallConnect: Fpp call$response")
 
             if (response[TOAST_MESSAGE] != null && response[TOAST_MESSAGE]?.equals("") != true) {
-                showToast(response[TOAST_MESSAGE] .toString())
+                response[TOAST_MESSAGE]?.let { showToast(it.toString()) }
             }
-
         }
     }
 

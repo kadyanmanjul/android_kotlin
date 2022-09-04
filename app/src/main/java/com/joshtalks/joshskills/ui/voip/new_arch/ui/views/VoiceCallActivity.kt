@@ -178,12 +178,21 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
             Category.FPP ->{
                 val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
                 vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
+                vm.callData[INTENT_DATA_FPP_NAME] = intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
             }
             Category.GROUP -> {
                 val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
                 val groupId = intent?.getStringExtra(INTENT_DATA_GROUP_ID)
                 vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
                 vm.callData[INTENT_DATA_GROUP_ID] = groupId ?: "0"}
+            Category.EXPERT -> {
+                val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
+                vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
+                vm.callData[INTENT_DATA_EXPERT_PRICE_PER_MIN] = intent?.getStringExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN).toString()
+                vm.callData[INTENT_DATA_TOTAL_AMOUNT] = intent?.getStringExtra(INTENT_DATA_TOTAL_AMOUNT).toString()
+                vm.callData[IS_EXPERT_CALLING] = intent?.getStringExtra(IS_EXPERT_CALLING).toString()
+                vm.callData[INTENT_DATA_FPP_NAME] = intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
+            }
         }
     }
 
@@ -225,6 +234,9 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
             }
             Category.GROUP -> {
                 openFragment { addGroupCallFragment() }
+            }
+            Category.EXPERT -> {
+                addExpertCallFragment()
             }
         }
     }
@@ -295,6 +307,12 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
     private fun addFppCallFragment() {
         supportFragmentManager.commit {
             add(R.id.voice_call_container, FppCallFragment(), "FppCallFragment")
+        }
+    }
+
+    private fun addExpertCallFragment() {
+        supportFragmentManager.commit {
+            add(R.id.voice_call_container, ExpertCallFragment(), "ExpertCallFragment")
         }
     }
 
