@@ -31,7 +31,7 @@ object MarketingAnalytics {
                     AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT,
                     params
                 )
-                AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP,params)
+                FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SIGN_UP,params)
                 BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_STREAM).addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_STREAM)
             }
@@ -52,7 +52,7 @@ object MarketingAnalytics {
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
 
-            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM,params)
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.VIEW_ITEM,params)
         }
     }
 
@@ -233,7 +233,7 @@ object MarketingAnalytics {
 
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Event.SEARCH, Utils.getDeviceId())
-            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
         }
     }
 

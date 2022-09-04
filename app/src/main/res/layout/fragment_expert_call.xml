@@ -174,7 +174,6 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; vm.uiState.startTime > 0 ) ? View.VISIBLE : View.GONE }"
-                    android:onClick="@{vm::recordCall}"
                     android:padding="@dimen/_14sdp"
                     tools:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"

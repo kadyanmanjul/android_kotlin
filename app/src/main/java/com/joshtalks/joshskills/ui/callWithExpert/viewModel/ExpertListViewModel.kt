@@ -79,7 +79,7 @@ class ExpertListViewModel : BaseViewModel() {
             )
             return
         }
-        if (AppObjectController.joshApplication.getVoipState() == State.IDLE) {
+        if (getVoipState() == State.IDLE) {
             selectedUser = expertListModel
             message.what = START_FPP_CALL_FROM_WALLET
             singleLiveEvent.value = message
