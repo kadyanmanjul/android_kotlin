@@ -87,7 +87,8 @@ class WalletRechargePaymentManager private constructor(
                     "mobile" to getPhoneNumberOrDefault(),
                     "test_id" to courseData.testId,
                     "mentor_id" to Mentor.getInstance().getId(),
-                    "is_micro_payment" to true.toString()
+                    "is_micro_payment" to true.toString(),
+                    "wallet_amount" to selectedAmount.amount.toString()
                 )
 
                 val orderDetailsResponse: Response<OrderDetailResponse> =

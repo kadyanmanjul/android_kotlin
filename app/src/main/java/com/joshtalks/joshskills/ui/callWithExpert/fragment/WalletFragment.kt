@@ -14,7 +14,9 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecorati
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWalletBinding
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.AmountAdapter
+import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
+import com.joshtalks.joshskills.ui.callWithExpert.utils.removeRupees
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel
 
@@ -30,7 +32,6 @@ class WalletFragment : Fragment() {
         ViewModelProvider(requireActivity())[CallWithExpertViewModel::class.java]
     }
 
-    var amountToAdd = EMPTY
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +60,6 @@ class WalletFragment : Fragment() {
         viewModel.availableAmount.observe(viewLifecycleOwner) {
             binding.amountList.adapter =
                 AmountAdapter(it) { amount ->
-                    amountToAdd = amount.amountInRupees()
                     this@WalletFragment.viewModel.updateAddedAmount(amount.amountInRupees())
                     callWithExpertViewModel.updateAmount(amount)
                 }
@@ -76,8 +76,9 @@ class WalletFragment : Fragment() {
     }
 
     fun openCheckoutScreen() {
-        if (amountToAdd != EMPTY) {
+        if (!viewModel.addedAmount.value.isNullOrEmpty()) {
             WalletRechargePaymentManager.selectedExpertForCall = null
+            callWithExpertViewModel.updateAmount(Amount(viewModel.addedAmount.value!!.removeRupees().toInt(), viewModel.commonTestId))
             callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
             callWithExpertViewModel.proceedPayment()
         }else{

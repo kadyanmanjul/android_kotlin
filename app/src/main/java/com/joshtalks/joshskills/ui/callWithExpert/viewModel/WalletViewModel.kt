@@ -23,13 +23,16 @@ class WalletViewModel(private val app: Application) : AndroidViewModel(app) {
 
     private val _availableBalance = MutableLiveData<String>("₹ 0")
 
+     var commonTestId: Int = 0
+
     val availableBalance: LiveData<String>
         get() = _availableBalance
 
-    private val _addedAmount = MutableLiveData(app.getString(R.string.enter_amount_in_inr))
+//     val addedAmount = MutableLiveData(app.getString(R.string.enter_amount_in_inr))
+     val addedAmount = MutableLiveData<String>()
 
-    val addedAmount: LiveData<String>
-        get() = _addedAmount
+//    val addedAmount: LiveData<String>
+//        get() = _addedAmount
 
     private val _availableAmount = MutableLiveData<List<Amount>>()
 
@@ -64,13 +67,14 @@ class WalletViewModel(private val app: Application) : AndroidViewModel(app) {
                 }
                 .collectLatest {
                     _loading.postValue(false)
-                    _availableAmount.postValue(it)
+                    _availableAmount.postValue(it.amount_list)
+                    commonTestId = it.commonTestId
                 }
         }
     }
 
     fun updateAddedAmount(amount: String) {
-        _addedAmount.value = amount
+        addedAmount.value = amount
     }
 
 }

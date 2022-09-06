@@ -4,6 +4,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
+import com.joshtalks.joshskills.ui.callWithExpert.model.AvailableAmount
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletBalance
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -44,10 +45,10 @@ class ExpertListRepo {
         }
     }.flowOn(Dispatchers.IO)
 
-    val walletAmounts = flow<List<Amount>> {
+    val walletAmounts = flow<AvailableAmount> {
         val response = AppObjectController.commonNetworkService.getAvailableAmounts()
         if (response.isSuccessful && response.body() != null) {
-            emit(response.body()!!.amount_list)
+            emit(response.body()!!)
         } else {
             throw Throwable("Something Went Wrong")
         }

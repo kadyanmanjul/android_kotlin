@@ -75,18 +75,20 @@
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/availableBalance" />
 
-        <TextView
+        <EditText
             android:id="@+id/enteredAmountTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
-            android:text="@{viewModel.addedAmount}"
-            android:textColor="@color/grey_7A"
+            android:text="@={viewModel.addedAmount}"
+            android:textColor="@color/black"
             android:textSize="@dimen/_14ssp"
+            android:background="@color/transparent"
             app:layout_constraintBottom_toBottomOf="@+id/view7"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
             app:layout_constraintTop_toTopOf="@+id/view7"
-            tools:text="@string/enter_amount_in_inr" />
+            android:hint="@string/enter_amount_in_inr"
+            android:inputType="numberDecimal" />
 
         <Button
             android:id="@+id/proceedBtn"

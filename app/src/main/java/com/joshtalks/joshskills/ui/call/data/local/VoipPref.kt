@@ -105,6 +105,7 @@ object VoipPref {
                     val map = HashMap<String, String>()
                     map["time_spoken_in_seconds"] = duration
                     map["connected_user_id"] = remoteUserMentorId
+                    map["agora_call_id"] = getLastCallId().toString()
                    val response =  AppObjectController.commonNetworkService.deductAmountAfterCall(map)
                     when(response.code()){
                         200->{
@@ -119,6 +120,7 @@ object VoipPref {
                     val map = HashMap<String, String>()
                     map["time_spoken_in_seconds"] = duration
                     map["connected_user_id"] = remoteUserMentorId
+                    map["agora_call_id"] = getLastCallId().toString()
                     val response = AppObjectController.commonNetworkService.deductAmountAfterCall(map)
                     when (response.code()) {
                         200 -> {
