@@ -138,23 +138,8 @@ enum class NotificationAction(val type: String) {
     @SerializedName("open_reminder")
     ACTION_OPEN_REMINDER("open_reminder"),
 
-    @SerializedName("audio_feedback_report")
-    AUDIO_FEEDBACK_REPORT("audio_feedback_report"),
-
     @SerializedName("award_declare_notification")
     AWARD_DECLARE("award_declare_notification"),
-
-    @SerializedName("GROUP_CHAT_MESSAGE_NOTIFICATION")
-    GROUP_CHAT_MESSAGE_NOTIFICATION("GROUP_CHAT_MESSAGE_NOTIFICATION"),
-
-    @SerializedName("GROUP_CHAT_REPLY")
-    GROUP_CHAT_REPLY("GROUP_CHAT_REPLY"),
-
-    @SerializedName("GROUP_CHAT_VOICE_NOTE_HEARD")
-    GROUP_CHAT_VOICE_NOTE_HEARD("GROUP_CHAT_VOICE_NOTE_HEARD"),
-
-    @SerializedName("GROUP_CHAT_PIN_MESSAGE")
-    GROUP_CHAT_PIN_MESSAGE("GROUP_CHAT_PIN_MESSAGE"),
 
     @SerializedName("ACTION_COMPLETE_ONBOARDING")
     ACTION_COMPLETE_ONBOARDING("ACTION_COMPLETE_ONBOARDING"),

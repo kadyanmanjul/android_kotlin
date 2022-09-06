@@ -36,11 +36,7 @@ import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -80,8 +76,8 @@ class NotificationUtils(val context: Context) {
             JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Notification")
         }
 
-        private var notificationChannelId = "101111"
-        private var notificationChannelName = NotificationChannelNames.DEFAULT.type
+        private var notificationChannelId = NotificationChannelData.DEFAULT.id
+        private var notificationChannelName = NotificationChannelData.DEFAULT.type
 
         @RequiresApi(Build.VERSION_CODES.N)
         private var importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -130,8 +126,7 @@ class NotificationUtils(val context: Context) {
                         || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
                         || notificationObject.action == NotificationAction.CALL_RECORDING_NOTIFICATION
                     ) {
-                        val inboxIntent =
-                            InboxActivity.getInboxIntent(context)
+                        val inboxIntent = InboxActivity.getInboxIntent(context)
                         inboxIntent.putExtra(HAS_NOTIFICATION, true)
                         inboxIntent.putExtra(NOTIFICATION_ID, notificationObject.id)
                         arrayOf(inboxIntent, this)
@@ -152,10 +147,7 @@ class NotificationUtils(val context: Context) {
                 style.setSummaryText("")
 
                 val notificationBuilder =
-                    NotificationCompat.Builder(
-                        context,
-                        notificationChannelId
-                    )
+                    NotificationCompat.Builder(context, notificationChannelId)
                         .setTicker(notificationObject.ticker)
                         .setSmallIcon(R.drawable.ic_status_bar_notification)
                         .setContentTitle(notificationObject.contentTitle)
@@ -167,22 +159,16 @@ class NotificationUtils(val context: Context) {
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setWhen(System.currentTimeMillis())
                         .setDefaults(Notification.DEFAULT_ALL)
-                        .setColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.colorAccent
-                            )
-                        )
+                        .setColor(ContextCompat.getColor(context, R.color.colorAccent))
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
                 }
 
-                val dismissIntent =
-                    Intent(context, DismissNotifEventReceiver::class.java).apply {
-                        putExtra(NOTIFICATION_ID, notificationObject.id)
-                        putExtra(HAS_NOTIFICATION, true)
-                    }
+                val dismissIntent = Intent(context, DismissNotifEventReceiver::class.java).apply {
+                    putExtra(NOTIFICATION_ID, notificationObject.id)
+                    putExtra(HAS_NOTIFICATION, true)
+                }
                 val dismissPendingIntent: PendingIntent =
                     PendingIntent.getBroadcast(context, uniqueInt, dismissIntent, 0)
 
@@ -202,23 +188,8 @@ class NotificationUtils(val context: Context) {
                     notificationBuilder.setChannelId(notificationChannelId)
                     notificationManager.createNotificationChannel(notificationChannel)
                 }
-                when (notificationObject.action) {
-                    NotificationAction.GROUP_CHAT_REPLY -> {
-                        notificationManager.notify(10112, notificationBuilder.build())
-                    }
-                    NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD -> {
-                        notificationManager.notify(10122, notificationBuilder.build())
-                    }
-                    NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
-                        notificationManager.notify(10132, notificationBuilder.build())
-                    }
-                    NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
-                        notificationManager.notify(10192, notificationBuilder.build())
-                    }
-                    else -> {
-                        notificationManager.notify(uniqueInt, notificationBuilder.build())
-                    }
-                }
+                //TODO: Change this uniqueInt to notificationID
+                notificationManager.notify(uniqueInt, notificationBuilder.build())
             }
         }
     }
@@ -234,7 +205,7 @@ class NotificationUtils(val context: Context) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
-                notificationChannelId = NotificationAction.ACTION_OPEN_TEST.type
+                //TODO: notificationChannelId = NotificationAction.ACTION_OPEN_TEST.type
                 CourseDetailsActivity.getIntent(
                     context.applicationContext,
                     actionData!!.toInt(),
@@ -252,7 +223,8 @@ class NotificationUtils(val context: Context) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
-                notificationChannelId = action.name
+                notificationChannelId = NotificationChannelData.UPDATES.id
+                notificationChannelName = NotificationChannelData.UPDATES.type
                 return processChatTypeNotification(notificationObject, action, actionData)
             }
             NotificationAction.ACTION_OPEN_LESSON -> {
@@ -263,7 +235,8 @@ class NotificationUtils(val context: Context) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
-                notificationChannelId = action.name
+                notificationChannelId = NotificationChannelData.UPDATES.id
+                notificationChannelName = NotificationChannelData.UPDATES.type
                 return processOpenLessonNotification(notificationObject, action, actionData)
             }
             NotificationAction.ACTION_OPEN_SPEAKING_SECTION -> {
@@ -274,7 +247,8 @@ class NotificationUtils(val context: Context) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
-                notificationChannelId = action.name
+                notificationChannelId = NotificationChannelData.UPDATES.id
+                notificationChannelName = NotificationChannelData.UPDATES.type
                 return processOpenSpeakingSectionNotification(
                     notificationObject,
                     action,
@@ -289,17 +263,20 @@ class NotificationUtils(val context: Context) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
-                notificationChannelId = action.name
+                notificationChannelId = NotificationChannelData.UPDATES.id
+                notificationChannelName = NotificationChannelData.UPDATES.type
                 return processOpenPaymentNotification(notificationObject, action, actionData)
             }
             NotificationAction.ACTION_OPEN_COURSE_EXPLORER -> {
-                notificationChannelId = NotificationAction.ACTION_OPEN_COURSE_EXPLORER.name
+                notificationChannelId = NotificationChannelData.UPDATES.id
+                notificationChannelName = NotificationChannelData.UPDATES.type
                 return Intent(context, CourseExploreActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
             }
             NotificationAction.ACTION_OPEN_URL -> {
-                notificationChannelId = NotificationAction.ACTION_OPEN_URL.name
+                notificationChannelId = NotificationChannelData.UPDATES.id
+                notificationChannelName = NotificationChannelData.UPDATES.type
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
@@ -314,7 +291,8 @@ class NotificationUtils(val context: Context) {
                 if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                     return null
                 }
-                notificationChannelId = NotificationAction.ACTION_OPEN_CONVERSATION_LIST.name
+                notificationChannelId = NotificationChannelData.UPDATES.id
+                notificationChannelName = NotificationChannelData.UPDATES.type
                 Intent(context, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
@@ -325,7 +303,6 @@ class NotificationUtils(val context: Context) {
                 if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                     return null
                 }
-                notificationChannelId = NotificationAction.ACTION_UP_SELLING_POPUP.name
                 Intent(context, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
@@ -341,23 +318,12 @@ class NotificationUtils(val context: Context) {
                 }
             }
             NotificationAction.ACTION_OPEN_REFERRAL -> {
-                notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
+                notificationChannelId = NotificationChannelData.REMINDERS.id
+                notificationChannelName = NotificationChannelData.REMINDERS.type
                 return Intent(context, ReferralActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
             }
-            /* NotificationAction.ACTION_OPEN_QUESTION -> {
-
-                 if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
-                     return null
-                 }
-                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                     importance = NotificationManager.IMPORTANCE_HIGH
-                 }
-                 notificationChannelId = action.name
-                 return processQuestionTypeNotification(notificationObject, action, actionData)
-
-             }*/
             NotificationAction.ACTION_DELETE_DATA -> {
                 if (User.getInstance().isVerified) {
                     Mentor.deleteUserData()
@@ -365,11 +331,7 @@ class NotificationUtils(val context: Context) {
                 return null
             }
             NotificationAction.ACTION_DELETE_CONVERSATION_DATA -> {
-                actionData?.let {
-                    println("action = $action")
-                    println("actionData = $actionData")
-                    deleteConversationData(it)
-                }
+                actionData?.let { deleteConversationData(it) }
                 return null
             }
             NotificationAction.ACTION_DELETE_USER -> {
@@ -396,15 +358,10 @@ class NotificationUtils(val context: Context) {
                 if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                     return null
                 }
-                notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
+                //TODO: notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
                 return Intent(context, ReminderListActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
-            }
-            NotificationAction.AUDIO_FEEDBACK_REPORT -> {
-                // deleteUserCredentials()
-                // deleteUserData()
-                return null
             }
             NotificationAction.AWARD_DECLARE -> {
                 Intent(context, LeaderBoardViewPagerActivity::class.java).apply {
@@ -425,20 +382,28 @@ class NotificationUtils(val context: Context) {
                 }
             }
             NotificationAction.ACTION_OPEN_GROUPS -> {
+                notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
+                notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
                 return Intent(context, JoshGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, actionData)
                 }
             }
             NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
+                notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
+                notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
                 return Intent(context, SeeAllRequestsActivity::class.java)
             }
             NotificationAction.ACTION_OPEN_FPP_LIST -> {
+                notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
+                notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
                 return Intent(context, FavoriteListActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, actionData)
                     putExtra(IS_COURSE_BOUGHT, true)
                 }
             }
             NotificationAction.ACTION_OPEN_GROUP_CHAT_CLIENT -> {
+                notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
+                notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
                 if (actionData.equals(Mentor.getInstance().getId()))
                     return null
                 return Intent(context, JoshGroupActivity::class.java).apply {
@@ -537,8 +502,7 @@ class NotificationUtils(val context: Context) {
     }
 
     private fun isNotificationCrash(): Class<*> {
-        val isNotificationCrash =
-            false
+        val isNotificationCrash = false
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
@@ -547,8 +511,7 @@ class NotificationUtils(val context: Context) {
     }
 
     private fun isOpenPaymentNotificationCrash(): Class<*> {
-        val isNotificationCrash =
-            false
+        val isNotificationCrash = false
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
@@ -557,8 +520,7 @@ class NotificationUtils(val context: Context) {
     }
 
     private fun isOpenLessonNotificationCrash(): Class<*> {
-        val isNotificationCrash =
-            false
+        val isNotificationCrash = false
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
@@ -567,8 +529,7 @@ class NotificationUtils(val context: Context) {
     }
 
     private fun isOpenSpeakingSectionNotificationCrash(): Class<*> {
-        val isNotificationCrash =
-            false
+        val isNotificationCrash = false
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {

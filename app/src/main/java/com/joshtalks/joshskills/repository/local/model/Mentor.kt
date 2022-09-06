@@ -143,8 +143,8 @@ class Mentor {
             )
 
             val notificationId = 101567
-            val notificationChannelId = "109000"
-            val notificationChannelName = NotificationChannelNames.DEFAULT.type
+            val notificationChannelId = NotificationChannelData.UPDATES.id
+            val notificationChannelName = NotificationChannelData.UPDATES.type
             val contentTitle: String? = null
             val contentText = joshApplication.getString(R.string.auto_logout_message)
             val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
@@ -161,10 +161,7 @@ class Mentor {
             style.setSummaryText("")
 
             val notificationBuilder =
-                NotificationCompat.Builder(
-                    joshApplication,
-                    notificationChannelId
-                )
+                NotificationCompat.Builder(joshApplication, notificationChannelId)
                     .setTicker(null)
                     .setSmallIcon(R.drawable.ic_status_bar_notification)
                     .setContentTitle(contentTitle)
@@ -176,10 +173,7 @@ class Mentor {
                     .setWhen(System.currentTimeMillis())
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setColor(
-                        ContextCompat.getColor(
-                            joshApplication,
-                            R.color.colorAccent
-                        )
+                        ContextCompat.getColor(joshApplication, R.color.colorAccent)
                     )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

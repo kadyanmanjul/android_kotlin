@@ -4,7 +4,6 @@ package com.joshtalks.joshskills.ui.chat.service
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
-import android.media.*
 import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -21,8 +20,7 @@ import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBusForLessonQuestion
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
-import com.joshtalks.joshskills.ui.voip.*
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.ui.voip.util.NotificationId
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.DownloadBlock
@@ -31,13 +29,9 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.ExecutorService
 import timber.log.Timber
 
-
 const val DOWNLOAD_CHAT_OBJECT = "chat_obj"
 const val DOWNLOAD_LESSON_QUESTION_OBJECT = "lesson_question_obj"
 const val DOWNLOAD_FILE_URL = "file_url"
-
-const val DOWNLOAD_NOTIFICATION_CHANNEL = "Download Media "
-private var notificationChannelId = "101133"
 
 class DownloadMediaService : Service(), FetchListener {
 
@@ -97,7 +91,6 @@ class DownloadMediaService : Service(), FetchListener {
             }
         }
     }
-
 
     inner class MyBinder : Binder() {
         fun getService(): DownloadMediaService {
@@ -222,10 +215,21 @@ class DownloadMediaService : Service(), FetchListener {
     }
 
     private fun downloadNotification(title: String = "Downloading Media"): Notification {
-        Timber.tag(TAG).e("actionNotification ")
+        val notificationChannelId = NotificationChannelData.DOWNLOADS.id
 
-        val lNotificationBuilder = NotificationCompat.Builder(this, DOWNLOAD_NOTIFICATION_CHANNEL)
-            .setChannelId(DOWNLOAD_NOTIFICATION_CHANNEL)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                notificationChannelId,
+                NotificationChannelData.DOWNLOADS.type,
+                NotificationManager.IMPORTANCE_MIN
+            )
+            notificationChannel.enableLights(true)
+            notificationChannel.enableVibration(true)
+            mNotificationManager?.createNotificationChannel(notificationChannel)
+        }
+
+        val lNotificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
+            .setChannelId(notificationChannelId)
             .setContentTitle(title)
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setColor(
@@ -237,18 +241,6 @@ class DownloadMediaService : Service(), FetchListener {
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setProgress(0, 0, true)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                notificationChannelId,
-                NotificationChannelNames.DEFAULT.type,
-                NotificationManager.IMPORTANCE_MIN
-            )
-            notificationChannel.enableLights(true)
-            notificationChannel.enableVibration(true)
-            lNotificationBuilder.setChannelId(notificationChannelId)
-            mNotificationManager?.createNotificationChannel(notificationChannel)
-        }
 
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_LOW
         return lNotificationBuilder.build()

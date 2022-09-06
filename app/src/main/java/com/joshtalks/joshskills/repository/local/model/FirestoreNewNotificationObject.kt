@@ -103,12 +103,7 @@ data class FirestoreNewNotificationObject(
         it.action = when (action) {
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN.type -> NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN
             NotificationAction.ACTION_COMPLETE_ONBOARDING.type -> NotificationAction.ACTION_COMPLETE_ONBOARDING
-            NotificationAction.GROUP_CHAT_PIN_MESSAGE.type -> NotificationAction.GROUP_CHAT_PIN_MESSAGE
-            NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD.type -> NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD
-            NotificationAction.GROUP_CHAT_REPLY.type -> NotificationAction.GROUP_CHAT_REPLY
-            NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.type -> NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION
             NotificationAction.AWARD_DECLARE.type -> NotificationAction.AWARD_DECLARE
-            NotificationAction.AUDIO_FEEDBACK_REPORT.type -> NotificationAction.AUDIO_FEEDBACK_REPORT
             NotificationAction.ACTION_OPEN_REMINDER.type -> NotificationAction.ACTION_OPEN_REMINDER
             NotificationAction.ACTION_LOGOUT_USER.type -> NotificationAction.ACTION_LOGOUT_USER
             NotificationAction.ACTION_DELETE_USER_AND_DATA.type -> NotificationAction.ACTION_DELETE_USER_AND_DATA

@@ -22,7 +22,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
@@ -246,19 +246,14 @@ class ProcessCallRecordingService : Service() {
             messageText = """$messageText${fileQueue.size} is remaining."""
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name: CharSequence = NotificationChannelNames.OTHERS.type
+            val name: CharSequence = NotificationChannelData.OTHERS.type
             val importance: Int = NotificationManager.IMPORTANCE_LOW
-            val mChannel =
-                NotificationChannel(CHANNEL_ID, name, importance)
+            val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
         val lNotificationBuilder = ContextCompat.getColor(AppObjectController.joshApplication, R.color.colorPrimary).let {
-            NotificationCompat.Builder(
-                this,
-                CHANNEL_ID
-            )
-                .setChannelId(CHANNEL_ID)
+            NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText("Call Recording is generating...")
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
