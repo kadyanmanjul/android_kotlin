@@ -2,21 +2,15 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.media.projection.MediaProjectionManager
-import android.os.Environment
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import com.hbisoft.hbrecorder.HBRecorder
-import com.hbisoft.hbrecorder.HBRecorderListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.*
@@ -38,10 +32,9 @@ import java.io.File
 
 private const val TAG = "VoiceCallActivity"
 
-class VoiceCallActivity : BaseActivity(),HBRecorderListener {
+class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
     private var isServiceBounded = false
-    private val SCREEN_RECORD_REQUEST_CODE = 1
     var recordingPermissionAlert: AlertDialog? = null
     var file : File? = null
     var currentFileName : String? = null
@@ -54,9 +47,6 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
 
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
-    }
-    private val hbRecorder by lazy {
-        HBRecorder(this,this)
     }
     val vm by lazy {
         ViewModelProvider(this)[VoiceCallViewModel::class.java]
@@ -267,21 +257,6 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
                 CLOSE_CALL_SCREEN -> {
                     finishAndRemoveTask()
                 }
-                START_SCREEN_RECORDING->{
-                    proceedToRecord()
-                }
-                STOP_SCREEN_RECORDING->{
-                    stopScreenRecording()
-                }
-                RECORDING_PERMISSION_DIALOG->{
-                    startScreenRecording()
-                }
-                CHANGE_APP_THEME_T0_BLACK->{
-                    window.statusBarColor  = ContextCompat.getColor(this,R.color.black_quiz)
-                }
-                CHANGE_APP_THEME_T0_BLUE->{
-                    window.statusBarColor  = ContextCompat.getColor(this,R.color.colorPrimaryDark)
-                }
                 else -> {
                     if (it.what < 0) {
                         showToast("Error Occurred")
@@ -368,69 +343,4 @@ class VoiceCallActivity : BaseActivity(),HBRecorderListener {
         }
     }
 
-    private fun initiateRecording() {
-        val mediaProjectionManager: MediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        val permissionIntent: Intent? = mediaProjectionManager.createScreenCaptureIntent()
-        startActivityForResult(permissionIntent, SCREEN_RECORD_REQUEST_CODE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                recordData = data
-                recordResultCode = resultCode
-                showDialog = false
-                vm.startGameFromRepo()
-                vm.isRecordPermissionGiven.set(true)
-            }
-        }
-    }
-
-    fun stopScreenRecording(){
-        hbRecorder.stopScreenRecording()
-    }
-
-    fun startScreenRecording(){
-        if(showDialog){
-            initiateRecording()
-        }else{
-            vm.startGameFromRepo()
-            vm.isRecordPermissionGiven.set(true)
-        }
-    }
-
-    private fun proceedToRecord() {
-
-        hbRecorder.setOutputPath(getFileDirectory().absolutePath)
-        hbRecorder.isAudioEnabled(false)
-        hbRecorder.recordHDVideo(false)
-        currentFileName = "recordVideo" + "${System.currentTimeMillis()}"
-        hbRecorder.fileName = currentFileName
-        recordResultCode?.let { hbRecorder.startScreenRecording(recordData, it)
-        }
-    }
-
-    private fun getFileDirectory(): File {
-        val dir = application.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-        file = File(dir?.path + "/JoshSkills")
-        if(file?.exists()==false){
-            file?.mkdirs()
-        }
-        return file as File
-    }
-
-    override fun HBRecorderOnStart() {
-    }
-
-    override fun HBRecorderOnComplete() {
-        val file1 = File(file, "$currentFileName.mp4")
-        vm.processRecording(videoFile = file1)
-        file = null
-        currentFileName = null
-    }
-
-    override fun HBRecorderOnError(errorCode: Int, reason: String?) {
-        Log.d(TAG, "HBRecorderOnError: $errorCode $reason")
-    }
 }

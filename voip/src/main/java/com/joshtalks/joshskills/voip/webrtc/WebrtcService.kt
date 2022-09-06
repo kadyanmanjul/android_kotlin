@@ -10,9 +10,6 @@ internal interface WebrtcService {
     fun enableSpeaker(speaker :Boolean)
     fun observeCallingEvents() : SharedFlow<CallState> // Will return value
     fun onDestroy()
-    fun onStartRecording()
-    fun onStopRecording()
-    fun observeSpeakersVolume() : SharedFlow<Int>
 }
 
 internal interface CallRequest {
@@ -36,7 +33,6 @@ internal sealed class CallState {
     class Error(val reason : String) : CallState()
     object UserAlreadyDisconnectedError: CallState()
     object UserLeftChannel: CallState()
-    object RecordingGenerated: CallState()
 }
 
 //internal enum class State {

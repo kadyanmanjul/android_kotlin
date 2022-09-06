@@ -47,13 +47,10 @@ const val CALL_DISCONNECTED_URI = "/call_disconnect"
 const val API_HEADER = "/api_header"
 const val MENTOR_ID = "/mentor_id"
 const val COURSE_ID = "/course_id"
-const val RECORD_VIDEO_URI = "/video_url"
 const val IS_COURSE_BOUGHT_OR_FREE_TRIAL = "/is_course_bought_or_free_trial"
 const val NOTIFICATION_DATA = "/notification_data"
 const val MENTOR_NAME = "/mentor_name"
 const val MENTOR_PROFILE = "/mentor_profile"
-const val RECORDING_TEXT = "/recording_text"
-const val GAME_FLAG = "/game_flag"
 const val DEVICE_ID = "/device_id"
 
 
@@ -107,7 +104,6 @@ const val PREF_KEY_INCOMING_CALL_TYPE = "josh_recent_incoming_call_type"
 const val PEER_TO_PEER = 1
 const val FPP = 2
 const val GROUP = 3
-const val P2P_GAME = 4
 
 // Call Direction
 const val INCOMING = 1

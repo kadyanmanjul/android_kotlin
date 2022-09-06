@@ -8,7 +8,6 @@ import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_DISCONNECTED
-import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
 import com.joshtalks.joshskills.voip.constant.Event.HOLD
 import com.joshtalks.joshskills.voip.constant.Event.HOLD_REQUEST
 import com.joshtalks.joshskills.voip.constant.Event.MUTE
@@ -30,7 +29,6 @@ import com.joshtalks.joshskills.voip.constant.Event.UNHOLD_REQUEST
 import com.joshtalks.joshskills.voip.constant.Event.UNMUTE
 import com.joshtalks.joshskills.voip.constant.Event.UNMUTE_REQUEST
 import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.ActionDirection
 import com.joshtalks.joshskills.voip.mediator.CallDirection
@@ -208,7 +206,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             // Emit Event to show Call Screen
                             ensureActive()
                             val startTime = SystemClock.elapsedRealtime()
-                            val uiState = context.currentUiState.copy(startTime = startTime, recordingButtonState = RecordingButtonState.IDLE)
+                            val uiState = context.currentUiState.copy(startTime = startTime)
                             context.updateUIState(uiState = uiState)
                             connectingTimer.cancel()
                             ensureActive()
@@ -314,58 +312,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                       Event.START_GAME -> {
-                            ensureActive()
-                            val userAction = UserAction(
-                                ServerConstants.START_GAME,
-                                context.channelData.getChannel(),
-                                address = Utils.uuid ?: ""
-                            )
-                            val uiState = context.currentUiState.copy(isStartGameClicked = true)
-                            context.updateUIState(uiState = uiState)
-                            context.sendMessageToServer(userAction)
-                        }
-                        Event.END_GAME -> {
-                            ensureActive()
-                            if(event.data == ActionDirection.SERVER) {
-                                val userAction = UserAction(
-                                    ServerConstants.END_GAME,
-                                    context.channelData.getChannel(),
-                                    address = context.channelData.getPartnerMentorId()
-                                )
-                                context.sendMessageToServer(userAction)
-                            }
-                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "", isRemoteUserGameStarted = false)
-                            context.updateUIState(uiState = uiState)
-                        }
-                        Event.NEXT_WORD_REQUEST -> {
-                            ensureActive()
-                            val userAction = UserAction(
-                                ServerConstants.NEXT_WORD_REQUEST,
-                                context.channelData.getChannel(),
-                                address = Utils.uuid ?: ""
-                            )
-                            context.sendMessageToServer(userAction)
 
-                            val uiState = context.currentUiState.copy(isNextWordClicked = true)
-                            context.updateUIState(uiState = uiState)
-                        }
-                        Event.NEXT_WORD_RECEIVED -> {
-                            ensureActive()
-                            val incomingWord= event.data as IncomingGameNextWord
-                            val uiState = context.currentUiState.copy(nextGameWord = incomingWord.word, nextGameWordColor = incomingWord.color, isNextWordClicked = false)
-                            context.updateUIState(uiState = uiState)
-
-                        }
-                        CANCEL_RECORDING_REQUEST -> {
-                            ensureActive()
-                            val userAction = UserAction(
-                                ServerConstants.CANCEL_RECORDING_REQUEST,
-                                context.channelData.getChannel(),
-                                address = Utils.uuid ?: ""
-                            )
-                            context.sendMessageToServer(userAction)
-                        }
                         SYNC_UI_STATE -> {
                             ensureActive()
                             context.sendMessageToServer(
@@ -375,7 +322,6 @@ class JoinedState(val context: CallContext) : VoipState {
                                     isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                     isMute = if (context.currentUiState.isOnMute) 1 else 0,
                                     address = context.channelData.getPartnerMentorId(),
-                                    isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                 )
                             )
                         }
@@ -390,20 +336,15 @@ class JoinedState(val context: CallContext) : VoipState {
                                         isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                         isMute = if (context.currentUiState.isOnMute) 1 else 0,
                                         address = context.channelData.getPartnerMentorId(),
-                                        isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                     )
                                 )
                             val uiState = context.currentUiState.copy(
                                 isRemoteUserMuted = uiData.isMute(),
                                 isOnHold = uiData.isHold(),
-                                isRemoteUserGameStarted = uiData.isPlayBtnClick()
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT ,
-                                Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT,
-                                Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST , Event.STOP_GAME_RECORDING, Event.START_GAME_RECORDING
-                        -> {
+                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
                             CallAnalytics.addAnalytics(

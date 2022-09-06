@@ -102,36 +102,6 @@ class WebrtcRepository(scope : CoroutineScope) {
         mService?.changeMicState(false)
     }
 
-    fun startCallRecording() {
-        Log.d(TAG, "startCallRecording: ")
-        mService?.startRecording()
-    }
-
-    fun stopCallRecording() {
-        Log.d(TAG, "stopCallRecording: ")
-        mService?.stopRecording()
-    }
-
-    fun acceptCallRecording(){
-        Log.d(TAG, "acceptCallRecording: ")
-        mService?.acceptCallRecording()
-    }
-
-    fun startAgoraRecording(){
-        Log.d(TAG, "startAgoraRecording: ")
-        mService?.startAgoraRecording()
-    }
-
-    fun stopAgoraClientCallRecording(){
-        Log.d(TAG, "stopAgoraClientCallRecording: ")
-        mService?.stopAgoraCallRecording()
-    }
-
-    fun rejectCallRecording(){
-        Log.d(TAG, "acceptCallRecording: ")
-        mService?.rejectCallRecording()
-    }
-
     fun turnOnSpeaker() {
         Log.d(TAG, "turnOnSpeaker: ")
         mService?.changeSpeakerState(true)
@@ -154,20 +124,6 @@ class WebrtcRepository(scope : CoroutineScope) {
 
     fun getNewTopicImage() {
         mService?.changeTopicImage()
-    }
-
-    fun cancelRecordingRequest() {
-        mService?.cancelRecordingRequest()
-    }
-
-    fun startGame() {
-        mService?.startGame()
-    }
-    fun endGame() {
-        mService?.endGame()
-    }
-    fun nextGameWord() {
-        mService?.nextGameWord()
     }
 }
 

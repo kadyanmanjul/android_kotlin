@@ -119,28 +119,6 @@ class JoshContentProvider : ContentProvider() {
                 cursor.addRow(arrayOf(Utils.getDeviceId()))
                 return cursor
             }
-            RECORDING_TEXT -> {
-                val cursor = MatrixCursor(arrayOf(RECORDING_TEXT_COLUMN))
-                val toastText  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")
-                cursor.addRow(arrayOf(toastText))
-                return cursor
-            }
-            RECORD_VIDEO_URI -> {
-                val cursor = MatrixCursor(arrayOf(VIDEO_COLUMN))
-                AppDirectory.videoSentFile().let { file ->
-                    cursor.addRow(arrayOf(file.absolutePath))
-                }
-                return cursor
-            }
-            GAME_FLAG->{
-                val cursor = MatrixCursor(arrayOf(GAME_TEXT_COLUMN))
-                try{
-                    cursor.addRow(arrayOf(PrefManager.getIntValue(IS_GAME_ON, defValue = 1).toString()))
-                    return cursor
-                }catch(e : Exception){
-                    cursor.addRow(arrayOf("1"))
-                }
-            }
             NOTIFICATION_DATA -> {
                 val cursor =
                     MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN,

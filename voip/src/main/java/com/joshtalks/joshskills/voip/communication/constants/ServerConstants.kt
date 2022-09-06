@@ -18,16 +18,7 @@ class ServerConstants {
         val ACK_UI_STATE_UPDATED = 13
         val TOPIC_IMAGE_REQUEST = 14
         val TOPIC_IMAGE_RECEIVED = 15
-        val START_RECORDING = 16
-        val STOP_RECORDING = 17
-        val CALL_RECORDING_ACCEPT = 18
-        val CALL_RECORDING_REJECT = 19
-        val CANCEL_RECORDING_REQUEST = 20
         val GROUP_INCOMING_CALL = 21
         val FPP_INCOMING_CALL = 22
-        val START_GAME = 23
-        val END_GAME = 24
-        val NEXT_WORD_RECEIVED = 25
-        val NEXT_WORD_REQUEST = 26
     }
 }

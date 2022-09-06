@@ -10,7 +10,8 @@ import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 
 // Fired Leave Channel and waiting for Leave Channel Callback
-class LeavingState(val context: CallContext) : VoipState {
+class
+LeavingState(val context: CallContext) : VoipState {
     private val TAG = "LeavingState"
     private val scope =
         CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->

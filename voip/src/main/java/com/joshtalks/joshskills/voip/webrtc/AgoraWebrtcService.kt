@@ -40,7 +40,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
 
     // TODO: Make State More reliable
     private var currentState = IDLE
-    private var recordFile : File? = null
 
     private lateinit var lazyJoin: Deferred<Unit>
     private val listener by lazy { AgoraEventHandler(scope) }
@@ -59,59 +58,58 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             setParameters("{\"che.audio.enable.aec\":false}")  //for automatic echo cancelling
             setParameters("{\"che.audio.enable.agc\":true}")  //automatic gain control
             setParameters("{\"che.audio.enable.ns\":false}")   //noise suppression
-            enableAudioVolumeIndication(500,3,true)
+            enableAudioVolumeIndication(500, 3, true)
         }
         Log.d(TAG, "initWebrtcService: ${agoraEngine}")
         observeCallbacks()
-        observeSpeakersCalBack()
     }
 
     override suspend fun connectCall(request: CallRequest) {
-            try {
-                Log.d(TAG, "Connect Call Request : $request")
-                state.emit(JOINING)
-                currentState = JOINING
-                val status = joinChannel(request)
-                Log.d(TAG, "Join Channel Status ----> $status")
-                when (status) {
-                    JOINING_CHANNEL_SUCCESS -> {}
-                    USER_ALREADY_IN_A_CHANNEL -> {
-                        state.emit(LEAVING_AND_JOINING)
-                        currentState = LEAVING_AND_JOINING
-                        createLazyJoinRequest(request)
-                        leaveChannel()
-                    }
-                    else -> {
-                        state.emit(IDLE)
-                        currentState = IDLE
-                        eventFlow.emit(CallState.Error("In AgoraWebrtcService Class, connectCall Method Received Error Joining Status : $status"))
-                    }
+        try {
+            Log.d(TAG, "Connect Call Request : $request")
+            state.emit(JOINING)
+            currentState = JOINING
+            val status = joinChannel(request)
+            Log.d(TAG, "Join Channel Status ----> $status")
+            when (status) {
+                JOINING_CHANNEL_SUCCESS -> {}
+                USER_ALREADY_IN_A_CHANNEL -> {
+                    state.emit(LEAVING_AND_JOINING)
+                    currentState = LEAVING_AND_JOINING
+                    createLazyJoinRequest(request)
+                    leaveChannel()
                 }
-                // 1. API Call to notify backend Start Listening to Pubnub Channel
-                // 2. Will send timeout (Use a Timer/repeat/loop and break-out from it when receive channel through pubnub)
-                // 3. Receive Token and Channel through Pubnub [Pubnub Module]
-                // 4. Join Channel through Agora SDK
-            } catch (e: Exception) {
-                if (e is CancellationException)
-                    throw e
-                e.printStackTrace()
+                else -> {
+                    state.emit(IDLE)
+                    currentState = IDLE
+                    eventFlow.emit(CallState.Error("In AgoraWebrtcService Class, connectCall Method Received Error Joining Status : $status"))
+                }
             }
+            // 1. API Call to notify backend Start Listening to Pubnub Channel
+            // 2. Will send timeout (Use a Timer/repeat/loop and break-out from it when receive channel through pubnub)
+            // 3. Receive Token and Channel through Pubnub [Pubnub Module]
+            // 4. Join Channel through Agora SDK
+        } catch (e: Exception) {
+            if (e is CancellationException)
+                throw e
+            e.printStackTrace()
+        }
     }
 
     override suspend fun disconnectCall() {
         Log.d(TAG, "Disconnecting Call")
-            try {
-                // 1. Send DISCONNECTING signal through Pubnub
-                // 2. Leave Channel through Agora SDK
-                stopLazyJoin()
-                state.emit(LEAVING)
-                currentState = LEAVING
-                leaveChannel()
-            } catch (e: Exception) {
-                if (e is CancellationException)
-                    throw e
-                e.printStackTrace()
-            }
+        try {
+            // 1. Send DISCONNECTING signal through Pubnub
+            // 2. Leave Channel through Agora SDK
+            stopLazyJoin()
+            state.emit(LEAVING)
+            currentState = LEAVING
+            leaveChannel()
+        } catch (e: Exception) {
+            if (e is CancellationException)
+                throw e
+            e.printStackTrace()
+        }
     }
 
     private fun createLazyJoinRequest(request: CallRequest) {
@@ -158,37 +156,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         agoraEngine?.removeHandler(listener)
         RtcEngine.destroy()
         agoraEngine = null
-    }
-
-    override fun onStartRecording() {
-        if (recordFile!=null){
-            return
-        }
-        Utils.context?.getTempFileForCallRecording()?.let { file->
-            recordFile = file
-            Log.d(TAG, "GAME observe Agora onStartRecording:  ${recordFile?.absolutePath}")
-            agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000))
-        }
-    }
-
-    override fun onStopRecording() {
-        Log.d(TAG, "GAME observe Agora onStopRecording: ${recordFile?.absolutePath}")
-            recordFile?.absolutePath?.let {
-                agoraEngine?.stopAudioRecording()
-                PrefManager.saveLastRecordingPath(recordFile!!.absolutePath)
-                scope.launch {
-                    try {
-                        eventFlow.emit(CallState.RecordingGenerated)
-                    } catch (e : Exception) {
-                        e.printStackTrace()
-                    }
-                }
-                recordFile = null
-            }
-    }
-
-    override fun observeSpeakersVolume(): SharedFlow<Int> {
-        return eventUid
     }
 
     private fun joinChannel(request: CallRequest): Int? {
@@ -286,25 +253,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         }
     }
 
-    private fun observeSpeakersCalBack(){
-        scope.launch {
-            try {
-                listener.observeCallEventSpeaker().collect{ speakers ->
-                    speakers?.forEach { user ->
-                        if (user.volume > 15) {
-                            when (user.uid) {
-                                0 -> eventUid.emit(0)
-                                else -> eventUid.emit(1)
-                            }
-                        }
-                    }
-                }
-            }catch (ex:Exception){
-
-            }
-        }
-    }
 }
-
 // TODO: Will Use this class instead of Message
 data class Envelope<T : Enum<T>>(val type: T, val data: Any? = null)

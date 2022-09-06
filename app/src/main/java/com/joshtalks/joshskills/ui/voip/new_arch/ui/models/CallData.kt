@@ -4,7 +4,6 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.joshtalks.joshskills.BR
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.voip.data.RecordingButtonState
 
 interface CallData{
     fun getProfileImage(): String?
@@ -38,13 +37,6 @@ class CallUIState : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.currentState)
         }
-    @get:Bindable
-    var recordingCurrentState : String = "Waiting for your partner to accept"
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recordingCurrentState)
-        }
-
     @get:Bindable
     var name : String = ""
         set(value) {
@@ -88,59 +80,10 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
-    var recordTime : Long = 0L
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recordTime)
-        }
-
-    @get:Bindable
-    var recordBtnImg: Int = R.drawable.call_fragment_record
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recordBtnImg)
-        }
-
-    @get:Bindable
-    var recordCrdViewTxt: String = "Waiting for your partner to accept"
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recordCrdViewTxt)
-        }
-
-    @get:Bindable
-    var recordBtnTxt: String = "Record"
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recordBtnTxt)
-        }
-
-    @get:Bindable
     var isMute: Boolean = false
         set(value) {
             field = value
             notifyPropertyChanged(BR.mute)
-        }
-
-    @get:Bindable
-    var isRecordingEnabled: Boolean = false
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recordingEnabled)
-        }
-
-    @get:Bindable
-    var recordingButtonState: RecordingButtonState = RecordingButtonState.SENTREQUEST
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recordingButtonState)
-        }
-
-    @get:Bindable
-    var recordingStartTime : Long = 0L
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.startTime)
         }
 
     @get:Bindable
@@ -172,37 +115,6 @@ class CallUIState : BaseObservable() {
     }
 
     @get:Bindable
-    var gameWord:String = ""
-        set(value) {
-            if(isGameStarted) {
-                field = value
-                notifyPropertyChanged(BR.gameWord)
-            }
-        }
-
-    @get:Bindable
-    var wordColor:String = ""
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.wordColor)
-        }
-
-    @get:Bindable
-    var isNextWordClicked:Boolean = false
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.nextWordClicked)
-        }
-
-    @get:Bindable
-    var isStartGameClicked:Boolean = false
-        set(value) {
-            field = value
-            isGameStarted = field
-            notifyPropertyChanged(BR.startGameClicked)
-        }
-
-    @get:Bindable
     var occupation:String = ""
         set(value) {
             field = value
@@ -228,27 +140,6 @@ class CallUIState : BaseObservable() {
         set(value) {
             field = value
             notifyPropertyChanged(BR.localUserProfile)
-        }
-
-    @get:Bindable
-    var isCalleeSpeaking:Boolean = false
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.calleeSpeaking)
-        }
-
-    @get:Bindable
-    var isCallerSpeaking:Boolean = false
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.callerSpeaking)
-        }
-
-    @get:Bindable
-    var recordButtonPressedTwoTimes : Int = 0
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.callerSpeaking)
         }
 
     @get:Bindable

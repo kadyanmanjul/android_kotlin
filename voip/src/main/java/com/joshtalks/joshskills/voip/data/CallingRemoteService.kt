@@ -210,24 +210,6 @@ class CallingRemoteService : Service() {
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
                                 }
-                                START_RECORDING -> {
-                                    serviceEvents.emit(ServiceEvents.START_RECORDING)
-                                }
-                                STOP_RECORDING -> {
-                                    serviceEvents.emit(ServiceEvents.STOP_RECORDING)
-                                }
-                                CALL_RECORDING_ACCEPT -> {
-                                    serviceEvents.emit(ServiceEvents.CALL_RECORDING_ACCEPT)
-                                }
-                                CALL_RECORDING_REJECT -> {
-                                    serviceEvents.emit(ServiceEvents.CALL_RECORDING_REJECT)
-                                }
-                                CANCEL_RECORDING_REQUEST -> {
-                                    serviceEvents.emit(ServiceEvents.CANCEL_RECORDING_REQUEST)
-                                }
-                                AGORA_CALL_RECORDED -> {
-                                    serviceEvents.emit(ServiceEvents.PROCESS_AGORA_CALL_RECORDING)
-                                }
                             }
                         }
                         catch (e : Exception){
@@ -348,27 +330,7 @@ class CallingRemoteService : Service() {
 
     fun backPress() { mediator.userAction(Action.BACK_PRESS) }
 
-    fun startRecording() { mediator.userAction(Action.START_RECORDING) }
-
-    fun stopRecording() { mediator.userAction(Action.STOP_RECORDING) }
-
     fun changeTopicImage() { mediator.userAction(Action.TOPIC_IMAGE_CHANGE) }
-
-    fun nextGameWord() { mediator.userAction(Action.NEXT_WORD_REQUEST) }
-
-    fun startGame() { mediator.userAction(Action.START_GAME) }
-
-    fun endGame() { mediator.userAction(Action.END_GAME) }
-
-    fun acceptCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_ACCEPTED) }
-
-    fun rejectCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_REJECTED) }
-
-    fun cancelRecordingRequest() {mediator.userAction(Action.CANCEL_RECORDING_REQUEST)}
-
-    fun startAgoraRecording() {mediator.startAgoraCallRecording()}
-
-    fun stopAgoraCallRecording() {mediator.stopAgoraCallRecording()}
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
@@ -474,17 +436,6 @@ data class UIState(
     val isOnMute: Boolean = false,
     val isReconnecting: Boolean = false,
     val startTime: Long = 0L,
-    val recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE,
-    val recordingButtonNooftimesclicked: Int = 0,
-    val recordingStartTime: Long = 0L,
-    val isRecordingEnabled: Boolean = false,
-    val isCallerSpeaking: Boolean = false,
-    val isCalleeSpeaking: Boolean = false,
-    val isNextWordClicked: Boolean = false ,
-    val isStartGameClicked: Boolean = false,
-    val nextGameWord: String = "",
-    val nextGameWordColor: String = "",
-    val isRemoteUserGameStarted : Boolean = false
     ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")
@@ -496,17 +447,4 @@ enum class ServiceEvents {
     CALL_CONNECTED_EVENT,
     RECONNECTING_FAILED,
     CLOSE_CALL_SCREEN,
-    START_RECORDING,
-    STOP_RECORDING,
-    CALL_RECORDING_ACCEPT,
-    CALL_RECORDING_REJECT,
-    CANCEL_RECORDING_REQUEST,
-    PROCESS_AGORA_CALL_RECORDING,
-}
-
-enum class RecordingButtonState {
-    IDLE,
-    SENTREQUEST,
-    GOTREQUEST,
-    RECORDING
 }

@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.voip.state
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.model.IncomingGameNextWord
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
@@ -120,9 +119,7 @@ class JoiningState(val context: CallContext) : VoipState {
                                 extra = msg
                             )
                         }
-                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT,
-                                Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT, Event.CALL_RECORDING_REJECT,
-                                Event.CANCEL_RECORDING_REQUEST,STOP_GAME_RECORDING,START_GAME_RECORDING -> {
+                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT"
                             CallAnalytics.addAnalytics(
@@ -224,49 +221,7 @@ class JoiningState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                        Event.START_GAME -> {
-                            ensureActive()
-                            val userAction = UserAction(
-                                ServerConstants.START_GAME,
-                                context.channelData.getChannel(),
-                                address = Utils.uuid ?: ""
-                            )
-                            val uiState = context.currentUiState.copy(isStartGameClicked = true)
-                            context.updateUIState(uiState = uiState)
-                            context.sendMessageToServer(userAction)
-                        }
-                        Event.END_GAME -> {
-                            ensureActive()
-                            if(event.data == ActionDirection.SERVER) {
-                                val userAction = UserAction(
-                                    ServerConstants.END_GAME,
-                                    context.channelData.getChannel(),
-                                    address = context.channelData.getPartnerMentorId()
-                                )
-                                context.sendMessageToServer(userAction)
-                            }
-                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "", isRemoteUserGameStarted = false)
-                            context.updateUIState(uiState = uiState)
-                        }
-                        Event.NEXT_WORD_REQUEST -> {
-                            ensureActive()
-                            val userAction = UserAction(
-                                ServerConstants.NEXT_WORD_REQUEST,
-                                context.channelData.getChannel(),
-                                address = Utils.uuid ?: ""
-                            )
-                            context.sendMessageToServer(userAction)
 
-                            val uiState = context.currentUiState.copy(isNextWordClicked = true)
-                            context.updateUIState(uiState = uiState)
-                        }
-                        Event.NEXT_WORD_RECEIVED -> {
-                            ensureActive()
-                            val incomingWord= event.data as IncomingGameNextWord
-                            val uiState = context.currentUiState.copy(nextGameWord = incomingWord.word, nextGameWordColor = incomingWord.color, isNextWordClicked = false)
-                            context.updateUIState(uiState = uiState)
-
-                        }
                         SYNC_UI_STATE -> {
                             ensureActive()
                             context.sendMessageToServer(
@@ -276,7 +231,6 @@ class JoiningState(val context: CallContext) : VoipState {
                                     isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                     isMute = if (context.currentUiState.isOnMute) 1 else 0,
                                     address = context.channelData.getPartnerMentorId(),
-                                    isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                 )
                             )
                         }
@@ -291,13 +245,11 @@ class JoiningState(val context: CallContext) : VoipState {
                                         isHold = if (context.currentUiState.isOnHold) 1 else 0,
                                         isMute = if (context.currentUiState.isOnMute) 1 else 0,
                                         address = context.channelData.getPartnerMentorId(),
-                                        isPlayButtonClick = if(context.currentUiState.isStartGameClicked) 1 else 0
                                     )
                                 )
                             val uiState = context.currentUiState.copy(
                                 isRemoteUserMuted = uiData.isMute(),
                                 isOnHold = uiData.isHold(),
-                                isRemoteUserGameStarted = uiData.isPlayBtnClick()
                             )
                             context.updateUIState(uiState = uiState)
                         }

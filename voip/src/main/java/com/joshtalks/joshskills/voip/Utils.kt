@@ -214,26 +214,6 @@ fun Context.isFreeTrialOrCourseBought(): Boolean {
     return isFreeTrialOrCourseBought=="true"
 }
 
-fun Context.getVideoUrl():String{
-    var audioUrlId = ""
-    val videoUrl = contentResolver.query(
-        Uri.parse(CONTENT_URI + RECORD_VIDEO_URI),
-        null,
-        null,
-        null,
-        null
-    )
-    videoUrl?.moveToFirst()
-    try {
-        audioUrlId = videoUrl.getStringData(VIDEO_COLUMN)
-        videoUrl?.close()
-    }catch (ex:Exception){
-        ex.printStackTrace()
-        return ""
-    }
-    return audioUrlId
-}
-
 fun Context.getMentorName(): String {
     var mentorName = ""
     val mentorNameCursor = contentResolver.query(
@@ -332,48 +312,6 @@ fun Context.getServiceNotificationIntent(data: NotificationData): PendingIntent 
         flag)
     return pendingIntent
 
-}
-
-fun Context.getRecordingText(): String {
-    var textData = ""
-    val recordingCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + RECORDING_TEXT),
-        null,
-        null,
-        null,
-        null
-    )
-
-    recordingCursor?.moveToFirst()
-    try {
-        textData = recordingCursor.getStringData(RECORDING_TEXT_COLUMN)
-        recordingCursor?.close()
-    }catch (ex:Exception){
-        ex.printStackTrace()
-        return ""
-    }
-    return textData
-}
-
-fun Context.getGameFlag(): String {
-    var textData = "1"
-    val recordingCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + GAME_FLAG),
-        null,
-        null,
-        null,
-        null
-    )
-
-    recordingCursor?.moveToFirst()
-    try {
-        textData = recordingCursor.getStringData(GAME_TEXT_COLUMN)
-        recordingCursor?.close()
-    }catch (ex:Exception){
-        ex.printStackTrace()
-        return "1"
-    }
-    return textData
 }
 
 

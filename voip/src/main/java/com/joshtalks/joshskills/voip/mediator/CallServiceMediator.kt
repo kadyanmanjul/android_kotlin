@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.voip.mediator
 
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.ServiceEvents
@@ -12,27 +11,31 @@ import kotlinx.coroutines.flow.StateFlow
 // TODO: Need to Refactor
 internal interface CallServiceMediator {
     // To Observer UI State
-    fun observerUIState() : StateFlow<UIState>
+    fun observerUIState(): StateFlow<UIState>
+
     // To Observer UI Transition Events
-    fun observerUITransition() : SharedFlow<ServiceEvents>
+    fun observerUITransition(): SharedFlow<ServiceEvents>
+
     // To Observer Mediator Events
-    fun observeEvents() : SharedFlow<Envelope<Event>>
+    fun observeEvents(): SharedFlow<Envelope<Event>>
+
     // Needed for Connect Call
-    fun connectCall(callCategory: Category, callData : HashMap<String, Any>)
+    fun connectCall(callCategory: Category, callData: HashMap<String, Any>)
+
     // Needed to show Incoming Call TODO: Need to check
     suspend fun handleIncomingCall(map: HashMap<String, String>)
+
     // Needed to hide Notification
     fun hideIncomingCall()
     fun declineIncomingCall()
 
     // Needed to receive User Action
     fun userAction(action: UserAction)
+
     // Used to destroy Mediator
     suspend fun onDestroy()
-    fun stopAgoraCallRecording()
-    fun startAgoraCallRecording()
-}
 
+}
 enum class UserAction {
     BACK_PRESS,
     DISCONNECT,
@@ -44,12 +47,4 @@ enum class UserAction {
     SPEAKER_ON,
     SPEAKER_OFF,
     TOPIC_IMAGE_CHANGE,
-    START_RECORDING,
-    STOP_RECORDING,
-    RECORDING_REQUEST_ACCEPTED,
-    RECORDING_REQUEST_REJECTED,
-    CANCEL_RECORDING_REQUEST,
-    START_GAME,
-    END_GAME,
-    NEXT_WORD_REQUEST,
 }

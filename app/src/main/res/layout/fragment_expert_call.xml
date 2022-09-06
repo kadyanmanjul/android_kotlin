@@ -6,7 +6,6 @@
     <data>
         <import type="android.view.View"/>
         <import type="com.joshtalks.joshskills.base.constants.ConstantsKt"/>
-        <import type="com.joshtalks.joshskills.voip.data.RecordingButtonState" />
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
@@ -160,45 +159,10 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_mute"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/btn_record_call"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_speaker_on" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/btn_record_call"
-                    android:layout_width="@dimen/_45sdp"
-                    android:layout_height="@dimen/_45sdp"
-                    android:background="@drawable/circle2"
-                    android:backgroundTint="@color/dis_color_10f"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="@dimen/_14sdp"
-                    android:visibility="gone"
-                    app:imageResource="@{vm.uiState.recordBtnImg}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@drawable/ic_rec_mic" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_record_call"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center"
-                    android:paddingTop="@dimen/_4sdp"
-                    android:text="@{vm.uiState.recordBtnTxt}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:textColor="@color/white"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/btn_record_call"
-                    app:layout_constraintStart_toStartOf="@+id/btn_record_call"
-                    app:layout_constraintTop_toBottomOf="@+id/btn_record_call"
-                    tools:ignore="MissingPrefix"
-                    tools:text="Record" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_speaker"

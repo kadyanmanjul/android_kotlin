@@ -14,15 +14,6 @@ const val RECONNECTING = 113
 const val RECONNECTED = 114
 const val CLOSE_CALL_SCREEN = 130
 const val CANCEL_INCOMING_TIMER = 131
-const val SHOW_RECORDING_PERMISSION_DIALOG = 132
-const val SHOW_RECORDING_REJECTED_DIALOG = 133
-const val HIDE_RECORDING_PERMISSION_DIALOG = 134
-const val GET_FRAGMENT_BITMAP = 135
-const val CHANGE_APP_THEME_T0_BLACK= 136
-const val CHANGE_APP_THEME_T0_BLUE= 137
-const val START_SCREEN_RECORDING= 138
-const val STOP_SCREEN_RECORDING= 139
-const val RECORDING_PERMISSION_DIALOG= 140
 
 
 const val CALL_CONNECT_REQUEST = 115
@@ -38,14 +29,11 @@ const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining
 // Content Provider Voip State
 const val CONTENT_VOIP_STATE_AUTHORITY = "content://com.joshtalks.joshskills.voipstate"
 const val PSTN_STATE_PATH = "/current_pstn_state"
-const val BITMAP_PATH = "/bitmap"
-
 
 
 //    Content values for Voip State
 const val CURRENT_VOIP_STATE = "josh_current_voip_state"
 const val CURRENT_PSTN_STATE = "josh_current_pstn_state"
-const val SCREENSHOT_BITMAP = "screenshot_bitmap"
 
 
 
@@ -94,21 +82,8 @@ enum class Event {
     UNMUTE_REQUEST,
     TOPIC_IMAGE_CHANGE_REQUEST,
     TOPIC_IMAGE_RECEIVED,
-    START_RECORDING,
-    STOP_RECORDING,
-    CALL_RECORDING_ACCEPT,
-    CALL_RECORDING_REJECT,
-    CANCEL_RECORDING_REQUEST,
-    AGORA_CALL_RECORDED,
-    AGORA_CALL_SPEAKER_VOLUME,
-    START_GAME,
-    END_GAME,
-    NEXT_WORD_REQUEST,
-    NEXT_WORD_RECEIVED,
     GROUP_INCOMING_CALL,
     FPP_INCOMING_CALL,
-    START_GAME_RECORDING,
-    STOP_GAME_RECORDING
 }
 
 enum class State {

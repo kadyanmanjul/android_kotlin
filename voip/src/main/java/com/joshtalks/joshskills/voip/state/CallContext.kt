@@ -164,15 +164,6 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
         Log.d(TAG, "enableSpeaker $isEnable} ")
         mediator.changeSpeaker(isEnable)
     }
-
-    fun startRecording() {
-        Log.d(TAG, "startRecording")
-        mediator.startRecording()
-    }
-    fun stopRecording() {
-        Log.d(TAG, "stopRecording")
-        mediator.stopRecording()
-    }
 }
 
 class UnexpectedException(message: String) : Throwable(message = message)

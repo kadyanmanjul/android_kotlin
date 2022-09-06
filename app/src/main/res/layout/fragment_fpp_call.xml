@@ -6,7 +6,6 @@
     <data>
         <import type="android.view.View"/>
         <import type="com.joshtalks.joshskills.base.constants.ConstantsKt"/>
-        <import type="com.joshtalks.joshskills.voip.data.RecordingButtonState" />
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
@@ -20,32 +19,6 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:background="#0D5CB8">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/topic_viewpager"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:padding="@dimen/_5sdp"
-            android:layout_margin="@dimen/_10sdp"
-            setViewPagerAdapter="@{vm.uiState.topicImage}"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_card_view"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/topic_header" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:id="@+id/next_topic_btn"
-            android:layout_margin="@dimen/_10sdp"
-            android:onClick="@{vm::getNewTopicImage}"
-            app:layout_constraintBottom_toBottomOf="@+id/topic_viewpager"
-            app:layout_constraintEnd_toEndOf="@+id/topic_viewpager"
-            android:background="@drawable/circle2"
-            android:backgroundTint="@color/topic_btn_blue"
-            app:srcCompat = "@drawable/ic_arrow_back"
-            android:rotation="180"
-            />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_group_name"
@@ -166,6 +139,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="24dp"
             android:gravity="center"
             android:text="Discussion Topic"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
@@ -173,8 +147,26 @@
             android:textStyle="bold"
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintHorizontal_bias="0.512"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@+id/call_time1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/topic_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topic_header"
+            tools:ignore="MissingPrefix"
+            android:text="@{vm.uiState.topic}"
+            tools:text="Talk about what is Future" />
+
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -222,45 +214,9 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_mute"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/btn_record_call"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_baseline_speaker_on" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/btn_record_call"
-                    android:layout_width="@dimen/_45sdp"
-                    android:layout_height="@dimen/_45sdp"
-                    android:background="@drawable/circle2"
-                    android:backgroundTint="@color/dis_color_10f"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="@dimen/_14sdp"
-                    android:visibility="gone"
-                    app:imageResource="@{vm.uiState.recordBtnImg}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@drawable/ic_rec_mic" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_record_call"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center"
-                    android:paddingTop="@dimen/_4sdp"
-                    android:text="@{vm.uiState.recordBtnTxt}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:textColor="@color/white"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/btn_record_call"
-                    app:layout_constraintStart_toStartOf="@+id/btn_record_call"
-                    app:layout_constraintTop_toBottomOf="@+id/btn_record_call"
-                    tools:ignore="MissingPrefix"
-                    tools:text="Record" />
+                    app:srcCompat="@drawable/ic_baseline_speaker_on" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_speaker"
@@ -327,7 +283,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            app:constraint_referenced_ids="topic_header, topic_viewpager, occupation_future_goals, next_topic_btn"
+            app:constraint_referenced_ids="topic_header, topic_name, occupation_future_goals"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline

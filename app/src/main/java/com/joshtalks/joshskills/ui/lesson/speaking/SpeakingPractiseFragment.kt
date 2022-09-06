@@ -47,26 +47,20 @@ import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
-import com.joshtalks.joshskills.ui.recording_gallery.views.RecordingGalleryActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
-import org.json.JSONObject
 import java.util.*
 
 const val NOT_ATTEMPTED = "NA"
@@ -166,14 +160,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     }
 
-    private fun getVoipState(): State? {
-        try {
+    private fun getVoipState(): State {
             return com.joshtalks.joshskills.voip.data.local.PrefManager.getVoipState()
-        } catch (ex: java.lang.Exception) {
-            showToast("Please retry again later")
-            ex.printStackTrace()
-        }
-        return null
     }
 
     override fun onStop() {

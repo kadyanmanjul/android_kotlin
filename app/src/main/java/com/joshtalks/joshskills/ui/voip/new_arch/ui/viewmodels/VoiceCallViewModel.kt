@@ -2,12 +2,9 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
 import android.app.Activity
 import android.app.Application
-import android.media.MediaMetadataRetriever
-import android.media.MediaMetadataRetriever.METADATA_KEY_DURATION
 import android.os.Message
 import android.util.Log
 import android.view.View
-import androidx.core.net.toUri
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -21,20 +18,15 @@ import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.ifEnoughMemorySize
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
-import java.io.File
 import java.util.ArrayDeque
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -57,19 +49,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     val callData = HashMap<String, Any>()
     val uiState by lazy { CallUIState() }
     val pendingEvents = ArrayDeque<Int>()
-    var recordCnclStop = 0 // 0 = record, 1 = cancel, 2 = stop
     private var singleLiveEvent = EventLiveData
-    var audioRecordFile: File? = null
-    var videoRecordFile: File? = null
     var visibleCrdView = false
     var isListening = false
-    var isRequestDialogShowed = false
-    var timer: Job? = null
-    val toastText  = Utils.context?.getRecordingText()?:""
     var isPermissionGranted: ObservableBoolean = ObservableBoolean(false)
-    var isGameEnabled: ObservableBoolean = ObservableBoolean(false)
     var isExpertCallData = ObservableField(false)
-    var isRecordPermissionGiven: ObservableBoolean = ObservableBoolean(false)
 
 
     private val connectCallJob by lazy {
@@ -89,7 +73,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     }
 
     init {
-        isGameEnabled.set(Utils.context?.getGameFlag() == "1")
         listenRepositoryEvents()
     }
 
@@ -155,94 +138,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             singleLiveEvent.value = msg
                         }
                     }
-                    ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
-                        Log.d(TAG, " GAME observe: PROCESS_AGORA_CALL_RECORDING")
-                        File(PrefManager.getLastRecordingPath()).let { file ->
-                            processRecording(recordFile1 = file)
-                            cancelRecordingTimer()
-                        }
-                    }
                 }
             }
         }
     }
 
-    fun recordingStartedUIChanges() {
-        uiState.visibleCrdView = true
-        uiState.recordCrdViewTxt = "REC"
-        uiState.recordBtnImg = R.drawable.ic_stop_record
-        uiState.recordBtnTxt = "Stop"
-    }
-
-    fun processRecording(recordFile1: File?=null,videoFile : File? = null) {
-        if(recordFile1!=null)
-        audioRecordFile = recordFile1
-        if(videoFile!=null)
-        videoRecordFile = videoFile
-
-        CoroutineScope(Dispatchers.IO).launch {
-            if (audioRecordFile?.absolutePath?.isEmpty()?.not() == true && videoRecordFile?.absolutePath.isNullOrEmpty().not() ) {
-                val len = audioRecordFile?.length() ?:0
-                if (len < 1) {
-                    return@launch
-                }
-                ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = audioRecordFile?.absolutePath?:"", callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = audioRecordFile?.getMediaDuration()?.toInt()?:0)
-                CallRecordingAnalytics.addAnalytics(
-                    agoraCallId = PrefManager.getAgraCallId().toString(),
-                    agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
-                    localPath = audioRecordFile?.absolutePath!!)
-                audioRecordFile = null
-                videoRecordFile = null
-            }
-        }
-    }
-    fun File.getMediaDuration(): Long {
-        if (!exists()) return 0
-        val retriever = MediaMetadataRetriever()
-        return try {
-            retriever.setDataSource(applicationContext, this.toUri())
-            val duration = retriever.extractMetadata(METADATA_KEY_DURATION)
-            retriever.release()
-            duration?.toLongOrNull() ?: 0
-        } catch (exception: Exception) {
-            0
-        }
-    }
-
-    fun acceptCallRecording(view:View) {
-        repository.acceptCallRecording()
-        CallAnalytics.addAnalytics(
-            event = EventName.RECORDING_ACCEPTED,
-            agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-        )
-        startAudioRecording()
-    }
-
-    fun startAudioRecording(){
-        try {
-            repository.startAgoraRecording()
-        }catch (ex:Exception){
-            Log.e(TAG, "startAudioVideoRecording: ${ex.message}")
-        }
-    }
-
-    fun stopAudioRecording(){
-        try {
-            repository.stopAgoraClientCallRecording()
-        }catch (e:Exception){
-            Log.e(TAG, "stopAudioVideoRecording: ${e.message}")
-        }
-    }
-
-    fun rejectCallRecording() {
-        CallAnalytics.addAnalytics(
-            event = EventName.RECORDING_REJECTED,
-            agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-        )
-        repository.rejectCallRecording()
-    }
 
     private fun listenUIState() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -252,22 +152,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 Log.d(TAG, "listenUIState: State --> $voipState")
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
-                uiState.isCallerSpeaking = state.isCallerSpeaking
-                uiState.isCalleeSpeaking = state.isCalleeSpeaking
-                uiState.recordButtonPressedTwoTimes = state.recordingButtonNooftimesclicked
-                // TODO remove this logic from here ( issues: fix when state is REQUESTED we have to show dialog even when other user come back from background )
-                if (state.recordingButtonState == RecordingButtonState.GOTREQUEST
-                    && uiState.recordingButtonState != RecordingButtonState.GOTREQUEST
-                    && uiState.recordBtnTxt.equals("Record")) {
-                    val msg = Message.obtain().apply {
-                        what = SHOW_RECORDING_PERMISSION_DIALOG
-                    }
-                    withContext(Dispatchers.Main) {
-                        singleLiveEvent.value = msg
-                    }
-                }
-                if (uiState.recordTime != state.recordingStartTime)
-                    uiState.recordTime = state.recordingStartTime
 
                 if(voipState!=State.IDLE && voipState != State.SEARCHING) {
                     uiState.name = state.remoteUserName
@@ -278,9 +162,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     uiState.localUserProfile = Utils.context?.getMentorProfile()?:""
                 }catch (ex:Exception){}
 
-                uiState.gameWord = state.nextGameWord
-                uiState.wordColor = state.nextGameWordColor
-                uiState.isStartGameClicked = state.isStartGameClicked
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType
@@ -292,54 +173,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     else -> ""
                 }
 
-                if (state.nextGameWord == "") {
-                    uiState.p2pCallBackgroundColor = R.color.p2p_call_background_color
-                } else {
-                    uiState.p2pCallBackgroundColor = R.color.black
-                }
-
-                when(state.recordingButtonState) {
-                    RecordingButtonState.SENTREQUEST -> {
-                        Log.d(TAG, "GAME observe: STOP_RECORDING ${state.isStartGameClicked} ${uiState.isRecordingEnabled} ${state.isRecordingEnabled}")
-                            if (state.isStartGameClicked && uiState.isRecordingEnabled) {
-                                    Log.d(TAG, "GAME observe: STOP_RECORDING inside ")
-                                val msg1 = Message.obtain().apply {
-                                    what = STOP_SCREEN_RECORDING
-                                }
-                                withContext(Dispatchers.Main) {
-                                    singleLiveEvent.value = msg1
-                                }
-                                stopAudioRecording()
-                                uiState.isRecordingEnabled = state.isRecordingEnabled
-
-                                if(timer?.isActive == true || timer?.isCompleted == true){
-                                    delay(1500)
-                                    repository.startCallRecording()
-                                }
-                            }
-                        cancelRecordingTimer()
-                    }
-                    RecordingButtonState.RECORDING -> {
-                        Log.d(TAG, "GAME observe: RECORDING ${applicationContext.ifEnoughMemorySize()} ${!uiState.isRecordingEnabled} ${state.isRecordingEnabled}")
-                        if ( !uiState.isRecordingEnabled) {
-                            startRecordingTimer(RecordingButtonState.RECORDING)
-                            val msg1 = Message.obtain().apply {
-                                what = START_SCREEN_RECORDING
-                            }
-                            withContext(Dispatchers.Main) {
-                                singleLiveEvent.value = msg1
-                            }
-                            startAudioRecording()
-                            uiState.isRecordingEnabled = state.isRecordingEnabled
-                        }
-                    }
-                    else -> {}
-                }
-
-                Log.d(TAG, "listenUIState: ${state.isRemoteUserGameStarted}")
-                if(state.isRemoteUserGameStarted && uiState.isStartGameClicked && uiState.gameWord.equals("")){
-                    repository.nextGameWord()
-                }
 
                 if (state.isReconnecting) {
                     uiState.currentState = "Reconnecting"
@@ -353,29 +186,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     if (voipState == State.CONNECTED || voipState == State.RECONNECTING)
                         uiState.currentState = "Timer"
                 }
-                if(state.isStartGameClicked && !state.nextGameWord.equals("") && isRecordPermissionGiven.get()){
-                    val msg = Message.obtain().apply {
-                        what = CHANGE_APP_THEME_T0_BLACK
-                    }
-                    withContext(Dispatchers.Main) {
-                        singleLiveEvent.value = msg
-                    }
-                    CallAnalytics.addAnalytics(
-                        event = EventName.GAME_STARTED,
-                        agoraCallId = PrefManager.getAgraCallId().toString(),
-                        agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-                    )
-                }
-
-                if(!state.isStartGameClicked || state.nextGameWord.equals("")){
-                    val msg = Message.obtain().apply {
-                        what = CHANGE_APP_THEME_T0_BLUE
-                    }
-                    withContext(Dispatchers.Main) {
-                        singleLiveEvent.value = msg
-                    }
-                }
-                uiState.isNextWordClicked = state.isNextWordClicked
 
 
                 if (uiState.isSpeakerOn != state.isSpeakerOn) {
@@ -388,20 +198,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 }
             }
         }
-    }
-
-    fun getTime(recordingButtonState: RecordingButtonState): Job? {
-        try {
-            timer = CoroutineScope(Dispatchers.IO).launch {
-                delay(60000)
-                if (recordingButtonState == RecordingButtonState.RECORDING) {
-                    if (uiState.recordTime > 0) {
-                        repository.stopCallRecording()
-                    }
-                }
-            }
-        } catch (ex: Exception) {}
-        return timer
     }
 
     private fun getOccupationText(aspiration: String, occupation: String): String {
@@ -442,7 +238,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
             extra = PrefManager.getVoipState().name
         )
-        endGameFromRepo()
         disconnect()
     }
 
@@ -498,7 +293,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     // User Action
     fun backPress() {
         Log.d(TAG, "backPress ")
-        endGameFromRepo()
         repository.backPress()
     }
 
@@ -523,75 +317,5 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun unboundService(activity: Activity) {
         voipLog?.log("unbound Service")
         repository.stopService(activity)
-    }
-
-    fun startGame(v:View){
-        if (Utils.isInternetAvailable().not()) {
-            Utils.showToast("Seems like you have no internet")
-            return
-        }
-        CallAnalytics.addAnalytics(
-            event = EventName.PLAY_GAME_CLICK,
-            agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-        )
-
-            val msg = Message.obtain().apply {
-                what = RECORDING_PERMISSION_DIALOG
-            }
-            singleLiveEvent.value = msg
-
-    }
-
-    fun endGame(v:View){
-        if (Utils.isInternetAvailable().not()) {
-            Utils.showToast("Wait for the internet to reconnect...")
-            return
-        }
-       endGameFromRepo()
-    }
-
-    fun startGameFromRepo(){
-        repository.startGame()
-    }
-
-    fun endGameFromRepo(){
-        CallAnalytics.addAnalytics(
-            event = EventName.END_GAME_CLICK,
-            agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-        )
-        cancelRecordingTimer()
-        repository.endGame()
-    }
-
-    fun nextWord(v:View){
-        CallAnalytics.addAnalytics(
-            event = EventName.NEW_WORD_CLICK,
-            agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-        )
-        if (Utils.isInternetAvailable().not()) {
-            Utils.showToast("Seems like you have no internet")
-            return
-        }
-        cancelRecordingTimer()
-        repository.nextGameWord()
-        viewModelScope.launch(Dispatchers.Main) {
-            Utils.showToast(toastText)
-        }
-    }
-
-    fun cancelRecordingTimer(){
-        if(timer?.isActive == true || timer?.isCompleted == true) {
-            timer?.cancel()
-            timer = null
-        }
-    }
-    fun startRecordingTimer(state: RecordingButtonState){
-        if(timer == null || timer?.isActive == false) {
-           timer = getTime(state)
-           timer?.start()
-       }
     }
 }

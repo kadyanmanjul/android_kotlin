@@ -105,9 +105,6 @@
             android:name=".ui.callWithExpert.CallWithExpertActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.recording_gallery.views.RecordingGalleryActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.fpp.SeeAllRequestsActivity"
             android:exported="false" />
         <activity
@@ -802,10 +799,6 @@
 
         <service
             android:name=".core.service.BackgroundService"
-            android:enabled="true"
-            android:exported="false" />
-        <service
-            android:name=".ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService"
             android:enabled="true"
             android:exported="false" />
     </application>

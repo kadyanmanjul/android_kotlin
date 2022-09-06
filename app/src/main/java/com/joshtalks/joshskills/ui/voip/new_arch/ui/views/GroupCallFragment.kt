@@ -182,10 +182,6 @@ class GroupCallFragment : BaseFragment(), SensorEventListener {
         setCurrentCallState()
     }
 
-    fun changeTopicImage(v: View) {
-        if (callBinding.topicViewpager.currentItem < callBinding.topicViewpager.adapter!!.itemCount)
-            callBinding.topicViewpager.currentItem = callBinding.topicViewpager.currentItem + 1
-    }
 
     private fun setCurrentCallState() {
         if (isFragmentRestarted) {

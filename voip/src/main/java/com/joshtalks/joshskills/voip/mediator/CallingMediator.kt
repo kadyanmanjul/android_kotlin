@@ -87,7 +87,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             try {
                 mutex.withLock {
                     handleWebrtcEvent()
-                    handleWebrtcSpeakerVolume()
                     handlePubnubEvent()
                     handleFallbackEvents()
                     observeChannelState()
@@ -240,45 +239,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         val envelope = Envelope(Event.TOPIC_IMAGE_CHANGE_REQUEST)
                         stateChannel.send(envelope)
                     }
-                    UserAction.START_RECORDING -> {
-                        val envelope = Envelope(Event.START_GAME_RECORDING, data = ActionDirection.LOCAL)
-                        stateChannel.send(envelope)
-                    }
-                    UserAction.STOP_RECORDING -> {
-                        val envelope = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
-                        stateChannel.send(envelope)
-                    }
-                    UserAction.RECORDING_REQUEST_ACCEPTED -> {
-//                        val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.SERVER)
-//                        stateChannel.send(envelope)
-                    }
-                    UserAction.RECORDING_REQUEST_REJECTED -> {
-                        val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.SERVER)
-                        stateChannel.send(envelope)
-                    }
-                    UserAction.CANCEL_RECORDING_REQUEST -> {
-                        val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.SERVER)
-                        stateChannel.send(envelope)
-                    }
-                    UserAction.NEXT_WORD_REQUEST -> {
-
-                        val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
-                        stateChannel.send(envelopeEndGame)
-                        val envelope = Envelope(Event.NEXT_WORD_REQUEST, data = ActionDirection.SERVER)
-                        stateChannel.send(envelope)
-                    }
-                        UserAction.START_GAME -> {
-                        val envelope = Envelope(Event.START_GAME, data = ActionDirection.SERVER)
-                        stateChannel.send(envelope)
-                    }
-                    UserAction.END_GAME -> {
-                        if(callContext?.currentUiState!!.isStartGameClicked) {
-                            val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
-                            stateChannel.send(envelopeEndGame)
-                            val envelope = Envelope(Event.END_GAME, data = ActionDirection.SERVER)
-                            stateChannel.send(envelope)
-                        }
-                    }
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
@@ -330,14 +290,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             e.printStackTrace()
         }
         webrtcService.onDestroy()
-    }
-
-    override fun stopAgoraCallRecording() {
-        stopRecording()
-    }
-
-    override fun startAgoraCallRecording() {
-        startRecording()
     }
 
     // Handle Events coming from Backend
@@ -408,33 +360,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_USER_LEFT)
                                 stateChannel.send(envelope)
                             }
-                            CallState.RecordingGenerated -> {
-                                val envelope = Envelope(Event.AGORA_CALL_RECORDED)
-                                flow.emit(envelope)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        if (e is CancellationException)
-                            throw e
-                        e.printStackTrace()
-                    }
-                }
-            } catch (e: Exception) {
-                Log.d(TAG, "handleWebrtcEvent : $e")
-                e.printStackTrace()
-                if (e is CancellationException)
-                    throw e
-            }
-        }
-    }
 
-    private fun handleWebrtcSpeakerVolume() {
-        scope.launch {
-            try {
-                webrtcService.observeSpeakersVolume().collect {
-                    try {
-                        val envelope = Envelope(Event.AGORA_CALL_SPEAKER_VOLUME, it)
-                        speakerVolumeChannel.send(envelope)
+                        }
                     } catch (e: Exception) {
                         if (e is CancellationException)
                             throw e
@@ -514,53 +441,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             )
                             stateChannel.send(envelope)
                         }
-                        ServerConstants.NEXT_WORD_RECEIVED ->{
-                            Log.d(TAG, " GAME observe: START GAME RECORDING  ServerConstants NEXT_WORD_RECEIVED")
-
-                            if(callContext?.currentUiState!!.isStartGameClicked) {
-                                val envelopeStartRecording = Envelope(Event.START_GAME_RECORDING, data = ActionDirection.LOCAL)
-                                stateChannel.send(envelopeStartRecording)
-                                val incomingWorData = IncomingGameNextWord(word = event.getWord(), color = event.getWordColor())
-                                val envelope = Envelope(
-                                    Event.NEXT_WORD_RECEIVED,
-                                    incomingWorData
-                                )
-                                stateChannel.send(envelope)
-                            }
-                        }
-                        ServerConstants.END_GAME ->{
-                            Log.d(TAG, " GAME observe: START GAME RECORDING ServerConstants  END_GAME")
-                            if(callContext?.currentUiState!!.isStartGameClicked) {
-                                val envelope = Envelope(
-                                    Event.END_GAME,
-                                    data = ActionDirection.LOCAL
-                                )
-                                stateChannel.send(envelope)
-                            }
-                        }
                         // Remote User Disconnected
                         ServerConstants.DISCONNECTED -> {
                             val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
-                            stateChannel.send(envelope)
-                        }
-                        ServerConstants.START_RECORDING -> {
-                            val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.LOCAL)
-                            stateChannel.send(envelope)
-                        }
-                        ServerConstants.STOP_RECORDING -> {
-                            val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
-                            stateChannel.send(envelope)
-                        }
-                        ServerConstants.CALL_RECORDING_ACCEPT -> {
-                            val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
-                            stateChannel.send(envelope)
-                        }
-                        ServerConstants.CALL_RECORDING_REJECT -> {
-                            val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.LOCAL)
-                            stateChannel.send(envelope)
-                        }
-                        ServerConstants.CANCEL_RECORDING_REQUEST -> {
-                            val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.LOCAL)
                             stateChannel.send(envelope)
                         }
                     }
@@ -635,14 +518,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     fun changeSpeaker(isEnable: Boolean) {
         webrtcService.enableSpeaker(isEnable)
-    }
-
-    fun startRecording() {
-        webrtcService.onStartRecording()
-    }
-
-    fun stopRecording() {
-        webrtcService.onStopRecording()
     }
 
     private fun HashMap<String, Any>.direction(): CallDirection {
