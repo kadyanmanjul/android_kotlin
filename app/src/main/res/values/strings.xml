@@ -1065,5 +1065,7 @@
         <item>₹ 100000</item>
     </string-array>
     <string name="rup">\u20B9</string>
+    <string name="transaction_history">Transaction History</string>
+    <string name="recharge">Recharge</string>
 
 </resources>
