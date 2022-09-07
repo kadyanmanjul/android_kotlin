@@ -129,8 +129,8 @@ public class VideoDownloadController {
         return new CacheDataSource.Factory()
                 .setCache(getDownloadCache())
                 .setCacheKeyFactory(CacheKeyFactory.DEFAULT)
-                .setCacheWriteDataSinkFactory(getCacheWriteDataSinkFactory(getDownloadCache()))
-                .setCacheReadDataSourceFactory(getCacheReadDataSourceFactory())
+                //.setCacheWriteDataSinkFactory(getCacheWriteDataSinkFactory(getDownloadCache()))
+                //.setCacheReadDataSourceFactory(getCacheReadDataSourceFactory())
                 .setUpstreamDataSourceFactory(upstreamFactory)
                 .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
     }
