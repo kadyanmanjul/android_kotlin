@@ -141,9 +141,6 @@ enum class NotificationAction(val type: String) {
     @SerializedName("award_declare_notification")
     AWARD_DECLARE("award_declare_notification"),
 
-    @SerializedName("ACTION_COMPLETE_ONBOARDING")
-    ACTION_COMPLETE_ONBOARDING("ACTION_COMPLETE_ONBOARDING"),
-
     @SerializedName("OPEN_FREE_TRIAL_SCREEN")
     ACTION_OPEN_FREE_TRIAL_SCREEN("OPEN_FREE_TRIAL_SCREEN"),
 

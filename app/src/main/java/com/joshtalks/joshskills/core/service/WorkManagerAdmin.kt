@@ -259,16 +259,6 @@ object WorkManagerAdmin {
         }
     }
 
-    fun setLocalNotificationWorker() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .cancelAllWorkByTag(LocalNotificationWorker::class.java.name)
-        val workRequest = OneTimeWorkRequestBuilder<LocalNotificationWorker>()
-            .setInputData(workDataOf())
-            .addTag(LocalNotificationWorker::class.java.name)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
-    }
-
     fun startVersionAndFlowWorker() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)

@@ -189,7 +189,6 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         requestMap["is_free_trial"] = "Y"
 
         viewModel.completingProfile(requestMap, isUserVerified)
-        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.NAME_ENTERED.value)
         viewModel.postGoal(GoalKeys.NAME_SUBMITTED)
     }
 

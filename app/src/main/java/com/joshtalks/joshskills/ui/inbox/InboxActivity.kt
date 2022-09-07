@@ -40,8 +40,6 @@ import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
 import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
 import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -57,7 +55,6 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -583,7 +580,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onClick(inboxEntity: InboxEntity) {
-        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
         val check = viewModel.abTestRepository.isVariantActive(VariantKeys.EFT_ENABLED)
         if (check && inboxEntity.isFreeTrialExtendable) {
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)

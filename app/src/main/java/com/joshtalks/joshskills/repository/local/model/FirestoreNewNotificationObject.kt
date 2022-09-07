@@ -102,7 +102,6 @@ data class FirestoreNewNotificationObject(
         it.extraData = extraData
         it.action = when (action) {
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN.type -> NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN
-            NotificationAction.ACTION_COMPLETE_ONBOARDING.type -> NotificationAction.ACTION_COMPLETE_ONBOARDING
             NotificationAction.AWARD_DECLARE.type -> NotificationAction.AWARD_DECLARE
             NotificationAction.ACTION_OPEN_REMINDER.type -> NotificationAction.ACTION_OPEN_REMINDER
             NotificationAction.ACTION_LOGOUT_USER.type -> NotificationAction.ACTION_LOGOUT_USER

@@ -240,8 +240,7 @@ class JoshApplication :
     }
 
     private fun removeAlarmReminder(delay: Int) {
-        val alarmManager =
-            this.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager = this.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (alarmManager != null) {
             val pIntent = Intent(
                 this.applicationContext,
@@ -271,7 +270,6 @@ class JoshApplication :
                 setAlarmReminder(i)
             }
         }
-        WorkManagerAdmin.setLocalNotificationWorker()
         ReminderUtil(this).setAlarmNotificationWorker()
     }
 

@@ -860,41 +860,6 @@ class FakeCallNotificationWorker(
     }
 }
 
-class LocalNotificationWorker(
-    val context: Context,
-    workerParams: WorkerParameters
-) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            checkOnBoardingStage(context)
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-
-    private fun checkOnBoardingStage(context: Context) {
-        val onBoardingStage = PrefManager.getStringValue(ONBOARDING_STAGE)
-        val isOnBoardingUnfinished = onBoardingStage == OnBoardingStage.APP_INSTALLED.value ||
-                onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
-                onBoardingStage == OnBoardingStage.JI_HAAN_CLICKED.value
-        if (User.getInstance().isVerified.not() && isOnBoardingUnfinished) {
-            showOnBoardingCompletionNotification(context)
-        }
-    }
-
-    private fun showOnBoardingCompletionNotification(context: Context) {
-        val nc = NotificationObject().apply {
-            contentTitle = "You are just one step away from"
-            contentText = "Fulfilling your dream of speaking in English"
-            action = NotificationAction.ACTION_COMPLETE_ONBOARDING
-        }
-        NotificationUtils(context).sendNotification(nc)
-    }
-}
-
-
 fun getGoogleAdId(context: Context): String? {
     try {
         MobileAds.initialize(context)

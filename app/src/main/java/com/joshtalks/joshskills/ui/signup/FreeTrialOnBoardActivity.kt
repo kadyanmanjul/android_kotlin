@@ -68,7 +68,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         initABTest()
         initOnboardingCourse()
         addViewModelObservers()
-        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
     }
 
     private fun initOnboardingCourse() {
@@ -167,7 +166,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     fun startFreeTrial(testId: String) {
         layout.btnStartTrial.pauseAnimation()
-        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, testId)
         if (testId == HINDI_TO_ENGLISH_TEST_ID  || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
             requestWorkerForChangeLanguage("en", canCreateActivity = false)
