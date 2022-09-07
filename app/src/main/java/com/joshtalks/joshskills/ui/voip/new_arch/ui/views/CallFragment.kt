@@ -52,9 +52,6 @@ class   CallFragment : BaseFragment() {
     private val audioManager by lazy {
         requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
-    private val audioController by lazy {
-        AudioController(CoroutineScope((Dispatchers.IO)))
-    }
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
