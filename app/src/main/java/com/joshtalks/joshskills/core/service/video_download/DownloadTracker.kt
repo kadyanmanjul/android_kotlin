@@ -4,12 +4,16 @@ import android.content.Context
 import android.net.Uri
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.RenderersFactory
-import com.google.android.exoplayer2.offline.*
+import com.google.android.exoplayer2.offline.Download
+import com.google.android.exoplayer2.offline.DownloadHelper
+import com.google.android.exoplayer2.offline.DownloadIndex
+import com.google.android.exoplayer2.offline.DownloadManager
+import com.google.android.exoplayer2.offline.DownloadRequest
+import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo
-import com.google.android.exoplayer2.trackselection.TrackSelection
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.util.Log
 import com.google.android.exoplayer2.util.Util
@@ -23,7 +27,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import java.io.IOException
-import java.util.*
+import java.util.Arrays
 import java.util.concurrent.CopyOnWriteArraySet
 
 /**
@@ -147,11 +151,16 @@ class DownloadTracker internal constructor(
     }
 
     private inner class DownloadManagerListener : DownloadManager.Listener {
-        override fun onDownloadChanged(downloadManager: DownloadManager, download: Download) {
-            Log.e("download_state", "" + download.state)
+        override fun onDownloadChanged(
+            downloadManager: DownloadManager,
+            download: Download,
+            finalException: java.lang.Exception?
+        ) {
+            Log.e(TAG, "" + download.state +" exception : ${finalException?.message}")
             downloads[download.request.uri] = download
             for (listener in listeners) {
                 listener.onDownloadsChanged(download)
+                downloadManager.minRetryCount
             }
         }
 
@@ -212,7 +221,7 @@ class DownloadTracker internal constructor(
                             )
                         )
 
-                val trackSelectionFactory: TrackSelection.Factory =
+                val trackSelectionFactory: AdaptiveTrackSelection.Factory =
                     AdaptiveTrackSelection.Factory()
                 val trackSelector = DefaultTrackSelector(context, trackSelectionFactory)
                 trackSelector.parameters.buildUpon()
@@ -243,22 +252,6 @@ class DownloadTracker internal constructor(
                     parametersBuilder.build(),
                     Arrays.asList(selectionOverride)
                 )
-                /*for (int periodIndex = 0; periodIndex < downloadHelper.getPeriodCount(); periodIndex++) {
-                    downloadHelper.clearTrackSelections(periodIndex);
-                    for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
-                        TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory();
-                        DefaultTrackSelector trackSelector = new DefaultTrackSelector(context, trackSelectionFactory);
-                        DefaultTrackSelector.Parameters currentParameters = trackSelector.getParameters();
-                        DefaultTrackSelector.Parameters newParameters = currentParameters
-                                .buildUpon()
-                                .setForceLowestBitrate(true)
-                                .setForceHighestSupportedBitrate(false)
-                                // .setMaxVideoSizeSd()
-                                .build();
-                        trackSelector.setParameters(newParameters);
-                        downloadHelper.addTrackSelectionForSingleRenderer(periodIndex, i, newParameters, getOverrides(i));
-                    }
-                }*/
                 val downloadRequest = buildDownloadRequest()
                 if (downloadRequest.streamKeys.isEmpty()) {
                     // All tracks were deselected in the dialog. Don't start the download.
@@ -271,7 +264,7 @@ class DownloadTracker internal constructor(
         }
 
         override fun onPrepareError(helper: DownloadHelper, e: IOException) {
-            Log.e("error", "err")
+            Log.e(TAG, "err ${e.message}")
             for (listener in listeners) {
                 if (lessonQuestion != null) {
                     listener.onError(gsonMapper.toJson(lessonQuestion), e)
@@ -382,7 +375,7 @@ class DownloadTracker internal constructor(
     }
 
     companion object {
-        private const val TAG = "DownloadTracker"
+        private const val TAG = "ManjulDT"
     }
 
     init {

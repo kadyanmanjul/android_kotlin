@@ -42,7 +42,7 @@
                 android:animateLayoutChanges="true"
                 android:gravity="center"
                 android:orientation="horizontal"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <FrameLayout
                     android:layout_width="0dp"

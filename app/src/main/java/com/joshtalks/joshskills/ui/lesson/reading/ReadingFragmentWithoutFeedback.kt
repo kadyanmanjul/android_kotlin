@@ -53,7 +53,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
@@ -164,7 +164,7 @@ private const val TAG = "ReadingFragmentWithoutFeedback"
 
 class ReadingFragmentWithoutFeedback :
     CoreJoshFragment(),
-    Player.EventListener,
+    Player.Listener,
     AudioPlayerEventListener,
     ProgressUpdateListener {
 
@@ -451,8 +451,7 @@ class ReadingFragmentWithoutFeedback :
 
         val downloadManager =
             AppObjectController.joshApplication.getSystemService(Context.DOWNLOAD_SERVICE) as (DownloadManager)
-        downloadID = downloadManager.enqueue(request)
-    }
+        downloadID = downloadManager.enqueue(request) }
 
     private fun registerDownloadReceiver() {
         AppObjectController.joshApplication.registerReceiver(
@@ -1938,7 +1937,7 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    override fun onPlayerError(error: ExoPlaybackException) {
+    override fun onPlayerError(error: PlaybackException) {
         error.printStackTrace()
     }
 
@@ -2105,9 +2104,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
-    }
-
-    override fun onTrackChange(tag: String?) {
     }
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {

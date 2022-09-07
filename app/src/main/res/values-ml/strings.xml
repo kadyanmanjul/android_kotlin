@@ -209,8 +209,6 @@
     <string name="see_your_answer">"നിങ്ങളുടെ ഉത്തരങ്ങൾ കാണുക"</string>
     <string name="reset">റീസെറ്റ്</string>
     <string name="submitted_recording">"സബ്മിറ്റ് ചെയ്ത റെക്കോർഡിംഗ്"</string>
-    <string name="submit_record_msz">ഈ സബ്മിറ്റ് ചെയ്യാൻ  നിങ്ങൾക്ക് താൽപ്പര്യമുണ്ടോ?</string>
-    <string name="select_character">ആദ്യം നിങ്ങളുടെ കഥാപാത്രം തിരഞ്ഞെടുക്കുക</string>
     <string name="unlock_class_text">"അടുത്ത ക്ലാസ് തുറക്കുക"</string>
     <string name="start_now">"ഇപ്പോൾ തുടങ്ങുക"</string>
     <string name="get_started">"ആരംഭിക്കുക"</string>
@@ -286,12 +284,10 @@
     <string name="hi_i_am">ഹലോ! ഞാൻ</string>
     <string name="about_teacher_title">"ടീച്ചറെ കുറിച്ച്"</string>
     <string name="joined">Joined</string>
-    <string name="conversation_practice">കോൺവെർസേഷൻ പ്രാക്ടീസ് </string>
     <string name="usb_connected_message">നിങ്ങളുടെ ഉപകരണം പിസിയിലേക്ക് കണക്റ്റുചെയ്തിരിക്കുന്നു. വീഡിയോ പ്ലേ ചെയ്യാൻ USB ഡാറ്റ കണക്ഷൻ വിച്ഛേദിക്കുക</string>
     <string name="select_your_character">"ആദ്യം നിങ്ങളുടെ കഥാപാത്രം തിരഞ്ഞെടുക്കുക"</string>
     <string name="ok_got_it_lbl">ശരി പിടി കിട്ടി</string>
     <string name="start_practise">"പരിശീലനം ആരംഭിക്കുക"</string>
-    <string name="practise_intro_sub">ഈ പ്രാക്ടീസ് എങ്ങനെ പൂർത്തിയാക്കാം?</string>
     <string name="hint_name_field">നിങ്ങളുടെ പേര്?</string>
     <string name="hint_email_field">ഉദാഹരണം abc@xyz.com</string>
     <string name="hint_date_field">ഉദാഹരണം 01 ജനുവരി 1990</string>

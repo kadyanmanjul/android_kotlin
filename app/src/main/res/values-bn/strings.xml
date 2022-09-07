@@ -211,8 +211,6 @@
     <string name="see_your_answer">"আপনার উত্তর দেখুন"</string>
     <string name="reset">রিসেট</string>
     <string name="submitted_recording">"জমা করা রেকর্ডিং"</string>
-    <string name="submit_record_msz">আপনি কি এই রেকর্ডিং জমা দিতে চান?</string>
-    <string name="select_character">প্রথমে আপনার চরিত্র চয়ন করুন</string>
     <string name="unlock_class_text">"পরবর্তী ক্লাস আনলক করুন"</string>
     <string name="start_now">"এখুনি শুরু করুন"</string>
     <string name="get_started">"শুরু"</string>
@@ -286,12 +284,10 @@
     <string name="hi_i_am">হ্যালো! আমি</string>
     <string name="about_teacher_title">"শিক্ষক সম্পর্কে"</string>
     <string name="joined">Joined</string>
-    <string name="conversation_practice">কথোপকথন প্র্যাক্টিস </string>
     <string name="usb_connected_message">আপনার ডিভাইস পিসির সাথে সংযুক্ত। ভিডিওটি চালানোর জন্য অনুগ্রহ করে USB ডেটা সংযোগ বিচ্ছিন্ন করুন৷</string>
     <string name="select_your_character">"প্রথমে আপনার চরিত্র চয়ন করুন"</string>
     <string name="ok_got_it_lbl">ঠিক আছে বুঝেছি</string>
     <string name="start_practise">"অভ্যাস শুরু করুন"</string>
-    <string name="practise_intro_sub">কিভাবে এই প্র্যাক্টিস সম্পূর্ণ করবে?</string>
     <string name="hint_name_field">তোমার নাম?</string>
     <string name="hint_email_field">উদাহরণ abc@xyz.com</string>
     <string name="hint_date_field">উদাহরণ 01 জানুয়ারী 1990</string>

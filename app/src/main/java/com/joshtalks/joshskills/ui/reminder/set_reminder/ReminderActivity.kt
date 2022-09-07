@@ -8,7 +8,6 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -18,12 +17,12 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityReminderBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.util.ReminderUtil
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 
 class ReminderActivity : CoreJoshActivity() {
@@ -154,7 +153,7 @@ class ReminderActivity : CoreJoshActivity() {
     }
 
     private fun openNextScreen() {
-        val firstTime = SharedPrefsManager.newInstance(this)
+        /*val firstTime = getSharedPreferences.newInstance(this)
             .getBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, true)
         if (!firstTime) {
             startActivity(Intent(this, ReminderListActivity::class.java))
@@ -163,7 +162,7 @@ class ReminderActivity : CoreJoshActivity() {
             SharedPrefsManager.newInstance(this)
                 .putBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, false)
             showBottomSheet()
-        }
+        }*/
     }
 
     private fun showBottomSheet() {

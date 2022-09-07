@@ -3,40 +3,39 @@ package com.joshtalks.joshskills.util
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.Lifecycle
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
 class ExoAudioPlayer {
-    private val TAG = "vocab"
+    private val TAG = "ExoAudioPlayer"
     private var progressTracker: ProgressTracker? = null
     private var progressUpdateListener: ProgressUpdateListener? = null
     var context: Context? = AppObjectController.joshApplication
-    private val playerEventListener: Player.EventListener
+    private val playerEventListener: Player.Listener
     private var durationSet = false
     var currentPlayingUrl = EMPTY
     private var audioDuration: Long = 0
 
 
     init {
-        playerEventListener = object : Player.EventListener {
-            override fun onSeekProcessed() {
-            }
+        playerEventListener = object : Player.Listener {
 
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
                 if (playbackState == ExoPlayer.STATE_READY && !durationSet) {
                     audioDuration = player?.duration ?: 0
                     durationSet = true
@@ -59,7 +58,7 @@ class ExoAudioPlayer {
 
     var playerListener: AudioPlayerEventListener? = null
 
-    private var player: SimpleExoPlayer? = null
+    private var player: ExoPlayer? = null
 
     companion object {
         var LAST_ID: String = ""
@@ -82,14 +81,14 @@ class ExoAudioPlayer {
     private fun initializePlayer() {
         Log.d(TAG, "initializePlayer: ")
         val audioAttributes = AudioAttributes.Builder()
-            .setContentType(C.CONTENT_TYPE_MUSIC)
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
             .build()
         val extractorsFactory: DefaultExtractorsFactory = DefaultExtractorsFactory()
             .setConstantBitrateSeekingEnabled(true)
 
         player =
-            SimpleExoPlayer.Builder(AppObjectController.joshApplication).setUseLazyPreparation(true)
+            ExoPlayer.Builder(AppObjectController.joshApplication).setUseLazyPreparation(true)
                 .build().apply {
                     setAudioAttributes(audioAttributes, true)
                 }
@@ -122,18 +121,16 @@ class ExoAudioPlayer {
     fun play(audioUrl: String, id: String = "", seekDuration: Long = 0) {
         Log.d(TAG, "play: ")
         currentPlayingUrl = audioUrl
-        val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
-            context,
-            Util.getUserAgent(context!!, "joshskills")
-        )
+        val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(context!!)
         LAST_ID = id
         val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
         val audioSource: MediaSource =
-            factory.createMediaSource(Uri.parse(audioUrl))
+            factory.createMediaSource(MediaItem.fromUri(Uri.parse(audioUrl)))
         player?.repeatMode = ExoPlayer.REPEAT_MODE_OFF
         player?.playWhenReady = true
         progressTracker = ProgressTracker()
-        player?.prepare(audioSource)
+        player?.setMediaSource(audioSource)
+        player?.prepare()
         player?.seekTo(seekDuration)
     }
 
@@ -154,7 +151,7 @@ class ExoAudioPlayer {
     }
 
     inner class ProgressTracker : Runnable {
-        internal val handler: Handler = Handler()
+        internal val handler: Handler = Handler(Looper.getMainLooper())
         override fun run() {
             val currentPosition = player?.currentPosition ?: 0
             progressUpdateListener?.onProgressUpdate(currentPosition)

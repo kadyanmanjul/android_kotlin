@@ -212,8 +212,6 @@
     <string name="see_your_answer">"ਆਪਣੇ ਜਵਾਬ ਵੇਖੋ"</string>
     <string name="reset">ਰੀਸੈਟ ਕਰੋ</string>
     <string name="submitted_recording">"ਸਬਮਿਟ ਕੀਤੀ ਰਿਕਾਰਡਿੰਗ"</string>
-    <string name="submit_record_msz">ਕੀ ਤੁਸੀਂ ਇਸ ਰਿਕਾਰਡਿੰਗ ਨੂੰ ਸਪੁਰਦ ਕਰਨਾ ਚਾਹੋਗੇ?</string>
-    <string name="select_character">ਪਹਿਲਾਂ ਆਪਣਾ ਕਿਰਦਾਰ ਚੁਣੋ</string>
     <string name="unlock_class_text">"ਅਗਲੀ ਕਲਾਸ ਨੂੰ ਅਨਲੌਕ ਕਰੋ"</string>
     <string name="start_now">"ਹੁਣੇ ਸ਼ੁਰੂ ਕਰੋ"</string>
     <string name="get_started">"ਸ਼ੁਰੂ ਕਰੋ"</string>
@@ -287,12 +285,10 @@
     <string name="hi_i_am">ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਆਈ</string>
     <string name="about_teacher_title">"ਅਧਿਆਪਕ ਬਾਰੇ"</string>
     <string name="joined">Joined</string>
-    <string name="conversation_practice">ਗੱਲਬਾਤ ਦਾ ਅਭਿਆਸ</string>
     <string name="usb_connected_message">ਤੁਹਾਡੀ ਡਿਵਾਈਸ PC ਨਾਲ ਕਨੈਕਟ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਵੀਡੀਓ ਚਲਾਉਣ ਲਈ USB ਡਾਟਾ ਕਨੈਕਸ਼ਨ ਡਿਸਕਨੈਕਟ ਕਰੋ</string>
     <string name="select_your_character">"ਪਹਿਲਾਂ ਆਪਣਾ ਕਿਰਦਾਰ ਚੁਣੋ"</string>
     <string name="ok_got_it_lbl">ਠੀਕ ਹੈ ਸਮਝ ਲਿਆ</string>
     <string name="start_practise">"ਅਭਿਆਸ ਸ਼ੁਰੂ ਕਰੋ"</string>
-    <string name="practise_intro_sub">ਇਸ ਅਭਿਆਸ ਨੂੰ ਕਿਵੇਂ ਪੂਰਾ ਕਰਨਾ ਹੈ?</string>
     <string name="hint_name_field">ਤੁਹਾਡਾ ਨਾਮ?</string>
     <string name="hint_email_field">ਉਦਾਹਰਨ abc@xyz.com</string>
     <string name="hint_date_field">ਉਦਾਹਰਨ 01 ਜਨਵਰੀ 1990</string>

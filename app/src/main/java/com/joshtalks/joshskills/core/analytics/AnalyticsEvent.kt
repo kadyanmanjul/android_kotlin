@@ -175,7 +175,6 @@ enum class AnalyticsEvent(val NAME: String) {
     AUDIO_DOWNLOAD_STATUS("Audio Download Status V3"),
     AUDIO_LOCAL_PATH("Audio path V3"),
     AUDIO_VIEW_STATUS("Audio View Status V3"),
-    AUDIO_PLAYING_STATUS("Audio playing Status V3"),
     AUDIO_ID("Audio id V3"),
     AUDIO_DURATION("Audio Duration V3"),
     TIME_TAKEN_DOWNLOAD("Time taken to download V3"),
@@ -401,21 +400,6 @@ enum class AnalyticsEvent(val NAME: String) {
     SUBSCRIPTION_BUTTON_CLICKED("subscription_button_clicked"),
     SUBSCRIPTION_POPUP("SUBSCRIPTION_POPUP"),
     SUBSCRIPTION_EXPIRED("subscription_expired"),
-    //CONVERSATION PRACTISE EVENTS
-
-    CONVERSATION_PRACTISE_STARTED("conv prac started v3"),
-    CONVERSATION_PRACTISE_TAP_TO_START("conv prac tap to continue v3"),
-    CONVERSATION_PRACTISE_SUBMITTED("conv prac submitted v3"),
-    CONVERSATION_PRACTISE_ID("conv prac id v3"),
-    CONVO_OPTION_SELECTED("conv prac option selected v3"),
-    CONVERSATION_PLAY_BACK("conv play back v3"),
-    PRACTISE_OPENED("prac opened v3"),
-    PATNER_SELECTED("patner selected v3"),
-    RECORD_OPENED("record opened v3"),
-    RECORD_STARTED("record started v3"),
-    RECORD_SHARED("recording shared v3"),
-    CON_QUIZ_SUBMIT_BUTTON_CLICKED("conv prac quiz submit clicked v3"),
-    CON_RECORDING_SUBMITTED("conv recording submitted v3"),
 
     //onboarding new
     NEW_ONBOARDING_GET_STARTED("new onboard get started clicked v3"),

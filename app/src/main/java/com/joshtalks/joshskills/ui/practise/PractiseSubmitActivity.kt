@@ -42,7 +42,7 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -98,7 +98,7 @@ const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 
 class PractiseSubmitActivity :
     CoreJoshActivity(),
-    Player.EventListener,
+    Player.Listener,
     AudioPlayerEventListener,
     ProgressUpdateListener {
     private var compositeDisposable = CompositeDisposable()
@@ -1104,7 +1104,7 @@ class PractiseSubmitActivity :
         }
     }
 
-    override fun onPlayerError(error: ExoPlaybackException) {
+    override fun onPlayerError(error: PlaybackException) {
         error.printStackTrace()
     }
 
@@ -1212,9 +1212,6 @@ class PractiseSubmitActivity :
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
-    }
-
-    override fun onTrackChange(tag: String?) {
     }
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {

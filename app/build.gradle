@@ -240,7 +240,6 @@ dependencies {
     implementation(project(path: ':mediapicker'), {
         exclude group: 'com.bumptech.glide'
     })
-    implementation project(path: ':joshcamerax')
     implementation project(path: ':voip')
     implementation project(path: ':base')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -297,8 +296,8 @@ dependencies {
     implementation 'com.zlc.glide:webpdecoder:1.6.4.9.0'
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
 
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.7'
-    implementation 'com.google.android.exoplayer:extension-workmanager:2.11.7'
+    api 'com.google.android.exoplayer:exoplayer:2.18.1'
+    implementation 'com.google.android.exoplayer:extension-workmanager:2.18.1'
 
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.11'

@@ -16,8 +16,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
-import com.joshtalks.joshcamerax.utils.onPageSelected
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
@@ -402,15 +402,16 @@ class AssessmentActivity : CoreJoshActivity() {
         // Enable/Disable Scrolling
         binding.questionViewPager.isUserInputEnabled =
             (assessmentWithRelations.assessment.type == AssessmentType.QUIZ || assessmentWithRelations.assessment.status == AssessmentStatus.COMPLETED).not()
-
-        binding.questionViewPager.onPageSelected { position ->
-
-            setButtonView(
-                assessmentWithRelations.assessment.type,
-                assessmentWithRelations.questionList.sortedBy { it.question.sortOrder }[position],
-                assessmentWithRelations.questionList.size - 1 == position
-            )
-        }
+        binding.questionViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                setButtonView(
+                    assessmentWithRelations.assessment.type,
+                    assessmentWithRelations.questionList.sortedBy { it.question.sortOrder }[position],
+                    assessmentWithRelations.questionList.size - 1 == position
+                )
+                super.onPageSelected(position)
+            }
+        })
 
     }
 

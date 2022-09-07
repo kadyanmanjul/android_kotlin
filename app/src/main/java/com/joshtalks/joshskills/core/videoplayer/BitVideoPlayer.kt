@@ -15,7 +15,14 @@ import android.os.Build
 import android.os.Handler
 import android.util.AttributeSet
 import android.util.Pair
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.Surface
+import android.view.TextureView
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
@@ -33,30 +40,39 @@ import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.customview.customView
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_VIDEO_BUFFER_SIZE
+import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.STATE_BUFFERING
 import com.google.android.exoplayer2.Player.STATE_IDLE
+import com.google.android.exoplayer2.RenderersFactory
+import com.google.android.exoplayer2.Tracks
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.*
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
-import com.google.android.exoplayer2.ui.*
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.ui.DefaultTimeBar
+import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.ui.TimeBar
 import com.google.android.exoplayer2.ui.TimeBar.OnScrubListener
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.ErrorMessageProvider
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SELECTED_QUALITY
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
-import java.util.*
+import java.util.Formatter
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener,
+class BitVideoPlayer : StyledPlayerView, LifecycleObserver, StyledPlayerView.ControllerVisibilityListener,
     TextureView.SurfaceTextureListener {
 
     constructor(context: Context) : super(context)
@@ -70,7 +86,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     private var videoTrackAdapter: VideoTrackAdapter? = null
     private var uri: Uri? = null
     private var lastPosition: Long = 0
-    private var player: SimpleExoPlayer? = null
+    private var player: ExoPlayer? = null
     private var trackSelector: DefaultTrackSelector? = null
     private val timeHandler = Handler()
     private val controllerHandler = Handler()
@@ -108,6 +124,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     private lateinit var videoBackward: AppCompatImageView
     private lateinit var videoForward: AppCompatImageView
     private lateinit var mProgressBar: CircularProgressBar
+    private lateinit var mPlay: AppCompatImageView
+    private lateinit var mPause: AppCompatImageView
 
 
     private val timeRunnable: Runnable = object : Runnable {
@@ -313,9 +331,9 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         if (player == null) {
             try {
                 val renderersFactory: RenderersFactory = getDefaultRenderersFactory()
-                trackSelector?.parameters = ParametersBuilder(context).build()
+                trackSelector?.parameters = DefaultTrackSelector.Parameters.Builder(context).build()
 
-                val trackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory()
+                val trackSelectionFactory: AdaptiveTrackSelection.Factory = AdaptiveTrackSelection.Factory()
                 trackSelector = DefaultTrackSelector(context, trackSelectionFactory)
                 trackSelector?.parameters?.buildUpon()?.apply {
                     setForceLowestBitrate(true)
@@ -339,12 +357,14 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 )
                     .setPrioritizeTimeOverSizeThresholds(true)
                     .setAllocator(defaultAllocator)
-                    .createDefaultLoadControl()
+                    .build()
+
                 val audioAttributes = AudioAttributes.Builder()
-                    .setContentType(C.CONTENT_TYPE_MUSIC)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                     .setUsage(C.USAGE_MEDIA)
                     .build()
-                player = SimpleExoPlayer.Builder(context, renderersFactory)
+
+                player = ExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
                     .setUseLazyPreparation(true)
                     //   .setPauseAtEndOfMediaItems(true)
@@ -392,6 +412,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         videoBackward = findViewById(R.id.img_bwd)
         videoForward = findViewById(R.id.img_fwd)
         mProgressBar = findViewById(R.id.progress_bar)
+        mPlay = findViewById(R.id.exo_play)
+        mPause = findViewById(R.id.exo_pause)
     }
 
     fun getToolbar() = mToolbar
@@ -451,6 +473,15 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "10 sec backward").push()
             seekTo(getCurrentPosition() + 10 * 1000)
         }
+        mPlay.setOnClickListener {
+            resumePlayer()
+        }
+        mPause.setOnClickListener {
+            pausePlayer()
+        }
+
+        mPlay.visibility = GONE
+        mPause.visibility = VISIBLE
     }
 
     private fun setupAudioFocus() {
@@ -468,7 +499,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     }
 
 
-    override fun onVisibilityChange(visibility: Int) {
+    override fun onVisibilityChanged(visibility: Int) {
         if (visibility == View.GONE) {
             progressBarBottom.visibility = View.GONE
             hideToolbarWithAnimation()
@@ -482,7 +513,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         if (mControlsDisabled)
             return
 
-        if (isControllerVisible) {
+        if (isControllerFullyVisible) {
             val controller = findViewById<View>(R.id.exo_controller)
             controller.animate().alpha(0f)
                 .setInterpolator(DecelerateInterpolator())
@@ -587,7 +618,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                         setHandleAudioBecomingNoisy(true)
                         playWhenReady = true
                         //  setWakeMode(C.WAKE_MODE_NETWORK)
-                        prepare(audioSource, true, false)
+                        setMediaSource(audioSource,true)
+                        prepare()
                     }
                 }
             }
@@ -651,6 +683,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             playWhenReady = false
             playbackState
             this@BitVideoPlayer.currentPosition = currentPosition
+            mPlay.visibility = VISIBLE
+            mPause.visibility = GONE
         }
     }
 
@@ -658,6 +692,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         player?.run {
             playWhenReady = true
             playbackState
+            mPlay.visibility = GONE
+            mPause.visibility = VISIBLE
             seekTo(this@BitVideoPlayer.currentPosition)
         }
     }
@@ -712,7 +748,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     private fun controllerAutoHideOnDelay() {
         controllerHandler.removeCallbacksAndMessages(null)
         controllerHandler.postDelayed({
-            if (isControllerVisible) {
+            if (isControllerFullyVisible) {
                 toggleControls()
             }
         }, 3500)
@@ -913,14 +949,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
 
 
     fun onSelectTrack(videoQualityTrack: VideoQualityTrack) {
-        val parametersBuilder = trackSelector?.buildUponParameters()
-        // parametersBuilder?.setRendererDisabled(0, false)
-        val trackGroups = trackSelector!!.currentMappedTrackInfo!!.getTrackGroups(0)
-        val selectionOverride: DefaultTrackSelector.SelectionOverride =
-            DefaultTrackSelector.SelectionOverride(0, videoQualityTrack.id)
-        parametersBuilder?.setSelectionOverride(0, trackGroups, selectionOverride)
-        trackSelector!!.parameters = parametersBuilder!!.build()
-        videoQualityP = videoQualityTrack.title
+
+
     }
 
     private fun onSelectAudioTrack(audioLanguageTrack: AudioLanguageTrack) {
@@ -959,140 +989,33 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
 
 
     private inner class PlayerErrorMessageProvider :
-        ErrorMessageProvider<ExoPlaybackException> {
-        override fun getErrorMessage(e: ExoPlaybackException): Pair<Int, String> {
+        ErrorMessageProvider<PlaybackException> {
+        override fun getErrorMessage(e: PlaybackException): Pair<Int, String> {
             e.printStackTrace()
             return Pair.create(0, "errorString")
         }
     }
 
-    private inner class PlayerEventListener : Player.EventListener {
+    private inner class PlayerEventListener : Player.Listener {
         var playWhenReady = false
         var playbackState: Int = STATE_IDLE
 
-        override fun onTracksChanged(
-            trackGroups: TrackGroupArray,
-            trackSelections: TrackSelectionArray
-        ) {
-            super.onTracksChanged(trackGroups, trackSelections)
-            try {
-                audioLanguage = trackSelections[1]?.selectedFormat?.language ?: ""
-                val oldTrack = currentMappedTrackInfoPosition
-
-                //trackSelections[0]?.selectedFormat.width
-                currentMappedTrackInfoPosition =
-                    trackSelections.get(0)?.getIndexInTrackGroup(0) ?: 0
-
-                if (lisOfVideoQualityTrack.isNullOrEmpty().not()) {
-                    lisOfVideoQualityTrack[oldTrack].isSelected = false
-                    lisOfVideoQualityTrack[currentMappedTrackInfoPosition].isSelected = true
-                    videoTrackAdapter?.notifyDataSetChanged()
-                }
-
-                if (lisOfVideoQualityTrack.isNullOrEmpty()/* || oldTrack != currentMappedTrackInfoPosition*/) {
-                    lisOfVideoQualityTrack.clear()
-                    val mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? =
-                        trackSelector?.currentMappedTrackInfo
-
-                    if (mappedTrackInfo != null) {
-                        val trackGroups =
-                            mappedTrackInfo.getTrackGroups(0)[0] //render index important
-                        for (x in 0 until trackGroups.length) {
-                            val currentQuality = "" + trackGroups.getFormat(x).height + "p"
-                            lisOfVideoQualityTrack.add(
-                                VideoQualityTrack(
-                                    x,
-                                    trackGroups.getFormat(x).height,
-                                    currentQuality, currentMappedTrackInfoPosition == x
-                                )
-                            )
-                        }
-
-                        lisOfVideoQualityTrack.sortBy { it.quality }
-
-                        val supportedResolutions =
-                            context.resources.getStringArray(R.array.resolutions)
-                        when (PrefManager.getStringValue(
-                            SELECTED_QUALITY,
-                            false,
-                            supportedResolutions[supportedResolutions.size - 1]
-                        )) {
-                            supportedResolutions[2] -> {
-                                currentMappedTrackInfoPosition = 0
-                                onSelectTrack(lisOfVideoQualityTrack[0].apply {
-                                    isSelected = true
-                                    videoQualityP = this.title
-                                })
-                            }
-                            supportedResolutions[1] -> {
-                                if (lisOfVideoQualityTrack.size > 1) {
-                                    currentMappedTrackInfoPosition = 1
-                                    onSelectTrack(lisOfVideoQualityTrack[1].apply {
-                                        isSelected = true
-                                        videoQualityP = this.title
-                                    })
-                                } else {
-                                    onSelectTrack(lisOfVideoQualityTrack[0].apply {
-                                        isSelected = true
-                                        videoQualityP = this.title
-                                    })
-                                    currentMappedTrackInfoPosition = 1
-                                }
-                            }
-                            else -> {
-                                onSelectTrack(lisOfVideoQualityTrack[lisOfVideoQualityTrack.size - 1].apply {
-                                    isSelected = true
-                                    videoQualityP = this.title
-                                })
-                                currentMappedTrackInfoPosition = lisOfVideoQualityTrack.size - 1
-                            }
-
-                        }
-                    }
-
-                }
-                if (videoQualityP.isEmpty()) {
-                    videoQualityP = lisOfVideoQualityTrack[0].title
-                }
-                if (lisOfAudioLanguageTrack.isNullOrEmpty()) {
-
-                    val mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? =
-                        trackSelector?.currentMappedTrackInfo
-                    if (mappedTrackInfo != null) {
-                        val infoArray = trackSelector!!.currentMappedTrackInfo!!.getTrackGroups(1)
-                        for (x in 0 until infoArray.length) {
-                            val language = infoArray.get(x).getFormat(0).language
-                            lisOfAudioLanguageTrack.add(
-                                AudioLanguageTrack(
-                                    language ?: "",
-                                    language ?: "",
-                                    currentMappedTrackInfoPosition == x
-                                )
-                            )
-                        }
-                    }
-                }
-
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-
+        override fun onTracksChanged(tracks: Tracks) {
+            super.onTracksChanged(tracks)
+            // TODO logic for formats
         }
 
-        override fun onPlayerError(error: ExoPlaybackException) {
+        override fun onPlayerError(error: PlaybackException) {
             super.onPlayerError(error)
             error.printStackTrace()
         }
 
-        override fun onLoadingChanged(isLoading: Boolean) {
-            super.onLoadingChanged(isLoading)
-            if (isLoading.not()) {
-                //  mProgressBar.visibility = View.GONE
-            }
+        override fun onIsLoadingChanged(isLoading: Boolean) {
+            super.onIsLoadingChanged(isLoading)
         }
 
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            super.onPlayerStateChanged(playWhenReady, playbackState)
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
             this.playWhenReady = playWhenReady
             this.playbackState = playbackState
 

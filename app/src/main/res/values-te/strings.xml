@@ -210,8 +210,6 @@
     <string name="see_your_answer">మీ సమాధానాలు చూడండి</string>
     <string name="reset">రీసెట్ చేయండి</string>
     <string name="submitted_recording">సమర్పించబడిన రికార్డింగ్</string>
-    <string name="submit_record_msz">మీరు ఈ రికార్డింగ్‌ని సమర్పించాలనుకుంటున్నారా?</string>
-    <string name="select_character">ముందుగా మీ పాత్రను ఎంచుకోండి</string>
     <string name="unlock_class_text">తదుపరి తరగతిని అన్‌లాక్ చేయండి</string>
     <string name="start_now">ఇప్పుడే మొదలు పెట్టండి  </string>
     <string name="get_started">ప్రారంభించు</string>
@@ -285,12 +283,10 @@
     <string name="hi_i_am">హలో! I</string>
     <string name="about_teacher_title">గురువు గురించి</string>
     <string name="joined">Joined</string>
-    <string name="conversation_practice">సంభాషణ అభ్యాసం</string>
     <string name="usb_connected_message">మీ మొబైల్ PCకి కనెక్ట్ చేయబడింది. దయచేసి వీడియోను ప్లే చేయడానికి USB డేటా కనెక్షన్‌ని డిస్‌కనెక్ట్ చేయండి</string>
     <string name="select_your_character">ముందు మీ పాత్రను ఎంచుకోండి</string>
     <string name="ok_got_it_lbl">సరే అర్థమయ్యింది</string>
     <string name="start_practise">ప్రాక్టీస్ ప్రారంభించండి</string>
-    <string name="practise_intro_sub">ఈ వ్యాయామాన్ని ఎలా పూర్తి చేయాలి?</string>
     <string name="hint_name_field">మీ పేరు?</string>
     <string name="hint_email_field">ఉదాహరణ abc@xyz.com</string>
     <string name="hint_date_field">ఉదాహరణ 01 జనవరి 1990</string>

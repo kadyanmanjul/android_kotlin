@@ -210,8 +210,6 @@
     <string name="see_your_answer">உங்கள் பதில்களைக் காண்க</string>
     <string name="reset">புதிதாக துடங்கு</string>
     <string name="submitted_recording">சமர்ப்பிக்கப்பட்ட பதிவு</string>
-    <string name="submit_record_msz">இந்தப் பதிவைச் சமர்ப்பிக்க விரும்புகிறீர்களா?</string>
-    <string name="select_character">முதலில் உங்கள் பாத்திரத்தை தேர்ந்தெடுங்கள்</string>
     <string name="unlock_class_text">அடுத்த வகுப்பைத் திறக்கவும்</string>
     <string name="start_now">இப்போதே தொடங்கு</string>
     <string name="get_started">தொடங்கு</string>
@@ -284,12 +282,10 @@
     <string name="hi_i_am">வணக்கம்! நான்</string>
     <string name="about_teacher_title">ஆசிரியரைப் பற்றி</string>
     <string name="joined">Joined</string>
-    <string name="conversation_practice">உரையாடல் பயிற்சி</string>
     <string name="usb_connected_message">உங்கள் சாதனம் PC உடன் இணைக்கப்பட்டுள்ளது. வீடியோவை இயக்க USB டேட்டா இணைப்பை துண்டிக்கவும்</string>
     <string name="select_your_character">முதலில் உங்கள் பாத்திரத்தைத் தேர்ந்தெடுங்கள்</string>
     <string name="ok_got_it_lbl">கிடைத்தது</string>
     <string name="start_practise">பயிற்சியைத் தொடங்கு</string>
-    <string name="practise_intro_sub">இந்தப் பயிற்சியை எப்படி முடிப்பது?</string>
     <string name="hint_name_field">உங்கள் பெயர்?</string>
     <string name="hint_email_field">உதாரணம் abc@xyz.com</string>
     <string name="hint_date_field">உதாரணம் 01 ஜனவரி 1990</string>

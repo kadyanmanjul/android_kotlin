@@ -70,14 +70,6 @@ enum class VerificationStatus {
     INITIATED, SUCCESS, FAILED, USER_DENY, TIMEOUT
 }
 
-enum class PractiseUser(val type: Int) {
-    FIRST(0), SECOND(1)
-}
-
-enum class ViewTypeForPractiseUser(val type: Int) {
-    FIRST(0), SECOND(1)
-}
-
 class FirebaseRemoteConfigKey {
     companion object {
 

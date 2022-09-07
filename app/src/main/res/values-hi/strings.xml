@@ -206,8 +206,6 @@
     <string name="see_your_answer">"अपने जवाब देखें "</string>
     <string name="reset">रीसेट</string>
     <string name="submitted_recording">"सबमिट की गयी रिकॉर्डिंग "</string>
-    <string name="submit_record_msz">क्या आप इस रिकॉर्डिंग को सबमिट करना चाहते है?</string>
-    <string name="select_character">पहले अपना कैरेक्टर चुनें</string>
     <string name="unlock_class_text">"अगली क्लास अनलॉक करें "</string>
     <string name="start_now">"अभी शुरू करें "</string>
     <string name="get_started">"शुरू करें "</string>
@@ -283,12 +281,10 @@
     <string name="hi_i_am">नमस्ते! मैं</string>
     <string name="about_teacher_title">"टीचर के बारे में "</string>
     <string name="joined">"शामिल हुए "</string>
-    <string name="conversation_practice">कन्वर्सेशन प्रैक्टिस</string>
     <string name="usb_connected_message">आपका डिवाइस पीसी से जुड़ा हुआ है। वीडियो चलाने के लिए कृपया USB डेटा कनेक्शन को डिस्कनेक्ट करें</string>
     <string name="select_your_character">"पहले अपना कैरेक्टर चुनें "</string>
     <string name="ok_got_it_lbl">ठीक है,मिल गया</string>
     <string name="start_practise">"प्रैक्टिस शुरू करें "</string>
-    <string name="practise_intro_sub">इस प्रैक्टिस को पूरा कैसे करें?</string>
     <string name="hint_name_field">आपका नाम</string>
     <string name="hint_email_field">उदाहरण abc@xyz.com</string>
     <string name="hint_date_field">उदाहरण 01 जनवरी 1990</string>

@@ -355,21 +355,6 @@
                 android:value=".ui.introduction.DemoCourseDetailsActivity" />
         </activity>
         <activity
-            android:name=".ui.conversation_practice.ConversationPracticeActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.conversation_practice.history.SubmittedPractiseActivity"
-            android:alwaysRetainTaskState="true"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
             android:name=".ui.assessment.AssessmentActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
@@ -772,26 +757,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-
-            <!-- Automatically run MyInitializer at app startup -->
-
-            <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
-                android:value="androidx.startup" />
-            <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
-                android:value="androidx.startup" />
-        </provider>
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            android:enabled="false"
-            android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${file_provider}.provider"

@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeVie
 import com.joshtalks.joshskills.ui.special_practice.viewmodel.ViewAndShareViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 
-class ViewAndShareVideoFragment : BaseKFactorFragment(), Player.EventListener {
+class ViewAndShareVideoFragment : BaseKFactorFragment(), Player.Listener {
 
     private val videoShareViewModel by lazy {
         ViewModelProvider(this).get(ViewAndShareViewModel::class.java)

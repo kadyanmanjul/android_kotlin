@@ -33,8 +33,6 @@ import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
@@ -42,11 +40,8 @@ import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.chat.UPDATED_CHAT_ROOM_OBJECT
-import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
-import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
@@ -63,9 +58,13 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE
+import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME
+import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
@@ -573,53 +572,6 @@ class NotificationUtils(val context: Context) {
             InboxActivity::class.java
         } else {
             LessonActivity::class.java
-        }
-    }
-
-    private fun processQuestionTypeNotification(
-        notificationObject: NotificationObject?,
-        action: NotificationAction?,
-        actionData: String?
-    ): Intent? {
-
-        notificationChannelId = action?.name ?: EMPTY
-        var questionId = ""
-
-        notificationObject?.extraData?.let {
-            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
-            val map: Map<String, String> = Gson().fromJson(it, mapTypeToken)
-            questionId = map["question_id"] ?: EMPTY
-        }
-        val question: Question? =
-            AppObjectController.appDatabase.chatDao().getQuestionOnIdV2(questionId)
-
-        return if (question == null) {
-            processChatTypeNotification(notificationObject, action, actionData)
-        } else {
-            when {
-                question.type == BASE_MESSAGE_TYPE.QUIZ || question.type == BASE_MESSAGE_TYPE.TEST -> {
-                    return Intent(context.applicationContext, AssessmentActivity::class.java).apply {
-                        putExtra(AssessmentActivity.KEY_ASSESSMENT_ID, question.assessmentId)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                }
-                question.type == BASE_MESSAGE_TYPE.CP -> {
-                    return Intent(
-                        context.applicationContext,
-                        ConversationPracticeActivity::class.java
-                    ).apply {
-                        putExtra(PRACTISE_ID, question.conversationPracticeId)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                }
-
-                question.type == BASE_MESSAGE_TYPE.PR || question.material_type == BASE_MESSAGE_TYPE.VI -> {
-                    return processChatTypeNotification(notificationObject, action, actionData)
-                }
-                else -> {
-                    return null
-                }
-            }
         }
     }
 

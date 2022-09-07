@@ -178,7 +178,7 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:background="#000000"
             android:visibility="gone"
-            tool:visibility="visible">
+            tool:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/play_icon"

@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import android.util.*;
+import androidx.annotation.*;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.workmanager.WorkManagerScheduler;
 import com.google.android.exoplayer2.offline.Download;
@@ -46,6 +48,7 @@ import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.FOCUS_ON_C
 public class VideoDownloadService extends DownloadService {
 
     private static final String CHANNEL_ID = "download_channel";
+    private static final String TAG = "ManjulVDS";
     private static final int JOB_ID = 1;
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
@@ -69,7 +72,44 @@ public class VideoDownloadService extends DownloadService {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate() called");
         notificationHelper = new DownloadNotificationHelper(this, CHANNEL_ID);
+        VideoDownloadController.getInstance().getDownloadManager().addListener(new DownloadManager.Listener() {
+            @Override
+            public void onDownloadChanged(DownloadManager downloadManager, Download download, @Nullable Exception finalException) {
+                DownloadManager.Listener.super.onDownloadChanged(downloadManager, download, finalException);
+                if (finalException!=null){
+                    Timber.tag(TAG).i("onDownloadChanged  exception %s", finalException.getMessage());
+                }
+                DOWNLOAD_STATUS downloadStatus = DOWNLOAD_STATUS.NOT_START;
+
+                if (download.state == Download.STATE_DOWNLOADING || download.state == Download.STATE_QUEUED) {
+                    videoNotUploadFlagUpdate();
+                    downloadStatus = DOWNLOAD_STATUS.DOWNLOADING;
+                } else if (download.state == Download.STATE_COMPLETED) {
+                    downloadStatus = DOWNLOAD_STATUS.DOWNLOADED;
+                } else if (download.state == Download.STATE_REMOVING) {
+                    downloadStatus = DOWNLOAD_STATUS.FAILED;
+                } else if (download.state == Download.STATE_FAILED) {
+                    downloadStatus = DOWNLOAD_STATUS.FAILED;
+                } else if (download.state == Download.STATE_STOPPED) {
+                    downloadStatus = DOWNLOAD_STATUS.FAILED;
+                }
+                notificationListMap.put(Util.fromUtf8Bytes(download.request.data), nextNotificationId);
+                DatabaseUtils.updateVideoDownload(Util.fromUtf8Bytes(download.request.data), downloadStatus);
+                Notification notification;
+                if (download.state == Download.STATE_COMPLETED) {
+                    clearNotification(Util.fromUtf8Bytes(download.request.data));
+                    //notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, "Download completed");
+                } else if (download.state == Download.STATE_FAILED) {
+                    notification = notificationHelper.buildDownloadFailedNotification(getApplicationContext(),R.mipmap.ic_launcher, null, "Download failed");
+                    RxBus2.publish(new MediaProgressEventBus(Download.STATE_FAILED, Util.fromUtf8Bytes(download.request.data), 0, 0L));
+                    NotificationUtil.setNotification(getApplicationContext(), nextNotificationId++, notification);
+                } else {
+                    return;
+                }
+            }
+        });
     }
 
     @NotNull
@@ -80,12 +120,11 @@ public class VideoDownloadService extends DownloadService {
 
     @Override
     protected Scheduler getScheduler() {
-        return new WorkManagerScheduler("Download Video");
+        return new WorkManagerScheduler(getApplicationContext(),"Download Video");
     }
 
-    @NotNull
     @Override
-    protected Notification getForegroundNotification(@NotNull List<Download> downloads) {
+    protected Notification getForegroundNotification(List<Download> downloads, int notMetRequirements) {
         showDownloadProgress(downloads);
         Intent intent = null;
         try {
@@ -104,43 +143,8 @@ public class VideoDownloadService extends DownloadService {
                 101,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        return notificationHelper.buildProgressNotification(R.drawable.ic_download, pendingIntent, "", downloads);
+        return notificationHelper.buildProgressNotification(getApplicationContext() ,R.drawable.ic_download, pendingIntent, "", downloads,notMetRequirements);
     }
-
-
-    @Override
-    protected void onDownloadChanged(Download download) {
-
-        Timber.tag("download_video").i("onDownloadChanged " + download.state + "  " + download.getPercentDownloaded() + "  " + download.getBytesDownloaded() + " " + download.contentLength);
-        DOWNLOAD_STATUS downloadStatus = DOWNLOAD_STATUS.NOT_START;
-
-        if (download.state == Download.STATE_DOWNLOADING || download.state == Download.STATE_QUEUED) {
-            videoNotUploadFlagUpdate();
-            downloadStatus = DOWNLOAD_STATUS.DOWNLOADING;
-        } else if (download.state == Download.STATE_COMPLETED) {
-            downloadStatus = DOWNLOAD_STATUS.DOWNLOADED;
-        } else if (download.state == Download.STATE_REMOVING) {
-            downloadStatus = DOWNLOAD_STATUS.FAILED;
-        } else if (download.state == Download.STATE_FAILED) {
-            downloadStatus = DOWNLOAD_STATUS.FAILED;
-        } else if (download.state == Download.STATE_STOPPED) {
-            downloadStatus = DOWNLOAD_STATUS.FAILED;
-        }
-        notificationListMap.put(Util.fromUtf8Bytes(download.request.data), nextNotificationId);
-        DatabaseUtils.updateVideoDownload(Util.fromUtf8Bytes(download.request.data), downloadStatus);
-        Notification notification;
-        if (download.state == Download.STATE_COMPLETED) {
-            clearNotification(Util.fromUtf8Bytes(download.request.data));
-            //notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, "Download completed");
-        } else if (download.state == Download.STATE_FAILED) {
-            notification = notificationHelper.buildDownloadFailedNotification(R.mipmap.ic_launcher, null, "Download failed");
-            RxBus2.publish(new MediaProgressEventBus(Download.STATE_FAILED, Util.fromUtf8Bytes(download.request.data), 0, 0L));
-            NotificationUtil.setNotification(this, nextNotificationId++, notification);
-        } else {
-            return;
-        }
-    }
-
 
     void videoNotUploadFlagUpdate() {
         new Timer().schedule(new TimerTask() {

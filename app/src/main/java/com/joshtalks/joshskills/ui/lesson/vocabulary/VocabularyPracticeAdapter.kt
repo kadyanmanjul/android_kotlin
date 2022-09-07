@@ -919,9 +919,6 @@ class VocabularyPracticeAdapter(
         override fun onCurrentTimeUpdated(lastPosition: Long) {
         }
 
-        override fun onTrackChange(tag: String?) {
-        }
-
         override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
         }
 

@@ -13,7 +13,6 @@ import android.util.Pair
 import android.view.LayoutInflater
 import android.view.Surface
 import android.view.View
-import android.view.WindowManager
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -26,17 +25,22 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_VIDEO_BUFFER_SIZE
-import com.google.android.exoplayer2.ExoPlaybackException.TYPE_SOURCE
+import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.STATE_IDLE
+import com.google.android.exoplayer2.RenderersFactory
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
-import com.google.android.exoplayer2.trackselection.TrackSelection
-import com.google.android.exoplayer2.ui.*
-import com.google.android.exoplayer2.ui.TimeBar.OnScrubListener
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.ui.DefaultTimeBar
+import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.ui.TimeBar
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.ErrorMessageProvider
 import com.joshtalks.joshskills.R
@@ -45,11 +49,12 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
-import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.set
+import java.util.Formatter
+import java.util.Locale
 
-class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener {
+
+class MiniExoPlayer : StyledPlayerView, LifecycleObserver,
+    StyledPlayerView.ControllerVisibilityListener {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -67,7 +72,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private var uri: Uri? = null
     private var videoId: Int? = null
     private var lastPosition: Long = 0
-    private var player: SimpleExoPlayer? = null
+    private var player: ExoPlayer? = null
     private var trackSelector: DefaultTrackSelector? = null
     private val timeHandler = Handler()
     private val controllerHandler = Handler()
@@ -124,9 +129,9 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         if (player == null) {
             try {
                 val renderersFactory: RenderersFactory = getDefaultRenderersFactory()
-                trackSelector?.parameters = ParametersBuilder(context).build()
+                trackSelector?.parameters = DefaultTrackSelector.Parameters.Builder(context).build()
 
-                val trackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory()
+                val trackSelectionFactory: AdaptiveTrackSelection.Factory = AdaptiveTrackSelection.Factory()
                 trackSelector = DefaultTrackSelector(context, trackSelectionFactory)
                 trackSelector?.parameters?.buildUpon()?.apply {
                     setForceLowestBitrate(true)
@@ -150,16 +155,15 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                 )
                     .setPrioritizeTimeOverSizeThresholds(true)
                     .setAllocator(defaultAllocator)
-                    .createDefaultLoadControl()
+                    .build()
 
                 val audioAttributes = AudioAttributes.Builder()
-                    .setContentType(C.CONTENT_TYPE_MUSIC)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                     .setUsage(C.USAGE_MEDIA)
                     .build()
-                player = SimpleExoPlayer.Builder(context, renderersFactory)
+                player = ExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
                     .setUseLazyPreparation(true)
-                    // .setPauseAtEndOfMediaItems(true)
                     .setTrackSelector(trackSelector!!).build().apply {
                         setAudioAttributes(audioAttributes, true)
                     }
@@ -195,16 +199,14 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         tvPlayerEndTime = findViewById(R.id.tv_player_end_time)
         tvPlayerCurrentTime = findViewById(R.id.tv_player_current_time)
         findViewById<View>(R.id.exo_buffering).visibility = View.GONE
-
-
     }
 
 
     private fun initListener() {
         imgFullScreenEnterExit.setOnClickListener {
             val display =
-                (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-            val orientation = display.rotation
+                (context.display)
+            val orientation = display?.rotation
             if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
                 imgFullScreenEnterExit.setImageResource(R.drawable.ic_full_screen_enter)
                 context.activity()?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -221,7 +223,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                     ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             )
         }
-        defaultTimeBar.addListener(object : OnScrubListener {
+        defaultTimeBar.addListener(object : TimeBar.OnScrubListener {
             override fun onScrubStart(timeBar: TimeBar, position: Long) {
                 playerListener?.onPositionDiscontinuity(player?.currentPosition ?: lastPosition)
             }
@@ -273,7 +275,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         val audioAttributes =
             AudioAttributes.Builder()
                 .setUsage(C.USAGE_MEDIA)
-                .setContentType(C.CONTENT_TYPE_MOVIE)
+                .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
                 .build()
         player!!.setAudioAttributes(audioAttributes, true)
     }
@@ -283,8 +285,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         else -> (this as? ContextWrapper)?.baseContext?.activity()
     }
 
-
-    override fun onVisibilityChange(visibility: Int) {
+    override fun onVisibilityChanged(visibility: Int) {
         if (visibility == View.GONE) {
             if (mIsPlaying.not()) {
                 //  visiblePlayButton()
@@ -439,28 +440,29 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
 
 
     private inner class PlayerErrorMessageProvider :
-        ErrorMessageProvider<ExoPlaybackException> {
-        override fun getErrorMessage(e: ExoPlaybackException): Pair<Int, String> {
+        ErrorMessageProvider<PlaybackException> {
+        override fun getErrorMessage(e: PlaybackException): Pair<Int, String> {
             e.printStackTrace()
             return Pair.create(0, "errorString")
         }
     }
 
-    private inner class PlayerEventListener : Player.EventListener {
+    private inner class PlayerEventListener : Player.Listener {
         var playWhenReady = false
         var playbackState: Int = STATE_IDLE
 
-        override fun onPlayerError(error: ExoPlaybackException) {
+        override fun onPlayerError(error: PlaybackException) {
             super.onPlayerError(error)
             error.printStackTrace()
-            if (error.type == TYPE_SOURCE) {
+            if (error.errorCode == PlaybackException.ERROR_CODE_DECODER_INIT_FAILED ||
+                error.errorCode == PlaybackException.ERROR_CODE_AUDIO_TRACK_INIT_FAILED
+            ) {
                 mIsPlayerInit = false
-
             }
         }
 
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            super.onPlayerStateChanged(playWhenReady, playbackState)
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
             this.playWhenReady = playWhenReady
             this.playbackState = playbackState
 
@@ -474,7 +476,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                 player?.playWhenReady = false
                 player?.seekTo(0, 0)
             }
-
 
             playerListener?.onPlayerStateChanged(playWhenReady, playbackState)
             when (playbackState) {

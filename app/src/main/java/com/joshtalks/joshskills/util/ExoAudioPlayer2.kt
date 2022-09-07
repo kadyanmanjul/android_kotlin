@@ -3,17 +3,16 @@ package com.joshtalks.joshskills.util
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
+import android.os.Looper
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -22,16 +21,16 @@ class ExoAudioPlayer2 {
     private var progressTracker: ProgressTracker? = null
     private var progressUpdateListener: ProgressUpdateListener? = null
     var context: Context? = AppObjectController.joshApplication
-    private val playerEventListener: Player.EventListener
+    private val playerEventListener: Player.Listener
     private var durationSet = false
     var currentPlayingUrl = EMPTY
     private var audioDuration: Long = 0
-    private val player: SimpleExoPlayer by lazy {
+    private val player: ExoPlayer by lazy {
         val audioAttributes = AudioAttributes.Builder()
-            .setContentType(C.CONTENT_TYPE_MUSIC)
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
             .build()
-        SimpleExoPlayer.Builder(AppObjectController.joshApplication).setUseLazyPreparation(true)
+        ExoPlayer.Builder(AppObjectController.joshApplication).setUseLazyPreparation(true)
             .build().apply {
                 setAudioAttributes(audioAttributes, true)
 
@@ -40,11 +39,9 @@ class ExoAudioPlayer2 {
     }
 
     init {
-        playerEventListener = object : Player.EventListener {
-            override fun onSeekProcessed() {
-            }
-
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        playerEventListener = object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
                 if (playbackState == ExoPlayer.STATE_READY && !durationSet) {
                     audioDuration = player.duration
                     durationSet = true
@@ -53,11 +50,8 @@ class ExoAudioPlayer2 {
                     playerListener?.complete()
                     return
                 }
-                if (playbackState == ExoPlayer.STATE_READY && playWhenReady.not()) {
+                if (playbackState == ExoPlayer.STATE_READY) {
                     progressUpdateListener?.onDurationUpdate(player.duration)
-                }
-                if (!playWhenReady) {
-                    playerListener?.onPlayerPause()
                 }
             }
 
@@ -139,13 +133,9 @@ class ExoAudioPlayer2 {
             if (isPlaybackSpeed) {
                 param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
             }
-            player.setPlaybackParameters(param)
+            player.playbackParameters = param
             currentPlayingUrl = audioUrl
-            val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
-                context!!,
-                Util.getUserAgent(context!!, "joshskills")
-            )
-
+            val dataSourceFactory = DefaultDataSource.Factory(context!!)
             LAST_ID = id
             val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
             player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
@@ -154,8 +144,9 @@ class ExoAudioPlayer2 {
             player.setWakeMode(C.WAKE_MODE_NETWORK)
             player.setHandleAudioBecomingNoisy(true)
             val audioSource: MediaSource =
-                factory.createMediaSource(Uri.parse(audioUrl))
-            player.prepare(audioSource,true,false)
+                factory.createMediaSource(MediaItem.fromUri(Uri.parse(audioUrl)))
+            player.setMediaSource(audioSource,true)
+            player.prepare()
             player.seekTo(seekDuration)
         }catch (ex:Exception){
             ex.printStackTrace()
@@ -178,10 +169,10 @@ class ExoAudioPlayer2 {
     }
 
     inner class ProgressTracker(
-        private val player: SimpleExoPlayer,
+        private val player: ExoPlayer,
         private val delayMillis: Long = 50
     ) : Runnable {
-        internal val handler: Handler = Handler()
+        internal val handler: Handler = Handler(Looper.getMainLooper())
         override fun run() {
             val currentPosition = player.currentPosition
             progressUpdateListener?.onProgressUpdate(currentPosition)

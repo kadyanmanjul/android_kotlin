@@ -80,7 +80,6 @@ import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
-import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
@@ -90,7 +89,6 @@ import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.speaking.BLOCKED
@@ -167,7 +165,7 @@ private const val TAG = "ConversationActivity"
 
 class ConversationActivity :
     BaseConversationActivity(),
-    Player.EventListener,
+    Player.Listener,
     ExoAudioPlayer.ProgressUpdateListener,
     AudioPlayerEventListener,
     OnDismissWithSuccess {
@@ -1916,25 +1914,6 @@ class ConversationActivity :
         )
 
         compositeDisposable.add(
-            RxBus2.listen(ConversationPractiseEventBus::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        ConversationPracticeActivity.startConversationPracticeActivity(
-                            this,
-                            CONVERSATION_PRACTISE_REQUEST_CODE,
-                            it.id,
-                            it.pImage
-                        )
-                    },
-                    {
-                        it.printStackTrace()
-                    }
-                )
-        )
-
-        compositeDisposable.add(
             RxBus2.listenWithoutDelay(StartCertificationExamEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -2439,7 +2418,6 @@ class ConversationActivity :
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {}
 
-    override fun onTrackChange(tag: String?) {}
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {}
 

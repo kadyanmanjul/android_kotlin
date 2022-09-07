@@ -35,53 +35,6 @@ abstract class BaseCell {
 
     fun getAppContext() = AppObjectController.joshApplication
 
-
-    fun setBlurImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
-        if (iv != null) {
-            val multi = MultiTransformation(
-                RoundedCornersTransformation(
-                    Utils.dpToPx(ROUND_CORNER),
-                    0,
-                    RoundedCornersTransformation.CornerType.ALL
-                )
-            )
-            Glide.with(getAppContext())
-                .load(url)
-                .override(Target.SIZE_ORIGINAL)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CircleCrop())
-                )
-                .apply(RequestOptions.bitmapTransform(multi))
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        callback?.run()
-                        //iv?.tag = url
-                        return false
-                    }
-
-                })
-                .into(iv)
-        }
-
-    }
-
     fun setImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
         if (iv != null) {
             val multi = MultiTransformation(

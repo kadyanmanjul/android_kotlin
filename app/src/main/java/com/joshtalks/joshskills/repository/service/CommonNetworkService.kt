@@ -4,11 +4,26 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
-import com.joshtalks.joshskills.repository.server.*
-import com.joshtalks.joshskills.repository.server.certification_exam.*
-import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
-import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
-import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
+import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
+import com.joshtalks.joshskills.repository.server.BaseResponse
+import com.joshtalks.joshskills.repository.server.CertificateDetail
+import com.joshtalks.joshskills.repository.server.FAQ
+import com.joshtalks.joshskills.repository.server.FAQCategory
+import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
+import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardMentor
+import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardType
+import com.joshtalks.joshskills.repository.server.LinkAttribution
+import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
+import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
+import com.joshtalks.joshskills.repository.server.RestartCourseResponse
+import com.joshtalks.joshskills.repository.server.SuccessResponse
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
+import com.joshtalks.joshskills.repository.server.certification_exam.PostalDetails
+import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
@@ -34,11 +49,26 @@ import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
-import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.userprofile.models.AwardHeader
+import com.joshtalks.joshskills.ui.userprofile.models.CourseHeader
+import com.joshtalks.joshskills.ui.userprofile.models.FppStatusInProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.GroupsHeader
+import com.joshtalks.joshskills.ui.userprofile.models.PictureHeader
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.PurchasePopUp
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -105,19 +135,6 @@ interface CommonNetworkService {
     suspend fun getCourseEnrolledDetails(
         @Body params: CourseEnrolledRequest
     ): Response<CourseEnrolledResponse>
-
-    @GET("$DIR/conversation-practice/{id}/")
-    suspend fun getConversationPractise(
-        @Path("id") id: String
-    ): Response<ConversationPractiseModel>
-
-    @POST("$DIR/conversation-practice/submit/")
-    suspend fun submitConversationPractice(
-        @Body request: SubmitConversationPractiseRequest
-    ): Response<SuccessResponse>
-
-    @GET("$DIR/conversation-practice/mentor/")
-    suspend fun getSubmittedConversationPractise(@Query("conversationpractice_id") eventName: String): Response<List<SubmittedConversationPractiseModel>>
 
     @POST("$DIR/mentor/reminders/")
     suspend fun setReminder(@Body requestSetReminderRequest: ReminderRequest): Response<BaseResponse<Int>>

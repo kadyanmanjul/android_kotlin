@@ -622,7 +622,7 @@ class AppObjectController {
                     if (VideoDownloadController.getInstance().downloadTracker != null)
                         videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
                 } catch (ex: Exception) {
-                    Log.e("AppObjectController", "initObjectInThread: referrer")
+                    Log.e("Manjul", "initObjectInThread: referrer ex : ${ex.message}")
                 }
                 InstallReferralUtil.installReferrer(context)
             }.start()

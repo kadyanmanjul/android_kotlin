@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.custom_ui;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 import static com.joshtalks.joshskills.messaging.RxBus2.publish;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -11,46 +10,30 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.RenderersFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.analytics.AnalyticsListener;
-import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.offline.Download;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.DefaultTimeBar;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.TimeBar;
-import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.*;
+import com.google.android.exoplayer2.analytics.*;
+import com.google.android.exoplayer2.audio.*;
+import com.google.android.exoplayer2.offline.*;
+import com.google.android.exoplayer2.source.*;
+import com.google.android.exoplayer2.trackselection.*;
+import com.google.android.exoplayer2.ui.*;
+import com.google.android.exoplayer2.util.*;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.CountUpTimer;
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
-import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController;
+import com.joshtalks.joshskills.core.service.video_download.*;
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.server.engage.Graph;
@@ -61,8 +44,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+import timber.log.*;
 
-public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
+public class JoshVideoPlayer extends StyledPlayerView implements View.OnTouchListener, View.OnClickListener {
+    private static final String TAG = "ManjulJVP";
     private final Handler timeHandler = new Handler();
     private final CountUpTimer countUpTimer = new CountUpTimer(false);
     private final Set<Graph> videoViewGraphList = new HashSet<>();
@@ -71,9 +56,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private long currentPosition = 0;
     private Activity activity;
     private ImageView fullScreenToggle;
-    private OrientationEventListener mOrientationListener;
     private ScreenOrientation screenOrientation = ScreenOrientation.PORTRAIT;
-    private SimpleExoPlayer player;
+    private ExoPlayer player;
     private boolean isVideoEnded = false;
     private float playbackSpeed = 1f;
 
@@ -110,15 +94,14 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
     };
     private DefaultTrackSelector trackSelector;
-    private TrackGroupArray lastSeenTrackGroupArray;
-    private boolean startAutoPlay;
+    private Tracks lastSeenTrackGroups;
     private int startWindow;
     private GestureDetector gestureDetector;
     private PlayerControlViewVisibilityListener playerControlViewVisibilityListener;
     private PlayerFullScreenListener playerFullScreenListener;
     private PlayerEventCallback playerEventCallback;
     private PlayerCompletionCallback playerCompletionCallback;
-    private ControllerButtonCallback  controllerButtonCallback;
+    private ControllerButtonCallback controllerButtonCallback;
     private String videoId;
     @Nullable
     private Graph graph;
@@ -174,25 +157,33 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
         if (player == null) {
             try {
-                TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory();
+                AdaptiveTrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory();
                 RenderersFactory renderersFactory = VideoDownloadController.getInstance().buildRenderersFactory(false);
-                trackSelector = new DefaultTrackSelector(trackSelectionFactory);
-                DefaultTrackSelector.Parameters trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
+                trackSelector = new DefaultTrackSelector(getContext(), trackSelectionFactory);
+                DefaultTrackSelector.Parameters trackSelectorParameters = new DefaultTrackSelector.Parameters.Builder(getContext()).build();
                 trackSelector.setParameters(trackSelectorParameters);
-                lastSeenTrackGroupArray = null;
-
-                player = new SimpleExoPlayer.Builder(AppObjectController.getJoshApplication(), renderersFactory)
+                lastSeenTrackGroups = null;
+                player = new ExoPlayer.Builder(AppObjectController.getJoshApplication(), renderersFactory)
+                        .setSeekBackIncrementMs(10000)
+                        .setSeekForwardIncrementMs(10000)
                         .setUseLazyPreparation(true)
                         .setTrackSelector(trackSelector)
                         .build();
 
             } catch (Exception e) {
-                player = ExoPlayerFactory.newSimpleInstance(getContext());
+                player = new ExoPlayer.Builder(getContext())
+                        .setUseLazyPreparation(true)
+                        .setSeekBackIncrementMs(10000)
+                        .setSeekForwardIncrementMs(10000)
+                        .build();
                 e.printStackTrace();
+                Timber.tag(TAG).e(e, "init: ");
             }
 
             findViewById(R.id.playAgain).setOnClickListener(this);
             findViewById(R.id.playAgain).setVisibility(GONE);
+            findViewById(R.id.exo_pause).setVisibility(GONE);
+            findViewById(R.id.exo_play).setVisibility(VISIBLE);
             findViewById(R.id.playbackSpeed).setOnClickListener(this);
             findViewById(R.id.llControlsContainer).setVisibility(VISIBLE);
             player.addListener(new PlayerEventListener());
@@ -200,6 +191,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
 
             player.addAnalyticsListener(new AnalyticsListener() {
+                @Override
+                public void onPlaybackStateChanged(EventTime eventTime, int state) {
+                    AnalyticsListener.super.onPlaybackStateChanged(eventTime, state);
+                }
+
                 @Override
                 public void onPlayerStateChanged(EventTime eventTime, boolean playWhenReady, int playbackState) {
                     if (playWhenReady) {
@@ -212,7 +208,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
                         PlayerListener listener = (PlayerListener) getContext();
 
-                        if (playbackState == com.google.android.exoplayer2.Player.STATE_READY) {
+                        if (playbackState == Player.STATE_READY) {
                             listener.onPlayerReady();
                         }
 
@@ -259,9 +255,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             timeHandler.post(timeRunnable);
             try {
                 setControllerShowTimeoutMs(5000);
-                setRewindIncrementMs(10000);
-                setFastForwardIncrementMs(10000);
-                setControllerVisibilityListener(visibility -> {
+                setControllerVisibilityListener((ControllerVisibilityListener) visibility -> {
                     if (playerControlViewVisibilityListener != null) {
                         playerControlViewVisibilityListener.onVisibilityChange(visibility);
                     }
@@ -293,9 +287,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     private void setupAudioFocus() {
+        @SuppressLint("WrongConstant")
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(C.USAGE_MEDIA)
-                .setContentType(C.CONTENT_TYPE_MOVIE)
+                .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
                 .build();
         player.setAudioAttributes(audioAttributes, true);
     }
@@ -311,9 +306,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             return;
         try {
             if (VideoDownloadController.getInstance().getMediaSource(uri)!=null){
-                player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false);
+                player.setMediaSource(VideoDownloadController.getInstance().getMediaSource(uri), true);
+                player.prepare();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -342,7 +338,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     }
 
-    public SimpleExoPlayer getExoPlayer() {
+    public ExoPlayer getExoPlayer() {
         return player;
     }
 
@@ -392,6 +388,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 countUpTimer.reset();
             }
         } catch (Exception e) {
+            Timber.tag(TAG).e(e, "pushAnalyticsEvents: ");
         }
     }
 
@@ -408,9 +405,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 }
 
                 MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
-                if (audioSource!=null){
+                if (audioSource != null) {
                     player.setHandleAudioBecomingNoisy(true);
-                    player.prepare(audioSource, true, false);
+                    player.setMediaSource(audioSource, true);
+                    player.prepare();
                     player.setPlayWhenReady(true);
                 }
             }
@@ -440,19 +438,21 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 }
 
                 MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
-                if (audioSource!=null){
+                if (audioSource != null) {
                     player.setHandleAudioBecomingNoisy(true);
-                    player.prepare(audioSource, true, false);
+                    player.setMediaSource(audioSource, true);
+                    player.prepare();
                     player.setPlayWhenReady(false);
                 }
             }
-        }catch (Exception ex){
-
+        } catch (Exception ex) {
+            Timber.tag(TAG).e(ex, "downloadStreamButNotPlay: ");
         }
     }
 
     public void setFullScreenListener(PlayerFullScreenListener playerFullScreenListener) {
         findViewById(R.id.exo_play).setOnClickListener(this);
+        findViewById(R.id.exo_pause).setOnClickListener(this);
         findViewById(R.id.ivFullScreenToggleOp).setOnClickListener(this);
         findViewById(R.id.ivFullScreenToggleOp).setVisibility(VISIBLE);
         this.playerFullScreenListener = playerFullScreenListener;
@@ -491,6 +491,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                     onResume();
                     if (controllerButtonCallback != null)
                         controllerButtonCallback.onPlay();
+                }
+            }else if (v.getId() == R.id.exo_pause) {
+                if (player.isPlaying()) {
+                    onPause();
                 }
             } else if (v.getId() == R.id.ivFullScreenToggleOp) {
                 if (playerFullScreenListener != null) {
@@ -581,6 +585,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void onResume() {
         if (player != null) {
             player.setPlayWhenReady(true);
+            findViewById(R.id.exo_pause).setVisibility(VISIBLE);
+            findViewById(R.id.exo_play).setVisibility(GONE);
             int playerState = player.getPlaybackState();
             if (playerState == Player.STATE_IDLE) {
                 downloadStreamPlay();
@@ -592,6 +598,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     public void onPause() {
         if (player != null) {
+            findViewById(R.id.exo_pause).setVisibility(GONE);
+            findViewById(R.id.exo_play).setVisibility(VISIBLE);
             currentPosition = player.getCurrentPosition();
             player.setPlayWhenReady(false);
             player.getPlaybackState();
@@ -619,6 +627,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void setClickListners() {
         findViewById(R.id.playAgain).setOnClickListener(this);
         findViewById(R.id.exo_play).setOnClickListener(this);
+        findViewById(R.id.exo_pause).setOnClickListener(this);
     }
 
     enum ScreenOrientation {
@@ -636,7 +645,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public interface PlayerEventCallback {
-        void onReceiveEvent(int event, boolean playbackState);
+        void onReceiveEvent(int event);
     }
 
     public interface PlayerCompletionCallback {
@@ -645,16 +654,17 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     public interface ControllerButtonCallback {
         void onPlay();
+
         void onWatchAgain();
     }
 
-    private class PlayerEventListener implements Player.EventListener {
+    private class PlayerEventListener implements Player.Listener {
 
         @Override
-        @SuppressWarnings("ReferenceEquality")
-        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+        public void onTracksChanged(Tracks trackGroups) {
+            Player.Listener.super.onTracksChanged(trackGroups);
             try {
-                if (trackGroups != lastSeenTrackGroupArray) {
+                if (trackGroups != lastSeenTrackGroups) {
                     MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
                     if (mappedTrackInfo != null) {
                         if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO)
@@ -664,7 +674,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                                 == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
                         }
                     }
-                    lastSeenTrackGroupArray = trackGroups;
+                    lastSeenTrackGroups = trackGroups;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -672,9 +682,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
 
         @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        public void onPlaybackStateChanged(int playbackState) {
+            Player.Listener.super.onPlaybackStateChanged(playbackState);
             if (playerEventCallback != null) {
-                playerEventCallback.onReceiveEvent(playbackState, playWhenReady);
+                playerEventCallback.onReceiveEvent(playbackState);
             }
             if (playbackState == Player.STATE_ENDED && !isVideoEnded) {
                 isVideoEnded = true;
@@ -683,11 +694,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 findViewById(R.id.playAgain).setVisibility(VISIBLE);
                 findViewById(R.id.llControlsContainer).setVisibility(GONE);
             }
+
         }
 
         @Override
-        public void onPlayerError(ExoPlaybackException e) {
-            e.printStackTrace();
+        public void onPlayerError(PlaybackException error) {
+            Player.Listener.super.onPlayerError(error);
+            error.printStackTrace();
         }
     }
 
