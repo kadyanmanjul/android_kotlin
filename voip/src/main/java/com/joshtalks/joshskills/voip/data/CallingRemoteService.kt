@@ -304,7 +304,6 @@ class CallingRemoteService : Service() {
                         e.printStackTrace()
                     }
                 }
-
                 audioController.resetAudioRoute()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -321,6 +320,7 @@ class CallingRemoteService : Service() {
         if (callData != null) {
             mediator.connectCall(category, callData)
             notification.searching()
+            audioController.resetAudioRoute()
             expertCallData = callData
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
