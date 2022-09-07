@@ -41,15 +41,11 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 
-class   CallFragment : BaseFragment() , SensorEventListener {
+class   CallFragment : BaseFragment() {
     private val TAG = "CallFragment"
 
     lateinit var callBinding: FragmentCallBinding
     private var isAnimationCanceled = false
-    private var sensorManager: SensorManager? = null
-    private var proximity: Sensor? = null
-    private var powerManager: PowerManager? = null
-    private  var lock: PowerManager.WakeLock? = null
     private var audioRequest :AudioFocusRequest? = null
     private var isFragmentRestarted = false
 
@@ -108,7 +104,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
     }
 
     override fun initViewState() {
-        setUpProximitySensor()
         gainAudioFocus()
 
         liveData.observe(viewLifecycleOwner) {
@@ -146,20 +141,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
             )
             Log.d(TAG, "gainAudioFocus 2: request result $result")
 
-        }
-    }
-
-    private fun setUpProximitySensor() {
-        try {
-            sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-            proximity = sensorManager?.getDefaultSensor(Sensor.TYPE_PROXIMITY)
-            powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
-            lock = powerManager?.newWakeLock(
-                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                "simplewakelock:wakelocktag"
-            )
-        }catch (ex : NullPointerException){
-            ex.printStackTrace()
         }
     }
 
@@ -205,9 +186,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        proximity?.also { proximity ->
-            sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
-        }
         if (callBinding.incomingTimerContainer.visibility == View.VISIBLE) {
             CoroutineScope(Dispatchers.Main).launch{
                 progressAnimator.resume()
@@ -228,29 +206,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 requireActivity().finish()
         } else
             isFragmentRestarted = true
-    }
-
-    override fun onSensorChanged(p0: SensorEvent?) {
-        if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
-                turnScreenOff()
-        } else {
-            turnScreenOn()
-        }
-    }
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
-
-    private fun turnScreenOff() {
-        if (lock?.isHeld == false) lock?.acquire(10 * 60 * 1000L /*10 minutes*/)
-    }
-
-    private fun turnScreenOn() {
-        if (lock?.isHeld == true) lock?.release()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        sensorManager?.unregisterListener(this)
-        if(lock?.isHeld == true) lock?.release()
     }
 
     override fun onDestroy() {

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
 import com.joshtalks.joshskills.voip.R
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.PREF_KEY_PSTN_STATE
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
@@ -54,6 +55,8 @@ class PrefManager {
         }
 
         fun getVoipState(): State {
+            if(::preferenceManager.isInitialized.not())
+                Utils.context?.let { initServicePref(it) }
             val ordinal = preferenceManager.getInt(VOIP_STATE, State.IDLE.ordinal)
             Log.d(TAG, "getVoipState: $ordinal")
             Log.d(TAG, "getVoipState: ${State.values()}")

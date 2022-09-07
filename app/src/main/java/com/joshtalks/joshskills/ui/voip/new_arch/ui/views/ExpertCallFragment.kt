@@ -32,14 +32,10 @@ import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 
-class ExpertCallFragment : BaseFragment() , SensorEventListener {
+class ExpertCallFragment : BaseFragment() {
     private val TAG = "FppCallFragment"
 
     lateinit var callBinding: FragmentExpertCallBinding
-    private var sensorManager: SensorManager? = null
-    private var proximity: Sensor? = null
-    private var powerManager: PowerManager? = null
-    private  var lock: PowerManager.WakeLock? = null
     private var mPlayer: MediaPlayer? = null
     private var scope = CoroutineScope(Dispatchers.Main)
     private val audioController by lazy {
@@ -107,7 +103,6 @@ class ExpertCallFragment : BaseFragment() , SensorEventListener {
     }
 
     override fun initViewState() {
-        setUpProximitySensor()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 CANCEL_INCOMING_TIMER -> {
@@ -123,24 +118,6 @@ class ExpertCallFragment : BaseFragment() , SensorEventListener {
     }
 
     override fun setArguments() {}
-
-    private fun setUpProximitySensor() {
-        Log.d(TAG, "onSensorChanged: 2")
-
-        try {
-            sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-            proximity = sensorManager?.getDefaultSensor(Sensor.TYPE_PROXIMITY)
-            powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
-            lock = powerManager?.newWakeLock(
-                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                "simplewakelock:wakelock"
-            )
-        }catch (ex : NullPointerException){
-            ex.printStackTrace()
-            Log.d(TAG, "onSensorChanged: 3")
-
-        }
-    }
 
     private fun startPlaying() {
         scope.launch {
@@ -169,19 +146,6 @@ class ExpertCallFragment : BaseFragment() , SensorEventListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        proximity?.also { proximity ->
-            sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        sensorManager?.unregisterListener(this)
-        if(lock?.isHeld == true) lock?.release()
-    }
-
     override fun onStart() {
         super.onStart()
         setCurrentCallState()
@@ -195,30 +159,6 @@ class ExpertCallFragment : BaseFragment() , SensorEventListener {
                 requireActivity().finish()
         } else
             isFragmentRestarted = true
-    }
-
-    override fun onSensorChanged(p0: SensorEvent?) {
-        if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
-            Log.d(TAG, "onSensorChanged: 1")
-            turnScreenOff()
-        } else {
-            turnScreenOn()
-        }
-    }
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
-
-    private fun turnScreenOff() {
-        if (lock?.isHeld == false) lock?.acquire(10 * 60 * 1000L /*10 minutes*/)
-    }
-
-    private fun turnScreenOn() {
-        if (lock?.isHeld == true) lock?.release()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        sensorManager?.unregisterListener(this)
-        if(lock?.isHeld == true) lock?.release()
     }
 
     override fun onDestroy() {
