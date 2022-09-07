@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
+import com.joshtalks.joshskills.voip.ProximityHelper
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
@@ -21,6 +23,7 @@ LeavingState(val context: CallContext) : VoipState {
 
     init {
         Log.d("Call State", TAG)
+        Utils.context?.let { ProximityHelper.getInstance(it)?.stop() }
         CallAnalytics.addAnalytics(
             event = EventName.CHANNEL_LEAVING,
             agoraCallId = context.channelData.getCallingId().toString(),

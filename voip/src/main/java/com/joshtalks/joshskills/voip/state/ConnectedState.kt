@@ -1,6 +1,9 @@
 package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_EXPERT_PRICE_PER_MIN
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOTAL_AMOUNT
+import com.joshtalks.joshskills.voip.ProximityHelper
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
@@ -26,6 +29,7 @@ class ConnectedState(val context: CallContext) : VoipState {
     init {
         Log.d("Call State", TAG)
         observe()
+        Utils.context?.let { ProximityHelper.getInstance(it)?.start() }
         //startPaymentTimer(context.request[INTENT_DATA_TOTAL_AMOUNT] as Int, context.request[INTENT_DATA_EXPERT_PRICE_PER_MIN] as Int)
     }
 

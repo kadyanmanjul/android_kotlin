@@ -32,16 +32,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class GroupCallFragment : BaseFragment(), SensorEventListener {
+class GroupCallFragment : BaseFragment() {
 
     private val TAG = "GroupCallFragment"
 
     lateinit var callBinding: FragmentGroupCallBinding
     private var isAnimationCanceled = false
-    private var sensorManager: SensorManager? = null
-    private var proximity: Sensor? = null
-    private var powerManager: PowerManager? = null
-    private var lock: PowerManager.WakeLock? = null
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
     }
@@ -99,7 +95,6 @@ class GroupCallFragment : BaseFragment(), SensorEventListener {
     }
 
     override fun initViewState() {
-        setUpProximitySensor()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 CANCEL_INCOMING_TIMER -> {
@@ -107,20 +102,6 @@ class GroupCallFragment : BaseFragment(), SensorEventListener {
                     callBinding.incomingTimerContainer.visibility = View.INVISIBLE
                 }
             }
-        }
-    }
-
-    private fun setUpProximitySensor() {
-        try {
-            sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-            proximity = sensorManager?.getDefaultSensor(Sensor.TYPE_PROXIMITY)
-            powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
-            lock = powerManager?.newWakeLock(
-                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                "simplewakelock:wakelocktag"
-            )
-        } catch (ex: NullPointerException) {
-            ex.printStackTrace()
         }
     }
 
@@ -167,9 +148,6 @@ class GroupCallFragment : BaseFragment(), SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        proximity?.also { proximity ->
-            sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
-        }
         if (callBinding.incomingTimerContainer.visibility == View.VISIBLE) {
             CoroutineScope(Dispatchers.Main).launch {
                 progressAnimator.resume()
@@ -191,31 +169,5 @@ class GroupCallFragment : BaseFragment(), SensorEventListener {
                 requireActivity().finish()
         } else
             isFragmentRestarted = true
-    }
-
-    override fun onSensorChanged(p0: SensorEvent?) {
-        if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
-            if (audioController.getCurrentAudioRoute() == AudioRouteConstants.EarpieceAudio) {
-                turnScreenOff()
-            }
-        } else {
-            turnScreenOn()
-        }
-    }
-
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
-
-    private fun turnScreenOff() {
-        if (lock?.isHeld == false) lock?.acquire(10 * 60 * 1000L /*10 minutes*/)
-    }
-
-    private fun turnScreenOn() {
-        if (lock?.isHeld == true) lock?.release()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        sensorManager?.unregisterListener(this)
-        if (lock?.isHeld == true) lock?.release()
     }
 }
