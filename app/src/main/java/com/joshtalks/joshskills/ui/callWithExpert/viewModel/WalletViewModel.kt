@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
+import com.joshtalks.joshskills.ui.callWithExpert.utils.removeRupees
 import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -28,11 +29,7 @@ class WalletViewModel(private val app: Application) : AndroidViewModel(app) {
     val availableBalance: LiveData<String>
         get() = _availableBalance
 
-//     val addedAmount = MutableLiveData(app.getString(R.string.enter_amount_in_inr))
      val addedAmount = MutableLiveData<String>()
-
-//    val addedAmount: LiveData<String>
-//        get() = _addedAmount
 
     private val _availableAmount = MutableLiveData<List<Amount>>()
 
@@ -75,6 +72,13 @@ class WalletViewModel(private val app: Application) : AndroidViewModel(app) {
 
     fun updateAddedAmount(amount: String) {
         addedAmount.value = amount
+    }
+
+    fun getAmountId(): Int {
+        val foundAmount = _availableAmount.value?.find { amount ->
+            amount.amount == addedAmount.value!!.removeRupees().toInt()
+        }
+        return foundAmount?.id ?: commonTestId
     }
 
 }

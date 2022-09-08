@@ -1065,6 +1065,8 @@
         <item>₹ 100000</item>
     </string-array>
     <string name="rup">\u20B9</string>
+    <string name="please_select_amount_to_add">Please select amount to add</string>
+    <string name="minimum_amount_required">Minimum amount required is INR 50</string>
     <string name="transaction_history">Transaction History</string>
     <string name="recharge">Recharge</string>
     <string name="call_info_copied">call info copied</string>

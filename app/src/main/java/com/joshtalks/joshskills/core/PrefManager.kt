@@ -186,7 +186,6 @@ const val HAS_SEEN_WARNING_POPUP_FT = "HAS_SEEN_WARNING_POPUP_FT"
 const val IS_APP_RESTARTED = "IS_APP_RESTARTED"
 
 object PrefManager {
-
     private const val PREF_NAME_COMMON = "JoshSkills"
     private const val PREF_NAME_CONSISTENT = "com.joshtalks.joshskills.JoshSkillsConsistentPref"
 

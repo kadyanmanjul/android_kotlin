@@ -107,15 +107,15 @@ class PrefManager {
             editor.commit()
         }
 
-        fun setExpertCallDuration(duration: Long) {
+        fun setExpertCallDuration(duration: String) {
             val editor = preferenceManager.edit()
-            editor.putLong(EXPERT_CALL_DURATION, duration)
+            editor.putString(EXPERT_CALL_DURATION, duration)
             Log.d("calltime", "setExpertCallDuration time => $duration ")
             editor.commit()
         }
 
-        fun getExpertCallDuration(): Long {
-            return preferenceManager.getLong(EXPERT_CALL_DURATION, 0)
+        fun getExpertCallDuration(): String? {
+            return preferenceManager.getString(EXPERT_CALL_DURATION, "")
         }
 
         fun savePstnState(state: String) {

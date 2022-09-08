@@ -423,21 +423,11 @@ class CallingRemoteService : Service() {
     }
 
     fun stopCallTimer() {
-        storeCallTimingInDb()
+//        storeCallTimingInDb()
         countdownTimerBack?.cancel()
         countdownTimerBack = null
     }
 
-    private fun storeCallTimingInDb() {
-        if (countdownTimerBack != null && expertCallData[IS_EXPERT_CALLING] != null){
-            val isExpertCalling = expertCallData[IS_EXPERT_CALLING].toString()
-            if (isExpertCalling == true.toString()) {
-                    timeInMillSec?.let { time ->
-                        PrefManager.setExpertCallDuration(time)
-                    }
-            }
-        }
-    }
 }
 
 // TODO: Need to Change

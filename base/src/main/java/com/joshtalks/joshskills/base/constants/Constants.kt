@@ -144,3 +144,4 @@ const val IS_EXPERT_CALLING = "expert_calling"
 
 const val USER_NAME= "USER_NAME"
 const val USER_PROFILE = "USER_PROFILE"
+const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"

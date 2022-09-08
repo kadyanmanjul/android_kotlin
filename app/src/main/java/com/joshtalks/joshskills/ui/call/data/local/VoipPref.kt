@@ -15,6 +15,8 @@ import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
+import com.joshtalks.joshskills.voip.data.local.AGORA_CALL_ID
+import com.joshtalks.joshskills.voip.data.local.LOCAL_USER_AGORA_ID
 import com.joshtalks.joshskills.voip.inSeconds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -94,6 +96,8 @@ object VoipPref {
         }
 
     private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String) {
+        setExpertCallDuration(duration)
+
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             try {
                 delay(500)
@@ -110,6 +114,7 @@ object VoipPref {
                     when(response.code()){
                         200->{
                             SkillsDatastore.updateWalletCredits(response.body()?.amount?:0)
+                            setExpertCallDuration("")
                         }
                         406->{
 
@@ -305,4 +310,20 @@ object VoipPref {
     fun getCurrentUserImage(): String{
         return Mentor.getInstance().getUser()?.photo?: ""
     }
+
+    fun setLocalUserAgoraIdAndCallId(localUserAgoraId: Int, callId: Int) {
+        val editor = preferenceManager.edit()
+        editor.putInt(LOCAL_USER_AGORA_ID, localUserAgoraId)
+        editor.putInt(AGORA_CALL_ID, callId)
+        editor.commit()
+    }
+
+    fun setExpertCallDuration(duration: String) {
+        com.joshtalks.joshskills.voip.data.local.PrefManager.setExpertCallDuration(duration)
+    }
+
+    fun getExpertCallDuration(): String? {
+        return com.joshtalks.joshskills.voip.data.local.PrefManager.getExpertCallDuration()
+    }
+
 }

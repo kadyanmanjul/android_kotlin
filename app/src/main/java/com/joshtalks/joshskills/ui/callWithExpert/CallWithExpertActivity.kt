@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentMan
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.razorpay.PaymentResultListener
 
 class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, PaymentStatusListener {
@@ -123,6 +124,11 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
                 viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = SPEAKING_PAGE)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.syncCallDuration()
     }
 
     override fun onPaymentSuccess(p0: String?) {

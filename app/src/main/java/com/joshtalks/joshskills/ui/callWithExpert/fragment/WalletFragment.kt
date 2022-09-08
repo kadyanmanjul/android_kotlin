@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentMan
 import com.joshtalks.joshskills.ui.callWithExpert.utils.removeRupees
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel
+import com.moengage.core.internal.utils.isNullOrEmpty
 
 class WalletFragment : Fragment() {
 
@@ -76,14 +77,18 @@ class WalletFragment : Fragment() {
     }
 
     fun openCheckoutScreen() {
-        if (!viewModel.addedAmount.value.isNullOrEmpty()) {
-            WalletRechargePaymentManager.selectedExpertForCall = null
-            callWithExpertViewModel.updateAmount(Amount(viewModel.addedAmount.value!!.removeRupees().toInt(), viewModel.commonTestId))
-            callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
-            callWithExpertViewModel.proceedPayment()
-        }else{
-            showToast("Please select amount to add")
-        }
+        viewModel.addedAmount.value?.let { addedAmount ->
+            when{
+                addedAmount == "" -> { showToast(getString(R.string.please_select_amount_to_add)) }
+                addedAmount.removeRupees().toInt() < 50 -> { showToast(getString(R.string.minimum_amount_required)) }
+                else -> {
+                    WalletRechargePaymentManager.selectedExpertForCall = null
+                    callWithExpertViewModel.updateAmount(Amount(viewModel.addedAmount.value!!.removeRupees().toInt(), viewModel.getAmountId()))
+                    callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
+                    callWithExpertViewModel.proceedPayment()
+                }
+            }
+        } ?: showToast(getString(R.string.please_select_amount_to_add))
     }
 
 }

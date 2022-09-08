@@ -115,6 +115,7 @@ class JoshApplication :
             Utils.initUtils(this)
             Stetho.initializeWithDefaults(this);
         }
+        com.joshtalks.joshskills.voip.data.local.PrefManager.initServicePref(this)
 
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
     }
