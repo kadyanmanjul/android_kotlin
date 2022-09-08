@@ -392,9 +392,9 @@ interface CommonNetworkService {
     ): Response<PurchasePopUp>
 
     @GET("$DIR/micro_payment/get_wallet_transactions/{mentor}")
-    suspend fun getWalletTransactions(@Path("mentor") mentorId: String): Response<TransactionResponse>
+    suspend fun getWalletTransactions(@Path("mentor") mentorId: String, @Query("page") page:Int): Response<TransactionResponse>
 
     @GET("$DIR/micro_payment/get_payment_logs/{mentor}")
-    suspend fun getPaymentTransactions(@Path("mentor") mentorId: String): Response<WalletLogResponse>
+    suspend fun getPaymentTransactions(@Path("mentor") mentorId: String, @Query("page") page:Int): Response<WalletLogResponse>
 
 }

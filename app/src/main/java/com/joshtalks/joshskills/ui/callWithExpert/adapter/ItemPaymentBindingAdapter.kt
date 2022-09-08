@@ -5,6 +5,7 @@ import androidx.databinding.BindingAdapter
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletLogs
+import java.text.SimpleDateFormat
 
 @BindingAdapter(value = ["setAmountAdded"], requireAll = false)
 fun setTextFromInt(view:TextView,item:WalletLogs){
@@ -23,5 +24,6 @@ fun setTextFromBool(view:TextView,item:WalletLogs){
 
 @BindingAdapter(value = ["setDateFromMills"], requireAll = false)
 fun setTextFromLong(view:TextView,item:WalletLogs){
-    view.text = DateTimeUtils.millisToTime(item.created)
+    val date  = DateTimeUtils.formatDate(item.created)
+    view.text = SimpleDateFormat("d MMM y, k:m a").format(date)
 }
