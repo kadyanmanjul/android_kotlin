@@ -4,22 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
-import com.joshtalks.joshskills.core.IS_APP_RESTARTED
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.MY_COLOR_CODE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -75,10 +66,10 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                     }
-                }else{
+                } else {
                     showToast("No internet connection")
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
@@ -170,8 +161,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 } else {
                     showToast("No internet connection")
                 }
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
             }
@@ -219,7 +209,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         val res = AppObjectController.commonNetworkService.saveBroadcastEvent(event)
                         if (res.isSuccessful)
                             appDatabase.broadcastDao().deleteEvent(event.id)
-                    }else{
+                    } else {
                         showToast("No internet connection")
                     }
                 } catch (ex: Exception) {
@@ -274,13 +264,13 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val lastPaymentEntry = appDatabase.paymentDao().getLastPaymentEntry()
-                if (lastPaymentEntry!=null && lastPaymentEntry.isdeleted.not()) {
+                if (lastPaymentEntry != null && lastPaymentEntry.isdeleted.not()) {
                     if (lastPaymentEntry.isSync && (lastPaymentEntry.status == PaymentStatus.SUCCESS || lastPaymentEntry.status == PaymentStatus.FAILED)) {
                         when (lastPaymentEntry.status) {
                             PaymentStatus.SUCCESS -> {
-                                if (PrefManager.getBoolValue(IS_APP_RESTARTED,false)){
+                                if (PrefManager.getBoolValue(IS_APP_RESTARTED, false)) {
                                     appDatabase.paymentDao().deletePaymentEntry(lastPaymentEntry.razorpayOrderId)
-                                }else {
+                                } else {
                                     paymentStatus.postValue(lastPaymentEntry)
                                 }
                             }
@@ -288,7 +278,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                                 if (lastPaymentEntry.timeStamp.plus(1000 * 60 * 60 * 4) < System.currentTimeMillis()) {
                                     appDatabase.paymentDao()
                                         .deletePaymentEntry(lastPaymentEntry.razorpayOrderId)
-                                }else{
+                                } else {
                                     paymentStatus.postValue(lastPaymentEntry)
                                 }
                             }
@@ -305,7 +295,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             .updatePayment(lastPaymentEntry)
 
                         if (res.isSuccessful && res.body() != null) {
-                            if (res.body()!!.payment == null){
+                            if (res.body()!!.payment == null) {
                                 /* appDatabase.paymentDao()
                                      .deletePaymentEntry(it.razorpayOrderId)*/
                             } else {
@@ -317,13 +307,27 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
 
             }
         }
     }
 
-    suspend fun syncPaymentStatus(razorpayOrderId: String,status:PaymentStatus) {
-        appDatabase.paymentDao().updatePaymentStatus(razorpayOrderId,status)
+    suspend fun syncPaymentStatus(razorpayOrderId: String, status: PaymentStatus) {
+        appDatabase.paymentDao().updatePaymentStatus(razorpayOrderId, status)
+    }
+
+    fun getFreeTrialNotifications() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.utilsAPIService.getFTScheduledNotifications()
+                AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
+                if (response.isNotEmpty())
+                    PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
+                NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }

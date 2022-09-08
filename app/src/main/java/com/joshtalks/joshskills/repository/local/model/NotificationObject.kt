@@ -79,8 +79,8 @@ class NotificationObject {
     var priority: Int? = null
 
     override fun toString(): String {
-            return AppObjectController.gsonMapper.toJson(this)
-        }
+        return AppObjectController.gsonMapper.toJson(this)
+    }
 }
 
 enum class NotificationAction(val type: String) {
@@ -169,5 +169,15 @@ enum class NotificationAction(val type: String) {
     ACTION_GROUP_INCOMING_CALL("open_group_call"),
 
     @SerializedName("call_recording_notification")
-    CALL_RECORDING_NOTIFICATION("call_recording_notification"),
+    CALL_RECORDING_NOTIFICATION("call_recording_notification");
+
+    companion object {
+        fun getEnumFromValue(value: String?): NotificationAction? {
+            for (enum in values()) {
+                if (value == enum.type)
+                    return enum
+            }
+            return null
+        }
+    }
 }

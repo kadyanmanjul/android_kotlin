@@ -21,18 +21,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -59,16 +51,17 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
+import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
-import java.lang.reflect.Type
-import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import java.lang.reflect.Type
+import java.util.concurrent.ExecutorService
 
 class NotificationUtils(val context: Context) {
     companion object {
@@ -528,15 +521,6 @@ class NotificationUtils(val context: Context) {
         }
     }
 
-    private fun isOpenSpeakingSectionNotificationCrash(): Class<*> {
-        val isNotificationCrash = false
-        return if (isNotificationCrash) {
-            InboxActivity::class.java
-        } else {
-            LessonActivity::class.java
-        }
-    }
-
     private fun processQuestionTypeNotification(
         notificationObject: NotificationObject?,
         action: NotificationAction?,
@@ -622,9 +606,7 @@ class NotificationUtils(val context: Context) {
 
         val rIntent = Intent(context.applicationContext, isOpenLessonNotificationCrash()).apply {
             val obj = JSONObject(actionData)
-            Timber.d("ghjk12 : actionData -> $obj")
             val lessonId = obj.getInt(LessonActivity.LESSON_ID)
-            Timber.d("ghjk12 : NotifLessonId -> $lessonId")
             putExtra(LessonActivity.LESSON_ID, lessonId)
             putExtra(LessonActivity.IS_DEMO, false)
             putExtra(LessonActivity.IS_NEW_GRAMMAR, obj.getBoolean(LessonActivity.IS_NEW_GRAMMAR))
@@ -640,13 +622,6 @@ class NotificationUtils(val context: Context) {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
-//        notificationObject?.extraData?.let {
-//            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
-//            val map: Map<String, String> = Gson().fromJson(it, mapTypeToken)
-//            if (map.containsKey(LessonActivity.LESSON_ID)) {
-//                rIntnet.putExtra(LessonActivity.LESSON_ID, map[LessonActivity.LESSON_ID] ?: EMPTY)
-//            }
-//        }
         return rIntent
     }
 
@@ -674,13 +649,6 @@ class NotificationUtils(val context: Context) {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
-//        notificationObject?.extraData?.let {
-//            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
-//            val map: Map<String, String> = Gson().fromJson(it, mapTypeToken)
-//            if (map.containsKey(LessonActivity.LESSON_ID)) {
-//                rIntnet.putExtra(LessonActivity.LESSON_ID, map[LessonActivity.LESSON_ID] ?: EMPTY)
-//            }
-//        }
         return rIntent
     }
 
@@ -699,13 +667,6 @@ class NotificationUtils(val context: Context) {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
-//        notificationObject?.extraData?.let {
-//            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
-//            val map: Map<String, Int> = Gson().fromJson(it, mapTypeToken)
-//            if (map.containsKey(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
-//                rIntent.putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, map[PaymentSummaryActivity.TEST_ID_PAYMENT])
-//            }
-//        }
         return rIntent
     }
 
@@ -727,6 +688,19 @@ class NotificationUtils(val context: Context) {
     fun pushAnalytics(groupId: String?) {
         if (groupId != null) {
             GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_RECEIVED, groupId)
+        }
+    }
+
+    fun updateNotificationDb(category: NotificationCategory) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val notificationList = AppObjectController.appDatabase.scheduleNotificationDao().getCategoryNotifications(category.category)
+            notificationList.forEach {
+                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
+                intent.putExtra("id", it.id)
+                val pendingIntent = PendingIntent.getBroadcast(context.applicationContext, it.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                ReminderUtil(context).createAlarm(pendingIntent, System.currentTimeMillis() + it.execute_after)
+                AppObjectController.appDatabase.scheduleNotificationDao().updateScheduled(it.id)
+            }
         }
     }
 }

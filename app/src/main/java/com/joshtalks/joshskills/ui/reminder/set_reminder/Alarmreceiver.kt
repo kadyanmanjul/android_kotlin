@@ -77,9 +77,7 @@ class AlarmReceiver : BroadcastReceiver() {
                             )
                                 context.showNotificationWithFullScreenIntent(context)
                         }
-                        else ->
-                            context
-                                .showNotificationWithFullScreenIntent(context)
+                        else -> context.showNotificationWithFullScreenIntent(context)
                     }
 
                 }

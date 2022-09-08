@@ -1,12 +1,11 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
+import com.joshtalks.joshskills.core.notification.model.ScheduleNotification
 import com.joshtalks.joshskills.repository.local.model.MissedNotification
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 @JvmSuppressWildcards
 interface UtilsAPIService {
@@ -19,4 +18,7 @@ interface UtilsAPIService {
 
     @POST("$DIR/notification/analytics_v2/")
     suspend fun engageNewNotificationAsync(@Body params: NotificationAnalyticsRequest): Map<String, String>
+
+    @GET("$DIR/notification/client_side/{course_id}")
+    suspend fun getFTScheduledNotifications(@Path("course_id") course: String = EMPTY): List<ScheduleNotification>
 }
