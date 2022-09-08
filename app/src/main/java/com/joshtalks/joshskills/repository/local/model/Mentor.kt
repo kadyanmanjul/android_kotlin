@@ -28,6 +28,8 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -86,6 +88,7 @@ class Mentor {
                     .setUserId(loginResponse.userId)
                     .update()
                 AppAnalytics.updateUser()
+                NotificationUtils(joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 UserExperior.setUserIdentifier(getInstance().getId())
             }
         }

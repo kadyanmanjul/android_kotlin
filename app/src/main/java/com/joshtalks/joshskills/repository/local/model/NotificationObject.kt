@@ -84,6 +84,9 @@ class NotificationObject {
 }
 
 enum class NotificationAction(val type: String) {
+    @SerializedName("open_app")
+    OPEN_APP("open_app"),
+
     @SerializedName("open_test")
     ACTION_OPEN_TEST("open_test"),
 

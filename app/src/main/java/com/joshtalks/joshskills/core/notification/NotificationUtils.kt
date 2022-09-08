@@ -199,6 +199,9 @@ class NotificationUtils(val context: Context) {
     ): Intent? {
 
         return when (action) {
+            NotificationAction.OPEN_APP -> {
+                return Intent(context, LauncherActivity::class.java)
+            }
             NotificationAction.ACTION_OPEN_TEST -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
@@ -707,13 +710,32 @@ class NotificationUtils(val context: Context) {
 
     fun updateNotificationDb(category: NotificationCategory) {
         CoroutineScope(Dispatchers.IO).launch {
-            val notificationList = AppObjectController.appDatabase.scheduleNotificationDao().getCategoryNotifications(category.category)
+            val notificationList =
+                AppObjectController.appDatabase.scheduleNotificationDao().getCategoryNotifications(category.category)
             notificationList.forEach {
                 val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
                 intent.putExtra("id", it.id)
-                val pendingIntent = PendingIntent.getBroadcast(context.applicationContext, it.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context.applicationContext,
+                    it.id.toInt(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
                 ReminderUtil(context).createAlarm(pendingIntent, System.currentTimeMillis() + it.execute_after)
                 AppObjectController.appDatabase.scheduleNotificationDao().updateScheduled(it.id)
+            }
+        }
+    }
+
+    fun removeScheduledNotification(category: NotificationCategory) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val notificationIds = AppObjectController.appDatabase.scheduleNotificationDao().removeCategory(category.category)
+            notificationIds.forEach {
+                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
+                intent.putExtra("id", it)
+                val pendingIntent =
+                    PendingIntent.getBroadcast(context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                ReminderUtil(context).deleteAlarm(pendingIntent)
             }
         }
     }

@@ -11,20 +11,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.IS_APP_OPENED_FOR_FIRST_TIME
-import com.joshtalks.joshskills.core.IS_APP_RESTARTED
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.LAST_FAKE_CALL_INVOKE_TIME
-import com.joshtalks.joshskills.core.LAST_LOGIN_TYPE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_GID_ID
-import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -33,6 +20,8 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
@@ -283,6 +272,21 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
             MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
             MarketingAnalytics.openAppFirstTime()
+            getAppOpenNotifications()
+        }
+    }
+
+    fun getAppOpenNotifications() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.utilsAPIService.getFTScheduledNotifications()
+                AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
+                if (response.isNotEmpty())
+                    PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
+                NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.APP_OPEN)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

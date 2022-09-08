@@ -42,7 +42,6 @@ object WorkManagerAdmin {
             .beginWith(workerList)
             .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
 //            mutableListOf(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
-//            .then(OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<AppUsageSyncWorker>().build(),

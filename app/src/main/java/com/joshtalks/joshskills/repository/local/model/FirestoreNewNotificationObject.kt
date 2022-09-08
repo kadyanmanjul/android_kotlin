@@ -101,6 +101,7 @@ data class FirestoreNewNotificationObject(
         it.deeplink = deeplink
         it.extraData = extraData
         it.action = when (action) {
+            NotificationAction.OPEN_APP.type -> NotificationAction.OPEN_APP
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN.type -> NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN
             NotificationAction.AWARD_DECLARE.type -> NotificationAction.AWARD_DECLARE
             NotificationAction.ACTION_OPEN_REMINDER.type -> NotificationAction.ACTION_OPEN_REMINDER

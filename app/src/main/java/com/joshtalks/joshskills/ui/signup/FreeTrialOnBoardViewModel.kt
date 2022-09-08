@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
@@ -130,6 +132,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             AppAnalytics.updateUser()
             fetchMentor()
 //            WorkManagerAdmin.userActiveStatusWorker(true)
+            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
         }
     }

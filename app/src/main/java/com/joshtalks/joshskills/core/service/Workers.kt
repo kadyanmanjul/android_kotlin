@@ -218,28 +218,6 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
         return Result.success()
     }
 }
-/*
-class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-
-    override suspend fun doWork(): Result {
-        try {
-            if (PrefManager.hasKey(INSTANCE_ID, false) && PrefManager.getStringValue(API_TOKEN)
-                    .isBlank()
-                && PrefManager.getStringValue(INSTANCE_ID).isBlank().not()
-            ) {
-                val instanceId = PrefManager.getStringValue(INSTANCE_ID)
-                val response =
-                    AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
-                updateFromLoginResponse(response)
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-}
-*/
 
 class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

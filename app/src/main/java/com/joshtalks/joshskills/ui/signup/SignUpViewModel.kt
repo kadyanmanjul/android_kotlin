@@ -19,6 +19,8 @@ import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
@@ -244,6 +246,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
             ABTestRepository().updateAllCampaigns()
+            NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
             val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT, false)
             val courseExpiryTime =
                 PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
