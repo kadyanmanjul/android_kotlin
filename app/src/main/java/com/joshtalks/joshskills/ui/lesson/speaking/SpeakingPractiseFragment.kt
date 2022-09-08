@@ -21,15 +21,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
+import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
+import com.joshtalks.joshskills.constants.START_BLOCK_TIMER
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -42,10 +49,8 @@ import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
-import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
-import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
-import com.joshtalks.joshskills.ui.lesson.LessonViewModel
-import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.lesson.*
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
@@ -66,6 +71,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import java.time.Duration
 import java.util.*
 
 const val NOT_ATTEMPTED = "NA"
@@ -102,6 +108,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var isIntroVideoEnabled = false
     private var lessonID = -1
     private var isBlockedFT = false
+    private var countdownTimerBack: CountdownTimerBack? = null
+    private val event = EventLiveData
+
+
 
 
     private val viewModel: LessonViewModel by lazy {
@@ -202,6 +212,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             lessonID = it
         }
 
+        viewModel.blockLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+              true->{
+                  val durationInMillis = Duration.ofMinutes(viewModel.isUserBlock?.get()?.duration!!.toLong()).toMillis()
+                  val unblockTimestamp = viewModel.isUserBlock?.get()?.timestamp?.plus(durationInMillis)
+                  val currentTimestamp = System.currentTimeMillis()
+                  startTimer(currentTimestamp- (unblockTimestamp!!))
+              }
+            }
+        }
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner) {
             val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
             questionId = spQuestion?.id
@@ -593,6 +613,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.lessonLiveData.observe(viewLifecycleOwner) {
             try {
                 lessonNo = it?.lessonNo ?: 0
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -796,6 +817,19 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
+    fun openBlockReasonDialog(v: View) {
+        if (isAdded && activity != null) {
+            val dialog = AlertDialog.Builder(context)
+            dialog
+                .setMessage(viewModel.isUserBlock?.get()?.reason?.let {
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(it).replace("<br\\>", "\n")
+                })
+                .setPositiveButton("GOT IT")
+                { dialog, _ -> dialog.dismiss() }.show()
+        }
+    }
+
     fun openRatingDialog(v: View) {
         if (isAdded && activity != null) {
             val rating = PrefManager.getRatingObject(RATING_OBJECT)?.rating
@@ -838,10 +872,31 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     fun showSeniorStudentScreen() {
         SeniorStudentActivity.startSeniorStudentActivity(requireActivity())
     }
+    private fun startTimer(startTimeInMilliSeconds: Long) {
+        countdownTimerBack?.stop()
+        countdownTimerBack = object : CountdownTimerBack((startTimeInMilliSeconds)) {
+            override fun onTimerTick(millis: Long) {
+                AppObjectController.uiHandler.post {
+                    binding.cdTimer.text = UtilTime.timeFormatted(millis)
+                }
+            }
 
+            override fun onTimerFinish() {
+              viewModel.blockLiveData.postValue(false)
+                PrefManager.putPrefObject(BLOCK_STATUS, BlockStatusModel(0,0,"",0))
+
+            }
+        }
+        countdownTimerBack?.startTimer()
+    }
     companion object {
         @JvmStatic
         fun newInstance() =
             SpeakingPractiseFragment()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        countdownTimerBack?.stop()
     }
 }
