@@ -7,16 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayoutMediator
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentTransactionsBinding
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.ViewPagerAdapter
-import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel
+import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletTransactionViewModel
 
 class TransactionsFragment : Fragment() {
 
     private lateinit var binding:FragmentTransactionsBinding
 
     private val viewModel by lazy {
-        ViewModelProvider(this)[WalletViewModel::class.java]
+        ViewModelProvider(this)[WalletTransactionViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -32,19 +33,20 @@ class TransactionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = activity?.supportFragmentManager?.let { ViewPagerAdapter(it,lifecycle) }
+        val adapter = activity?.supportFragmentManager?.let { ViewPagerAdapter(it,lifecycle,viewModel) }
         binding.viewPager.adapter = adapter
         TabLayoutMediator(binding.tabLayoutTransaction,binding.viewPager){tab,position->
             when(position){
                 0->{
-                    tab.text = "Wallet Transactions"
+                    tab.text = activity?.getString(R.string.wallet_transactions)
                 }
                 1->{
-                    tab.text = "Payment Logs"
+                    tab.text = activity?.getString(R.string.payment_logs)
                 }
             }
         }.attach()
     }
+
     fun onRechargeClicked(v:View){
         requireActivity().onBackPressed()
     }

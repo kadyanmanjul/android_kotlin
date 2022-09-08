@@ -6,7 +6,7 @@
     <data>
         <variable
         name="item"
-        type="com.joshtalks.joshskills.ui.callWithExpert.model.Transaction"
+        type="com.joshtalks.joshskills.ui.callWithExpert.model.WalletLogs"
             />
     </data>
 
@@ -38,7 +38,6 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_2sdp"
                     android:text="@{item.event_log}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Bold"
                     android:maxLines="1"
                     android:textColor="@color/pure_black"
                     android:textSize="@dimen/_14ssp"
@@ -46,7 +45,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/txtV_crd_amount"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Call with Suman Sharma for 2 minutes"/>
+                    tools:text="Recharge"/>
 
                 <TextView
                     android:id="@+id/txtV_crd_time"
@@ -54,17 +53,33 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_1sdp"
+                    android:textColor="@color/txt_payment_details"
+                    android:maxLines="1"
                     android:ellipsize="end"
+                    setDateFromMills="@{item}"
+                    android:fontFamily="@font/open_sans"
+                    android:textSize="@dimen/_12ssp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="23 Aug 22, 05:35 PM"
+                    app:layout_constraintTop_toBottomOf="@+id/txtV_crd_heading" />
+
+                <TextView
+                    android:id="@+id/txtV_crd_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_12sdp"
+                    android:textSize="@dimen/_12ssp"
+                    android:text="@{item.payment_id}"
+                    android:textColor="@color/txt_payment_details"
                     android:fontFamily="@font/open_sans"
                     android:maxLines="1"
-                    setDateFromMills="@{item}"
-                    android:textColor="@color/txt_payment_details"
-                    android:textSize="@dimen/_12ssp"
-                    android:layout_marginBottom="@dimen/_12sdp"
+                    android:ellipsize="end"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtV_crd_heading"
-                    tools:text="23 Aug 22, 05:35 PM" />
+                    tools:text="#CALL_NEW12454102"
+                    app:layout_constraintTop_toBottomOf="@+id/txtV_crd_time" />
 
                 <TextView
                     android:id="@+id/txtV_crd_amount"
@@ -73,12 +88,39 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:fontFamily="@font/open_sans_semibold"
+                    android:textColor="@color/txt_money_added"
                     android:textSize="@dimen/_16ssp"
                     android:textStyle="bold"
-                    setAmountDeductedOrAdded="@{item}"
+                    setAmountAdded = "@{item}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    tools:text="-₹ 26"
+                    tools:text="+₹ 26"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtV_crd_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:fontFamily="@font/open_sans"
+                    android:layout_marginBottom="@dimen/_11sdp"
+                    setPaymentStatus="@{item}"
+                    android:textColor="@color/txt_money_added"
+                    android:textSize="@dimen/_12ssp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="SUCCESS"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <ImageView
+                    android:id="@+id/img_copy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_marginVertical="@dimen/_1sdp"
+                    app:layout_constraintBottom_toBottomOf="@+id/txtV_crd_id"
+                    app:layout_constraintStart_toEndOf="@+id/txtV_crd_id"
+                    app:layout_constraintTop_toTopOf="@+id/txtV_crd_id"
+                    app:srcCompat="@drawable/ic_content_copy"
+                    android:contentDescription="@string/call_info_copied" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

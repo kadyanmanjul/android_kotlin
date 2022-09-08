@@ -10,6 +10,8 @@ fun Long.toRupees() = "₹ $this"
 
 fun String.removeRupees() = this.removePrefix("₹ ")
 
+fun String.removeNegative() = this.removePrefix("-")
+
 fun View.visible(){
     this.visibility = View.VISIBLE
 }

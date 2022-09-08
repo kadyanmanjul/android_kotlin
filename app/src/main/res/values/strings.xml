@@ -1067,5 +1067,8 @@
     <string name="rup">\u20B9</string>
     <string name="transaction_history">Transaction History</string>
     <string name="recharge">Recharge</string>
+    <string name="call_info_copied">call info copied</string>
+    <string name="payment_logs">Payment Logs</string>
+    <string name="wallet_transactions">Wallet Transactions</string>
 
 </resources>

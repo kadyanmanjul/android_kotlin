@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel" />
+            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletTransactionViewModel" />
 
         <import type="android.view.View"/>
     </data>
@@ -26,13 +26,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="@dimen/_18sdp" />
+            app:layout_constraintGuide_begin="@dimen/_16sdp" />
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="@dimen/_20sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/_18sdp" />
 
         <TextView
             android:id="@+id/availableBalanceHeading"
@@ -60,47 +67,59 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rechargeNow"
+            onSingleClick="@{handler::onRechargeClicked}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textStyle="bold"
             android:text="@string/recharge"
-            onSingleClick="@{handler::onRechargeClicked}"
-            android:layout_marginEnd="@dimen/_8sdp"
+            app:cornerRadius="@dimen/_8sdp"
+            android:layout_marginEnd="-1dp"
             android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="@+id/availableBalance"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintTop_toTopOf="@+id/availableBalance" />
 
-        <!--tab_not_selected!-->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout_transaction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:textAllCaps="false"
-            app:tabTextColor="@color/tab_transaction_text_color"
+            app:tabTextAppearance="@style/TabLayoutWalletHistory"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/availableBalance"
+            app:tabBackground="@drawable/tab_payment_history"
+            app:tabIndicator="@null"
+            app:tabRippleColor="@null"
+            android:clipToPadding="true"
             app:tabSelectedTextColor="@color/white"
-            app:tabBackground="@drawable/tab_not_selected"
-            app:tabSelectedBackground="@drawable/tab_transactions"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/availableBalance">
+            app:tabTextColor="@color/tab_transaction_text_color">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Wallet Transactions" />
+                android:text="@string/wallet_transactions" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Payment Logs" />
+                android:text="@string/payment_logs" />
 
         </com.google.android.material.tabs.TabLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_e6"
+            app:layout_constraintBottom_toTopOf="@+id/viewPager" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_12sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
