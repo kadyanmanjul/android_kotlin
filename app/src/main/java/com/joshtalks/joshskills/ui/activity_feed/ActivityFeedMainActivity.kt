@@ -67,6 +67,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
         iv_edit.visibility= GONE
         iv_help.visibility= GONE
         iv_setting.visibility=GONE
+        btn_upgrade.visibility = GONE
     }
     private fun getData() {
         viewModel.getActivityFeed("")

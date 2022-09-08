@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PURCHASE_
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
@@ -26,63 +27,63 @@ import kotlinx.coroutines.sync.Mutex
 private const val TAG = "VoipPref"
 
 object VoipPref {
-        lateinit var preferenceManager: SharedPreferences
+    lateinit var preferenceManager: SharedPreferences
 
-        val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
-            e.printStackTrace()
-        }
-        val mutex = Mutex(false)
-        var isListenerActivated = false
+    val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
+        e.printStackTrace()
+    }
+    val mutex = Mutex(false)
+    var isListenerActivated = false
 
-        @Synchronized
-        fun initVoipPref(context: Context) {
-            preferenceManager = context.getSharedPreferences(
-                context.getString(R.string.voip_shared_pref_file_name),
-                Context.MODE_PRIVATE
-            )
-            startListener()
-        }
+    @Synchronized
+    fun initVoipPref(context: Context) {
+        preferenceManager = context.getSharedPreferences(
+            context.getString(R.string.voip_shared_pref_file_name),
+            Context.MODE_PRIVATE
+        )
+        startListener()
+    }
 
-        fun updateIncomingCallData(callId: Int, callType: Int) {
-            val editor = preferenceManager.edit()
-            editor.putInt(PREF_KEY_INCOMING_CALL_TYPE, callType)
-            editor.putInt(PREF_KEY_INCOMING_CALL_ID, callId)
-            editor.apply()
-        }
+    fun updateIncomingCallData(callId: Int, callType: Int) {
+        val editor = preferenceManager.edit()
+        editor.putInt(PREF_KEY_INCOMING_CALL_TYPE, callType)
+        editor.putInt(PREF_KEY_INCOMING_CALL_ID, callId)
+        editor.apply()
+    }
 
-        fun updateCurrentCallStartTime(startTime : Long) {
-            val editor = preferenceManager.edit()
-            editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, startTime)
-            editor.commit()
-        }
+    fun updateCurrentCallStartTime(startTime: Long) {
+        val editor = preferenceManager.edit()
+        editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, startTime)
+        editor.commit()
+    }
 
-        fun updateLastCallDetails(
-            duration: Long,
-            remoteUserName: String,
-            remoteUserImage: String?,
-            callId: Int,
-            callType: Int,
-            remoteUserAgoraId: Int,
-            localUserAgoraId: Int,
-            channelName: String,
-            topicName: String,
-            showFpp : String,
-            remoteUserMentorId : String
-        ) {
-            val editor = preferenceManager.edit()
-            editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L)
-            editor.putLong(PREF_KEY_LAST_CALL_DURATION, duration)
-            editor.putString(PREF_KEY_LAST_REMOTE_USER_NAME, remoteUserName)
-            editor.putString(PREF_KEY_LAST_REMOTE_USER_IMAGE, remoteUserImage)
-            editor.putInt(PREF_KEY_LAST_CALL_ID, callId)
-            editor.putInt(PREF_KEY_LAST_CALL_TYPE, callType)
-            editor.putInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID, remoteUserAgoraId)
-            editor.putString(PREF_KEY_LAST_CHANNEL_NAME, channelName)
-            editor.putInt(PREF_KEY_LOCAL_USER_AGORA_ID, localUserAgoraId)
-            editor.putString(PREF_KEY_LAST_TOPIC_NAME, topicName)
-            editor.putString(PREF_KEY_FPP_FLAG, showFpp)
-            editor.putString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, remoteUserMentorId)
-            editor.commit()
+    fun updateLastCallDetails(
+        duration: Long,
+        remoteUserName: String,
+        remoteUserImage: String?,
+        callId: Int,
+        callType: Int,
+        remoteUserAgoraId: Int,
+        localUserAgoraId: Int,
+        channelName: String,
+        topicName: String,
+        showFpp: String,
+        remoteUserMentorId: String
+    ) {
+        val editor = preferenceManager.edit()
+        editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L)
+        editor.putLong(PREF_KEY_LAST_CALL_DURATION, duration)
+        editor.putString(PREF_KEY_LAST_REMOTE_USER_NAME, remoteUserName)
+        editor.putString(PREF_KEY_LAST_REMOTE_USER_IMAGE, remoteUserImage)
+        editor.putInt(PREF_KEY_LAST_CALL_ID, callId)
+        editor.putInt(PREF_KEY_LAST_CALL_TYPE, callType)
+        editor.putInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID, remoteUserAgoraId)
+        editor.putString(PREF_KEY_LAST_CHANNEL_NAME, channelName)
+        editor.putInt(PREF_KEY_LOCAL_USER_AGORA_ID, localUserAgoraId)
+        editor.putString(PREF_KEY_LAST_TOPIC_NAME, topicName)
+        editor.putString(PREF_KEY_FPP_FLAG, showFpp)
+        editor.putString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, remoteUserMentorId)
+        editor.commit()
 
             if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) && duration.inSeconds() >= 300) {
                 editor.putBoolean(IS_FIRST_CALL, false)
@@ -103,8 +104,8 @@ object VoipPref {
                 showDialogBox(duration, PURCHASE_POPUP)
             }
 
-            deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId)
-        }
+        deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId)
+    }
 
     private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String) {
         setExpertCallDuration(duration)
@@ -127,7 +128,7 @@ object VoipPref {
                             setExpertCallDuration("")
                             SkillsDatastore.updateWalletCredits(response.body()?.amount?:0)
                         }
-                        406->{
+                        406 -> {
 
                         }
                     }
@@ -148,7 +149,7 @@ object VoipPref {
                         }
                     }
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 showToast("Something went wrong")
             }
         }
@@ -166,8 +167,7 @@ object VoipPref {
                 withContext(Dispatchers.Main) {
                     if (type == CALL_RATING) {
                         newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
-                    }
-                    else {
+                    } else {
                         newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
                 }
@@ -176,8 +176,7 @@ object VoipPref {
                 withContext(Dispatchers.Main) {
                     if (type == CALL_RATING) {
                         newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
-                    }
-                    else {
+                    } else {
                         newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
                 }
@@ -205,19 +204,21 @@ object VoipPref {
         ).show(fragmentActivity.supportFragmentManager, "CallRatingsFragment")
     }
 
-    private fun showPurchaseDialog(fragmentActivity: FragmentActivity) {
+    private fun showPurchaseDialog(fragmentActivity: FragmentActivity, duration: Long) {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             try {
-                val resp =  AppObjectController.commonNetworkService.getPurchasePopUpResponse(getLastCallDurationInSec().toString(), getLastRemoteUserMentorId())
-                if (resp.body()?.popUpBody?: EMPTY != EMPTY) {
-                    PurchaseDialog.newInstance(
-                        timerPopText = resp.body()?.popUpBody ?: EMPTY,
-                        timerTitlePopText = resp.body()?.popUpTitle ?: EMPTY,
-                        pricePopUpText = resp.body()?.popUpPrice ?: EMPTY,
-                        expireTime = resp.body()?.expireTime
-                    ).show(fragmentActivity.supportFragmentManager, "PurchaseDialog")
+                val resp =
+                    AppObjectController.commonNetworkService.getCoursePopUpData(
+                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID),
+                        popupName = PurchasePopupType.SPEAKING_COMPLETED.name,
+                        callCount = PrefManager.getIntValue(FT_CALLS_LEFT),
+                        callDuration = duration
+                    )
+                resp.body()?.let {
+                    PurchaseDialog.newInstance(it)
+                        .show(fragmentActivity.supportFragmentManager, "PurchaseDialog")
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 Log.d("sagar", "showPurchaseDialog: ${ex.message}")
             }
         }
@@ -225,61 +226,61 @@ object VoipPref {
 
     private fun showReportDialog(fragmentActivity: FragmentActivity) {
 
-            val function = fun() {
-                showFeedBackDialog(fragmentActivity)
-            }
-            VoipReportDialogFragment.newInstance(
-                getLastRemoteUserAgoraId(),
-                getLocalUserAgoraId(), "REPORT", getLastCallChannelName(), function
-            )
-                .show(fragmentActivity.supportFragmentManager, "ReportDialogFragment")
+        val function = fun() {
+            showFeedBackDialog(fragmentActivity)
         }
+        VoipReportDialogFragment.newInstance(
+            getLastRemoteUserAgoraId(),
+            getLocalUserAgoraId(), "REPORT", getLastCallChannelName(), function
+        )
+            .show(fragmentActivity.supportFragmentManager, "ReportDialogFragment")
+    }
 
-        private fun showFeedBackDialog(fragmentActivity: FragmentActivity) {
-            FeedbackDialogFragment.newInstance()
-                .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
-        }
+    private fun showFeedBackDialog(fragmentActivity: FragmentActivity) {
+        FeedbackDialogFragment.newInstance()
+            .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
+    }
 
         fun getStartTimeStamp(): Long {
             val startTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
             return startTime
         }
 
-        fun getLastCallTopicName(): String {
-            return preferenceManager.getString(PREF_KEY_LAST_TOPIC_NAME, "").toString()
-        }
+    fun getLastCallTopicName(): String {
+        return preferenceManager.getString(PREF_KEY_LAST_TOPIC_NAME, "").toString()
+    }
 
-        fun getLastRemoteUserName(): String {
-            return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_NAME, "").toString()
-        }
+    fun getLastRemoteUserName(): String {
+        return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_NAME, "").toString()
+    }
 
-        fun getLastCallType(): Int {
-            return preferenceManager.getInt(PREF_KEY_LAST_CALL_TYPE, -1)
-        }
+    fun getLastCallType(): Int {
+        return preferenceManager.getInt(PREF_KEY_LAST_CALL_TYPE, -1)
+    }
 
-        fun getIncomingCallId(): Int {
-            return preferenceManager.getInt(PREF_KEY_INCOMING_CALL_ID, -1)
-        }
+    fun getIncomingCallId(): Int {
+        return preferenceManager.getInt(PREF_KEY_INCOMING_CALL_ID, -1)
+    }
 
-        fun getLastProfileImage(): String {
-            return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_IMAGE, "").toString()
-        }
+    fun getLastProfileImage(): String {
+        return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_IMAGE, "").toString()
+    }
 
-        fun getLastRemoteUserAgoraId(): Int {
-            return preferenceManager.getInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID, -1)
-        }
+    fun getLastRemoteUserAgoraId(): Int {
+        return preferenceManager.getInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID, -1)
+    }
 
-        fun getLocalUserAgoraId(): Int {
-            return preferenceManager.getInt(PREF_KEY_LOCAL_USER_AGORA_ID, -1)
-        }
+    fun getLocalUserAgoraId(): Int {
+        return preferenceManager.getInt(PREF_KEY_LOCAL_USER_AGORA_ID, -1)
+    }
 
-        fun getLastCallId(): Int {
-            return preferenceManager.getInt(PREF_KEY_LAST_CALL_ID, -1)
-        }
+    fun getLastCallId(): Int {
+        return preferenceManager.getInt(PREF_KEY_LAST_CALL_ID, -1)
+    }
 
-        fun getLastCallChannelName(): String {
-            return preferenceManager.getString(PREF_KEY_LAST_CHANNEL_NAME, "").toString()
-        }
+    fun getLastCallChannelName(): String {
+        return preferenceManager.getString(PREF_KEY_LAST_CHANNEL_NAME, "").toString()
+    }
 
     fun getLastCallDurationInSec(): Long {
         val duration = preferenceManager.getLong(PREF_KEY_LAST_CALL_DURATION, 0)
@@ -295,24 +296,24 @@ object VoipPref {
         return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, "").toString()
     }
 
-        fun startListener() {
-            if(isListenerActivated.not()) {
-                Log.d(TAG, "startListener: ")
-                isListenerActivated = true
-                preferenceManager.registerOnSharedPreferenceChangeListener(VoipPrefListener)
-            }
+    fun startListener() {
+        if (isListenerActivated.not()) {
+            Log.d(TAG, "startListener: ")
+            isListenerActivated = true
+            preferenceManager.registerOnSharedPreferenceChangeListener(VoipPrefListener)
         }
+    }
 
-   private fun getFppFlag(): String {
+    private fun getFppFlag(): String {
         return preferenceManager.getString(PREF_KEY_FPP_FLAG, "true").toString()
     }
 
-    fun getCurrentUserName(): String{
-        return Mentor.getInstance().getUser()?.firstName?: ""
+    fun getCurrentUserName(): String {
+        return Mentor.getInstance().getUser()?.firstName ?: ""
     }
 
-    fun getCurrentUserImage(): String{
-        return Mentor.getInstance().getUser()?.photo?: ""
+    fun getCurrentUserImage(): String {
+        return Mentor.getInstance().getUser()?.photo ?: ""
     }
 
     fun setLocalUserAgoraIdAndCallId(localUserAgoraId: Int, callId: Int) {

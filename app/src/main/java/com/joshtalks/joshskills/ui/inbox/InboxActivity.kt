@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_INBOX_TOOLTIP
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -52,13 +53,14 @@ import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.util.FileUploadService
 import com.moengage.core.analytics.MoEAnalyticsHelper
+import com.skydoves.balloon.*
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
-import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
-import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.activity_conversation.*
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.calling_feature_showcas_view.*
+import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -127,6 +129,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
             ReferralActivity.startReferralActivity(this@InboxActivity)
             MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
+        }
+
+        btn_upgrade.setOnClickListener {
+            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                this@InboxActivity,
+                AppObjectController.getFirebaseRemoteConfig().getString(
+                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                )
+            )
         }
 
         findMoreLayout = findViewById(R.id.parent_layout)
@@ -218,8 +229,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun workInBackground() {
         lifecycleScope.launchWhenResumed {
-                processIntent(intent)
-                checkInAppUpdate()
+            processIntent(intent)
+            checkInAppUpdate()
         }
     }
 
@@ -437,26 +448,33 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
                 val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2) {
-                    if (paymentStatusView.visibility != View.VISIBLE){
+                    if (paymentStatusView.visibility != View.VISIBLE) {
                         findMoreLayout.visibility = View.VISIBLE
                         paymentStatusView.visibility = View.GONE
                     }
                     if (isSubscriptionCourseBought) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = true
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = false
-                    }
-                    else if (isCapsuleCourseBought.not()) {
+                    } else if (isCapsuleCourseBought.not()) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = true
+                        try {
+                            runOnUiThread {
+                                btn_upgrade.isVisible = haveFreeTrialCourse
+                                iv_icon_referral.isVisible = haveFreeTrialCourse.not()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
-                    }
-                    else {
-                        if (paymentStatusView.visibility != View.VISIBLE){
+                    } else {
+                        if (paymentStatusView.visibility != View.VISIBLE) {
                             findMoreLayout.visibility = View.GONE
                             paymentStatusView.visibility = View.GONE
                         }
                     }
                 } else {
-                    if (paymentStatusView.visibility != View.VISIBLE){
+                    if (paymentStatusView.visibility != View.VISIBLE) {
                         findMoreLayout.visibility = View.GONE
                         paymentStatusView.visibility = View.GONE
                     }
@@ -475,7 +493,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (findMoreLayout.visibility != View.VISIBLE &&
             PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
         ) {
-            if (paymentStatusView.visibility != View.VISIBLE){
+            if (paymentStatusView.visibility != View.VISIBLE) {
                 findMoreLayout.visibility = View.VISIBLE
                 paymentStatusView.visibility = View.GONE
             }
@@ -487,6 +505,31 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         viewModel.getProfileData(Mentor.getInstance().getId())
         if (!PrefManager.getBoolValue(FETCHED_SCHEDULED_NOTIFICATION))
             viewModel.getFreeTrialNotifications()
+    }
+
+    fun showBuyCourseTooltip(courseId: String) {
+        val text = AppObjectController.getFirebaseRemoteConfig().getString(
+            BUY_COURSE_INBOX_TOOLTIP + courseId
+        )
+        if (text.isBlank()) return
+        val balloon = Balloon.Builder(this)
+            .setLayout(R.layout.layout_bb_tip)
+            .setHeight(BalloonSizeSpec.WRAP)
+            .setIsVisibleArrow(true)
+            .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+            .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
+            .setWidthRatio(0.85f)
+            .setDismissWhenTouchOutside(true)
+            .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+            .setLifecycleOwner(this)
+            .setDismissWhenClicked(true)
+            .setAutoDismissDuration(3000L)
+            .setPreferenceName("BUY_COURSE_ENGLISH_TOOLTIP")
+            .setShowCounts(3)
+            .build()
+        val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+        textView.text = text
+        balloon.showAlignBottom(buy_english_course)
     }
 
     override fun onPause() {

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +40,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEventForLesso
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBusForLessonQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
@@ -62,13 +62,13 @@ import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.io.File
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
+import java.util.*
 
 class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
 
@@ -770,7 +770,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                     .addParam(ParamKeys.IS_CORRECT_ANSWER, question.question.status.toString())
                     .push()
             }
-        }catch (ex:Exception) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -808,6 +808,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             updateQuiz(assessmentQuestions[++currentQuizQuestion])
         } else {
             showQuizCompleteLayout()
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+                viewModel.getCoursePopupData(PurchasePopupType.GRAMMAR_COMPLETED)
             lessonActivityListener?.onSectionStatusUpdate(GRAMMAR_POSITION, true)
         }
     }
@@ -967,7 +969,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .push()
             updateQuiz(assessmentQuestions[++currentQuizQuestion])
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -978,7 +980,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .push()
             updateQuiz(assessmentQuestions[--currentQuizQuestion])
-        }catch (ex: Exception) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }

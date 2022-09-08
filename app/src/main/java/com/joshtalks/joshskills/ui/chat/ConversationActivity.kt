@@ -71,6 +71,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
@@ -90,9 +91,9 @@ import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.lesson.speaking.BLOCKED
 import com.joshtalks.joshskills.ui.lesson.speaking.SHOW_WARNING_POPUP
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
@@ -573,12 +574,14 @@ class ConversationActivity :
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE
-            conversationBinding.imageViewLogo.setOnClickListener {
-                openCourseProgressListingScreen()
-            }
-            conversationBinding.textMessageTitle.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
-                openCourseProgressListingScreen()
+            if (inboxEntity.isCapsuleCourse) {
+                conversationBinding.imageViewLogo.setOnClickListener {
+                    openCourseProgressListingScreen()
+                }
+                conversationBinding.textMessageTitle.setOnClickListener {
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
+                    openCourseProgressListingScreen()
+                }
             }
 
             conversationBinding.ivBack.setOnClickListener {
@@ -1298,11 +1301,16 @@ class ConversationActivity :
         }
         lifecycleScope.launchWhenCreated {
             unlockClassViewModel.batchChange.collectLatest {
-                if (it) {
-                    conversationViewModel.refreshChatOnManual()
-                } else {
-                    conversationBinding.refreshLayout.isRefreshing = false
+                when (it) {
+                    BATCH_CHANGE_SUCCESS -> conversationViewModel.refreshChatOnManual()
+                    BATCH_CHANGE_FAILURE -> conversationBinding.refreshLayout.isRefreshing = false
+                    BATCH_CHANGE_BUY_FIRST -> conversationViewModel.getCoursePopupData(PurchasePopupType.LESSON_LOCKED)
                 }
+            }
+        }
+        conversationViewModel.coursePopupData.observe(this) {
+            it?.let {
+                PurchaseDialog.newInstance(it).show(supportFragmentManager, "PurchaseDialog")
             }
         }
         utilConversationViewModel.isLoading.observe(this) { isLoading ->
@@ -1644,7 +1652,7 @@ class ConversationActivity :
                                                     it.url
                                                 )
                                             } else if (it.type == BASE_MESSAGE_TYPE.VI) {
-                                                if (AppObjectController.getVideoTracker()!=null){
+                                                if (AppObjectController.getVideoTracker() != null) {
                                                     AppObjectController.videoDownloadTracker.download(
                                                         it.chatModel,
                                                         Uri.parse(it.url),

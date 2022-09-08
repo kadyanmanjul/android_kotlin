@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
@@ -70,7 +71,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         val currentPaddingBottom = v.paddingBottom
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (isAdded && activity!=null) {
+                if (isAdded && activity != null) {
                     val drawable = R.drawable.blue_new_btn_pressed_state
                     v.background = ContextCompat.getDrawable(
                         requireActivity(),
@@ -88,7 +89,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
 
-                if (isAdded && activity!=null) {
+                if (isAdded && activity != null) {
                     val drawable = R.drawable.blue_new_btn_unpressed_state
                     v.background = ContextCompat.getDrawable(
                         requireActivity(),
@@ -250,12 +251,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             lessonId = it
         }
 
-        viewModelOnlineTest.grammarAssessmentLiveData.observe(
-            viewLifecycleOwner
-        ) {
-            timerPopText = it.popUpText?.body?: EMPTY
-            if ( timerPopText!= EMPTY){
-                PurchaseDialog.newInstance(timerPopText,it.popUpText?.title?: EMPTY, it.popUpText?.price?: EMPTY).show(requireActivity().supportFragmentManager,"PurchaseDialog")
+        viewModelOnlineTest.coursePopupData.observe(viewLifecycleOwner) {
+            it?.let {
+                PurchaseDialog.newInstance(it)
+                    .show(requireActivity().supportFragmentManager, "PurchaseDialog")
             }
         }
     }
@@ -445,10 +444,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             .addParam(ParamKeys.LESSON_ID, lessonId)
             .push()
         lessonActivityListener?.onNextTabCall(
-            if (PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getBoolValue(
-                    IS_A2_C1_RETENTION_ENABLED
-                )
-            ) TRANSLATION_POSITION else GRAMMAR_POSITION
+            if (PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED))
+                TRANSLATION_POSITION
+            else
+                GRAMMAR_POSITION
         )
     }
 
@@ -478,6 +477,8 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     }
 
     override fun onTestCompleted() {
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+            viewModel.getCoursePopupData(PurchasePopupType.GRAMMAR_COMPLETED)
         showGrammarCompleteLayout()
     }
 

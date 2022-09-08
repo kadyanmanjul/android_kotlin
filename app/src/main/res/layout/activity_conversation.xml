@@ -381,7 +381,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_bar"
-            android:layout_below="@+id/free_trial_container">
+            android:layout_below="@+id/user_point_container">
 
             <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
                 android:id="@+id/refresh_layout"

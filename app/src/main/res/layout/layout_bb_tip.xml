@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/balloon_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_yellow_with_stroke"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/_16sdp"
+    android:paddingVertical="@dimen/_8sdp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:text="Bade Bhaiya Tip 💡"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Bold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/balloon_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/balloon_icon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            tools:src="@drawable/arrow" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/balloon_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Lorem Ipsum is just a placeholder text"
+            android:textColor="@android:color/black"
+            tools:text="@tools:sample/lorem/random" />
+    </LinearLayout>
+</RelativeLayout>

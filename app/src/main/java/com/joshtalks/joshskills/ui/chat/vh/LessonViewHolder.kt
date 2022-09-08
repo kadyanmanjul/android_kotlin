@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.ui.chat.vh
 
+import android.content.res.ColorStateList
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -27,7 +29,7 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
     }
 
     private fun setupUI(lesson: LessonModel) {
-        val isLessonCompleted= lesson.status == LESSON_STATUS.CO
+        val isLessonCompleted = lesson.status == LESSON_STATUS.CO
 
         if (isLessonCompleted) {
             lessonInProgressStub.get().visibility = View.GONE

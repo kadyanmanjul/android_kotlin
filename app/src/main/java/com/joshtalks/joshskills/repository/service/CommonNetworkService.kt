@@ -33,7 +33,6 @@ import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.userprofile.models.*
-import com.joshtalks.joshskills.ui.voip.analytics.data.network.PurchasePopUp
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -385,16 +384,17 @@ interface CommonNetworkService {
     @POST("$DIR/micro_payment/user_wallet/")
     suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
 
-    @GET("$DIR/fpp/call_popup/")
-    suspend fun getPurchasePopUpResponse(
-        @Query("duration") duration: String,
-        @Query("remote_user_id") remoteUserId: String,
-    ): Response<PurchasePopUp>
-
     @GET("$DIR/micro_payment/get_wallet_transactions/{mentor}/")
     suspend fun getWalletTransactions(@Path("mentor") mentorId: String, @Query("page") page:Int): Response<TransactionResponse>
 
     @GET("$DIR/micro_payment/get_payment_logs/{mentor}/")
     suspend fun getPaymentTransactions(@Path("mentor") mentorId: String, @Query("page") page:Int): Response<WalletLogResponse>
 
+    @GET("$DIR/course/show_popup/")
+    suspend fun getCoursePopUpData(
+        @Query("course_id") courseId: String,
+        @Query("name") popupName: String,
+        @Query("call_count") callCount: Int = 0,
+        @Query("call_duration") callDuration: Long = 0
+    ): Response<PurchaseDataResponse>
 }

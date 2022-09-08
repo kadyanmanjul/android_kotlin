@@ -7,10 +7,12 @@
     android:orientation="vertical">
 
     <include layout="@layout/call_ongoing_layout" />
+
     <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+        android:id="@+id/call_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/call_bar_layout"/>
+        android:layout_height="wrap_content" />
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -104,6 +106,26 @@
                 app:layout_constraintTop_toTopOf="@id/iv_help"
                 tools:src="@drawable/ic_search"
                 tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_upgrade"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:backgroundTint="@color/yellow_light"
+                android:elevation="0dp"
+                android:text="Upgrade Now"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+                android:textSize="@dimen/_10ssp"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/_48sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/iv_edit"

@@ -1,87 +1,80 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.content.res.Resources
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_CLICKED
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_IGNORED
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_POPUP_SEEN
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
+import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
-import java.util.*
 
-class PurchaseDialog: BaseDialogFragment(true)  {
+class PurchaseDialog : BaseDialogFragment() {
 
     private lateinit var binding: PurchaseCourseDialogBinding
-    val POP_TEXT = "POP_TEXT"
-    val TITLE_TEXT = "TITLE_TEXT"
-    val PRICE_TEXT = "PRICE_TEXT"
-    var expireDate:Date? = null
     private var countdownTimerBack: CountdownTimerBack? = null
+    private lateinit var purchaseDataResponse: PurchaseDataResponse
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = PurchaseCourseDialogBinding.inflate(inflater,container,false)
+        binding = PurchaseCourseDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     companion object {
+        private const val PURCHASE_DATA = "purchase_data"
+
         @JvmStatic
-        fun newInstance(timerPopText:String = EMPTY, timerTitlePopText:String = EMPTY, pricePopUpText:String = EMPTY, expireTime:Date? = null): PurchaseDialog {
-            val fragment = PurchaseDialog().apply {
+        fun newInstance(purchaseDataResponse: PurchaseDataResponse): PurchaseDialog =
+            PurchaseDialog().apply {
                 arguments = Bundle().apply {
-                    putString(POP_TEXT, timerPopText)
-                    putString(TITLE_TEXT, timerTitlePopText)
-                    putString(PRICE_TEXT, pricePopUpText)
-                    expireDate = expireTime
+                    putParcelable(PURCHASE_DATA, purchaseDataResponse)
                 }
             }
-            return fragment
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isCancelable = true
         initView()
-        binding.btnCancel.setOnClickListener {
-            closeDialog()
-        }
-
         binding.btnBuy.setOnClickListener {
             showFreeTrialPaymentScreen()
         }
     }
 
     private fun initView() {
-        val mArgs = arguments
-        binding.txtPopUpBody.text = mArgs?.getString(POP_TEXT).toString()
-        binding.txtPopUpTitle.text = mArgs?.getString(TITLE_TEXT).toString()
-        binding.btnBuy.text = mArgs?.getString(PRICE_TEXT)
-        if (expireDate?.time!=null) {
-            if (expireDate?.time!! >= System.currentTimeMillis()) {
-                if (expireDate?.time!! > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
+        arguments?.getParcelable<PurchaseDataResponse>(PURCHASE_DATA)?.let {
+            purchaseDataResponse = it
+        } ?: run {
+            dismiss()
+        }
+        binding.purchaseData = purchaseDataResponse
+        binding.executePendingBindings()
+        if (purchaseDataResponse.expireTime?.time != null) {
+            if (purchaseDataResponse.expireTime?.time!! >= System.currentTimeMillis()) {
+                if (purchaseDataResponse.expireTime?.time!! > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
                     binding.txtFtEndsIn.visibility = View.GONE
                 } else {
                     binding.txtFtEndsIn.visibility = View.VISIBLE
-                    startTimer(expireDate?.time!! - System.currentTimeMillis())
+                    startTimer(purchaseDataResponse.expireTime?.time!! - System.currentTimeMillis())
                 }
             } else {
                 binding.txtFtEndsIn.visibility = View.VISIBLE
                 binding.txtFtEndsIn.text = getString(R.string.free_trial_ended)
                 PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             }
-        }else{
+        } else {
             binding.txtFtEndsIn.visibility = View.GONE
         }
     }
@@ -97,7 +90,7 @@ class PurchaseDialog: BaseDialogFragment(true)  {
                                 UtilTime.timeFormatted(millis)
                             )
                         }
-                    }catch (ex:Exception){
+                    } catch (ex: Exception) {
 
                     }
                 }
@@ -107,13 +100,13 @@ class PurchaseDialog: BaseDialogFragment(true)  {
                         PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                         binding.txtFtEndsIn.visibility = View.VISIBLE
                         binding.txtFtEndsIn.text = getString(R.string.free_trial_ended)
-                    }catch (ex:Exception){
+                    } catch (ex: Exception) {
 
                     }
                 }
             }
             countdownTimerBack?.startTimer()
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }
@@ -125,10 +118,10 @@ class PurchaseDialog: BaseDialogFragment(true)  {
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
                 ),
-                expireDate?.time?:0
+                purchaseDataResponse.expireTime?.time ?: 0
             )
             closeDialog()
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }
     }
@@ -147,5 +140,29 @@ class PurchaseDialog: BaseDialogFragment(true)  {
     override fun onDestroy() {
         super.onDestroy()
         countdownTimerBack?.stop()
+    }
+
+    fun setOnDismissListener(function: () -> Unit) {
+        Log.d("PurchaseDialog.kt", "YASH => setOnDismissListener:150 ")
+        dialog?.setOnDismissListener {
+            Log.d("PurchaseDialog.kt", "YASH => setOnDismissListener:153 dismissed")
+            function.invoke()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val d = dialog
+        d?.let {
+            try {
+                val rect = Resources.getSystem().displayMetrics.run { Rect(0, 0, widthPixels, heightPixels) }
+                val percentWidth = rect.width() * 0.8
+                d.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+            } catch (e: Exception) {
+                val width = ViewGroup.LayoutParams.MATCH_PARENT
+                val height = ViewGroup.LayoutParams.WRAP_CONTENT
+                d.window?.setLayout(width, height)
+            }
+        }
     }
 }
