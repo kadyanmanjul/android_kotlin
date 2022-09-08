@@ -20,8 +20,9 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
@@ -52,8 +53,11 @@ import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivit
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -118,6 +122,7 @@ class NotificationUtils(val context: Context) {
                         || notificationObject.action == NotificationAction.ACTION_OPEN_LESSON
                         || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
                         || notificationObject.action == NotificationAction.CALL_RECORDING_NOTIFICATION
+                        || notificationObject.action == NotificationAction.INITIATE_RANDOM_CALL
                     ) {
                         val inboxIntent = InboxActivity.getInboxIntent(context)
                         inboxIntent.putExtra(HAS_NOTIFICATION, true)
@@ -466,6 +471,15 @@ class NotificationUtils(val context: Context) {
                     context = context,
                     videoUrl = notificationObject.extraData,
                 )
+            }
+            NotificationAction.INITIATE_RANDOM_CALL -> {
+                val intent = Intent(context, VoiceCallActivity::class.java).apply {
+                        putExtra(INTENT_DATA_COURSE_ID, "151")
+                        putExtra(INTENT_DATA_TOPIC_ID, "10")
+                        putExtra(STARTING_POINT, FROM_ACTIVITY)
+                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+                    }
+                return intent
             }
             else -> {
                 return null
