@@ -5,15 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.ui.callWithExpert.model.Transaction
-import com.joshtalks.joshskills.ui.callWithExpert.model.WalletLogs
+import androidx.paging.cachedIn
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class WalletTransactionViewModel(private val app: Application) : AndroidViewModel(app) {
@@ -26,43 +24,15 @@ class WalletTransactionViewModel(private val app: Application) : AndroidViewMode
     val availableBalance: LiveData<String>
         get() = _availableBalance
 
-    private val _walletTransactions = MutableLiveData<List<Transaction>>()
+    val walletPaymentLogsList = flow {
+        emitAll(repository.getWalletLogs().cachedIn(viewModelScope))
+    }
 
-    val walletTransactions : LiveData<List<Transaction>>
-        get() = _walletTransactions
-
-    private val _paymentHistory = MutableLiveData<List<WalletLogs>>()
-
-    val paymentHistory : LiveData<List<WalletLogs>>
-        get() = _paymentHistory
+    val walletTransactionList = flow {
+        emitAll(repository.getWalletTransactions().cachedIn(viewModelScope))
+    }
     init {
         getWalletCredits()
-        getWalletTransactions()
-        getPaymentTransactions()
-    }
-
-    private fun getPaymentTransactions() {
-        viewModelScope.launch {
-            repository.paymentHistory
-                .catch {
-                    showToast(app.getString(R.string.something_went_wrong))
-                }
-                .collectLatest {
-                    _paymentHistory.postValue(it)
-                }
-        }
-    }
-
-    private fun getWalletTransactions() {
-        viewModelScope.launch {
-            repository.walletTransaction
-                .catch {
-                    showToast(app.getString(R.string.something_went_wrong))
-                }
-                .collectLatest {
-                    _walletTransactions.postValue(it)
-                }
-        }
     }
 
     private fun getWalletCredits() {

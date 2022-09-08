@@ -2,11 +2,13 @@ package com.joshtalks.joshskills.ui.callWithExpert.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ItemWalletTransactionBinding
 import com.joshtalks.joshskills.ui.callWithExpert.model.Transaction
 
-class WalletTransactionsAdapter(var items: List<Transaction> = listOf()):RecyclerView.Adapter<WalletTransactionsAdapter.TransactionViewHolder>() {
+class WalletTransactionsAdapter(var items: List<Transaction> = listOf()): PagingDataAdapter<Transaction,WalletTransactionsAdapter.TransactionViewHolder>(TransactionDiffUtilsCallbacks()) {
     inner class TransactionViewHolder(val itemBinding: ItemWalletTransactionBinding):RecyclerView.ViewHolder(itemBinding.root){
         fun bind(item: Transaction){
             with(itemBinding){
@@ -20,14 +22,21 @@ class WalletTransactionsAdapter(var items: List<Transaction> = listOf()):Recycle
         return TransactionViewHolder(binding)
     }
 
-    fun addTransactionToList(members: List<Transaction>) {
-        items = members
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount() = items.size
-
     override fun onBindViewHolder(holder: WalletTransactionsAdapter.TransactionViewHolder, position: Int) {
-        holder.bind(items[position])
+        val item = getItem(position)
+        if (item != null) {
+            holder.bind(item)
+        }
     }
+}
+
+class TransactionDiffUtilsCallbacks : DiffUtil.ItemCallback<Transaction>() {
+    override fun areItemsTheSame(oldItem: Transaction, newItem: Transaction): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: Transaction, newItem: Transaction): Boolean {
+        return oldItem == newItem
+    }
+
 }

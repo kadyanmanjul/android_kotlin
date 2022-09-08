@@ -1070,5 +1070,7 @@
     <string name="call_info_copied">call info copied</string>
     <string name="payment_logs">Payment Logs</string>
     <string name="wallet_transactions">Wallet Transactions</string>
+    <string name="josh_transaction_id">josh_transaction_id</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
 
 </resources>
