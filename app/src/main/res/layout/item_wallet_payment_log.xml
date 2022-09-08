@@ -37,7 +37,7 @@
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_2sdp"
-                    android:text="@{item.event_log}"
+                    android:text="@{item.event_log != null?item.event_log: @string/recharge }"
                     android:maxLines="1"
                     android:textColor="@color/pure_black"
                     android:textSize="@dimen/_14ssp"

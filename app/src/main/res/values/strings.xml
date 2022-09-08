@@ -1072,5 +1072,6 @@
     <string name="wallet_transactions">Wallet Transactions</string>
     <string name="josh_transaction_id">josh_transaction_id</string>
     <string name="copied_to_clipboard">Copied to Clipboard</string>
+    <string name="empty"> </string>
 
 </resources>
