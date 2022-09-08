@@ -22,15 +22,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
-import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
-import com.joshtalks.joshskills.constants.START_BLOCK_TIMER
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
@@ -43,6 +38,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
@@ -62,15 +58,11 @@ import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
-import org.json.JSONObject
 import java.time.Duration
 import java.util.*
 
@@ -110,7 +102,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var isBlockedFT = false
     private var countdownTimerBack: CountdownTimerBack? = null
     private val event = EventLiveData
+    private val getBlockStatus = fun(){
 
+
+    }
 
 
 
@@ -821,12 +816,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         if (isAdded && activity != null) {
             val dialog = AlertDialog.Builder(context)
             dialog
-                .setMessage(viewModel.isUserBlock?.get()?.reason?.let {
+                .setMessage(viewModel.isUserBlock.get()?.reason?.let {
                     AppObjectController.getFirebaseRemoteConfig()
                         .getString(it).replace("<br\\>", "\n")
                 })
                 .setPositiveButton("GOT IT")
-                { dialog, _ -> dialog.dismiss() }.show()
+                { dialog, _ ->
+                    viewModel.isUserCallBlock(true)
+                    dialog.dismiss()
+                }.show()
         }
     }
 
@@ -838,7 +836,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .setTitle(getString(R.string.rating_title, rating.toString()))
                 .setMessage(getString(R.string.rating_message))
                 .setPositiveButton("GOT IT")
-                { dialog, _ -> dialog.dismiss() }.show()
+                { dialog, _ ->  }.show()
+
         }
     }
 

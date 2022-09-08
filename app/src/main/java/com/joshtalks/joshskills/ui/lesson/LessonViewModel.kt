@@ -991,8 +991,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         return !(differ < 86400000 && differ > -86400000)
     }
 
-     fun isUserCallBlock() {
-        if(checkBlockStatusInSP()){
+     fun isUserCallBlock(isForceHit : Boolean = false) {
+        if(checkBlockStatusInSP() && !isForceHit){
             startBlockTimer()
         }else{
            blockStatusFromApi()
@@ -1008,7 +1008,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     response.body()!!.timestamp = System.currentTimeMillis()
                     PrefManager.putPrefObject(BLOCK_STATUS, response.body() as BlockStatusModel)
                     startBlockTimer()
+                }else if(response.isSuccessful && response.body() != null && response.body()!!.duration==0){
+                    PrefManager.putPrefObject(BLOCK_STATUS,BlockStatusModel(0,0,"",0))
+                    blockLiveData.postValue(false)
                 }
+
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
