@@ -99,6 +99,12 @@ abstract class BaseViewHolder(
         }
     }
 
+    fun setViewHolderBGRound(
+        cMessage: ChatModel, lMessage: ChatModel?, root: FrameLayout
+    ) {
+        setViewBgBasicMessageStack(root, cMessage.sender!!)
+    }
+
     private fun isDateChange(cDate: Date, lDate: Date): Boolean {
         val days = TimeUnit.DAYS.convert(cDate.time - lDate.time, TimeUnit.MILLISECONDS)
         if (days > 0) {
@@ -132,6 +138,13 @@ abstract class BaseViewHolder(
         }
     }
 
+    private fun setViewBgBasicMessageStack(root: FrameLayout, cSender: Sender) {
+        if (cSender.id.equals(userId, ignoreCase = true)) {
+            root.setBackgroundResource(R.drawable.outgoing_message_same_bg)
+        } else {
+            root.setBackgroundResource(R.drawable.incoming_message_same_bg)
+        }
+    }
 
     protected fun getUrlForDownload(it: ChatModel): String? {
         if (it.url == null) {

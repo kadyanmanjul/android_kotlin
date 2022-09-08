@@ -19,7 +19,7 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
 
     override fun bind(message: ChatModel, previousMessage: ChatModel?) {
         if (null != message.sender) {
-            setViewHolderBG(message, previousMessage, rootSubView)
+            setViewHolderBGRound(message, previousMessage, rootSubView)
         }
         message.lesson?.let {
             setupUI(it)
