@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import timber.log.Timber
 
 const val LATEST_PUBNUB_MESSAGE_TIME = "josh_pref_key_latest_pubnub_message_time"
 const val VOIP_STATE = "josh_pref_key_voip_state"
@@ -19,6 +20,7 @@ const val LOCAL_USER_AGORA_ID = "josh_pref_key_local_user_agora_id"
 const val AGORA_CALL_ID = "josh_pref_key_agora_call_id"
 const val CURRENT_CALL_CATEGORY = "josh_pref_key_call_category"
 const val LAST_RECORDING = "josh_pref_key_agora_call_recording"
+const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"
 
 
 private const val TAG = "PrefManager"
@@ -103,6 +105,17 @@ class PrefManager {
             editor.putInt(LOCAL_USER_AGORA_ID, localUserAgoraId)
             editor.putInt(AGORA_CALL_ID, callId)
             editor.commit()
+        }
+
+        fun setExpertCallDuration(duration: Long) {
+            val editor = preferenceManager.edit()
+            editor.putLong(EXPERT_CALL_DURATION, duration)
+            Log.d("calltime", "setExpertCallDuration time => $duration ")
+            editor.commit()
+        }
+
+        fun getExpertCallDuration(): Long {
+            return preferenceManager.getLong(EXPERT_CALL_DURATION, 0)
         }
 
         fun savePstnState(state: String) {

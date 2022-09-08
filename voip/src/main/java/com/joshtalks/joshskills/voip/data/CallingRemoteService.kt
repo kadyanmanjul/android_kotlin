@@ -58,6 +58,7 @@ class CallingRemoteService : Service() {
     private val notificationData by lazy { TestNotification(getNotificationData()) }
     private val notification by lazy { VoipNotification(notificationData, NotificationPriority.Low) }
     private val binder = RemoteServiceBinder()
+    private var timeInMillSec: Long? = null
 
     var countdownTimerBack: Job? = null
     var expertCallData = HashMap<String, Any>()
@@ -372,6 +373,7 @@ class CallingRemoteService : Service() {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy: ")
+        stopCallTimer()
         unregisterReceivers()
         mediator.onDestroy()
         ioScope.cancel()
@@ -398,10 +400,10 @@ class CallingRemoteService : Service() {
 
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
         try {
-            val timeInMillSec :Long= (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
+             timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
             Log.v("sagar", "timeInSec: $timeInMillSec")
             countdownTimerBack = timerScope.launch {
-                delay(timeInMillSec)
+                delay(timeInMillSec!!)
                 disconnectCall()
             }
         }catch (ex:Exception){
@@ -421,8 +423,20 @@ class CallingRemoteService : Service() {
     }
 
     fun stopCallTimer() {
+        storeCallTimingInDb()
         countdownTimerBack?.cancel()
         countdownTimerBack = null
+    }
+
+    private fun storeCallTimingInDb() {
+        if (countdownTimerBack != null && expertCallData[IS_EXPERT_CALLING] != null){
+            val isExpertCalling = expertCallData[IS_EXPERT_CALLING].toString()
+            if (isExpertCalling == true.toString()) {
+                    timeInMillSec?.let { time ->
+                        PrefManager.setExpertCallDuration(time)
+                    }
+            }
+        }
     }
 }
 

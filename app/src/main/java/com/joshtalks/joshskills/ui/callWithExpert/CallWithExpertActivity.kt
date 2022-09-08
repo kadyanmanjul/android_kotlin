@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.callWithExpert
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -116,6 +117,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
     }
 
     override fun onPaymentError(p0: Int, p1: String?) {
+        Log.d("paymenterror", "onPaymentError: and status => $p0 and $p1")
         walletPaymentManager.onPaymentFailed(p0, p1)
     }
 

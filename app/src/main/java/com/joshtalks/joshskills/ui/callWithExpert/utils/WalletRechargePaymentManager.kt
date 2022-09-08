@@ -183,9 +183,11 @@ class WalletRechargePaymentManager private constructor(
         if (status != 0) {
             // payment not cancelled by user but failed.
             showToast("Payment Failed... Please Try Again")
+
+            // TODO: Verify Payment Maybe Called Later.
+//            verifyPayment()
         }
 
-        verifyPayment()
         viewModelScope.launch {
             delay(5000)
             onPaymentFinished(false)
@@ -201,7 +203,6 @@ class WalletRechargePaymentManager private constructor(
             }
         }
         paymentStatusListener?.onPaymentFinished(isPaymentSuccessful)
-        // TODO: Show Dialog
 
     }
 
