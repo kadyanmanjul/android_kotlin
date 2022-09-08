@@ -254,7 +254,7 @@
     <string name="back_button_desc">Back Button</string>
 
     <!--End-->
-    <string name="help" translatable="false">Help</string>
+    <string name="help" translatable="false">Support</string>
     <string name="close" translatable="false">Close</string>
     <string name="favorite_list" translatable="false">Favorite List</string>
     <string name="restart_course" translatable="false">Restart Course</string>
