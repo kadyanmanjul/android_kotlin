@@ -89,6 +89,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
+    private var isBbTooltipVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -483,7 +484,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                        if (PrefManager.hasKey(COUPON_EXPIRY_TIME)) {
+                            val expiryTime = PrefManager.getLongValue(COUPON_EXPIRY_TIME)
+                            if (expiryTime > System.currentTimeMillis() && isBbTooltipVisible.not())
+                                showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                            else
+                                PrefManager.removeKey(COUPON_EXPIRY_TIME)
+                        }
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
@@ -541,13 +548,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
             .setDismissWhenClicked(true)
-            .setAutoDismissDuration(3000L)
-            .setPreferenceName("BUY_COURSE_ENGLISH_TOOLTIP")
-            .setShowCounts(3)
+            .setAutoDismissDuration(5000L)
+            .setOnBalloonDismissListener {
+                isBbTooltipVisible = false
+            }
             .build()
         val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
         textView.text = text
         balloon.showAlignBottom(buy_english_course)
+        isBbTooltipVisible = true
     }
 
     override fun onPause() {

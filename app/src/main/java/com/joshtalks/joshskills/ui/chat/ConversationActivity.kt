@@ -405,11 +405,10 @@ class ConversationActivity :
         if (inboxEntity.isCourseBought) {
             conversationBinding.freeTrialExpiryLayout.visibility = GONE
             return
-        } else if (PrefManager.getIntValue(FT_CALLS_LEFT) > 0) {
+        }/*else if (PrefManager.getIntValue(FT_CALLS_LEFT) > 0) {
             conversationBinding.freeTrialContainer.visibility = VISIBLE
             conversationBinding.freeTrialText.text = getString(R.string.ft_calls_left, PrefManager.getIntValue(FT_CALLS_LEFT))
-
-        } else if (
+        } */ else if (
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {

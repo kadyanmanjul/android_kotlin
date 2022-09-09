@@ -204,7 +204,7 @@
                     android:id="@+id/bb_tooltip_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:constraint_referenced_ids="iv_arrow, layout_bb_tip" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -231,6 +231,7 @@
                     android:id="@+id/layout_bb_tip"
                     layout="@layout/layout_bb_tip"
                     android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/_minus3sdp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_24sdp"
                     app:layout_constraintEnd_toEndOf="parent"

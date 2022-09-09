@@ -53,6 +53,8 @@ data class PurchaseDataResponse(
     val couponCode: String?,
     @SerializedName("coupon_expiry_text")
     val couponExpiry: String?,
+    @SerializedName("coupon_expiry_time")
+    val couponExpiryTime: Date?
 ) : Parcelable
 
 enum class PurchasePopupType {

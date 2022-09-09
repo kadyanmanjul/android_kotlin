@@ -768,6 +768,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     .apply {
                         show(supportFragmentManager, PurchaseDialog::class.simpleName)
                     }
+                if (it.isCouponPopup && it.expireTime != null)
+                    PrefManager.put(COUPON_EXPIRY_TIME, it.expireTime.time)
             }
         }
     }
@@ -1095,8 +1097,15 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     }
 
     fun showBuyCourseTooltip(tabPosition: Int) {
+        when (tabPosition) {
+            SPEAKING_POSITION -> return
+            GRAMMAR_POSITION -> if (PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION).not()) return
+//            VOCAB_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_VOCAB_TOOLTIP).not()) return
+//            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_TOOLTIP)
+//                    .not()
+//            ) return
+        }
         val key = when (tabPosition) {
-            SPEAKING_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP
             GRAMMAR_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_GRAMMAR_TOOLTIP
             VOCAB_POSITION - isTranslationDisabled -> FirebaseRemoteConfigKey.BUY_COURSE_VOCABULARY_TOOLTIP
             READING_POSITION - isTranslationDisabled -> FirebaseRemoteConfigKey.BUY_COURSE_READING_TOOLTIP
@@ -1117,8 +1126,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             .setDismissWhenClicked(true)
             .setAutoDismissDuration(3000L)
             .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-            .setPreferenceName(key)
-            .setShowCounts(3)
+//            .setPreferenceName(key)
+//            .setShowCounts(3)
             .build()
         val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
         textView.text = text
@@ -1234,9 +1243,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     private fun setSelectedColor(tab: TabLayout.Tab?) {
         tab?.let {
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL) &&
-                PrefManager.getIntValue(LESSON_ACTIVITY_VISIT_COUNT) >= 2
-            ) showBuyCourseTooltip(tab.position)
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+                showBuyCourseTooltip(tab.position)
             tab.view.findViewById<TextView>(R.id.title_tv)
                 ?.setTextColor(ContextCompat.getColor(this, R.color.white))
             when (tab.position) {

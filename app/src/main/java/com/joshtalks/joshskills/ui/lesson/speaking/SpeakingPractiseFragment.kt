@@ -235,7 +235,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         )
                         binding.btnStartTrialText.visibility = GONE
                         binding.blockContainer.visibility = VISIBLE
-                    } else {
+                    } else if (it <= 3) {
                         binding.btnStartTrialText.visibility = VISIBLE
                         binding.blockContainer.visibility = GONE
                         val text = AppObjectController.getFirebaseRemoteConfig().getString(
@@ -255,6 +255,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 R.color.colorAccent
                             )
                         )
+                    } else {
+                        binding.bbTooltipGroup.visibility = GONE
                     }
                 }
             }
