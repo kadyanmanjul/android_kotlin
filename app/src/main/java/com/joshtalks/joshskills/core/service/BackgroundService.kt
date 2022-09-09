@@ -49,6 +49,7 @@ const val NOTIF_ID = 12301
 val NOTIF_CHANNEL_ID = NotificationChannelData.OTHERS.id
 val NOTIF_CHANNEL_NAME = NotificationChannelData.OTHERS.type
 
+//TODO: Uncomment manifest file declaration
 class BackgroundService : Service() {
 
     lateinit var apiService: UtilsAPIService
@@ -198,14 +199,14 @@ class BackgroundService : Service() {
                 val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
                 listOfReceived?.forEach {
                     try {
-                        apiService.engageNewNotificationAsync(
-                            NotificationAnalyticsRequest(
-                                it.id,
-                                it.time_stamp.plus(serverOffsetTime),
-                                it.action,
-                                it.platform
-                            )
-                        )
+//                        apiService.engageNewNotificationAsync(
+//                            NotificationAnalyticsRequest(
+//                                it.id,
+//                                it.time_stamp.plus(serverOffsetTime),
+//                                it.action,
+//                                it.platform
+//                            )
+//                        )
                         notificationDao.updateSyncStatus(it.notificationId)
                     } catch (e: Exception) {
                         if (e is HttpException) {

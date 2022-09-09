@@ -24,6 +24,9 @@ interface ScheduleNotificationDao {
     @Query("UPDATE schedule_notification SET is_shown = 1 WHERE id = :id")
     suspend fun updateShown(id: String)
 
+    @Query("UPDATE schedule_notification SET is_event_sent = 1 WHERE id = :id")
+    suspend fun updateEventSent(id: String)
+
     @Query("SELECT * FROM schedule_notification WHERE id = :notificationId")
     suspend fun getNotification(notificationId: String): ScheduleNotification
 
@@ -32,6 +35,9 @@ interface ScheduleNotificationDao {
 
     @Query("DELETE FROM schedule_notification")
     suspend fun clearTable()
+
+//    @Query("SELECT * FROM schedule_notification WHERE is_shown = 1 AND is_event_sent = 0")
+//    suspend fun getShownNotifications(): List<ScheduleNotification>
 
     @Transaction
     suspend fun removeCategory(category: String): List<String> {

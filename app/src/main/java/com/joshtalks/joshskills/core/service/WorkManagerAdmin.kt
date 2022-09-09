@@ -69,7 +69,6 @@ object WorkManagerAdmin {
     fun requiredTaskInLandingPage() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<WorkerInLandingScreen>().build())
-//            .then(OneTimeWorkRequestBuilder<UserActiveWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
@@ -153,12 +152,11 @@ object WorkManagerAdmin {
 
     fun syncNotificationEngagement() {
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(
-                OneTimeWorkRequestBuilder<NotificationEngagementSyncWorker>().build()
-            )
+            .enqueue(OneTimeWorkRequestBuilder<NotificationEngagementSyncWorker>().build())
     }
 
     fun setBackgroundNotificationWorker() {
+        removeBackgroundNotificationWorker()
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
