@@ -215,8 +215,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     }
                     R.id.menu_help -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
-//                        openHelpActivity()
-                        CallWithExpertActivity.open(this)
+                        openHelpActivity()
                     }
                     R.id.menu_settings -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.SETTINGS).push()
