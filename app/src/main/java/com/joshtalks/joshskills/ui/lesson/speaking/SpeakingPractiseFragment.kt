@@ -221,11 +221,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.callCountLiveData.observe(viewLifecycleOwner) {
                 it?.let {
                     binding.infoContainer.visibility = GONE
+                    binding.txtLabelCallsLeft.visibility = VISIBLE
                     binding.txtLabelCallsLeft.paintFlags =
                         binding.txtLabelCallsLeft.paintFlags or Paint.UNDERLINE_TEXT_FLAG
                     binding.txtLabelCallsLeft.text = "$it calls left"
                     if (it == 0) {
-                        binding.callCountContainer.visibility = GONE
+                        binding.bbTooltipGroup.visibility = GONE
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
                                 requireContext(),
@@ -239,13 +240,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.blockContainer.visibility = GONE
                         val text = AppObjectController.getFirebaseRemoteConfig().getString(
                             FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP.plus(
-                                PrefManager.getStringValue(CURRENT_COURSE_ID)
+                                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
                             )
                         )
                         if (text.isBlank().not()) {
-                            binding.callCountContainer.visibility = VISIBLE
-                            binding.layoutBbTip.findViewById<MaterialTextView>(R.id.balloon_text).text =
-                                text
+                            binding.bbTooltipGroup.visibility = GONE
+                        } else {
+                            binding.bbTooltipGroup.visibility = VISIBLE
+                            binding.layoutBbTip.findViewById<MaterialTextView>(R.id.balloon_text).text = text
                         }
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
@@ -257,7 +259,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 }
             }
         } else {
-            binding.callCountContainer.visibility = GONE
+            binding.txtLabelCallsLeft.visibility = GONE
+            binding.bbTooltipGroup.visibility = GONE
         }
 
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner) {
