@@ -320,8 +320,13 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     fun getFreeTrialNotifications() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.utilsAPIService
-                    .getFTScheduledNotifications(PrefManager.getStringValue(CURRENT_COURSE_ID))
+                val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
+                    PrefManager.getStringValue(
+                        FREE_TRIAL_TEST_ID,
+                        false,
+                        FREE_TRIAL_DEFAULT_TEST_ID
+                    )
+                )
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
                 if (response.isNotEmpty())
                     PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)

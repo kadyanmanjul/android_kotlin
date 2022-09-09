@@ -8,19 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
-import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
-import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -28,7 +17,8 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
@@ -314,6 +304,8 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     AppObjectController.signUpNetworkService.createFreeOrder(data)
                 if (response.isSuccessful) {
                     isFreeOrderCreated.postValue(true)
+                    if (!PrefManager.getBoolValue(FETCHED_SCHEDULED_NOTIFICATION))
+                        getFreeTrialNotifications(testId)
                 }
             } catch (ex: Exception) {
                 when (ex) {
@@ -441,4 +433,18 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         )
     }
 
+    fun getFreeTrialNotifications(testId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(testId)
+                AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
+                if (response.isNotEmpty())
+                    PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
+                NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
+                NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }
