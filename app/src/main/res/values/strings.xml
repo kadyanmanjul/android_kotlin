@@ -385,6 +385,8 @@
     <string name="english">English</string>
     <string name="low">Low</string>
     <string name="login_type">Login Type</string>
+    <string name="register_number" translatable="false">Register Number</string>
+    <string name="register_email" translatable="false">Register Email</string>
     <string name="female">Female</string>
     <string name="male">Male</string>
     <string name="other">Other</string>
