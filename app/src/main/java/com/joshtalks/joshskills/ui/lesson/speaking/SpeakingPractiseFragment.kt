@@ -21,21 +21,24 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
-import com.joshtalks.joshskills.repository.local.model.User
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
@@ -51,23 +54,28 @@ import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
+import java.time.Duration
 import java.util.*
 
 const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
 const val ATTEMPTED = "AT"
 const val UPGRADED_USER = "NFT"
-const val BLOCKED ="BLOCKED"
+const val BLOCKED = "BLOCKED"
 const val SHOW_WARNING_POPUP = "SHOW_WARNING_POPUP"
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
@@ -97,6 +105,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var isIntroVideoEnabled = false
     private var lessonID = -1
     private var isBlockedFT = false
+    private var countdownTimerBack: CountdownTimerBack? = null
+    private val event = EventLiveData
+    private val getBlockStatus = fun(){
+    }
+
 
 
     private val viewModel: LessonViewModel by lazy {
@@ -148,7 +161,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
             viewModel.lessonSpotlightStateLiveData.postValue(null)
         } else {
-            CoroutineScope(Dispatchers.Main).launch{
+            CoroutineScope(Dispatchers.Main).launch {
                 delay(100)
                 viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
                 PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
@@ -191,6 +204,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             lessonID = it
         }
 
+        viewModel.blockLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+              true->{
+                  val durationInMillis = Duration.ofMinutes(viewModel.isUserBlock?.get()?.duration!!.toLong()).toMillis()
+                  val unblockTimestamp = viewModel.isUserBlock?.get()?.timestamp?.plus(durationInMillis)
+                  val currentTimestamp = System.currentTimeMillis()
+                  startTimer(currentTimestamp- (unblockTimestamp!!))
+              }
+            }
+        }
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner) {
             val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
             questionId = spQuestion?.id
@@ -337,14 +360,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                     }
 
-                    if(!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) && PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                    if (!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) && PrefManager.getBoolValue(
+                            IS_FREE_TRIAL
+                        )
+                    ) {
                         binding.imgRecentCallsHistory.visibility = INVISIBLE
-                        PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN,true)
+                        PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN, true)
                     }
 
-                    when(response.isFtCallerBlocked){
-                         BLOCKED -> {
-                            if(PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                    when (response.isFtCallerBlocked) {
+                        BLOCKED -> {
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                                 PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
                                 binding.containerReachedFtLimit.visibility = VISIBLE
                                 binding.btnStartTrialText.isEnabled = false
@@ -352,24 +378,26 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 binding.infoContainer.visibility = INVISIBLE
                                 isBlockedFT = true
                             }
-                         }
+                        }
                         SHOW_WARNING_POPUP -> {
-                            if(PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(HAS_SEEN_WARNING_POPUP_FT).not()) {
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(HAS_SEEN_WARNING_POPUP_FT)
+                                    .not()
+                            ) {
                                 // dialog for warning about shorter calls
                                 binding.containerReachedFtLimit.visibility = GONE
                                 AlertDialog.Builder(activity).setTitle(R.string.warning)
                                     .setIcon(R.drawable.ic_warning)
-                                    .setPositiveButton(R.string.got_it){dialog,_ ->
+                                    .setPositiveButton(R.string.got_it) { dialog, _ ->
                                         dialog.dismiss()
                                     }
                                     .setMessage(R.string.shorter_calls_error_message)
                                     .show()
-                                PrefManager.put(HAS_SEEN_WARNING_POPUP_FT,true)
+                                PrefManager.put(HAS_SEEN_WARNING_POPUP_FT, true)
                             }
 
                         }
-                        else->{
-                            if(PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                        else -> {
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                                 binding.infoContainer.visibility = VISIBLE
                                 binding.containerReachedFtLimit.visibility = GONE
                             }
@@ -518,7 +546,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.txtCallsLeft.visibility = GONE
                     binding.txtLabelBecomeSeniorStudent.visibility = GONE
                     binding.btnNewStudent.visibility = GONE
-                    if (!isBlockedFT){
+                    if (!isBlockedFT) {
                         binding.infoContainer.visibility = VISIBLE
                     }
                 }
@@ -780,6 +808,23 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
+    fun openBlockReasonDialog(v: View) {
+        if (isAdded && activity != null) {
+            val dialog = AlertDialog.Builder(context)
+            dialog
+                .setMessage(viewModel.isUserBlock.get()?.reason?.let {
+                    val newKey = it + "_" + PrefManager.getStringValue(CURRENT_COURSE_ID)
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(newKey).replace("<br\\>", "\n")
+                })
+                .setPositiveButton("GOT IT")
+                { dialog, _ ->
+                    viewModel.isUserCallBlock(true)
+                    dialog.dismiss()
+                }.show()
+        }
+    }
+
     fun openRatingDialog(v: View) {
         if (isAdded && activity != null) {
             val rating = PrefManager.getRatingObject(RATING_OBJECT)?.rating
@@ -822,10 +867,31 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     fun showSeniorStudentScreen() {
         SeniorStudentActivity.startSeniorStudentActivity(requireActivity())
     }
+    private fun startTimer(startTimeInMilliSeconds: Long) {
+        countdownTimerBack?.stop()
+        countdownTimerBack = object : CountdownTimerBack((startTimeInMilliSeconds)) {
+            override fun onTimerTick(millis: Long) {
+                AppObjectController.uiHandler.post {
+                    binding.cdTimer.text = UtilTime.timeFormatted(millis)
+                }
+            }
 
+            override fun onTimerFinish() {
+              viewModel.blockLiveData.postValue(false)
+                PrefManager.putPrefObject(BLOCK_STATUS, BlockStatusModel(0,0,"",0))
+
+            }
+        }
+        countdownTimerBack?.startTimer()
+    }
     companion object {
         @JvmStatic
         fun newInstance() =
             SpeakingPractiseFragment()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        countdownTimerBack?.stop()
     }
 }

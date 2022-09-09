@@ -336,6 +336,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     override fun onResume() {
         super.onResume()
+        viewModel.isUserCallBlock()
         subscribeRxBus()
     }
 

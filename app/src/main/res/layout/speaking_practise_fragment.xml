@@ -347,7 +347,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="@dimen/_20sdp"
-                    android:visibility="@{vm.isInternetSpeedGood == 0  ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{vm.isInternetSpeedGood == 0 &amp;&amp; !vm.blockLiveData  ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -357,7 +357,8 @@
                     app:lottie_autoPlay="true"
                     app:lottie_fileName="lottie/internet_progress_bar.json"
                     app:lottie_imageAssetsFolder="lottie"
-                    app:lottie_loop="true" />
+                    app:lottie_loop="true"
+                    tools:visibility="gone"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/progress_text_view"
@@ -366,7 +367,7 @@
                     android:layout_marginTop="@dimen/_1sdp"
                     android:gravity="center"
                     android:paddingHorizontal="@dimen/_16sdp"
-                    android:visibility="@{vm.isInternetSpeedGood == 0  ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{vm.isInternetSpeedGood == 0 &amp;&amp; !vm.blockLiveData   ? View.VISIBLE : View.GONE}"
                     android:text="@string/progress_network_text"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
@@ -375,7 +376,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/network_progress_bar"
                     android:textColor="@color/black"
                     android:layout_marginBottom="@dimen/_25sdp"
-                    tools:text="Checking your Internet Connection" />
+                    tools:text="Checking your Internet Connection"
+                    tools:visibility="gone"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/network_container"
@@ -389,12 +391,12 @@
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_12sdp"
                     android:paddingRight="@dimen/_20sdp"
-                    android:visibility="@{vm.isInternetSpeedGood == 1  ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{vm.isInternetSpeedGood == 1 &amp;&amp; !vm.blockLiveData  ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
-                    tools:visibility="gone">
+                    tools:visibility="visible">
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/network_tv"
@@ -459,22 +461,95 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/network_sub_tv"
                         app:rippleColor="@color/white"
-                        tools:visibility="visible" />
-
+                        tools:visibility="gone" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/block_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_24sdp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="@dimen/_40sdp"
+                    android:background="@drawable/crd_red_border"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_12sdp"
+                    android:paddingRight="@dimen/_20sdp"
+                    android:visibility="@{vm.blockLiveData  ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/block_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:gravity="center"
+                        android:text="Your Practice Partner service is temporarily disabled"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="#FF0000"
+                        android:textSize="@dimen/_14ssp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/timer_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="@dimen/_20sdp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="@dimen/_20sdp"
+                        android:gravity="center"
+                        android:onClick="@{handler::openBlockReasonDialog}"
+                        android:text="Check why?"
+                        android:textAllCaps="false"
+                        android:drawablePadding="@dimen/_4sdp"
+                        app:drawableStartCompat="@drawable/ic_info_micro"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_10ssp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/block_tv" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/cd_timer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textColor="#FF0000"
+                        android:visibility="visible"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:paddingHorizontal="@dimen/_20sdp"
+                        android:background="@drawable/block_button_round_stroke_red"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/timer_tv"
+                        tools:ignore="MissingPrefix" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/btn_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:visibility="@{vm.isInternetSpeedGood == 2  ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{vm.isInternetSpeedGood == 2 &amp;&amp; !vm.blockLiveData  ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
                     app:layout_constraintVertical_bias="1"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_new_student"

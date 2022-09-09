@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
@@ -188,6 +189,8 @@ const val IS_FIRST_TIME_SPEAKING_SCREEN = "IS_FIRST_TIME_SPEAKING_SCREEN"
 const val IS_FIRST_TIME_CONVERSATION = "IS_FIRST_TIME_CONVERSATION"
 const val HAS_SEEN_WARNING_POPUP_FT = "HAS_SEEN_WARNING_POPUP_FT"
 const val IS_APP_RESTARTED = "IS_APP_RESTARTED"
+const val BLOCK_STATUS = "BLOCK_STATUS"
+
 
 object PrefManager {
 
@@ -372,6 +375,12 @@ object PrefManager {
         val gson = Gson()
         val json: String = getStringValue(key = key, defaultValue = "") as String
         return gson.fromJson(json, UserRating::class.java)
+    }
+
+    fun getBlockStatusObject(key: String): BlockStatusModel? {
+        val gson = Gson()
+        val json: String = getStringValue(key = key, defaultValue = "") as String
+        return gson.fromJson(json, BlockStatusModel::class.java)
     }
 
     fun getCallCount(): Int {

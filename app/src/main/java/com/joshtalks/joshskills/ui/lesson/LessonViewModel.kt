@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Message
 import android.util.Log
 import android.view.View
+import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
@@ -13,32 +14,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.CANCEL_BUTTON_CLICK
-import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
-import com.joshtalks.joshskills.constants.CLOSE_VIDEO_VIEW
-import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
-import com.joshtalks.joshskills.constants.SEND_OUTPUT_FILE
-import com.joshtalks.joshskills.constants.SHARE_VIDEO
-import com.joshtalks.joshskills.constants.SHOW_AUDIO_ONLY
-import com.joshtalks.joshskills.constants.SHOW_VIDEO_VIEW
-import com.joshtalks.joshskills.constants.SUBMIT_BUTTON_CLICK
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
-import com.joshtalks.joshskills.core.ConnectionDetails
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Event
-import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.RATING_OBJECT
-import com.joshtalks.joshskills.core.RATING_TIMESTAMP
-import com.joshtalks.joshskills.core.Speed
-import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.THRESHOLD_SPEED_IN_KBPS
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -49,7 +27,6 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -75,6 +52,7 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
 import com.joshtalks.joshskills.ui.referral.WHATSAPP_PACKAGE_STRING
@@ -91,6 +69,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.Duration
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -133,7 +112,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
     var isInternetSpeedGood = ObservableInt(2)
+    var isUserBlock : ObservableField<BlockStatusModel> = ObservableField<BlockStatusModel>()
     var userRating = ObservableField<UserRating>()
+    val blockLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
     val voipState by lazy {
         CallBar()
     }
@@ -153,6 +134,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     init{
         getRating()
+        isUserCallBlock()
     }
 
     fun getVideoData() {
@@ -178,12 +160,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         message.what = PERMISSION_FROM_READING
         singleLiveEvent.value = message
     }
+    fun startBlockTimer() {
+        isUserBlock.set(PrefManager.getBlockStatusObject(BLOCK_STATUS))
+        blockLiveData.postValue(true)
+    }
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val lesson = getLessonFromDB(lessonId)
             if (lesson != null) {
-                lessonLiveData.postValue(lesson)
+                lessonLiveData.postValue(lesson!!)
             } else {
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             }
@@ -999,10 +985,64 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun ifRatingFromApi(currentTime :Long) : Boolean{
+    private fun ifUserCurrentlyBlocked(currentTime :Long) : Boolean{
         val previousTime: Long = PrefManager.getLongValue(RATING_TIMESTAMP,false)
         val differ = currentTime - previousTime
         return !(differ < 86400000 && differ > -86400000)
+    }
+
+     fun isUserCallBlock(isForceHit : Boolean = false) {
+        if(checkBlockStatusInSP() && !isForceHit){
+            startBlockTimer()
+        }else{
+           blockStatusFromApi()
+        }
+    }
+
+    private fun blockStatusFromApi() {
+        viewModelScope.launch(Dispatchers.IO)
+        {
+            try {
+                val response = AppObjectController.chatNetworkService.getUserBlockStatus()
+                if (response.isSuccessful && response.body() != null && response.body()!!.duration!=0) {
+                    response.body()!!.timestamp = System.currentTimeMillis()
+                    PrefManager.putPrefObject(BLOCK_STATUS, response.body() as BlockStatusModel)
+                    startBlockTimer()
+                }else if(response.isSuccessful && response.body() != null && response.body()!!.duration==0){
+                    PrefManager.putPrefObject(BLOCK_STATUS,BlockStatusModel(0,0,"",0))
+                    blockLiveData.postValue(false)
+                }
+
+            } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
+                Timber.e(ex)
+            }
+        }
+    }
+
+    private fun checkBlockStatusInSP(): Boolean {
+       val blockStatus = PrefManager.getBlockStatusObject(BLOCK_STATUS)
+        if(blockStatus?.timestamp?.toInt() == 0 )
+            return false
+
+        if(checkWithinBlockTimer(blockStatus)){
+            return true
+        }else{
+            PrefManager.putPrefObject(BLOCK_STATUS,BlockStatusModel(0,0,"",0))
+            return false
+        }
+    }
+
+    private fun checkWithinBlockTimer(blockStatus: BlockStatusModel?): Boolean {
+        if (blockStatus != null) {
+            val durationInMillis = Duration.ofMinutes(blockStatus.duration.toLong()).toMillis()
+            val unblockTimestamp = blockStatus.timestamp + durationInMillis
+            val currentTimestamp = System.currentTimeMillis()
+            if(currentTimestamp <= unblockTimestamp ){
+                return true
+            }
+        }
+        return false
     }
 
     fun inviteFriends(dynamicLink: String, path: String) {

@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.repository.server.assessment.*
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
@@ -157,4 +158,7 @@ interface ChatNetworkService {
 
     @POST("$DIR/voicecall/agora_call_share")
     suspend fun postCallRecordingFile(@Body request : CallRecordingRequest) : Response<Unit>
+
+    @GET("$DIR/p2p/block_status")
+    suspend fun getUserBlockStatus(): Response<BlockStatusModel>
 }
