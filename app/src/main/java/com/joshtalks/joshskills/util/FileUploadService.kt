@@ -29,7 +29,7 @@ import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import java.io.File
 import java.util.*
@@ -45,7 +45,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
-
 
 class FileUploadService : Service() {
     private val MAX_NUMBER_OF_RETRIES = 5
@@ -390,38 +389,21 @@ class FileUploadService : Service() {
         stopForeground(true)
     }
 
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(channelId: String, channelName: String): String {
-        val chan = NotificationChannel(
-            channelId,
-            channelName, NotificationManager.IMPORTANCE_NONE
-        )
-        chan.lightColor = Color.BLUE
-        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        service.createNotificationChannel(chan)
-        return channelId
-    }
-
     private fun showUploadNotification() {
         var messageText = ""
         if (fileQueue.size > 0) {
             messageText = """$messageText${fileQueue.size} is remaining."""
         }
+        val channelId = NotificationChannelData.UPLOADS.id
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name: CharSequence = NotificationChannelNames.OTHERS.type
+            val name: CharSequence = NotificationChannelData.UPLOADS.type
             val importance: Int = NotificationManager.IMPORTANCE_LOW
-            val mChannel =
-                NotificationChannel(CHANNEL_ID, name, importance)
+            val mChannel = NotificationChannel(channelId, name, importance)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
-        val lNotificationBuilder = NotificationCompat.Builder(
-            this,
-            CHANNEL_ID
-        )
-            .setChannelId(CHANNEL_ID)
+        val lNotificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setChannelId(channelId)
             .setContentTitle(getString(R.string.app_name))
             .setContentText("Submitting a practice...")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
@@ -435,7 +417,6 @@ class FileUploadService : Service() {
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MIN)
 
-
         startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
     }
 
@@ -445,7 +426,6 @@ class FileUploadService : Service() {
         const val UPLOAD_ALL_PENDING = "UPLOAD_ALL_PENDING"
         const val NEW_TASK_MODEL = "UPLOAD_ALL_PENDING"
         private val TAG = "FileUploadService"
-        private const val CHANNEL_ID = "FILE_UPLOAD"
         private const val NOTIFICATION_ID = 111
         fun uploadAllPendingTasks(context: Context) {
             try {

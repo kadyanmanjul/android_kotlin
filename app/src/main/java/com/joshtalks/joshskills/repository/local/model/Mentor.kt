@@ -28,6 +28,8 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -86,6 +88,7 @@ class Mentor {
                     .setUserId(loginResponse.userId)
                     .update()
                 AppAnalytics.updateUser()
+                NotificationUtils(joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 UserExperior.setUserIdentifier(getInstance().getId())
             }
         }
@@ -143,8 +146,8 @@ class Mentor {
             )
 
             val notificationId = 101567
-            val notificationChannelId = "109000"
-            val notificationChannelName = NotificationChannelNames.DEFAULT.type
+            val notificationChannelId = NotificationChannelData.UPDATES.id
+            val notificationChannelName = NotificationChannelData.UPDATES.type
             val contentTitle: String? = null
             val contentText = joshApplication.getString(R.string.auto_logout_message)
             val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
@@ -161,10 +164,7 @@ class Mentor {
             style.setSummaryText("")
 
             val notificationBuilder =
-                NotificationCompat.Builder(
-                    joshApplication,
-                    notificationChannelId
-                )
+                NotificationCompat.Builder(joshApplication, notificationChannelId)
                     .setTicker(null)
                     .setSmallIcon(R.drawable.ic_status_bar_notification)
                     .setContentTitle(contentTitle)
@@ -176,10 +176,7 @@ class Mentor {
                     .setWhen(System.currentTimeMillis())
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setColor(
-                        ContextCompat.getColor(
-                            joshApplication,
-                            R.color.colorAccent
-                        )
+                        ContextCompat.getColor(joshApplication, R.color.colorAccent)
                     )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

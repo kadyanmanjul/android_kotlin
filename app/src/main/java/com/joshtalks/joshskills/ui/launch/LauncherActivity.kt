@@ -139,17 +139,17 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     }
 
     private fun analyzeAppRequirement() {
-            when {
-                PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> {
-                    if (intent.data == null)
-                        viewModel.initGaid(testId)
-                }
-                Mentor.getInstance().hasId() -> startNextActivity()
-                else -> viewModel.getMentorForUser(
-                    PrefManager.getStringValue(USER_UNIQUE_ID),
-                    testId
-                )
+        when {
+            PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> {
+                if (intent.data == null)
+                    viewModel.initGaid(testId)
             }
+            Mentor.getInstance().hasId() -> startNextActivity()
+            else -> viewModel.getMentorForUser(
+                PrefManager.getStringValue(USER_UNIQUE_ID),
+                testId
+            )
+        }
     }
 
     private fun handleIntent() {
@@ -225,6 +225,7 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         if(canRunApplication()) {
             WorkManagerAdmin.appStartWorker()
             lifecycleScope.launch {
+                viewModel.addAnalytics()
                 viewModel.updateABTestCampaigns()
                 AppObjectController.uiHandler.removeCallbacksAndMessages(null)
                 if (testId.isNullOrEmpty().not()) {

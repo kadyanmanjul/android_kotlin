@@ -79,11 +79,14 @@ class NotificationObject {
     var priority: Int? = null
 
     override fun toString(): String {
-            return AppObjectController.gsonMapper.toJson(this)
-        }
+        return AppObjectController.gsonMapper.toJson(this)
+    }
 }
 
 enum class NotificationAction(val type: String) {
+    @SerializedName("open_app")
+    OPEN_APP("open_app"),
+
     @SerializedName("open_test")
     ACTION_OPEN_TEST("open_test"),
 
@@ -138,26 +141,8 @@ enum class NotificationAction(val type: String) {
     @SerializedName("open_reminder")
     ACTION_OPEN_REMINDER("open_reminder"),
 
-    @SerializedName("audio_feedback_report")
-    AUDIO_FEEDBACK_REPORT("audio_feedback_report"),
-
     @SerializedName("award_declare_notification")
     AWARD_DECLARE("award_declare_notification"),
-
-    @SerializedName("GROUP_CHAT_MESSAGE_NOTIFICATION")
-    GROUP_CHAT_MESSAGE_NOTIFICATION("GROUP_CHAT_MESSAGE_NOTIFICATION"),
-
-    @SerializedName("GROUP_CHAT_REPLY")
-    GROUP_CHAT_REPLY("GROUP_CHAT_REPLY"),
-
-    @SerializedName("GROUP_CHAT_VOICE_NOTE_HEARD")
-    GROUP_CHAT_VOICE_NOTE_HEARD("GROUP_CHAT_VOICE_NOTE_HEARD"),
-
-    @SerializedName("GROUP_CHAT_PIN_MESSAGE")
-    GROUP_CHAT_PIN_MESSAGE("GROUP_CHAT_PIN_MESSAGE"),
-
-    @SerializedName("ACTION_COMPLETE_ONBOARDING")
-    ACTION_COMPLETE_ONBOARDING("ACTION_COMPLETE_ONBOARDING"),
 
     @SerializedName("OPEN_FREE_TRIAL_SCREEN")
     ACTION_OPEN_FREE_TRIAL_SCREEN("OPEN_FREE_TRIAL_SCREEN"),
@@ -188,4 +173,17 @@ enum class NotificationAction(val type: String) {
 
     @SerializedName("call_recording_notification")
     CALL_RECORDING_NOTIFICATION("call_recording_notification"),
+
+    @SerializedName("initiate_random_call")
+    INITIATE_RANDOM_CALL("initiate_random_call");
+
+    companion object {
+        fun getEnumFromValue(value: String?): NotificationAction? {
+            for (enum in values()) {
+                if (value == enum.type)
+                    return enum
+            }
+            return null
+        }
+    }
 }

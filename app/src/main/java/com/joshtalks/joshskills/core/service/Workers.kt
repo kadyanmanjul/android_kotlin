@@ -220,28 +220,6 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
         return Result.success()
     }
 }
-/*
-class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-
-    override suspend fun doWork(): Result {
-        try {
-            if (PrefManager.hasKey(INSTANCE_ID, false) && PrefManager.getStringValue(API_TOKEN)
-                    .isBlank()
-                && PrefManager.getStringValue(INSTANCE_ID).isBlank().not()
-            ) {
-                val instanceId = PrefManager.getStringValue(INSTANCE_ID)
-                val response =
-                    AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
-                updateFromLoginResponse(response)
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-}
-*/
 
 // TODO: Remove this worker
 //class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
@@ -862,41 +840,6 @@ class FakeCallNotificationWorker(
         return Result.success()
     }
 }
-
-class LocalNotificationWorker(
-    val context: Context,
-    workerParams: WorkerParameters
-) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            checkOnBoardingStage(context)
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-
-    private fun checkOnBoardingStage(context: Context) {
-        val onBoardingStage = PrefManager.getStringValue(ONBOARDING_STAGE)
-        val isOnBoardingUnfinished = onBoardingStage == OnBoardingStage.APP_INSTALLED.value ||
-                onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
-                onBoardingStage == OnBoardingStage.JI_HAAN_CLICKED.value
-        if (User.getInstance().isVerified.not() && isOnBoardingUnfinished) {
-            showOnBoardingCompletionNotification(context)
-        }
-    }
-
-    private fun showOnBoardingCompletionNotification(context: Context) {
-        val nc = NotificationObject().apply {
-            contentTitle = "You are just one step away from"
-            contentText = "Fulfilling your dream of speaking in English"
-            action = NotificationAction.ACTION_COMPLETE_ONBOARDING
-        }
-        NotificationUtils(context).sendNotification(nc)
-    }
-}
-
 
 fun getGoogleAdId(context: Context): String? {
     try {

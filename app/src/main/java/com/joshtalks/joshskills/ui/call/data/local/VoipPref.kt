@@ -9,6 +9,8 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_RATING
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PURCHASE_POPUP
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
@@ -80,13 +82,22 @@ object VoipPref {
             editor.putString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, remoteUserMentorId)
             editor.commit()
 
-            // TODO: These logic shouldn't be here
-
-            if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
-                Log.d("sagar", "SAGAR => updateLastCallDetails:86 ")
-                showDialogBox(duration, CALL_RATING)
+            if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) && duration.inSeconds() >= 300) {
+                editor.putBoolean(IS_FIRST_CALL, false)
+                editor.putBoolean(IS_FIRST_5MIN_CALL, false)
+                NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
+                NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_FIRST_CALL)
+                NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIVE_MIN_CALL)
+            } else if (duration != 0L && preferenceManager.getBoolean(IS_FIRST_CALL, true)) {
+                editor.putBoolean(IS_FIRST_CALL, false)
+                NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
+                NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
             }
-            else if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+
+            // TODO: These logic shouldn't be here
+            if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
+                showDialogBox(duration, CALL_RATING)
+            } else if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                 showDialogBox(duration, PURCHASE_POPUP)
             }
 
@@ -146,7 +157,6 @@ object VoipPref {
                 val newFragmentActivity = newCurrentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
                     if (type == CALL_RATING) {
-                        Log.d("sagar", "SAGAR => showDialogBox:147 ")
                         newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
                     }
                     else {
@@ -157,7 +167,6 @@ object VoipPref {
                 val newFragmentActivity = currentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
                     if (type == CALL_RATING) {
-                        Log.d("sagar", "SAGAR => showDialogBox:156 ")
                         newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
                     }
                     else {
@@ -168,19 +177,16 @@ object VoipPref {
         }
     }
 
-        // TODO: These function shouldn't be here
-        private fun FragmentActivity.showVoipDialog(totalSecond: Long,type: String) {
-            if(type == CALL_RATING) {
-                Log.d("sagar", "SAGAR => showVoipDialog:168 ")
-                showCallRatingDialog(this)
-            }
-            else{
-                showPurchaseDialog(this)
-            }
+    // TODO: These function shouldn't be here
+    private fun FragmentActivity.showVoipDialog(totalSecond: Long, type: String) {
+        if (type == CALL_RATING) {
+            showCallRatingDialog(this)
+        } else {
+            showPurchaseDialog(this)
         }
+    }
 
     private fun showCallRatingDialog(fragmentActivity: FragmentActivity) {
-        Log.d("sagar", "SAGAR => showCallRatingDialog:175 ")
         CallRatingsFragment.newInstance(
             getLastRemoteUserName(),
             getLastCallDurationInSec().toInt(),
@@ -190,8 +196,6 @@ object VoipPref {
             getLocalUserAgoraId().toString()
         ).show(fragmentActivity.supportFragmentManager, "CallRatingsFragment")
     }
-
-
 
     private fun showPurchaseDialog(fragmentActivity: FragmentActivity) {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
@@ -230,7 +234,6 @@ object VoipPref {
 
         fun getStartTimeStamp(): Long {
             val startTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
-            Log.d(TAG, "getStartTimeStamp: $startTime")
             return startTime
         }
 
@@ -270,15 +273,15 @@ object VoipPref {
             return preferenceManager.getString(PREF_KEY_LAST_CHANNEL_NAME, "").toString()
         }
 
-        fun getLastCallDurationInSec(): Long {
-            val duration = preferenceManager.getLong(PREF_KEY_LAST_CALL_DURATION, 0)
-            Log.d(TAG, "getLastCallDurationInSec: $duration")
-            return if(duration.inSeconds()>0){
-                duration.inSeconds()
-            }else{
-                1
-            }
+    fun getLastCallDurationInSec(): Long {
+        val duration = preferenceManager.getLong(PREF_KEY_LAST_CALL_DURATION, 0)
+        Log.d(TAG, "getLastCallDurationInSec: $duration")
+        return if (duration.inSeconds() > 0) {
+            duration.inSeconds()
+        } else {
+            1
         }
+    }
 
     fun getLastRemoteUserMentorId(): String {
         return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, "").toString()

@@ -101,14 +101,9 @@ data class FirestoreNewNotificationObject(
         it.deeplink = deeplink
         it.extraData = extraData
         it.action = when (action) {
+            NotificationAction.OPEN_APP.type -> NotificationAction.OPEN_APP
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN.type -> NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN
-            NotificationAction.ACTION_COMPLETE_ONBOARDING.type -> NotificationAction.ACTION_COMPLETE_ONBOARDING
-            NotificationAction.GROUP_CHAT_PIN_MESSAGE.type -> NotificationAction.GROUP_CHAT_PIN_MESSAGE
-            NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD.type -> NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD
-            NotificationAction.GROUP_CHAT_REPLY.type -> NotificationAction.GROUP_CHAT_REPLY
-            NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.type -> NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION
             NotificationAction.AWARD_DECLARE.type -> NotificationAction.AWARD_DECLARE
-            NotificationAction.AUDIO_FEEDBACK_REPORT.type -> NotificationAction.AUDIO_FEEDBACK_REPORT
             NotificationAction.ACTION_OPEN_REMINDER.type -> NotificationAction.ACTION_OPEN_REMINDER
             NotificationAction.ACTION_LOGOUT_USER.type -> NotificationAction.ACTION_LOGOUT_USER
             NotificationAction.ACTION_DELETE_USER_AND_DATA.type -> NotificationAction.ACTION_DELETE_USER_AND_DATA
@@ -132,6 +127,9 @@ data class FirestoreNewNotificationObject(
             NotificationAction.ACTION_OPEN_FPP_LIST.type -> NotificationAction.ACTION_OPEN_FPP_LIST
             NotificationAction.ACTION_OPEN_FPP_REQUESTS.type -> NotificationAction.ACTION_OPEN_FPP_REQUESTS
             NotificationAction.EMERGENCY_NOTIFICATION.type -> NotificationAction.EMERGENCY_NOTIFICATION
+            NotificationAction.INITIATE_RANDOM_CALL.type -> NotificationAction.INITIATE_RANDOM_CALL
+            NotificationAction.ACTION_FPP_INCOMING_CALL.type -> NotificationAction.ACTION_FPP_INCOMING_CALL
+            NotificationAction.ACTION_P2P_INCOMING_CALL.type -> NotificationAction.ACTION_P2P_INCOMING_CALL
             else -> null
         }
     }

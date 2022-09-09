@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -45,8 +46,8 @@ private const val WRITE_TIMEOUT = 30L
 private const val READ_TIMEOUT = 30L
 
 const val NOTIF_ID = 12301
-const val NOTIF_CHANNEL_ID = "12301"
-const val NOTIF_CHANNEL_NAME = "NOTIFICATION SERVICE"
+val NOTIF_CHANNEL_ID = NotificationChannelData.OTHERS.id
+val NOTIF_CHANNEL_NAME = NotificationChannelData.OTHERS.type
 
 class BackgroundService : Service() {
 

@@ -28,23 +28,7 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
-import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
-import com.joshtalks.joshskills.core.IS_APP_RESTARTED
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
-import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -57,7 +41,6 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -503,6 +486,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initMoEngage()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
+        if (!PrefManager.getBoolValue(FETCHED_SCHEDULED_NOTIFICATION))
+            viewModel.getFreeTrialNotifications()
     }
 
     override fun onPause() {
@@ -580,7 +565,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onClick(inboxEntity: InboxEntity) {
-        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
         val check = viewModel.abTestRepository.isVariantActive(VariantKeys.EFT_ENABLED)
         if (check && inboxEntity.isFreeTrialExtendable) {
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)

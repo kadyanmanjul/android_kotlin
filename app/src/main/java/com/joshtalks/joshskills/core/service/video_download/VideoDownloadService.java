@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity;
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelData;
 import com.joshtalks.joshskills.ui.chat.ConversationActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,16 +43,15 @@ import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNL
 import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.CHAT_ROOM_OBJECT;
 import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.FOCUS_ON_CHAT_ID;
 
-
 public class VideoDownloadService extends DownloadService {
 
-    private static final String CHANNEL_ID = "download_channel";
+    private static final String CHANNEL_ID = NotificationChannelData.DOWNLOADS.getId();
+    private static final String CHANNEL_NAME = NotificationChannelData.DOWNLOADS.getType();
     private static final int JOB_ID = 1;
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
     private static int nextNotificationId = FOREGROUND_NOTIFICATION_ID + 1;
     private static final HashMap<String, Integer> notificationListMap = new HashMap<>();
-
 
     private DownloadNotificationHelper notificationHelper;
 
@@ -64,7 +64,6 @@ public class VideoDownloadService extends DownloadService {
         nextNotificationId = FOREGROUND_NOTIFICATION_ID + 1;
         notificationListMap.clear();
     }
-
 
     @Override
     public void onCreate() {
@@ -141,7 +140,6 @@ public class VideoDownloadService extends DownloadService {
         }
     }
 
-
     void videoNotUploadFlagUpdate() {
         new Timer().schedule(new TimerTask() {
             @Override
@@ -195,7 +193,6 @@ public class VideoDownloadService extends DownloadService {
                 haveDownloadedBytes |= download.getBytesDownloaded() > 0;
                 downloadTaskCount++;
             }
-
 
             if (haveDownloadTasks) {
                 int progress = (int) (totalPercentage / downloadTaskCount);

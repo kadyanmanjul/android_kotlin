@@ -845,13 +845,6 @@
     <string name="allowed_name_characters" translatable="false">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM</string>
     <string name="discussion_topic" translatable="false">Discussion Topic</string>
 
-    <!--    Notification Module-->
-    <string name="channel_name_calls" translatable="false">Calls</string>
-    <string name="CHANNEL_ID_CALLS" translatable="false">10001</string>
-    <string name="channel_name_normal" translatable="false">others</string>
-    <string name="channel_calls_description" translatable="false">For Incoming Calls Notification</string>
-    <string name="channel_others_description" translatable="false">some other updates</string>
-    <string name="CHANNEL_ID_OTHERS" translatable="false">10002</string>
     <string name="submit_report_btn" translatable="false">Submit</string>
 
     //call ratings strings

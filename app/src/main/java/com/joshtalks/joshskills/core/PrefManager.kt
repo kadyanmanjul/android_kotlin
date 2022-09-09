@@ -121,7 +121,6 @@ const val CHAT_OPENED_FOR_NOTIFICATION = "chat_opened_for_notification"
 const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
-const val ONBOARDING_STAGE = "onboarding_stage"
 const val BLOCK_ISSUE = "BLOCK_ISSUE"
 const val REPORT_ISSUE = "REPORT_ISSUE"
 const val LAST_TIME_AUTOSTART_SHOWN = "LAST_TIME_AUTOSTART_SHOWN"
@@ -190,7 +189,7 @@ const val IS_FIRST_TIME_CONVERSATION = "IS_FIRST_TIME_CONVERSATION"
 const val HAS_SEEN_WARNING_POPUP_FT = "HAS_SEEN_WARNING_POPUP_FT"
 const val IS_APP_RESTARTED = "IS_APP_RESTARTED"
 const val BLOCK_STATUS = "BLOCK_STATUS"
-
+const val FETCHED_SCHEDULED_NOTIFICATION = "FETCHED_SCHEDULED_NOTIFICATION"
 
 object PrefManager {
 

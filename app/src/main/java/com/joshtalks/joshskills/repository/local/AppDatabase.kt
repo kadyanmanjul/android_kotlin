@@ -16,7 +16,9 @@ import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.VariableMap
 import com.joshtalks.joshskills.core.abTest.repository.ABTestCampaignDao
 import com.joshtalks.joshskills.core.notification.database.NotificationEventDao
+import com.joshtalks.joshskills.core.notification.database.ScheduleNotificationDao
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
+import com.joshtalks.joshskills.core.notification.model.ScheduleNotification
 import com.joshtalks.joshskills.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
@@ -131,9 +133,10 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class , Payment::class
+        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class,
+        ScheduleNotification::class
     ],
-    version = 53,
+    version = 54,
     exportSchema = true
 )
 @TypeConverters(
@@ -233,7 +236,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_49_50,
                                 MIGRATION_50_51,
                                 MIGRATION_51_52,
-                                MIGRATION_52_53
+                                MIGRATION_52_53,
+                                MIGRATION_53_54
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -673,10 +677,17 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `is_ft_caller_blocked` TEXT")
             }
         }
-        private val MIGRATION_52_53: Migration = object : Migration(52,53) {
+
+        private val MIGRATION_52_53: Migration = object : Migration(52, 53) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE `nps_event_table`")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `payment_table` (`amount` REAL NOT NULL, `joshtalks_order_id` INTEGER NOT NULL, `razorpay_key_id` TEXT NOT NULL, `razorpay_order_id` TEXT NOT NULL, `status` TEXT, `time_stamp` INTEGER NOT NULL, `is_sync` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, `response` TEXT NOT NULL, PRIMARY KEY(`razorpay_order_id`))")
+            }
+        }
+
+        private val MIGRATION_53_54: Migration = object : Migration(53, 54) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `schedule_notification` (`id` TEXT NOT NULL, `category` TEXT NOT NULL, `title` TEXT NOT NULL, `body` TEXT NOT NULL, `execute_after` INTEGER NOT NULL, `action` TEXT NOT NULL, `action_data` TEXT NOT NULL, `is_scheduled` INTEGER NOT NULL DEFAULT 0, `is_shown` INTEGER NOT NULL DEFAULT 0, `is_event_sent` INTEGER NOT NULL DEFAULT 0)")
             }
         }
 
@@ -728,6 +739,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun notificationEventDao(): NotificationEventDao
     abstract fun broadcastDao(): BroadCastDao
     abstract fun paymentDao(): PaymentDao
+    abstract fun scheduleNotificationDao(): ScheduleNotificationDao
 }
 
 class MessageTypeConverters {

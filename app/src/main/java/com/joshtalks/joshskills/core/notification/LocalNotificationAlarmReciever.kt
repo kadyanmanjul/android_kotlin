@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventRece
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.NOTIFICATION_TEXT_TEXT
 import com.joshtalks.joshskills.core.service.NOTIFICATION_TITLE_TEXT
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import kotlinx.coroutines.CoroutineScope
@@ -24,27 +24,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LocalNotificationAlarmReciever : BroadcastReceiver() {
-    override fun onReceive(
-        context: Context,
-        intent: Intent
-    ) {
-        val index = intent.getIntExtra("id",0)
+    override fun onReceive(context: Context, intent: Intent) {
+        val index = intent.getIntExtra("id", 0)
         if ("android.intent.action.BOOT_COMPLETED" == intent.action) {
             CoroutineScope(Dispatchers.IO).launch {
-                context.showNotificationWithFullScreenIntent(context,notificationIndex=index)
+                context.showNotificationWithFullScreenIntent(context, notificationIndex = index)
             }
         } else
-
             CoroutineScope(Dispatchers.IO).launch {
-                context.showNotificationWithFullScreenIntent(context,notificationIndex=index)
+                context.showNotificationWithFullScreenIntent(context, notificationIndex = index)
             }
     }
 
     private fun Context.showNotificationWithFullScreenIntent(
         context: Context,
         channelId: String = CHANNEL_ID,
-        notificationIndex:Int
-
+        notificationIndex: Int
     ) {
 
         val delay = NOTIFICATION_DELAY.get(notificationIndex)
@@ -56,21 +51,18 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
                     .replace("%num", (24..78).random().toString())
                     .replace("%name", User.getInstance().firstName.toString())
         } else {
-            title =
-                NOTIFICATION_TITLE_TEXT.get(notificationIndex)
+            title = NOTIFICATION_TITLE_TEXT.get(notificationIndex)
         }
 
-
         val intent = Intent(applicationContext, LauncherActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                putExtra(HAS_NOTIFICATION, true)
-                putExtra(HAS_LOCAL_NOTIFICATION, true)
-            }
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            putExtra(HAS_NOTIFICATION, true)
+            putExtra(HAS_LOCAL_NOTIFICATION, true)
+        }
 
         intent.run {
             val activityList = arrayOf(this)
             val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(delay).toInt()
-
 
             val pendingIntent = PendingIntent.getActivities(
                 context,
@@ -83,14 +75,10 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
             style.setSummaryText("")
 
             val builder = NotificationCompat.Builder(context, channelId)
-
                 .setStyle(style)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.colorAccent
-                    )
+                    ContextCompat.getColor(context, R.color.colorAccent)
                 )
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
                 .setContentTitle(title)
@@ -101,10 +89,7 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
                 .setCategory(Notification.CATEGORY_REMINDER)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.colorAccent
-                    )
+                    ContextCompat.getColor(context, R.color.colorAccent)
                 )
             val dismissIntent =
                 Intent(applicationContext, LocalNotificationDismissEventReceiver::class.java)
@@ -113,8 +98,7 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
 
             builder.setDeleteIntent(dismissPendingIntent)
 
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             with(notificationManager) {
                 buildChannel()
@@ -126,20 +110,18 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
 
     private fun NotificationManager.buildChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = NotificationChannelNames.OTHERS.type
+            val name = NotificationChannelData.LOCAL_NOTIFICATIONS.type
             val descriptionText = "This is for josh local notification"
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
-
             createNotificationChannel(channel)
         }
     }
 
     companion object {
-        private const val CHANNEL_ID = "josh_app_local_notification_channel"
+        private val CHANNEL_ID = NotificationChannelData.LOCAL_NOTIFICATIONS.id
         const val NOTIFICATION_ID = 0
     }
-
 }

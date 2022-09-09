@@ -69,7 +69,7 @@ class ReminderUtil(val context: Context) {
         )
     }
 
-    private fun createAlarm(pendingIntent: PendingIntent, triggerTime: Long) {
+    fun createAlarm(pendingIntent: PendingIntent, triggerTime: Long) {
         val alarmManager: AlarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         alarmManager.setExact(
@@ -100,7 +100,7 @@ class ReminderUtil(val context: Context) {
             AppObjectController.getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.NOTIFICATION_API_TIME) * 60 * 60 * 1000
         if (timeDiffConfig != 0L && timeDiff > timeDiffConfig) {
             PrefManager.put(LAST_TIME_NOTIFICATION_API, System.currentTimeMillis())
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S){
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 if (context.applicationContext != null) {
                     val intent = Intent(context.applicationContext, BackgroundService::class.java)
                     val pendingIntent =

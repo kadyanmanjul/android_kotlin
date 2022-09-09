@@ -19,6 +19,8 @@ import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
@@ -244,6 +246,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
             ABTestRepository().updateAllCampaigns()
+            NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
             val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT, false)
             val courseExpiryTime =
                 PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
@@ -453,6 +456,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         )
                     )
                 if (resp.isSuccessful) {
+                    if (!PrefManager.getBoolValue(FETCHED_SCHEDULED_NOTIFICATION))
+                        getFreeTrialNotifications()
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)
                     getRegisteredFreeTrialCourse()
                     return@launch
@@ -520,6 +525,27 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             } catch (ex: Exception) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
+            }
+        }
+    }
+
+    fun getFreeTrialNotifications() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
+                    PrefManager.getStringValue(
+                        FREE_TRIAL_TEST_ID,
+                        false,
+                        FREE_TRIAL_DEFAULT_TEST_ID
+                    )
+                )
+                AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
+                if (response.isNotEmpty())
+                    PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
+                NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
+                NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

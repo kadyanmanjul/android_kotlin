@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.util.ReminderUtil
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
@@ -77,9 +77,7 @@ class AlarmReceiver : BroadcastReceiver() {
                             )
                                 context.showNotificationWithFullScreenIntent(context)
                         }
-                        else ->
-                            context
-                                .showNotificationWithFullScreenIntent(context)
+                        else -> context.showNotificationWithFullScreenIntent(context)
                     }
 
                 }
@@ -94,7 +92,6 @@ class AlarmReceiver : BroadcastReceiver() {
         description: String = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.REMINDER_NOTIFICATION_DESCRIPTION)
 
-
     ) {
         val builder = NotificationCompat.Builder(this, channelId)
             .setFullScreenIntent(getFullScreenIntent(), true)
@@ -106,18 +103,15 @@ class AlarmReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
                 ContextCompat.getColor(
-                    context,
-                    R.color.colorAccent
+                    context, R.color.colorAccent
                 )
             )
             .setSound(
                 RingtoneManager.getActualDefaultRingtoneUri(
-                    context,
-                    RingtoneManager.TYPE_ALARM
+                    context, RingtoneManager.TYPE_ALARM
                 )
             )
-        val dismissIntent =
-            Intent(applicationContext, AlarmNotifDismissReceiver::class.java)
+        val dismissIntent = Intent(applicationContext, AlarmNotifDismissReceiver::class.java)
         val dismissPendingIntent: PendingIntent =
             PendingIntent.getBroadcast(applicationContext, 1, dismissIntent, 0)
 
@@ -138,7 +132,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun NotificationManager.buildChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = NotificationChannelNames.OTHERS.type
+            val name = NotificationChannelData.OTHERS.type
             val descriptionText = "This is for josh alarm notification"
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
@@ -151,9 +145,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun Context.getFullScreenIntent(): PendingIntent {
 
-        val destination =
-            AlarmNotifierActivity::class.java
-
+        val destination = AlarmNotifierActivity::class.java
         val intent = Intent(this, destination)
 
 // flags and request code are 0 for the purpose of demonstration
@@ -161,7 +153,7 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        private const val CHANNEL_ID = "josh_app_alarm_channel"
+        private val CHANNEL_ID = NotificationChannelData.OTHERS.id
         const val NOTIFICATION_ID = 0
     }
 
