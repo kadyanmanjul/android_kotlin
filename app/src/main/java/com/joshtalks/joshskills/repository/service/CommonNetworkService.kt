@@ -26,9 +26,7 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
-import com.joshtalks.joshskills.ui.callWithExpert.model.AvailableAmount
-import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListResponse
-import com.joshtalks.joshskills.ui.callWithExpert.model.WalletBalance
+import com.joshtalks.joshskills.ui.callWithExpert.model.*
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
@@ -392,4 +390,11 @@ interface CommonNetworkService {
         @Query("duration") duration: String,
         @Query("remote_user_id") remoteUserId: String,
     ): Response<PurchasePopUp>
+
+    @GET("$DIR/micro_payment/get_wallet_transactions/{mentor}/")
+    suspend fun getWalletTransactions(@Path("mentor") mentorId: String, @Query("page") page:Int): Response<TransactionResponse>
+
+    @GET("$DIR/micro_payment/get_payment_logs/{mentor}/")
+    suspend fun getPaymentTransactions(@Path("mentor") mentorId: String, @Query("page") page:Int): Response<WalletLogResponse>
+
 }

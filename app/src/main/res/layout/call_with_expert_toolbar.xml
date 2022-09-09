@@ -80,7 +80,8 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/iv_earn"
-                android:layout_width="@dimen/_45sdp"
+                android:layout_width="wrap_content"
+                android:minWidth="@dimen/_45sdp"
                 android:layout_height="@dimen/_24sdp"
                 tools:text="\u20B9 0"
                 android:textAllCaps="false"

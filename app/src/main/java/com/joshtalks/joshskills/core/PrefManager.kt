@@ -192,7 +192,6 @@ const val BLOCK_STATUS = "BLOCK_STATUS"
 const val FETCHED_SCHEDULED_NOTIFICATION = "FETCHED_SCHEDULED_NOTIFICATION"
 
 object PrefManager {
-
     private const val PREF_NAME_COMMON = "JoshSkills"
     private const val PREF_NAME_CONSISTENT = "com.joshtalks.joshskills.JoshSkillsConsistentPref"
 

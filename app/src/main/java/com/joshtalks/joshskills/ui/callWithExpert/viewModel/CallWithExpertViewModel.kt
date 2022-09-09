@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.callWithExpert.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -63,6 +64,8 @@ class CallWithExpertViewModel : ViewModel() {
         _proceedPayment.value = true
     }
 
+
+
     fun updateAmount(amount: Amount) {
         addedAmount = amount
     }
@@ -96,5 +99,10 @@ class CallWithExpertViewModel : ViewModel() {
 
     fun paymentSuccess(isSuccess: Boolean) {
         _paymentSuccessful.postValue(isSuccess)
+    }
+
+    fun syncCallDuration(){
+        Log.d("durationsync", "syncCallDuration: ")
+        expertListRepo.deductAmountAfterCall()
     }
 }

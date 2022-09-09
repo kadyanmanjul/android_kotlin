@@ -9,7 +9,11 @@
         android:id="@+id/walletFragment"
         android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.WalletFragment"
         android:label="Add money to wallet"
-        tools:layout="@layout/fragment_wallet"/>
+        tools:layout="@layout/fragment_wallet">
+        <action
+            android:id="@+id/action_wallet_to_transactions"
+            app:destination="@+id/transactions"/>
+    </fragment>
     <fragment
         android:id="@+id/expertListFragment"
         android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertListFragment"
@@ -23,4 +27,9 @@
         android:id="@+id/paymentProcessingFragment"
         android:name="com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment"
         android:label="Processing Payment" />
+    <fragment
+        android:id="@+id/transactions"
+        android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.TransactionsFragment"
+        android:label="Transactions"
+        tools:layout="@layout/fragment_transactions" />
 </navigation>

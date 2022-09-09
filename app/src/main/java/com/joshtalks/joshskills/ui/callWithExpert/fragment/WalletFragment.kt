@@ -14,9 +14,12 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecorati
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWalletBinding
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.AmountAdapter
+import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
+import com.joshtalks.joshskills.ui.callWithExpert.utils.removeRupees
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel
+import com.moengage.core.internal.utils.isNullOrEmpty
 
 class WalletFragment : Fragment() {
 
@@ -30,7 +33,6 @@ class WalletFragment : Fragment() {
         ViewModelProvider(requireActivity())[CallWithExpertViewModel::class.java]
     }
 
-    var amountToAdd = EMPTY
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +61,6 @@ class WalletFragment : Fragment() {
         viewModel.availableAmount.observe(viewLifecycleOwner) {
             binding.amountList.adapter =
                 AmountAdapter(it) { amount ->
-                    amountToAdd = amount.amountInRupees()
                     this@WalletFragment.viewModel.updateAddedAmount(amount.amountInRupees())
                     callWithExpertViewModel.updateAmount(amount)
                 }
@@ -76,13 +77,18 @@ class WalletFragment : Fragment() {
     }
 
     fun openCheckoutScreen() {
-        if (amountToAdd != EMPTY) {
-            WalletRechargePaymentManager.selectedExpertForCall = null
-            callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
-            callWithExpertViewModel.proceedPayment()
-        }else{
-            showToast("Please select amount to add")
-        }
+        viewModel.addedAmount.value?.let { addedAmount ->
+            when{
+                addedAmount == "" -> { showToast(getString(R.string.please_select_amount_to_add)) }
+                addedAmount.removeRupees().toInt() < 50 -> { showToast(getString(R.string.minimum_amount_required)) }
+                else -> {
+                    WalletRechargePaymentManager.selectedExpertForCall = null
+                    callWithExpertViewModel.updateAmount(Amount(viewModel.addedAmount.value!!.removeRupees().toInt(), viewModel.getAmountId()))
+                    callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
+                    callWithExpertViewModel.proceedPayment()
+                }
+            }
+        } ?: showToast(getString(R.string.please_select_amount_to_add))
     }
 
 }

@@ -1058,5 +1058,15 @@
         <item>₹ 100000</item>
     </string-array>
     <string name="rup">\u20B9</string>
+    <string name="please_select_amount_to_add">Please select amount to add</string>
+    <string name="minimum_amount_required">Minimum amount required is INR 50</string>
+    <string name="transaction_history">Transaction History</string>
+    <string name="recharge">Recharge</string>
+    <string name="call_info_copied">call info copied</string>
+    <string name="payment_logs">Payment Logs</string>
+    <string name="wallet_transactions">Wallet Transactions</string>
+    <string name="josh_transaction_id">josh_transaction_id</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
+    <string name="empty"> </string>
 
 </resources>

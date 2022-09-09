@@ -22,9 +22,9 @@ const val INTENT_DATA_FPP_MENTOR_ID = "josh_intent_fpp_mentor_id"
 const val INTENT_DATA_FPP_NAME = "josh_intent_fpp_name"
 const val INTENT_DATA_FPP_IMAGE = "josh_intent_fpp_image"
 const val INTENT_DATA_GROUP_ID = "josh_intent_group_id"
-const val INTENT_DATA_GROUP_NAME = "josh_intent_group_name"
-const val INTENT_DATA_TOTAL_AMOUNT = "josh_intent_total_amount"
-const val INTENT_DATA_EXPERT_PRICE_PER_MIN = "josh_intent_name_expert_price_per_min"
+const val INTENT_DATA_GROUP_NAME =  "josh_intent_group_name"
+const val INTENT_DATA_TOTAL_AMOUNT =  "josh_intent_total_amount"
+const val INTENT_DATA_EXPERT_PRICE_PER_MIN =  "josh_intent_name_expert_price_per_min"
 
 
 // Service Action
@@ -134,6 +134,6 @@ const val IS_EXPERT_CALLING = "expert_calling"
 
 const val USER_NAME = "USER_NAME"
 const val USER_PROFILE = "USER_PROFILE"
-
+const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"
 const val IS_FIRST_CALL = "IS_FIRST_CALL"
 const val IS_FIRST_5MIN_CALL = "IS_FIRST_5MIN_CALL"

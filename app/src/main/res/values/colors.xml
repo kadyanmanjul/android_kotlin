@@ -214,4 +214,9 @@
     <color name="payment_status_red">#F03636</color>
     <color name="green_payment">#57CC02</color>
     <color name="green_payment_text">#179549</color>
+
+    <color name="txt_money_deducted">#D63231</color>
+    <color name="txt_money_added">#36B252</color>
+    <color name="txt_payment_details">#747474</color>
+    <color name="tab_transaction_text_color">#6B6B6B</color>
 </resources>
