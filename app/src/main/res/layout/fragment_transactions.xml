@@ -19,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="@color/name_field_color">
+        android:background="@color/name_field_color">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineStart"
@@ -92,6 +92,7 @@
             app:layout_constraintTop_toBottomOf="@+id/availableBalance"
             app:tabBackground="@drawable/tab_payment_history"
             app:tabIndicator="@null"
+            android:background="@color/name_field_color"
             app:tabRippleColor="@null"
             android:clipToPadding="true"
             app:tabSelectedTextColor="@color/white"

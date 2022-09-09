@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.databinding.ItemWalletPaymentLogBinding
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletLogs
 import com.moengage.core.internal.utils.MoEUtils.getSystemService
 
-class WalletLogsAdapter(var items: List<WalletLogs> = listOf()):PagingDataAdapter<WalletLogs,WalletLogsAdapter.LogsViewHolder>(LogsDiffUtilCallbacks()) {
+class WalletLogsAdapter():PagingDataAdapter<WalletLogs,WalletLogsAdapter.LogsViewHolder>(LogsDiffUtilCallbacks()) {
     inner class LogsViewHolder(val itemBinding: ItemWalletPaymentLogBinding):RecyclerView.ViewHolder(itemBinding.root){
         fun bind(item: WalletLogs){
             with(itemBinding){

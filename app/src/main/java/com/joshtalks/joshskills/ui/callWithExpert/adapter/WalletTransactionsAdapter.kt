@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ItemWalletTransactionBinding
 import com.joshtalks.joshskills.ui.callWithExpert.model.Transaction
 
-class WalletTransactionsAdapter(var items: List<Transaction> = listOf()): PagingDataAdapter<Transaction,WalletTransactionsAdapter.TransactionViewHolder>(TransactionDiffUtilsCallbacks()) {
+class WalletTransactionsAdapter(): PagingDataAdapter<Transaction,WalletTransactionsAdapter.TransactionViewHolder>(TransactionDiffUtilsCallbacks()) {
     inner class TransactionViewHolder(val itemBinding: ItemWalletTransactionBinding):RecyclerView.ViewHolder(itemBinding.root){
         fun bind(item: Transaction){
             with(itemBinding){
