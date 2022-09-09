@@ -113,8 +113,8 @@ object VoipPref {
                    val response =  AppObjectController.commonNetworkService.deductAmountAfterCall(map)
                     when(response.code()){
                         200->{
-                            SkillsDatastore.updateWalletCredits(response.body()?.amount?:0)
                             setExpertCallDuration("")
+                            SkillsDatastore.updateWalletCredits(response.body()?.amount?:0)
                         }
                         406->{
 
@@ -129,6 +129,7 @@ object VoipPref {
                     val response = AppObjectController.commonNetworkService.deductAmountAfterCall(map)
                     when (response.code()) {
                         200 -> {
+                            setExpertCallDuration("")
                             SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
                         }
                         406 -> {

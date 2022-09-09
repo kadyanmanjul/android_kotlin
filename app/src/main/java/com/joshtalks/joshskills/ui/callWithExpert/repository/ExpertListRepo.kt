@@ -97,8 +97,9 @@ class ExpertListRepo {
         AppObjectController.commonNetworkService.getCallNowStatus(expertId)
 
     fun deductAmountAfterCall() {
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(4000)
         if (!VoipPref.getExpertCallDuration().isNullOrEmpty()) {
-            CoroutineScope(Dispatchers.IO).launch {
                 try {
                     delay(500)
                     val currentActivity = ActivityLifecycleCallback.currentActivity
@@ -114,8 +115,8 @@ class ExpertListRepo {
                             AppObjectController.commonNetworkService.deductAmountAfterCall(map)
                         when (response.code()) {
                             200 -> {
-                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
                                 VoipPref.setExpertCallDuration("")
+                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
                             }
                             406 -> {
 
@@ -131,6 +132,7 @@ class ExpertListRepo {
                             AppObjectController.commonNetworkService.deductAmountAfterCall(map)
                         when (response.code()) {
                             200 -> {
+                                VoipPref.setExpertCallDuration("")
                                 SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
                             }
                             406 -> {
