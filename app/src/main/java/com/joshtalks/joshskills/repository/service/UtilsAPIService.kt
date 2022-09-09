@@ -20,5 +20,5 @@ interface UtilsAPIService {
     suspend fun engageNewNotificationAsync(@Body params: NotificationAnalyticsRequest): Map<String, String>
 
     @GET("$DIR/notification/client_side/")
-    suspend fun getFTScheduledNotifications(@Query("course_id") course: String = EMPTY): List<ScheduleNotification>
+    suspend fun getFTScheduledNotifications(@Query("test_id") course: String = "None"): List<ScheduleNotification>
 }

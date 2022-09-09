@@ -325,6 +325,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
                 if (response.isNotEmpty())
                     PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
+                NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
             } catch (e: Exception) {
                 e.printStackTrace()

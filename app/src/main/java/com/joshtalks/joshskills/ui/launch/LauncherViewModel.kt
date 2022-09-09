@@ -276,13 +276,11 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getAppOpenNotifications() {
+    private fun getAppOpenNotifications() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications()
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
-                if (response.isNotEmpty())
-                    PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
                 NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.APP_OPEN)
             } catch (e: Exception) {
                 e.printStackTrace()
