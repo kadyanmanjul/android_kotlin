@@ -390,7 +390,7 @@ dependencies {
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
 
     // fresh chat
-    implementation 'com.github.freshdesk:freshchat-android:5.0.5'
+    implementation 'com.github.freshdesk:freshchat-android:5.1.2'
     implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
     implementation 'androidx.webkit:webkit:1.4.0'
     implementation 'androidx.startup:startup-runtime:1.1.1'

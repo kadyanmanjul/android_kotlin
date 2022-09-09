@@ -381,6 +381,7 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                         android:textColor="@color/black"
                         android:visibility="@{vm.isProfileLoading ? View.GONE : View.VISIBLE}"
+                        tools:visibility="@{vm.isProfileLoading ? View.GONE : View.VISIBLE}"
                         app:layout_constraintStart_toStartOf="@id/user_age_text"
                         app:layout_constraintTop_toBottomOf="@id/user_age_text" />
 

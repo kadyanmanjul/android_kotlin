@@ -478,17 +478,7 @@ class UserProfileActivity : CoreJoshActivity() {
                 onBackPressed()
             }
         }
-        with(iv_help) {
-            if (mentorId == Mentor.getInstance().getId()) {
-                visibility = View.GONE
-            } else {
-                visibility = View.VISIBLE
-                setOnClickListener {
-                    MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
-                    openHelpActivity()
-                }
-            }
-        }
+        iv_help.visibility = View.GONE
         with(iv_edit) {
             if (mentorId == Mentor.getInstance().getId()) {
                 visibility = View.VISIBLE
@@ -820,18 +810,16 @@ class UserProfileActivity : CoreJoshActivity() {
         userName = userData.name
         binding.userAge.text = userData.age.toString()
         if (userData.age == null || userData.age <= 1) {
-            binding.userAge.text = "_________"
-            binding.userAge.letterSpacing = 0.0F
-            binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.userAge.visibility = GONE
+            binding.userAgeText.visibility = GONE
         } else {
             binding.userAge.text = userData.age.toString()
             binding.txtUserHometown.letterSpacing = 0.05F
             binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
         }
         if (userData.hometown.isNullOrBlank()) {
-            binding.txtUserHometown.text = "_________"
-            binding.txtUserHometown.letterSpacing = 0.0F
-            binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.txtUserHometown.visibility = GONE
+            binding.txtLabelHometown.visibility = GONE
         } else {
             binding.txtUserHometown.text = userData.hometown
             binding.txtUserHometown.letterSpacing = 0.05F

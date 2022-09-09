@@ -63,6 +63,16 @@ class PersonalInfoFragment : Fragment() {
                 binding.loginTypeTv.text = RegistrationMethods.TRUE_CALLER.type
             }
         }
+        if (Mentor.getInstance().getUser()?.phoneNumber.isNullOrBlank().not()) {
+            binding.registerTv.text = Mentor.getInstance().getUser()?.phoneNumber
+            binding.textView6.text = getString(R.string.register_email)
+        } else if (Mentor.getInstance().getUser()?.email.isNullOrBlank().not()) {
+            binding.registerTv.text = Mentor.getInstance().getUser()?.email
+            binding.textView6.text = getString(R.string.register_email)
+        } else {
+            binding.registerTv.visibility = View.GONE
+            binding.textView6.visibility = View.GONE
+        }
     }
 
     override fun onResume() {

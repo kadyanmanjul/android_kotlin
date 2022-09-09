@@ -463,49 +463,6 @@ class ConversationActivity :
         }
     }
 
-    private fun showLeaderBoardTooltip() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_TOOLTIP, defValue = false)) {
-                withContext(Dispatchers.Main) {
-                    conversationBinding.leaderboardTooltipLayout.visibility = GONE
-                }
-            } else {
-                delay(LEADERBOARD_TOOLTIP_DELAY_IN_MS)
-                if (conversationAdapter.getLastLesson()?.lessonNo == 1) {
-                    withContext(Dispatchers.Main) {
-                        conversationBinding.joshTextView.text =
-                            leaderboardTooltipList[currentTooltipIndex]
-                        conversationBinding.txtTooltipIndex.text =
-                            "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
-                        conversationBinding.leaderboardTooltipLayout.visibility = VISIBLE
-                    }
-                }
-            }
-        }
-    }
-
-//    private fun showCohortBaseCourse() {
-//        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
-//            conversationBinding.cbcTooltip.visibility = VISIBLE
-//            conversationBinding.overlayLayout.visibility = VISIBLE
-//            groupAndFppButtonElevation()
-//
-//            conversationBinding.overlayLayout.setOnClickListener {
-//                conversationBinding.welcomeContainer.visibility = INVISIBLE
-//                conversationBinding.cbcTooltip.visibility = GONE
-//                conversationBinding.overlayLayout.visibility = GONE
-//                conversationBinding.overlayLayout.setOnClickListener(null)
-//            }
-//        }
-//    }
-
-//    fun hideCohortCourseTooltip() {
-//        conversationBinding.welcomeContainer.visibility = INVISIBLE
-//        conversationBinding.cbcTooltip.visibility = GONE
-//        conversationBinding.overlayLayout.visibility = GONE
-//        conversationBinding.overlayLayout.setOnClickListener(null)
-//        PrefManager.put(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP, true)
-//    }
 
     fun hideLeaderboardTooltip() {
         conversationBinding.leaderboardTooltipLayout.visibility = GONE
@@ -531,7 +488,8 @@ class ConversationActivity :
                 )
             )*/
             conversationBinding.labelTapToDismiss.visibility = GONE
-            delay(6500)
+            PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
+            delay(600)
             conversationBinding.overlayLayout.setOnClickListener {
                 PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
                 hideLeaderBoardSpotlight()
@@ -1481,16 +1439,8 @@ class ConversationActivity :
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
-                //conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-                // conversationBinding.userPointContainer.slideInAnimation()
                 conversationBinding.userPointContainer.visibility = VISIBLE
-                // showLeaderBoardTooltip()
-                if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
-                    if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
-                        showLeaderBoardSpotlight()
-                    }
-                }
-                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
+                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION) && PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false).not()) {
                         showLeaderBoardSpotlight()
                 } else {
                     CoroutineScope(Dispatchers.IO).launch {
@@ -2702,12 +2652,11 @@ class ConversationActivity :
     fun slideInAnimation(tooltipView: JoshTooltip) {
         tooltipView.visibility = INVISIBLE
         val start = getScreenHeightAndWidth().second
-        val mid = start * 0.2 * -1
-        val end = tooltipView.x
+        val mid = start * 0.02
         tooltipView.x = start.toFloat()
         tooltipView.requestLayout()
         tooltipView.visibility = VISIBLE
-        val valueAnimation = ValueAnimator.ofFloat(start.toFloat(), mid.toFloat(), end).apply {
+        val valueAnimation = ValueAnimator.ofFloat(start.toFloat(), mid.toFloat()).apply {
             interpolator = AccelerateInterpolator()
             duration = 500
             addUpdateListener {
