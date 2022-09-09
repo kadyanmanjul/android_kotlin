@@ -816,9 +816,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         if (isAdded && activity != null) {
             val dialog = AlertDialog.Builder(context)
             dialog
-                .setMessage(viewModel.isUserBlock.get()?.reason?.let {
+                .setMessage(viewModel.isUserBlock.get()?.reason?.let { 
+                    val newKey = it + "_" + PrefManager.getStringValue(CURRENT_COURSE_ID)
                     AppObjectController.getFirebaseRemoteConfig()
-                        .getString(it).replace("<br\\>", "\n")
+                        .getString(newKey).replace("<br\\>", "\n")
                 })
                 .setPositiveButton("GOT IT")
                 { dialog, _ ->
