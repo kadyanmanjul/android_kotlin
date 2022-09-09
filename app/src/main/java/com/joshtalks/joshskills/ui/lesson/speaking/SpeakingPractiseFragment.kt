@@ -255,6 +255,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                 }
             }
+        } else {
+            binding.callCountContainer.visibility = GONE
         }
 
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner) {
