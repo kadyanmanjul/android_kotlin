@@ -195,7 +195,6 @@
                     android:textColor="@color/colorPrimary"
                     android:textSize="16.90sp"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toTopOf="@id/info_container"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/progress_bar"
@@ -205,8 +204,8 @@
                     android:id="@+id/call_count_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="txt_label_calls_left, iv_arrow, layout_bb_tip"
-                    android:visibility="visible"/>
+                    android:visibility="visible"
+                    app:constraint_referenced_ids="txt_label_calls_left, iv_arrow, layout_bb_tip" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_label_calls_left"
@@ -216,17 +215,15 @@
                     android:autoLink="all"
                     android:drawablePadding="@dimen/_4sdp"
                     android:gravity="center"
-                    android:onClick="@{()->handler.showSeniorStudentScreen()}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:onClick="@{handler::startBuyPageActivity}"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/colorPrimary"
-                    android:visibility="gone"
+                    android:textStyle="bold"
                     app:drawableStartCompat="@drawable/ic_info_micro"
-                    app:layout_constraintBottom_toTopOf="@id/info_container"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/progress_bar"
-                    tools:text="3 calls left"
-                    tools:visibility="visible" />
+                    app:layout_constraintTop_toBottomOf="@id/txt_how_to_speak"
+                    tools:text="3 calls left"/>
 
                 <include
                     android:id="@+id/layout_bb_tip"
@@ -242,7 +239,6 @@
                     android:id="@+id/iv_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:elevation="@dimen/_1sdp"
                     app:layout_constraintEnd_toEndOf="@id/txt_label_calls_left"
                     app:layout_constraintStart_toStartOf="@id/txt_label_calls_left"
                     app:layout_constraintTop_toBottomOf="@id/txt_label_calls_left"
@@ -262,8 +258,8 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_how_to_speak"
-                    tools:visibility="gone">
+                    app:layout_constraintTop_toBottomOf="@+id/layout_bb_tip"
+                    tools:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/image_view"

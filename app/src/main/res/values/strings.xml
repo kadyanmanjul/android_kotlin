@@ -57,6 +57,7 @@
     <string name="buy_course" translatable="false">Buy Course</string>
     <string name="start_learning">Start Learning</string>
     <string name="upgrade">Upgrade</string>
+    <string name="upgrade_now">Upgrade Now</string>
     <string name="done">Done</string>
 
 
@@ -1070,5 +1071,6 @@
     <string name="josh_transaction_id">josh_transaction_id</string>
     <string name="copied_to_clipboard">Copied to Clipboard</string>
     <string name="empty"> </string>
+    <string name="ft_calls_left" formatted="false">%s calls left in free trial</string>
 
 </resources>

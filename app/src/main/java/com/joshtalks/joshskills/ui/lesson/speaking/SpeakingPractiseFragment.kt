@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
+import com.google.android.material.textview.MaterialTextView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -60,7 +61,6 @@ import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
@@ -110,7 +110,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var isBlockedFT = false
     private var countdownTimerBack: CountdownTimerBack? = null
     private val event = EventLiveData
-    private val getBlockStatus = fun(){
+    private val getBlockStatus = fun() {
     }
 
     private val viewModel: LessonViewModel by lazy {
@@ -175,7 +175,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun getVoipState(): State {
-            return com.joshtalks.joshskills.voip.data.local.PrefManager.getVoipState()
+        return com.joshtalks.joshskills.voip.data.local.PrefManager.getVoipState()
     }
 
     override fun onStop() {
@@ -223,8 +223,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.txtLabelCallsLeft.paintFlags =
                         binding.txtLabelCallsLeft.paintFlags or Paint.UNDERLINE_TEXT_FLAG
                     binding.txtLabelCallsLeft.text = "$it calls left"
-                    binding.callCountContainer.visibility = GONE
                     if (it == 0) {
+                        binding.callCountContainer.visibility = GONE
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
                                 requireContext(),
@@ -235,8 +235,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.blockContainer.visibility = VISIBLE
                     } else {
                         binding.btnStartTrialText.visibility = VISIBLE
-                        binding.blockContainer.visibility = VISIBLE
-                        binding.callCountContainer.visibility = VISIBLE
+                        binding.blockContainer.visibility = GONE
+                        val text = AppObjectController.getFirebaseRemoteConfig().getString(
+                            FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP.plus(
+                                PrefManager.getStringValue(CURRENT_COURSE_ID)
+                            )
+                        )
+                        if (text.isBlank().not()) {
+                            binding.callCountContainer.visibility = VISIBLE
+                            binding.layoutBbTip.findViewById<MaterialTextView>(R.id.balloon_text).text =
+                                text
+                        }
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
                                 requireContext(),
@@ -352,14 +361,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
         // redirect to buy screen
         binding.txtBuyToContinueCalls.setOnClickListener {
-            activity?.let { it1 ->
-                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-                    it1,
-                    AppObjectController.getFirebaseRemoteConfig().getString(
-                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                    )
-                )
-            }
+            startBuyPageActivity(it)
         }
 
         viewModel.speakingTopicLiveData.observe(viewLifecycleOwner) { response ->
@@ -657,6 +659,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
         initDemoViews(lessonNo)
+    }
+
+    fun startBuyPageActivity(v: View) {
+        activity?.let { it1 ->
+            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                it1,
+                AppObjectController.getFirebaseRemoteConfig().getString(
+                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                )
+            )
+        }
     }
 
     private fun navigateToLoginActivity() {

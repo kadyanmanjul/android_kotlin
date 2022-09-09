@@ -709,7 +709,7 @@
                     android:gravity="center"
                     android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
                     android:padding="@dimen/_10sdp"
-                    android:text="Buy Now"
+                    android:text="Upgrade Now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/black" />
 

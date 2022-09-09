@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class BlockStatusModel(
     @SerializedName("time_left")
     val duration : Int,
-    @SerializedName("count")
-    val count : Int,
+    @SerializedName("calls_left")
+    val callsLeft : Int,
     @SerializedName("block_reason")
     val reason : String,
     @SerializedName("timestamp")

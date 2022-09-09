@@ -189,7 +189,7 @@ object VoipPref {
         if (type == CALL_RATING) {
             showCallRatingDialog(this)
         } else {
-            showPurchaseDialog(this)
+            showPurchaseDialog(this, totalSecond)
         }
     }
 

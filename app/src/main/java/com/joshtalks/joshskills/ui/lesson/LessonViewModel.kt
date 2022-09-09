@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Message
 import android.util.Log
 import android.view.View
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
@@ -53,15 +52,15 @@ import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.io.File
-import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
 import java.time.Duration
+import java.util.*
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -985,8 +984,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         return !(differ < 86400000 && differ > -86400000)
     }
 
-     fun isUserCallBlock(isForceHit : Boolean = false) {
-        if(checkBlockStatusInSP() && !isForceHit){
+    fun isUserCallBlock(isForceHit: Boolean = false) {
+        if (checkBlockStatusInSP() && !isForceHit) {
             startBlockTimer()
         } else {
             blockStatusFromApi()
@@ -1002,13 +1001,15 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     response.body()!!.timestamp = System.currentTimeMillis()
                     PrefManager.putPrefObject(BLOCK_STATUS, response.body() as BlockStatusModel)
                     startBlockTimer()
-                } else if(response.isSuccessful && response.body() != null && response.body()!!.duration==0){
-                    PrefManager.putPrefObject(BLOCK_STATUS, BlockStatusModel(0,0,"",0))
+                } else if (response.isSuccessful && response.body() != null && response.body()!!.duration == 0) {
+                    PrefManager.putPrefObject(BLOCK_STATUS, BlockStatusModel(0, 0, "", 0))
                     blockLiveData.postValue(false)
                 }
-                if (response.isSuccessful && response.body() != null && response.body()!!.count >= 0) {
-                    PrefManager.put(FT_CALLS_LEFT, response.body()!!.count)
-                    callCountLiveData.postValue(response.body()!!.count)
+                if (response.isSuccessful && response.body() != null && response.body()!!.callsLeft >= 0) {
+                    if (response.body()!!.callsLeft == 0)
+                        PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
+                    PrefManager.put(FT_CALLS_LEFT, response.body()!!.callsLeft)
+                    callCountLiveData.postValue(response.body()!!.callsLeft)
                 }
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)

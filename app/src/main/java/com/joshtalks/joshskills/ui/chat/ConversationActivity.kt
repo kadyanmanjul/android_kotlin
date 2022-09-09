@@ -78,6 +78,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
@@ -102,6 +103,8 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
@@ -119,10 +122,6 @@ import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.core.pstn_states.PSTNState
-import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
-import com.joshtalks.joshskills.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -340,7 +339,8 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED) && PrefManager.getStringValue(
+        if (AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean(IS_CALL_WITH_EXPERT_ENABLED) && PrefManager.getStringValue(
                 CURRENT_COURSE_ID
             ) == DEFAULT_COURSE_ID
         ) {
@@ -398,7 +398,16 @@ class ConversationActivity :
     }
 
     private fun initFreeTrialTimer() {
-        if (inboxEntity.isCourseBought.not() &&
+        PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
+        PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
+        if (inboxEntity.isCourseBought) {
+            conversationBinding.freeTrialExpiryLayout.visibility = GONE
+            return
+        } else if (PrefManager.getIntValue(FT_CALLS_LEFT) > 0) {
+            conversationBinding.freeTrialContainer.visibility = VISIBLE
+            conversationBinding.freeTrialText.text = getString(R.string.ft_calls_left, PrefManager.getIntValue(FT_CALLS_LEFT))
+
+        } else if (
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
@@ -409,19 +418,16 @@ class ConversationActivity :
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
             }
-        } else if (inboxEntity.isCourseBought.not() &&
+        } else if (
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time < System.currentTimeMillis()
         ) {
             PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
-            PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
             conversationBinding.freeTrialContainer.visibility = VISIBLE
             conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
-        } else {
-            conversationBinding.freeTrialExpiryLayout.visibility = GONE
         }
     }
 
@@ -552,7 +558,7 @@ class ConversationActivity :
             putExtra(FLOW_FROM, "payment journey")
         }
         startActivity(intent)
-        val broadcastIntent=Intent().apply {
+        val broadcastIntent = Intent().apply {
             action = CALLING_SERVICE_ACTION
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
@@ -1448,8 +1454,12 @@ class ConversationActivity :
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.userPointContainer.visibility = VISIBLE
-                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION) && PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false).not()) {
-                        showLeaderBoardSpotlight()
+                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION) && PrefManager.getBoolValue(
+                        IS_FREE_TRIAL_ENDED,
+                        defValue = false
+                    ).not()
+                ) {
+                    showLeaderBoardSpotlight()
                 } else {
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(1000)
