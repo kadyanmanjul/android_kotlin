@@ -1124,7 +1124,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
             .setDismissWhenClicked(true)
-            .setAutoDismissDuration(3000L)
+            .setAutoDismissDuration(5000L)
             .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
 //            .setPreferenceName(key)
 //            .setShowCounts(3)

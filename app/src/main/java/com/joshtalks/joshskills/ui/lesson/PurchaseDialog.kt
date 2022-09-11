@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.content.DialogInterface
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +25,7 @@ class PurchaseDialog : BaseDialogFragment() {
     private lateinit var binding: PurchaseCourseDialogBinding
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var purchaseDataResponse: PurchaseDataResponse
+    private var onDismissListener: DialogInterface.OnDismissListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,6 +80,9 @@ class PurchaseDialog : BaseDialogFragment() {
             }
         } else {
             binding.txtFtEndsIn.visibility = View.GONE
+        }
+        binding.close.setOnClickListener {
+            closeDialog()
         }
     }
 
@@ -141,6 +147,7 @@ class PurchaseDialog : BaseDialogFragment() {
 
     fun closeDialog() {
         countdownTimerBack?.stop()
+        onDismissListener?.onDismiss(dialog)
         super.dismiss()
     }
 
@@ -149,13 +156,10 @@ class PurchaseDialog : BaseDialogFragment() {
         countdownTimerBack?.stop()
     }
 
-    fun setOnDismissListener(function: () -> Unit) {
-        Log.d("PurchaseDialog.kt", "YASH => setOnDismissListener:150 ")
-        dialog?.setOnDismissListener {
-            Log.d("PurchaseDialog.kt", "YASH => setOnDismissListener:153 dismissed")
-            function.invoke()
-        }
+    fun setOnDismissListener(onDismissListener: DialogInterface.OnDismissListener) {
+        this.onDismissListener = onDismissListener
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -165,6 +169,7 @@ class PurchaseDialog : BaseDialogFragment() {
                 val rect = Resources.getSystem().displayMetrics.run { Rect(0, 0, widthPixels, heightPixels) }
                 val percentWidth = rect.width() * 0.8
                 d.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+                d.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             } catch (e: Exception) {
                 val width = ViewGroup.LayoutParams.MATCH_PARENT
                 val height = ViewGroup.LayoutParams.WRAP_CONTENT

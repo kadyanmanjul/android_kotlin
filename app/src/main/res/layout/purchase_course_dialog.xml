@@ -7,115 +7,143 @@
 
         <import type="android.view.View" />
 
+        <import type="android.view.Gravity" />
+
         <variable
             name="purchaseData"
             type="com.joshtalks.joshskills.repository.server.PurchaseDataResponse" />
 
     </data>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/container"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_10sdp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:padding="@dimen/_16sdp">
+        android:background="@android:color/transparent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/_16sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/josh_skill_logo" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/course_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="@string/onboarding_course_heading"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/_12sdp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txt_pop_up_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:gravity="center"
+                android:text="@{purchaseData.popUpTitle}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@color/pure_black"
+                android:textSize="@dimen/_24sdp"
+                tools:text="Get 10% OFF" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txt_pop_up_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:gravity="@{purchaseData.couponPopup ? Gravity.START : Gravity.CENTER_HORIZONTAL}"
+                android:text="@{purchaseData.popUpBody}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/pure_black"
+                android:textSize="@dimen/_14sdp"
+                tools:gravity="center_horizontal"
+                tools:text="Use Coupon :" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/coupon_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@drawable/bg_black_dashed_rectangle"
+                android:gravity="center"
+                android:text="@{purchaseData.couponCode}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@color/pure_black"
+                android:textSize="@dimen/_24sdp"
+                android:visibility="@{purchaseData.couponCode != null ? View.VISIBLE : View.GONE}"
+                tools:text="ENG10"
+                tools:visibility="visible" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/coupon_expiry_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:gravity="center"
+                android:text="@{purchaseData.couponExpiry}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/gray_6F"
+                android:textStyle="bold"
+                android:visibility="@{purchaseData.couponExpiry != null ? View.VISIBLE : View.GONE}"
+                tools:text="Coupon expires in 00:30 minutes"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_buy"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_36sdp"
+                android:backgroundTint="@color/colorAccent"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_8sdp"
+                android:text="@{purchaseData.popUpPrice}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                app:cornerRadius="@dimen/_36sdp"
+                tools:text="Buy now @ ₹499" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txt_ft_ends_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:textColor="#FF0000"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="gone"
+                tools:text="Free trial ends in 24:00"
+                tools:visibility="visible" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/logo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/josh_skill_logo" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/course_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:text="@string/onboarding_course_heading"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/_12sdp" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txt_pop_up_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:gravity="center"
-            android:text="@{purchaseData.popUpTitle}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-            android:textColor="@color/pure_black"
-            android:textSize="@dimen/_24sdp"
-            tools:text="Get 10% OFF" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txt_pop_up_body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:text="@{purchaseData.popUpBody}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/pure_black"
-            android:textSize="@dimen/_14sdp"
-            tools:text="Use Coupon :" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/coupon_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:background="@drawable/bg_black_dashed_rectangle"
-            android:gravity="center"
-            android:text="@{purchaseData.couponCode}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-            android:textColor="@color/pure_black"
-            android:textSize="@dimen/_24sdp"
-            android:visibility="@{purchaseData.couponCode != null ? View.VISIBLE : View.GONE}"
-            tools:text="ENG10"
-            tools:visibility="visible" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/coupon_expiry_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:gravity="center"
-            android:text="@{purchaseData.couponExpiry}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/gray_6F"
-            android:textStyle="bold"
-            android:visibility="@{purchaseData.couponExpiry != null ? View.VISIBLE : View.GONE}"
-            tools:text="Coupon expires in 00:30 minutes"
-            tools:visibility="visible" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_buy"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_36sdp"
-            android:backgroundTint="@color/colorAccent"
-            android:gravity="center"
-            android:paddingVertical="@dimen/_8sdp"
-            android:text="@{purchaseData.popUpPrice}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_16ssp"
-            app:cornerRadius="@dimen/_36sdp"
-            tools:text="Buy now @ ₹499" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txt_ft_ends_in"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:textColor="#FF0000"
-            android:textSize="@dimen/_12ssp"
-            android:visibility="gone"
-            tools:text="Free trial ends in 24:00"
-            tools:visibility="visible" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            android:id="@+id/close"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:background="@drawable/bg_white_round_36"
+            android:elevation="@dimen/_4sdp"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="@dimen/_4sdp"
+            android:src="@drawable/ic_cross"
+            android:tint="@color/black"
+            app:layout_constraintBottom_toTopOf="@id/container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/container" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
