@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Rect
@@ -27,6 +28,7 @@ class PurchaseDialog : BaseDialogFragment() {
     private lateinit var binding: PurchaseCourseDialogBinding
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var purchaseDataResponse: PurchaseDataResponse
+    private var onDismissListener: DialogInterface.OnDismissListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
