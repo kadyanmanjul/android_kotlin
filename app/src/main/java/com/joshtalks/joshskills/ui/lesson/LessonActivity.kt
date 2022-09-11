@@ -1099,7 +1099,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     fun showBuyCourseTooltip(tabPosition: Int) {
         when (tabPosition) {
             SPEAKING_POSITION -> return
-            GRAMMAR_POSITION -> if (PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION).not()) return
+            GRAMMAR_POSITION -> if (lessonIsNewGrammar && PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION).not()) return
 //            VOCAB_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_VOCAB_TOOLTIP).not()) return
 //            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_TOOLTIP)
 //                    .not()
