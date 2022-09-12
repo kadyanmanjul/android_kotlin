@@ -100,8 +100,8 @@ class ExpertListRepo {
 
     fun deductAmountAfterCall() {
         CoroutineScope(Dispatchers.IO).launch {
-//            VoipPref.expertDurationMutex.withLock {
-            delay(4000)
+            VoipPref.expertDurationMutex.withLock {
+//            delay(4000)
                 if (!VoipPref.getExpertCallDuration().isNullOrEmpty()) {
                     try {
                         delay(500)
@@ -150,7 +150,7 @@ class ExpertListRepo {
                     } catch (ex: Exception) {
                         showToast("Something went wrong")
                     }
-//                }
+                }
 
             }
         }
