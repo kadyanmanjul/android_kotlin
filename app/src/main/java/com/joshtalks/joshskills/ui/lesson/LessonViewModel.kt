@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Message
 import android.util.Log
 import android.view.View
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
@@ -27,21 +26,13 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.PendingTask
-import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
@@ -61,15 +52,15 @@ import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.io.File
-import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
 import java.time.Duration
+import java.util.*
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -79,7 +70,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val lessonQuestionsLiveData: MutableLiveData<List<LessonQuestion>> = MutableLiveData()
     val lessonLiveData: MutableLiveData<LessonModel> = MutableLiveData()
     val pointsSnackBarText: MutableLiveData<PointsListResponse> = MutableLiveData()
-    val requestStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
     val grammarAssessmentLiveData: MutableLiveData<AssessmentWithRelations> = MutableLiveData()
     val grammarVideoInterval: MutableLiveData<Graph?> = MutableLiveData()
@@ -112,7 +102,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
     var isInternetSpeedGood = ObservableInt(2)
-    var isUserBlock : ObservableField<BlockStatusModel> = ObservableField<BlockStatusModel>()
+    var isUserBlock: ObservableField<BlockStatusModel> = ObservableField<BlockStatusModel>()
     var userRating = ObservableField<UserRating>()
     val blockLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
     val voipState by lazy {
@@ -121,6 +111,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val filePath: MutableLiveData<String> = MutableLiveData()
     val videoDownPath: MutableLiveData<String> = MutableLiveData()
     val outputFile: MutableLiveData<String> = MutableLiveData()
+    val coursePopupData: MutableLiveData<PurchaseDataResponse?> = MutableLiveData()
+    val callCountLiveData: MutableLiveData<Int?> = MutableLiveData(null)
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)
@@ -132,7 +124,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
     val isVideoMuxFailed: Boolean = false
 
-    init{
+    init {
         getRating()
         isUserCallBlock()
     }
@@ -160,6 +152,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         message.what = PERMISSION_FROM_READING
         singleLiveEvent.value = message
     }
+
     fun startBlockTimer() {
         isUserBlock.set(PrefManager.getBlockStatusObject(BLOCK_STATUS))
         blockLiveData.postValue(true)
@@ -847,13 +840,13 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun saveMicroPaymentImpression(eventName: String, eventId:String = EMPTY, previousPage:String = EMPTY) {
+    fun saveMicroPaymentImpression(eventName: String, eventId: String = EMPTY, previousPage: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
-                    Pair("event_name",eventName),
+                    Pair("event_name", eventName),
                     Pair("expert_id", eventId),
-                    Pair("previous_page",previousPage)
+                    Pair("previous_page", previousPage)
                 )
                 AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
             } catch (ex: Exception) {
@@ -940,31 +933,31 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             .build()
     }
 
-     fun getButtonVisibility(){
-         if(PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS)==-1){
-             isInternetSpeedGood.set(2)
-             return
-         }
-        if(isInternetSpeedGood.get()!=0)
-         isInternetSpeedGood.set(0)
+    fun getButtonVisibility() {
+        if (PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS) == -1) {
+            isInternetSpeedGood.set(2)
+            return
+        }
+        if (isInternetSpeedGood.get() != 0)
+            isInternetSpeedGood.set(0)
 
         viewModelScope.launch(Dispatchers.IO) {
-            if(ConnectionDetails.getInternetSpeed()!= Speed.LOW){
+            if (ConnectionDetails.getInternetSpeed() != Speed.LOW) {
                 isInternetSpeedGood.set(2)
-            }else{
+            } else {
                 isInternetSpeedGood.set(1)
 
             }
         }
     }
 
-    fun recheckSpeed(v: View){
+    fun recheckSpeed(v: View) {
         getButtonVisibility()
     }
 
-    fun getRating()  {
+    fun getRating() {
         val currentTime = Date().time
-        if(PrefManager.getCallCount()>=3) {
+        if (PrefManager.getCallCount() >= 3) {
             viewModelScope.launch(Dispatchers.IO)
             {
                 try {
@@ -980,22 +973,22 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     Timber.e(ex)
                 }
             }
-        }else{
+        } else {
             userRating.set(PrefManager.getRatingObject(RATING_OBJECT))
         }
     }
 
-    private fun ifUserCurrentlyBlocked(currentTime :Long) : Boolean{
-        val previousTime: Long = PrefManager.getLongValue(RATING_TIMESTAMP,false)
+    private fun ifRatingFromApi(currentTime: Long): Boolean {
+        val previousTime: Long = PrefManager.getLongValue(RATING_TIMESTAMP, false)
         val differ = currentTime - previousTime
         return !(differ < 86400000 && differ > -86400000)
     }
 
-     fun isUserCallBlock(isForceHit : Boolean = false) {
-        if(checkBlockStatusInSP() && !isForceHit){
+    fun isUserCallBlock(isForceHit: Boolean = false) {
+        if (checkBlockStatusInSP() && !isForceHit) {
             startBlockTimer()
-        }else{
-           blockStatusFromApi()
+        } else {
+            blockStatusFromApi()
         }
     }
 
@@ -1004,15 +997,20 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         {
             try {
                 val response = AppObjectController.chatNetworkService.getUserBlockStatus()
-                if (response.isSuccessful && response.body() != null && response.body()!!.duration!=0) {
+                if (response.isSuccessful && response.body() != null && response.body()!!.duration != 0) {
                     response.body()!!.timestamp = System.currentTimeMillis()
                     PrefManager.putPrefObject(BLOCK_STATUS, response.body() as BlockStatusModel)
                     startBlockTimer()
-                }else if(response.isSuccessful && response.body() != null && response.body()!!.duration==0){
-                    PrefManager.putPrefObject(BLOCK_STATUS,BlockStatusModel(0,0,"",0))
+                } else if (response.isSuccessful && response.body() != null && response.body()!!.duration == 0) {
+                    PrefManager.putPrefObject(BLOCK_STATUS, BlockStatusModel(0, 0, "", 0))
                     blockLiveData.postValue(false)
                 }
-
+                if (response.isSuccessful && response.body() != null && response.body()!!.callsLeft >= 0) {
+                    if (response.body()!!.callsLeft == 0)
+                        PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
+                    PrefManager.put(FT_CALLS_LEFT, response.body()!!.callsLeft)
+                    callCountLiveData.postValue(response.body()!!.callsLeft)
+                }
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
@@ -1021,14 +1019,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun checkBlockStatusInSP(): Boolean {
-       val blockStatus = PrefManager.getBlockStatusObject(BLOCK_STATUS)
-        if(blockStatus?.timestamp?.toInt() == 0 )
+        val blockStatus = PrefManager.getBlockStatusObject(BLOCK_STATUS)
+        if (blockStatus?.timestamp?.toInt() == 0)
             return false
 
-        if(checkWithinBlockTimer(blockStatus)){
+        if (checkWithinBlockTimer(blockStatus)) {
             return true
-        }else{
-            PrefManager.putPrefObject(BLOCK_STATUS,BlockStatusModel(0,0,"",0))
+        } else {
+            PrefManager.putPrefObject(BLOCK_STATUS, BlockStatusModel(0, 0, "", 0))
             return false
         }
     }
@@ -1038,7 +1036,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             val durationInMillis = Duration.ofMinutes(blockStatus.duration.toLong()).toMillis()
             val unblockTimestamp = blockStatus.timestamp + durationInMillis
             val currentTimestamp = System.currentTimeMillis()
-            if(currentTimestamp <= unblockTimestamp ){
+            if (currentTimestamp <= unblockTimestamp) {
                 return true
             }
         }
@@ -1070,7 +1068,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         singleLiveEvent.value = message
     }
 
-    fun closeCurrentFragment(){
+    fun closeCurrentFragment() {
         message.what = CLOSE_FULL_READING_FRAGMENT
         singleLiveEvent.value = message
     }
@@ -1081,23 +1079,23 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         singleLiveEvent.value = message
     }
 
-    fun submitButton(){
+    fun submitButton() {
         message.what = SUBMIT_BUTTON_CLICK
         singleLiveEvent.value = message
     }
 
-    fun cancelButton(){
+    fun cancelButton() {
         message.what = CANCEL_BUTTON_CLICK
         singleLiveEvent.value = message
     }
 
-    fun closeVideoView(){
+    fun closeVideoView() {
         message.what = CLOSE_VIDEO_VIEW
         singleLiveEvent.value = message
     }
 
-    fun showVideoView(){
-        if (isVideoMuxFailed){
+    fun showVideoView() {
+        if (isVideoMuxFailed) {
             showAudioView()
         } else {
             message.what = SHOW_VIDEO_VIEW
@@ -1105,12 +1103,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun showAudioView(){
+    fun showAudioView() {
         message.what = SHOW_AUDIO_ONLY
         singleLiveEvent.value = message
     }
 
-    fun updatePracticeEngagement(requestEngage:RequestEngage) {
+    fun updatePracticeEngagement(requestEngage: RequestEngage) {
         viewModelScope.launch {
             val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
                 .getLessonQuestionById(requestEngage.questionId)
@@ -1126,14 +1124,35 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun saveReadingPracticeImpression(eventName: String,lessonId: String) {
+    fun saveReadingPracticeImpression(eventName: String, lessonId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
-                    Pair("lesson_id",lessonId),
+                    Pair("lesson_id", lessonId),
                     Pair("event_name", eventName)
                 )
                 AppObjectController.commonNetworkService.saveReadingPracticeImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun getCoursePopupData(popupType: PurchasePopupType) {
+        viewModelScope.launch {
+            try {
+                val response =
+                    AppObjectController.commonNetworkService.getCoursePopUpData(
+                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID),
+                        popupName = popupType.name
+                    )
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        coursePopupData.value = it.apply {
+                            this.name = popupType
+                        }
+                    }
+                }
             } catch (ex: Exception) {
                 Timber.e(ex)
             }

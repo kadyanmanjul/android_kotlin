@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
@@ -317,6 +318,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     .addParam(ParamKeys.LESSON_ID,lessonID)
                     .push()
             }
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+                viewModel.getCoursePopupData(PurchasePopupType.VOCAB_COMPLETED)
             lessonActivityListener?.onSectionStatusUpdate(VOCAB_POSITION, true)
         }
     }

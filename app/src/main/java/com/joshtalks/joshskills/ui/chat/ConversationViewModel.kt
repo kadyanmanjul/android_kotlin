@@ -28,6 +28,8 @@ import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBu
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
@@ -80,6 +82,7 @@ class ConversationViewModel(
     val abTestCampaignliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }
     val isFreeTrialCallBlocked = MutableLiveData<String>(null)
+    val coursePopupData = MutableLiveData<PurchaseDataResponse?>()
 
     fun getCampaignData(campaign: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
@@ -535,6 +538,27 @@ class ConversationViewModel(
                     Pair("previous_page",previousPage)
                 )
                 AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun getCoursePopupData(popupType: PurchasePopupType) {
+        viewModelScope.launch {
+            try {
+                val response =
+                    AppObjectController.commonNetworkService.getCoursePopUpData(
+                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID),
+                        popupName = popupType.name
+                    )
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        coursePopupData.value = it.apply {
+                            this.name = popupType
+                        }
+                    }
+                }
             } catch (ex: Exception) {
                 Timber.e(ex)
             }

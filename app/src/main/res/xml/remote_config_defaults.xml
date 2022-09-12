@@ -1814,4 +1814,25 @@
         <key>IS_CALL_WITH_EXPERT_ENABLED</key>
         <value>yes</value>
     </entry>
+    <entry>
+        <key>BUY_COURSE_INBOX_TOOLTIP_151</key>
+        <value>Agar aapko yeh course achha laga aur ek saal ke liye ye khareedna chahte hai to aapke paas agle 30 min ke liye 10% off hai.
+        </value>
+    </entry>
+    <entry>
+        <key>BUY_COURSE_SPEAKING_TOOLTIP_151</key>
+        <value>Unlimited Calling paane ke liye apna course aaj hi Upgrade kare!!</value>
+    </entry>
+    <entry>
+        <key>BUY_COURSE_GRAMMAR_TOOLTIP_151</key>
+        <value>Daily Video Lessons se sentence formation seekhe perfect grammar ke saath.</value>
+    </entry>
+    <entry>
+        <key>BUY_COURSE_VOCABULARY_TOOLTIP_151</key>
+        <value>Aise new words har din seekhne ke liye aap yahan se course ka Full Access pa sakte hai. </value>
+    </entry>
+    <entry>
+        <key>BUY_COURSE_READING_TOOLTIP_151</key>
+        <value>Roz reading practice karne ke liye aaj hi apna course upgrade kare.</value>
+    </entry>
 </defaults>

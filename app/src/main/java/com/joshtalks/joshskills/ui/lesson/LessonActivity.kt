@@ -35,9 +35,11 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.textview.MaterialTextView
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
@@ -45,44 +47,8 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
-import com.joshtalks.joshskills.core.ApiCallStatus.FAILED
-import com.joshtalks.joshskills.core.ApiCallStatus.START
-import com.joshtalks.joshskills.core.ApiCallStatus.SUCCESS
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CALL_BUTTON_CLICKED_FROM_NEW_SCREEN
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Event
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_LESSON_SPOTLIGHT
-import com.joshtalks.joshskills.core.HAS_SEEN_QUIZ_VIDEO_TOOLTIP
-import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_SPOTLIGHT
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_GRAMMAR_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_READING_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_SPEAKING_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_VOCABULARY_SCREEN
-import com.joshtalks.joshskills.core.INTRO_VIDEO_STARTED_PLAYING
-import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
-import com.joshtalks.joshskills.core.IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.IS_SPEAKING_SCREEN_CLICKED
-import com.joshtalks.joshskills.core.LAST_SEEN_VIDEO_ID
-import com.joshtalks.joshskills.core.LESSON_COMPLETED_FOR_NOTIFICATION
-import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
-import com.joshtalks.joshskills.core.LESSON_NUMBER
-import com.joshtalks.joshskills.core.LESSON_TWO_OPENED
-import com.joshtalks.joshskills.core.LESSON__CHAT_ID
-import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_COMPLETED_RULES
-import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_TOTAL_RULES
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL
-import com.joshtalks.joshskills.core.SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
-import com.joshtalks.joshskills.core.TIME_SPENT_ON_INTRO_VIDEO
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -91,8 +57,6 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
-import com.joshtalks.joshskills.core.playSnackbarSound
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
@@ -118,6 +82,7 @@ import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.ui.online_test.util.AnimateAtsOptionViewEvent
 import com.joshtalks.joshskills.ui.online_test.vh.AtsOptionView
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
@@ -130,10 +95,14 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.skydoves.balloon.ArrowPositionRules
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
+import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.lesson_activity.container_reading
+import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -239,6 +208,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             R.layout.lesson_activity
         )
         binding.viewbinding = this
+        initToolbar()
         event.observe(this) {
             when (it.what) {
                 PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
@@ -285,11 +255,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
-        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
-        findViewById<View>(R.id.iv_back).setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
-            onBackPressed()
-        }
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
         }
@@ -303,6 +268,25 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             closeVideoPopUpUi()
         }
         viewModel.lessonId.postValue(getLessonId)
+    }
+
+    private fun initToolbar() {
+        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
+        findViewById<View>(R.id.iv_back).setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+            onBackPressed()
+        }
+        binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade).apply {
+            isVisible = PrefManager.getBoolValue(IS_FREE_TRIAL)
+            setOnClickListener {
+                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                    this@LessonActivity,
+                    AppObjectController.getFirebaseRemoteConfig().getString(
+                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                    )
+                )
+            }
+        }
     }
 
     private fun requestStoragePermission(requestCode: Int) {
@@ -337,6 +321,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     override fun onResume() {
         super.onResume()
         viewModel.isUserCallBlock()
+        PrefManager.put(LESSON_ACTIVITY_VISIT_COUNT, PrefManager.getIntValue(LESSON_ACTIVITY_VISIT_COUNT).plus(1))
         subscribeRxBus()
     }
 
@@ -415,7 +400,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                 .push()
             viewModel.postGoal(GoalKeys.GRAMMAR_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
-            if(lessonNumber == 1) {
+            if (lessonNumber == 1) {
                 viewModel.postGoal(GoalKeys.LESSON1_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
             }
 
@@ -768,6 +753,15 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         viewModel.outputFile.observe(this) {
             outputFile = it
         }
+        viewModel.coursePopupData.observe(this) {
+            if (it != null) {
+                PurchaseDialog
+                    .newInstance(it)
+                    .apply {
+                        show(supportFragmentManager, PurchaseDialog::class.simpleName)
+                    }
+            }
+        }
     }
 
     private fun hideSpotlight() {
@@ -834,9 +828,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
-                        AppObjectController.uiHandler.post {
-                            openLessonCompleteScreen(lesson)
-                        }
                     } else {
                         AppObjectController.uiHandler.post {
                             openIncompleteTab(currentTabNumber)
@@ -1031,7 +1022,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             tab.setCustomView(R.layout.capsule_tab_layout_view)
             when (position) {
                 SPEAKING_POSITION -> {
-                    if(PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT).not()){
+                    if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT).not()) {
                         viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
                     }
                     setSelectedColor(tab)
@@ -1086,13 +1077,44 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             {
                 if (defaultSection != -1) {
                     binding.lessonViewpager.currentItem =
-                        if (defaultSection == SPEAKING_POSITION || defaultSection == GRAMMAR_POSITION ) defaultSection else defaultSection - isTranslationDisabled
+                        if (defaultSection == SPEAKING_POSITION || defaultSection == GRAMMAR_POSITION) defaultSection else defaultSection - isTranslationDisabled
                 } else {
                     openIncompleteTab(arrayFragment.size - 1)
                 }
             },
             50
         )
+    }
+
+    fun showBuyCourseTooltip(tabPosition: Int) {
+        val key = when (tabPosition) {
+            SPEAKING_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP
+            GRAMMAR_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_GRAMMAR_TOOLTIP
+            VOCAB_POSITION - isTranslationDisabled -> FirebaseRemoteConfigKey.BUY_COURSE_VOCABULARY_TOOLTIP
+            READING_POSITION - isTranslationDisabled -> FirebaseRemoteConfigKey.BUY_COURSE_READING_TOOLTIP
+            else -> ""
+        }
+        val text = AppObjectController.getFirebaseRemoteConfig().getString(key.plus(courseId))
+        if (text.isBlank()) return
+        val balloon = Balloon.Builder(this)
+            .setLayout(R.layout.layout_bb_tip)
+            .setHeight(BalloonSizeSpec.WRAP)
+            .setIsVisibleArrow(true)
+            .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+            .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
+            .setWidthRatio(0.85f)
+            .setDismissWhenTouchOutside(true)
+            .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+            .setLifecycleOwner(this)
+            .setDismissWhenClicked(true)
+            .setAutoDismissDuration(3000L)
+            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+            .setPreferenceName(key)
+            .setShowCounts(3)
+            .build()
+        val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+        textView.text = text
+        balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade))
     }
 
     private fun isOnlineTestCompleted(): Boolean {
@@ -1204,10 +1226,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     private fun setSelectedColor(tab: TabLayout.Tab?) {
         tab?.let {
-
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL) &&
+                PrefManager.getIntValue(LESSON_ACTIVITY_VISIT_COUNT) >= 2
+            ) showBuyCourseTooltip(tab.position)
             tab.view.findViewById<TextView>(R.id.title_tv)
                 ?.setTextColor(ContextCompat.getColor(this, R.color.white))
-
             when (tab.position) {
                 SPEAKING_POSITION -> {
                     tab.view.background =
@@ -1305,7 +1328,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (intent?.getBooleanExtra("reopen",false)==true) {
+        if (intent?.getBooleanExtra("reopen", false) == true) {
             return
         }
         intent?.let {
@@ -1553,16 +1576,17 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 )
         )
     }
-    private fun closeReadingFullScreen(){
+
+    private fun closeReadingFullScreen() {
         supportFragmentManager.popBackStackImmediate()
         container_reading.visibility = View.GONE
     }
 }
 
 @BindingAdapter("setRatingText")
-fun AppCompatTextView.ratingText(rating:UserRating?){
+fun AppCompatTextView.ratingText(rating: UserRating?) {
     Log.d(TAG, "ratingText: $rating")
-    if(rating!=null) {
+    if (rating != null) {
         if (rating.rating.toInt() == -1 || rating.rating.isNaN()) {
             this.visibility = View.GONE
         } else {

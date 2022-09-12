@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
@@ -36,6 +38,7 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
     val message: MutableLiveData<String> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val repository: ABTestRepository by lazy { ABTestRepository() }
+    val coursePopupData: MutableLiveData<PurchaseDataResponse?> = MutableLiveData(null)
 
 
     private fun fetchAssessmentDetails(lessonId: Int) {

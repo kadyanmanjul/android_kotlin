@@ -6,11 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import java.util.*
+import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
+const val BATCH_CHANGE_FAILURE = -1
+const val BATCH_CHANGE_BUY_FIRST = 0
+const val BATCH_CHANGE_SUCCESS = 1
 
 class UnlockClassViewModel(
     application: Application,
@@ -21,8 +24,9 @@ class UnlockClassViewModel(
     private val chatDao = AppObjectController.appDatabase.chatDao()
     private val lessonDao = AppObjectController.appDatabase.lessonDao()
 
-    val batchChange = MutableSharedFlow<Boolean>(replay = 0)
+    val batchChange = MutableSharedFlow<Int>(replay = 0)
     val unlockNextClass = MutableSharedFlow<Boolean>(replay = 0)
+    val purchaseDialogData = MutableSharedFlow<PurchaseDataResponse?>()
 
     fun canWeAddUnlockNextClass(chatId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -57,14 +61,17 @@ class UnlockClassViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
-                if (response.isSuccessful) {
-                    batchChange.emit(true)
+                if (response.code() == 405) {
+                    batchChange.emit(BATCH_CHANGE_BUY_FIRST)
+                    return@launch
+                } else if (response.isSuccessful) {
+                    batchChange.emit(BATCH_CHANGE_SUCCESS)
                     return@launch
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
-            batchChange.emit(false)
+            batchChange.emit(BATCH_CHANGE_FAILURE)
         }
 
     }
@@ -78,5 +85,4 @@ class UnlockClassViewModel(
             )
         }
     }
-
 }

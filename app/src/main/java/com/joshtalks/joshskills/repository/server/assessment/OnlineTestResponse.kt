@@ -44,9 +44,6 @@ data class OnlineTestResponse(
     @SerializedName("total_answered")
     var totalAnswered: Int? = null,
 
-    @SerializedName("pop_up")
-    val popUpText: PurchaseDataResponse?
-
 ) : Parcelable
 
 enum class OnlineTestType(val status: String) {
