@@ -54,7 +54,8 @@ class FavoriteCall : CallCategory {
             Log.d(TAG, "onPreCallConnect: Fpp call$response")
 
             if (response[TOAST_MESSAGE] != null && response[TOAST_MESSAGE]?.equals("") != true) {
-                response[TOAST_MESSAGE]?.let { showToast(it.toString()) }
+                showToast(response[TOAST_MESSAGE] .toString(), length = 1)
+                throw UserBlockedException()
             }
         }
     }
