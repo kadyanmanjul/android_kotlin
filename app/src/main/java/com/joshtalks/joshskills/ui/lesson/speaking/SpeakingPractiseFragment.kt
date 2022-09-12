@@ -225,6 +225,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.txtLabelCallsLeft.paintFlags =
                         binding.txtLabelCallsLeft.paintFlags or Paint.UNDERLINE_TEXT_FLAG
                     binding.txtLabelCallsLeft.text = "$it calls left"
+                    binding.txtLabelCallsLeft.setOnClickListener {
+                        viewModel.getCoursePopupData(PurchasePopupType.SPEAKING_COMPLETED)
+                    }
                     if (it == 0) {
                         binding.bbTooltipGroup.visibility = GONE
                         binding.txtLabelCallsLeft.setTextColor(
@@ -233,10 +236,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 R.color.red
                             )
                         )
-                        binding.btnStartTrialText.visibility = GONE
+                        /*binding.btnStartTrialText.isEnabled = false
+                        binding.btnStartTrialText.alpha = 0.2F*/
                         binding.blockContainer.visibility = VISIBLE
                     } else if (it <= 3) {
-                        binding.btnStartTrialText.visibility = VISIBLE
                         binding.blockContainer.visibility = GONE
                         val text = AppObjectController.getFirebaseRemoteConfig().getString(
                             FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP.plus(
@@ -289,6 +292,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             if (!PrefManager.getBoolValue(IS_FIRST_TIME_CALL_INITIATED)) {
                 MarketingAnalytics.callInitiatedForFirstTime()
                 PrefManager.put(IS_FIRST_TIME_CALL_INITIATED, true)
+            }
+            if (viewModel.callCountLiveData.value == 0) {
+                viewModel.getCoursePopupData(PurchasePopupType.SPEAKING_COMPLETED)
+                return@setOnSingleClickListener
             }
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)

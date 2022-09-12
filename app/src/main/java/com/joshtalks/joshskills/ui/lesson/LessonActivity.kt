@@ -278,7 +278,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
-        binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade).apply {
+        binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade).apply {
             isVisible = PrefManager.getBoolValue(IS_FREE_TRIAL)
             setOnClickListener {
 //                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
@@ -1100,7 +1100,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         when (tabPosition) {
             SPEAKING_POSITION -> return
             GRAMMAR_POSITION -> if (lessonIsNewGrammar && PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION).not()) return
-//            VOCAB_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_VOCAB_TOOLTIP).not()) return
+            VOCAB_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN).not()) return
+            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_SCREEN).not()) return
 //            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_TOOLTIP)
 //                    .not()
 //            ) return
@@ -1124,14 +1125,14 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
             .setDismissWhenClicked(true)
-            .setAutoDismissDuration(5000L)
+            .setAutoDismissDuration(4000L)
             .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
 //            .setPreferenceName(key)
 //            .setShowCounts(3)
             .build()
         val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
         textView.text = text
-        balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade))
+        balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade))
     }
 
     private fun isOnlineTestCompleted(): Boolean {

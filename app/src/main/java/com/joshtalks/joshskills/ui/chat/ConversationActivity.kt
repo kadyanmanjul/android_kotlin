@@ -415,7 +415,13 @@ class ConversationActivity :
             } else {
                 conversationBinding.freeTrialContainer.visibility = VISIBLE
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-                startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
+                if (inboxEntity.expiryDate!!.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
+                    conversationBinding.freeTrialExpiryLayout.visibility = GONE
+                } else {
+                    conversationBinding.freeTrialContainer.visibility = VISIBLE
+                    conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+                    startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
+                }
             }
         } else if (
             inboxEntity.expiryDate != null &&

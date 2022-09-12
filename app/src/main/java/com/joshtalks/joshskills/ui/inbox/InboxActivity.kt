@@ -466,7 +466,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val capsuleCourse = temp.firstOrNull { it.isCapsuleCourse }
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
                 val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
-                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2) {
+                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
                     if (paymentStatusView.visibility != View.VISIBLE) {
                         findMoreLayout.visibility = View.VISIBLE
                         paymentStatusView.visibility = View.GONE
@@ -548,7 +548,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
             .setDismissWhenClicked(true)
-            .setAutoDismissDuration(5000L)
+            .setAutoDismissDuration(4000L)
             .setOnBalloonDismissListener {
                 isBbTooltipVisible = false
             }
