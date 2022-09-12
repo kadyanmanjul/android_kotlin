@@ -781,14 +781,10 @@
     <string name="achieve_100_points_first" translatable="false">Achieve 100 points first</string>
     <string name="language_text" translatable="false">
         <font color="@android:color/black">I want to</font>
-        <font color="#107BE5">speak english confidently</font>
+        <font color="#107BE5">speak English confidently</font>
         <font color="@android:color/black">from …</font>
     </string>
-    <string name="goal_text" translatable="false">
-        <font color="@android:color/black">I want to</font>
-        <font color="#107BE5">learn English</font>
-        <font color="@android:color/black">because I want to …</font>
-    </string>
+    <string name="goal_text" translatable="false">मैं English इसलिए सीखना चाहता हूँ:</string>
     <string name="buy_now" translatable="false">Buy now</string>
     <string name="your_free_trial_has_ended" translatable="false">Your Free Trial has ended</string>
     <string name="tap_anywhere_to_continue" translatable="false">Tap anywhere to continue</string>
