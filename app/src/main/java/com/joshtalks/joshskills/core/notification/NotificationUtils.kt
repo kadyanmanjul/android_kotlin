@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.*
@@ -54,6 +55,7 @@ import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
@@ -649,15 +651,11 @@ class NotificationUtils(val context: Context) {
     ): Intent {
 
         val rIntent = Intent(context.applicationContext, isOpenLessonNotificationCrash()).apply {
-            val obj = JSONObject(actionData)
-            putExtra(LessonActivity.LESSON_ID, obj.getInt(LessonActivity.LESSON_ID))
+            putExtra(LessonActivity.LESSON_ID, actionData?.toInt() ?: 0)
             putExtra(LessonActivity.IS_DEMO, false)
-            putExtra(LessonActivity.IS_NEW_GRAMMAR, obj.getBoolean(LessonActivity.IS_NEW_GRAMMAR))
-            putExtra(
-                LessonActivity.IS_LESSON_COMPLETED,
-                obj.getBoolean(LessonActivity.IS_LESSON_COMPLETED)
-            )
-            putExtra(CONVERSATION_ID, obj.getString(CONVERSATION_ID))
+            putExtra(LessonActivity.IS_NEW_GRAMMAR, false)
+            putExtra(LessonActivity.IS_LESSON_COMPLETED, false)//obj.getBoolean(LessonActivity.IS_LESSON_COMPLETED)
+//            putExtra(CONVERSATION_ID, obj.getString(CONVERSATION_ID))
             putExtra(LessonActivity.LESSON_SECTION, SPEAKING_POSITION)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ShareConstants.ACTION_TYPE, action)
@@ -730,6 +728,19 @@ class NotificationUtils(val context: Context) {
     fun removeScheduledNotification(category: NotificationCategory) {
         CoroutineScope(Dispatchers.IO).launch {
             val notificationIds = AppObjectController.appDatabase.scheduleNotificationDao().removeCategory(category.category)
+            notificationIds.forEach {
+                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
+                intent.putExtra("id", it)
+                val pendingIntent =
+                    PendingIntent.getBroadcast(context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                ReminderUtil(context).deleteAlarm(pendingIntent)
+            }
+        }
+    }
+
+    fun removeAllScheduledNotification() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val notificationIds = AppObjectController.appDatabase.scheduleNotificationDao().clearAllNotifications()
             notificationIds.forEach {
                 val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
                 intent.putExtra("id", it)

@@ -802,10 +802,10 @@
             android:exported="true"
             android:permission="com.joshtalks.permission.READ_WRITE_CONTENT" />
 
-        <service
-            android:name=".core.service.BackgroundService"
-            android:enabled="true"
-            android:exported="false" />
+<!--        <service-->
+<!--            android:name=".core.service.BackgroundService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="false" />-->
     </application>
 
 </manifest>

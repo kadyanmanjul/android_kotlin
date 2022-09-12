@@ -687,7 +687,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_53_54: Migration = object : Migration(53, 54) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `schedule_notification` (`id` TEXT NOT NULL, `category` TEXT NOT NULL, `title` TEXT NOT NULL, `body` TEXT NOT NULL, `execute_after` INTEGER NOT NULL, `action` TEXT NOT NULL, `action_data` TEXT NOT NULL, `is_scheduled` INTEGER NOT NULL DEFAULT 0, `is_shown` INTEGER NOT NULL DEFAULT 0, `is_event_sent` INTEGER NOT NULL DEFAULT 0)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `schedule_notification` (`id` TEXT NOT NULL PRIMARY KEY, `category` TEXT NOT NULL, `title` TEXT NOT NULL, `body` TEXT NOT NULL, `execute_after` INTEGER NOT NULL, `action` TEXT NOT NULL, `action_data` TEXT NOT NULL, `is_scheduled` INTEGER NOT NULL DEFAULT 0, `is_shown` INTEGER NOT NULL DEFAULT 0, `is_event_sent` INTEGER NOT NULL DEFAULT 0)")
             }
         }
 

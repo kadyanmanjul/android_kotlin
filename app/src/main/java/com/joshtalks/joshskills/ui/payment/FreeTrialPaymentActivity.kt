@@ -34,6 +34,8 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
+import com.joshtalks.joshskills.core.notification.NotificationCategory
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
@@ -190,6 +192,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         setObservers()
         MarketingAnalytics.openPreCheckoutPage()
         setListeners()
+        NotificationUtils(this).updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
     }
 
     private fun dynamicCardCreation() {
@@ -894,6 +897,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             PrefManager.getStringValue(CURRENT_COURSE_ID) != ENG_GOVT_EXAM_COURSE_ID
         )
             index = 0
+        NotificationUtils(applicationContext).removeScheduledNotification(NotificationCategory.AFTER_BUY_PAGE)
+        NotificationUtils(applicationContext).updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
         try {
             viewModel.getOrderDetails(
                 viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId ?: testId,
@@ -1042,6 +1047,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
+        NotificationUtils(applicationContext).removeAllScheduledNotification()
         viewModel.removeEntryFromPaymentTable(razorpayOrderId)
         MarketingAnalytics.coursePurchased(
             BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0),

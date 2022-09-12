@@ -75,7 +75,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         animatedProgressBar()
         handleIntent()
         setObservers()
-        viewModel.addAnalytics()
         AppObjectController.getNewArchVoipFlag()
         AppObjectController.initObjectInThread()
         VoipPref.initVoipPref(this)

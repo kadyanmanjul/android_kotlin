@@ -3,24 +3,24 @@ package com.joshtalks.joshskills.core.firestore
 import android.content.Context
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.reflect.Type
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 private const val TAG = "NotificationAnalytics"
 
 class NotificationAnalytics {
     private val notificationDao by lazy {
         AppObjectController.appDatabase.notificationEventDao()
+    }
+
+    private val scheduledDao by lazy {
+        AppObjectController.appDatabase.scheduleNotificationDao()
     }
 
     suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: Channel?): Boolean {
@@ -40,6 +40,10 @@ class NotificationAnalytics {
                 }
                 result = false
             }
+            if (event == Action.DISPLAYED) {
+                scheduledDao.updateEventSent(notificationId)
+                result = false
+            }
             val notificationEvent = NotificationEvent(
                 action = event.action,
                 time_stamp = System.currentTimeMillis(),
@@ -48,7 +52,7 @@ class NotificationAnalytics {
             )
             pushAnalytics(notificationEvent)
             return result
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
             return false
         }
@@ -81,24 +85,17 @@ class NotificationAnalytics {
             if (listOfReceived?.isEmpty() == true)
                 return true
 
+            val request = ArrayList<NotificationAnalyticsRequest>()
             listOfReceived?.forEach {
-                try {
-                    AppObjectController.utilsAPIService.engageNewNotificationAsync(
-                        NotificationAnalyticsRequest(
-                            it.id,
-                            it.time_stamp.plus(serverOffsetTime),
-                            it.action,
-                            it.platform
-                        )
-                    )
-                    notificationDao.updateSyncStatus(it.notificationId)
-                } catch (e: Exception) {
-                    if (e is HttpException) {
-                        if (e.code() == 400)
-                            notificationDao.updateSyncStatus(it.notificationId)
-                    }
-                    e.printStackTrace()
-                }
+                request.add(NotificationAnalyticsRequest(it.id, it.time_stamp.plus(serverOffsetTime), it.action, it.platform))
+            }
+            if (request.isEmpty()) {
+                return true
+            }
+
+            val resp = AppObjectController.utilsAPIService.engageNewNotificationAsync(request)
+            listOfReceived?.forEach {
+                notificationDao.updateSyncStatus(it.notificationId)
             }
             return true
         } catch (ex: Exception) {
@@ -168,7 +165,8 @@ class NotificationAnalytics {
         MOENGAGE("moengage"),
         API("API"),
         GROUPS("groups"),
-        PUBNUB("PUBNUB")
+        PUBNUB("PUBNUB"),
+        CLIENT("client")
     }
 }
 

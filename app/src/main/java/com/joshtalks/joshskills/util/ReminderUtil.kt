@@ -95,7 +95,7 @@ class ReminderUtil(val context: Context) {
     }
 
     fun setAlarmNotificationWorker() {
-        val timeDiff = System.currentTimeMillis() - PrefManager.getLongValue(LAST_TIME_NOTIFICATION_API)
+        /*val timeDiff = System.currentTimeMillis() - PrefManager.getLongValue(LAST_TIME_NOTIFICATION_API)
         val timeDiffConfig =
             AppObjectController.getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.NOTIFICATION_API_TIME) * 60 * 60 * 1000
         if (timeDiffConfig != 0L && timeDiff > timeDiffConfig) {
@@ -116,11 +116,11 @@ class ReminderUtil(val context: Context) {
                     }
                 }
             }
-        }
+        }*/
     }
 
     fun deleteNotificationAlarms() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             if (context.applicationContext != null) {
                 val alarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 val intent = Intent(context.applicationContext, BackgroundService::class.java)
@@ -128,6 +128,6 @@ class ReminderUtil(val context: Context) {
                     PendingIntent.getService(context.applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
                 alarmManager.cancel(pendingIntent)
             }
-        }
+        }*/
     }
 }
