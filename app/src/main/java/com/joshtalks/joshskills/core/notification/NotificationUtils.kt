@@ -647,7 +647,6 @@ class NotificationUtils(val context: Context) {
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ShareConstants.ACTION_TYPE, action)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         return rIntent
     }
@@ -725,11 +724,16 @@ class NotificationUtils(val context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val notificationIds = AppObjectController.appDatabase.scheduleNotificationDao().clearAllNotifications()
             notificationIds.forEach {
-                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
-                intent.putExtra("id", it)
-                val pendingIntent =
-                    PendingIntent.getBroadcast(context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                ReminderUtil(context).deleteAlarm(pendingIntent)
+                try {
+                    val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
+                    intent.putExtra("id", it)
+                    val pendingIntent = PendingIntent.getBroadcast(
+                        context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                    ReminderUtil(context).deleteAlarm(pendingIntent)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             }
         }
     }

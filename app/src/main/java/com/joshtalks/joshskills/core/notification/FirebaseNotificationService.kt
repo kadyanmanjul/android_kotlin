@@ -147,7 +147,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     channel = NotificationAnalytics.Channel.MOENGAGE
                     NotificationUtils(this).getDataFromMoengage(it)
                 }
-            else
+            else if (intent.extras?.containsKey("action") == true && intent.extras?.containsKey("id") == true)
                 mapOf(
                     Pair("action", intent.extras?.getString("action")),
                     Pair("action_data", intent.extras?.getString("action_data")),
@@ -155,6 +155,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     Pair("content_title", intent.extras?.getString("gcm.notification.title")),
                     Pair("content_text", intent.extras?.getString("gcm.notification.body"))
                 )
+            else {
+                super.handleIntent(intent)
+                return
+            }
 
             if (data.isNullOrEmpty())
                 return
