@@ -176,7 +176,7 @@ object VoipPref {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             delay(500)
             val currentActivity = ActivityLifecycleCallback.currentActivity
-            if (currentActivity.isDestroyed || currentActivity.isFinishing) {
+            if (currentActivity == null ||currentActivity.isDestroyed || currentActivity.isFinishing) {
                 delay(500)
                 val newCurrentActivity = ActivityLifecycleCallback.currentActivity
                 val newFragmentActivity = newCurrentActivity as? FragmentActivity
@@ -187,7 +187,7 @@ object VoipPref {
                         newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
                 }
-            } else if (currentActivity != null) {
+            } else {
                 val newFragmentActivity = currentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
                     if (type == CALL_RATING) {
