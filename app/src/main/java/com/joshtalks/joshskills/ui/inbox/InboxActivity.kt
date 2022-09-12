@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -199,7 +200,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     }
                     R.id.menu_help -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
-                        openHelpActivity()
+//                        openHelpActivity()
+                        CallWithExpertActivity.open(this)
                     }
                     R.id.menu_settings -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.SETTINGS).push()

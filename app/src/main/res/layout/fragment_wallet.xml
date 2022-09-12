@@ -77,18 +77,20 @@
 
         <EditText
             android:id="@+id/enteredAmountTv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:background="@color/transparent"
+            android:hint="@string/enter_amount_in_inr"
+            android:inputType="number"
             android:text="@={viewModel.addedAmount}"
             android:textColor="@color/black"
             android:textSize="@dimen/_14ssp"
-            android:background="@color/transparent"
             app:layout_constraintBottom_toBottomOf="@+id/view7"
+            app:layout_constraintEnd_toStartOf="@+id/proceedBtn"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-            app:layout_constraintTop_toTopOf="@+id/view7"
-            android:hint="@string/enter_amount_in_inr"
-            android:inputType="numberDecimal" />
+            app:layout_constraintTop_toTopOf="@+id/view7" />
 
         <Button
             android:id="@+id/proceedBtn"
