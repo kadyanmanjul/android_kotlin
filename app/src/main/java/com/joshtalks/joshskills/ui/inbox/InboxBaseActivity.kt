@@ -172,7 +172,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
         }
     }
 
-    protected fun handelIntentAction() {
+    protected fun handleIntentAction() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (intent != null && intent.hasExtra(ShareConstants.ACTION_TYPE)) {
                 val obj =

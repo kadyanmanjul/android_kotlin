@@ -56,16 +56,13 @@ import com.joshtalks.joshskills.util.FileUploadService
 import com.moengage.core.analytics.MoEAnalyticsHelper
 import com.skydoves.balloon.*
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_conversation.*
 import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.calling_feature_showcas_view.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -115,7 +112,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun addAfterTime() {
         workInBackground()
-        handelIntentAction()
+        handleIntentAction()
         viewModel.getTotalWatchTime()
     }
 
@@ -240,7 +237,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         super.onNewIntent(intent)
         processIntent(intent)
         this.intent = intent
-        handelIntentAction()
+        handleIntentAction()
     }
 
     private fun initMoEngage() {
