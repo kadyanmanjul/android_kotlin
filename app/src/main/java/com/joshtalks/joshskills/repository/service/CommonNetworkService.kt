@@ -410,4 +410,7 @@ interface CommonNetworkService {
         @Query("call_count") callCount: Int = 0,
         @Query("call_duration") callDuration: Long = 0
     ): Response<PurchaseDataResponse>
+
+    @POST("$DIR/impression/track_popup_impression/")
+    suspend fun savePopupImpression(@Body params: Map<String, String>): Response<Void>
 }

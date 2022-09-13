@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.lesson
 
-import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Rect
@@ -10,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
@@ -19,13 +19,15 @@ import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PurchaseDialog : BaseDialogFragment() {
 
     private lateinit var binding: PurchaseCourseDialogBinding
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var purchaseDataResponse: PurchaseDataResponse
-    private var onDismissListener: DialogInterface.OnDismissListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +54,9 @@ class PurchaseDialog : BaseDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         isCancelable = true
         initView()
+        savePopupImpression("POPUP_SHOWN")
         binding.btnBuy.setOnClickListener {
+            savePopupImpression("POPUP_CLICKED")
             showFreeTrialPaymentScreen()
         }
     }
@@ -133,7 +137,7 @@ class PurchaseDialog : BaseDialogFragment() {
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
                 )
             )
-            closeDialog()
+            closeDialog(isPopupIgnored = false)
         } catch (ex: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }
@@ -145,19 +149,16 @@ class PurchaseDialog : BaseDialogFragment() {
         }
     }
 
-    fun closeDialog() {
+    fun closeDialog(isPopupIgnored: Boolean = true) {
         countdownTimerBack?.stop()
-        onDismissListener?.onDismiss(dialog)
+        if(isPopupIgnored)
+            savePopupImpression("POPUP_IGNORED")
         super.dismiss()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         countdownTimerBack?.stop()
-    }
-
-    fun setOnDismissListener(onDismissListener: DialogInterface.OnDismissListener) {
-        this.onDismissListener = onDismissListener
     }
 
 
@@ -174,6 +175,21 @@ class PurchaseDialog : BaseDialogFragment() {
                 val width = ViewGroup.LayoutParams.MATCH_PARENT
                 val height = ViewGroup.LayoutParams.WRAP_CONTENT
                 d.window?.setLayout(width, height)
+            }
+        }
+    }
+
+    fun savePopupImpression(eventName: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                AppObjectController.commonNetworkService.savePopupImpression(
+                    mapOf(
+                        "popup_key" to (purchaseDataResponse.name?.name ?: ""),
+                        "event_name" to eventName
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
