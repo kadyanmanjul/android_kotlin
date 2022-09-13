@@ -130,8 +130,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         btn_upgrade.setOnClickListener {
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-                this@InboxActivity,
+//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                this@InboxActivity,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                )
+//            )
+            BuyPageActivity.startBuyPageActivity(
+                this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
                 )
@@ -368,7 +374,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (isTryAgainVisible) {
             tryAgain.visibility = View.VISIBLE
             tryAgain.setOnClickListener {
-                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                    this,
+//                    AppObjectController.getFirebaseRemoteConfig().getString(
+//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                    )
+//                )
+                BuyPageActivity.startBuyPageActivity(
                     this,
                     AppObjectController.getFirebaseRemoteConfig().getString(
                         FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID

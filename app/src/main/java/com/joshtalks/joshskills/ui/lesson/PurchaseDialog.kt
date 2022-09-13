@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 
 class PurchaseDialog : BaseDialogFragment() {
 
@@ -113,12 +114,18 @@ class PurchaseDialog : BaseDialogFragment() {
 
     fun showFreeTrialPaymentScreen() {
         try {
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                requireActivity(),
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                ),
+//                purchaseDataResponse.expireTime?.time ?: 0
+//            )
+            BuyPageActivity.startBuyPageActivity(
                 requireActivity(),
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),
-                purchaseDataResponse.expireTime?.time ?: 0
+                )
             )
             closeDialog()
         } catch (ex: Exception) {

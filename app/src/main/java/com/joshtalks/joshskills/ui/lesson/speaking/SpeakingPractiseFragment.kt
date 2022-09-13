@@ -57,6 +57,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -669,7 +670,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     fun startBuyPageActivity(v: View) {
         activity?.let { it1 ->
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                it1,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                )
+//            )
+            BuyPageActivity.startBuyPageActivity(
                 it1,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID

@@ -83,6 +83,7 @@ import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.ui.online_test.util.AnimateAtsOptionViewEvent
 import com.joshtalks.joshskills.ui.online_test.vh.AtsOptionView
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
@@ -102,6 +103,7 @@ import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -279,7 +281,13 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade).apply {
             isVisible = PrefManager.getBoolValue(IS_FREE_TRIAL)
             setOnClickListener {
-                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                    this@LessonActivity,
+//                    AppObjectController.getFirebaseRemoteConfig().getString(
+//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                    )
+//                )
+                BuyPageActivity.startBuyPageActivity(
                     this@LessonActivity,
                     AppObjectController.getFirebaseRemoteConfig().getString(
                         FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
