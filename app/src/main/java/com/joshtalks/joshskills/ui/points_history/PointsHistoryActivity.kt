@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_POINTS_HISTORY_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
@@ -272,12 +273,18 @@ class PointsHistoryActivity : CoreJoshActivity() {
     }
 
     fun showFreeTrialPaymentScreen() {
-        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            viewModel.pointsHistoryLiveData.value?.expiryDate?.time
+//        )
+        BuyPageActivity.startBuyPageActivity(
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            viewModel.pointsHistoryLiveData.value?.expiryDate?.time
+            )
         )
         // finish()
     }

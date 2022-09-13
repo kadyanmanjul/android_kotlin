@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -220,12 +221,18 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
     }
 
     fun showFreeTrialPaymentScreen() {
-        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            viewModel.previousLeaderBoardData.value?.currentMentor?.expiryDate?.time
+//        )
+        BuyPageActivity.startBuyPageActivity(
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            viewModel.previousLeaderBoardData.value?.currentMentor?.expiryDate?.time
+            )
         )
         // finish()
     }

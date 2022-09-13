@@ -947,12 +947,18 @@ class ConversationActivity :
 
     fun moveToPaymentActivity(v: View) {
         MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
-        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            inboxEntity.expiryDate?.time
+//        )
+        BuyPageActivity.startBuyPageActivity(
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            inboxEntity.expiryDate?.time
+            )
         )
     }
 
