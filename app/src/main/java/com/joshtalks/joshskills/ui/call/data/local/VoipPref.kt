@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.voip.data.local.LOCAL_USER_AGORA_ID
 import com.joshtalks.joshskills.voip.inSeconds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "VoipPref"
 
@@ -34,6 +35,8 @@ object VoipPref {
     }
     val mutex = Mutex(false)
     var isListenerActivated = false
+    
+     val expertDurationMutex = Mutex(false)
 
     @Synchronized
     fun initVoipPref(context: Context) {
@@ -111,6 +114,7 @@ object VoipPref {
         setExpertCallDuration(duration)
 
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            expertDurationMutex.withLock {
             try {
                 delay(500)
                 val currentActivity = ActivityLifecycleCallback.currentActivity
@@ -151,6 +155,7 @@ object VoipPref {
                 }
             } catch (ex: Exception) {
                 showToast("Something went wrong")
+            }
             }
         }
     }

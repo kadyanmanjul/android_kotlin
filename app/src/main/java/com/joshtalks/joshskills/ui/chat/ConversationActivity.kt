@@ -699,7 +699,7 @@ class ConversationActivity :
             MaterialDialog(this@ConversationActivity).show {
                 message(R.string.restart_course_message)
                 positiveButton(R.string.restart_now) {
-                    if (email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
+                    if (!phoneNumber.isNullOrEmpty()) {
                         conversationBinding.btnRestartCourse.visibility = View.GONE
                         conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
                     } else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
