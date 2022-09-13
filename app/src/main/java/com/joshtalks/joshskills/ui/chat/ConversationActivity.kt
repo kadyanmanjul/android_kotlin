@@ -15,7 +15,9 @@ import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -98,6 +100,7 @@ import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.lesson.speaking.BLOCKED
 import com.joshtalks.joshskills.ui.lesson.speaking.SHOW_WARNING_POPUP
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
@@ -122,12 +125,6 @@ import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.core.pstn_states.PSTNState
-import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
-import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
-import com.joshtalks.joshskills.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
