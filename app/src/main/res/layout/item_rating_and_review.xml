@@ -92,10 +92,11 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:textColor="@color/pure_black"
                 android:layout_marginTop="@dimen/_6sdp"
-                android:paddingBottom="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_12sdp"
                 android:text="very good app they provide you a very good knowledge and environment for improving your English speaking"
                 app:layout_constraintTop_toBottomOf="@+id/rating_date"
                 />

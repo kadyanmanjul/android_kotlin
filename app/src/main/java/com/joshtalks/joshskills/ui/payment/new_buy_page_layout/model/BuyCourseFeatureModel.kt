@@ -13,7 +13,8 @@ data class BuyCourseFeatureModel(
     @SerializedName("teacher_name") var teacherName: String? = null,
     @SerializedName("youtube_channel") var youtubeChannel: String? = null,
     @SerializedName("youtube_link") var youtubeLink:String?=null,
-    @SerializedName("teacher_desc") var teacherDesc: String? = null
+    @SerializedName("teacher_desc") var teacherDesc: String? = null,
+    @SerializedName("expire_time") var expiryTime: Date? = null
 )
 
 data class CouponListModel(

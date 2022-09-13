@@ -25,7 +25,11 @@ data class CourseDetailsList(
     @SerializedName("coupon_text")
     val couponText: String? = null,
     @SerializedName("is_recommended")
-    val isRecommended: Boolean? = false
+    val isRecommended: Boolean? = false,
+    @SerializedName("image_url")
+    val imageUrl: String? = null,
+    @SerializedName("teacher_name")
+    val teacherName: String? = null
 )
 
 data class PriceParameterModel(
