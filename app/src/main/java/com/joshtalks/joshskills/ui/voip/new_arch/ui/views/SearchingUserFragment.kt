@@ -8,17 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentSearchingUserBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import kotlinx.coroutines.sync.Mutex
+import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 
 class SearchingUserFragment : BaseFragment() {
 
     lateinit var searchingUserBinding: FragmentSearchingUserBinding
     private var timer: CountDownTimer? = null
+    private var isFragmentRestarted = false
+
 
     val voiceCallViewModel by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
@@ -26,7 +30,7 @@ class SearchingUserFragment : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         searchingUserBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_searching_user, container, false)
@@ -54,6 +58,7 @@ class SearchingUserFragment : BaseFragment() {
                     val diff = searchingUserBinding.progressBar.progress + 10
                     fillProgressBar(diff)
                 }
+
                 override fun onFinish() {
                     startProgressBarCountDown()
                 }
@@ -80,5 +85,22 @@ class SearchingUserFragment : BaseFragment() {
         super.onDestroyView()
         timer?.cancel()
         timer = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setCurrentCallState()
+    }
+
+    private fun replaceCallUserFragment() {
+        requireActivity().supportFragmentManager.commit {
+            replace(R.id.voice_call_container, CallFragment(), "CallFragment")
+        }
+    }
+
+    private fun setCurrentCallState() {
+        if ((PrefManager.getVoipState() == State.JOINED || PrefManager.getVoipState() == State.CONNECTED)) {
+            replaceCallUserFragment()
+        }
     }
 }
