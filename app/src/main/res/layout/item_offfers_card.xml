@@ -40,8 +40,8 @@
                 android:id="@+id/coupon_discount_percent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
                 android:text="Get 10% Off "
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                 android:textColor="@color/pure_black" />
 
@@ -64,13 +64,13 @@
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:text="Apply"
-            app:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:textAllCaps="false" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

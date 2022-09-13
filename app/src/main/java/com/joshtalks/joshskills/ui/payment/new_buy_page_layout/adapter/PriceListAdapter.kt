@@ -3,11 +3,13 @@ package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter
 import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ItemNewPriceCardBinding
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_PRICE_CARD
@@ -73,6 +75,12 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
             Log.e("sagar", "setData: $priceList", )
             binding.itemData = priceList
             binding.discountPrice.paintFlags = binding.discountPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
+            if (priceList?.couponText != EMPTY) {
+                binding.discountTxt.visibility = View.VISIBLE
+            }
+            else {
+                binding.discountTxt.visibility = View.GONE
+            }
             binding.executePendingBindings()
         }
     }

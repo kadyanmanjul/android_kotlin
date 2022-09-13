@@ -135,7 +135,7 @@
             android:layout_marginStart="@dimen/_10sdp"
             android:enabled="false"
             android:gravity="start"
-            android:hint="@string/hint_name_field"
+            android:hint="Enter Coupon Code"
             android:imeOptions="actionNext"
             android:inputType="textCapWords"
             android:lines="1"

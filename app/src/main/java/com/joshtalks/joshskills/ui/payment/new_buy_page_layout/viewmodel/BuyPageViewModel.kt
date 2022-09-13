@@ -120,17 +120,12 @@ class BuyPageViewModel : BaseViewModel() {
 
     //this method is get price and if pass coupon code then it will return discount price
     fun getCoursePriceList(code: String?) {
-        Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:109 ")
         try {
-            Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:111 ")
             viewModelScope.launch{
                 try {
-                    Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:112 ")
-                    val response = buyPageRepo.getPriceList(PriceParameterModel("2221debc-11e5-48cb-82b9-39f78ac9cf98", 1907,code))
+                    val response = buyPageRepo.getPriceList(PriceParameterModel(PrefManager.getStringValue(USER_UNIQUE_ID), Integer.parseInt(testId),code))
                     if (response.isSuccessful && response.body() != null) {
-                        Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:115 ")
                         withContext(mainDispatcher) {
-                            Log.e("sagar", "getCoursePriceList: ${response.body()}")
                             priceListAdapter.addPriceList(response.body()?.courseDetails)
                         }
                     }
@@ -148,21 +143,20 @@ class BuyPageViewModel : BaseViewModel() {
 
     val onItemClick: (ListOfCoupon, Int, Int,String) -> Unit = { it, type, position, couponType ->
         itemPosition = position
-        Log.d("BuyPageViewModel.kt", "SAGAR => :129 $couponType  $type")
         try {
             when (type) {
                 CLICK_ON_OFFER_CARD -> {
                     if (couponType == APPLY) {
-                        Log.d("BuyPageViewModel.kt", "SAGAR => :133 ")
+                        isCouponApplied.set(true)
                         try {
-                            getCoursePriceList("JOSH20")
+                            getCoursePriceList(it.couponCode)
                             isDiscount = true
                         }catch (ex:Exception){
                             Log.d("BuyPageViewModel.kt", "SAGAR => :139 ${ex.message}")
                         }
                     }
                     else {
-                        Log.d("BuyPageViewModel.kt", "SAGAR => :138 ")
+                        isCouponApplied.set(false)
                         getCoursePriceList(null)
                     }
                 }
@@ -193,7 +187,6 @@ class BuyPageViewModel : BaseViewModel() {
         itemPosition = position
         when (type) {
             CLICK_ON_COUPON_APPLY -> {
-                isCouponApplied.set(true)
                 onItemClick(it, CLICK_ON_OFFER_CARD, position, APPLY)
                 message.what = CLICK_ON_COUPON_APPLY
                 message.obj = it
@@ -236,7 +229,6 @@ class BuyPageViewModel : BaseViewModel() {
 
                 val orderDetailsResponse: Response<OrderDetailResponse> =
                     AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
-                Log.e("sagar", "getOrderDetails: ${orderDetailsResponse.code()}")
                 if (orderDetailsResponse.code() == 201) {
                     val response: OrderDetailResponse = orderDetailsResponse.body()!!
                     //orderDetailsLiveData.postValue(response)

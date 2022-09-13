@@ -7,7 +7,7 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_skill_logo"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_130sdp"
+        android:layout_height="@dimen/_160sdp"
         android:scaleType="fitXY"
         android:src="@drawable/goverment_course_thumbnail"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,10 +19,11 @@
         android:layout_width="@dimen/_110sdp"
         android:layout_height="@dimen/_27sdp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:elevation="@dimen/_10sdp"
         android:gravity="center"
         app:cardCornerRadius="@dimen/_30sdp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:cardElevation="@dimen/_5sdp"
+        android:padding="@dimen/_5sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_skill_logo"
         app:rippleColor="@color/colorAccent"
@@ -49,7 +50,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginStart="@dimen/_4sdp"
                 android:layout_toRightOf="@id/play_icon"
-                android:text="@string/play_video"
+                android:text="Watch video"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                 android:textColor="@color/colorAccent">
 
