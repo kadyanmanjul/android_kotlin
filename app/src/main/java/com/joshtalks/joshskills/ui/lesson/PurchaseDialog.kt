@@ -184,7 +184,7 @@ class PurchaseDialog : BaseDialogFragment() {
             try {
                 AppObjectController.commonNetworkService.savePopupImpression(
                     mapOf(
-                        "popup_key" to (purchaseDataResponse.name?.name ?: ""),
+                        "popup_key" to (purchaseDataResponse.popUpKey ?: ""),
                         "event_name" to eventName
                     )
                 )
