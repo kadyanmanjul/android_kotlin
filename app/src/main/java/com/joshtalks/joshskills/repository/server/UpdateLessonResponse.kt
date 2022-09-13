@@ -49,8 +49,6 @@ data class PurchaseDataResponse(
     val popUpPrice: String?,
     @SerializedName("expire_time")
     val expireTime: Date?,
-    @SerializedName("is_coupon_popup")
-    val isCouponPopup: Boolean = false,
     @SerializedName("coupon_code")
     val couponCode: String?,
     @SerializedName("coupon_expiry_text")

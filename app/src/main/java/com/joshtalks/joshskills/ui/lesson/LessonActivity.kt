@@ -768,8 +768,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     .apply {
                         show(supportFragmentManager, PurchaseDialog::class.simpleName)
                     }
-                if (it.isCouponPopup && it.expireTime != null)
-                    PrefManager.put(COUPON_EXPIRY_TIME, it.expireTime.time)
+                if (it.couponCode != null && it.couponExpiryTime != null)
+                    PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
             }
         }
     }
