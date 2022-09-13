@@ -25,14 +25,13 @@ class NotificationAnalytics {
 
     suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: Channel?): Boolean {
         try {
-            Timber.tag(TAG).d("addAnalytics() called with: notificationId = $notificationId, mEvent = $mEvent, channel = $channel")
             var result = true
             var event = mEvent
-            var platformChannel = channel?.action?: EMPTY
+            var platformChannel = channel?.action ?: EMPTY
             val notification = getNotification(notificationId)
             if (notification != null && notification.isNotEmpty()) {
                 if (event == Action.DISCARDED || event == Action.CLICKED) {
-                    notification.filter { it.action == Action.RECEIVED.action }[0].platform?.let {
+                    notification.filter { it.action == Action.RECEIVED.action || it.action == Action.DISPLAYED.action }[0].platform?.let {
                         platformChannel = it
                     }
                 } else if (event == Action.RECEIVED) {
@@ -59,8 +58,6 @@ class NotificationAnalytics {
     }
 
     suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: String) {
-        Timber.tag(TAG)
-            .d("addAnalytics() called with: notificationId = $notificationId, mEvent = $mEvent, channel = $channel")
         val notification = getNotification(notificationId)
         if (notification != null && notification.isNotEmpty()) {
             return
@@ -93,7 +90,7 @@ class NotificationAnalytics {
                 return true
             }
 
-            val resp = AppObjectController.utilsAPIService.engageNewNotificationAsync(request)
+            AppObjectController.utilsAPIService.engageNewNotificationAsync(request)
             listOfReceived?.forEach {
                 notificationDao.updateSyncStatus(it.notificationId)
             }

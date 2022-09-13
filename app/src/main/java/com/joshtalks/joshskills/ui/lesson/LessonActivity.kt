@@ -83,6 +83,7 @@ import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.ui.online_test.util.AnimateAtsOptionViewEvent
 import com.joshtalks.joshskills.ui.online_test.vh.AtsOptionView
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
@@ -102,6 +103,7 @@ import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -276,10 +278,16 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
-        binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade).apply {
+        binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade).apply {
             isVisible = PrefManager.getBoolValue(IS_FREE_TRIAL)
             setOnClickListener {
-                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                    this@LessonActivity,
+//                    AppObjectController.getFirebaseRemoteConfig().getString(
+//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                    )
+//                )
+                BuyPageActivity.startBuyPageActivity(
                     this@LessonActivity,
                     AppObjectController.getFirebaseRemoteConfig().getString(
                         FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
@@ -760,6 +768,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     .apply {
                         show(supportFragmentManager, PurchaseDialog::class.simpleName)
                     }
+                if (it.couponCode != null && it.couponExpiryTime != null)
+                    PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
             }
         }
     }
@@ -1087,8 +1097,16 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     }
 
     fun showBuyCourseTooltip(tabPosition: Int) {
+        when (tabPosition) {
+            SPEAKING_POSITION -> return
+            GRAMMAR_POSITION -> if (lessonIsNewGrammar && PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION).not()) return
+            VOCAB_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN).not()) return
+            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_SCREEN).not()) return
+//            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_TOOLTIP)
+//                    .not()
+//            ) return
+        }
         val key = when (tabPosition) {
-            SPEAKING_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP
             GRAMMAR_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_GRAMMAR_TOOLTIP
             VOCAB_POSITION - isTranslationDisabled -> FirebaseRemoteConfigKey.BUY_COURSE_VOCABULARY_TOOLTIP
             READING_POSITION - isTranslationDisabled -> FirebaseRemoteConfigKey.BUY_COURSE_READING_TOOLTIP
@@ -1107,14 +1125,14 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
             .setDismissWhenClicked(true)
-            .setAutoDismissDuration(3000L)
+            .setAutoDismissDuration(4000L)
             .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-            .setPreferenceName(key)
-            .setShowCounts(3)
+//            .setPreferenceName(key)
+//            .setShowCounts(3)
             .build()
         val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
         textView.text = text
-        balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade))
+        balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade))
     }
 
     private fun isOnlineTestCompleted(): Boolean {
@@ -1226,9 +1244,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     private fun setSelectedColor(tab: TabLayout.Tab?) {
         tab?.let {
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL) &&
-                PrefManager.getIntValue(LESSON_ACTIVITY_VISIT_COUNT) >= 2
-            ) showBuyCourseTooltip(tab.position)
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+                showBuyCourseTooltip(tab.position)
             tab.view.findViewById<TextView>(R.id.title_tv)
                 ?.setTextColor(ContextCompat.getColor(this, R.color.white))
             when (tab.position) {

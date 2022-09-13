@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_RATING
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PURCHASE_POPUP
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -88,24 +89,34 @@ object VoipPref {
         editor.putString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, remoteUserMentorId)
         editor.commit()
 
-            if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) && duration.inSeconds() >= 300) {
-                editor.putBoolean(IS_FIRST_CALL, false)
-                editor.putBoolean(IS_FIRST_5MIN_CALL, false)
-                NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
-                NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_FIRST_CALL)
-                NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIVE_MIN_CALL)
-            } else if (duration != 0L && preferenceManager.getBoolean(IS_FIRST_CALL, true)) {
-                editor.putBoolean(IS_FIRST_CALL, false)
-                NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
-                NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
-            }
+        if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) && duration.inSeconds() >= 300) {
+            editor.putBoolean(IS_FIRST_CALL, false)
+            editor.putBoolean(IS_FIRST_5MIN_CALL, false)
+            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
+            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_FIRST_CALL)
+            NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIVE_MIN_CALL)
+            MarketingAnalytics.callComplete5MinForFirstTime()
+        } else if (duration != 0L && preferenceManager.getBoolean(IS_FIRST_CALL, true)) {
+            editor.putBoolean(IS_FIRST_CALL, false)
+            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
+            NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
+        }
 
-            // TODO: These logic shouldn't be here
-            if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
-                showDialogBox(duration, CALL_RATING)
-            } else if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
-                showDialogBox(duration, PURCHASE_POPUP)
-            }
+
+        if (duration.inSeconds() >= 300) {
+            MarketingAnalytics.callComplete5Min()
+        }
+
+        if (duration.inSeconds() >= 1200) {
+            MarketingAnalytics.callComplete20Min()
+        }
+
+        // TODO: These logic shouldn't be here
+        if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
+            showDialogBox(duration, CALL_RATING)
+        } else if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+            showDialogBox(duration, PURCHASE_POPUP)
+        }
 
         deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId)
     }
@@ -165,7 +176,7 @@ object VoipPref {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             delay(500)
             val currentActivity = ActivityLifecycleCallback.currentActivity
-            if (currentActivity.isDestroyed || currentActivity.isFinishing) {
+            if (currentActivity == null ||currentActivity.isDestroyed || currentActivity.isFinishing) {
                 delay(500)
                 val newCurrentActivity = ActivityLifecycleCallback.currentActivity
                 val newFragmentActivity = newCurrentActivity as? FragmentActivity
@@ -176,7 +187,7 @@ object VoipPref {
                         newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
                 }
-            } else if (currentActivity != null) {
+            } else {
                 val newFragmentActivity = currentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
                     if (type == CALL_RATING) {

@@ -55,6 +55,7 @@ import com.joshtalks.joshskills.ui.leaderboard.constants.PROFILE_ITEM_CLICKED
 import com.joshtalks.joshskills.ui.leaderboard.constants.SCROLL_TO_TOP
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.skydoves.balloon.ArrowOrientation
 import com.skydoves.balloon.Balloon
@@ -408,12 +409,18 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
     }
 
     fun showFreeTrialPaymentScreen() {
-        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            viewModel.leaderBoardData.value?.get("TODAY")?.current_mentor?.expiryDate?.time
+//        )
+        BuyPageActivity.startBuyPageActivity(
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            viewModel.leaderBoardData.value?.get("TODAY")?.current_mentor?.expiryDate?.time
+            )
         )
         // finish()
     }

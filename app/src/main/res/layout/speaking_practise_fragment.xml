@@ -201,11 +201,12 @@
                     tools:visibility="gone" />
 
                 <androidx.constraintlayout.widget.Group
-                    android:id="@+id/call_count_container"
+                    android:id="@+id/bb_tooltip_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    app:constraint_referenced_ids="txt_label_calls_left, iv_arrow, layout_bb_tip" />
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="iv_arrow, layout_bb_tip"
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_label_calls_left"
@@ -215,15 +216,17 @@
                     android:autoLink="all"
                     android:drawablePadding="@dimen/_4sdp"
                     android:gravity="center"
-                    android:onClick="@{handler::startBuyPageActivity}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_14ssp"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     app:drawableStartCompat="@drawable/ic_info_micro"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txt_how_to_speak"
-                    tools:text="3 calls left"/>
+                    tools:text="3 calls left"
+                    tools:visibility="visible" />
 
                 <include
                     android:id="@+id/layout_bb_tip"
@@ -231,6 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_minus3sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_arrow" />

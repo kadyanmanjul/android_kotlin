@@ -155,7 +155,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         if (intent.hasExtra(HAS_LOCAL_NOTIFICATION) &&
             intent.getBooleanExtra(HAS_LOCAL_NOTIFICATION, false)
         ) {
-            PrefManager.put(HAS_SEEN_LOCAL_NOTIFICATION, true)
             PrefManager.put(
                 LOCAL_NOTIFICATION_INDEX,
                 PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0).plus(1)

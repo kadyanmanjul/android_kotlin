@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+            <variable
+                name="vm"
+                type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/progress_container_view_share"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.callWithExpert.fragment.WalletFragment">
+
+
+        <LinearLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:elevation="@dimen/_4sdp"
+                android:minHeight="?attr/actionBarSize"
+                app:contentInsetEnd="0dp"
+                app:contentInsetEndWithActions="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp"
+                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_6sdp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:onClick="@{vm::onBackPress}"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_4sdp"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        tools:visibility="visible" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginHorizontal="@dimen/_6sdp"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/iv_back"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="start|center"
+                        android:singleLine="true"
+                        android:text="Apply Coupon"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+            </com.google.android.material.appbar.MaterialToolbar>
+        </LinearLayout>
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/_18sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/_18sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/_20sdp" />
+
+        <View
+            android:id="@+id/view7"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:background="@drawable/blue_rectangle_without_solid"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/enteredAmountTv"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:digits="@string/allowed_name_characters"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:enabled="false"
+            android:gravity="start"
+            android:hint="Enter Coupon Code"
+            android:imeOptions="actionNext"
+            android:inputType="textCapWords"
+            android:lines="1"
+            android:maxLength="24"
+            android:maxLines="1"
+            android:minLines="1"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_14sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/light_grey"
+            android:textColorHint="@color/light_grey"
+            android:textCursorDrawable="@drawable/cursor_drawable"
+            app:layout_constraintHorizontal_bias="0.512"
+            app:layout_constraintBottom_toBottomOf="@+id/view7"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@+id/view7" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/proceedBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:elevation="0dp"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="@dimen/_17sdp"
+            android:paddingVertical="@dimen/_7sdp"
+            android:text="Apply"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/view7"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintTop_toTopOf="@+id/view7"
+            app:textAllCaps="true" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/amountList"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:paddingBottom="@dimen/_20sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/view7"
+            onCouponItemClick="@{vm.onItemCouponClick}"
+            couponListAdapter="@{vm.couponListAdapter}"
+            tools:listitem="@layout/item_coupon_card" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

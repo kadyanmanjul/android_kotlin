@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
@@ -56,16 +57,13 @@ import com.joshtalks.joshskills.util.FileUploadService
 import com.moengage.core.analytics.MoEAnalyticsHelper
 import com.skydoves.balloon.*
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_conversation.*
 import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.calling_feature_showcas_view.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -91,6 +89,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
+    private var isBbTooltipVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -115,7 +114,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun addAfterTime() {
         workInBackground()
-        handelIntentAction()
+        handleIntentAction()
         viewModel.getTotalWatchTime()
     }
 
@@ -133,8 +132,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         btn_upgrade.setOnClickListener {
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-                this@InboxActivity,
+//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                this@InboxActivity,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                )
+//            )
+            BuyPageActivity.startBuyPageActivity(
+                this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
                 )
@@ -168,12 +173,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
         buy_english_course.setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            BuyPageActivity.startBuyPageActivity(
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
                 )
             )
+//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                this,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                )
+//            )
         }
     }
 
@@ -240,7 +251,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         super.onNewIntent(intent)
         processIntent(intent)
         this.intent = intent
-        handelIntentAction()
+        handleIntentAction()
     }
 
     private fun initMoEngage() {
@@ -366,7 +377,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (isTryAgainVisible) {
             tryAgain.visibility = View.VISIBLE
             tryAgain.setOnClickListener {
-                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                    this,
+//                    AppObjectController.getFirebaseRemoteConfig().getString(
+//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                    )
+//                )
+                BuyPageActivity.startBuyPageActivity(
                     this,
                     AppObjectController.getFirebaseRemoteConfig().getString(
                         FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
@@ -449,7 +466,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val capsuleCourse = temp.firstOrNull { it.isCapsuleCourse }
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
                 val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
-                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2) {
+                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
                     if (paymentStatusView.visibility != View.VISIBLE) {
                         findMoreLayout.visibility = View.VISIBLE
                         paymentStatusView.visibility = View.GONE
@@ -467,7 +484,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                        if (PrefManager.hasKey(COUPON_EXPIRY_TIME)) {
+                            val expiryTime = PrefManager.getLongValue(COUPON_EXPIRY_TIME)
+                            if (expiryTime > System.currentTimeMillis() && isBbTooltipVisible.not())
+                                showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                            else
+                                PrefManager.removeKey(COUPON_EXPIRY_TIME)
+                        }
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
@@ -525,13 +548,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
             .setDismissWhenClicked(true)
-            .setAutoDismissDuration(3000L)
-            .setPreferenceName("BUY_COURSE_ENGLISH_TOOLTIP")
-            .setShowCounts(3)
+            .setAutoDismissDuration(4000L)
+            .setOnBalloonDismissListener {
+                isBbTooltipVisible = false
+            }
             .build()
         val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
         textView.text = text
         balloon.showAlignBottom(buy_english_course)
+        isBbTooltipVisible = true
     }
 
     override fun onPause() {

@@ -330,6 +330,9 @@ class ReadingFragmentWithoutFeedback :
         super.onResume()
         showRecordHintAnimation()
         subscribeRXBus()
+        if(PrefManager.hasKey(HAS_SEEN_READING_SCREEN).not()){
+            PrefManager.put(HAS_SEEN_READING_SCREEN,true)
+        }
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {

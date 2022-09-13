@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.chat.vh.PdfCourseProgressView
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -319,12 +320,18 @@ class CourseProgressActivityNew : CoreJoshActivity(), CourseProgressAdapter.Prog
     }
 
     fun showFreeTrialPaymentScreen() {
-        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            viewModel.progressLiveData.value?.expiryDate?.time
+//        )
+        BuyPageActivity.startBuyPageActivity(
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            viewModel.progressLiveData.value?.expiryDate?.time
+            )
         )
         // finish()
     }
