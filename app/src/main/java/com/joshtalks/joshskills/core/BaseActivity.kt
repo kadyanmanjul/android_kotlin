@@ -118,7 +118,8 @@ abstract class BaseActivity :
         Signup,
         Empty,
         DeepLink,
-        FreeTrial
+        FreeTrial,
+        BuyPage
     }
 
     var openSettingActivity: ActivityResultLauncher<Intent> = registerForActivityResult(

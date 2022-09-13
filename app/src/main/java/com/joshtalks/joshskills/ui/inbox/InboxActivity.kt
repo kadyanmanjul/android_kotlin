@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
@@ -165,12 +166,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
         buy_english_course.setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            BuyPageActivity.startBuyPageActivity(
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
                 )
             )
+//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                this,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                )
+//            )
         }
     }
 

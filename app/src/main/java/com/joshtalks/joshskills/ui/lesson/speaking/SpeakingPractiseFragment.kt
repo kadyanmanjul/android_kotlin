@@ -280,6 +280,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             courseId = it
         }
         binding.btnStartTrialText.setOnSingleClickListener {
+            if (!PrefManager.getBoolValue(IS_FIRST_TIME_CALL_INITIATED)) {
+                MarketingAnalytics.callInitiatedForFirstTime()
+                PrefManager.put(IS_FIRST_TIME_CALL_INITIATED, true)
+            }
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             MarketingAnalytics.callInitiated()
