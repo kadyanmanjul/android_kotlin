@@ -214,4 +214,5 @@
     <color name="payment_status_red">#F03636</color>
     <color name="green_payment">#57CC02</color>
     <color name="green_payment_text">#179549</color>
+    <color name="price_card_stroke">#8D8D8D</color>
 </resources>

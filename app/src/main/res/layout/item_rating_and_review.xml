@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="true"
+        android:elevation="0dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="@dimen/_4sdp"
+        app:cardElevation="4dp"
+        android:layout_margin="@dimen/_8sdp"
+        tools:cardPreventCornerOverlap="false">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/group_item_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/report_white"
+            android:clipToPadding="true">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/white_button_round_enabled"
+                android:gravity="center_vertical|start"
+                android:src="@drawable/img_5"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="Sagar jain"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                android:textColor="@color/pure_black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.017"
+                app:layout_constraintStart_toEndOf="@+id/profile_image"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Harsh Gupta" />
+
+            <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+                android:id="@+id/course_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:progressDrawable="@drawable/ratingbar_selector_v2"
+                android:rating="3.5"
+                android:stepSize="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_image"
+                app:layout_constraintVertical_bias="1" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/rating_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:text="02/09/2022"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:textColor="@color/black_0.7_alpha"
+                app:layout_constraintStart_toEndOf="@+id/course_rating"
+                app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/rating_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:textColor="@color/pure_black"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_8sdp"
+                android:text="very good app they provide you a very good knowledge and environment for improving your English speaking"
+                app:layout_constraintTop_toBottomOf="@+id/rating_date"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>

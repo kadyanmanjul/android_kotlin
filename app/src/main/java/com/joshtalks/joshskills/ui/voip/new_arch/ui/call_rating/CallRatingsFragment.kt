@@ -113,9 +113,17 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
         callerMentorId = mArgs.getString(CALLER_MENTOR_ID).toString()
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
-        if (vm.getDurationInMin() >= 5) {
-           MarketingAnalytics.callComplete5Min()
+        if (!PrefManager.getBoolValue(IS_FIRST_TIME_5_MIN_CALL)){
+            if (vm.getDurationInMin() >= 5) {
+                MarketingAnalytics.callComplete5MinForFirstTime()
+                PrefManager.put(IS_FIRST_TIME_5_MIN_CALL, true)
+            }
         }
+
+        if (vm.getDurationInMin() >= 5) {
+            MarketingAnalytics.callComplete5Min()
+        }
+
         if (vm.getDurationInMin() >= 20) {
             MarketingAnalytics.callComplete20Min()
         }

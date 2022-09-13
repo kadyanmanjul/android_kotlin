@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListResponse
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletBalance
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.*
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
@@ -392,4 +393,16 @@ interface CommonNetworkService {
         @Query("duration") duration: String,
         @Query("remote_user_id") remoteUserId: String,
     ): Response<PurchasePopUp>
+
+    @GET("$DIR/course/buy_course_feature/")
+    suspend fun getCourseFeatureDetails(@Query("test_id") testId:Int) :Response<BuyCourseFeatureModel>
+
+    @GET("$DIR/course/get_valid_coupons/")
+    suspend fun getValidCoupon(@Query("first_impression") firstImpression: Long) : Response<CouponListModel>
+
+    @POST("$DIR/course/course_price_details/")
+    suspend fun getCoursePriceList(@Body params: PriceParameterModel): Response<CoursePriceListModel>
+
+    @GET("$DIR/course/list_reviews/")
+    suspend fun getReviews(@Query("test_id") testId:Int) :Response<RatingAndReviews>
 }

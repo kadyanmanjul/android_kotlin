@@ -102,6 +102,10 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
+            android:name=".ui.payment.new_buy_page_layout.BuyPageActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".ui.callWithExpert.CallWithExpertActivity"
             android:exported="false" />
         <activity

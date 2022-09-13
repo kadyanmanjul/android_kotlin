@@ -1065,5 +1065,10 @@
         <item>₹ 100000</item>
     </string-array>
     <string name="rup">\u20B9</string>
+    <string name="english_speaking_course">English Speaking Course</string>
+    <string name="about_the_teacher">About the Teacher</string>
+    <string name="course_ratings_and_reviews">Course Ratings and Reviews</string>
+    <string name="offer_for_you">Offer for you</string>
+    <string name="insert_code">Insert Code</string>
 
 </resources>
