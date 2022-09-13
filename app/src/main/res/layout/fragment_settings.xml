@@ -306,6 +306,25 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/clear_downloads_tv" />
 
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/p2p_proximity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:background="@color/white"
+                    android:checked="true"
+                    android:drawablePadding="@dimen/_8sdp"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/_12sdp"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:text="@string/p2p_proximity_setting"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    app:drawableStartCompat="@drawable/proximity"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/p2p_setting" />
+
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/rate_us_tv"
@@ -324,7 +343,7 @@
                     app:drawableStartCompat="@drawable/ic_rate_us"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/p2p_setting" />
+                    app:layout_constraintTop_toBottomOf="@+id/p2p_proximity" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/privacy_policy_tv"

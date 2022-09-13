@@ -26,6 +26,7 @@ const val AGORA_CALL_ID = "josh_pref_key_agora_call_id"
 const val CURRENT_CALL_CATEGORY = "josh_pref_key_call_category"
 const val LAST_RECORDING = "josh_pref_key_agora_call_recording"
 const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"
+const val PROXIMITY_ON = "is_josh_proximity_on"
 
 
 private const val TAG = "PrefManager"
@@ -70,6 +71,15 @@ class PrefManager {
             Log.d(TAG, "Setting Voip State : ${state.ordinal}")
             val editor = preferenceManager.edit()
             editor.putInt(VOIP_STATE, state.ordinal)
+            editor.commit()
+        }
+
+        fun isProximitySensorOn() = preferenceManager.getBoolean(PROXIMITY_ON, true)
+
+        fun updateProximitySettings(isProximityOn : Boolean) {
+            Log.d("ProximityHelper", "updateProximitySettings: isProximitySensorOn = $isProximityOn")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PROXIMITY_ON, isProximityOn)
             editor.commit()
         }
 
