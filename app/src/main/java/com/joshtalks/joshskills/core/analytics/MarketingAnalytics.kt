@@ -124,6 +124,16 @@ object MarketingAnalytics {
         }
     }
 
+    fun callComplete5MinForFirstTime() {
+        JoshSkillExecutors.BOUNDED.submit {
+            val params = Bundle().apply {
+                putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            }
+
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SELECT_ITEM,params)
+        }
+    }
+
     fun openInboxPage() {
         val context = AppObjectController.joshApplication
         // Facebook Event
@@ -234,6 +244,14 @@ object MarketingAnalytics {
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Event.SEARCH, Utils.getDeviceId())
             FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
+        }
+    }
+
+    fun callInitiatedForFirstTime() {
+        JoshSkillExecutors.BOUNDED.submit {
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Event.SELECT_PROMOTION, Utils.getDeviceId())
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SELECT_PROMOTION, bundle)
         }
     }
 

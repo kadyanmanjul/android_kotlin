@@ -122,6 +122,12 @@ import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.core.pstn_states.PSTNState
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -529,13 +535,20 @@ class ConversationActivity :
 
     fun showFreeTrialPaymentScreen() {
         MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
-        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+        BuyPageActivity.startBuyPageActivity(
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
             ),
             inboxEntity.expiryDate?.time
         )
+//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            inboxEntity.expiryDate?.time
+//        )
         // finish()
     }
 

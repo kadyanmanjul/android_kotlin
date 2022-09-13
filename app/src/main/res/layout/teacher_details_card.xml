@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/about_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:text="@string/about_the_teacher"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+            android:textColor="@color/pure_black"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/teacher_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:text="fgfhgcv"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+            android:textColor="@color/pure_black"
+            app:layout_constraintEnd_toStartOf="@+id/teacher_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/about_text" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/youtube_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/teacher_youtube_link"
+            android:clickable="true"
+            android:focusable="true"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
+            android:textColor="@color/colorAccent"
+            app:layout_constraintEnd_toStartOf="@+id/teacher_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/teacher_name" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/teacher_image"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_marginRight="@dimen/_40sdp"
+            android:src="@drawable/img_5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/about_text"
+            app:layout_constraintTop_toBottomOf="@+id/about_text" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/desc_about_teacher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Suman ma’am have been teaching Spoken English for various competitive exams with exclusive focus to UPSC, Banking and SSC for the last 10 years.  "
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/about_text"
+            app:layout_constraintTop_toBottomOf="@+id/teacher_image" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
