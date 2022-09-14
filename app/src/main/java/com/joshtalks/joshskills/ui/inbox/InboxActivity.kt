@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -100,6 +101,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
+        val mentorId = Mentor.getInstance().getId()
+        val mentorUserId = Mentor.getInstance().getUserId()
+        Log.d("mentorid", "mentor id is: $mentorId and mentor user id: $mentorUserId")
         initView()
         addLiveDataObservable()
         addAfterTime()

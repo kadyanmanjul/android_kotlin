@@ -589,13 +589,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:visibility="@{vm.isInternetSpeedGood == 2 &amp;&amp; !vm.blockLiveData  ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
                     app:layout_constraintVertical_bias="1"
                     tools:visibility="gone">
+
+                    <androidx.constraintlayout.widget.Group
+                        app:constraint_referenced_ids="btn_new_student,btn_group_call, btn_favorite, btnStartTrialText"
+                        android:layout_width="wrap_content"
+                        android:visibility="@{vm.isInternetSpeedGood == 2 &amp;&amp; !vm.blockLiveData  ? View.VISIBLE : View.GONE}"
+                        android:layout_height="wrap_content"
+                        />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_new_student"
