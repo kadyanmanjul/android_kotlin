@@ -47,7 +47,7 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
@@ -518,7 +518,7 @@ class NotificationUtils(val context: Context) {
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
-            FreeTrialPaymentActivity::class.java
+            BuyPageActivity::class.java
         }
     }
 

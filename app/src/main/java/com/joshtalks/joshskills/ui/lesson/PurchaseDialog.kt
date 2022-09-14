@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

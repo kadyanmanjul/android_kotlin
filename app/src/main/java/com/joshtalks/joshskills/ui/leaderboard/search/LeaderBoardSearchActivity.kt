@@ -22,7 +22,6 @@ import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.track.COURSE_EXPIRY_TIME_IN_MS
 import com.joshtalks.joshskills.track.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import java.util.ArrayList
 import java.util.Locale

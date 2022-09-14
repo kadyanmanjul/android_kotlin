@@ -54,7 +54,6 @@ import com.joshtalks.joshskills.ui.leaderboard.constants.NEED_VIEW_BITMAP
 import com.joshtalks.joshskills.ui.leaderboard.constants.PROFILE_ITEM_CLICKED
 import com.joshtalks.joshskills.ui.leaderboard.constants.SCROLL_TO_TOP
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.skydoves.balloon.ArrowOrientation

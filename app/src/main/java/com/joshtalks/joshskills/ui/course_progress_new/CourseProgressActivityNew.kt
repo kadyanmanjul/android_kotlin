@@ -29,7 +29,6 @@ import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.chat.vh.PdfCourseProgressView
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope

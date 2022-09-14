@@ -49,7 +49,6 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel

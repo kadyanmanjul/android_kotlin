@@ -82,7 +82,6 @@ import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.ui.online_test.util.AnimateAtsOptionViewEvent
 import com.joshtalks.joshskills.ui.online_test.vh.AtsOptionView
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION

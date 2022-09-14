@@ -36,17 +36,14 @@ import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ActiveUserRequest
-import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.yariksoffice.lingver.Lingver
@@ -826,7 +823,7 @@ class FakeCallNotificationWorker(
                 PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) != 0L &&
                 PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) < System.currentTimeMillis() &&
                 AppObjectController.currentActivityClass != PaymentSummaryActivity::class.java.simpleName &&
-                AppObjectController.currentActivityClass != FreeTrialPaymentActivity::class.java.simpleName
+                AppObjectController.currentActivityClass != BuyPageActivity::class.java.simpleName
             ) {
                 try {
                     val resp = AppObjectController.p2pNetworkService.getFakeCall()
