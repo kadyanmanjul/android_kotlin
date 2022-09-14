@@ -597,9 +597,9 @@
     <string name="p2p_subtitle" translatable="false">Speaking Practice</string>
     <string name="reconnecting" translatable="false">Reconnecting</string>
     <string name="hold_call" translatable="false">Call On Hold</string>
-    <string name="call_start_permission_message_rational" translatable="false">Please allow permissions on your device settings to start speakingGo to settings --> permissions and enable Microphone </string>
-    <string name="call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone </string>
-    <string name="demo_call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone </string>
+    <string name="call_start_permission_message_rational" translatable="false">Please allow permissions on your device settings to start speakingGo to settings --> permissions and enable Microphone, Phone and Storage </string>
+    <string name="call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone, Phone and Storage </string>
+    <string name="demo_call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone, Phone and Storage </string>
     <string name="spoke_for_minute" translatable="false">Spoke for %1$s </string>
     <string name="block" translatable="false">Block</string>
     <string name="block_user_hint" translatable="false">By clicking block, %s will never be able to call you and your calls will never go to %s</string>
