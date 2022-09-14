@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.callWithExpert.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,6 +76,7 @@ class ExpertListFragment:BaseFragment() {
                             putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)
 
                         }
+                        Log.d("calltype", "start fpp call from expert list fragment: ")
                         startActivity(callIntent)
                     } else {
                         showToast("You don't have amount")

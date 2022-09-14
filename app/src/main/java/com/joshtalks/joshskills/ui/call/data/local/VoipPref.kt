@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.local.AGORA_CALL_ID
 import com.joshtalks.joshskills.voip.data.local.LOCAL_USER_AGORA_ID
 import com.joshtalks.joshskills.voip.inSeconds
@@ -107,55 +108,34 @@ object VoipPref {
                 showDialogBox(duration, PURCHASE_POPUP)
             }
 
-        deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId)
+        deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
     }
 
-    private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String) {
-        setExpertCallDuration(duration)
+    private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {
+        if (callType == Category.EXPERT.ordinal) {
+            setExpertCallDuration(duration)
 
-        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            expertDurationMutex.withLock {
-            try {
-                delay(500)
-                val currentActivity = ActivityLifecycleCallback.currentActivity
-                if (currentActivity.isDestroyed || currentActivity.isFinishing) {
-                    delay(500)
-                    val newCurrentActivity = ActivityLifecycleCallback.currentActivity
-                    val newFragmentActivity = newCurrentActivity as? FragmentActivity
-                    val map = HashMap<String, String>()
-                    map["time_spoken_in_seconds"] = duration
-                    map["connected_user_id"] = remoteUserMentorId
-                    map["agora_call_id"] = getLastCallId().toString()
-                   val response =  AppObjectController.commonNetworkService.deductAmountAfterCall(map)
-                    when(response.code()){
-                        200->{
-                            setExpertCallDuration("")
-                            SkillsDatastore.updateWalletCredits(response.body()?.amount?:0)
-                        }
-                        406 -> {
+            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+                expertDurationMutex.withLock {
+                    try {
+                        val map = HashMap<String, String>()
+                        map["time_spoken_in_seconds"] = duration
+                        map["connected_user_id"] = remoteUserMentorId
+                        map["agora_call_id"] = getLastCallId().toString()
+                        val response =
+                            AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                        when (response.code()) {
+                            200 -> {
+                                setExpertCallDuration("")
+                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
+                            }
+                            406 -> {
 
+                            }
                         }
-                    }
-                } else if (currentActivity != null) {
-                    val newFragmentActivity = currentActivity as? FragmentActivity
-                    val map = HashMap<String, String>()
-                    map["time_spoken_in_seconds"] = duration
-                    map["connected_user_id"] = remoteUserMentorId
-                    map["agora_call_id"] = getLastCallId().toString()
-                    val response = AppObjectController.commonNetworkService.deductAmountAfterCall(map)
-                    when (response.code()) {
-                        200 -> {
-                            setExpertCallDuration("")
-                            SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
-                        }
-                        406 -> {
-
-                        }
+                    } catch (ex: Exception) {
                     }
                 }
-            } catch (ex: Exception) {
-                showToast("Something went wrong")
-            }
             }
         }
     }

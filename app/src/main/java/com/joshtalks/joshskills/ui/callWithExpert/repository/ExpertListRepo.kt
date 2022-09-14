@@ -101,54 +101,26 @@ class ExpertListRepo {
     fun deductAmountAfterCall() {
         CoroutineScope(Dispatchers.IO).launch {
             VoipPref.expertDurationMutex.withLock {
-//            delay(4000)
                 if (!VoipPref.getExpertCallDuration().isNullOrEmpty()) {
                     try {
-                        delay(500)
-                        val currentActivity = ActivityLifecycleCallback.currentActivity
-                        if (currentActivity.isDestroyed || currentActivity.isFinishing) {
-                            delay(500)
-                            val newCurrentActivity = ActivityLifecycleCallback.currentActivity
-                            val newFragmentActivity = newCurrentActivity as? FragmentActivity
-                            val map = HashMap<String, String>()
-                            map["time_spoken_in_seconds"] = VoipPref.getExpertCallDuration()!!
-                            map["connected_user_id"] = VoipPref.getLastRemoteUserMentorId()
-                            map["agora_call_id"] = VoipPref.getLastCallId().toString()
-                            val response =
-                                AppObjectController.commonNetworkService.deductAmountAfterCall(map)
-                            when (response.code()) {
-                                200 -> {
-                                    VoipPref.setExpertCallDuration("")
-                                    SkillsDatastore.updateWalletCredits(
-                                        response.body()?.amount ?: 0
-                                    )
-                                }
-                                406 -> {
-
-                                }
+                        val map = HashMap<String, String>()
+                        map["time_spoken_in_seconds"] = VoipPref.getExpertCallDuration()!!
+                        map["connected_user_id"] = VoipPref.getLastRemoteUserMentorId()
+                        map["agora_call_id"] = VoipPref.getLastCallId().toString()
+                        val response =
+                            AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                        when (response.code()) {
+                            200 -> {
+                                VoipPref.setExpertCallDuration("")
+                                SkillsDatastore.updateWalletCredits(
+                                    response.body()?.amount ?: 0
+                                )
                             }
-                        } else if (currentActivity != null) {
-                            val newFragmentActivity = currentActivity as? FragmentActivity
-                            val map = HashMap<String, String>()
-                            map["time_spoken_in_seconds"] = VoipPref.getExpertCallDuration()!!
-                            map["connected_user_id"] = VoipPref.getLastRemoteUserMentorId()
-                            map["agora_call_id"] = VoipPref.getLastCallId().toString()
-                            val response =
-                                AppObjectController.commonNetworkService.deductAmountAfterCall(map)
-                            when (response.code()) {
-                                200 -> {
-                                    VoipPref.setExpertCallDuration("")
-                                    SkillsDatastore.updateWalletCredits(
-                                        response.body()?.amount ?: 0
-                                    )
-                                }
-                                406 -> {
+                            406 -> {
 
-                                }
                             }
                         }
                     } catch (ex: Exception) {
-                        showToast("Something went wrong")
                     }
                 }
 
