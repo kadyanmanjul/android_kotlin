@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class FppCallFragment : BaseFragment() {
     private val TAG = "FppCallFragment"
@@ -60,7 +61,7 @@ class FppCallFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("calltype", "inflate fpp call fragment")
+        Timber.tag("calltype").d("inflate fpp call fragment")
         vm.isPermissionGranted.addOnPropertyChangedCallback(object : OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable, propertyId: Int) {
                 if(vm.source== FROM_ACTIVITY && vm.isPermissionGranted.get()) {
