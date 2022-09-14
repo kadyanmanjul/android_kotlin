@@ -649,7 +649,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         ) {
             binding.btnCallWithExpert.isVisible = true
         }
-        binding.btnCallWithExpert.isVisible = true
 
 
         binding.btnCallWithExpert.setOnClickListener {
