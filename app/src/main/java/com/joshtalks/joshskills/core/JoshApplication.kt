@@ -83,7 +83,6 @@ class JoshApplication :
         Branch.getAutoInstance(this)
         turnOnStrictMode()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
-        initPrefManager()
     }
 
     override fun onTerminate() {
@@ -224,7 +223,4 @@ class JoshApplication :
         }
     }
 
-    fun initPrefManager(){
-        com.joshtalks.joshskills.voip.data.local.PrefManager.initServicePref(this)
-    }
 }
