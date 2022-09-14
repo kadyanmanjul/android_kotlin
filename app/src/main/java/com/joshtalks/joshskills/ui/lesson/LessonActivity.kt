@@ -767,8 +767,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     .newInstance(it)
                     .apply {
                         if (openLessonCompletedScreen) {
-                            this.dialog?.setOnDismissListener {
-                                openLessonCompleteScreen(viewModel.lessonLiveData.value ?: lesson ?: return@setOnDismissListener)
+                            setOnDismissListener {
+                                openLessonCompleteScreen(
+                                    viewModel.lessonLiveData.value ?: lesson ?: return@setOnDismissListener
+                                )
                             }
                         }
                         show(supportFragmentManager, PurchaseDialog::class.simpleName)
@@ -874,8 +876,13 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
-                        AppObjectController.uiHandler.post {
-                            openLessonCompleteScreen(lesson)
+                        if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                            openLessonCompletedScreen = true
+                            viewModel.getCoursePopupData(PurchasePopupType.LESSON_COMPLETED)
+                        } else {
+                            AppObjectController.uiHandler.post {
+                                openLessonCompleteScreen(lesson)
+                            }
                         }
                     }
                 }
@@ -1113,9 +1120,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_SCREEN)
                     .not()
             ) return
-//            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_TOOLTIP)
-//                    .not()
-//            ) return
         }
         val key = when (tabPosition) {
             GRAMMAR_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_GRAMMAR_TOOLTIP
@@ -1328,17 +1332,12 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             PrefManager.putPrefObject("lessonObject", lesson)
         } else {
             this.lesson = lesson
-            if (openLessonCompletedScreen.not() && PrefManager.getBoolValue(IS_FREE_TRIAL)) {
-                viewModel.getCoursePopupData(PurchasePopupType.LESSON_COMPLETED)
-                openLessonCompletedScreen = true
-            } else {
-                openLessonCompletedActivity.launch(
-                    LessonCompletedActivity.getActivityIntent(
-                        this,
-                        lesson
-                    )
+            openLessonCompletedActivity.launch(
+                LessonCompletedActivity.getActivityIntent(
+                    this,
+                    lesson
                 )
-            }
+            )
         }
     }
 

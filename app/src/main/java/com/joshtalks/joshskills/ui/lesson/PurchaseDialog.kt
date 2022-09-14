@@ -27,6 +27,7 @@ class PurchaseDialog : BaseDialogFragment() {
     private lateinit var binding: PurchaseCourseDialogBinding
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var purchaseDataResponse: PurchaseDataResponse
+    private var onDialogDismiss: () -> Unit = {}
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -152,6 +153,7 @@ class PurchaseDialog : BaseDialogFragment() {
         countdownTimerBack?.stop()
         if(isPopupIgnored)
             savePopupImpression("POPUP_IGNORED")
+        onDialogDismiss.invoke()
         super.dismiss()
     }
 
@@ -191,5 +193,9 @@ class PurchaseDialog : BaseDialogFragment() {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun setOnDismissListener(function: () -> Unit) {
+        onDialogDismiss = function
     }
 }
