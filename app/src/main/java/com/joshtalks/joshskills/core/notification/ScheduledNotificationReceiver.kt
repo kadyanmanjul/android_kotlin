@@ -27,7 +27,7 @@ class ScheduledNotificationReceiver : BroadcastReceiver() {
 
                 when (nc?.action) {
                     NotificationAction.INITIATE_RANDOM_CALL.type -> {
-                        if (database.courseDao().getMaxExpiryTime().time > System.currentTimeMillis() && isBlocked().not()) {
+                        if (database.courseDao().getMaxExpiryTime().time < System.currentTimeMillis() || isBlocked()) {
                             notificationAction = NotificationAction.ACTION_OPEN_PAYMENT_PAGE
                             ncActionData = Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(
                                 FREE_TRIAL_TEST_ID
@@ -35,7 +35,7 @@ class ScheduledNotificationReceiver : BroadcastReceiver() {
                         }
                     }
                     NotificationAction.ACTION_OPEN_SPEAKING_SECTION.type -> {
-                        if (database.courseDao().getMaxExpiryTime().time > System.currentTimeMillis()) {
+                        if (database.courseDao().getMaxExpiryTime().time < System.currentTimeMillis()) {
                             notificationAction = NotificationAction.ACTION_OPEN_PAYMENT_PAGE
                             ncActionData = Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(
                                 FREE_TRIAL_TEST_ID
