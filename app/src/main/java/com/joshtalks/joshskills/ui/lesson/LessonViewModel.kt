@@ -1152,8 +1152,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             this.name = popupType
                         }
                     }
-                }
+                } else
+                    coursePopupData.postValue(null)
             } catch (ex: Exception) {
+                coursePopupData.postValue(null)
                 Timber.e(ex)
             }
         }

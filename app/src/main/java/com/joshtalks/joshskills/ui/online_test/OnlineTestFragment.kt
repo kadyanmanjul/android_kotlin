@@ -252,7 +252,7 @@ class OnlineTestFragment :
     fun showGrammarCompleteFragment() {
         activity?.supportFragmentManager?.beginTransaction()?.replace(
             R.id.parent_Container,
-            GrammarOnlineTestFragment.getInstance(lessonNumber, scoreText, pointsList),
+            GrammarOnlineTestFragment.getInstance(lessonNumber, scoreText, pointsList, true),
             GrammarOnlineTestFragment.TAG
         )?.addToBackStack(GrammarOnlineTestFragment.TAG)?.commitAllowingStateLoss()
         testCompletedListener?.onTestCompleted()

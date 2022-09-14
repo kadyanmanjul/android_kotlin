@@ -784,8 +784,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             QUESTION_STATUS.AT,
             questionId
         )
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL))
-            viewModel.getCoursePopupData(PurchasePopupType.SPEAKING_COMPLETED)
         lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
     }
 

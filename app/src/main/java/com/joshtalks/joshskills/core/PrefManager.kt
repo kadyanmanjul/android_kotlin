@@ -116,6 +116,7 @@ const val HAS_SEEN_LEADERBOARD_ANIMATION = "joshskills_has_seen_leaderboard_anim
 const val HAS_SEEN_LESSON_SPOTLIGHT = "joshskills_has_seen_lesson_spotlight"
 const val HAS_SEEN_SPEAKING_SPOTLIGHT = "joshskills_has_seen_speaking_spotlight"
 const val HAS_SEEN_LOCAL_NOTIFICATION = "has_seen_local_notification"
+const val HAS_SEEN_VOCAB_SCREEN = "has_seen_vacab_screen"
 const val HAS_SEEN_READING_SCREEN = "has_seen_reading_screen"
 const val LOCAL_NOTIFICATION_INDEX = "local_notification_index"
 const val CHAT_OPENED_FOR_NOTIFICATION = "chat_opened_for_notification"

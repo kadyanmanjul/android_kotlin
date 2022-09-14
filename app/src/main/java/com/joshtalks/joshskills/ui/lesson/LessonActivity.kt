@@ -35,7 +35,6 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -65,6 +64,7 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
@@ -155,6 +155,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private lateinit var filePath: String
     private lateinit var videoDownPath: String
     private lateinit var outputFile: String
+    private var openLessonCompletedScreen: Boolean = false
 
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
@@ -765,6 +766,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 PurchaseDialog
                     .newInstance(it)
                     .apply {
+                        if (openLessonCompletedScreen) {
+                            this.dialog?.setOnDismissListener {
+                                openLessonCompleteScreen(viewModel.lessonLiveData.value ?: lesson ?: return@setOnDismissListener)
+                            }
+                        }
                         show(supportFragmentManager, PurchaseDialog::class.simpleName)
                     }
                 if (it.couponCode != null && it.couponExpiryTime != null)
@@ -1098,9 +1104,15 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     fun showBuyCourseTooltip(tabPosition: Int) {
         when (tabPosition) {
             SPEAKING_POSITION -> return
-            GRAMMAR_POSITION -> if (lessonIsNewGrammar && PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION).not()) return
-            VOCAB_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN).not()) return
-            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_SCREEN).not()) return
+            GRAMMAR_POSITION -> if (lessonIsNewGrammar && PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION)
+                    .not()
+            ) return
+            VOCAB_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_VOCAB_SCREEN)
+                    .not()
+            ) return
+            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_SCREEN)
+                    .not()
+            ) return
 //            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_TOOLTIP)
 //                    .not()
 //            ) return
@@ -1316,12 +1328,17 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             PrefManager.putPrefObject("lessonObject", lesson)
         } else {
             this.lesson = lesson
-            openLessonCompletedActivity.launch(
-                LessonCompletedActivity.getActivityIntent(
-                    this,
-                    lesson
+            if (openLessonCompletedScreen.not() && PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                viewModel.getCoursePopupData(PurchasePopupType.LESSON_COMPLETED)
+                openLessonCompletedScreen = true
+            } else {
+                openLessonCompletedActivity.launch(
+                    LessonCompletedActivity.getActivityIntent(
+                        this,
+                        lesson
+                    )
                 )
-            )
+            }
         }
     }
 
