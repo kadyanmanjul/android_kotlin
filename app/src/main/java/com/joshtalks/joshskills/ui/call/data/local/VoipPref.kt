@@ -115,7 +115,7 @@ object VoipPref {
         // TODO: These logic shouldn't be here
         if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
             showDialogBox(duration, CALL_RATING)
-        } else if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+        } else if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal) {
             showDialogBox(duration, PURCHASE_POPUP)
         }
 
