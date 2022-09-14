@@ -404,6 +404,7 @@
     <string name="submitted">Submitted</string>
     <string name="ringing">Ringing</string>
     <string name="p2p_notification_setting" translatable="false">Speaking partner notifications</string>
+    <string name="p2p_proximity_setting" translatable="false">Proximity Sensor</string>
     <string name="practise_tip_1">English mei baat karne ki practice karo students ke saath</string>
     <string name="practise_tip_2">Kariye Unlimited Practice, but only in English</string>
     <string name="practise_tip_3">Apne Partner ki respect karein aur abusive language na use karein</string>
@@ -781,14 +782,10 @@
     <string name="achieve_100_points_first" translatable="false">Achieve 100 points first</string>
     <string name="language_text" translatable="false">
         <font color="@android:color/black">I want to</font>
-        <font color="#107BE5">speak english confidently</font>
+        <font color="#107BE5">speak English confidently</font>
         <font color="@android:color/black">from …</font>
     </string>
-    <string name="goal_text" translatable="false">
-        <font color="@android:color/black">I want to</font>
-        <font color="#107BE5">learn English</font>
-        <font color="@android:color/black">because I want to …</font>
-    </string>
+    <string name="goal_text" translatable="false">मैं English इसलिए सीखना चाहता हूँ:</string>
     <string name="buy_now" translatable="false">Buy now</string>
     <string name="your_free_trial_has_ended" translatable="false">Your Free Trial has ended</string>
     <string name="tap_anywhere_to_continue" translatable="false">Tap anywhere to continue</string>
@@ -1072,5 +1069,11 @@
     <string name="copied_to_clipboard">Copied to Clipboard</string>
     <string name="empty"> </string>
     <string name="ft_calls_left" formatted="false">%s calls left in free trial</string>
+    <string name="english_speaking_course">English Speaking Course</string>
+    <string name="about_the_teacher">About the Teacher</string>
+    <string name="course_ratings_and_reviews">Course Ratings and Reviews</string>
+    <string name="offer_for_you">Offer for you</string>
+    <string name="insert_code">Insert Code</string>
+    <string name="teacher_youtube_link"><u>Serene Paathshala</u></string>
 
 </resources>

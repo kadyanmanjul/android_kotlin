@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="amount"
+            type="com.joshtalks.joshskills.ui.callWithExpert.model.Amount" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_7sdp"
+        android:elevation="@dimen/_60sdp"
+        app:cardElevation="@dimen/_6sdp"
+        app:strokeColor="@color/colorAccent"
+        app:strokeWidth="@dimen/_1sdp"
+        app:cardCornerRadius="@dimen/_6sdp">
+
+        <TextView
+            android:id="@+id/feature_name"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold"
+            tools:text="Unlimited Calling" />
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

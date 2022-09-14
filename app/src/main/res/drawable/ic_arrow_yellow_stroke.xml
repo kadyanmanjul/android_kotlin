@@ -1,12 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="38dp"
-    android:height="11dp"
-    android:viewportWidth="38"
-    android:viewportHeight="11">
-    <path
-        android:strokeWidth="1"
-        android:pathData="M17.776,0.694C18.545,0.435 19.455,0.435 20.224,0.694L36.227,10.5H1.773L17.776,0.694Z"
-        android:fillColor="#F9ECBD"
-        android:strokeColor="#F1DCA5"/>
+    android:width="76dp"
+    android:height="28dp"
+    android:viewportWidth="76"
+    android:viewportHeight="28">
+  <path
+      android:pathData="M35.592,0.815C37.017,-0.26 38.982,-0.26 40.407,0.815L75.22,27.056L0.778,27.056L35.592,0.815Z"
+      android:fillColor="@color/bb_tooltip_bg"/>
+  <path
+      android:pathData="M73.5,27.056L39.805,1.613C38.736,0.807 37.263,0.807 36.194,1.613L2.5,27.056L73.5,27.056ZM40.407,0.815C38.982,-0.26 37.017,-0.26 35.592,0.815L0.778,27.056L75.22,27.056L40.407,0.815Z"
+      android:fillColor="@color/bb_tooltip_stroke"
+      android:fillType="evenOdd"/>
 </vector>

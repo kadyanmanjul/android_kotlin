@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import com.joshtalks.joshskills.ui.callWithExpert.model.*
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.*
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
@@ -384,6 +385,18 @@ interface CommonNetworkService {
     @POST("$DIR/micro_payment/user_wallet/")
     suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
 
+    @GET("$DIR/course/buy_course_feature/")
+    suspend fun getCourseFeatureDetails(@Query("test_id") testId:Int) :Response<BuyCourseFeatureModel>
+
+    @GET("$DIR/course/get_valid_coupons/")
+    suspend fun getValidCoupon(@Query("first_impression") firstImpression: Long) : Response<CouponListModel>
+
+    @POST("$DIR/course/course_price_details/")
+    suspend fun getCoursePriceList(@Body params: PriceParameterModel): Response<CoursePriceListModel>
+
+    @GET("$DIR/course/list_reviews/")
+    suspend fun getReviews(@Query("test_id") testId:Int) :Response<RatingAndReviews>
+
     @GET("$DIR/micro_payment/get_wallet_transactions/{mentor}/")
     suspend fun getWalletTransactions(@Path("mentor") mentorId: String, @Query("page") page:Int): Response<TransactionResponse>
 
@@ -397,4 +410,7 @@ interface CommonNetworkService {
         @Query("call_count") callCount: Int = 0,
         @Query("call_duration") callDuration: Long = 0
     ): Response<PurchaseDataResponse>
+
+    @POST("$DIR/impression/track_popup_impression/")
+    suspend fun savePopupImpression(@Body params: Map<String, String>): Response<Void>
 }

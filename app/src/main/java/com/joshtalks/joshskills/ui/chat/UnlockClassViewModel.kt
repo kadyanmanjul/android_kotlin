@@ -61,7 +61,7 @@ class UnlockClassViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
-                if (response.code() == 405) {
+                if (response.code() == 406) {
                     batchChange.emit(BATCH_CHANGE_BUY_FIRST)
                     return@launch
                 } else if (response.isSuccessful) {

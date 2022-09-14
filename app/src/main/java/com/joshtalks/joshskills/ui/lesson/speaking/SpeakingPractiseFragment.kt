@@ -57,6 +57,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -220,31 +221,36 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.callCountLiveData.observe(viewLifecycleOwner) {
                 it?.let {
                     binding.infoContainer.visibility = GONE
+                    binding.txtLabelCallsLeft.visibility = VISIBLE
                     binding.txtLabelCallsLeft.paintFlags =
                         binding.txtLabelCallsLeft.paintFlags or Paint.UNDERLINE_TEXT_FLAG
                     binding.txtLabelCallsLeft.text = "$it calls left"
+                    binding.txtLabelCallsLeft.setOnClickListener {
+                        viewModel.getCoursePopupData(PurchasePopupType.SPEAKING_COMPLETED)
+                    }
                     if (it == 0) {
-                        binding.callCountContainer.visibility = GONE
+                        binding.bbTooltipGroup.visibility = GONE
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
                                 requireContext(),
                                 R.color.red
                             )
                         )
-                        binding.btnStartTrialText.visibility = GONE
+                        /*binding.btnStartTrialText.isEnabled = false
+                        binding.btnStartTrialText.alpha = 0.2F*/
                         binding.blockContainer.visibility = VISIBLE
-                    } else {
-                        binding.btnStartTrialText.visibility = VISIBLE
+                    } else if (it <= 3) {
                         binding.blockContainer.visibility = GONE
                         val text = AppObjectController.getFirebaseRemoteConfig().getString(
                             FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP.plus(
-                                PrefManager.getStringValue(CURRENT_COURSE_ID)
+                                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
                             )
                         )
                         if (text.isBlank().not()) {
-                            binding.callCountContainer.visibility = VISIBLE
-                            binding.layoutBbTip.findViewById<MaterialTextView>(R.id.balloon_text).text =
-                                text
+                            binding.bbTooltipGroup.visibility = GONE
+                        } else {
+                            binding.bbTooltipGroup.visibility = VISIBLE
+                            binding.layoutBbTip.findViewById<MaterialTextView>(R.id.balloon_text).text = text
                         }
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
@@ -252,11 +258,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 R.color.colorAccent
                             )
                         )
+                    } else {
+                        binding.bbTooltipGroup.visibility = GONE
                     }
                 }
             }
         } else {
-            binding.callCountContainer.visibility = GONE
+            binding.txtLabelCallsLeft.visibility = GONE
+            binding.bbTooltipGroup.visibility = GONE
         }
 
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner) {
@@ -280,6 +289,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             courseId = it
         }
         binding.btnStartTrialText.setOnSingleClickListener {
+            if (!PrefManager.getBoolValue(IS_FIRST_TIME_CALL_INITIATED)) {
+                MarketingAnalytics.callInitiatedForFirstTime()
+                PrefManager.put(IS_FIRST_TIME_CALL_INITIATED, true)
+            }
+            if (viewModel.callCountLiveData.value == 0) {
+                viewModel.getCoursePopupData(PurchasePopupType.SPEAKING_COMPLETED)
+                return@setOnSingleClickListener
+            }
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             MarketingAnalytics.callInitiated()
@@ -667,7 +684,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     fun startBuyPageActivity(v: View) {
         activity?.let { it1 ->
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                it1,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                )
+//            )
+            BuyPageActivity.startBuyPageActivity(
                 it1,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID

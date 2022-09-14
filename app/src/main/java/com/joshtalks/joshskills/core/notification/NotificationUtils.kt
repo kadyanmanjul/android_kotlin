@@ -13,6 +13,7 @@ import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.facebook.share.internal.ShareConstants
@@ -27,7 +28,6 @@ import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.*
@@ -55,7 +55,6 @@ import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
@@ -298,8 +297,6 @@ class NotificationUtils(val context: Context) {
                 notificationChannelName = NotificationChannelData.UPDATES.type
                 Intent(context, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
             }
             NotificationAction.ACTION_UP_SELLING_POPUP -> {
@@ -308,8 +305,6 @@ class NotificationUtils(val context: Context) {
                 }
                 Intent(context, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject.id)
                     putExtra(COURSE_ID, actionData)
                     putExtra(ShareConstants.ACTION_TYPE, action)
                     putExtra(ARG_PLACEHOLDER_URL, notificationObject.bigPicture)
@@ -369,8 +364,6 @@ class NotificationUtils(val context: Context) {
             NotificationAction.AWARD_DECLARE -> {
                 Intent(context, LeaderBoardViewPagerActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
                 return null
             }
@@ -380,8 +373,6 @@ class NotificationUtils(val context: Context) {
                     FreeTrialOnBoardActivity::class.java
                 ).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
             }
             NotificationAction.ACTION_OPEN_GROUPS -> {
@@ -415,7 +406,7 @@ class NotificationUtils(val context: Context) {
             }
             NotificationAction.EMERGENCY_NOTIFICATION -> {
                 lateinit var intent: Intent
-                if (isValidFullNumber("+91", actionData)) {
+                if (actionData?.isDigitsOnly() == true && isValidFullNumber("+91", actionData)) {
                     intent = Intent(Intent.ACTION_DIAL).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
@@ -598,8 +589,6 @@ class NotificationUtils(val context: Context) {
         val rIntnet = Intent(context.applicationContext, isNotificationCrash()).apply {
             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
             putExtra(ShareConstants.ACTION_TYPE, action)
-            putExtra(HAS_NOTIFICATION, true)
-            putExtra(NOTIFICATION_ID, notificationObject?.id)
             putExtra(QUESTION_ID, actionData)
             // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -636,8 +625,6 @@ class NotificationUtils(val context: Context) {
             putExtra(CONVERSATION_ID, obj.getString(CONVERSATION_ID))
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ShareConstants.ACTION_TYPE, action)
-            putExtra(HAS_NOTIFICATION, true)
-            putExtra(NOTIFICATION_ID, notificationObject?.id)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
@@ -659,10 +646,7 @@ class NotificationUtils(val context: Context) {
             putExtra(LessonActivity.LESSON_SECTION, SPEAKING_POSITION)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ShareConstants.ACTION_TYPE, action)
-            putExtra(HAS_NOTIFICATION, true)
-            putExtra(NOTIFICATION_ID, notificationObject?.id)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         return rIntent
     }
@@ -677,8 +661,6 @@ class NotificationUtils(val context: Context) {
             putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, actionData)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra(ShareConstants.ACTION_TYPE, action)
-            putExtra(HAS_NOTIFICATION, true)
-            putExtra(NOTIFICATION_ID, notificationObject?.id)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
@@ -742,11 +724,16 @@ class NotificationUtils(val context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val notificationIds = AppObjectController.appDatabase.scheduleNotificationDao().clearAllNotifications()
             notificationIds.forEach {
-                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
-                intent.putExtra("id", it)
-                val pendingIntent =
-                    PendingIntent.getBroadcast(context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                ReminderUtil(context).deleteAlarm(pendingIntent)
+                try {
+                    val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
+                    intent.putExtra("id", it)
+                    val pendingIntent = PendingIntent.getBroadcast(
+                        context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                    ReminderUtil(context).deleteAlarm(pendingIntent)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             }
         }
     }

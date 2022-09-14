@@ -1,13 +1,15 @@
 package com.joshtalks.joshskills.ui.lesson
 
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
@@ -16,6 +18,10 @@ import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PurchaseDialog : BaseDialogFragment() {
 
@@ -48,7 +54,9 @@ class PurchaseDialog : BaseDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         isCancelable = true
         initView()
+        savePopupImpression("POPUP_SHOWN")
         binding.btnBuy.setOnClickListener {
+            savePopupImpression("POPUP_CLICKED")
             showFreeTrialPaymentScreen()
         }
     }
@@ -76,6 +84,9 @@ class PurchaseDialog : BaseDialogFragment() {
             }
         } else {
             binding.txtFtEndsIn.visibility = View.GONE
+        }
+        binding.close.setOnClickListener {
+            closeDialog()
         }
     }
 
@@ -113,14 +124,20 @@ class PurchaseDialog : BaseDialogFragment() {
 
     fun showFreeTrialPaymentScreen() {
         try {
-            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+//                requireActivity(),
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                ),
+//                purchaseDataResponse.expireTime?.time ?: 0
+//            )
+            BuyPageActivity.startBuyPageActivity(
                 requireActivity(),
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),
-                purchaseDataResponse.expireTime?.time ?: 0
+                )
             )
-            closeDialog()
+            closeDialog(isPopupIgnored = false)
         } catch (ex: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }
@@ -132,8 +149,10 @@ class PurchaseDialog : BaseDialogFragment() {
         }
     }
 
-    fun closeDialog() {
+    fun closeDialog(isPopupIgnored: Boolean = true) {
         countdownTimerBack?.stop()
+        if(isPopupIgnored)
+            savePopupImpression("POPUP_IGNORED")
         super.dismiss()
     }
 
@@ -142,13 +161,6 @@ class PurchaseDialog : BaseDialogFragment() {
         countdownTimerBack?.stop()
     }
 
-    fun setOnDismissListener(function: () -> Unit) {
-        Log.d("PurchaseDialog.kt", "YASH => setOnDismissListener:150 ")
-        dialog?.setOnDismissListener {
-            Log.d("PurchaseDialog.kt", "YASH => setOnDismissListener:153 dismissed")
-            function.invoke()
-        }
-    }
 
     override fun onStart() {
         super.onStart()
@@ -158,10 +170,26 @@ class PurchaseDialog : BaseDialogFragment() {
                 val rect = Resources.getSystem().displayMetrics.run { Rect(0, 0, widthPixels, heightPixels) }
                 val percentWidth = rect.width() * 0.8
                 d.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+                d.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             } catch (e: Exception) {
                 val width = ViewGroup.LayoutParams.MATCH_PARENT
                 val height = ViewGroup.LayoutParams.WRAP_CONTENT
                 d.window?.setLayout(width, height)
+            }
+        }
+    }
+
+    fun savePopupImpression(eventName: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                AppObjectController.commonNetworkService.savePopupImpression(
+                    mapOf(
+                        "popup_key" to (purchaseDataResponse.popUpKey ?: ""),
+                        "event_name" to eventName
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

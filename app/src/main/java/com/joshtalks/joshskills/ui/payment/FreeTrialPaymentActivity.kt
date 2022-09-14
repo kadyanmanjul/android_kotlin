@@ -1047,7 +1047,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
-        NotificationUtils(applicationContext).removeAllScheduledNotification()
         viewModel.removeEntryFromPaymentTable(razorpayOrderId)
         MarketingAnalytics.coursePurchased(
             BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0),
@@ -1089,7 +1088,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             extras["device_id"] = Utils.getDeviceId()
             extras["guest_mentor_id"] = guestMentorId
             BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
-
+            NotificationUtils(applicationContext).removeAllScheduledNotification()
         } catch (e: Exception) {
             e.printStackTrace()
         }

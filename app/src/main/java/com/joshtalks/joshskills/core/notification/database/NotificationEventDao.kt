@@ -15,7 +15,7 @@ interface NotificationEventDao {
     @Query("SELECT * FROM notification_event_table WHERE id = :id")
     suspend fun getNotificationEvent(id:String): List<NotificationEvent>?
 
-    @Query("SELECT * FROM notification_event_table WHERE analytics_sent = 0")
+    @Query("SELECT * FROM notification_event_table WHERE analytics_sent = 0 LIMIT 30")
     suspend fun getUnsyncEvent(): List<NotificationEvent>?
 
     @Query("UPDATE notification_event_table SET analytics_sent = 1 WHERE notificationId = :id")

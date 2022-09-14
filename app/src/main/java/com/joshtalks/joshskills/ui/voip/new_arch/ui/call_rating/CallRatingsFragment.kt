@@ -33,7 +33,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
@@ -113,12 +112,6 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
         callerMentorId = mArgs.getString(CALLER_MENTOR_ID).toString()
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
-        if (vm.getDurationInMin() >= 5) {
-           MarketingAnalytics.callComplete5Min()
-        }
-        if (vm.getDurationInMin() >= 20) {
-            MarketingAnalytics.callComplete20Min()
-        }
         binding.howCallTxt.text = getString(R.string.how_was_your_call_name, callerName)
         binding.callDurationText.text = getString(R.string.you_spoke_for_minutes, vm.getCallDurationString())
         binding.block.text = getString(R.string.block_caller, callerName)
