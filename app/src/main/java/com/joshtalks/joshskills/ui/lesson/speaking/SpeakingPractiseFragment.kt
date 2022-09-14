@@ -246,7 +246,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
                             )
                         )
-                        if (text.isBlank().not()) {
+                        if (text.isBlank()) {
                             binding.bbTooltipGroup.visibility = GONE
                         } else {
                             binding.bbTooltipGroup.visibility = VISIBLE
