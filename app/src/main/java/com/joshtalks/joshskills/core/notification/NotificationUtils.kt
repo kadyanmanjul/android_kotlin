@@ -638,11 +638,14 @@ class NotificationUtils(val context: Context) {
     ): Intent {
 
         val rIntent = Intent(context.applicationContext, isOpenLessonNotificationCrash()).apply {
-            putExtra(LessonActivity.LESSON_ID, actionData?.toInt() ?: 0)
+            try {
+                putExtra(LessonActivity.LESSON_ID, actionData?.toInt() ?: 20)
+            } catch (ex: Exception) {
+                putExtra(LessonActivity.LESSON_ID, 20)
+            }
             putExtra(LessonActivity.IS_DEMO, false)
             putExtra(LessonActivity.IS_NEW_GRAMMAR, false)
-            putExtra(LessonActivity.IS_LESSON_COMPLETED, false)//obj.getBoolean(LessonActivity.IS_LESSON_COMPLETED)
-//            putExtra(CONVERSATION_ID, obj.getString(CONVERSATION_ID))
+            putExtra(LessonActivity.IS_LESSON_COMPLETED, false)
             putExtra(LessonActivity.LESSON_SECTION, SPEAKING_POSITION)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ShareConstants.ACTION_TYPE, action)
