@@ -646,8 +646,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 CURRENT_COURSE_ID
             ) == DEFAULT_COURSE_ID
         ) {
+            binding.btnCallWithExpert.isVisible = true
         }
-        binding.btnCallWithExpert.isVisible = true
 
 
         binding.btnCallWithExpert.setOnClickListener {
