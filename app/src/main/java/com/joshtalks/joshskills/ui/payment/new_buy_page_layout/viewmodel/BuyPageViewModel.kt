@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.PriceParame
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -88,7 +89,6 @@ class BuyPageViewModel : BaseViewModel() {
                 val response = buyPageRepo.getCouponList()
                 if (response.isSuccessful && response.body() != null) {
                     withContext(mainDispatcher) {
-                        Log.e("sagar", "getValidCouponList: ${response.body()}")
                         if (methodCallType == COUPON) {
                             couponListAdapter.addOffersList(response.body()!!.listOfCoupon)
                         }
@@ -107,7 +107,6 @@ class BuyPageViewModel : BaseViewModel() {
                     }
                 }
             }catch (e: Exception){
-                Log.e("sagar", "getValidCouponList: ${e.message}")
                 e.printStackTrace()
             }
         }
@@ -303,9 +302,35 @@ class BuyPageViewModel : BaseViewModel() {
             )
         )
     }
+
     fun onBackPress(view: View) {
         message.what = BUY_PAGE_BACK_PRESS
         singleLiveEvent.value = message
     }
 
+    fun applyEnteredCoupon(code : String) {
+        Log.e("Sagar", "applyEnteredCoupon: $code")
+        if (code.isNotBlank()){
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val response = buyPageRepo.getCouponFromCode(code)
+                    val data = response.body()
+                    Log.e("Sagar", "applyEnteredCoupon:reponse: ${data?.couponCode}")
+                    if (response.isSuccessful && data != null && data.couponCode != null) {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            offersListAdapter.applyCoupon(data)
+                            message.what = COUPON_APPLIED
+                            message.obj = data
+                            singleLiveEvent.value = message
+                        }
+                    } else {
+                        showToast("Coupon code is not valid or expired")
+                    }
+                } catch (e: Exception) {
+                    showToast("Coupon code is not valid or expired")
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
 }

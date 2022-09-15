@@ -842,6 +842,7 @@
     <string name="unextendable_freetrial" translatable="false">Free Trial can\'t be extended</string>
     <string name="year_format" translatable="false">YYYY</string>
     <string name="allowed_name_characters" translatable="false">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM</string>
+    <string name="allowed_name_characters_with_number" translatable="false">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM1234567890</string>
     <string name="discussion_topic" translatable="false">Discussion Topic</string>
 
     <string name="submit_report_btn" translatable="false">Submit</string>

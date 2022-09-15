@@ -405,6 +405,9 @@ interface CommonNetworkService {
     @GET("$DIR/course/get_valid_coupons/")
     suspend fun getValidCoupon(@Query("first_impression") firstImpression: Long): Response<CouponListModel>
 
+    @GET("$DIR/course/get_coupon_code/")
+    suspend fun getCouponFromCode(@Query("code") code: String): Response<Coupon>
+
     @POST("$DIR/course/course_price_details/")
     suspend fun getCoursePriceList(@Body params: PriceParameterModel): Response<CoursePriceListModel>
 

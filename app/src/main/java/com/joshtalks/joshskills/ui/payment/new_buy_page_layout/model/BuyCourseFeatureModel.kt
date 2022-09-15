@@ -24,9 +24,9 @@ data class CouponListModel(
 )
 
 data class Coupon(
-    @SerializedName("coupon_code") var couponCode: String,
-    @SerializedName("amount_percent") var amountPercent: Int,
-    @SerializedName("expire_at") var validDuration: Date,
-    @SerializedName("max_discount_amount") var maxDiscountAmount: Int,
+    @SerializedName("coupon_code") val couponCode: String,
+    @SerializedName("amount_percent") val amountPercent: Int,
+    @SerializedName("expire_at") val validDuration: Date,
+    @SerializedName("max_discount_amount") val maxDiscountAmount: Int,
     var isCouponSelected: Int = 0
 )

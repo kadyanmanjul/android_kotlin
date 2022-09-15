@@ -1,9 +1,14 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter
 
+import android.text.Editable
+import android.text.TextWatcher
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @BindingAdapter("featureListAdapter")
@@ -25,6 +30,19 @@ fun couponListAdapter(
     view.adapter = adapter
 
     adapter.setListener(function)
+}
+
+@BindingAdapter("onCouponApply")
+fun setOnCouponApply(view: AppCompatEditText, query: MutableStateFlow<String>) {
+    view.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(s: Editable?) {
+            query.value = s.toString()
+        }
+    })
 }
 
 @BindingAdapter("ratingAndReviewListAdapter")

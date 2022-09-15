@@ -174,17 +174,22 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 CLICK_ON_COUPON_APPLY -> {
                     val coupon = it.obj as Coupon
                     updateListItem(coupon)
-                    showToast("Coupon applied")
-                    onBackPressed()
-                    onCouponApply(coupon)
+                    couponApplied(coupon)
                 }
                 CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
                 MAKE_PHONE_CALL -> makePhoneCall()
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
+                COUPON_APPLIED -> couponApplied(it.obj as Coupon)
             }
         }
+    }
+
+    fun couponApplied(coupon: Coupon) {
+        showToast("Coupon applied")
+        onBackPressed()
+        onCouponApply(coupon)
     }
 
     private fun setFreeTrialTimer(buyCourseFeatureModel: BuyCourseFeatureModel) {
@@ -214,7 +219,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
     private fun updateListItem(coupon: Coupon) {
         viewModel.applyCoupon(coupon)
-        Log.e(TAG, "updateListItem: ${viewModel.couponList}")
+        Log.e("Sagar", "updateListItem: ${viewModel.couponList}")
     }
 
     private fun setCoursePrices(list: CourseDetailsList, position: Int) {

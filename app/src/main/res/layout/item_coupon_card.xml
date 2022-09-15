@@ -80,11 +80,12 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/coupon_desc"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_13sdp"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:text="Use code ENG10 and get 10% off on you purchase."
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                 android:textColor="#686E73"

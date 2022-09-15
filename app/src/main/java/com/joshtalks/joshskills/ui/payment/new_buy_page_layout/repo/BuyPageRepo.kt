@@ -14,4 +14,6 @@ class BuyPageRepo {
 
     suspend fun getReviewAndRating(testId:Int) = AppObjectController.commonNetworkService.getReviews(testId)
 
+    suspend fun getCouponFromCode(code: String) = AppObjectController.commonNetworkService.getCouponFromCode(code)
+
 }

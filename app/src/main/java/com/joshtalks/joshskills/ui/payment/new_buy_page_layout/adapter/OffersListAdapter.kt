@@ -59,20 +59,27 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     }
 
     fun applyCoupon(coupon: Coupon) {
-        val couponIndex = offersList.indexOf(coupon)
-        val item = offersList.getOrNull(couponIndex)
+        var hasCoupon = false
+        var couponIndex = -1
+        for(i in offersList.indices) {
+            if(offersList[i].couponCode == coupon.couponCode) {
+                hasCoupon = true
+                couponIndex = i
+            }
+        }
         offersList[0].isCouponSelected = 0
         notifyItemChanged(0)
-        if(item == null) {
-            coupon.isCouponSelected = 1
-            offersList.add(0, coupon)
-            notifyItemInserted(0)
-            scrollToFirst?.invoke()
-        } else {
+        if(hasCoupon) {
+            val item = offersList[couponIndex]
             item.isCouponSelected = 1
             offersList.remove(item)
             offersList.add(0, item)
             notifyItemRemoved(couponIndex)
+            notifyItemInserted(0)
+            scrollToFirst?.invoke()
+        } else {
+            coupon.isCouponSelected = 1
+            offersList.add(0, coupon)
             notifyItemInserted(0)
             scrollToFirst?.invoke()
         }
