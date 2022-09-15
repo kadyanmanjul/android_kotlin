@@ -2,10 +2,8 @@ package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.joshtalks.joshskills.ui.fpp.model.RecentCall
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CouponListModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.ListOfCoupon
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 
 
 @BindingAdapter("featureListAdapter")
@@ -21,7 +19,7 @@ fun featureListAdapter(
 fun couponListAdapter(
     view: RecyclerView,
     adapter: CouponListAdapter,
-    function: ((ListOfCoupon, Int, Int, String) -> Unit)?
+    function: ((Coupon, Int, Int, String) -> Unit)?
 ) {
     view.setHasFixedSize(false)
     view.adapter = adapter
@@ -42,14 +40,15 @@ fun ratingAndReviewListAdapter(
 fun offersListAdapter(
     view: RecyclerView,
     adapter: OffersListAdapter,
-    function: ((ListOfCoupon, Int, Int,String) -> Unit)?
+    function: ((Coupon, Int, Int, String) -> Unit)?
 ) {
     view.setHasFixedSize(false)
     view.adapter = adapter
-    adapter.setLayoutManager(view.layoutManager)
-
+    adapter.scroll { view.scrollToFirst() }
     adapter.setListener(function)
 }
+
+fun RecyclerView.scrollToFirst() = this.layoutManager?.smoothScrollToPosition(this, RecyclerView.State(), 0)
 
 @BindingAdapter("priceListAdapter", "onPriceItemClick")
 fun priceListAdapter(

@@ -20,10 +20,10 @@ data class BuyCourseFeatureModel(
 
 data class CouponListModel(
     @SerializedName("first_impression") var firstImpression: String,
-    @SerializedName("coupons") var listOfCoupon: MutableList<ListOfCoupon>? = null
+    @SerializedName("coupons") var listOfCoupon: MutableList<Coupon>? = null
 )
 
-data class ListOfCoupon(
+data class Coupon(
     @SerializedName("coupon_code") var couponCode: String,
     @SerializedName("amount_percent") var amountPercent: Int,
     @SerializedName("expire_at") var validDuration: Date,

@@ -1,25 +1,21 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.ItemOfffersCardBinding
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.ListOfCoupon
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_OFFER_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
 
-class OffersListAdapter(var offersList: MutableList<ListOfCoupon>? = mutableListOf()) :
+class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>() {
-    var itemClick: ((ListOfCoupon, Int, Int, String) -> Unit)? = null
-    var prevHolder: OffersListAdapter.OfferListViewHolder? = null
-    var holder: OfferListViewHolder? = null
-    var listSize = 0
+    private val TAG = "OffersListAdapter"
+    var itemClick: ((Coupon, Int, Int, String) -> Unit)? = null
+    var prevHolder: OfferListViewHolder? = null
+    var scrollToFirst : (() -> Unit?)? = null
     var manager: RecyclerView.LayoutManager? = null
     var isAnySelected = false
 
@@ -30,97 +26,78 @@ class OffersListAdapter(var offersList: MutableList<ListOfCoupon>? = mutableList
 
     override fun onBindViewHolder(holder: OfferListViewHolder, position: Int) {
         holder.setData()
-        this.holder = holder
-        holder.binding.couponDiscountPercent.text = "Get " + offersList?.get(position)?.amountPercent.toString() + "% Off"
+        holder.binding.couponDiscountPercent.text = "Get " + offersList[position].amountPercent.toString() + "% Off"
 
-        if (offersList?.get(position)?.isCouponSelected == 1) {
-            isAnySelected = true
+        if (offersList[position].isCouponSelected == 1) {
             holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_bg_green)
             holder.binding.btnApply.text = REMOVE
-            offersList?.get(position)?.let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
+            offersList[position]
+                .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
+        } else {
+            holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
+            holder.binding.btnApply.text = APPLY
         }
 
         holder.binding.btnApply.setOnClickListener {
-            if (isAnySelected && position != 0) {
-                offersList?.get(0)?.isCouponSelected = 0
+            if(offersList[holder.bindingAdapterPosition].isCouponSelected == 0) {
+                offersList[0].isCouponSelected = 0
+                offersList[holder.bindingAdapterPosition].isCouponSelected = 1
+                val selectedItem = offersList.get(holder.bindingAdapterPosition)
+                offersList.remove(selectedItem)
+                offersList.add(0, selectedItem)
                 notifyItemChanged(0)
-                itemSortWhenNothingSelected(holder, position)
-            } else if (isAnySelected && position == 0) {
-                if (holder.binding.btnApply.text == REMOVE) {
-                    isAnySelected = false
-                    offersList?.get(0)?.isCouponSelected = 0
-                    notifyItemChanged(position)
-                    holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
-                    holder.binding.btnApply.text = APPLY
-                    offersList?.get(position)?.let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
-                } else {
-                    offersList?.get(0)?.isCouponSelected = 1
-                    offersList?.sortByDescending { it.isCouponSelected }
-                    notifyItemChanged(0)
-                }
+                notifyItemRemoved(holder.bindingAdapterPosition)
+                notifyItemInserted(0)
+                scrollToFirst?.invoke()
             } else {
-                offersList?.get(0)?.isCouponSelected = 0
-                notifyItemChanged(0)
-                itemSortWhenNothingSelected(holder, position)
+                offersList[holder.bindingAdapterPosition].isCouponSelected = 0
+                notifyItemChanged(holder.bindingAdapterPosition)
+                offersList[position]
+                    .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
             }
         }
     }
 
-    fun itemSortWhenNothingSelected(holder: OfferListViewHolder, position: Int) {
-        if (holder.binding.btnApply.text == REMOVE) {
-            isAnySelected = false
-            offersList?.get(position)?.isCouponSelected = 0
-            notifyItemChanged(position)
-            holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
-            holder.binding.btnApply.text = APPLY
-            offersList?.get(position)?.let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
+    fun applyCoupon(coupon: Coupon) {
+        val couponIndex = offersList.indexOf(coupon)
+        val item = offersList.getOrNull(couponIndex)
+        offersList[0].isCouponSelected = 0
+        notifyItemChanged(0)
+        if(item == null) {
+            coupon.isCouponSelected = 1
+            offersList.add(0, coupon)
+            notifyItemInserted(0)
+            scrollToFirst?.invoke()
         } else {
-            offersList?.get(position)?.isCouponSelected = 1
-            offersList?.sortByDescending { it.isCouponSelected }
-            notifyItemRangeChanged(0, itemCount)
-            manager?.scrollToPosition(0)
+            item.isCouponSelected = 1
+            offersList.remove(item)
+            offersList.add(0, item)
+            notifyItemRemoved(couponIndex)
+            notifyItemInserted(0)
+            scrollToFirst?.invoke()
         }
     }
 
-    override fun getItemCount(): Int = offersList?.size ?: 0
+    override fun getItemCount(): Int = offersList.size
 
-    fun addOffersList(members: MutableList<ListOfCoupon>?) {
-        listSize = members?.size ?: 0
-        offersList = members
+    fun addOffersList(members: MutableList<Coupon>) {
+        offersList.clear()
+        offersList.addAll(members)
         notifyDataSetChanged()
     }
 
-    fun setListener(function: ((ListOfCoupon, Int, Int, String) -> Unit)?) {
+    fun setListener(function: ((Coupon, Int, Int, String) -> Unit)?) {
         itemClick = function
     }
 
-    inner class OfferListViewHolder(val binding: ItemOfffersCardBinding) :
+    class OfferListViewHolder(val binding: ItemOfffersCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun setData() {
             binding.executePendingBindings()
         }
     }
 
-    fun setBackgroundUI(view: View?, position: Int, couponList:List<ListOfCoupon>?) {
-        val rootCardView = view?.findViewById<ConstraintLayout>(R.id.root_card)
-        val buttonText = view?.findViewById<TextView>(R.id.btn_apply)
-        buttonText?.text = REMOVE
-        rootCardView?.setBackgroundResource(R.drawable.ic_coupon_card_bg_green)
-        if (couponList != null) {
-            offersList?.addAll(couponList)
-            offersList?.get(0)?.isCouponSelected = 0
-            notifyItemChanged(0)
-            offersList?.get(position)?.isCouponSelected = 1
-            offersList?.sortByDescending { it.isCouponSelected }
-            notifyItemRangeChanged(0, itemCount)
-            manager?.scrollToPosition(0)
-            rootCardView?.setBackgroundResource(R.drawable.ic_coupon_card_gary)
-            buttonText?.text = APPLY
-            Log.d("OffersListAdapter.kt", "SAGAR => setBackgroundUI:114 ${offersList}")
-        }
-    }
-
-    fun setLayoutManager(layoutManager: RecyclerView.LayoutManager?) {
-        this.manager = layoutManager
+    fun scroll(func :() -> Unit?) {
+        scrollToFirst = func
     }
 }

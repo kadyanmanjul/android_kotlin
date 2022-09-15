@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.ListOfCoupon" />
+            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon" />
     </data>
 
     <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"

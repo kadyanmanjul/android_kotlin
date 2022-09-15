@@ -23,7 +23,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
@@ -45,9 +44,8 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.OffersLis
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CouponListModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.ListOfCoupon
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -82,7 +80,6 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
     private var razorpayOrderId = EMPTY
-    var offersListAdapter = OffersListAdapter()
 
     private var countdownTimerBack: CountdownTimerBack? = null
 
@@ -175,10 +172,11 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                     initializeRazorpayPayment(it.obj as OrderDetailResponse)
                 }
                 CLICK_ON_COUPON_APPLY -> {
-                    updateListItem(it.arg1)
+                    val coupon = it.obj as Coupon
+                    updateListItem(coupon)
                     showToast("Coupon applied")
                     onBackPressed()
-                    onCouponApply(it.obj as ListOfCoupon)
+                    onCouponApply(coupon)
                 }
                 CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
@@ -214,9 +212,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
     }
 
-    private fun updateListItem(position: Int) {
-        val view: View? = binding.couponList.layoutManager?.findViewByPosition(position)
-        offersListAdapter.setBackgroundUI(view, position,viewModel.couponList)
+    private fun updateListItem(coupon: Coupon) {
+        viewModel.applyCoupon(coupon)
         Log.e(TAG, "updateListItem: ${viewModel.couponList}")
     }
 
@@ -642,11 +639,11 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         }
     }
 
-    fun onCouponApply(listOfCoupon: ListOfCoupon) {
+    fun onCouponApply(coupon: Coupon) {
         val dialogView = showCustomDialog(R.layout.coupon_applied_alert_dialog)
         val btnGotIt = dialogView.findViewById<AppCompatTextView>(R.id.got_it_button)
-        dialogView.findViewById<TextView>(R.id.coupon_name_text).text = listOfCoupon.couponCode + " applied"
-        dialogView.findViewById<TextView>(R.id.coupon_price_text).text = "You saved ₹" + listOfCoupon.maxDiscountAmount.toString()
+        dialogView.findViewById<TextView>(R.id.coupon_name_text).text = coupon.couponCode + " applied"
+        dialogView.findViewById<TextView>(R.id.coupon_price_text).text = "You saved ₹" + coupon.maxDiscountAmount.toString()
 
         btnGotIt.setOnClickListener {
             dialogView.dismiss()

@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel
 
 import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -24,7 +23,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.FeatureLi
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.OffersListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.PriceListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.ListOfCoupon
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.PriceParameterModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
@@ -34,7 +33,6 @@ import retrofit2.Response
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-
 
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }
@@ -60,8 +58,7 @@ class BuyPageViewModel : BaseViewModel() {
     var isOfferOrInsertCodeVisible = ObservableBoolean(false)
 
     val isVideoPopUpShow = ObservableBoolean(false)
-    var couponList:List<ListOfCoupon>?= null
-
+    var couponList:List<Coupon>?= null
 
     fun getCourseContent() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -96,7 +93,7 @@ class BuyPageViewModel : BaseViewModel() {
                             couponListAdapter.addOffersList(response.body()!!.listOfCoupon)
                         }
                         else {
-                            offersListAdapter.addOffersList(response.body()!!.listOfCoupon)
+                            response.body()!!.listOfCoupon?.let { offersListAdapter.addOffersList(it) }
 
                             if (response.body()!!.listOfCoupon?.size ?: 0 >= 1)
                                 isOfferOrInsertCodeVisible.set(true)
@@ -109,13 +106,15 @@ class BuyPageViewModel : BaseViewModel() {
                         }
                     }
                 }
-
             }catch (e: Exception){
                 Log.e("sagar", "getValidCouponList: ${e.message}")
                 e.printStackTrace()
             }
-
         }
+    }
+
+    fun applyCoupon(coupon: Coupon) {
+        offersListAdapter.applyCoupon(coupon)
     }
 
     //this method is get price and if pass coupon code then it will return discount price
@@ -129,19 +128,18 @@ class BuyPageViewModel : BaseViewModel() {
                             priceListAdapter.addPriceList(response.body()?.courseDetails)
                         }
                     }
-
                 }catch (e: Exception){
                     Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:121")
                     e.printStackTrace()
                 }
 
-            }   
+            }
         }catch (ex:Exception){
             Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:130 ")
         }
     }
 
-    val onItemClick: (ListOfCoupon, Int, Int,String) -> Unit = { it, type, position, couponType ->
+    val onItemClick: (Coupon, Int, Int, String) -> Unit = { it, type, position, couponType ->
         itemPosition = position
         try {
             when (type) {
@@ -183,7 +181,7 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    val onItemCouponClick: (ListOfCoupon, Int, Int, String) -> Unit = { it, type, position, couponType ->
+    val onItemCouponClick: (Coupon, Int, Int, String) -> Unit = { it, type, position, couponType ->
         itemPosition = position
         when (type) {
             CLICK_ON_COUPON_APPLY -> {
