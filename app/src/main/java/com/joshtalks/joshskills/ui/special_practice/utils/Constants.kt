@@ -60,4 +60,5 @@ const val MAKE_PHONE_CALL = 510
 const val BUY_PAGE_BACK_PRESS = 511
 const val APPLY_COUPON_BUTTON_SHOW = 512
 const val COUPON_APPLIED = 513
+const val SCROLL_TO_BOTTOM = 514
 

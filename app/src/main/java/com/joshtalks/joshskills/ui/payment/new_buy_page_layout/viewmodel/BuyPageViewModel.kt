@@ -104,6 +104,9 @@ class BuyPageViewModel : BaseViewModel() {
                             }
                             couponList = response.body()!!.listOfCoupon
                         }
+                        delay(200)
+                        message.what = SCROLL_TO_BOTTOM
+                        singleLiveEvent.value = message
                     }
                 }
             }catch (e: Exception){
