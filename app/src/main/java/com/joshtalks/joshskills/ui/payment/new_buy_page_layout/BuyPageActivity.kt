@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -502,7 +503,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             extras["device_id"] = Utils.getDeviceId()
             extras["guest_mentor_id"] = guestMentorId
             BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
-
+            NotificationUtils(applicationContext).removeAllScheduledNotification()
         } catch (e: Exception) {
             e.printStackTrace()
         }
