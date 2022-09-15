@@ -84,7 +84,7 @@
             android:background="@color/transparent"
             android:hint="@string/enter_amount_in_inr"
             android:inputType="number"
-            android:maxLength="5"
+            android:maxLength="8"
             android:text="@={viewModel.addedAmount}"
             android:textColor="@color/black"
             android:textSize="@dimen/_14ssp"

@@ -61,7 +61,7 @@ class WalletFragment : Fragment() {
         viewModel.availableAmount.observe(viewLifecycleOwner) {
             binding.amountList.adapter =
                 AmountAdapter(it) { amount ->
-                    this@WalletFragment.viewModel.updateAddedAmount(amount.amountInRupees())
+                    this@WalletFragment.viewModel.updateAddedAmount(amount.amount.toString())
                     callWithExpertViewModel.updateAmount(amount)
                 }
         }
