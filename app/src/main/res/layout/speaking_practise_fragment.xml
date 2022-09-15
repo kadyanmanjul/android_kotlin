@@ -729,7 +729,6 @@
                     android:textColor="@color/pure_black"
                     android:textSize="@dimen/_12ssp"
                     android:textStyle="bold"
-                    android:visibility="@{vm.isInternetSpeedGood == 2 ? View.VISIBLE : View.GONE, default=gone}"
                     app:cornerRadius="@dimen/_36sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

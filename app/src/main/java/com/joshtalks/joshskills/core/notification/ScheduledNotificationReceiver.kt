@@ -25,23 +25,27 @@ class ScheduledNotificationReceiver : BroadcastReceiver() {
                 var notificationAction = NotificationAction.getEnumFromValue(nc?.action)
                 var ncActionData = nc?.action_data
 
-                when (nc?.action) {
-                    NotificationAction.INITIATE_RANDOM_CALL.type -> {
-                        if (database.courseDao().getMaxExpiryTime().time < System.currentTimeMillis() || isBlocked()) {
-                            notificationAction = NotificationAction.ACTION_OPEN_PAYMENT_PAGE
-                            ncActionData = Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(
-                                FREE_TRIAL_TEST_ID
-                            ))
+                try {
+                    when (nc?.action) {
+                        NotificationAction.INITIATE_RANDOM_CALL.type -> {
+                            if (database.courseDao().getMaxExpiryTime().time < System.currentTimeMillis() || isBlocked()) {
+                                notificationAction = NotificationAction.ACTION_OPEN_PAYMENT_PAGE
+                                ncActionData = Utils.getLangPaymentTestIdFromTestId(
+                                    PrefManager.getStringValue(FREE_TRIAL_TEST_ID)
+                                )
+                            }
+                        }
+                        NotificationAction.ACTION_OPEN_SPEAKING_SECTION.type -> {
+                            if (database.courseDao().getMaxExpiryTime().time < System.currentTimeMillis()) {
+                                notificationAction = NotificationAction.ACTION_OPEN_PAYMENT_PAGE
+                                ncActionData = Utils.getLangPaymentTestIdFromTestId(
+                                    PrefManager.getStringValue(FREE_TRIAL_TEST_ID)
+                                )
+                            }
                         }
                     }
-                    NotificationAction.ACTION_OPEN_SPEAKING_SECTION.type -> {
-                        if (database.courseDao().getMaxExpiryTime().time < System.currentTimeMillis()) {
-                            notificationAction = NotificationAction.ACTION_OPEN_PAYMENT_PAGE
-                            ncActionData = Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(
-                                FREE_TRIAL_TEST_ID
-                            ))
-                        }
-                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
 
                 AppDatabase.getDatabase(context)?.scheduleNotificationDao()?.updateShown(notificationId)
