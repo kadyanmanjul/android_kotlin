@@ -723,6 +723,7 @@
                     android:gravity="center"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
+                    android:visibility="gone"
                     android:paddingVertical="@dimen/_14sdp"
                     android:text="@string/talk_to_expert"
                     android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
