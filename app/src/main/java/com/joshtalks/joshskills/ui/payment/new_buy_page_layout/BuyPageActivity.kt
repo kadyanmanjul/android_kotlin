@@ -216,6 +216,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun makePhoneCall() {
+        viewModel.saveImpressionForBuyPageLayout(BUY_PAGE_CALL_CLICKED)
         Utils.call(this@BuyPageActivity, "+918634503202")//change the number
     }
 
@@ -229,6 +230,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun openCouponList() {
+        viewModel.saveImpressionForBuyPageLayout(OPEN_COUPON_PAGE)
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace(R.id.buy_page_parent_container, CouponCardFragment(), "CouponCardFragment")
@@ -257,6 +259,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             binding.courseTypeContainer.addView(otherCourseCard)
             val teacherVideoButton = otherCourseCard?.findViewById<RelativeLayout>(R.id.play_video_button)
             teacherVideoButton?.setOnClickListener {
+                viewModel.saveImpressionForBuyPageLayout(PLAY_SAMPLE_VIDEO)
                 playSampleVideo(buyCourseFeatureModel.video ?: EMPTY)
             }
 
@@ -283,6 +286,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
             youtubeLink.setOnClickListener {
                 try {
+                    viewModel.saveImpressionForBuyPageLayout(YOUTUBE_LINK_CLICK)
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse(buyCourseFeatureModel.youtubeLink)
                     intent.setPackage("com.google.android.youtube")
@@ -606,6 +610,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun openCourseExplorerActivity() {
+        viewModel.saveImpressionForBuyPageLayout(OPEN_COURSE_EXPLORER_SCREEN)
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_CODE,

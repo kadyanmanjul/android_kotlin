@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.core.analytics
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -172,15 +173,18 @@ object MarketingAnalytics {
             )
             putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
         }
-
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
-        bundle.putDouble(FirebaseAnalytics.Param.VALUE, amount.toDouble())
-        bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
-        bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
-        FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
-        AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_PURCHASED,params)
+        try {
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
+            bundle.putDouble(FirebaseAnalytics.Param.VALUE, amount.toDouble())
+            bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
+            bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
+            FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
+            AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_PURCHASED,params)
+        }catch (e:Exception){
+            Log.e(TAG, "coursePurchased: ${e.message}")
+        }
     }
 
     fun logAchievementLevelEvent(achievementLevel: Int) {
