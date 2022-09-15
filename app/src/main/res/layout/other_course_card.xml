@@ -14,26 +14,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/play_video_button"
-        android:layout_width="@dimen/_110sdp"
-        android:layout_height="@dimen/_27sdp"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:gravity="center"
-        app:cardCornerRadius="@dimen/_30sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cardElevation="@dimen/_5sdp"
-        android:padding="@dimen/_5sdp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_skill_logo"
-        app:rippleColor="@color/colorAccent"
-        app:strokeColor="@color/colorAccent"
-        app:strokeWidth="@dimen/_1sdp">
-
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center">
+            android:id="@+id/play_video_button"
+            android:background="@drawable/blue_rounded_corner"
+            android:layout_width="@dimen/_110sdp"
+            android:layout_height="@dimen/_27sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:gravity="center"
+            android:elevation="@dimen/_15sdp"
+            app:cardCornerRadius="@dimen/_15sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:cardElevation="@dimen/_5sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_skill_logo"
+            app:rippleColor="@color/colorAccent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/play_icon"
@@ -57,5 +51,4 @@
             </androidx.appcompat.widget.AppCompatTextView>
         </RelativeLayout>
 
-    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

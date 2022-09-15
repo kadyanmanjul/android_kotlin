@@ -4,10 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_110sdp"
-    android:layout_marginBottom="@dimen/_10sdp"
-    android:elevation="@dimen/_10sdp"
-android:layout_marginTop="@dimen/_10sdp"
-    android:background="@color/special_card_color">
+    android:background="@color/special_card_color"
+    android:elevation="@dimen/_10sdp">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_payment_course"
@@ -31,16 +29,20 @@ android:layout_marginTop="@dimen/_10sdp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_privacy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_5sdp"
         android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_5sdp"
         android:layout_marginBottom="@dimen/_10sdp"
         android:gravity="center"
-        android:text="By continuing you consent to share your information with Josh Skills and agree to Josh Skills’ Privacy Policy "
+        android:text="@string/privacy_label"
         android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+        android:textColor="@color/grey"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_payment_course">
 
     </com.google.android.material.textview.MaterialTextView>

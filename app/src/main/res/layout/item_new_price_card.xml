@@ -5,172 +5,188 @@
     <data>
 
         <import type="android.view.View" />
+
         <variable
             name="itemData"
             type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList" />
     </data>
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_margin="@dimen/_5sdp"
-    android:layout_height="wrap_content">
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elevation="@dimen/_10sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/_20sdp"
-        android:visibility="@{itemData.isRecommended ? View.VISIBLE : View.GONE}"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/ic_recommended_image" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/price_card_view"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_10sdp"
-        app:cardCornerRadius="@dimen/_6sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:strokeColor="#8D8D8D"
-        app:strokeWidth="2dp">
+        android:layout_height="wrap_content">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_minus10sdp"
+            android:layout_marginEnd="@dimen/_21sdp"
+            android:background="@drawable/ic_recommended_image"
+            android:elevation="@dimen/_10sdp"
+            android:scaleType="fitXY"
+            android:visibility="@{itemData.isRecommended ? View.VISIBLE : View.GONE, default = gone}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/price_card_view"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/price_root_view"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/price_card_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-          >
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:cardCornerRadius="@dimen/_6sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="#D8D8D8"
+            app:strokeWidth="@dimen/_1sdp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/check_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_20sdp"
-                android:background="@drawable/ic_radio_button_unchecked"
-                android:backgroundTint="@color/black_0.7_alpha"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/price_root_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/ll"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:paddingBottom="@dimen/_6sdp"
-                app:layout_constraintStart_toEndOf="@+id/check_icon"
-                app:layout_constraintEnd_toStartOf="@+id/lll"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="@dimen/_12sdp"
-                app:layout_constraintBottom_toBottomOf="@+id/lll"
-                >
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llll"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/discount_txt"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/check_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_18sdp"
+                        android:background="@drawable/ic_radio_button_unchecked"
+                        android:backgroundTint="#D8D8D8" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/course_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_3sdp"
-                    android:text="@{itemData.courseName}"
-                    android:textColor="@color/pure_black"
-                    android:textSize="@dimen/_12sdp"
-                    android:textStyle="bold"
-                    tools:text="vjhvjhvhjhvhjvhjvkuyfutyfufcyiccc yictycyicyicyitctyck tyy"/>
+                    <LinearLayout
+                        android:id="@+id/ll"
+                        android:layout_width="@dimen/_157sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_14sdp"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/course_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{itemData.courseName}"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/pure_black"
+                            android:textStyle="bold"
+                            tools:text="vjhvjhvhjhvhjvhjvkuyfutyfufcyiccc yictycyicyicyitctyck tyy" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/coupon_save_percent"
+                            android:layout_width="@dimen/_60sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@drawable/green_rectangle_without_solid"
+                            android:backgroundTint="#28BF60"
+                            android:gravity="center"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="@{itemData.savingInCourse}"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            app:textAllCaps="false"
+                            tools:text="Save 100%" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/lll"
+                        android:layout_width="@dimen/_53sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_12sdp"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/discount_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:text="@{itemData.actualAmount}"
+                            android:textAlignment="textEnd"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                            android:textColor="#888888"
+                            tools:text="₹840" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/original_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:letterSpacing="0"
+                            android:text="@{itemData.discountedPrice}"
+                            android:textAlignment="textEnd"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                            android:textColor="@color/pure_black"
+                            android:textStyle="bold"
+                            tools:text="₹4399" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/price_per_day"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginBottom="@dimen/_5sdp"
+                            android:gravity="end"
+                            android:lineSpacingMultiplier="0"
+                            android:paddingEnd="@dimen/_2sdp"
+                            android:text="@{itemData.perDayPrice}"
+                            android:textAlignment="textEnd"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal11_Regular"
+                            android:textColor="#A62E2D"
+                            android:textStyle="italic"
+                            tools:text="₹3/day" />
+
+                    </LinearLayout>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/coupon_save_percent"
-                    android:layout_width="@dimen/_60sdp"
+                    android:id="@+id/discount_txt"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/_20sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@drawable/green_rectangle_without_solid"
+                    android:background="@drawable/green_rectangle_without_solid_one_side_corner"
                     android:backgroundTint="#28BF60"
-                    android:text="@{itemData.savingInCourse}"
+                    android:gravity="center_horizontal"
+                    android:text="@{itemData.couponText}"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                    android:textColor="@color/black_0.7_alpha"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
-                    app:textAllCaps="false" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lll"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.871"
-                app:layout_constraintStart_toEndOf="@+id/ll"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="@dimen/_7sdp"
-                android:layout_marginTop="@dimen/_7sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                >
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/llll"
+                    app:textAllCaps="false"
+                    tools:text="kjnfdjkvndjfkvnfdjkvndkfjv" />
 
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/discount_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_3sdp"
-                    android:text="@{itemData.actualAmount}"
-                    android:gravity="end"
-                    android:layout_gravity="end"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                    android:textColor="@color/black_0.7_alpha" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/original_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{itemData.discountedPrice}"
-                    android:textAlignment="center"
-                    android:gravity="end"
-                    android:layout_gravity="end"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                    android:textColor="@color/pure_black"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/discount_txt"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:background="@drawable/green_rectangle_without_solid_one_side_corner"
-                android:backgroundTint="#28BF60"
-                android:text="@{itemData.couponText}"
-                android:textAlignment="center"
-                android:gravity="center_horizontal"
-                android:visibility="gone"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/lll"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:textAllCaps="false" />
+        </com.google.android.material.card.MaterialCardView>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </com.google.android.material.card.MaterialCardView>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </layout>

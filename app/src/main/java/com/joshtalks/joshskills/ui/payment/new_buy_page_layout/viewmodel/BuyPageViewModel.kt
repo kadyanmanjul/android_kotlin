@@ -60,7 +60,7 @@ class BuyPageViewModel : BaseViewModel() {
     var isOfferOrInsertCodeVisible = ObservableBoolean(false)
 
     val isVideoPopUpShow = ObservableBoolean(false)
-    var list:Int = 0
+    var couponList:List<ListOfCoupon>?= null
 
 
     fun getCourseContent() {
@@ -105,7 +105,7 @@ class BuyPageViewModel : BaseViewModel() {
                                 message.what = APPLY_COUPON_BUTTON_SHOW
                                 singleLiveEvent.value = message
                             }
-                            list = response.body()!!.listOfCoupon?.size?:0
+                            couponList = response.body()!!.listOfCoupon
                         }
                     }
                 }
@@ -273,6 +273,17 @@ class BuyPageViewModel : BaseViewModel() {
                 AppObjectController.commonNetworkService.saveImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
+            }
+        }
+    }
+    fun checkMentorIdPaid() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
+                val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
+                mentorPaymentStatus.postValue(response["payment"] as Boolean)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

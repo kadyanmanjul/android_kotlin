@@ -214,7 +214,7 @@
     <color name="payment_status_red">#F03636</color>
     <color name="green_payment">#57CC02</color>
     <color name="green_payment_text">#179549</color>
-    <color name="price_card_stroke">#8D8D8D</color>
+    <color name="price_card_stroke">#D8D8D8</color>
 
     <color name="txt_money_deducted">#D63231</color>
     <color name="txt_money_added">#36B252</color>
@@ -224,4 +224,5 @@
     <color name="yellow_light">#FFD450</color>
     <color name="bb_tooltip_bg">#F9ECBD</color>
     <color name="bb_tooltip_stroke">#F1DCA5</color>
+    <color name="selected_color_trans">#F1F7FD</color>
 </resources>

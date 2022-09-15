@@ -29,7 +29,9 @@ data class CourseDetailsList(
     @SerializedName("image_url")
     val imageUrl: String? = null,
     @SerializedName("teacher_name")
-    val teacherName: String? = null
+    val teacherName: String? = null,
+    @SerializedName("per_day")
+    var perDayPrice: String? = null
 )
 
 data class PriceParameterModel(

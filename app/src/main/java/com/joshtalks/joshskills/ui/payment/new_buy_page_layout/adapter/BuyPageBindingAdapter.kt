@@ -46,6 +46,7 @@ fun offersListAdapter(
 ) {
     view.setHasFixedSize(false)
     view.adapter = adapter
+    adapter.setLayoutManager(view.layoutManager)
 
     adapter.setListener(function)
 }

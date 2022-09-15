@@ -7,8 +7,9 @@
         android:id="@+id/root_card"
         android:layout_width="@dimen/_230sdp"
         android:layout_height="@dimen/_60sdp"
-        android:layout_margin="@dimen/_5sdp"
         android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
+        android:layout_marginStart="@dimen/_15sdp"
         android:background="@drawable/ic_coupon_card_gary">
 
 
