@@ -62,7 +62,7 @@ data class Course(
     @ColumnInfo(name = "expire_date")
     @SerializedName("expire_time") val expiryDate: Date? = null,
 
-    @ColumnInfo(name="paid_test_id")
+    @ColumnInfo(name = "paid_test_id")
     @SerializedName("paid_test_id") val paidTestId: String? = null,
 
     @ColumnInfo(name = "is_extend_ft_applicable")
@@ -110,4 +110,7 @@ interface CourseDao {
 
     @Query("select courseId,conversation_id  from course  WHERE conversation_id IN (:ids)")
     suspend fun getCourseIdsFromConversationId(ids: List<String>): List<CourseIdFilerModel>
+
+    @Query("SELECT max(expire_date) FROM course")
+    suspend fun getMaxExpiryTime(): Date
 }

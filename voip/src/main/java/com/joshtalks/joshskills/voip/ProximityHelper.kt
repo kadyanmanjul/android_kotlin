@@ -8,15 +8,17 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.PowerManager
 import android.util.Log
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.*
 import java.lang.IllegalArgumentException
 
 class ProximityHelper private  constructor(val application: Application) {
     val STOPED = 0
     val STARTED = 1
-
+    private val TAG = "ProximityHelper"
     private var sensorManager : SensorManager? = null
     private var proximity: Sensor? = null
+    private var accelerometer: Sensor? = null
     private var powerManager: PowerManager? = null
     private var wakeLock : PowerManager.WakeLock? = null
     private var state = STOPED
@@ -81,16 +83,19 @@ class ProximityHelper private  constructor(val application: Application) {
     }
 
     fun start() {
-        scope.launch {
-            if(state == STOPED) {
-                proximity?.also { proximity ->
-                    sensorManager?.registerListener(
-                        proximityCallback,
-                        proximity,
-                        SensorManager.SENSOR_DELAY_NORMAL
-                    )
+        if(PrefManager.isProximitySensorOn()) {
+            Log.d(TAG, "start: isProximitySensorOn = true")
+            scope.launch {
+                if (state == STOPED) {
+                    proximity?.also { proximity ->
+                        sensorManager?.registerListener(
+                            proximityCallback,
+                            proximity,
+                            SensorManager.SENSOR_DELAY_NORMAL
+                        )
+                    }
+                    state = STARTED
                 }
-                state = STARTED
             }
         }
     }

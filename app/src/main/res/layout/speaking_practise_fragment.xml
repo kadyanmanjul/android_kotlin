@@ -201,11 +201,12 @@
                     tools:visibility="gone" />
 
                 <androidx.constraintlayout.widget.Group
-                    android:id="@+id/call_count_container"
+                    android:id="@+id/bb_tooltip_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    app:constraint_referenced_ids="txt_label_calls_left, iv_arrow, layout_bb_tip" />
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="iv_arrow, layout_bb_tip"
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_label_calls_left"
@@ -215,15 +216,17 @@
                     android:autoLink="all"
                     android:drawablePadding="@dimen/_4sdp"
                     android:gravity="center"
-                    android:onClick="@{handler::startBuyPageActivity}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_14ssp"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     app:drawableStartCompat="@drawable/ic_info_micro"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txt_how_to_speak"
-                    tools:text="3 calls left"/>
+                    tools:text="3 calls left"
+                    tools:visibility="visible" />
 
                 <include
                     android:id="@+id/layout_bb_tip"
@@ -231,6 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_minus3sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_arrow" />
@@ -243,7 +247,6 @@
                     app:layout_constraintStart_toStartOf="@id/txt_label_calls_left"
                     app:layout_constraintTop_toBottomOf="@id/txt_label_calls_left"
                     app:srcCompat="@drawable/ic_arrow_yellow_stroke" />
-
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/info_container"
@@ -436,12 +439,12 @@
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_12sdp"
                     android:paddingRight="@dimen/_20sdp"
-                    android:visibility="@{vm.isInternetSpeedGood == 1 &amp;&amp; !vm.blockLiveData  ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{vm.isInternetSpeedGood == 1 &amp;&amp; !vm.blockLiveData ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/network_tv"
@@ -521,7 +524,7 @@
                     android:paddingVertical="@dimen/_12sdp"
                     android:paddingRight="@dimen/_20sdp"
                     android:visibility="@{vm.blockLiveData  ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
+                    app:layout_constraintBottom_toTopOf="@id/btn_call_with_expert"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
@@ -590,7 +593,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_7sdp"
                     android:visibility="@{vm.isInternetSpeedGood == 2 &amp;&amp; !vm.blockLiveData  ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
+                    app:layout_constraintBottom_toTopOf="@id/btn_call_with_expert"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
@@ -682,35 +685,6 @@
                         tools:visibility="visible" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_call_with_expert"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_14sdp"
-                        android:layout_marginBottom="@dimen/_7sdp"
-                        android:backgroundTint="#F09436"
-                        android:gravity="center"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:paddingVertical="@dimen/_14sdp"
-                        android:text="@string/talk_to_expert"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                        android:textColor="@color/pure_black"
-                        android:textSize="@dimen/_12ssp"
-                        android:textStyle="bold"
-                        android:visibility="gone"
-                        app:cornerRadius="@dimen/_36sdp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/btnStartTrialText"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.7"
-                        app:rippleColor="@color/white"
-                        tools:visibility="visible" />
-
-                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnStartTrialText"
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="0dp"
@@ -738,6 +712,34 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_call_with_expert"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:layout_marginBottom="@dimen/_7sdp"
+                    android:backgroundTint="#F09436"
+                    android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingVertical="@dimen/_14sdp"
+                    android:text="@string/talk_to_expert"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="@color/pure_black"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold"
+                    android:visibility="@{vm.isInternetSpeedGood == 2 ? View.VISIBLE : View.GONE, default=gone}"
+                    app:cornerRadius="@dimen/_36sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/btn_container"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7"
+                    app:rippleColor="@color/white"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_continue"
                     style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="0dp"
@@ -759,10 +761,11 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btn_container"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_call_with_expert"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.7"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/white"
+                    tools:visibility="visible" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btn_continue_text"
@@ -969,7 +972,6 @@
                 app:rippleColor="@color/white"
                 tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     </FrameLayout>
 

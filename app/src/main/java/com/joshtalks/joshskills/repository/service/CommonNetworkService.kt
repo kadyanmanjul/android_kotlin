@@ -413,4 +413,7 @@ interface CommonNetworkService {
 
     @GET("$DIR/course/list_reviews/")
     suspend fun getReviews(@Query("test_id") testId: Int): Response<RatingAndReviews>
+
+    @POST("$DIR/impression/track_popup_impression/")
+    suspend fun savePopupImpression(@Body params: Map<String, String>): Response<Void>
 }

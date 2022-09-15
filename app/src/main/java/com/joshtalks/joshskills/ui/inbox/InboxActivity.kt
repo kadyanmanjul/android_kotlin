@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -42,12 +43,12 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
@@ -88,6 +89,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
+    private var isBbTooltipVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -97,6 +99,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
+        val mentorId = Mentor.getInstance().getId()
+        val mentorUserId = Mentor.getInstance().getUserId()
+        Log.d("mentorid", "mentor id is: $mentorId and mentor user id: $mentorUserId")
         initView()
         addLiveDataObservable()
         addAfterTime()
@@ -221,6 +226,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     R.id.menu_help -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                         openHelpActivity()
+//                        CallWithExpertActivity.open(this)
                     }
                     R.id.menu_settings -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.SETTINGS).push()
@@ -463,7 +469,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val capsuleCourse = temp.firstOrNull { it.isCapsuleCourse }
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
                 val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
-                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2) {
+                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
                     if (paymentStatusView.visibility != View.VISIBLE) {
                         findMoreLayout.visibility = View.VISIBLE
                         paymentStatusView.visibility = View.GONE
@@ -481,7 +487,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                        if (PrefManager.hasKey(COUPON_EXPIRY_TIME)) {
+                            val expiryTime = PrefManager.getLongValue(COUPON_EXPIRY_TIME)
+                            if (expiryTime > System.currentTimeMillis() && isBbTooltipVisible.not())
+                                showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                            else
+                                PrefManager.removeKey(COUPON_EXPIRY_TIME)
+                        }
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
@@ -539,13 +551,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
             .setDismissWhenClicked(true)
-            .setAutoDismissDuration(3000L)
-            .setPreferenceName("BUY_COURSE_ENGLISH_TOOLTIP")
-            .setShowCounts(3)
+            .setAutoDismissDuration(4000L)
+            .setOnBalloonDismissListener {
+                isBbTooltipVisible = false
+            }
             .build()
         val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
         textView.text = text
         balloon.showAlignBottom(buy_english_course)
+        isBbTooltipVisible = true
     }
 
     override fun onPause() {

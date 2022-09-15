@@ -37,6 +37,8 @@ data class OutrankedDataResponse(
 
 @Parcelize
 data class PurchaseDataResponse(
+    @SerializedName("popup_key")
+    val popUpKey: String?,
     @SerializedName("name")
     var name: PurchasePopupType?,
     @SerializedName("title")
@@ -47,12 +49,12 @@ data class PurchaseDataResponse(
     val popUpPrice: String?,
     @SerializedName("expire_time")
     val expireTime: Date?,
-    @SerializedName("is_coupon_popup")
-    val isCouponPopup: Boolean = false,
     @SerializedName("coupon_code")
     val couponCode: String?,
     @SerializedName("coupon_expiry_text")
     val couponExpiry: String?,
+    @SerializedName("coupon_expiry_time")
+    val couponExpiryTime: Date?
 ) : Parcelable
 
 enum class PurchasePopupType {

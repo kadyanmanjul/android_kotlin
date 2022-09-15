@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.databinding.FragmentWalletTransactionsBinding
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.WalletTransactionsAdapter
@@ -12,11 +13,12 @@ import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletTransactionVie
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class WalletTransactions(val viewModel: WalletTransactionViewModel) : Fragment() {
+class WalletTransactions: Fragment() {
 
     private lateinit var binding:FragmentWalletTransactionsBinding
 
     private val adapter by lazy { WalletTransactionsAdapter() }
+    private val viewModel by lazy { ViewModelProvider(this)[WalletTransactionViewModel::class.java]}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

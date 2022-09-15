@@ -115,6 +115,9 @@ const val LESSON_COMPLETE_SNACKBAR_TEXT_STRING = "lesson_complete_snackbar_text_
 const val HAS_SEEN_LEADERBOARD_ANIMATION = "joshskills_has_seen_leaderboard_animation"
 const val HAS_SEEN_LESSON_SPOTLIGHT = "joshskills_has_seen_lesson_spotlight"
 const val HAS_SEEN_SPEAKING_SPOTLIGHT = "joshskills_has_seen_speaking_spotlight"
+const val HAS_SEEN_LOCAL_NOTIFICATION = "has_seen_local_notification"
+const val HAS_SEEN_VOCAB_SCREEN = "has_seen_vacab_screen"
+const val HAS_SEEN_READING_SCREEN = "has_seen_reading_screen"
 const val LOCAL_NOTIFICATION_INDEX = "local_notification_index"
 const val CHAT_OPENED_FOR_NOTIFICATION = "chat_opened_for_notification"
 const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
@@ -191,9 +194,11 @@ const val BLOCK_STATUS = "BLOCK_STATUS"
 const val FETCHED_SCHEDULED_NOTIFICATION = "FETCHED_SCHEDULED_NOTIFICATION"
 const val FT_CALLS_LEFT = "FT_CALLS_LEFT"
 const val LESSON_ACTIVITY_VISIT_COUNT = "LESSON_ACTIVITY_VISIT_COUNT"
+const val COUPON_EXPIRY_TIME = "COUPON_EXPIRY_TIME"
 const val IS_FIRST_TIME_CALL_INITIATED = "IS_FIRST_TIME_CALL_INITIATED"
 
 object PrefManager {
+
     private const val PREF_NAME_COMMON = "JoshSkills"
     private const val PREF_NAME_CONSISTENT = "com.joshtalks.joshskills.JoshSkillsConsistentPref"
 

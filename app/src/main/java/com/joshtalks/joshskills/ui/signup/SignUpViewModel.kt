@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
@@ -476,6 +477,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val response = AppObjectController.chatNetworkService.getRegisteredCourses()
                 if (response.isEmpty().not()) {
+                    patchDeviceDetails()
                     AppObjectController.appDatabase.courseDao().insertRegisterCourses(response).let{
                         AppObjectController.appDatabase.courseDao().getRegisterCourseMinimal().let{
                             freeTrialEntity.postValue(it.firstOrNull())
@@ -485,6 +487,45 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             } catch (e: Exception) {
                 apiStatus.postValue(ApiCallStatus.SUCCESS)
             }
+        }
+    }
+
+    private suspend fun patchDeviceDetails() {
+        try {
+            val device = DeviceDetailsResponse.getInstance()
+            val status = device?.apiStatus ?: ApiRespStatus.EMPTY
+            val deviceId = device?.id ?: 0
+            if (ApiRespStatus.PATCH == status) {
+                //return Result.success()
+                if (deviceId > 0) {
+                    val details = AppObjectController.signUpNetworkService.patchDeviceDetails(
+                        deviceId,
+                        UpdateDeviceRequest()
+                    )
+                    // TODO no need to send UpdateDeviceRequest object in patch request
+                    details.apiStatus = ApiRespStatus.PATCH
+                    details.update()
+                }
+            } else if (ApiRespStatus.POST == status) {
+                if (deviceId > 0) {
+                    val details = AppObjectController.signUpNetworkService.patchDeviceDetails(
+                        deviceId,
+                        UpdateDeviceRequest()
+                    )
+                    // TODO no need to send UpdateDeviceRequest object in patch request
+                    details.apiStatus = ApiRespStatus.PATCH
+                    details.update()
+                }
+            } else {
+                val details =
+                    AppObjectController.signUpNetworkService.postDeviceDetails(
+                        UpdateDeviceRequest()
+                    )
+                details.apiStatus = ApiRespStatus.POST
+                details.update()
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 

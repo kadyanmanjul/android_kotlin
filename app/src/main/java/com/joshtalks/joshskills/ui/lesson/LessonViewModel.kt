@@ -988,16 +988,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         if (checkBlockStatusInSP() && !isForceHit) {
             startBlockTimer()
         } else {
-            blockStatusFromApi()
+            blockStatusFromApi(isForceHit)
         }
     }
 
-    private fun blockStatusFromApi() {
+    private fun blockStatusFromApi(isForceHit: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO)
         {
             try {
                 val response = AppObjectController.chatNetworkService.getUserBlockStatus()
-                if (response.isSuccessful && response.body() != null && response.body()!!.duration != 0) {
+                if (response.isSuccessful && response.body() != null && response.body()!!.duration != 0 && !isForceHit) {
                     response.body()!!.timestamp = System.currentTimeMillis()
                     PrefManager.putPrefObject(BLOCK_STATUS, response.body() as BlockStatusModel)
                     startBlockTimer()
@@ -1152,8 +1152,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             this.name = popupType
                         }
                     }
-                }
+                } else
+                    coursePopupData.postValue(null)
             } catch (ex: Exception) {
+                coursePopupData.postValue(null)
                 Timber.e(ex)
             }
         }

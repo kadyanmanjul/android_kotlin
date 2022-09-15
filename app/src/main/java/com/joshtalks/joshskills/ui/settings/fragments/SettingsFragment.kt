@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.ui.extra.AUTO_START_SETTINGS_POPUP
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
 
 class SettingsFragment : Fragment() {
 
@@ -115,6 +117,12 @@ class SettingsFragment : Fragment() {
                 .addParam(ParamKeys.IS_CHECKED,isChecked)
                 .push()
         }
+        binding.p2pProximity.setOnCheckedChangeListener { buttonView, isChecked ->
+            Log.d("ProximityHelper", "onViewCreated: ")
+            VoipPrefManager.updateProximitySettings(isChecked)
+        }
+        binding.p2pProximity.isChecked = VoipPrefManager.isProximitySensorOn()
+
         if (PrefManager.getBoolValue(IS_FREE_TRIAL,false,false) && User.getInstance().isVerified.not()){
             binding.personalInfoTv.isEnabled = false
             binding.personalInfoTv.isClickable = false

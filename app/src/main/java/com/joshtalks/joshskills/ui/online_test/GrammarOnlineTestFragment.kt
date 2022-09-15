@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -52,6 +53,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     private var lessonId: Int = -1
     private var scoreText: Int = -1
     private var pointsList: String? = null
+    private var hasCompletedTest: Boolean = false
     private var timerPopText = EMPTY
 
     private var currentTooltipIndex = 0
@@ -125,6 +127,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             lessonNumber = it.getInt(CURRENT_LESSON_NUMBER, -1)
             scoreText = it.getInt(SCORE_TEXT, -1)
             pointsList = it.getString(POINTS_LIST)
+            hasCompletedTest = it.getBoolean(HAS_COMPLETED_TEST)
         }
         lessonId = if (requireActivity().intent.hasExtra(LessonActivity.LESSON_ID)) {
             requireActivity().intent.getIntExtra(LessonActivity.LESSON_ID, 0)
@@ -148,6 +151,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         binding.startBtn.setOnTouchListener(onTouchListener3)
         binding.scoreStartBtn.setOnTouchListener(onTouchListener3)
         // showTooltip()
+        if (hasCompletedTest) {
+            viewModel.getCoursePopupData(PurchasePopupType.GRAMMAR_COMPLETED)
+        }
         when {
             (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED)
                 .plus(1) == lessonNumber) -> {
@@ -325,10 +331,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     }
 
     private fun completeGrammarCardLogic() {
-        /*lessonActivityListener?.onQuestionStatusUpdate(
-            QUESTION_STATUS.AT,
-            questionId
-        )*/
         lessonActivityListener?.onSectionStatusUpdate(
             if (PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) TRANSLATION_POSITION else GRAMMAR_POSITION,
             true
@@ -456,13 +458,15 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         const val CURRENT_LESSON_NUMBER = "current_lesson_number"
         const val POINTS_LIST = "points_list"
         const val SCORE_TEXT = "score_text"
+        const val HAS_COMPLETED_TEST = "has_completed_test"
         private var animationJob: Job? = null
 
         @JvmStatic
         fun getInstance(
             lessonNumber: Int,
             scoreText: Int? = null,
-            pointsList: String? = null
+            pointsList: String? = null,
+            hasCompletedTest:Boolean = false
         ): GrammarOnlineTestFragment {
             val args = Bundle()
             args.putInt(CURRENT_LESSON_NUMBER, lessonNumber)
@@ -470,6 +474,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             scoreText?.let {
                 args.putInt(SCORE_TEXT, scoreText)
             }
+            args.putBoolean(HAS_COMPLETED_TEST, hasCompletedTest)
             val fragment = GrammarOnlineTestFragment()
             fragment.arguments = args
             return fragment

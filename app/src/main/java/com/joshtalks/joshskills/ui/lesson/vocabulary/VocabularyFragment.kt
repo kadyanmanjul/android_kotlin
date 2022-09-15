@@ -500,6 +500,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
+        if (PrefManager.hasKey(HAS_SEEN_VOCAB_SCREEN).not()) {
+            PrefManager.put(HAS_SEEN_VOCAB_SCREEN, true)
+        }
         try {
             if (isVisible.not()) {
                 adapter.audioManager?.onPause()

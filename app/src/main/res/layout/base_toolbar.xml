@@ -107,22 +107,21 @@
                 tools:src="@drawable/ic_search"
                 tools:visibility="visible" />
 
-            <com.google.android.material.button.MaterialButton
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/btn_upgrade"
-                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_8sdp"
+                android:background="@drawable/rect_round"
                 android:backgroundTint="@color/yellow_light"
-                android:elevation="0dp"
                 android:text="Upgrade Now"
                 android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                android:paddingVertical="@dimen/_4sdp"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Bold"
                 android:textColor="@color/colorAccent"
-                android:textStyle="bold"
                 android:textSize="@dimen/_10ssp"
                 android:visibility="gone"
-                app:cornerRadius="@dimen/_48sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -139,6 +138,7 @@
                 android:text="Edit"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                 android:textColor="@color/white"
+                android:textStyle="bold"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/iv_setting"
                 app:layout_constraintEnd_toStartOf="@id/iv_setting"

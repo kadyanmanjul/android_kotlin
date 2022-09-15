@@ -35,7 +35,6 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -65,6 +64,7 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
@@ -82,7 +82,6 @@ import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.ui.online_test.util.AnimateAtsOptionViewEvent
 import com.joshtalks.joshskills.ui.online_test.vh.AtsOptionView
-import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -156,6 +155,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private lateinit var filePath: String
     private lateinit var videoDownPath: String
     private lateinit var outputFile: String
+    private var openLessonCompletedScreen: Boolean = false
 
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
@@ -278,7 +278,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
-        binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade).apply {
+        binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade).apply {
             isVisible = PrefManager.getBoolValue(IS_FREE_TRIAL)
             setOnClickListener {
 //                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
@@ -766,8 +766,17 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 PurchaseDialog
                     .newInstance(it)
                     .apply {
+                        if (openLessonCompletedScreen) {
+                            setOnDismissListener {
+                                openLessonCompleteScreen(
+                                    viewModel.lessonLiveData.value ?: lesson ?: return@setOnDismissListener
+                                )
+                            }
+                        }
                         show(supportFragmentManager, PurchaseDialog::class.simpleName)
                     }
+                if (it.couponCode != null && it.couponExpiryTime != null)
+                    PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
             }
         }
     }
@@ -867,8 +876,13 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
-                        AppObjectController.uiHandler.post {
-                            openLessonCompleteScreen(lesson)
+                        if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                            openLessonCompletedScreen = true
+                            viewModel.getCoursePopupData(PurchasePopupType.LESSON_COMPLETED)
+                        } else {
+                            AppObjectController.uiHandler.post {
+                                openLessonCompleteScreen(lesson)
+                            }
                         }
                     }
                 }
@@ -1095,8 +1109,19 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     }
 
     fun showBuyCourseTooltip(tabPosition: Int) {
+        when (tabPosition) {
+            SPEAKING_POSITION -> return
+            GRAMMAR_POSITION -> if (lessonIsNewGrammar && PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION)
+                    .not()
+            ) return
+            VOCAB_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_VOCAB_SCREEN)
+                    .not()
+            ) return
+            READING_POSITION - isTranslationDisabled -> if (PrefManager.getBoolValue(HAS_SEEN_READING_SCREEN)
+                    .not()
+            ) return
+        }
         val key = when (tabPosition) {
-            SPEAKING_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP
             GRAMMAR_POSITION -> FirebaseRemoteConfigKey.BUY_COURSE_GRAMMAR_TOOLTIP
             VOCAB_POSITION - isTranslationDisabled -> FirebaseRemoteConfigKey.BUY_COURSE_VOCABULARY_TOOLTIP
             READING_POSITION - isTranslationDisabled -> FirebaseRemoteConfigKey.BUY_COURSE_READING_TOOLTIP
@@ -1115,14 +1140,14 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
             .setDismissWhenClicked(true)
-            .setAutoDismissDuration(3000L)
+            .setAutoDismissDuration(4000L)
             .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-            .setPreferenceName(key)
-            .setShowCounts(3)
+//            .setPreferenceName(key)
+//            .setShowCounts(3)
             .build()
         val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
         textView.text = text
-        balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialButton>(R.id.btn_upgrade))
+        balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade))
     }
 
     private fun isOnlineTestCompleted(): Boolean {
@@ -1234,9 +1259,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     private fun setSelectedColor(tab: TabLayout.Tab?) {
         tab?.let {
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL) &&
-                PrefManager.getIntValue(LESSON_ACTIVITY_VISIT_COUNT) >= 2
-            ) showBuyCourseTooltip(tab.position)
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+                showBuyCourseTooltip(tab.position)
             tab.view.findViewById<TextView>(R.id.title_tv)
                 ?.setTextColor(ContextCompat.getColor(this, R.color.white))
             when (tab.position) {

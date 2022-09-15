@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.commit
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.FRESH_CHAT_UNREAD_MESSAGES
 import com.joshtalks.joshskills.core.PrefManager
@@ -94,6 +95,7 @@ class HelpActivity : CoreJoshActivity() {
         super.onResume()
         Runtime.getRuntime().gc()
         addObserver()
+        AppObjectController.getUnreadFreshchatMessages()
     }
 
     override fun onPause() {

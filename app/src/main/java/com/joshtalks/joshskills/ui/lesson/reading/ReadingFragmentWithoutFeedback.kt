@@ -72,7 +72,6 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
-import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -108,7 +107,6 @@ import zeroonezero.android.audio_mixer.input.GeneralAudioInput
 import java.io.File
 import java.io.IOException
 import java.lang.Runnable
-import java.lang.System
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
@@ -330,6 +328,9 @@ class ReadingFragmentWithoutFeedback :
         super.onResume()
         showRecordHintAnimation()
         subscribeRXBus()
+        if (PrefManager.hasKey(HAS_SEEN_READING_SCREEN).not()) {
+            PrefManager.put(HAS_SEEN_READING_SCREEN, true)
+        }
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {

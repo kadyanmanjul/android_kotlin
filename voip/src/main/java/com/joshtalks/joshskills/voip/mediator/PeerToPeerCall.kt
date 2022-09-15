@@ -52,11 +52,6 @@ class PeerToPeerCall : CallCategory {
             )
             val response = voipNetwork.startPeerToPeerCall(request)
             Log.d(TAG, "onPreCallConnect: $response")
-
-                if (response[TOAST_MESSAGE] != null && response[TOAST_MESSAGE]?.equals("") != true) {
-                    showToast(response[TOAST_MESSAGE] .toString(), length = 1)
-                    throw UserBlockedException()
-                }
         }
     }
 

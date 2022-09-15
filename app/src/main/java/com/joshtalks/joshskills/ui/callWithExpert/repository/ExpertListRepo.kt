@@ -1,10 +1,10 @@
 package com.joshtalks.joshskills.ui.callWithExpert.repository
 
 import androidx.fragment.app.FragmentActivity
-import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -13,16 +13,17 @@ import com.joshtalks.joshskills.ui.callWithExpert.adapter.WalletLogsPagingSource
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.WalletTransactionPagingSource
 import com.joshtalks.joshskills.ui.callWithExpert.constant.PER_PAGE_ITEMS
 import com.joshtalks.joshskills.ui.callWithExpert.model.AvailableAmount
+import com.joshtalks.joshskills.ui.callWithExpert.model.Transaction
+import com.joshtalks.joshskills.ui.callWithExpert.model.WalletLogs
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import com.joshtalks.joshskills.ui.callWithExpert.model.Transaction
-import com.joshtalks.joshskills.ui.callWithExpert.model.WalletLogs
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 
 class ExpertListRepo {
     suspend fun getExpertList() = AppObjectController.commonNetworkService.getExpertList()
@@ -67,7 +68,8 @@ class ExpertListRepo {
     }.flowOn(Dispatchers.IO)
 
     fun getWalletLogs(): Flow<PagingData<WalletLogs>> {
-        val pagingSource = WalletLogsPagingSource(commonNetworkService = AppObjectController.commonNetworkService)
+        val pagingSource =
+            WalletLogsPagingSource(commonNetworkService = AppObjectController.commonNetworkService)
         return Pager(
             config = PagingConfig(
                 pageSize = PER_PAGE_ITEMS,
@@ -80,7 +82,8 @@ class ExpertListRepo {
     }
 
     fun getWalletTransactions(): Flow<PagingData<Transaction>> {
-        val pagingSource = WalletTransactionPagingSource(commonNetworkService = AppObjectController.commonNetworkService)
+        val pagingSource =
+            WalletTransactionPagingSource(commonNetworkService = AppObjectController.commonNetworkService)
         return Pager(
             config = PagingConfig(
                 pageSize = PER_PAGE_ITEMS,
@@ -92,21 +95,14 @@ class ExpertListRepo {
         ).flow
     }
 
-//    suspend fun getCallStatus(expertId: String) = AppObjectController.commonNetworkService.getCallNowStatus(expertId)
     suspend fun getCallStatus(expertId: String) =
         AppObjectController.commonNetworkService.getCallNowStatus(expertId)
 
     fun deductAmountAfterCall() {
         CoroutineScope(Dispatchers.IO).launch {
-            delay(4000)
-        if (!VoipPref.getExpertCallDuration().isNullOrEmpty()) {
-                try {
-                    delay(500)
-                    val currentActivity = ActivityLifecycleCallback.currentActivity
-                    if (currentActivity.isDestroyed || currentActivity.isFinishing) {
-                        delay(500)
-                        val newCurrentActivity = ActivityLifecycleCallback.currentActivity
-                        val newFragmentActivity = newCurrentActivity as? FragmentActivity
+            VoipPref.expertDurationMutex.withLock {
+                if (!VoipPref.getExpertCallDuration().isNullOrEmpty()) {
+                    try {
                         val map = HashMap<String, String>()
                         map["time_spoken_in_seconds"] = VoipPref.getExpertCallDuration()!!
                         map["connected_user_id"] = VoipPref.getLastRemoteUserMentorId()
@@ -116,33 +112,18 @@ class ExpertListRepo {
                         when (response.code()) {
                             200 -> {
                                 VoipPref.setExpertCallDuration("")
-                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
+                                SkillsDatastore.updateWalletCredits(
+                                    response.body()?.amount ?: 0
+                                )
                             }
                             406 -> {
 
                             }
                         }
-                    } else if (currentActivity != null) {
-                        val newFragmentActivity = currentActivity as? FragmentActivity
-                        val map = HashMap<String, String>()
-                        map["time_spoken_in_seconds"] = VoipPref.getExpertCallDuration()!!
-                        map["connected_user_id"] = VoipPref.getLastRemoteUserMentorId()
-                        map["agora_call_id"] = VoipPref.getLastCallId().toString()
-                        val response =
-                            AppObjectController.commonNetworkService.deductAmountAfterCall(map)
-                        when (response.code()) {
-                            200 -> {
-                                VoipPref.setExpertCallDuration("")
-                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
-                            }
-                            406 -> {
-
-                            }
-                        }
+                    } catch (ex: Exception) {
                     }
-                } catch (ex: Exception) {
-                    showToast("Something went wrong")
                 }
+
             }
         }
     }

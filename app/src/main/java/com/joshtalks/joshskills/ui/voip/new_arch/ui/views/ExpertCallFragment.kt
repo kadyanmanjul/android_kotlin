@@ -42,7 +42,6 @@ class ExpertCallFragment : BaseFragment() {
         AudioController(CoroutineScope((Dispatchers.IO)))
     }
 
-    var serice = null
     private var isFragmentRestarted = false
 
     val vm by lazy {

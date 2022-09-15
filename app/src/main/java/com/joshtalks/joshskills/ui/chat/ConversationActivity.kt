@@ -268,8 +268,6 @@ class ConversationActivity :
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.handler = this
-        conversationBinding.isFreeTrialCallBlocked =
-            PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED) || PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)
         conversationBinding.executePendingBindings()
         activityRef = WeakReference(this)
         initIntentObject()
@@ -406,11 +404,10 @@ class ConversationActivity :
         if (inboxEntity.isCourseBought) {
             conversationBinding.freeTrialExpiryLayout.visibility = GONE
             return
-        } else if (PrefManager.getIntValue(FT_CALLS_LEFT) > 0) {
+        }/*else if (PrefManager.getIntValue(FT_CALLS_LEFT) > 0) {
             conversationBinding.freeTrialContainer.visibility = VISIBLE
             conversationBinding.freeTrialText.text = getString(R.string.ft_calls_left, PrefManager.getIntValue(FT_CALLS_LEFT))
-
-        } else if (
+        } */ else if (
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
@@ -419,7 +416,13 @@ class ConversationActivity :
             } else {
                 conversationBinding.freeTrialContainer.visibility = VISIBLE
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-                startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
+                if (inboxEntity.expiryDate!!.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
+                    conversationBinding.freeTrialExpiryLayout.visibility = GONE
+                } else {
+                    conversationBinding.freeTrialContainer.visibility = VISIBLE
+                    conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+                    startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
+                }
             }
         } else if (
             inboxEntity.expiryDate != null &&
@@ -472,7 +475,6 @@ class ConversationActivity :
             }
         }
     }
-
 
     fun hideLeaderboardTooltip() {
         conversationBinding.leaderboardTooltipLayout.visibility = GONE
@@ -922,28 +924,6 @@ class ConversationActivity :
         }
     }
 
-    fun callPracticePartner(v: View) {
-        if (getVoipState() == State.IDLE) {
-            if (checkPstnState() == com.joshtalks.joshskills.core.pstn_states.PSTNState.Idle) {
-                if (Utils.isInternetAvailable().not()) {
-                    showToast("Seems like you have no internet")
-                    return@callPracticePartner
-                }
-                startActivityForResult(
-                    Intent(this, VoiceCallActivity::class.java).apply {
-                        putExtra(INTENT_DATA_COURSE_ID, inboxEntity.courseId)
-                        putExtra(INTENT_DATA_TOPIC_ID, FREE_TRIAL_CALL_TOPIC_ID)
-                        putExtra(STARTING_POINT, FROM_ACTIVITY)
-                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
-                    }, VOICE_CALL_REQUEST_CODE
-                )
-            } else {
-                showToast("Cannot make this call while on another call")
-            }
-        } else
-            showToast("Wait for last call to get disconnected")
-    }
-
     fun moveToPaymentActivity(v: View) {
         MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
 //        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
@@ -1360,37 +1340,6 @@ class ConversationActivity :
                 }
             }
         }
-        if (inboxEntity.isCourseBought.not())
-            conversationViewModel.isFreeTrialCallBlocked.observe(this) {
-                when (it) {
-                    BLOCKED -> {
-                        PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
-                        conversationBinding.isFreeTrialCallBlocked = true
-                        conversationBinding.executePendingBindings()
-                    }
-                    SHOW_WARNING_POPUP -> {
-                        if (PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                                HAS_SEEN_WARNING_POPUP_FT
-                            ).not()
-                        ) {
-                            // dialog for warning about shorter calls
-                            AlertDialog.Builder(this).setTitle(R.string.warning)
-                                .setIcon(R.drawable.ic_warning)
-                                .setPositiveButton(R.string.got_it) { dialog, _ ->
-                                    dialog.dismiss()
-                                }
-                                .setMessage(R.string.shorter_calls_error_message)
-                                .show()
-                            PrefManager.put(HAS_SEEN_WARNING_POPUP_FT, true)
-                        }
-
-                    }
-                    else -> {
-                        conversationBinding.isFreeTrialCallBlocked = false
-                        conversationBinding.executePendingBindings()
-                    }
-                }
-            }
     }
 
     private fun addRVPatch(count: Int) {
@@ -2249,12 +2198,6 @@ class ConversationActivity :
             initFreeTrialTimer()
         } else if (PrefManager.hasKey(IS_FIRST_TIME_CONVERSATION).not()) {
             PrefManager.put(IS_FIRST_TIME_CONVERSATION, true)
-        }
-        try {
-            conversationBinding.isFreeTrialCallBlocked =
-                PrefManager.getBoolValue(IS_FREE_TRIAL_CALL_BLOCKED) || PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)
-            conversationBinding.executePendingBindings()
-        } catch (e: Exception) {
         }
         if (inboxEntity.isCapsuleCourse) {
             utilConversationViewModel.getProfileData(Mentor.getInstance().getId())
