@@ -33,7 +33,7 @@ class TransactionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = activity?.supportFragmentManager?.let { ViewPagerAdapter(it,lifecycle,viewModel) }
+        val adapter = ViewPagerAdapter(childFragmentManager,lifecycle)
         binding.viewPager.adapter = adapter
         TabLayoutMediator(binding.tabLayoutTransaction,binding.viewPager){tab,position->
             when(position){
