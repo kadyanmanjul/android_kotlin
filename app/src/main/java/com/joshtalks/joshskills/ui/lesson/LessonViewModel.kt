@@ -128,7 +128,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     init {
         getRating()
-        isUserCallBlock()
         getExpertBtnVisibility()
     }
 
@@ -1028,7 +1027,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
                     PrefManager.put(FT_CALLS_LEFT, response.body()!!.callsLeft)
                     callCountLiveData.postValue(response.body()!!.callsLeft)
-                    blockLiveData.postValue(false)
                 }
             } catch (ex: Throwable) {
                 blockLiveData.postValue(false)

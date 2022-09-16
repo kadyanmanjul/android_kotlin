@@ -139,7 +139,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.speaking_practise_fragment, container, false)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner =requireActivity()
         binding.handler = this
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
@@ -209,10 +209,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             when (it) {
                 true -> {
                     val durationInMillis =
-                        Duration.ofMinutes(viewModel.isUserBlock?.get()?.duration!!.toLong()).toMillis()
-                    val unblockTimestamp = viewModel.isUserBlock?.get()?.timestamp?.plus(durationInMillis)
+                        Duration.ofMinutes(viewModel.isUserBlock.get()?.duration!!.toLong()).toMillis()
+                    val unblockTimestamp = viewModel.isUserBlock.get()?.timestamp?.plus(durationInMillis)
                     val currentTimestamp = System.currentTimeMillis()
                     startTimer(currentTimestamp - (unblockTimestamp!!))
+                }
+                false->{
+                    Log.d(TAG, "checkBlockStatus:blockStatusFromApi 4")
+                    binding.blockContainer.visibility = View.GONE
                 }
             }
         }
