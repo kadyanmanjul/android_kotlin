@@ -669,9 +669,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
 
-        viewModel.isExpertBtnEnabled.observe(viewLifecycleOwner){
+        viewModel.isExpertBtnEnabled.observe(viewLifecycleOwner) {
             if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
-                        PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
+                        PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID) &&
+                        viewModel.isInternetSpeedGood.equals(2)
             ) {
                 binding.btnCallWithExpert.isVisible = true
             }
