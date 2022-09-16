@@ -43,7 +43,6 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -60,8 +59,6 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
-import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -480,13 +477,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        if (PrefManager.hasKey(COUPON_EXPIRY_TIME)) {
-                            val expiryTime = PrefManager.getLongValue(COUPON_EXPIRY_TIME)
-                            if (expiryTime > System.currentTimeMillis() && isBbTooltipVisible.not())
-                                showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
-                            else
-                                PrefManager.removeKey(COUPON_EXPIRY_TIME)
-                        }
+//                        if (PrefManager.hasKey(COUPON_EXPIRY_TIME)) {
+//                            val expiryTime = PrefManager.getLongValue(COUPON_EXPIRY_TIME)
+                        if (isBbTooltipVisible.not())
+                            showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+//                            else
+//                                PrefManager.removeKey(COUPON_EXPIRY_TIME)
+//                        }
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
