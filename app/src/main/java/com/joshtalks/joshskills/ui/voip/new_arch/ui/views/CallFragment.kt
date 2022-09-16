@@ -209,6 +209,8 @@ class   CallFragment : BaseFragment() {
         super.onDestroy()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioRequest?.let { audioManager.abandonAudioFocusRequest(it) }
+        }else {
+            audioManager.abandonAudioFocus(null)
         }
     }
 }
