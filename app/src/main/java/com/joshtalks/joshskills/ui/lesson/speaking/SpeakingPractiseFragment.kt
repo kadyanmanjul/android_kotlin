@@ -640,13 +640,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 showToast("Wait for last call to get disconnected")
         }
 
-        if (viewModel.isExpertBtnVisible &&
-            (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID || PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
-        ) {
-            binding.btnCallWithExpert.isVisible = true
-        }
-
-
         binding.btnCallWithExpert.setOnClickListener {
             viewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = SPEAKING_PAGE)
             if (User.getInstance().isVerified) {
@@ -673,6 +666,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner) {
             if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
+            }
+        }
+
+        viewModel.isExpertBtnEnabled.observe(viewLifecycleOwner){
+            if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
+                        PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
+            ) {
+                binding.btnCallWithExpert.isVisible = true
             }
         }
         initDemoViews(lessonNo)

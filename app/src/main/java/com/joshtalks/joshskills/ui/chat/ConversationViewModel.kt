@@ -85,7 +85,7 @@ class ConversationViewModel(
     val isFreeTrialCallBlocked = MutableLiveData<String>(null)
     val coursePopupData = MutableLiveData<PurchaseDataResponse?>()
 
-    var isExpertBtnEnabled :Boolean = false
+    val isExpertBtnEnabled : MutableLiveData<Boolean> = MutableLiveData()
     init {
         getExpertBtnVisibility()
     }
@@ -95,7 +95,8 @@ class ConversationViewModel(
             try {
                 val response = AppObjectController.commonNetworkService.getButtonExpertVisibility()
                 if (response.isSuccessful) {
-                    isExpertBtnEnabled = response.body()?.status == true
+                    val enabled  = response.body()?.status == true
+                    isExpertBtnEnabled.postValue(enabled)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

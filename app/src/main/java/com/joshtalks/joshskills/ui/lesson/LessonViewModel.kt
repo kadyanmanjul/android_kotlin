@@ -124,7 +124,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
     val isVideoMuxFailed: Boolean = false
 
-    var isExpertBtnVisible: Boolean = false
+    val isExpertBtnEnabled : MutableLiveData<Boolean> = MutableLiveData()
 
     init {
         getRating()
@@ -137,7 +137,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val response = AppObjectController.commonNetworkService.getButtonExpertVisibility()
                 if (response.isSuccessful) {
-                    isExpertBtnVisible = response.body()?.status == true
+                    val enabled  = response.body()?.status == true
+                    isExpertBtnEnabled.postValue(enabled)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

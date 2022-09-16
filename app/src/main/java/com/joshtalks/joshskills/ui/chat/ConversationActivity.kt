@@ -340,19 +340,7 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        setExpertBtnVisibility()
-
-
         //addIssuesToSharedPref()
-    }
-
-    private fun setExpertBtnVisibility(){
-        if (conversationViewModel.isExpertBtnEnabled &&
-                (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID || PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
-        ) {
-            conversationBinding.btnOpenExpertList.isVisible = true
-        }
-
     }
 
     private fun initSharedPreferences() {
@@ -1343,6 +1331,13 @@ class ConversationActivity :
                         PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
                     }
                 }
+            }
+        }
+        conversationViewModel.isExpertBtnEnabled.observe(this){
+            if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
+                        PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
+            ) {
+                conversationBinding.btnOpenExpertList.isVisible = true
             }
         }
     }
