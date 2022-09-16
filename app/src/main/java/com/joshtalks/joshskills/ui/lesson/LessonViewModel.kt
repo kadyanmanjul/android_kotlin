@@ -124,9 +124,26 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
     val isVideoMuxFailed: Boolean = false
 
+    var isExpertBtnVisible: Boolean = false
+
     init {
         getRating()
         isUserCallBlock()
+        getExpertBtnVisibility()
+    }
+
+    private fun getExpertBtnVisibility() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.commonNetworkService.getButtonExpertVisibility()
+                if (response.isSuccessful) {
+                    isExpertBtnVisible = response.body()?.status == true
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e(TAG, "${ex.message}")
+            }
+        }
     }
 
     fun getVideoData() {

@@ -419,4 +419,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/track_buy_course_impression/")
     suspend fun saveNewBuyPageLayoutImpression(@Body params : Map<String, Any>) :Response<Void>
+
+    @GET("$DIR/micro_payment/expert_call_status/")
+    suspend fun getButtonExpertVisibility(): Response<ButtonVisibilityResponse>
 }

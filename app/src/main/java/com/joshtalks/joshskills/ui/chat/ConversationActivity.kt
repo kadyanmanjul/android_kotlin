@@ -340,13 +340,20 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED) &&
-            (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID || PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
+        setExpertBtnVisibility()
+
+
+        //addIssuesToSharedPref()
+    }
+
+    private fun setExpertBtnVisibility(){
+        conversationViewModel.getExpertBtnVisibility()
+        if (conversationViewModel.isExpertBtnEnabled &&
+                (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID || PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
         ) {
             conversationBinding.btnOpenExpertList.isVisible = true
         }
 
-        //addIssuesToSharedPref()
     }
 
     private fun initSharedPreferences() {

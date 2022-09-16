@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Message
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -83,6 +84,22 @@ class ConversationViewModel(
     val repository: ABTestRepository by lazy { ABTestRepository() }
     val isFreeTrialCallBlocked = MutableLiveData<String>(null)
     val coursePopupData = MutableLiveData<PurchaseDataResponse?>()
+
+    var isExpertBtnEnabled :Boolean = false
+
+    fun getExpertBtnVisibility() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.commonNetworkService.getButtonExpertVisibility()
+                if (response.isSuccessful) {
+                    isExpertBtnEnabled = response.body()?.status == true
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e(TAG, "${ex.message}")
+            }
+        }
+    }
 
     fun getCampaignData(campaign: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
