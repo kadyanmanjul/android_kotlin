@@ -232,7 +232,18 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         viewModel.getCoursePopupData(PurchasePopupType.SPEAKING_COMPLETED)
                     }
                     if (it == 0) {
-                        binding.bbTooltipGroup.visibility = GONE
+                        val text = AppObjectController.getFirebaseRemoteConfig().getString(
+                            FirebaseRemoteConfigKey.BUY_COURSE_SPEAKING_TOOLTIP.plus(
+                                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
+                            )
+                        )
+                        if (text.isBlank()) {
+                            binding.bbTooltipGroup.visibility = GONE
+                        } else {
+                            binding.bbTooltipGroup.visibility = VISIBLE
+                            binding.layoutBbTip.findViewById<MaterialTextView>(R.id.balloon_text).text = text
+                        }
+                        binding.bbTooltipGroup.visibility = VISIBLE
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
                                 requireContext(),
@@ -241,7 +252,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         )
                         /*binding.btnStartTrialText.isEnabled = false
                         binding.btnStartTrialText.alpha = 0.2F*/
-                        binding.blockContainer.visibility = VISIBLE
+                        binding.blockContainer.visibility = GONE
                     } else if (it <= 3) {
                         binding.blockContainer.visibility = GONE
                         val text = AppObjectController.getFirebaseRemoteConfig().getString(
@@ -675,8 +686,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
         viewModel.isExpertBtnEnabled.observe(viewLifecycleOwner) {
             if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
-                        PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID) &&
-                        viewModel.isInternetSpeedGood.equals(2)
+                        PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
             ) {
                 binding.btnCallWithExpert.isVisible = true
             }

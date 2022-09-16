@@ -551,11 +551,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             .setBackgroundColorResource(R.color.bb_tooltip_stroke)
             .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
             .setWidthRatio(0.85f)
-            .setDismissWhenTouchOutside(true)
+            .setDismissWhenTouchOutside(false)
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(this)
-            .setDismissWhenClicked(true)
-            .setAutoDismissDuration(4000L)
+            .setDismissWhenClicked(false)
             .setOnBalloonDismissListener {
                 isBbTooltipVisible = false
             }
