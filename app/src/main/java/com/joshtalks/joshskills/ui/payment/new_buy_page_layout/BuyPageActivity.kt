@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -157,7 +158,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         } else {
             showErrorView()
         }
-
+        NotificationUtils(this).updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
+        MarketingAnalytics.openPreCheckoutPage()
         initToolbar()
     }
 
@@ -429,7 +431,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         if (phoneNumber.isEmpty()) {
             phoneNumber = "+919999999999"
         }
-
+        NotificationUtils(applicationContext).removeScheduledNotification(NotificationCategory.AFTER_BUY_PAGE)
+        NotificationUtils(applicationContext).updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
         try {
             viewModel.getOrderDetails(
                 priceForPaymentProceed?.testId ?: EMPTY,

@@ -91,7 +91,7 @@ class BuyPageViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = buyPageRepo.getCouponList()
-                apiStatus.postValue(ApiCallStatus.STA)
+                apiStatus.postValue(ApiCallStatus.START)
                 if (response.isSuccessful && response.body() != null) {
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     withContext(mainDispatcher) {
