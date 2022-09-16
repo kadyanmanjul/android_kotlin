@@ -347,7 +347,6 @@ class ConversationActivity :
     }
 
     private fun setExpertBtnVisibility(){
-        conversationViewModel.getExpertBtnVisibility()
         if (conversationViewModel.isExpertBtnEnabled &&
                 (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID || PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
         ) {

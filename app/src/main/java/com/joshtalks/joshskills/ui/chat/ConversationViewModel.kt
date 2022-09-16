@@ -86,6 +86,9 @@ class ConversationViewModel(
     val coursePopupData = MutableLiveData<PurchaseDataResponse?>()
 
     var isExpertBtnEnabled :Boolean = false
+    init {
+        getExpertBtnVisibility()
+    }
 
     fun getExpertBtnVisibility() {
         viewModelScope.launch(Dispatchers.IO) {
