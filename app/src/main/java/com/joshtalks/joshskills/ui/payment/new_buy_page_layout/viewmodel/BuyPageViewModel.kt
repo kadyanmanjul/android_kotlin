@@ -104,6 +104,9 @@ class BuyPageViewModel : BaseViewModel() {
                             }
                             couponList = response.body()!!.listOfCoupon
                         }
+                        delay(200)
+                        message.what = SCROLL_TO_BOTTOM
+                        singleLiveEvent.value = message
                     }
                 }
             }catch (e: Exception){
@@ -121,13 +124,16 @@ class BuyPageViewModel : BaseViewModel() {
         try {
             viewModelScope.launch{
                 try {
+                    isProcessing.set(true)
                     val response = buyPageRepo.getPriceList(PriceParameterModel(PrefManager.getStringValue(USER_UNIQUE_ID), Integer.parseInt(testId),code))
                     if (response.isSuccessful && response.body() != null) {
                         withContext(mainDispatcher) {
+                            isProcessing.set(false)
                             priceListAdapter.addPriceList(response.body()?.courseDetails)
                         }
                     }
                 }catch (e: Exception){
+                    isProcessing.set(false)
                     Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:121")
                     e.printStackTrace()
                 }
@@ -143,6 +149,7 @@ class BuyPageViewModel : BaseViewModel() {
         try {
             when (type) {
                 CLICK_ON_OFFER_CARD -> {
+                    saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED)
                     if (couponType == APPLY) {
                         isCouponApplied.set(true)
                         try {
@@ -309,6 +316,7 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     fun applyEnteredCoupon(code : String) {
+        saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED)
         Log.e("Sagar", "applyEnteredCoupon: $code")
         if (code.isNotBlank()){
             viewModelScope.launch(Dispatchers.IO) {
@@ -331,6 +339,17 @@ class BuyPageViewModel : BaseViewModel() {
                     e.printStackTrace()
                 }
             }
+        }
+    }
+
+    fun saveImpressionForBuyPageLayout(eventName: String, eventData:Int = 0){
+        viewModelScope.launch (Dispatchers.IO){
+            buyPageRepo.saveBuyPageImpression(
+                mapOf(
+                    "event_name" to eventName,
+                    "event_data" to eventData
+                )
+            )
         }
     }
 }

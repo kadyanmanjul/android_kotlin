@@ -211,6 +211,8 @@ object VoipPref {
                         callDuration = duration
                     )
                 resp.body()?.let {
+                    if (it.couponCode != null && it.couponExpiryTime != null)
+                        PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
                     PurchaseDialog.newInstance(it)
                         .show(fragmentActivity.supportFragmentManager, "PurchaseDialog")
                 }

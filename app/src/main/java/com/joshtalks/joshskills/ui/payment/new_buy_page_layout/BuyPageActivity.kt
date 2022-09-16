@@ -60,6 +60,7 @@ import com.razorpay.PaymentResultListener
 import de.hdodenhof.circleimageview.CircleImageView
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
+import kotlinx.android.synthetic.main.fragment_see_all_award.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -183,6 +184,9 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
                 COUPON_APPLIED -> couponApplied(it.obj as Coupon)
+                SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
+                    binding.scrollView.smoothScrollTo(binding.buyPageParentContainer.width, binding.buyPageParentContainer.height, 2000)
+                }
             }
         }
     }
@@ -212,10 +216,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun makePhoneCall() {
-        val callIntent = Intent(Intent.ACTION_DIAL)
-        callIntent.data = Uri.parse("tel:" + 6260268380) //change the number
-        startActivity(callIntent)
-
+        viewModel.saveImpressionForBuyPageLayout(BUY_PAGE_CALL_CLICKED)
+        Utils.call(this@BuyPageActivity, "+918634503202")//change the number
     }
 
     private fun updateListItem(coupon: Coupon) {
@@ -228,9 +230,10 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun openCouponList() {
+        viewModel.saveImpressionForBuyPageLayout(OPEN_COUPON_PAGE)
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            replace(R.id._buy_page_parent_container, CouponCardFragment(), "CouponCardFragment")
+            replace(R.id.buy_page_parent_container, CouponCardFragment(), "CouponCardFragment")
             addToBackStack("CouponCardFragment")
         }
     }
@@ -239,7 +242,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val fragment = RatingAndReviewFragment()
-            replace(R.id._buy_page_parent_container, fragment, COURSE_CONTENT)
+            replace(R.id.buy_page_parent_container, fragment, COURSE_CONTENT)
             addToBackStack(COURSE_CONTENT)
         }
     }
@@ -256,6 +259,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             binding.courseTypeContainer.addView(otherCourseCard)
             val teacherVideoButton = otherCourseCard?.findViewById<RelativeLayout>(R.id.play_video_button)
             teacherVideoButton?.setOnClickListener {
+                viewModel.saveImpressionForBuyPageLayout(PLAY_SAMPLE_VIDEO)
                 playSampleVideo(buyCourseFeatureModel.video ?: EMPTY)
             }
 
@@ -282,6 +286,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
             youtubeLink.setOnClickListener {
                 try {
+                    viewModel.saveImpressionForBuyPageLayout(YOUTUBE_LINK_CLICK)
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse(buyCourseFeatureModel.youtubeLink)
                     intent.setPackage("com.google.android.youtube")
@@ -333,8 +338,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         val paymentInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         proceedButtonCard = paymentInflate.inflate(R.layout.payment_button_card, null, true)
         val paymentButton = proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)
+        binding.paymentProceedBtnCard.removeAllViews()
         binding.paymentProceedBtnCard.addView(proceedButtonCard)
-        binding.paymentProceedBtnCard.parent.requestChildFocus(binding.paymentProceedBtnCard, binding.paymentProceedBtnCard)
         paymentButton?.setOnSingleClickListener {
             startPayment()
         }
@@ -523,7 +528,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         supportFragmentManager
             .beginTransaction()
             .replace(
-                R.id._buy_page_parent_container,
+                R.id.buy_page_parent_container,
                 PaymentProcessingFragment.newInstance(),
                 "Payment Processing"
             )
@@ -534,7 +539,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         supportFragmentManager
             .beginTransaction()
             .replace(
-                R.id._buy_page_parent_container,
+                R.id.buy_page_parent_container,
                 PaymentFailedDialogFragment.newInstance(
                     viewModel.orderDetailsLiveData.value?.joshtalksOrderId ?: 0
                 ),
@@ -605,6 +610,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun openCourseExplorerActivity() {
+        viewModel.saveImpressionForBuyPageLayout(OPEN_COURSE_EXPLORER_SCREEN)
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_CODE,

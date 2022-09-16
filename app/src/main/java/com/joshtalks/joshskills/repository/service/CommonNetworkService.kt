@@ -416,4 +416,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/track_popup_impression/")
     suspend fun savePopupImpression(@Body params: Map<String, String>): Response<Void>
+
+    @POST("$DIR/impression/track_buy_course_impression/")
+    suspend fun saveNewBuyPageLayoutImpression(@Body params : Map<String, Any>) :Response<Void>
 }

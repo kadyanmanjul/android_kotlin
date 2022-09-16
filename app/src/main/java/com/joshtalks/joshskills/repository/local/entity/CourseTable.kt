@@ -98,6 +98,12 @@ interface CourseDao {
     @Query(value = "select conversation_id from course")
     fun getAllConversationId(): List<String>
 
+    @Query("DELETE FROM course WHERE courseId = :id")
+    suspend fun deleteCourse(id: String)
+
+    @Query("DELETE FROM course")
+    suspend fun deleteAllCourses()
+
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query(value = "select * from course where courseId= :courseId AND is_deleted=0  LIMIT 1")
     suspend fun getCourseFromId(courseId: String): InboxEntity?

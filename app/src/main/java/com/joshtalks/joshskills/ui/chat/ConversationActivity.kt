@@ -341,8 +341,7 @@ class ConversationActivity :
         fetchMessage()
         readMessageDatabaseUpdate()
         if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_CALL_WITH_EXPERT_ENABLED) &&
-            PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID &&
-            Utils.getLangCodeFromCourseId(CURRENT_COURSE_ID) == "en"
+            (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID || PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
         ) {
             conversationBinding.btnOpenExpertList.isVisible = true
         }

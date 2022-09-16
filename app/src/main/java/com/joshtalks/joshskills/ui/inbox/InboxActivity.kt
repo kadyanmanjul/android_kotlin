@@ -276,18 +276,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun addLiveDataObservable() {
         lifecycleScope.launchWhenStarted {
-            viewModel.registerCourseNetworkData.collect {
+            viewModel.registerCourseLocalData.collect {
                 if (it.isNullOrEmpty()) {
                     openCourseExplorer()
                 } else {
                     MixPanelTracker.publishEvent(MixPanelEvent.INBOX_OPENED).push()
-                    addCourseInRecyclerView(it)
-                }
-            }
-        }
-        lifecycleScope.launchWhenStarted {
-            viewModel.registerCourseLocalData.collect {
-                if (it.isNotEmpty()) {
                     addCourseInRecyclerView(it)
                 }
             }

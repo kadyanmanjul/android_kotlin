@@ -90,12 +90,14 @@
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/coupon_save_percent"
-                            android:layout_width="@dimen/_60sdp"
-                            android:layout_height="@dimen/_20sdp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:background="@drawable/green_rectangle_without_solid"
                             android:backgroundTint="#28BF60"
                             android:gravity="center"
+                            android:paddingHorizontal="@dimen/_8sdp"
+                            android:paddingVertical="@dimen/_4sdp"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
                             android:text="@{itemData.savingInCourse}"

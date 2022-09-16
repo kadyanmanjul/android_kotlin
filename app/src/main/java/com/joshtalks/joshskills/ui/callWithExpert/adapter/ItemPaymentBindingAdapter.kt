@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.callWithExpert.adapter
 
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
@@ -17,7 +18,7 @@ fun setTextFromInt(view:TextView,item:WalletLogs){
 fun setTextFromBool(view:TextView,item:WalletLogs){
     if (item.is_failed){
         view.text = "FAILED"
-        view.setTextColor(R.color.txt_money_deducted)
+        view.setTextColor(ContextCompat.getColor(view.context,R.color.txt_transaction_failed_color))
     }else{
         view.text = "SUCCESS"
     }

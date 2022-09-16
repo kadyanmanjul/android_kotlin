@@ -220,6 +220,7 @@
     <color name="txt_money_added">#36B252</color>
     <color name="txt_payment_details">#747474</color>
     <color name="tab_transaction_text_color">#6B6B6B</color>
+    <color name="txt_transaction_failed_color">#D30E05</color>
 
     <color name="yellow_light">#FFD450</color>
     <color name="bb_tooltip_bg">#F9ECBD</color>

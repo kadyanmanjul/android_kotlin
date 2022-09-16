@@ -62,6 +62,7 @@ fun offersListAdapter(
 ) {
     view.setHasFixedSize(false)
     view.adapter = adapter
+
     adapter.scroll { view.scrollToFirst() }
     adapter.setListener(function)
 }
