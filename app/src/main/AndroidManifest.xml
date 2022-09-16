@@ -104,14 +104,16 @@
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
             android:name=".ui.payment.new_buy_page_layout.BuyPageActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ui.callWithExpert.CallWithExpertActivity"
             android:exported="false" />
         <activity
             android:name=".ui.fpp.SeeAllRequestsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.fpp.RecentCallActivity"
             android:exported="true"

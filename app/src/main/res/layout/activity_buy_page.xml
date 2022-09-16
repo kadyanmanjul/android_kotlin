@@ -70,7 +70,7 @@
                         android:textAllCaps="false"
                         android:textColor="@color/red"
                         android:textSize="@dimen/_11ssp"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -420,8 +420,18 @@
                     tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <ViewStub
+            android:id="@+id/error_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inflatedId="@+id/error_view"
+            android:layout="@layout/error_view_stub"
+            android:elevation="@dimen/_50sdp"
+            android:layout_gravity="center"
+            tools:visibility="gone"
+            />
+
     </FrameLayout>
 
 </layout>

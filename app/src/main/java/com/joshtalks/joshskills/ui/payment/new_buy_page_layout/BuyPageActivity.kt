@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
@@ -30,6 +33,7 @@ import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
+import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
@@ -89,6 +93,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         DataBindingUtil.setContentView(this, R.layout.activity_buy_page)
     }
     private var errorView: Stub<ErrorView>? = null
+    private var errorShowCount = 0
 
     private val viewModel by lazy {
         ViewModelProvider(this)[BuyPageViewModel::class.java]
@@ -142,10 +147,19 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     override fun onCreated() {
         viewModel.testId = testId
 
-        Log.d("BuyPageActivity.kt", "SAGAR => onCreated:111 $testId")
-        viewModel.getCourseContent()
-        viewModel.getCoursePriceList(null)
-        viewModel.getValidCouponList(OFFERS)
+        errorView = Stub(findViewById(R.id.error_view))
+        addObserver()
+        if (Utils.isInternetAvailable()) {
+            viewModel.getCourseContent()
+            viewModel.getCoursePriceList(null)
+            viewModel.getValidCouponList(OFFERS)
+            errorView?.resolved()?.let {
+                errorView!!.get().onSuccess()
+            }
+        } else {
+            showErrorView()
+        }
+
         initToolbar()
     }
 
@@ -191,6 +205,24 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         }
     }
 
+    fun addObserver(){
+        viewModel.apiStatus.observe(this) {
+            when (it) {
+                ApiCallStatus.START -> showProgressBar()
+                ApiCallStatus.SUCCESS -> {
+                        Log.d("BuyPageActivity.kt", "SAGAR => addObserver:216 ${errorShowCount}")
+                        hideProgressBar()
+                        errorView?.resolved()?.let {
+                            errorView!!.get().onSuccess()
+                        }
+                    Log.d("BuyPageActivity.kt", "SAGAR => addObserver:222 ${errorShowCount}")
+                }
+                ApiCallStatus.FAILED -> showErrorView()
+                else -> {}
+            }
+        }
+    }
+
     fun couponApplied(coupon: Coupon) {
         showToast("Coupon applied")
         onBackPressed()
@@ -199,7 +231,6 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
     private fun setFreeTrialTimer(buyCourseFeatureModel: BuyCourseFeatureModel) {
         if (buyCourseFeatureModel.expiryTime != null) {
-            binding.freeTrialTimer.visibility = View.VISIBLE
             if (buyCourseFeatureModel.expiryTime?.time ?: 0 >= System.currentTimeMillis()) {
                 if (buyCourseFeatureModel.expiryTime?.time ?: 0 > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
                     binding.freeTrialTimer.visibility = View.GONE
@@ -207,6 +238,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                     startTimer((buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis())
                 }
             } else {
+                binding.freeTrialTimer.visibility = View.VISIBLE
                 binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                 PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             }
@@ -655,7 +687,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         val dialogView = showCustomDialog(R.layout.coupon_applied_alert_dialog)
         val btnGotIt = dialogView.findViewById<AppCompatTextView>(R.id.got_it_button)
         dialogView.findViewById<TextView>(R.id.coupon_name_text).text = coupon.couponCode + " applied"
-        dialogView.findViewById<TextView>(R.id.coupon_price_text).text = "You saved ₹" + coupon.maxDiscountAmount.toString()
+        dialogView.findViewById<TextView>(R.id.coupon_price_text).text = "You saved upto ₹" + coupon.maxDiscountAmount.toString()
 
         btnGotIt.setOnClickListener {
             dialogView.dismiss()
@@ -676,6 +708,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
             override fun onTimerTick(millis: Long) {
                 AppObjectController.uiHandler.post {
+                    binding.freeTrialTimer.visibility = View.VISIBLE
                     binding.freeTrialTimer.text = getString(
                         R.string.free_trial_end_in,
                         UtilTime.timeFormatted(millis)
@@ -684,6 +717,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             }
 
             override fun onTimerFinish() {
+                binding.freeTrialTimer.visibility = View.VISIBLE
                 PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                 binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
             }
@@ -698,5 +732,40 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
     fun showWebViewDialog(webUrl: String) {
         WebViewFragment.showDialog(supportFragmentManager, webUrl)
+    }
+
+    fun showProgressBar() {
+        FullScreenProgressDialog.showProgressBar(this@BuyPageActivity)
+    }
+
+    fun hideProgressBar() {
+        FullScreenProgressDialog.hideProgressBar(this@BuyPageActivity)
+    }
+
+    fun showErrorView() {
+        errorView?.resolved().let {
+            errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                override fun onRetryButtonClicked() {
+                    if (Utils.isInternetAvailable()) {
+                        viewModel.getCourseContent()
+                        viewModel.getCoursePriceList(null)
+                        viewModel.getValidCouponList(OFFERS)
+                    } else {
+                        errorView?.get()?.enableRetryBtn()
+                        Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
+                            .setAction(getString(R.string.settings)) {
+                                startActivity(
+                                    Intent(
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                                            Settings.Panel.ACTION_INTERNET_CONNECTIVITY
+                                        else
+                                            Settings.ACTION_WIRELESS_SETTINGS
+                                    )
+                                )
+                            }.show()
+                    }
+                }
+            })
+        }
     }
 }

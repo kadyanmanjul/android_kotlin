@@ -152,6 +152,10 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
             return
         }
         handleOnBackPressed(true)
+        MarketingAnalytics.completeRegistrationAnalytics(
+            false,
+            RegistrationMethods.TRUE_CALLER
+        )
         activity?.let { hideKeyboard(it, binding.nameEditText) }
         if (binding.nameEditText.text.isNullOrEmpty()) {
             showToast(getString(R.string.name_error_toast))

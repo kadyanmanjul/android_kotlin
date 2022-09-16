@@ -12,10 +12,10 @@
     <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_115sdp"
+        android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/_7sdp"
         android:clipToPadding="true"
-        app:cardElevation="@dimen/_8sdp"
+        app:cardElevation="@dimen/_5sdp"
         android:shadowColor="@color/colorAccent"
         app:cardCornerRadius="@dimen/_6sdp"
         app:cardMaxElevation="@dimen/_7sdp">
@@ -24,7 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/blue_rectangle_without_solid"
-            android:elevation="@dimen/_7sdp">
+            android:elevation="@dimen/_7sdp"
+            android:paddingVertical="@dimen/_10sdp">
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -32,7 +33,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_8sdp"
                 android:text="ENG10"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/pure_black"
@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_15sdp"
-                android:text="Save ₹50 with this code"
+                android:text="Save ₹50 with this codcvdfjhcvyudfdjhvbcdyfjcvuyfdvcudfvufdcvduyfvudfvdyfuvcgyufdvgcuyefvcuydfvcuyfdkvydscbde de"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                 android:textColor="#218C38"
                 android:textStyle="bold"

@@ -77,9 +77,11 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
     inner class PriceListViewHolder(val binding: ItemNewPriceCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun setData(priceList: CourseDetailsList?, position: Int) {
-            Log.e("sagar", "setData: $priceList", )
             binding.itemData = priceList
+            binding.discountPrice.text = priceList?.actualAmount + " "
             binding.discountPrice.paintFlags = binding.discountPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
+            binding.originalPrice.text = priceList?.discountedPrice + " "
+            binding.pricePerDay.text = priceList?.perDayPrice +" "
             if (priceList?.couponText != EMPTY) {
                 binding.discountTxt.visibility = View.VISIBLE
             }
