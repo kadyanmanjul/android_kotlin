@@ -7,7 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
@@ -22,6 +25,8 @@ import com.joshtalks.joshskills.ui.fpp.constants.CAN_BE_CALL
 import com.joshtalks.joshskills.ui.fpp.constants.START_FPP_CALL_FROM_WALLET
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class ExpertListFragment:BaseFragment() {
     private lateinit var binding: FragmentExpertListBinding
@@ -57,31 +62,17 @@ class ExpertListFragment:BaseFragment() {
     }
 
     override fun initViewState() {
-        liveData.observe(this) {
-            when (it.what) {
-                START_FPP_CALL_FROM_WALLET -> {
-                    if (viewModel.creditsCount.value?.removeRupees()
-                            ?.toInt() ?: 0 >= expertListViewModel.selectedUser?.expertPricePerMinute ?: 0
-                    ) {
-                        viewModel.saveMicroPaymentImpression(eventName = CLICKED_CALL_BUTTON)
-                        val callIntent = Intent(AppObjectController.joshApplication, VoiceCallActivity::class.java)
-                        callIntent.apply {
-                            putExtra(STARTING_POINT, FROM_ACTIVITY)
-                            putExtra(IS_EXPERT_CALLING, "true")
-                            putExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN, expertListViewModel.selectedUser?.expertPricePerMinute.toString())
-                            putExtra(INTENT_DATA_TOTAL_AMOUNT,viewModel.creditsCount.value?.removeRupees())
-                            putExtra(INTENT_DATA_CALL_CATEGORY, Category.EXPERT.ordinal)
-                            putExtra(INTENT_DATA_FPP_MENTOR_ID, expertListViewModel.selectedUser?.mentorId)
-                            putExtra(INTENT_DATA_FPP_NAME, expertListViewModel.selectedUser?.expertName)
-                            putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)
-
-                        }
-                        Log.d("calltype", "start fpp call from expert list fragment: ")
-                        startActivity(callIntent)
-                    } else {
-                        showToast("You don't have amount")
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                expertListViewModel.startExpertCall.collectLatest { start ->
+                    if (start){
+                        startExpertCall()
                     }
                 }
+            }
+        }
+            liveData.observe(this) {
+            when (it.what) {
                 CAN_BE_CALL ->{
                     if (it.obj == false){
                         WalletBottomSheet(
@@ -105,6 +96,30 @@ class ExpertListFragment:BaseFragment() {
 
     override fun setArguments() {
 
+    }
+
+    private fun startExpertCall(){
+        if (viewModel.creditsCount.value?.removeRupees()
+                ?.toInt() ?: 0 >= expertListViewModel.selectedUser?.expertPricePerMinute ?: 0
+        ) {
+            viewModel.saveMicroPaymentImpression(eventName = CLICKED_CALL_BUTTON)
+            val callIntent = Intent(AppObjectController.joshApplication, VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(IS_EXPERT_CALLING, "true")
+                putExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN, expertListViewModel.selectedUser?.expertPricePerMinute.toString())
+                putExtra(INTENT_DATA_TOTAL_AMOUNT,viewModel.creditsCount.value?.removeRupees())
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.EXPERT.ordinal)
+                putExtra(INTENT_DATA_FPP_MENTOR_ID, expertListViewModel.selectedUser?.mentorId)
+                putExtra(INTENT_DATA_FPP_NAME, expertListViewModel.selectedUser?.expertName)
+                putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)
+
+            }
+            Log.d("calltype", "start fpp call from expert list fragment: ")
+            startActivity(callIntent)
+        } else {
+            showToast("You don't have amount")
+        }
     }
 
 }

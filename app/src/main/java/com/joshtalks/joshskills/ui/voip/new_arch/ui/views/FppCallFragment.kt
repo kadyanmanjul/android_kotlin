@@ -61,7 +61,8 @@ class FppCallFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.tag("calltype").d("inflate fpp call fragment")
+        Log.d("calltype", "inflate fpp call fragment")
+
         vm.isPermissionGranted.addOnPropertyChangedCallback(object : OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable, propertyId: Int) {
                 if(vm.source== FROM_ACTIVITY && vm.isPermissionGranted.get()) {

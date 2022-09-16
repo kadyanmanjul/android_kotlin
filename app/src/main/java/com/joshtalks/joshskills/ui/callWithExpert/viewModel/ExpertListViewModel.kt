@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,6 +36,7 @@ class ExpertListViewModel : BaseViewModel() {
     val adapter = ExpertListAdapter()
     var selectedUser: ExpertListModel? = null
     private val _canBeCalled = MutableLiveData<Boolean>()
+    val startExpertCall = MutableSharedFlow<Boolean>()
      lateinit var clickedSpeakerName: String
       var neededAmount: Int = 0
     val canBeCalled: LiveData<Boolean>
@@ -65,6 +67,7 @@ class ExpertListViewModel : BaseViewModel() {
         when (type) {
             FAV_CLICK_ON_CALL -> {
                 saveMicroPaymentImpression("CLICKED_CALL_EXPERT", eventId = it.mentorId)
+
                 getCallStatus(it)
 //                clickOnPhoneCall(it)
             }
@@ -81,8 +84,12 @@ class ExpertListViewModel : BaseViewModel() {
         }
         if (getVoipState() == State.IDLE) {
             selectedUser = expertListModel
-            message.what = START_FPP_CALL_FROM_WALLET
-            singleLiveEvent.value = message
+//            message.what = START_FPP_CALL_FROM_WALLET
+            Log.d("calltype", "start fpp call live data value set")
+            viewModelScope.launch {
+                startExpertCall.emit(true)
+            }
+//            singleLiveEvent.value = message
         } else {
             showToast(
                 "You can't place a new call while you're already in a call.",
