@@ -45,7 +45,6 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.*
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.OffersListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
@@ -64,7 +63,6 @@ import com.razorpay.PaymentResultListener
 import de.hdodenhof.circleimageview.CircleImageView
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
-import kotlinx.android.synthetic.main.fragment_see_all_award.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -273,7 +271,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     private fun openRatingAndReviewScreen() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            val fragment = RatingAndReviewFragment()
+            val fragment = RatingAndReviewFragment(testId.toInt())
             replace(R.id.buy_page_parent_container, fragment, COURSE_CONTENT)
             addToBackStack(COURSE_CONTENT)
         }
