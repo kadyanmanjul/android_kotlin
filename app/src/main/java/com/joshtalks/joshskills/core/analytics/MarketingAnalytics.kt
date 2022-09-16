@@ -121,7 +121,7 @@ object MarketingAnalytics {
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
 
-            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.POST_SCORE,params)
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.ADD_SHIPPING_INFO,params)
         }
     }
 
@@ -255,7 +255,7 @@ object MarketingAnalytics {
         JoshSkillExecutors.BOUNDED.submit {
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Event.SELECT_PROMOTION, Utils.getDeviceId())
-            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SELECT_PROMOTION, bundle)
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.REMOVE_FROM_CART, bundle)
         }
     }
 

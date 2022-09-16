@@ -76,9 +76,18 @@ class BuyPageViewModel : BaseViewModel() {
                        // informations.set(response.body()?.information)
                     }
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
+                }else{
+                    withContext(mainDispatcher) {
+                        message.what = IS_API_FAIL_COURSE
+                        singleLiveEvent.value = message
+                    }
                 }
 
             }catch (e: Exception){
+                withContext(mainDispatcher) {
+                    message.what = IS_API_FAIL_COURSE
+                    singleLiveEvent.value = message
+                }
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 e.printStackTrace()
             }
@@ -114,8 +123,17 @@ class BuyPageViewModel : BaseViewModel() {
                         message.what = SCROLL_TO_BOTTOM
                         singleLiveEvent.value = message
                     }
+                }else{
+                    withContext(mainDispatcher) {
+                        message.what = IS_API_FAIL_COUPON
+                        singleLiveEvent.value = message
+                    }
                 }
             }catch (e: Exception){
+                withContext(mainDispatcher) {
+                    message.what = IS_API_FAIL_COUPON
+                    singleLiveEvent.value = message
+                }
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 e.printStackTrace()
             }
@@ -132,23 +150,27 @@ class BuyPageViewModel : BaseViewModel() {
             viewModelScope.launch(Dispatchers.IO){
                 try {
                    // isProcessing.set(true)
-                    apiStatus.postValue(ApiCallStatus.START)
                     val response = buyPageRepo.getPriceList(PriceParameterModel(PrefManager.getStringValue(USER_UNIQUE_ID), Integer.parseInt(testId),code))
                     if (response.isSuccessful && response.body() != null) {
-                        apiStatus.postValue(ApiCallStatus.SUCCESS)
                         withContext(mainDispatcher) {
                             priceListAdapter.addPriceList(response.body()?.courseDetails)
                         }
+                    }else{
+                        withContext(mainDispatcher) {
+                            message.what = IS_API_FAIL_PRICE
+                            singleLiveEvent.value = message
+                        }
                     }
                 }catch (e: Exception){
-                    apiStatus.postValue(ApiCallStatus.FAILED)
-
+                    withContext(mainDispatcher) {
+                        message.what = IS_API_FAIL_PRICE
+                        singleLiveEvent.value = message
+                    }
                     e.printStackTrace()
                 }
 
             }
         }catch (ex:Exception){
-            apiStatus.postValue(ApiCallStatus.FAILED)
             Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:130 ")
         }
     }

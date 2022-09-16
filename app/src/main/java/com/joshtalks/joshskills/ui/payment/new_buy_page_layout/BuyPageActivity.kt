@@ -201,23 +201,27 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
                     binding.scrollView.smoothScrollTo(binding.buyPageParentContainer.width, binding.buyPageParentContainer.height, 2000)
                 }
+                IS_API_FAIL_PRICE -> showErrorView()
+                IS_API_FAIL_COUPON -> showErrorView()
+                IS_API_FAIL_COURSE -> showErrorView()
             }
         }
     }
 
-    fun addObserver(){
+    fun addObserver() {
         viewModel.apiStatus.observe(this) {
             when (it) {
                 ApiCallStatus.START -> showProgressBar()
                 ApiCallStatus.SUCCESS -> {
-                        Log.d("BuyPageActivity.kt", "SAGAR => addObserver:216 ${errorShowCount}")
-                        hideProgressBar()
-                        errorView?.resolved()?.let {
-                            errorView!!.get().onSuccess()
-                        }
-                    Log.d("BuyPageActivity.kt", "SAGAR => addObserver:222 ${errorShowCount}")
+                    hideProgressBar()
+                    errorView?.resolved()?.let {
+                        errorView!!.get().onSuccess()
+                    }
                 }
-                ApiCallStatus.FAILED -> showErrorView()
+                ApiCallStatus.FAILED -> {
+                    hideProgressBar()
+                    showErrorView()
+                }
                 else -> {}
             }
         }

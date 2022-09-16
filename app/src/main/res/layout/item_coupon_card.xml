@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginTop="@dimen/_1sdp"
-                android:text="Coupon expires in 30:00 "
+                android:text="Coupon expires in 30:00 minutes"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                 android:textColor="#686E73"
                 app:layout_constraintStart_toStartOf="parent"

@@ -4,6 +4,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.Utils
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.BranchEvent
 import io.branch.referral.util.CurrencyType
@@ -24,6 +25,7 @@ object BranchIOAnalytics {
                     }
                 }
                 branchEvent.addCustomDataProperty("app_version", BuildConfig.VERSION_NAME)
+                branchEvent.addCustomDataProperty("device_id",Utils.getDeviceId())
                 branchEvent.setCurrency(CurrencyType.INR)
                 branchEvent.logEvent(AppObjectController.joshApplication)
             } catch (ex: Exception) {

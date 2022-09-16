@@ -33,11 +33,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_INBOX_TOOLTIP
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -61,6 +57,7 @@ import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -106,6 +103,23 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         viewModel.handleGroupTimeTokens()
         viewModel.handleBroadCastEvents()
         MarketingAnalytics.openInboxPage()
+        watchTimeEvent()
+
+    }
+
+    fun watchTimeEvent(){
+        try {
+            lifecycleScope.launch {
+                val videoEngageEntity =
+                    AppObjectController.appDatabase.videoEngageDao().getWatchTime()
+                videoEngageEntity?.totalTime?.run {
+                    val time = TimeUnit.MILLISECONDS.toMinutes(this).div(10).toInt()
+                    MarketingAnalytics.logAchievementLevelEvent(time)
+                }
+            }
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
     }
 
     private fun initABTest() {

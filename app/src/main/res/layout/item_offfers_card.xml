@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lines="2"
-                android:text="Coupon will expire in 00:30 minutes "
+                android:text="Coupon will expire in 30:00 minutes "
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/black_0.7_alpha" />
