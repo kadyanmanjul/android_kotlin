@@ -11,16 +11,19 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
+import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.xiaomi.push.ex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.replay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -36,10 +39,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
         get() = _overAllWatchTime
-
-    private val _registerCourseNetworkData = MutableSharedFlow<List<InboxEntity>>(replay = 0)
-    val registerCourseNetworkData: SharedFlow<List<InboxEntity>>
-        get() = _registerCourseNetworkData
 
     private val _registerCourseLocalData = MutableSharedFlow<List<InboxEntity>>(replay = 0)
     val registerCourseLocalData: SharedFlow<List<InboxEntity>>
@@ -78,7 +77,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     fun getRegisterCourses() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                getAllRegisterCourseMinimalFromDB()
                 getCourseFromServer()
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -97,18 +95,24 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     val courseListResponse =
                         AppObjectController.chatNetworkService.getRegisteredCourses()
                     if (courseListResponse.isEmpty()) {
-                        _registerCourseNetworkData.emit(emptyList())
+                        appDatabase.courseDao().deleteAllCourses()
+                        _registerCourseLocalData.emit(emptyList())
                         return@launch
                     }
-                    appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
-//                        delay(1000)
-                        _registerCourseNetworkData.emit(
-                            appDatabase.courseDao().getRegisterCourseMinimal()
-                        )
+                    val listCourseId = mutableListOf<String>()
+                    val dbList = appDatabase.courseDao().getRegisterCourseMinimal()
+                    courseListResponse.forEach {
+                        listCourseId.add(it.courseId)
                     }
+                    val diff = dbList.filterNot { listCourseId.contains(it.courseId) }
+                    diff.forEach {
+                        appDatabase.courseDao().deleteCourse(it.courseId)
+                    }
+                    appDatabase.courseDao().insertRegisterCourses(courseListResponse)
                 } else {
                     showToast("No internet connection")
                 }
+                getAllRegisterCourseMinimalFromDB()
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
