@@ -1012,6 +1012,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     callCountLiveData.postValue(response.body()!!.callsLeft)
                 }
             } catch (ex: Throwable) {
+                blockLiveData.postValue(false)
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
             }
@@ -1152,10 +1153,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             this.name = popupType
                         }
                     }
-                } else
-                    coursePopupData.postValue(null)
+                }
             } catch (ex: Exception) {
-                coursePopupData.postValue(null)
                 Timber.e(ex)
             }
         }
