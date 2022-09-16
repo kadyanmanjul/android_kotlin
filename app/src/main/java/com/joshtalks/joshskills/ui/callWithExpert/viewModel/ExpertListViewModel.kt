@@ -84,12 +84,9 @@ class ExpertListViewModel : BaseViewModel() {
         }
         if (getVoipState() == State.IDLE) {
             selectedUser = expertListModel
-//            message.what = START_FPP_CALL_FROM_WALLET
-            Log.d("calltype", "start fpp call live data value set")
             viewModelScope.launch {
                 startExpertCall.emit(true)
             }
-//            singleLiveEvent.value = message
         } else {
             showToast(
                 "You can't place a new call while you're already in a call.",
