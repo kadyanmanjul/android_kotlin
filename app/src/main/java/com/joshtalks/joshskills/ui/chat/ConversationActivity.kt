@@ -2605,10 +2605,10 @@ class ConversationActivity :
             conversationBinding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
         overlayButtonImageView.setImageBitmap(overlayButtonItem.viewBitmap)
-        arrowView.x =
-            overlayButtonItem.x.toFloat() - resources.getDimension(R.dimen._40sdp) + (overlayButtonImageView.width / 2.0).toFloat() - resources.getDimension(
-                R.dimen._45sdp
-            )
+        arrowView.x = getScreenHeightAndWidth().second.div(3).toFloat()
+//            overlayButtonItem.x.toFloat() - resources.getDimension(R.dimen._40sdp) + (overlayButtonImageView.width / 2.0).toFloat() - resources.getDimension(
+//                R.dimen._45sdp
+//            )
         arrowView.y =
             overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
         overlayImageView.x = overlayItem.x.toFloat()
