@@ -41,5 +41,5 @@ fun setPricePerMinute(view: AppCompatTextView, str: ExpertListModel) {
 
 @BindingAdapter(value = ["setExperienceYears"], requireAll = false)
 fun setExperienceYears(view: AppCompatTextView, str: ExpertListModel) {
-    view.text = "Exp: "+str.expertExperience.toString().plus("/min")
+    view.text = "Exp: "+str.expertExperience.toString().plus(" mins")
 }

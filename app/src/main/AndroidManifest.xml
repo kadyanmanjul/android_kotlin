@@ -108,6 +108,7 @@
         </activity>
         <activity
             android:name=".ui.callWithExpert.CallWithExpertActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ui.fpp.SeeAllRequestsActivity"
