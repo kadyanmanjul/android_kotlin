@@ -1,40 +1,27 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel
 
-import android.util.Log
 import android.view.View
-import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.RatingAndReviewsAdapter
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.ReviewItem
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.utils.ReviewItemComparator
 import com.joshtalks.joshskills.ui.special_practice.utils.BUY_PAGE_BACK_PRESS
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
 
 class RatingAndReviewViewModel: BaseViewModel() {
 
     private val buyPageRepo by lazy { BuyPageRepo() }
+    var testId = 0
     val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
-    var ratingAndReviewAdapter =  RatingAndReviewsAdapter()
+    var ratingAndReviewAdapter =  RatingAndReviewsAdapter(ReviewItemComparator)
+    lateinit var reviewLiveData: Flow<PagingData<ReviewItem>>
 
-    fun getRatingAndReviews(testId:String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = buyPageRepo.getReviewAndRating(Integer.parseInt(testId))
-                if (response.isSuccessful && response.body() != null) {
-                    withContext(mainDispatcher) {
-                        Log.e("sagar", "getRatingAndReviews: ${response.body()?.reviews}")
-                        ratingAndReviewAdapter.addRatingList(response.body()?.reviews)
-                    }
-                }
-
-            }catch (e: Exception){
-                Log.e("sagar", "getRatingAndReviews: ${e.message}")
-                e.printStackTrace()
-            }
-
-        }
+    fun fetchReviews() {
+        reviewLiveData = buyPageRepo.getReviewResult(testId).flow
     }
 
     fun onBackPress(view: View) {
