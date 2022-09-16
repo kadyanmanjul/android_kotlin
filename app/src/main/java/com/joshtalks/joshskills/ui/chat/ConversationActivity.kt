@@ -1303,9 +1303,18 @@ class ConversationActivity :
         lifecycleScope.launchWhenCreated {
             unlockClassViewModel.batchChange.collectLatest {
                 when (it) {
-                    BATCH_CHANGE_SUCCESS -> conversationViewModel.refreshChatOnManual()
-                    BATCH_CHANGE_FAILURE -> conversationBinding.refreshLayout.isRefreshing = false
-                    BATCH_CHANGE_BUY_FIRST -> conversationViewModel.getCoursePopupData(PurchasePopupType.LESSON_LOCKED)
+                    BATCH_CHANGE_SUCCESS -> {
+                        conversationAdapter.removeUnlockMessage()
+                        conversationViewModel.refreshChatOnManual()
+                    }
+                    BATCH_CHANGE_FAILURE -> {
+                            conversationAdapter.removeUnlockMessage()
+                        conversationBinding.refreshLayout.isRefreshing = false
+                    }
+                    BATCH_CHANGE_BUY_FIRST -> {
+                        conversationBinding.refreshLayout.isRefreshing = false
+                        conversationViewModel.getCoursePopupData(PurchasePopupType.LESSON_LOCKED)
+                    }
                 }
             }
         }
@@ -1837,7 +1846,6 @@ class ConversationActivity :
                         conversationBinding.refreshLayout.isRefreshing = true
                         // conversationBinding.chatRv.removeView(it.viewHolder)
                         // conversationAdapter.removeNewClassCard()
-                        conversationAdapter.removeUnlockMessage()
                         unlockClassViewModel.updateBatchChangeRequest()
                         logUnlockCardEvent()
                     },
