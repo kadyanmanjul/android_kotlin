@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.core.custom_ui
 
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +66,17 @@ class FullScreenProgressDialog : DialogFragment() {
                 }
             } catch (ignored: Exception) {
                 ignored.printStackTrace()
+            }
+        }
+    }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).apply {
+            setOnKeyListener { dialogInterface, keyCode, keyEvent ->
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+                    activity?.finish()
+                }
+                true
             }
         }
     }

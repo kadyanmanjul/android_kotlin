@@ -123,7 +123,6 @@
                             android:layout_height="@dimen/_12sdp"
                             android:layout_gravity="end"
                             android:gravity="end"
-                            android:text="@{itemData.actualAmount}"
                             android:textAlignment="textEnd"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                             android:textColor="#888888"
@@ -136,7 +135,6 @@
                             android:layout_gravity="end"
                             android:gravity="end"
                             android:letterSpacing="0"
-                            android:text="@{itemData.discountedPrice}"
                             android:textAlignment="textEnd"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                             android:textColor="@color/pure_black"
@@ -152,12 +150,11 @@
                             android:gravity="end"
                             android:lineSpacingMultiplier="0"
                             android:paddingEnd="@dimen/_2sdp"
-                            android:text="@{itemData.perDayPrice}"
                             android:textAlignment="textEnd"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal11_Regular"
                             android:textColor="#A62E2D"
                             android:textStyle="italic"
-                            tools:text="₹3/day" />
+                            tools:text="₹3/day " />
 
                     </LinearLayout>
 
@@ -171,6 +168,10 @@
                     android:backgroundTint="#28BF60"
                     android:gravity="center_horizontal"
                     android:text="@{itemData.couponText}"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_2sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                     android:textColor="@color/white"

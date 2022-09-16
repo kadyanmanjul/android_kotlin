@@ -44,7 +44,7 @@ const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
 const val ARG_PLACEHOLDER_URL = "placeholder_image_url"
 
 enum class RegistrationMethods(val type: String) {
-    MOBILE_NUMBER("Mobile Number"), TRUE_CALLER("True Caller"), GOOGLE("Google"), FACEBOOK("Facebook")
+    MOBILE_NUMBER("Mobile Number"), TRUE_CALLER("True Caller"), GOOGLE("Google"), FACEBOOK("Facebook"), REGISTER_WITH_NUMBER("REGISTER_WITH_NUMBER")
 }
 
 enum class GENDER(val gValue: String) {

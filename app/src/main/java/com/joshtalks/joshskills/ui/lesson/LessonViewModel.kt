@@ -1028,8 +1028,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
                     PrefManager.put(FT_CALLS_LEFT, response.body()!!.callsLeft)
                     callCountLiveData.postValue(response.body()!!.callsLeft)
+                    blockLiveData.postValue(false)
                 }
             } catch (ex: Throwable) {
+                blockLiveData.postValue(false)
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
             }
@@ -1038,7 +1040,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun checkBlockStatusInSP(): Boolean {
         val blockStatus = PrefManager.getBlockStatusObject(BLOCK_STATUS)
-        if (blockStatus?.timestamp?.toInt() == 0)
+        if (blockStatus?.timestamp?.toInt() == 0 && blockStatus.duration == 0)
             return false
 
         if (checkWithinBlockTimer(blockStatus)) {
@@ -1054,7 +1056,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             val durationInMillis = Duration.ofMinutes(blockStatus.duration.toLong()).toMillis()
             val unblockTimestamp = blockStatus.timestamp + durationInMillis
             val currentTimestamp = System.currentTimeMillis()
-            if (currentTimestamp <= unblockTimestamp) {
+            if (currentTimestamp < unblockTimestamp) {
                 return true
             }
         }
@@ -1170,10 +1172,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             this.name = popupType
                         }
                     }
-                } else
-                    coursePopupData.postValue(null)
+                }
             } catch (ex: Exception) {
-                coursePopupData.postValue(null)
                 Timber.e(ex)
             }
         }

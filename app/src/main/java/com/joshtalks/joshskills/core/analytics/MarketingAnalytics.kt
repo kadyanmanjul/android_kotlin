@@ -116,7 +116,7 @@ object MarketingAnalytics {
             val facebookEventLogger = AppEventsLogger.newLogger(context)
             facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACHIEVED_LEVEL,params)
 
-            BranchEvent(AppEventsConstants.EVENT_NAME_ACHIEVED_LEVEL)
+            BranchEvent(BRANCH_STANDARD_EVENT.ACHIEVE_LEVEL)
                 .setDescription(BranchEventName.CALL_COMPLETED_5MIN.name)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)

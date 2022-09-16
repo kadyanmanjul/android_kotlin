@@ -90,7 +90,7 @@ object VoipPref {
         editor.putString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, remoteUserMentorId)
         editor.commit()
 
-        if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) && duration.inSeconds() >= 300) {
+        if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) && duration.inSeconds() >= 300 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
             editor.putBoolean(IS_FIRST_CALL, false)
             editor.putBoolean(IS_FIRST_5MIN_CALL, false)
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)

@@ -412,13 +412,13 @@ interface CommonNetworkService {
     suspend fun getCoursePriceList(@Body params: PriceParameterModel): Response<CoursePriceListModel>
 
     @GET("$DIR/course/list_reviews/")
-    suspend fun getReviews(@Query("test_id") testId: Int): Response<RatingAndReviews>
+    suspend fun getReviews(@Query("page") pageNo: Int, @Query("test_id") testId: Int): ReviewsListResponse
 
     @POST("$DIR/impression/track_popup_impression/")
     suspend fun savePopupImpression(@Body params: Map<String, String>): Response<Void>
 
     @POST("$DIR/impression/track_buy_course_impression/")
-    suspend fun saveNewBuyPageLayoutImpression(@Body params : Map<String, Any>) :Response<Void>
+    suspend fun saveNewBuyPageLayoutImpression(@Body params: Map<String, Any>): Response<Void>
 
     @GET("$DIR/micro_payment/expert_call_status/")
     suspend fun getButtonExpertVisibility(): Response<ButtonVisibilityResponse>

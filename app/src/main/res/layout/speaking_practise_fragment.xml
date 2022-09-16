@@ -523,7 +523,7 @@
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_12sdp"
                     android:paddingRight="@dimen/_20sdp"
-                    android:visibility="@{vm.blockLiveData  ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{vm.isInternetSpeedGood == 2 &amp;&amp; vm.blockLiveData  ? View.VISIBLE : View.GONE,default=gone}"
                     app:layout_constraintBottom_toTopOf="@id/btn_call_with_expert"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

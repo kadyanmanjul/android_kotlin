@@ -42,6 +42,7 @@ class BuyPageViewModel : BaseViewModel() {
     var couponListAdapter =  CouponListAdapter()
     var offersListAdapter =  OffersListAdapter()
     var priceListAdapter =  PriceListAdapter()
+    val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
     var informations = ObservableField(EMPTY)
     var testId: String = FREE_TRIAL_PAYMENT_TEST_ID
@@ -64,6 +65,7 @@ class BuyPageViewModel : BaseViewModel() {
     fun getCourseContent() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                apiStatus.postValue(ApiCallStatus.START)
                 val response = buyPageRepo.getFeatureList(Integer.parseInt(testId))
                 if (response.isSuccessful && response.body() != null) {
                     withContext(mainDispatcher) {
@@ -73,9 +75,11 @@ class BuyPageViewModel : BaseViewModel() {
                         singleLiveEvent.value = message
                        // informations.set(response.body()?.information)
                     }
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
                 }
 
             }catch (e: Exception){
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 e.printStackTrace()
             }
 
@@ -87,7 +91,9 @@ class BuyPageViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = buyPageRepo.getCouponList()
+                apiStatus.postValue(ApiCallStatus.STA)
                 if (response.isSuccessful && response.body() != null) {
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
                     withContext(mainDispatcher) {
                         if (methodCallType == COUPON) {
                             couponListAdapter.addOffersList(response.body()!!.listOfCoupon)
@@ -110,6 +116,7 @@ class BuyPageViewModel : BaseViewModel() {
                     }
                 }
             }catch (e: Exception){
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 e.printStackTrace()
             }
         }
@@ -122,24 +129,26 @@ class BuyPageViewModel : BaseViewModel() {
     //this method is get price and if pass coupon code then it will return discount price
     fun getCoursePriceList(code: String?) {
         try {
-            viewModelScope.launch{
+            viewModelScope.launch(Dispatchers.IO){
                 try {
-                    isProcessing.set(true)
+                   // isProcessing.set(true)
+                    apiStatus.postValue(ApiCallStatus.START)
                     val response = buyPageRepo.getPriceList(PriceParameterModel(PrefManager.getStringValue(USER_UNIQUE_ID), Integer.parseInt(testId),code))
                     if (response.isSuccessful && response.body() != null) {
+                        apiStatus.postValue(ApiCallStatus.SUCCESS)
                         withContext(mainDispatcher) {
-                            isProcessing.set(false)
                             priceListAdapter.addPriceList(response.body()?.courseDetails)
                         }
                     }
                 }catch (e: Exception){
-                    isProcessing.set(false)
-                    Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:121")
+                    apiStatus.postValue(ApiCallStatus.FAILED)
+
                     e.printStackTrace()
                 }
 
             }
         }catch (ex:Exception){
+            apiStatus.postValue(ApiCallStatus.FAILED)
             Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:130 ")
         }
     }

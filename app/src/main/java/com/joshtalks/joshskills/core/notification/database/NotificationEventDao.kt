@@ -21,4 +21,7 @@ interface NotificationEventDao {
     @Query("UPDATE notification_event_table SET analytics_sent = 1 WHERE notificationId = :id")
     suspend fun updateSyncStatus(id:Int)
 
+    @Query("DELETE FROM notification_event_table")
+    suspend fun clearEventsData()
+
 }
