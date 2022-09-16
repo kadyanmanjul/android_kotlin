@@ -151,7 +151,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         binding.startBtn.setOnTouchListener(onTouchListener3)
         binding.scoreStartBtn.setOnTouchListener(onTouchListener3)
         // showTooltip()
-        if (hasCompletedTest) {
+        if (hasCompletedTest && PrefManager.getBoolValue(IS_FREE_TRIAL)) {
             viewModel.getCoursePopupData(PurchasePopupType.GRAMMAR_COMPLETED)
         }
         when {
