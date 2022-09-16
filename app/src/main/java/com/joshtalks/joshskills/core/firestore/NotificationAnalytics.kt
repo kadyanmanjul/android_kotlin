@@ -77,6 +77,10 @@ class NotificationAnalytics {
 
     suspend fun pushToServer(): Boolean {
         try {
+            if (!PrefManager.getBoolValue(HAVE_CLEARED_NOTIF_ANALYTICS, isConsistent = false, defValue = false)) {
+                notificationDao.clearEventsData()
+                PrefManager.put(HAVE_CLEARED_NOTIF_ANALYTICS, true)
+            }
             val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
             val listOfReceived = notificationDao.getUnsyncEvent()
             if (listOfReceived?.isEmpty() == true)
