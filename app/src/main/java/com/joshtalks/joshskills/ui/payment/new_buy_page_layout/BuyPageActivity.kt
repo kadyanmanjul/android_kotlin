@@ -356,6 +356,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         val ratingInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         teacherRatingAndReviewCard = ratingInflate.inflate(R.layout.teacher_rating_and_review_card, null, true)
+        binding.teacherRatingAndReview.removeAllViews()
         binding.teacherRatingAndReview.addView(teacherRatingAndReviewCard)
 
         val ratingCount = teacherRatingAndReviewCard?.findViewById<TextView>(R.id.rating_count)

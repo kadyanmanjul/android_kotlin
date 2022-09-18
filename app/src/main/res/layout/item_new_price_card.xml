@@ -17,12 +17,12 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="85dp"
+            android:layout_height="23dp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginBottom="@dimen/_minus10sdp"
             android:layout_marginEnd="@dimen/_21sdp"
-            android:background="@drawable/ic_recommended_image"
+            app:srcCompat="@drawable/recommended"
             android:elevation="@dimen/_10sdp"
             android:scaleType="fitXY"
             android:visibility="@{itemData.isRecommended ? View.VISIBLE : View.GONE, default = gone}"
