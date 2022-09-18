@@ -491,7 +491,9 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    override fun setIntentExtras() {}
+    override fun setIntentExtras() {
+        AppObjectController.initGroups()
+    }
 
     override fun onDestroy() {
         CoroutineScope(Dispatchers.IO).launch {
