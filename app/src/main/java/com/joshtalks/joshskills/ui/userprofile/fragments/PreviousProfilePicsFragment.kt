@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class PreviousProfilePicsFragment : DialogFragment() {
@@ -144,25 +145,27 @@ class PreviousProfilePicsFragment : DialogFragment() {
             }
             previousProfilePics.profilePictures.sortedBy { it.timestamp?.time }
                 .let { picsList ->
-                    val recyclerView: RecyclerView = binding.rvPreviousPics
-                    val layoutManager = GridLayoutManager(context, 3)
-                    recyclerView.layoutManager = layoutManager
-                    recyclerView.setHasFixedSize(true)
-                    recyclerView.adapter = PreviousPicsAdapter(
-                        picsList,
-                        object : PreviousPicsAdapter.OnPreviousPicClickListener {
-                            override fun onPreviousPicClick(profilePicture: ProfilePicture,position:Int) {
-                                ProfileImageShowFragment.newInstance(
-                                    mentorId,
-                                    true,
-                                    imagesUrls,
-                                    position,
-                                    imageIds
-                                )
-                                    .show(activity!!.supportFragmentManager, "ImageShow")
-                            }
-                        },
-                        mentorId)
+                    withContext(Dispatchers.Main) {
+                        val recyclerView: RecyclerView = binding.rvPreviousPics
+                        val layoutManager = GridLayoutManager(context, 3)
+                        recyclerView.layoutManager = layoutManager
+                        recyclerView.setHasFixedSize(true)
+                        recyclerView.adapter = PreviousPicsAdapter(
+                            picsList,
+                            object : PreviousPicsAdapter.OnPreviousPicClickListener {
+                                override fun onPreviousPicClick(profilePicture: ProfilePicture,position:Int) {
+                                    ProfileImageShowFragment.newInstance(
+                                        mentorId,
+                                        true,
+                                        imagesUrls,
+                                        position,
+                                        imageIds
+                                    )
+                                        .show(activity!!.supportFragmentManager, "ImageShow")
+                                }
+                            },
+                            mentorId)
+                    }
                 }
         }
     }
