@@ -375,12 +375,16 @@ class BuyPageViewModel : BaseViewModel() {
 
     fun saveImpressionForBuyPageLayout(eventName: String, eventData:Int = 0){
         viewModelScope.launch (Dispatchers.IO){
-            buyPageRepo.saveBuyPageImpression(
-                mapOf(
-                    "event_name" to eventName,
-                    "event_data" to eventData
+            try {
+                buyPageRepo.saveBuyPageImpression(
+                    mapOf(
+                        "event_name" to eventName,
+                        "event_data" to eventData
+                    )
                 )
-            )
+            }catch (ex:java.lang.Exception){
+
+            }
         }
     }
 }

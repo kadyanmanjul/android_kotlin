@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.lifecycleScope
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
@@ -18,9 +17,7 @@ import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class PurchaseDialog : BaseDialogFragment() {
 
@@ -28,6 +25,8 @@ class PurchaseDialog : BaseDialogFragment() {
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var purchaseDataResponse: PurchaseDataResponse
     private var onDialogDismiss: () -> Unit = {}
+    private var freeTrialTimerJob: Job? = null
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,7 +74,7 @@ class PurchaseDialog : BaseDialogFragment() {
                     binding.txtFtEndsIn.visibility = View.GONE
                 } else {
                     binding.txtFtEndsIn.visibility = View.VISIBLE
-                    startTimer(purchaseDataResponse.expireTime?.time!! - System.currentTimeMillis())
+                    startFreeTrialTimer(purchaseDataResponse.expireTime?.time!! - System.currentTimeMillis())
                 }
             } else {
                 binding.txtFtEndsIn.visibility = View.VISIBLE
@@ -90,47 +89,37 @@ class PurchaseDialog : BaseDialogFragment() {
         }
     }
 
-    private fun startTimer(startTimeInMilliSeconds: Long) {
+    fun startFreeTrialTimer(endTimeInMilliSeconds: Long) {
         try {
-            countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
-                override fun onTimerTick(millis: Long) {
-                    try {
-                        AppObjectController.uiHandler.post {
+            var newTime = endTimeInMilliSeconds - 1000
+            binding.txtFtEndsIn.text = getString(
+                R.string.free_trial_end_in,
+                UtilTime.timeFormatted(newTime)
+            )
+            freeTrialTimerJob = scope.launch {
+                while (true) {
+                    delay(1000)
+                    newTime -= 1000
+                    if (isActive) {
+                        withContext(Dispatchers.Main) {
                             binding.txtFtEndsIn.text = getString(
                                 R.string.free_trial_end_in,
-                                UtilTime.timeFormatted(millis)
+                                UtilTime.timeFormatted(newTime)
                             )
                         }
-                    } catch (ex: Exception) {
-
-                    }
-                }
-
-                override fun onTimerFinish() {
-                    try {
-                        PrefManager.put(IS_FREE_TRIAL_ENDED, true)
-                        binding.txtFtEndsIn.visibility = View.VISIBLE
-                        binding.txtFtEndsIn.text = getString(R.string.free_trial_ended)
-                    } catch (ex: Exception) {
-
-                    }
+                        if (newTime <= 0)
+                            break
+                    } else
+                        break
                 }
             }
-            countdownTimerBack?.startTimer()
-        } catch (ex: Exception) {
+        }catch (ex:Exception){
 
         }
     }
 
     fun showFreeTrialPaymentScreen() {
         try {
-//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//                requireActivity(),
-//                AppObjectController.getFirebaseRemoteConfig().getString(
-//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                ),
-//                purchaseDataResponse.expireTime?.time ?: 0
-//            )
             BuyPageActivity.startBuyPageActivity(
                 requireActivity(),
                 AppObjectController.getFirebaseRemoteConfig().getString(
@@ -150,7 +139,7 @@ class PurchaseDialog : BaseDialogFragment() {
     }
 
     fun closeDialog(isPopupIgnored: Boolean = true) {
-        countdownTimerBack?.stop()
+        cancelTimerJob()
         if(isPopupIgnored)
             savePopupImpression("POPUP_IGNORED")
         onDialogDismiss.invoke()
@@ -158,10 +147,13 @@ class PurchaseDialog : BaseDialogFragment() {
     }
 
     override fun onDestroy() {
+        cancelTimerJob()
         super.onDestroy()
-        countdownTimerBack?.stop()
     }
 
+    fun cancelTimerJob(){
+        freeTrialTimerJob?.cancel()
+    }
 
     override fun onStart() {
         super.onStart()
