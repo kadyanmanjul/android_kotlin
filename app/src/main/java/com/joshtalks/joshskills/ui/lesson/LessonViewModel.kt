@@ -124,7 +124,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
     val isVideoMuxFailed: Boolean = false
 
-    val isExpertBtnEnabled : MutableLiveData<Boolean> = MutableLiveData()
+    val isExpertBtnEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
         getRating()
@@ -136,7 +136,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val response = AppObjectController.commonNetworkService.getButtonExpertVisibility()
                 if (response.isSuccessful) {
-                    val enabled  = response.body()?.status == true
+                    val enabled = response.body()?.status == true
                     isExpertBtnEnabled.postValue(enabled)
                 }
             } catch (ex: Exception) {
@@ -1157,11 +1157,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun getCoursePopupData(popupType: PurchasePopupType) {
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL)) return
         viewModelScope.launch {
             try {
                 val response =
                     AppObjectController.commonNetworkService.getCoursePopUpData(
-                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID),
+                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID },
                         popupName = popupType.name
                     )
                 if (response.isSuccessful) {

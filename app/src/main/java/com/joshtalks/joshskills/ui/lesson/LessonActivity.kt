@@ -845,6 +845,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
+                        openLessonCompleteScreen(lesson)
                     } else {
                         AppObjectController.uiHandler.post {
                             openIncompleteTab(currentTabNumber)

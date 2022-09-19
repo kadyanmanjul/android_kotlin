@@ -177,7 +177,7 @@ object VoipPref {
             try {
                 val resp =
                     AppObjectController.commonNetworkService.getCoursePopUpData(
-                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID),
+                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID },
                         popupName = PurchasePopupType.SPEAKING_COMPLETED.name,
                         callCount = PrefManager.getIntValue(FT_CALLS_LEFT),
                         callDuration = duration
