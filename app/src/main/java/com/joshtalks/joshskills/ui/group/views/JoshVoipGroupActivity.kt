@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.OPEN_GROUP_REQUEST
 import com.joshtalks.joshskills.constants.REFRESH_GRP_LIST_HIDE_INFO
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -49,7 +50,9 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         DataBindingUtil.setContentView(this, R.layout.activity_josh_voip_groupctivity)
     }
 
-    override fun setIntentExtras() {}
+    override fun setIntentExtras() {
+        AppObjectController.initGroups()
+    }
 
     override fun initViewBinding() {
         binding.vm = vm
