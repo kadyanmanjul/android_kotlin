@@ -406,30 +406,8 @@ class CallingRemoteService : Service() {
     }
 
     fun stopCallTimer() {
-//        storeCallTimingInDb()
         countdownTimerBack?.cancel()
         countdownTimerBack = null
-    }
-
-    fun startBeepSound(){
-        timerScope.launch {
-            val soundPool = SoundPool.Builder()
-                .build()
-            while (true){
-                soundPool.play(
-                    soundPool.load(
-                        this@CallingRemoteService,
-                        R.raw.beep,
-                        1),
-                    1f,
-                    1f,
-                    1,
-                    1,
-                    1f
-                )
-                delay(2000)
-            }
-        }
     }
 
 }
