@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.data
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.media.SoundPool
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
@@ -64,6 +65,8 @@ class CallingRemoteService : Service() {
     var countdownTimerBack: Job? = null
     var expertCallData = HashMap<String, Any>()
     private val timerScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
+
+    private var beepTimer: BeepTimer? = null
 
     override fun onCreate() {
         Log.d(TAG, "onCreate: ")
@@ -156,6 +159,8 @@ class CallingRemoteService : Service() {
         delay(5000)
         ioScope.cancel()
         syncScope.cancel()
+        timerScope.cancel()
+        beepTimer?.stopBeepSound()
         stopSelf()
     }
 
@@ -311,6 +316,7 @@ class CallingRemoteService : Service() {
     }
 
     fun disconnectCall() {
+        beepTimer?.stopBeepSound()
         stopCallTimer()
         notification.idle(getNotificationData())
         mediator.userAction(Action.DISCONNECT)
@@ -350,6 +356,8 @@ class CallingRemoteService : Service() {
         }
         ioScope.cancel()
         syncScope.cancel()
+        timerScope.cancel()
+        beepTimer?.stopBeepSound()
     }
 
     private fun showNotification() {
@@ -371,11 +379,15 @@ class CallingRemoteService : Service() {
 
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
         try {
-             timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
-            Log.v("sagar", "timeInSec: $timeInMillSec")
+            timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
             countdownTimerBack = timerScope.launch {
                 delay(timeInMillSec!!)
                 disconnectCall()
+            }
+            beepTimer = BeepTimer(this, timerScope)
+            timerScope.launch {
+                delay(timeInMillSec!! - 15000)
+                beepTimer?.startBeepSound()
             }
         }catch (ex:Exception){
             stopCallTimer()
@@ -397,6 +409,27 @@ class CallingRemoteService : Service() {
 //        storeCallTimingInDb()
         countdownTimerBack?.cancel()
         countdownTimerBack = null
+    }
+
+    fun startBeepSound(){
+        timerScope.launch {
+            val soundPool = SoundPool.Builder()
+                .build()
+            while (true){
+                soundPool.play(
+                    soundPool.load(
+                        this@CallingRemoteService,
+                        R.raw.beep,
+                        1),
+                    1f,
+                    1f,
+                    1,
+                    1,
+                    1f
+                )
+                delay(2000)
+            }
+        }
     }
 
 }

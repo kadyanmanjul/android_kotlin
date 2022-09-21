@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.model.AvailableAmount
 import com.joshtalks.joshskills.ui.callWithExpert.model.Transaction
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletLogs
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
+import com.joshtalks.joshskills.voip.constant.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -124,6 +125,35 @@ class ExpertListRepo {
                     }
                 }
 
+            }
+        }
+    }
+
+    fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {
+        if (callType == Category.EXPERT.ordinal) {
+            VoipPref.setExpertCallDuration(duration)
+
+            CoroutineScope(Dispatchers.IO + VoipPref.coroutineExceptionHandler).launch {
+                VoipPref.expertDurationMutex.withLock {
+                    try {
+                        val map = HashMap<String, String>()
+                        map["time_spoken_in_seconds"] = duration
+                        map["connected_user_id"] = remoteUserMentorId
+                        map["agora_call_id"] = VoipPref.getLastCallId().toString()
+                        val response =
+                            AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                        when (response.code()) {
+                            200 -> {
+                                VoipPref.setExpertCallDuration("")
+                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
+                            }
+                            406 -> {
+
+                            }
+                        }
+                    } catch (ex: Exception) {
+                    }
+                }
             }
         }
     }
