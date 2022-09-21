@@ -133,7 +133,7 @@ object MarketingAnalytics {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
 
-            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SELECT_ITEM,params)
+            FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.SELECT_ITEM,params)
 
             BranchEvent(BRANCH_STANDARD_EVENT.INVITE)
                 .setCustomerEventAlias("inbox_screen")
@@ -263,7 +263,7 @@ object MarketingAnalytics {
         JoshSkillExecutors.BOUNDED.submit {
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Event.SELECT_PROMOTION, Utils.getDeviceId())
-            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.REMOVE_FROM_CART, bundle)
+            FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.REMOVE_FROM_CART, bundle)
             BranchEvent(BRANCH_STANDARD_EVENT.RESERVE)
                 .setCustomerEventAlias("inbox_screen")
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
