@@ -168,6 +168,7 @@ fun Context.getMentorId(): String {
         mentorId = mentorIdCursor.getStringData(MENTOR_ID_COLUMN)
         mentorIdCursor?.close()
     } catch (ex: Exception) {
+        mentorIdCursor?.close()
         ex.printStackTrace()
         return ""
     }
@@ -188,6 +189,7 @@ fun Context.getCourseId(): String {
         courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
         courserIdCursor?.close()
     }catch (ex:Exception){
+        courserIdCursor?.close()
         ex.printStackTrace()
         return "151"
     }
@@ -208,6 +210,7 @@ fun Context.isFreeTrialOrCourseBought(): Boolean {
         isFreeTrialOrCourseBought = trialIdCursor.getStringData(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN)
         trialIdCursor?.close()
     }catch (ex:Exception){
+        trialIdCursor?.close()
         ex.printStackTrace()
         return false
     }
@@ -229,6 +232,7 @@ fun Context.getMentorName(): String {
         mentorName = mentorNameCursor.getStringData(MENTOR_NAME_COLUMN)
         mentorNameCursor?.close()
     } catch (ex: Exception) {
+        mentorNameCursor?.close()
         ex.printStackTrace()
         return ""
     }
@@ -250,6 +254,7 @@ fun Context.getMentorProfile(): String {
         mentorProfile = mentorProfileCursor.getStringData(MENTOR_PROFILE_COLUMN)
         mentorProfileCursor?.close()
     }catch (ex: Exception) {
+        mentorProfileCursor?.close()
         ex.printStackTrace()
         return ""
     }
@@ -271,6 +276,7 @@ fun Context.getDeviceId(): String {
         deviceId = deviceIdCursor.getStringData(DEVICE_ID_COLUMN)
         deviceIdCursor?.close()
     } catch (ex: Exception) {
+        deviceIdCursor?.close()
         ex.printStackTrace()
         return ""
     }

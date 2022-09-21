@@ -49,8 +49,8 @@
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:elevation="@dimen/_2sdp"
                 android:fillViewport="true"
-                app:layout_constraintBottom_toTopOf="@id/payment_container"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/payment_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tooolll">
@@ -59,229 +59,347 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp">
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/free_trial_timer"
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer1"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_30sdp"
+                        android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_15sdp"
                         android:layout_marginVertical="@dimen/_13sdp"
-                        android:background="@drawable/background_free_trial_timer"
-                        android:text="@string/free_trial_ended"
-                        android:textAllCaps="false"
-                        android:textColor="@color/red"
-                        android:textSize="@dimen/_11ssp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="gone">
+
+                        <include layout="@layout/shimmer_layout_for_course_data" />
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/shimmer1_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/shimmer1">
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/course_type_container"
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/free_trial_timer"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_13sdp"
+                            android:background="@drawable/background_free_trial_timer"
+                            android:text="@string/free_trial_ended"
+                            android:textAllCaps="false"
+                            android:textColor="@color/red"
+                            android:textSize="@dimen/_11ssp"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/course_type_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:orientation="vertical"
+                            android:visibility="visible" />
+
+                        <View
+                            android:id="@+id/view1"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/dotted_line"
+                            android:backgroundTint="@color/colorAccent"
+                            android:visibility="@{vm.isGovernmentCourse ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/course_type_container" />
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/teacher_details"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:orientation="vertical"
+                            android:visibility="visible" />
+
+                        <View
+                            android:id="@+id/view2"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/dotted_line"
+                            android:backgroundTint="@color/colorAccent"
+                            android:visibility="@{vm.isGovernmentCourse ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintEnd_toEndOf="parent" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:orientation="vertical"
+                        android:layout_marginHorizontal="@dimen/_15sdp"
+                        android:layout_marginVertical="@dimen/_13sdp"
                         android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/free_trial_timer" />
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer1_layout"
+                        tools:visibility="gone">
 
-                    <View
-                        android:id="@+id/view1"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:background="@drawable/dotted_line"
-                        android:backgroundTint="@color/colorAccent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:visibility="@{vm.isGovernmentCourse ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/course_type_container" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <include layout="@layout/shimmer_layout_for_feature" />
+
+                            <include layout="@layout/shimmer_layout_for_feature" />
+
+                            <include layout="@layout/shimmer_layout_for_feature" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/teacher_details"
+                        android:id="@+id/shimmer2_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_marginHorizontal="@dimen/_15sdp"
                         android:orientation="vertical"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer2">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/amountList"
+                            featureListAdapter="@{vm.featureAdapter}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginVertical="@dimen/_15sdp"
+                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                            app:spanCount="2" />
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/course_desc_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_20sdp"
+                            android:orientation="vertical"
+                            android:visibility="visible" />
+
+                        <View
+                            android:id="@+id/view3"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/dotted_line"
+                            android:backgroundTint="@color/colorAccent" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_15sdp"
+                        android:layout_marginVertical="@dimen/_12sdp"
                         android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/view1" />
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer2_layout"
+                        tools:visibility="gone">
 
-                    <View
-                        android:id="@+id/view2"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:background="@drawable/dotted_line"
-                        android:backgroundTint="@color/colorAccent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:visibility="@{vm.isGovernmentCourse ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/teacher_details" />
+                        <include layout="@layout/shimmer_layout_for_rating" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/amountList"
-                        featureListAdapter="@{vm.featureAdapter}"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/_15sdp"
-                        android:layout_marginVertical="@dimen/_15sdp"
-                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/view2"
-                        app:spanCount="2" />
+                    </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/course_desc_list"
+                        android:id="@+id/shimmer3_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer3">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/teacher_rating_and_review"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:orientation="vertical"
+                            android:visibility="visible" />
+
+                        <View
+                            android:id="@+id/view4"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/dotted_line"
+                            android:backgroundTint="@color/colorAccent" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_15sdp"
-                        android:layout_marginTop="@dimen/_24sdp"
-                        android:orientation="vertical"
-                        android:visibility="visible"
+                        android:layout_marginVertical="@dimen/_12sdp"
+                        android:visibility="@{vm.isCouponApiCall ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/amountList" />
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer3_layout">
 
-                    <View
-                        android:id="@+id/view3"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:background="@drawable/dotted_line"
-                        android:backgroundTint="@color/colorAccent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/course_desc_list" />
+                        <include layout="@layout/shimmer_layout_for_offer" />
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/teacher_rating_and_review"
+                        android:id="@+id/shimmer4_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_12sdp"
-                        android:layout_marginHorizontal="@dimen/_15sdp"
                         android:orientation="vertical"
-                        android:visibility="visible"
+                        android:visibility="@{vm.isCouponApiCall ? View.GONE : View.VISIBLE}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/view3" />
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer4">
 
-                    <View
-                        android:id="@+id/view4"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:background="@drawable/dotted_line"
-                        android:backgroundTint="@color/colorAccent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/teacher_rating_and_review" />
+                        <RelativeLayout
+                            android:id="@+id/offer_ll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_12sdp">
 
-                    <RelativeLayout
-                        android:id="@+id/offer_ll"
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/offer_for_you_txt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:text="@string/offer_for_you"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                                android:textColor="@color/pure_black"
+                                android:textStyle="bold"
+                                android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/insert_code"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:onClick="@{()->vm.openCouponListScreen()}"
+                                android:text="@string/insert_code"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                                android:textColor="@color/colorAccent"
+                                android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
+
+                        </RelativeLayout>
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/couponList"
+                            offersListAdapter="@{vm.offersListAdapter}"
+                            onOfferItemClick="@{vm.onItemClick}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_18sdp"
+                            android:layout_marginBottom="@dimen/_13sdp"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                            tools:listitem="@layout/item_offfers_card" />
+
+                        <View
+                            android:id="@+id/view6"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:background="@drawable/dotted_line"
+                            android:backgroundTint="@color/colorAccent" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_15sdp"
-                        android:layout_marginTop="@dimen/_12sdp"
+                        android:layout_marginVertical="@dimen/_12sdp"
+                        android:visibility="@{vm.isPriceApiCall ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/view4"
-                        app:layout_constraintEnd_toEndOf="parent">
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer4_layout">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <include layout="@layout/shimmer_layout_for_price" />
+
+                            <include layout="@layout/shimmer_layout_for_price" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/shimmer5_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="@{vm.isPriceApiCall ? View.GONE: View.VISIBLE}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer5" >
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/course_price_list"
+                            onPriceItemClick="@{vm.onItemPriceClick}"
+                            priceListAdapter="@{vm.priceListAdapter}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:orientation="vertical"
+                            android:visibility="@{vm.isPriceApiCall ? View.GONE : View.VISIBLE}"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/offer_for_you_txt"
+                            android:id="@+id/btn_see_course_list"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/offer_for_you"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                            android:textColor="@color/pure_black"
-                            android:textStyle="bold"
-                            android:layout_alignParentStart="true"
-                            android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/insert_code"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:onClick="@{()->vm.openCouponListScreen()}"
-                            android:text="@string/insert_code"
+                            android:layout_marginHorizontal="@dimen/_13sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:visibility="@{vm.isSeeAllButtonShow ? View.VISIBLE : View.GONE}"
+                            android:onClick="@{()-> vm.openCourseExplore()}"
+                            android:text="See course list >>"
                             android:textColor="@color/colorAccent"
-                            android:layout_marginTop="@dimen/_2sdp"
-                            android:layout_alignParentEnd="true"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                            android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
+                            android:textStyle="bold" />
 
-                    </RelativeLayout>
+                        <View
+                            android:id="@+id/view5"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:background="@drawable/dotted_line"
+                            android:backgroundTint="@color/colorAccent" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/couponList"
-                        offersListAdapter="@{vm.offersListAdapter}"
-                        onOfferItemClick="@{vm.onItemClick}"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_18sdp"
-                        android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/offer_ll"
-                        tools:listitem="@layout/item_offfers_card" />
-
-                    <View
-                        android:id="@+id/view6"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:background="@drawable/dotted_line"
-                        android:backgroundTint="@color/colorAccent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/couponList" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/course_price_list"
-                        onPriceItemClick="@{vm.onItemPriceClick}"
-                        priceListAdapter="@{vm.priceListAdapter}"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:orientation="vertical"
-                        android:visibility="visible"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/view6" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/btn_see_course_list"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:onClick="@{()-> vm.openCourseExplore()}"
-                        android:text="See course list >>"
-                        android:textColor="@color/colorAccent"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/course_price_list" />
-
-                    <View
-                        android:id="@+id/view5"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:background="@drawable/dotted_line"
-                        android:backgroundTint="@color/colorAccent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/btn_see_course_list" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/call_us_text"
@@ -289,35 +407,35 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_13sdp"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:text="More course related Questions?"
-                        android:textColor="@color/pure_black"
                         android:lines="2"
-                        android:textStyle="bold"
+                        android:text="@{vm.callUsText}"
                         android:textAlignment="center"
-                        app:textAllCaps="false"
+                        android:textColor="@color/pure_black"
                         android:textSize="@dimen/_14ssp"
+                        android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@+id/btn_call_us"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/view5" />
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout"
+                        app:textAllCaps="false" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_call_us"
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_25sdp"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
                         android:layout_marginTop="@dimen/_14sdp"
+                        android:backgroundTint="@color/white"
                         android:elevation="@dimen/_3sdp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
-                        app:cornerRadius="@dimen/_15sdp"
-                        android:text="Call us"
                         android:onClick="@{()-> vm.makePhoneCall()}"
+                        android:text="Call us"
                         android:textAllCaps="false"
-                        android:textStyle="bold"
                         android:textColor="@color/colorAccent"
-                        android:backgroundTint="@color/white"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:textStyle="bold"
+                        app:cornerRadius="@dimen/_15sdp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/view5"
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout"
                         app:strokeColor="@color/colorAccent"
                         app:strokeWidth="@dimen/_1sdp" />
 
@@ -330,9 +448,9 @@
                 android:id="@+id/payment_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintStart_toStartOf="parent">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/payment_proceed_btn_card"
@@ -421,16 +539,16 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <ViewStub
             android:id="@+id/error_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_50sdp"
             android:inflatedId="@+id/error_view"
             android:layout="@layout/error_view_stub"
-            android:elevation="@dimen/_50sdp"
-            android:layout_gravity="center"
-            tools:visibility="gone"
-            />
+            tools:visibility="gone" />
 
     </FrameLayout>
 

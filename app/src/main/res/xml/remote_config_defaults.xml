@@ -1654,4 +1654,8 @@
         <key>VOIP_FEEDBACK_MESSAGE</key>
         <value>#, do you want to speak with ## again?</value>
     </entry>
+    <entry>
+        <key>BUY_PAGE_SUPPORT_PHONE_NUMBER</key>
+        <value>+918634503204</value>
+    </entry>
 </defaults>

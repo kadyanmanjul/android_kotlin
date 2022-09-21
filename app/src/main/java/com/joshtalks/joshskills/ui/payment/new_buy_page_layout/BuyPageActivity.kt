@@ -31,6 +31,7 @@ import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
@@ -201,9 +202,6 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
                     binding.scrollView.smoothScrollTo(binding.buyPageParentContainer.width, binding.buyPageParentContainer.height, 2000)
                 }
-                IS_API_FAIL_PRICE -> showErrorView()
-                IS_API_FAIL_COUPON -> showErrorView()
-                IS_API_FAIL_COURSE -> showErrorView()
             }
         }
     }
@@ -211,16 +209,10 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     fun addObserver() {
         viewModel.apiStatus.observe(this) {
             when (it) {
-                ApiCallStatus.START -> showProgressBar()
                 ApiCallStatus.SUCCESS -> {
-                    hideProgressBar()
                     errorView?.resolved()?.let {
                         errorView!!.get().onSuccess()
                     }
-                }
-                ApiCallStatus.FAILED -> {
-                    hideProgressBar()
-                    showErrorView()
                 }
                 else -> {}
             }
@@ -253,7 +245,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
     private fun makePhoneCall() {
         viewModel.saveImpressionForBuyPageLayout(BUY_PAGE_CALL_CLICKED)
-        Utils.call(this@BuyPageActivity, "+918634503202")//change the number
+        Utils.call(this@BuyPageActivity, AppObjectController.getFirebaseRemoteConfig().getString(BUY_PAGE_SUPPORT_PHONE_NUMBER))
     }
 
     private fun updateListItem(coupon: Coupon) {
@@ -284,14 +276,22 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun dynamicCardCreation(buyCourseFeatureModel: BuyCourseFeatureModel) {
+        binding.shimmer1.visibility = View.GONE
+        binding.shimmer1.stopShimmer()
+        binding.shimmer1Layout.visibility = View.VISIBLE
+        binding.shimmer2.visibility = View.GONE
+        binding.shimmer2.stopShimmer()
+        binding.shimmer2Layout.visibility = View.VISIBLE
         val courseDetailsInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         if (buyCourseFeatureModel.teacherName == null && buyCourseFeatureModel.teacherImage == null && buyCourseFeatureModel.video == null && buyCourseFeatureModel.youtubeChannel == null) {
             englishCourseCard = courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
+            binding.courseTypeContainer.removeAllViews()
             binding.courseTypeContainer.addView(englishCourseCard)
             viewModel.isGovernmentCourse.set(false)
         } else {
             viewModel.isGovernmentCourse.set(true)
             otherCourseCard = courseDetailsInflate.inflate(R.layout.other_course_card, null, true)
+            binding.courseTypeContainer.removeAllViews()
             binding.courseTypeContainer.addView(otherCourseCard)
             val teacherVideoButton = otherCourseCard?.findViewById<RelativeLayout>(R.id.play_video_button)
             teacherVideoButton?.setOnClickListener {
@@ -300,6 +300,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             }
 
             teacherDetailsCard = courseDetailsInflate.inflate(R.layout.teacher_details_card, null, true)
+            binding.teacherDetails.removeAllViews()
             binding.teacherDetails.addView(teacherDetailsCard)
 
             val name = teacherDetailsCard?.findViewById<TextView>(R.id.teacher_name)
@@ -353,6 +354,9 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun setRating(buyCourseFeatureModel: BuyCourseFeatureModel) {
+        binding.shimmer3.visibility = View.GONE
+        binding.shimmer3.stopShimmer()
+        binding.shimmer3Layout.visibility = View.VISIBLE
         val ratingInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         teacherRatingAndReviewCard = ratingInflate.inflate(R.layout.teacher_rating_and_review_card, null, true)

@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val COURSE_ID = "course_id"
 
@@ -236,7 +237,7 @@ class CourseProgressActivityNew : CoreJoshActivity(), CourseProgressAdapter.Prog
     override fun onProgressItemClick(item: CourseOverviewItem, previousItem: CourseOverviewItem?) {
         CoroutineScope(Dispatchers.IO).launch {
             val lessonModel = viewModel.getLesson(item.lessonId)
-            runOnUiThread {
+            withContext(Dispatchers.Main) {
                 if (viewModel.progressLiveData.value?.isCourseBought == false &&
                     viewModel.progressLiveData.value?.expiryDate != null &&
                     viewModel.progressLiveData.value?.expiryDate!!.time < System.currentTimeMillis()
@@ -255,12 +256,16 @@ class CourseProgressActivityNew : CoreJoshActivity(), CourseProgressAdapter.Prog
                         )
                     )
                 } else {
-                    showAlertMessage(
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.INCOMPLETE_LESSONS_TITLE),
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.PROGRESS_MESSAGE)
-                    )
+                    if (!isFinishing) {
+                        try {
+                            showAlertMessage(
+                                AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.INCOMPLETE_LESSONS_TITLE),
+                                AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.PROGRESS_MESSAGE)
+                            )
+                        }catch (ex:Exception){}
+                    }
                 }
             }
         }
