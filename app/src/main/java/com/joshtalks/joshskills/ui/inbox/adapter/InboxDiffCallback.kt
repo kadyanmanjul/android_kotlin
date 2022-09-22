@@ -25,7 +25,10 @@ data class InboxDiffCallback(
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldInboxEntity = mOldInboxModelList[oldItemPosition]
         val newInboxEntity = mNewInboxModelList[newItemPosition]
-        return oldInboxEntity.chat_id == newInboxEntity.chat_id && oldInboxEntity.expiryDate == newInboxEntity.expiryDate
+        return oldInboxEntity.chat_id == newInboxEntity.chat_id &&
+                oldInboxEntity.expiryDate == newInboxEntity.expiryDate &&
+                oldInboxEntity.isCourseBought == newInboxEntity.isCourseBought &&
+                oldInboxEntity.isCourseLocked == newInboxEntity.isCourseLocked
     }
 
 }
