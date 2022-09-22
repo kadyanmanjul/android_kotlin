@@ -872,9 +872,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 return
                             } else {
                                 viewModel.saveImpression(CALL_PERMISSION_DENIED)
-                                MaterialDialog(requireActivity()).show {
-                                    message(R.string.call_start_permission_message)
-                                    positiveButton(R.string.ok)
+                                if (isAdded && activity!=null) {
+                                    MaterialDialog(requireActivity()).show {
+                                        message(R.string.call_start_permission_message)
+                                        positiveButton(R.string.ok)
+                                    }
                                 }
                             }
                         }

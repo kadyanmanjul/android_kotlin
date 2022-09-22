@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.FREE_TRIAL_PAYMENT_TEST_ID
@@ -28,7 +27,6 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.PriceParame
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -62,33 +60,30 @@ class BuyPageViewModel : BaseViewModel() {
     val isVideoPopUpShow = ObservableBoolean(false)
     var couponList:List<Coupon>?= null
 
+    var callUsText = ObservableField(EMPTY)
+
+    var isCouponApiCall = ObservableBoolean(true)
+    var isPriceApiCall = ObservableBoolean(true)
+
+    fun isSeeAllButtonShow() : Boolean {
+        return PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+    }
+
     fun getCourseContent() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                apiStatus.postValue(ApiCallStatus.START)
                 val response = buyPageRepo.getFeatureList(Integer.parseInt(testId))
                 if (response.isSuccessful && response.body() != null) {
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
                     withContext(mainDispatcher) {
                         featureAdapter.addFeatureList(response.body()?.features)
+                        callUsText.set(response.body()?.callUsText)
                         message.what = BUY_COURSE_LAYOUT_DATA
                         message.obj = response.body()!!
                         singleLiveEvent.value = message
-                       // informations.set(response.body()?.information)
-                    }
-                    apiStatus.postValue(ApiCallStatus.SUCCESS)
-                }else{
-                    withContext(mainDispatcher) {
-                        message.what = IS_API_FAIL_COURSE
-                        singleLiveEvent.value = message
                     }
                 }
-
             }catch (e: Exception){
-                withContext(mainDispatcher) {
-                    message.what = IS_API_FAIL_COURSE
-                    singleLiveEvent.value = message
-                }
-                apiStatus.postValue(ApiCallStatus.FAILED)
                 e.printStackTrace()
             }
 
@@ -99,9 +94,10 @@ class BuyPageViewModel : BaseViewModel() {
     fun getValidCouponList(methodCallType:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                isCouponApiCall.set(true)
                 val response = buyPageRepo.getCouponList()
-                apiStatus.postValue(ApiCallStatus.START)
                 if (response.isSuccessful && response.body() != null) {
+                    isCouponApiCall.set(false)
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     withContext(mainDispatcher) {
                         if (methodCallType == COUPON) {
@@ -124,17 +120,10 @@ class BuyPageViewModel : BaseViewModel() {
                         singleLiveEvent.value = message
                     }
                 }else{
-                    withContext(mainDispatcher) {
-                        message.what = IS_API_FAIL_COUPON
-                        singleLiveEvent.value = message
-                    }
+                    isCouponApiCall.set(true)
                 }
             }catch (e: Exception){
-                withContext(mainDispatcher) {
-                    message.what = IS_API_FAIL_COUPON
-                    singleLiveEvent.value = message
-                }
-                apiStatus.postValue(ApiCallStatus.FAILED)
+                isCouponApiCall.set(true)
                 e.printStackTrace()
             }
         }
@@ -149,23 +138,19 @@ class BuyPageViewModel : BaseViewModel() {
         try {
             viewModelScope.launch(Dispatchers.IO){
                 try {
-                   // isProcessing.set(true)
+                    isPriceApiCall.set(true)
                     val response = buyPageRepo.getPriceList(PriceParameterModel(PrefManager.getStringValue(USER_UNIQUE_ID), Integer.parseInt(testId),code))
                     if (response.isSuccessful && response.body() != null) {
+                        apiStatus.postValue(ApiCallStatus.SUCCESS)
+                        isPriceApiCall.set(false)
                         withContext(mainDispatcher) {
                             priceListAdapter.addPriceList(response.body()?.courseDetails)
                         }
                     }else{
-                        withContext(mainDispatcher) {
-                            message.what = IS_API_FAIL_PRICE
-                            singleLiveEvent.value = message
-                        }
+                        isPriceApiCall.set(true)
                     }
                 }catch (e: Exception){
-                    withContext(mainDispatcher) {
-                        message.what = IS_API_FAIL_PRICE
-                        singleLiveEvent.value = message
-                    }
+                    isPriceApiCall.set(true)
                     e.printStackTrace()
                 }
 
@@ -348,13 +333,11 @@ class BuyPageViewModel : BaseViewModel() {
 
     fun applyEnteredCoupon(code : String) {
         saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED)
-        Log.e("Sagar", "applyEnteredCoupon: $code")
         if (code.isNotBlank()){
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     val response = buyPageRepo.getCouponFromCode(code)
                     val data = response.body()
-                    Log.e("Sagar", "applyEnteredCoupon:reponse: ${data?.couponCode}")
                     if (response.isSuccessful && data != null && data.couponCode != null) {
                         viewModelScope.launch(Dispatchers.Main) {
                             offersListAdapter.applyCoupon(data)
