@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.getServiceNotificationIntent
+import com.joshtalks.joshskills.voip.openCallScreen
 import com.joshtalks.joshskills.base.model.NotificationData as Data
 
 internal class NotificationGenerator {
@@ -197,9 +197,9 @@ internal class NotificationGenerator {
     @SuppressLint("RestrictedApi")
     fun idle(notificationBuiltObj: NotificationBuiltObj, notificationData: Data) {
         notificationBuiltObj.notificationBuilder.setContentTitle(notificationData.title)
-        notificationBuiltObj.notificationBuilder.setContentText(notificationData.subTitle)
+        notificationBuiltObj.notificationBuilder.setContentText("Call Now")
+        notificationBuiltObj.notificationBuilder.setContentIntent(openCallScreen())
         notificationBuiltObj.notificationBuilder.setSilent(true)
-        notificationBuiltObj.notificationBuilder.setContentIntent(Utils.context?.getServiceNotificationIntent(notificationData))
         notificationBuiltObj.notificationBuilder.setUsesChronometer(false)
         notificationBuiltObj.notificationBuilder.setShowWhen(false)
         notificationBuiltObj.notificationBuilder.setOnlyAlertOnce(true)

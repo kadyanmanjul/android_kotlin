@@ -120,33 +120,37 @@ class JoshContentProvider : ContentProvider() {
                 return cursor
             }
             NOTIFICATION_DATA -> {
-                val cursor =
-                    MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN,
-                        NOTIFICATION_LESSON_COLUMN))
-                try{
-                    val word = AppObjectController.appDatabase.lessonQuestionDao().getRandomWord()
-                    Log.d(TAG, "query: Word ---> ${word.filter { it.word != null }}")
+                val cursor = MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN))
+                return try {
                     cursor.addRow(
                         arrayOf(
-                            word.last { it.word != null }.word?: "Appreciate",
-                            "Practice word of the day",
-                            word.last { it.word != null }.lessonId?: -1,
+                            getNotificationData(PrefManager.getStringValue(CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID))
                         )
                     )
-                    return cursor
-                }catch (e : Exception){
+                    cursor
+                } catch (e: Exception) {
                     cursor.addRow(
-                        arrayOf(
-                            "Appreciate",
-                            "Practice word of the day",
-                             -1,
-                        )
+                        arrayOf(getNotificationData("151"))
                     )
-                    return cursor
+                    cursor
                 }
             }
         }
         return null
+    }
+
+    private fun getNotificationData(courseId : String): String {
+        val name = Mentor.getInstance().getUser()?.firstName ?: "User"
+        return when (courseId) {
+            "151", "1214" -> "$name, English बोलने से आती हैं."
+            "1203"-> "$name, ইংলিশ প্রাকটিস করলে তবেই বলতে পারবেন।"
+            "1206"-> "$name, English ਬੋਲਣ ਨਾਲ ਆਉਂਦੀ ਹੈ।"
+            "1207"-> "$name, English बोलल्याने येते."
+            "1209"-> "$name, English സംസാരിച്ചു  പഠിക്കാം."
+            "1210"-> "$name, பேசினால் தான் ஆங்கிலம் வரும்"
+            "1211"-> "$name, English మాట్లాడితేనే వస్తుంది."
+            else -> "$name, You will learn English by speaking."
+        }
     }
 
     override fun getType(uri: Uri): String? {

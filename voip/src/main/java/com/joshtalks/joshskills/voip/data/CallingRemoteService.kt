@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
@@ -187,9 +186,7 @@ class CallingRemoteService : Service() {
                                         getHangUpIntent()
                                     )
                                     serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
-                                    Log.d(TAG, "SAGAR => observeNetworkEvents:206 ${expertCallData[IS_EXPERT_CALLING]}")
                                     if (expertCallData[IS_EXPERT_CALLING] == "true") {
-                                        Log.d(TAG, "SAGAR => observeNetworkEvents:206")
                                         startCallTimer()
                                     }
                                 }
@@ -370,8 +367,7 @@ class CallingRemoteService : Service() {
 
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
         try {
-             timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
-            Log.v("sagar", "timeInSec: $timeInMillSec")
+            timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
             countdownTimerBack = timerScope.launch {
                 delay(timeInMillSec!!)
                 disconnectCall()
@@ -403,24 +399,17 @@ class CallingRemoteService : Service() {
 // TODO: Need to Change
 class TestNotification(val notiData : Data) : NotificationData {
     override fun setTitle(): String {
-        return if (Utils.courseId == "151" && notiData.title.isNotEmpty()) {
-            notiData.title
-        }else{
-            "Appreciate"
+        return notiData.title.ifEmpty {
+            "User, You will learn English by speaking."
         }
     }
 
     override fun setContent(): String {
-        return if (Utils.courseId == "151" && notiData.subTitle.isNotEmpty()) {
-            notiData.subTitle
-        }else{
-            "Practice word of the day"
-        }
+        return "Call Now"
     }
 
     override fun setTapAction(): PendingIntent? {
-        Log.d(TAG, "setTapAction: ${Utils.courseId } ${Utils.context!!.isFreeTrialOrCourseBought()}")
-        return Utils.context!!.getServiceNotificationIntent(notiData)
+        return openCallScreen()
     }
 }
 
