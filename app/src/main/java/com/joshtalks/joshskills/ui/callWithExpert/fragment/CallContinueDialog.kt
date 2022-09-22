@@ -51,7 +51,7 @@ class CallContinueDialog : BaseDialogFragment(true) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.textContinueCall.text = Mentor.getInstance().getUser()?.firstName  +  " Continue call with " + selectedUser?.expertName
+        binding.textContinueCall.text = "Continue call with " + selectedUser?.expertName
 
         binding.btnYes.setOnClickListener {
             callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_CONTINUE_TO_CALL)

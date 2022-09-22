@@ -29,8 +29,12 @@ class BeepTimer(
 
     fun startBeepSound() {
         var timer = 0L
+        Log.d("experttimer", "started beep timer")
+
         coroutineScope.launch {
+            Log.d("experttimer", "shall play beep timer => ${timer < TIMER_DURATION}")
             while (timer < TIMER_DURATION) {
+                Log.d("experttimer", "playing beep timer")
                 soundPool.play(beepSound, 1f, 1f, 1, 0, 1.0f)
                 timer += 2000
                 delay(BEEP_INTERVAL)
@@ -45,7 +49,7 @@ class BeepTimer(
 
     companion object {
         private const val BEEP_INTERVAL = 2000L
-        private const val TIMER_DURATION = 15000L
+        const val TIMER_DURATION = 30000L
     }
 
 }

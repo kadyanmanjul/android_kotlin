@@ -159,7 +159,7 @@ class CallingRemoteService : Service() {
         delay(5000)
         ioScope.cancel()
         syncScope.cancel()
-        timerScope.cancel()
+//        timerScope.cancel()
         beepTimer?.stopBeepSound()
         stopSelf()
     }
@@ -356,7 +356,7 @@ class CallingRemoteService : Service() {
         }
         ioScope.cancel()
         syncScope.cancel()
-        timerScope.cancel()
+//        timerScope.cancel()
         beepTimer?.stopBeepSound()
     }
 
@@ -380,15 +380,22 @@ class CallingRemoteService : Service() {
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
         try {
             timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
+            Log.d("experttimer", "remaining to be disconnected in millies => $timeInMillSec")
+            beepTimer = BeepTimer(this, timerScope)
             countdownTimerBack = timerScope.launch {
-                delay(timeInMillSec!!)
+                Log.d("experttimer", "disconnection scheduled => $timeInMillSec")
+                delay(timeInMillSec!! - BeepTimer.TIMER_DURATION)
+                Log.d("experttimer", "starting beep timer")
+                beepTimer?.startBeepSound()
+                delay(BeepTimer.TIMER_DURATION)
+                Log.d("experttimer", "call disconnecting => $timeInMillSec")
                 disconnectCall()
             }
-            beepTimer = BeepTimer(this, timerScope)
-            timerScope.launch {
-                delay(timeInMillSec!! - 15000)
-                beepTimer?.startBeepSound()
-            }
+//            timerScope.launch {
+//                delay(timeInMillSec!! - BeepTimer.TIMER_DURATION)
+//                Log.d("experttimer", "starting beep timer")
+//                beepTimer?.startBeepSound()
+//            }
         }catch (ex:Exception){
             stopCallTimer()
         }
@@ -406,6 +413,7 @@ class CallingRemoteService : Service() {
     }
 
     fun stopCallTimer() {
+        Log.d("experttimer", "stopCallTimer: ")
         countdownTimerBack?.cancel()
         countdownTimerBack = null
     }
