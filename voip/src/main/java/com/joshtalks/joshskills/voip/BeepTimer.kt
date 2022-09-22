@@ -28,9 +28,11 @@ class BeepTimer(
     }
 
     fun startBeepSound() {
+        var timer = 0L
         coroutineScope.launch {
-            while (true) {
+            while (timer < TIMER_DURATION) {
                 soundPool.play(beepSound, 1f, 1f, 1, 0, 1.0f)
+                timer += 2000
                 delay(BEEP_INTERVAL)
             }
         }
@@ -43,6 +45,7 @@ class BeepTimer(
 
     companion object {
         private const val BEEP_INTERVAL = 2000L
+        private const val TIMER_DURATION = 15000L
     }
 
 }
