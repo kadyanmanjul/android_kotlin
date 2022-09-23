@@ -31,15 +31,17 @@ class BeepTimer(
         var timer = 0L
         Log.d("experttimer", "started beep timer")
 
-        coroutineScope.launch {
-            Log.d("experttimer", "shall play beep timer => ${timer < TIMER_DURATION}")
-            while (timer < TIMER_DURATION) {
-                Log.d("experttimer", "playing beep timer")
-                soundPool.play(beepSound, 1f, 1f, 1, 0, 1.0f)
-                timer += 2000
-                delay(BEEP_INTERVAL)
+//        soundPool.setOnLoadCompleteListener { soundPool, i, i2 ->
+            coroutineScope.launch {
+                Log.d("experttimer", "shall play beep timer => ${timer < TIMER_DURATION}")
+                while (timer < TIMER_DURATION) {
+                    Log.d("experttimer", "playing beep timer")
+                    soundPool.play(beepSound, 1f, 1f, 1, 0, 1.0f)
+                    timer += 2000
+                    delay(BEEP_INTERVAL)
+                }
             }
-        }
+//        }
     }
 
     fun stopBeepSound() {

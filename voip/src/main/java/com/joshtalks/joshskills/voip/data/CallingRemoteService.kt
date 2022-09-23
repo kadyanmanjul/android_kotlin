@@ -381,7 +381,7 @@ class CallingRemoteService : Service() {
         try {
             timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
             Log.d("experttimer", "remaining to be disconnected in millies => $timeInMillSec")
-            beepTimer = BeepTimer(this, timerScope)
+            beepTimer = BeepTimer(this)
             countdownTimerBack = timerScope.launch {
                 Log.d("experttimer", "disconnection scheduled => $timeInMillSec")
                 delay(timeInMillSec!! - BeepTimer.TIMER_DURATION)
