@@ -77,7 +77,7 @@ class CallingRemoteService : Service() {
         }
         registerReceivers()
         observerPstnService()
-        resetAudioRoute()
+        observeAudio()
         showNotification()
         Log.d(TAG, "onCreate: Creating Service")
     }
@@ -268,17 +268,18 @@ class CallingRemoteService : Service() {
         }
     }
 
-    private fun resetAudioRoute() {
+    private fun observeAudio() {
         ioScope.launch {
             try {
-                audioController.observeAudioRoute().collectLatest {
+                audioController.observeAudioRoute().collect {
                     try{
+                        Log.d(TAG, "observeAudio: $it")
                         when (it) {
-                            AudioRouteConstants.BluetoothAudio -> {Log.d(TAG, "observeAudioRoute BluetoothAudio")}
-                            AudioRouteConstants.Default -> {Log.d(TAG, "observeAudioRoute Default" )}
-                            AudioRouteConstants.EarpieceAudio -> {Log.d(TAG, "observeAudioRoute EarpieceAudio")}
-                            AudioRouteConstants.HeadsetAudio -> {Log.d(TAG, "observeAudioRoute HeadsetAudio")}
-                            AudioRouteConstants.SpeakerAudio -> {Log.d(TAG, "observeAudioRoute  SpeakerAudio")}
+                            AudioRouteConstants.BluetoothAudio -> {}
+                            AudioRouteConstants.Default -> {}
+                            AudioRouteConstants.EarpieceAudio -> {}
+                            AudioRouteConstants.HeadsetAudio -> {}
+                            AudioRouteConstants.SpeakerAudio -> {}
                         }
                     }
                     catch (e : Exception){
@@ -287,7 +288,6 @@ class CallingRemoteService : Service() {
                         e.printStackTrace()
                     }
                 }
-                audioController.resetAudioRoute()
             } catch (e: Exception) {
                 e.printStackTrace()
                 if(e is CancellationException)
@@ -303,7 +303,6 @@ class CallingRemoteService : Service() {
         if (callData != null) {
             mediator.connectCall(category, callData)
             notification.searching()
-            audioController.resetAudioRoute()
             expertCallData = callData
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
