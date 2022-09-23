@@ -86,7 +86,7 @@
             android:gravity="center"
             android:maxLines="2"
             android:layout_marginTop="@dimen/_32sdp"
-            android:text="@{handler.isLanguageFragment ? @string/language_text : @string/goal_text}"
+            android:text="@string/language_text"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
             android:textColor="@color/black"

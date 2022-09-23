@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.os.Message
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -26,7 +25,6 @@ import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseGoalAdapter
-import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_CONTINUE
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_GOAL_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_BACK_PRESS
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -49,7 +47,6 @@ class FreeTrialOnBoardViewModel : BaseViewModel() {
     var userName: String? = null
     var isVerified: Boolean = false
     var isUserExist: Boolean = false
-    val isLanguageFragment = ObservableBoolean(false)
     val abTestRepository by lazy { ABTestRepository() }
     var goalListAdapter =  ChooseGoalAdapter()
     val goalText = ObservableField(EMPTY)
@@ -241,11 +238,6 @@ class FreeTrialOnBoardViewModel : BaseViewModel() {
                 singleLiveEvent.value = message
             }
         }
-    }
-
-    fun onClickContinue(){
-        message.what = CLICK_CONTINUE
-        singleLiveEvent.value = message
     }
 
     fun postGoal(goal: GoalKeys) {

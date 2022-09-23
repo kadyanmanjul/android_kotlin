@@ -43,7 +43,6 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
 
     override fun initViewBinding() {
         binding.let {
-            viewModel.isLanguageFragment.set(true)
             binding.handler = viewModel
             binding.executePendingBindings()
         }

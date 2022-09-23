@@ -18,5 +18,4 @@ data class GoalList(
 
     @SerializedName("image_url")
     val imageUrl: String = "",
-    var isSelected :Boolean = false
 )

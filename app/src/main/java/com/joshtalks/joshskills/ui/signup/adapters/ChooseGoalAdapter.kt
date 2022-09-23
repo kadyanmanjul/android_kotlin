@@ -1,12 +1,10 @@
 package com.joshtalks.joshskills.ui.signup.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ItemReasonScreenBinding
 import com.joshtalks.joshskills.repository.server.GoalList
 import com.joshtalks.joshskills.ui.activity_feed.setImage
@@ -25,7 +23,7 @@ class ChooseGoalAdapter : RecyclerView.Adapter<ChooseGoalAdapter.ChooseLanguageI
     }
 
     override fun onBindViewHolder(holder: ChooseLanguageItemViewHolder, position: Int) {
-        holder.bind(goalList[position], position)
+        holder.bind(goalList[position], position,holder)
     }
 
     override fun getItemCount(): Int = goalList.size
@@ -41,26 +39,27 @@ class ChooseGoalAdapter : RecyclerView.Adapter<ChooseGoalAdapter.ChooseLanguageI
 
     inner class ChooseLanguageItemViewHolder(val binding: ItemReasonScreenBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(selectedGoal: GoalList, position: Int) {
+        fun bind(selectedGoal: GoalList, position: Int, holder: ChooseLanguageItemViewHolder) {
             with(binding) {
                 tvGoal.text = selectedGoal.goal
                 ivGoalIcon.setImage(selectedGoal.imageUrl)
                 rootView.setOnClickListener {
-                    if (count > 2 && !selectedGoal.isSelected) {
-                        showToast("You can’t select more than 2 options")
-                        return@setOnClickListener
+                    rootView.setBackgroundDrawable(AppObjectController.joshApplication.getDrawable(R.drawable.block_button_round_stroke_alpha_blue))
+                    onGoalItemClick?.invoke(
+                        selectedGoal,
+                        position,
+                        CLICK_GOAL_CARD,
+                        selectedGoal.goal
+                    )
+
+                    if (prevHolder != null && prevHolder != holder) {
+                        prevHolder?.binding?.rootView?.setBackgroundDrawable(
+                            AppObjectController.joshApplication.getDrawable(
+                                R.drawable.block_button_round_stroke_alpha_gray
+                            )
+                        )
                     }
-                    if (!selectedGoal.isSelected) {
-                        showToast("${selectedGoal.testId}")
-                        ++count
-                        selectedGoal.isSelected = true
-                        rootView.setBackgroundDrawable(AppObjectController.joshApplication.getDrawable(R.drawable.block_button_round_stroke_alpha_blue))
-                        onGoalItemClick?.invoke(selectedGoal, position, CLICK_GOAL_CARD ,selectedGoal.goal)
-                    }else{
-                        --count
-                        rootView.setBackgroundDrawable(AppObjectController.joshApplication.getDrawable(R.drawable.block_button_round_stroke_alpha_gray))
-                        selectedGoal.isSelected = false
-                    }
+                    prevHolder = holder
                 }
             }
         }

@@ -63,8 +63,6 @@ const val COUPON_APPLIED = 513
 const val SCROLL_TO_BOTTOM = 514
 const val CLICK_GOAL_CARD = 515
 const val CLICK_ON_BACK_PRESS = 516
-const val CLICK_CONTINUE = 517
-
 
 
 
