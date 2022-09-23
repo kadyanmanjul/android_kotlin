@@ -269,8 +269,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     private fun openRatingAndReviewScreen() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            val fragment = RatingAndReviewFragment(testId.toInt())
-            replace(R.id.buy_page_parent_container, fragment, COURSE_CONTENT)
+            replace(R.id.buy_page_parent_container, RatingAndReviewFragment.newInstance(testId.toInt()), COURSE_CONTENT)
             addToBackStack(COURSE_CONTENT)
         }
     }
