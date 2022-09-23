@@ -1,11 +1,11 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.app.Application
 import android.os.Message
 import androidx.databinding.ObservableBoolean
-import androidx.lifecycle.AndroidViewModel
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.GoalKeys
@@ -20,10 +20,15 @@ import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
+import com.joshtalks.joshskills.repository.server.GoalList
 import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
+import com.joshtalks.joshskills.ui.signup.adapters.ChooseGoalAdapter
+import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_CONTINUE
+import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_GOAL_CARD
+import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_BACK_PRESS
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
@@ -31,7 +36,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(application) {
+class FreeTrialOnBoardViewModel : BaseViewModel() {
 
     val signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
@@ -39,13 +44,15 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val availableLanguages: MutableLiveData<List<ChooseLanguages>> = MutableLiveData()
-    val availableGoals: MutableLiveData<List<GoalSelectionResponse>> = MutableLiveData()
+    val availableGoals: MutableLiveData<GoalSelectionResponse> = MutableLiveData()
     val liveEvent = EventLiveData
     var userName: String? = null
     var isVerified: Boolean = false
     var isUserExist: Boolean = false
     val isLanguageFragment = ObservableBoolean(false)
     val abTestRepository by lazy { ABTestRepository() }
+    var goalListAdapter =  ChooseGoalAdapter()
+    val goalText = ObservableField(EMPTY)
 
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -205,13 +212,15 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun getAvailableCourseGoals() {
+    fun getAvailableCourseGoals(testId:String) {
         viewModelScope.launch {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
-                val response = service.getAvailableGoals()
+                val response = service.getAvailableGoals(testId)
                 if (response.isSuccessful && response.code() in 200..203) {
-                    availableGoals.value = response.body()
+                    response.body()?.data?.let { goalListAdapter.setData(it) }
+                    goalListAdapter.count = 1
+                    goalText.set(response.body()?.title)
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                 } else {
                     apiStatus.postValue(ApiCallStatus.FAILED)
@@ -223,9 +232,30 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
+    val onItemGoalClick: (GoalList, Int, Int, String) -> Unit = { it, position,type, cardType ->
+        when (type) {
+            CLICK_GOAL_CARD -> {
+                message.what = CLICK_GOAL_CARD
+                message.obj = it
+                message.arg1 = position
+                singleLiveEvent.value = message
+            }
+        }
+    }
+
+    fun onClickContinue(){
+        message.what = CLICK_CONTINUE
+        singleLiveEvent.value = message
+    }
+
     fun postGoal(goal: GoalKeys) {
         viewModelScope.launch {
             abTestRepository.postGoal(goal.NAME)
         }
+    }
+
+    fun onBackPress(){
+        message.what = CLICK_ON_BACK_PRESS
+        singleLiveEvent.value = message
     }
 }

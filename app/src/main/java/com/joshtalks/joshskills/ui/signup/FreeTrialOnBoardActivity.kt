@@ -306,13 +306,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun openGoalFragment() {
+    fun openGoalFragment(testId: String) {
         viewModel.saveImpression(REASON_SCREEN_OPENED)
         supportFragmentManager.commit(true) {
             addToBackStack(ChooseGoalOnBoardFragment::class.java.name)
             replace(
                 R.id.container,
-                ChooseGoalOnBoardFragment.newInstance(),
+                ChooseGoalOnBoardFragment.newInstance(testId),
                 ChooseGoalOnBoardFragment::class.java.name
             )
         }

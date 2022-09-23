@@ -151,7 +151,7 @@ interface SignUpNetworkService {
     suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>
 
     @GET("$DIR/course/course_goal/")
-    suspend fun getAvailableGoals() : Response<List<GoalSelectionResponse>>
+    suspend fun getAvailableGoals( @Query("test_id") testId:String) : Response<GoalSelectionResponse>
 
     @POST("$DIR/mentor/register/")
     suspend fun registerCourse(@Body requestData: HashMap<String, String>): Response<Unit>

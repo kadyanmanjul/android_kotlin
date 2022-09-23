@@ -1,59 +1,68 @@
 package com.joshtalks.joshskills.ui.signup.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.joshtalks.joshskills.databinding.LiLanguageItemBinding
-import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.databinding.ItemReasonScreenBinding
+import com.joshtalks.joshskills.repository.server.GoalList
+import com.joshtalks.joshskills.ui.activity_feed.setImage
+import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_GOAL_CARD
 
 class ChooseGoalAdapter : RecyclerView.Adapter<ChooseGoalAdapter.ChooseLanguageItemViewHolder>() {
-
-    private val diffUtil = object : DiffUtil.ItemCallback<GoalSelectionResponse>() {
-        override fun areItemsTheSame(oldItem: GoalSelectionResponse, newItem: GoalSelectionResponse) =
-            oldItem.testId == newItem.testId
-
-        override fun areContentsTheSame(oldItem: GoalSelectionResponse, newItem: GoalSelectionResponse) =
-            oldItem == newItem
-    }
-
-    private val differ = AsyncListDiffer(this, diffUtil)
-    private var onGoalItemClick: ((GoalSelectionResponse) -> Unit)? = null
+    var goalList: List<GoalList> = listOf()
+    var prevHolder: ChooseLanguageItemViewHolder? = null
+    var count = 1
+    private var onGoalItemClick: ((GoalList, Int,Int, String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseLanguageItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = LiLanguageItemBinding.inflate(inflater, parent, false)
+        val binding = ItemReasonScreenBinding.inflate(inflater, parent, false)
         return ChooseLanguageItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ChooseLanguageItemViewHolder, position: Int) {
-        val goal = differ.currentList[position]
-        holder.bind(goal)
+        holder.bind(goalList[position], position)
     }
 
-    override fun getItemCount(): Int = differ.currentList.size
+    override fun getItemCount(): Int = goalList.size
 
-    fun setData(updatedGoalList: List<GoalSelectionResponse>) {
-        differ.submitList(updatedGoalList)
+    fun setData(updatedGoalList: List<GoalList>) {
+        goalList = updatedGoalList
+        notifyDataSetChanged()
     }
 
-    inner class ChooseLanguageItemViewHolder(val binding: LiLanguageItemBinding) :
+    fun setListener(function: ((GoalList, Int, Int,String) -> Unit)?) {
+        onGoalItemClick = function
+    }
+
+    inner class ChooseLanguageItemViewHolder(val binding: ItemReasonScreenBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(selectedGoal: GoalSelectionResponse) {
+        fun bind(selectedGoal: GoalList, position: Int) {
             with(binding) {
-                tvLanguage.text = selectedGoal.goal
-                container.setOnClickListener {
-                    onGoalItemClick?.invoke(selectedGoal)
-                }
-                tvLanguage.setOnClickListener {
-                    onGoalItemClick?.invoke(selectedGoal)
+                tvGoal.text = selectedGoal.goal
+                ivGoalIcon.setImage(selectedGoal.imageUrl)
+                rootView.setOnClickListener {
+                    if (count > 2 && !selectedGoal.isSelected) {
+                        showToast("You can’t select more than 2 options")
+                        return@setOnClickListener
+                    }
+                    if (!selectedGoal.isSelected) {
+                        showToast("${selectedGoal.testId}")
+                        ++count
+                        selectedGoal.isSelected = true
+                        rootView.setBackgroundDrawable(AppObjectController.joshApplication.getDrawable(R.drawable.block_button_round_stroke_alpha_blue))
+                        onGoalItemClick?.invoke(selectedGoal, position, CLICK_GOAL_CARD ,selectedGoal.goal)
+                    }else{
+                        --count
+                        rootView.setBackgroundDrawable(AppObjectController.joshApplication.getDrawable(R.drawable.block_button_round_stroke_alpha_gray))
+                        selectedGoal.isSelected = false
+                    }
                 }
             }
         }
-    }
-
-    fun setGoalItemClickListener(listener: (GoalSelectionResponse) -> Unit) {
-        onGoalItemClick = listener
     }
 }

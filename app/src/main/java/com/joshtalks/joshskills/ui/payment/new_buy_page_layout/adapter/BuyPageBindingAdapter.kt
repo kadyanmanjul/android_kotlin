@@ -6,8 +6,10 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.joshtalks.joshskills.repository.server.GoalList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
+import com.joshtalks.joshskills.ui.signup.adapters.ChooseGoalAdapter
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
@@ -74,6 +76,18 @@ fun priceListAdapter(
     view: RecyclerView,
     adapter: PriceListAdapter,
     function: ((CourseDetailsList, Int, Int,String) -> Unit)?
+) {
+    view.setHasFixedSize(false)
+    view.adapter = adapter
+
+    adapter.setListener(function)
+}
+
+@BindingAdapter("goalListAdapter", "onGoalItemClick")
+fun goalListAdapter(
+    view: RecyclerView,
+    adapter: ChooseGoalAdapter,
+    function: ((GoalList, Int,Int,String) -> Unit)?
 ) {
     view.setHasFixedSize(false)
     view.adapter = adapter

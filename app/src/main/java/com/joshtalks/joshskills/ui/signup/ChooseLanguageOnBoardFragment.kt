@@ -151,11 +151,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
             viewModel.postGoal(GoalKeys.HINDI_LANG_SELECTED)
         }
         try {
-            if (language.testId == HINDI_TO_ENGLISH_TEST_ID && isGovernmentCourseActive) {
-                (requireActivity() as FreeTrialOnBoardActivity).openGoalFragment()
-            } else {
-                language.let { (requireActivity() as FreeTrialOnBoardActivity).startFreeTrial(it.testId) }
-            }
+            (requireActivity() as FreeTrialOnBoardActivity).openGoalFragment(language.testId)
         } catch (e: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }

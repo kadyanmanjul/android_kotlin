@@ -226,4 +226,5 @@
     <color name="bb_tooltip_bg">#F9ECBD</color>
     <color name="bb_tooltip_stroke">#F1DCA5</color>
     <color name="selected_color_trans">#F1F7FD</color>
+    <color name="gray_button">#C0C0C0</color>
 </resources>
