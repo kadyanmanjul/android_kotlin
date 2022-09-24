@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.base.model.NotificationData
+import com.joshtalks.joshskills.voip.Utils.Companion.courseId
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
@@ -214,6 +215,26 @@ fun Context.isFreeTrialOrCourseBought(): Boolean {
     return isFreeTrialOrCourseBought=="true"
 }
 
+fun Context.isBlockedOrFreeTrialEnded(): Boolean {
+    var result = "false"
+    val queryCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + IS_FT_ENDED_OR_BLOCKED),
+        null,
+        null,
+        null,
+        null
+    )
+    queryCursor?.moveToFirst()
+    try {
+        result = queryCursor.getStringData(FT_ENDED_OR_BLOCKED_COLUMN)
+        queryCursor?.close()
+    } catch (ex: Exception) {
+        queryCursor?.close()
+        return true
+    }
+    return result == "true"
+}
+
 fun Context.getMentorName(): String {
     var mentorName = ""
     val mentorNameCursor = contentResolver.query(
@@ -294,16 +315,40 @@ fun Context.getDeviceId(): String {
 //    voipLog?.log("Data --> $data")
 //}
 
-fun openCallScreen(): PendingIntent {
+fun getAcceptCallIntent(): PendingIntent {
     val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
     val intent = Intent()
     intent.apply {
         setClassName(Utils.context!!.applicationContext, destination)
         flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        putExtra(INTENT_DATA_CALL_CATEGORY,Category.PEER_TO_PEER.ordinal)
-        putExtra(INTENT_DATA_COURSE_ID, "151")
-        putExtra(INTENT_DATA_TOPIC_ID, "10")
-        putExtra(STARTING_POINT, FROM_ACTIVITY)
+        putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+    }
+    return PendingIntent.getActivity(
+        Utils.context,
+        1102,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT
+    )
+}
+
+fun openCallScreen(): PendingIntent {
+    val intent = Intent()
+    if (Utils.context?.isBlockedOrFreeTrialEnded() == true) {
+        val destination = "com.joshtalks.joshskills.ui.inbox.InboxActivity"
+        intent.apply {
+            setClassName(Utils.context!!.applicationContext, destination)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+    } else {
+        val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+        intent.apply {
+            setClassName(Utils.context!!.applicationContext, destination)
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            putExtra(INTENT_DATA_COURSE_ID, courseId)
+            putExtra(INTENT_DATA_TOPIC_ID, "10")
+            putExtra(STARTING_POINT, FROM_ACTIVITY)
+        }
     }
     return PendingIntent.getActivity(
         Utils.context,

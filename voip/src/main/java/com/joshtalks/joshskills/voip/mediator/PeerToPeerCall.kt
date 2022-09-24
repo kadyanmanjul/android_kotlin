@@ -23,8 +23,8 @@ class PeerToPeerCall : CallCategory {
         val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_notification_new)
         val avatar: Bitmap? = getRandomName().textDrawableBitmap()
         remoteView.setImageViewBitmap(R.id.photo, avatar)
-        val acceptPendingIntent= openCallScreen()
-        val declinePendingIntent= getDeclineCallIntent()
+        val acceptPendingIntent = getAcceptCallIntent()
+        val declinePendingIntent = getDeclineCallIntent()
         remoteView.setOnClickPendingIntent(R.id.answer_text,acceptPendingIntent)
         remoteView.setOnClickPendingIntent(R.id.decline_text,declinePendingIntent)
         return remoteView

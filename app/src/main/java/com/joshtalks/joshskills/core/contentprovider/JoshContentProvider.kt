@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.isBlocked
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import kotlinx.coroutines.sync.Mutex
 import java.lang.Exception
@@ -79,7 +80,6 @@ class JoshContentProvider : ContentProvider() {
                 cursor.addRow(arrayOf(PrefManager.getStringValue(CURRENT_COURSE_ID,false, DEFAULT_COURSE_ID)))
                 return cursor
             }
-
             IS_COURSE_BOUGHT_OR_FREE_TRIAL -> {
                 val cursor = MatrixCursor(arrayOf(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN))
                 val shouldHaveTapAction = when {
@@ -97,7 +97,18 @@ class JoshContentProvider : ContentProvider() {
                 cursor.addRow(arrayOf(shouldHaveTapAction.toString()))
                 return cursor
             }
-
+            IS_FT_ENDED_OR_BLOCKED -> {
+                val cursor = MatrixCursor(arrayOf(FT_ENDED_OR_BLOCKED_COLUMN))
+                val isBlockedOrFtEnded = when {
+                    isBlocked() -> true
+                    PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false) -> {
+                        PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false)
+                    }
+                    else -> false
+                }
+                cursor.addRow(arrayOf(isBlockedOrFtEnded.toString()))
+                return cursor
+            }
             MENTOR_NAME -> {
                 val cursor = MatrixCursor(arrayOf(MENTOR_NAME_COLUMN))
                 if (PrefManager.getStringValue(USER_NAME)!= EMPTY)
