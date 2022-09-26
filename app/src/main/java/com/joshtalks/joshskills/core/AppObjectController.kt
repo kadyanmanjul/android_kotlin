@@ -548,7 +548,7 @@ class AppObjectController {
                         ViewPump.builder().addInterceptor(
                             CalligraphyInterceptor(
                                 CalligraphyConfig.Builder()
-                                    .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                                    .setDefaultFontPath("fonts/JoshOpenSans-Regular.ttf")
                                     .setFontAttrId(R.attr.fontPath)
                                     .build()
                             )

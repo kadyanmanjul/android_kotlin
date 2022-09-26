@@ -47,7 +47,7 @@ class AssessmentViewHolder(view: android.view.View, userId: String) : BaseViewHo
         CalligraphyTypefaceSpan(
             TypefaceUtils.load(
                 getAppContext().assets,
-                "fonts/OpenSans-Bold.ttf"
+                "fonts/JoshOpenSans-Bold.ttf"
             )
         )
 

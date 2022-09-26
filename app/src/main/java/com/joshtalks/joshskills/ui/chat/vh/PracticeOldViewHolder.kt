@@ -40,7 +40,7 @@ class PracticeOldViewHolder(view: View, userId: String) : BaseViewHolder(view, u
         CalligraphyTypefaceSpan(
             TypefaceUtils.load(
                 getAppContext().assets,
-                "fonts/OpenSans-Bold.ttf"
+                "fonts/JoshOpenSans-Bold.ttf"
             )
         )
 

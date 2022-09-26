@@ -111,7 +111,7 @@ class ReportOverviewView2(
             chart.setCenterTextTypeface(
                 Typeface.createFromAsset(
                     context.assets,
-                    "fonts/OpenSans-SemiBold.ttf"
+                    "fonts/JoshOpenSans-SemiBold.ttf"
                 )
             )
             chart.setCenterTextSize(12F)

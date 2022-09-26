@@ -56,7 +56,7 @@ class DemoTitleCardsViewHolder(
         CalligraphyTypefaceSpan(
             TypefaceUtils.load(
                 getAppContext().assets,
-                "fonts/OpenSans-Bold.ttf"
+                "fonts/JoshOpenSans-Bold.ttf"
             )
         )
 

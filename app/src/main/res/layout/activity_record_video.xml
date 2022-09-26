@@ -145,7 +145,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/_10sdp"
                                 android:layout_marginTop="@dimen/_10sdp"
-                                android:src="@drawable/ic_info" />
+                                android:src="@drawable/ic_info_i" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/word_text"

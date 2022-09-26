@@ -54,7 +54,7 @@
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:layout_marginHorizontal="@dimen/_12sdp"
-                        android:src="@drawable/ic_info"
+                        android:src="@drawable/ic_info_i"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"

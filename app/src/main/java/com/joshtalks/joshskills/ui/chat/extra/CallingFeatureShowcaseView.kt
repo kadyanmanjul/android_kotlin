@@ -56,7 +56,7 @@ class CallingFeatureShowcaseView : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar.inflateMenu(R.menu.conversation_menu)
-        val typefaceSpan = TypefaceUtils.load(requireContext().assets, "fonts/OpenSans-Regular.ttf")
+        val typefaceSpan = TypefaceUtils.load(requireContext().assets, "fonts/JoshOpenSans-Regular.ttf")
         val textForm: TextForm = TextForm.Builder(requireContext())
             .setText(getString(R.string.english_practise_hint))
             .setTextColorResource(R.color.black)

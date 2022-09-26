@@ -78,7 +78,7 @@
             app:layout_constraintEnd_toStartOf="@+id/textview1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textview1"
-            app:srcCompat="@drawable/ic_info" />
+            app:srcCompat="@drawable/ic_info_i" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/textview1"

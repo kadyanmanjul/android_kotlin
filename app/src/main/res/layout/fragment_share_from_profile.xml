@@ -114,7 +114,7 @@
                     android:id="@+id/image_view"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
-                    android:src="@drawable/ic_info"
+                    android:src="@drawable/ic_info_i"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

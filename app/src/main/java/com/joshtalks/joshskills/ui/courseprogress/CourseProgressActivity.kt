@@ -160,7 +160,7 @@ class CourseProgressActivity :
     fun setUserImage(url: String?) {
         if (url.isNullOrEmpty()) {
             try {
-                val font = Typeface.createFromAsset(assets, "fonts/OpenSans-SemiBold.ttf")
+                val font = Typeface.createFromAsset(assets, "fonts/JoshOpenSans-SemiBold.ttf")
                 val drawable: TextDrawable = TextDrawable.builder()
                     .beginConfig()
                     .textColor(ContextCompat.getColor(applicationContext, R.color.white))

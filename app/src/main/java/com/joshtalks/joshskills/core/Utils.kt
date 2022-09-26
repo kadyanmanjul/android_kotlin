@@ -6,7 +6,6 @@ import android.accounts.AccountManager
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
-import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -67,7 +66,6 @@ import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.material.tabs.TabLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_ENDED_FEATURE_LOCKED
-import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.TouchableSpan
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
@@ -1088,7 +1086,7 @@ fun ImageView.setUserInitial(
     try {
         val font = Typeface.createFromAsset(
             AppObjectController.joshApplication.assets,
-            "fonts/OpenSans-SemiBold.ttf"
+            "fonts/JoshOpenSans-SemiBold.ttf"
         )
         val drawable: TextDrawable = TextDrawable.builder()
             .beginConfig()
@@ -1117,7 +1115,7 @@ fun ImageView.setUserInitial(
     try {
         val font = Typeface.createFromAsset(
             AppObjectController.joshApplication.assets,
-            "fonts/OpenSans-SemiBold.ttf"
+            "fonts/JoshOpenSans-SemiBold.ttf"
         )
         val drawable: TextDrawable = TextDrawable.builder()
             .beginConfig()
@@ -1147,7 +1145,7 @@ fun ImageView.setUserInitialInRect(
     try {
         val font = Typeface.createFromAsset(
             AppObjectController.joshApplication.assets,
-            "fonts/OpenSans-SemiBold.ttf"
+            "fonts/JoshOpenSans-SemiBold.ttf"
         )
         val drawable: TextDrawable = TextDrawable.builder()
             .beginConfig()
@@ -1457,7 +1455,7 @@ fun String.textDrawableBitmap(
 
     val font = Typeface.createFromAsset(
         AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
+        "fonts/JoshOpenSans-SemiBold.ttf"
     )
     val drawable = TextDrawable.builder()
         .beginConfig()

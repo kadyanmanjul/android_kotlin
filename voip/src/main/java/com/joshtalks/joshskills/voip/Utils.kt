@@ -449,7 +449,7 @@ fun String.textDrawableBitmap(
 
     val font = Typeface.createFromAsset(
         Utils.context?.assets,
-        "fonts/OpenSans-SemiBold.ttf"
+        "fonts/JoshOpenSans-SemiBold.ttf"
     )
     val drawable = TextDrawable.builder()
         .beginConfig()
