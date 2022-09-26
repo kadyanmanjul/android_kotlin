@@ -10,19 +10,17 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
+import com.joshtalks.joshskills.repository.server.JuspayData
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
-import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.CouponListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.FeatureListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.OffersListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.PriceListAdapter
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.PriceParameterModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
@@ -247,18 +245,18 @@ class BuyPageViewModel : BaseViewModel() {
                     "mentor_id" to Mentor.getInstance().getId()
                 )
 
-                val orderDetailsResponse: Response<OrderDetailResponse> =
-                    AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
+                val orderDetailsResponse: Response<JuspayData> =
+                    AppObjectController.signUpNetworkService.createPaymentOrderV3(data).await()
                 if (orderDetailsResponse.code() == 201) {
-                    val response: OrderDetailResponse = orderDetailsResponse.body()!!
+                    val response: JuspayData = orderDetailsResponse.body()!!
                     //orderDetailsLiveData.postValue(response)
                     withContext(Dispatchers.Main){
                         message.what = ORDER_DETAILS_VALUE
                         message.obj = response
                         singleLiveEvent.value = message
                     }
-                    MarketingAnalytics.initPurchaseEvent(data, response)
-                    addPaymentEntry(response)
+                    //MarketingAnalytics.initPurchaseEvent(data, response)
+                    //addPaymentEntry(response)
                 } else {
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
@@ -314,17 +312,17 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    private fun addPaymentEntry(response: OrderDetailResponse) {
-        AppObjectController.appDatabase.paymentDao().inertPaymentEntry(
-            Payment(
-                response.amount,
-                response.joshtalksOrderId,
-                response.razorpayKeyId,
-                response.razorpayOrderId,
-                PaymentStatus.CREATED
-            )
-        )
-    }
+//    private fun addPaymentEntry(response: OrderDetailResponseV3) {
+//        AppObjectController.appDatabase.paymentDao().inertPaymentEntry(
+//            Payment(
+//                response.payload.amount,
+//                response.joshtalksOrderId,
+//                response.razorpayKeyId,
+//                response.payload.orderId,
+//                PaymentStatus.CREATED
+//            )
+//        )
+//    }
 
     fun onBackPress(view: View) {
         message.what = BUY_PAGE_BACK_PRESS

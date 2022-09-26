@@ -45,7 +45,7 @@ import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.repository.server.JuspayData
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
@@ -104,7 +104,6 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
     private var errorView: Stub<ErrorView>? = null
     private var errorShowCount = 0
-
     private val viewModel by lazy {
         ViewModelProvider(this)[BuyPageViewModel::class.java]
     }
@@ -197,7 +196,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 }
                 ORDER_DETAILS_VALUE -> {
                     //initializeRazorpayPayment(it.obj as OrderDetailResponse)
-                    initializeJuspayPayment(it.obj as OrderDetailResponse)
+                    initializeJuspayPayment(it.obj as JuspayData)
                 }
                 CLICK_ON_COUPON_APPLY -> {
                     val coupon = it.obj as Coupon
@@ -399,113 +398,90 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         }
     }
 
-    private fun initializeRazorpayPayment(orderDetails: OrderDetailResponse) {
-        Log.e("sagar", "initializeRazorpayPayment:1 ")
-        viewModel.isProcessing.set(true)
-        binding.progressBar.visibility = View.VISIBLE
-        val checkout = Checkout()
-        checkout.setImage(R.mipmap.ic_launcher)
-        checkout.setKeyID(orderDetails.razorpayKeyId)
+//    private fun initializeRazorpayPayment(orderDetails: OrderDetailResponse) {
+//        Log.e("sagar", "initializeRazorpayPayment:1 ")
+//        viewModel.isProcessing.set(true)
+//        binding.progressBar.visibility = View.VISIBLE
+//        val checkout = Checkout()
+//        checkout.setImage(R.mipmap.ic_launcher)
+//        checkout.setKeyID(orderDetails.razorpayKeyId)
+//        try {
+//            val preFill = JSONObject()
+//
+//            if (User.getInstance().email.isNullOrEmpty().not()) {
+//                preFill.put("email", User.getInstance().email)
+//            } else {
+//                preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
+//            }
+//            //preFill.put("contact", "9999999999")
+//
+//            val options = JSONObject()
+//            options.put("key", orderDetails.razorpayKeyId)
+//            options.put("name", "Josh Skills")
+//            try {
+//                options.put(
+//                    "description",
+//                    priceForPaymentProceed?.courseName + "_app"
+//                )
+//            } catch (ex: Exception) {
+//                ex.printStackTrace()
+//            }
+//            options.put("order_id", orderDetails.razorpayOrderId)
+//            options.put("currency", orderDetails.currency)
+//            options.put("amount", orderDetails.amount * 100)
+//            options.put("prefill", preFill)
+//            checkout.open(this, options)
+//            razorpayOrderId = orderDetails.razorpayOrderId
+//            binding.progressBar.visibility = View.GONE
+//        } catch (e: Exception) {
+//            Log.e("sagar", "initializeRazorpayPayment:2 ${e.message}")
+//            e.printStackTrace()
+//        }
+//    }
+
+    private fun initializeJuspayPayment(orderDetails: JuspayData) {
+        Log.e("sagar", "initializeJuspayPayment:1 $orderDetails")
+
         try {
-            val preFill = JSONObject()
-
-            if (User.getInstance().email.isNullOrEmpty().not()) {
-                preFill.put("email", User.getInstance().email)
-            } else {
-                preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
-            }
-            //preFill.put("contact", "9999999999")
-
-            val options = JSONObject()
-            options.put("key", orderDetails.razorpayKeyId)
-            options.put("name", "Josh Skills")
-            try {
-                options.put(
-                    "description",
-                    priceForPaymentProceed?.courseName + "_app"
-                )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-            options.put("order_id", orderDetails.razorpayOrderId)
-            options.put("currency", orderDetails.currency)
-            options.put("amount", orderDetails.amount * 100)
-            options.put("prefill", preFill)
-            checkout.open(this, options)
-            razorpayOrderId = orderDetails.razorpayOrderId
-            binding.progressBar.visibility = View.GONE
-        } catch (e: Exception) {
-            Log.e("sagar", "initializeRazorpayPayment:2 ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
-    private fun initializeJuspayPayment(orderDetails: OrderDetailResponse) {
-        Log.e("sagar", "initializeJuspayPayment:1 ")
-        val hyperInstance = HyperServices(this)
-
-        try {
-            val preFill = JSONObject()
-
-            if (User.getInstance().email.isNullOrEmpty().not()) {
-                preFill.put("email", User.getInstance().email)
-            } else {
-                preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
-            }
-
-            val options = JSONObject()
-            var phoneNumber = getPhoneNumber()
-            if (phoneNumber.isEmpty()) {
-                phoneNumber = "+919999999999"
-            }
-            options.put("action","initiate")
-            options.put("amount", orderDetails.amount * 100)
-            options.put("order_id", orderDetails.razorpayOrderId)
-            options.put("customerId","joshtalks")
-            options.put("customerEmail", preFill)
-            options.put("currency", orderDetails.currency)
-
-            if (BuildConfig.DEBUG)
-                options.put("environment", PaymentConstants.ENVIRONMENT.SANDBOX)
-            else
-                options.put("environment", PaymentConstants.ENVIRONMENT.PRODUCTION)
+            val payload = JSONObject()
             val sdkPayload = JSONObject()
-            try {
-                // generating inner payload
-                options.put("merchantId", "joshtalks")   //Your Merchant ID here
-                options.put("clientId", "joshtalks")       //Your Client ID here
-                sdkPayload.put("requestId", orderDetails.joshtalksOrderId)
-                sdkPayload.put("service", "in.juspay.hyperpay")
-                sdkPayload.put("payload", options)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            val hyperInstance = HyperServices(this)
+
+
+            payload.put("requestId", orderDetails.juspaySdkPayload?.requestId)
+            payload.put("service", "in.juspay.hyperpay")
+            sdkPayload.put("action", orderDetails.juspaySdkPayload?.payload?.action)
+            sdkPayload.put("amount", orderDetails.juspaySdkPayload?.payload?.amount?.times(100) ?: 10)
+            sdkPayload.put("order_id", orderDetails.juspaySdkPayload?.payload?.orderId)
+            sdkPayload.put("customerId", orderDetails.juspaySdkPayload?.payload?.customerId)
+            sdkPayload.put("customerEmail", orderDetails.juspaySdkPayload?.payload?.customerEmail)
+            sdkPayload.put("currency", orderDetails.juspaySdkPayload?.payload?.currency)
+            sdkPayload.put("environment", orderDetails.juspaySdkPayload?.payload?.environment)
+            sdkPayload.put("merchantId", orderDetails.juspaySdkPayload?.payload?.merchantId)
+            sdkPayload.put("clientId", orderDetails.juspaySdkPayload?.payload?.clientId)
+            sdkPayload.put("payload", payload)
+
             hyperInstance.initiate(sdkPayload, object : HyperPaymentsCallbackAdapter() {
-               override fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
-                   Log.e("sagar", "onEvent: ${data}", )
+                override fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
+                    Log.e("sagar", "onEvent: ${data}", )
                     try {
                         when (data.getString("event")) {
                             "show_loader" -> {
                                 viewModel.isProcessing.set(true)
-                                binding.progressBar.visibility = View.VISIBLE
-                                // Show some loader here
+                                showProgressBar()
                             }
                             "hide_loader" -> {
                                 // Hide Loader
-                                binding.progressBar.visibility = View.GONE
+                                hideProgressBar()
                             }
                             "initiate_result" -> {
-                                // Get the response
                                 val response: JSONObject = data.optJSONObject("payload")
-                                response.put("action","quickPay")
-                                sdkPayload.put("payload", response)
-                                hyperInstance.process(sdkPayload)
+//                                response.put("action","quickPay")
+//                                sdkPayload.put("payload", response)
+                                hyperInstance?.process(sdkPayload)
                             }
                             "process_result" -> {
-
-                                // Get the response
                                 val response: JSONObject = data.optJSONObject("payload")
-                                //Merchant handling
                             }
                         }
                     } catch (e: Exception) {
@@ -513,56 +489,12 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                     }
                 }
             })
-            razorpayOrderId = orderDetails.razorpayOrderId
+         // razorpayOrderId = orderDetails.razorpayOrderId
+            hyperInstance.process(sdkPayload)
+
         } catch (e: Exception) {
             Log.e("sagar", "initializJuspayPayment:2 ${e.message}")
             e.printStackTrace()
-        }
-    }
-
-    fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
-        when (data.optString("event")) {
-            "process_result" -> {
-                val error = data.optBoolean("error")
-                val innerPayload = data.optJSONObject("payload")
-                val status = innerPayload?.optString("status")
-                if (!error) {
-                    when (status) {
-                        "charged" -> {
-                            razorpayOrderId.verifyPayment()
-                            // Successful Transaction
-                            // check order status via S2S API
-                        }
-                        "cod_initiated" -> {
-                            // User opted for cash on delivery option displayed on payment page
-                        }
-                    }
-                } else {
-                    val errorCode = data.optString("errorCode")
-                    val errorMessage = data.optString("errorMessage")
-                    when (status) {
-                        "backpressed" -> {
-                            // user back-pressed from PP without initiating transaction
-                        }
-                        "user_aborted" -> {
-                            // user initiated a txn and pressed back
-                            // check order status via S2S API
-                        }
-                        "pending_vbv", "authorizing" -> {
-                            // txn in pending state
-                            // check order status via S2S API
-                        }
-                        "authorization_failed", "authentication_failed", "api_failure" -> {
-                            razorpayOrderId.verifyPayment()
-                            // txn failed
-                            // check order status via S2S API
-                        }
-                        "new" -> {
-                            // order created but txn failed
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -912,6 +844,41 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                     }
                 }
             })
+        }
+    }
+
+    fun initiateJuspaySdk(payloadData: JSONObject) {
+        try {
+            hyperInstance?.initiate(payloadData, object : HyperPaymentsCallbackAdapter() {
+                override fun onEvent(
+                    data: JSONObject,
+                    juspayResponseHandler: JuspayResponseHandler
+                ) {
+                    Log.d("Inside OnEvent ", "initiate")
+                    try {
+                        val event = data.getString("event")
+                        when (event) {
+                            "initiate_result" -> {
+
+                            }
+                            "process_result" -> {
+
+                            }
+                            "hide_loader" -> {
+
+                            }
+                            else -> {
+
+                            }
+                        }
+                    } catch (e: java.lang.Exception) {
+                        Log.d("Came here", e.toString())
+                        e.printStackTrace()
+                    }
+                }
+            })
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
     }
 }
