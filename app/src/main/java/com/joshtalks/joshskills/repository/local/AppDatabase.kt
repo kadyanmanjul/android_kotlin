@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.VariableMap
 import com.joshtalks.joshskills.core.abTest.repository.ABTestCampaignDao
+import com.joshtalks.joshskills.core.notification.client_side.AlarmFrequency
 import com.joshtalks.joshskills.core.notification.database.NotificationEventDao
 import com.joshtalks.joshskills.core.notification.database.ScheduleNotificationDao
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
@@ -131,12 +132,11 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
-        GroupsItem::class, TimeTokenRequest::class, ChatItem::class,
+        GroupsItem::class, TimeTokenRequest::class, ChatItem::class, ScheduleNotification::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class,
-        ScheduleNotification::class
     ],
-    version = 54,
+    version = 55,
     exportSchema = true
 )
 @TypeConverters(
@@ -169,7 +169,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     AwardTypeConverter::class,
     BigDecimalConverters::class,
     VariableMapConverters::class,
-    PaymentStatusConverters::class
+    PaymentStatusConverters::class,
+    FrequencyConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -237,7 +238,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_50_51,
                                 MIGRATION_51_52,
                                 MIGRATION_52_53,
-                                MIGRATION_53_54
+                                MIGRATION_53_54,
+                                MIGRATION_54_55
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -688,6 +690,13 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_53_54: Migration = object : Migration(53, 54) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `schedule_notification` (`id` TEXT NOT NULL PRIMARY KEY, `category` TEXT NOT NULL, `title` TEXT NOT NULL, `body` TEXT NOT NULL, `execute_after` INTEGER NOT NULL, `action` TEXT NOT NULL, `action_data` TEXT NOT NULL, `is_scheduled` INTEGER NOT NULL DEFAULT 0, `is_shown` INTEGER NOT NULL DEFAULT 0, `is_event_sent` INTEGER NOT NULL DEFAULT 0)")
+            }
+        }
+
+        private val MIGRATION_54_55: Migration = object : Migration(54, 55) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `schedule_notification` ADD COLUMN `frequency` TEXT NOT NULL DEFAULT 'ONCE'")
+                database.execSQL("ALTER TABLE `schedule_notification` ADD COLUMN `is_canceled` INTEGER NOT NULL DEFAULT 0")
             }
         }
 
@@ -1163,5 +1172,26 @@ class PaymentStatusConverters {
     @TypeConverter
     fun fromVariableMapType(paymentStatus: PaymentStatus): String {
         return AppObjectController.gsonMapper.toJson(paymentStatus)
+    }
+}
+
+class FrequencyConverter {
+    @TypeConverter
+    fun fromString(value: String): AlarmFrequency {
+        return try {
+            val type = object : TypeToken<AlarmFrequency>() {}.type
+            AppObjectController.gsonMapper.fromJson(value, type)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            AlarmFrequency.ONCE
+        }
+    }
+
+    @TypeConverter
+    fun fromVariableMapType(enumVal: AlarmFrequency): String {
+        if (null != enumVal) {
+            return AppObjectController.gsonMapper.toJson(enumVal)
+        }
+        return AppObjectController.gsonMapper.toJson(AlarmFrequency.ONCE)
     }
 }

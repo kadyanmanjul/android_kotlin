@@ -2,6 +2,9 @@ package com.joshtalks.joshskills.core.notification.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.joshtalks.joshskills.core.notification.client_side.AlarmFrequency
+import com.joshtalks.joshskills.repository.local.FrequencyConverter
 
 @Entity(tableName = "schedule_notification")
 data class ScheduleNotification(
@@ -16,5 +19,8 @@ data class ScheduleNotification(
     val action_data: String,
     val is_scheduled: Boolean = false,
     val is_shown: Boolean = false,
-    val is_event_sent: Boolean = false
+    val is_event_sent: Boolean = false,
+    val is_canceled: Boolean = false,
+    @TypeConverters(FrequencyConverter::class)
+    val frequency: AlarmFrequency = AlarmFrequency.ONCE
 )
