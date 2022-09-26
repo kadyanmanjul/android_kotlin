@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'hypersdk-asset-plugin'
 
 if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
@@ -463,4 +464,6 @@ dependencies {
 
     // Datastore for reactive shared pref
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation 'in.juspay:hypersdk:2.0.4-rc.78'
+
 }

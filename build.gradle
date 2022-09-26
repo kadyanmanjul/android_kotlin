@@ -12,6 +12,9 @@ buildscript {
 
     repositories {
         google()
+        maven {
+            url "https://maven.juspay.in/jp-build-packages/hypersdk-asset-download/releases/"
+        }
         jcenter()
         mavenCentral()
         maven {
@@ -48,6 +51,7 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.10'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'in.juspay:hypersdk-asset-plugin:1.0.3'
         if (!project.hasProperty("devBuild")) {
             classpath('com.google.firebase:perf-plugin:1.3.1') {
                 exclude group: 'com.google.guava', module: 'guava-jdk5'
@@ -60,6 +64,10 @@ allprojects {
     repositories {
         google()
         jcenter()
+        //Other maven url
+        maven {
+            url "https://maven.juspay.in/jp-build-packages/hyper-sdk/"
+        }
         flatDir {
             dirs 'libs'
         }
