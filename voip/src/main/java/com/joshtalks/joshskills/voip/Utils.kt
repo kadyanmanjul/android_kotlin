@@ -138,7 +138,9 @@ fun Context.getNotificationData(): NotificationData {
         )
         notificationDataCursor?.moveToFirst()
         val notificationData = NotificationData(
-            title = notificationDataCursor.getStringData(NOTIFICATION_TITLE_COLUMN))
+            title = notificationDataCursor.getStringData(NOTIFICATION_TITLE_COLUMN),
+            body = notificationDataCursor.getStringData(NOTIFICATION_SUBTITLE_COLUMN)
+        )
         notificationDataCursor?.close()
         return notificationData
     } catch (e : Exception) {

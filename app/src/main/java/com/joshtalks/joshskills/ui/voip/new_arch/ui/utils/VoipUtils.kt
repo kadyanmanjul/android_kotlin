@@ -7,6 +7,8 @@ import android.content.Context.ACTIVITY_SERVICE
 import android.database.Cursor
 import android.util.Log
 import com.joshtalks.joshskills.core.BLOCK_STATUS
+import com.joshtalks.joshskills.core.FT_CALLS_LEFT
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -63,6 +65,9 @@ private fun bytesToHuman(size: Long): String {
 
 fun isBlocked(): Boolean {
     val blockStatus = CorePrefManager.getBlockStatusObject(BLOCK_STATUS)
+    if (CorePrefManager.getIntValue(FT_CALLS_LEFT, defValue = 15) == 0 &&
+        CorePrefManager.getBoolValue(IS_FREE_TRIAL))
+        return true
     if (blockStatus?.timestamp?.toInt() == 0)
         return false
 
@@ -78,6 +83,8 @@ private fun checkWithinBlockTimer(blockStatus: BlockStatusModel?): Boolean {
         if (System.currentTimeMillis() <= unblockTimestamp) {
             return true
         }
+        if (blockStatus.callsLeft == 0)
+            return true
     }
     return false
 }

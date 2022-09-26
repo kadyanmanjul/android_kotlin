@@ -197,7 +197,7 @@ internal class NotificationGenerator {
     @SuppressLint("RestrictedApi")
     fun idle(notificationBuiltObj: NotificationBuiltObj, notificationData: Data) {
         notificationBuiltObj.notificationBuilder.setContentTitle(notificationData.title)
-        notificationBuiltObj.notificationBuilder.setContentText("Call Now")
+        notificationBuiltObj.notificationBuilder.setContentText(notificationData.body)
         notificationBuiltObj.notificationBuilder.setContentIntent(openCallScreen())
         notificationBuiltObj.notificationBuilder.setSilent(true)
         notificationBuiltObj.notificationBuilder.setUsesChronometer(false)

@@ -131,17 +131,35 @@ class JoshContentProvider : ContentProvider() {
                 return cursor
             }
             NOTIFICATION_DATA -> {
-                val cursor = MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN))
+                val cursor = MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN))
+                val isBlockedOrFtEnded = if (PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false)) {
+                    when {
+                        isBlocked() -> true
+                        else -> PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false)
+                    }
+                } else false
                 return try {
                     cursor.addRow(
                         arrayOf(
-                            getNotificationData(PrefManager.getStringValue(CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID))
+                            getNotificationTitle(
+                                PrefManager.getStringValue(CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID),
+                                isBlockedOrFtEnded
+                            ),
+                            getNotificationBody(
+                                PrefManager.getStringValue(
+                                    CURRENT_COURSE_ID,
+                                    defaultValue = DEFAULT_COURSE_ID
+                                ), isBlockedOrFtEnded
+                            )
                         )
                     )
                     cursor
                 } catch (e: Exception) {
                     cursor.addRow(
-                        arrayOf(getNotificationData("151"))
+                        arrayOf(
+                            getNotificationTitle(DEFAULT_COURSE_ID, isBlockedOrFtEnded),
+                            getNotificationBody(DEFAULT_COURSE_ID, isBlockedOrFtEnded)
+                        )
                     )
                     cursor
                 }
@@ -150,8 +168,9 @@ class JoshContentProvider : ContentProvider() {
         return null
     }
 
-    private fun getNotificationData(courseId : String): String {
+    private fun getNotificationTitle(courseId: String, blockedOrFTEnded: Boolean): String {
         val name = Mentor.getInstance().getUser()?.firstName ?: "User"
+        if (blockedOrFTEnded) return "${name}, JUST ₹2/DAY !!!"
         return when (courseId) {
             "151", "1214" -> "$name, English बोलने से आती हैं."
             "1203"-> "$name, ইংলিশ প্রাকটিস করলে তবেই বলতে পারবেন।"
@@ -161,6 +180,20 @@ class JoshContentProvider : ContentProvider() {
             "1210"-> "$name, பேசினால் தான் ஆங்கிலம் வரும்"
             "1211"-> "$name, English మాట్లాడితేనే వస్తుంది."
             else -> "$name, You will learn English by speaking."
+        }
+    }
+
+    private fun getNotificationBody(courseId: String, blockedOrFtEnded: Boolean): String {
+        if (!blockedOrFtEnded) return "Call now"
+        return when(courseId) {
+            "151", "1214" -> "Unlimited Calling, जब चाहें, जहाँ चाहें,  जितना चाहें !!!"
+            "1203"-> "Unlimited Calling, যে কোন সময় যে কোন জায়গায় যতটা আপনি চান"
+            "1206"-> "Unlimited Calling, ਜਦੋਂ ਚਾਹੋ, ਜਿੱਥੇ ਚਾਹੋ, ਜਿਹਨਾਂ ਚਾਹੋ !!!"
+            "1207"-> "Unlimited Calling, केव्हाही, कुठेही, पाहिजे तितके!!!"
+            "1209"-> "Unlimited Calling, എപ്പോൾ വേണമെങ്കിലും,എവിടെ വേണമെങ്കിലും,എത്ര വേണമെങ്കിലും!!!"
+            "1210"-> "Unlimited Calling, எங்கும், எந்நேரத்திலும், அளவில்லாமல்!!!"
+            "1211"-> "Unlimited Calling, ఎప్పుడు కావాలన్న, ఎక్కడ కావాలన్న, ఎంత కావాలన్న !!!"
+            else -> "Unlimited Calling, Anytime, Anywhere!!!"
         }
     }
 
