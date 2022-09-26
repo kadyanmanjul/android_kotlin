@@ -31,7 +31,7 @@ interface ScheduleNotificationDao {
     suspend fun getNotification(notificationId: String): ScheduleNotification
 
     @Query("UPDATE schedule_notification SET is_canceled = 1 WHERE category = :category AND is_scheduled = 1")
-    suspend fun removeScheduledCategory(category: String)
+    suspend fun updateScheduledCategory(category: String)
 
     @Query("DELETE FROM schedule_notification")
     suspend fun clearTable()
@@ -42,7 +42,7 @@ interface ScheduleNotificationDao {
     @Transaction
     suspend fun removeCategory(category: String): List<String> {
         val scheduledIds = getIdFromScheduledCategory(category)
-        removeScheduledCategory(category)
+        updateScheduledCategory(category)
         return scheduledIds
     }
 

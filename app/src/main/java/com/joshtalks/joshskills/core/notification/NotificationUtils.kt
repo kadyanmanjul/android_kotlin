@@ -731,7 +731,7 @@ class NotificationUtils(val context: Context) {
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
-                AlarmUtil(context).createAlarm(pendingIntent, it.frequency, it.execute_after)
+                AlarmUtil(context).createAlarm(pendingIntent, it.frequency!!, it.execute_after)
                 AppObjectController.appDatabase.scheduleNotificationDao().updateScheduled(it.id)
             }
         }

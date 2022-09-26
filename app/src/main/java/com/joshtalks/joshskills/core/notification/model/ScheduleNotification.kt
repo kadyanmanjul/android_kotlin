@@ -22,5 +22,5 @@ data class ScheduleNotification(
     val is_event_sent: Boolean = false,
     val is_canceled: Boolean = false,
     @TypeConverters(FrequencyConverter::class)
-    val frequency: AlarmFrequency = AlarmFrequency.ONCE
+    var frequency: AlarmFrequency? = AlarmFrequency.ONCE
 )

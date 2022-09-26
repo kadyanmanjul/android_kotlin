@@ -62,7 +62,7 @@ class AlarmUtil(val context: Context) {
             AlarmFrequency.FOUR_HOUR -> getMillisFromHours(4)
             AlarmFrequency.SIX_HOUR -> getMillisFromHours(6)
             AlarmFrequency.DAILY -> getMillisFromHours(24)
-            AlarmFrequency.DAILY_AT -> getMillisFromHours(1)
+            AlarmFrequency.DAILY_AT -> getMillisFromHours(24)
             AlarmFrequency.TWO_DAY_AT -> getMillisFromHours(24 * 2)
             AlarmFrequency.THREE_DAY_AT -> getMillisFromHours(24 * 3)
             AlarmFrequency.FOUR_DAY_AT -> getMillisFromHours(24 * 4)

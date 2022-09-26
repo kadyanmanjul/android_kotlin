@@ -695,7 +695,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_54_55: Migration = object : Migration(54, 55) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE `schedule_notification` ADD COLUMN `frequency` TEXT NOT NULL DEFAULT 'ONCE'")
+                database.execSQL("ALTER TABLE `schedule_notification` ADD COLUMN `frequency` TEXT")
                 database.execSQL("ALTER TABLE `schedule_notification` ADD COLUMN `is_canceled` INTEGER NOT NULL DEFAULT 0")
             }
         }
@@ -1177,7 +1177,8 @@ class PaymentStatusConverters {
 
 class FrequencyConverter {
     @TypeConverter
-    fun fromString(value: String): AlarmFrequency {
+    fun fromString(value: String?): AlarmFrequency {
+        if (value.isNullOrEmpty()) return AlarmFrequency.ONCE
         return try {
             val type = object : TypeToken<AlarmFrequency>() {}.type
             AppObjectController.gsonMapper.fromJson(value, type)
@@ -1188,7 +1189,7 @@ class FrequencyConverter {
     }
 
     @TypeConverter
-    fun fromVariableMapType(enumVal: AlarmFrequency): String {
+    fun fromVariableMapType(enumVal: AlarmFrequency?): String {
         if (null != enumVal) {
             return AppObjectController.gsonMapper.toJson(enumVal)
         }

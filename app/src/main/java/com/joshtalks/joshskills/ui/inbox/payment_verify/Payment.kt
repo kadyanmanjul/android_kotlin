@@ -29,9 +29,7 @@ data class Payment(
     val razorpayOrderId: String,
 
     @ColumnInfo(name = "status")
-    @TypeConverters(
-        PaymentStatusConverters::class
-    )
+    @TypeConverters(PaymentStatusConverters::class)
     var status: PaymentStatus? = PaymentStatus.CREATED,
 
     @ColumnInfo(name = "time_stamp")
