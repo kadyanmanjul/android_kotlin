@@ -771,7 +771,7 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
     val oneWeekMillis = 7 * oneDayMillis
 
     override suspend fun doWork(): Result {
-        return try {
+        try {
             NotificationAnalytics().fetchMissedNotification(context)
             if (shouldFetchClientData()) {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
@@ -790,6 +790,10 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
                 PrefManager.put(LAST_TIME_FETCHED_NOTIFICATION, System.currentTimeMillis())
                 PrefManager.put(DAILY_NOTIFICATION_COUNT, PrefManager.getIntValue(DAILY_NOTIFICATION_COUNT, defValue = 0) + 1)
             }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return try {
             if (shouldSendEnabledAnalytics()) {
                 val response = AppObjectController.commonNetworkService.saveImpression(
                     mapOf(
