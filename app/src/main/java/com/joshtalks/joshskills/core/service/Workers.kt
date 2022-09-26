@@ -766,9 +766,30 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
 
 class NotificationEngagementSyncWorker(val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
+
+    val oneDayMillis = 24 * 60 * 60 * 1000L
+    val oneWeekMillis = 7 * oneDayMillis
+
     override suspend fun doWork(): Result {
         return try {
             NotificationAnalytics().fetchMissedNotification(context)
+            if (shouldFetchClientData()) {
+                val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
+                    PrefManager.getStringValue(
+                        FREE_TRIAL_TEST_ID,
+                        false,
+                        FREE_TRIAL_DEFAULT_TEST_ID
+                    ),
+                    PrefManager.getIntValue(DAILY_NOTIFICATION_COUNT).toString()
+                )
+                if (response.isNotEmpty()) {
+                    NotificationUtils(context).removeAllNotificationAsync()
+                    AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
+                    NotificationUtils(context).updateNotificationDb()
+                }
+                PrefManager.put(LAST_TIME_FETCHED_NOTIFICATION, System.currentTimeMillis())
+                PrefManager.put(DAILY_NOTIFICATION_COUNT, PrefManager.getIntValue(DAILY_NOTIFICATION_COUNT, defValue = 0) + 1)
+            }
             if (shouldSendEnabledAnalytics()) {
                 val response = AppObjectController.commonNetworkService.saveImpression(
                     mapOf(
@@ -792,9 +813,14 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
         }
     }
 
+    private fun shouldFetchClientData(): Boolean {
+        val lastTime = PrefManager.getLongValue(LAST_TIME_FETCHED_NOTIFICATION)
+        if (lastTime < dateStartOfDay().time && PrefManager.getBoolValue(IS_FREE_TRIAL))
+            return true
+        return false
+    }
+
     private fun shouldSendEnabledAnalytics(): Boolean {
-        val oneDayMillis = 24 * 60 * 60 * 1000L
-        val oneWeekMillis = 7 * oneDayMillis
         val count = PrefManager.getIntValue(NOTIFICATION_STATUS_COUNT)
         val timeDifference = System.currentTimeMillis() - PrefManager.getLongValue(NOTIFICATION_LAST_TIME_STATUS)
         if (count < 7 && timeDifference > oneDayMillis)

@@ -535,8 +535,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initMoEngage()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
-        if (!PrefManager.getBoolValue(FETCHED_SCHEDULED_NOTIFICATION))
-            viewModel.getFreeTrialNotifications()
     }
 
     fun showBuyCourseTooltip(courseId: String) {

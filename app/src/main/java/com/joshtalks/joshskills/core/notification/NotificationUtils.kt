@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.core.notification.client_side.AlarmUtil
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -55,9 +56,11 @@ import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.util.ReminderUtil
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE
+import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import kotlinx.coroutines.CoroutineScope
@@ -691,10 +694,34 @@ class NotificationUtils(val context: Context) {
         }
     }
 
+    fun updateNotificationDb() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val categoryMap = PrefManager.getPrefMap(NOTIFICATION_CATEGORY_SCHEDULED) ?: mutableMapOf()
+            PrefManager.putPrefObject(NOTIFICATION_CATEGORY_SCHEDULED, categoryMap)
+            when {
+                categoryMap.containsKey(NotificationCategory.AFTER_FIVE_MIN_CALL.category) ->
+                    updateNotificationDb(NotificationCategory.AFTER_FIVE_MIN_CALL)
+                categoryMap.containsKey(NotificationCategory.AFTER_FIRST_CALL.category) ->
+                    updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
+                categoryMap.containsKey(NotificationCategory.AFTER_LOGIN.category) ->
+                    updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+
+                else -> updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+            }
+            if (categoryMap.containsKey(NotificationCategory.PAYMENT_INITIATED.category))
+                updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
+            else if (categoryMap.containsKey(NotificationCategory.AFTER_BUY_PAGE.category))
+                updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
+        }
+    }
+
     fun updateNotificationDb(category: NotificationCategory) {
         CoroutineScope(Dispatchers.IO).launch {
             val notificationList =
-                AppObjectController.appDatabase.scheduleNotificationDao().getCategoryNotifications(category.category)
+                AppObjectController.appDatabase.scheduleNotificationDao().getUnscheduledCatNotifications(category.category)
+            val categoryMap = PrefManager.getPrefMap(NOTIFICATION_CATEGORY_SCHEDULED) ?: mutableMapOf()
+            categoryMap[category.category] = 1
+            PrefManager.putPrefObject(NOTIFICATION_CATEGORY_SCHEDULED, categoryMap)
             notificationList.forEach {
                 val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
                 intent.putExtra("id", it.id)
@@ -704,7 +731,7 @@ class NotificationUtils(val context: Context) {
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
-                ReminderUtil(context).createAlarm(pendingIntent, System.currentTimeMillis() + it.execute_after)
+                AlarmUtil(context).createAlarm(pendingIntent, it.frequency, it.execute_after)
                 AppObjectController.appDatabase.scheduleNotificationDao().updateScheduled(it.id)
             }
         }
@@ -718,25 +745,29 @@ class NotificationUtils(val context: Context) {
                 intent.putExtra("id", it)
                 val pendingIntent =
                     PendingIntent.getBroadcast(context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
-                ReminderUtil(context).deleteAlarm(pendingIntent)
+                AlarmUtil(context).deleteAlarm(pendingIntent)
             }
         }
     }
 
     fun removeAllScheduledNotification() {
         CoroutineScope(Dispatchers.IO).launch {
-            val notificationIds = AppObjectController.appDatabase.scheduleNotificationDao().clearAllNotifications()
-            notificationIds.forEach {
-                try {
-                    val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
-                    intent.putExtra("id", it)
-                    val pendingIntent = PendingIntent.getBroadcast(
-                        context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                    ReminderUtil(context).deleteAlarm(pendingIntent)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+            removeAllNotificationAsync()
+        }
+    }
+
+    suspend fun removeAllNotificationAsync() {
+        val notificationIds = AppObjectController.appDatabase.scheduleNotificationDao().clearAllNotifications()
+        notificationIds.forEach {
+            try {
+                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
+                intent.putExtra("id", it)
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                AlarmUtil(context).deleteAlarm(pendingIntent)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
