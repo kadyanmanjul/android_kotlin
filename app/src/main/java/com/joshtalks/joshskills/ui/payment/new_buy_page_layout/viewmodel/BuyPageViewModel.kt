@@ -6,13 +6,13 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.repository.server.JuspayPayLoad
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
-import com.joshtalks.joshskills.repository.server.JuspayData
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.ui.payment.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.CouponListAdapter
@@ -245,10 +245,10 @@ class BuyPageViewModel : BaseViewModel() {
                     "mentor_id" to Mentor.getInstance().getId()
                 )
 
-                val orderDetailsResponse: Response<JuspayData> =
+                val orderDetailsResponse: Response<JuspayPayLoad> =
                     AppObjectController.signUpNetworkService.createPaymentOrderV3(data).await()
                 if (orderDetailsResponse.code() == 201) {
-                    val response: JuspayData = orderDetailsResponse.body()!!
+                    val response: JuspayPayLoad = orderDetailsResponse.body()!!
                     //orderDetailsLiveData.postValue(response)
                     withContext(Dispatchers.Main){
                         message.what = ORDER_DETAILS_VALUE

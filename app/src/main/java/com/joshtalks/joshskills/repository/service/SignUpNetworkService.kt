@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.repository.server.JuspayPayLoad
 import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.*
@@ -110,7 +111,7 @@ interface SignUpNetworkService {
     fun createPaymentOrder(@Body params: Map<String, String?>): Deferred<Response<OrderDetailResponse>>
 
     @POST("$DIR/payment/create_order_v3")
-    fun createPaymentOrderV3(@Body params: Map<String, String?>): Deferred<Response<JuspayData>>
+    fun createPaymentOrderV3(@Body params: Map<String, String?>): Deferred<Response<JuspayPayLoad>>
 
     @GET("$DIR/course/test_v2/")
     suspend fun exploreCourses(@QueryMap params: Map<String, String>? = mapOf("is_default" to "true")): List<CourseExploreModel>

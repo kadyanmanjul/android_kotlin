@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout
 
-import `in`.juspay.hypersdk.core.PaymentConstants
 import `in`.juspay.hypersdk.data.JuspayResponseHandler
 import `in`.juspay.hypersdk.ui.HyperPaymentsCallbackAdapter
 import `in`.juspay.services.HyperServices
@@ -28,6 +27,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.joshtalks.joshskills.repository.server.JuspayPayLoad
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
@@ -45,7 +45,6 @@ import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.JuspayData
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
@@ -64,8 +63,6 @@ import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.razorpay.BuildConfig
-import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import de.hdodenhof.circleimageview.CircleImageView
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
@@ -73,13 +70,10 @@ import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.math.BigDecimal
-import java.util.*
 import kotlin.collections.HashMap
-import kotlin.math.log
 
 
 class BuyPageActivity : BaseActivity(), PaymentResultListener {
@@ -196,7 +190,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 }
                 ORDER_DETAILS_VALUE -> {
                     //initializeRazorpayPayment(it.obj as OrderDetailResponse)
-                    initializeJuspayPayment(it.obj as JuspayData)
+                    initializeJuspayPayment(it.obj as JuspayPayLoad)
                 }
                 CLICK_ON_COUPON_APPLY -> {
                     val coupon = it.obj as Coupon
@@ -439,7 +433,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 //        }
 //    }
 
-    private fun initializeJuspayPayment(orderDetails: JuspayData) {
+    private fun initializeJuspayPayment(orderDetails: JuspayPayLoad) {
         Log.e("sagar", "initializeJuspayPayment:1 $orderDetails")
 
         try {
@@ -447,21 +441,24 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             val sdkPayload = JSONObject()
             val hyperInstance = HyperServices(this)
 
+            sdkPayload.put("action", orderDetails.payload?.action)
+            sdkPayload.put("amount", orderDetails.payload?.amount)
+            sdkPayload.put("orderId", orderDetails.payload?.orderId)
+            sdkPayload.put("customerId", orderDetails.payload?.customerId)
+            sdkPayload.put("customerEmail", orderDetails.payload?.customerEmail)
+            sdkPayload.put("currency", orderDetails.payload?.currency)
+            sdkPayload.put("environment", orderDetails.payload?.environment)
+            sdkPayload.put("merchantId", orderDetails.payload?.merchantId)
+            sdkPayload.put("clientId", orderDetails.payload?.clientId)
+            sdkPayload.put("clientAuthToken", orderDetails.payload?.clientAuthToken)
+            sdkPayload.put("clientAuthTokenExpiry", orderDetails.payload?.clientAuthTokenExpiry)
+            sdkPayload.put("customerPhone", orderDetails.payload?.customerPhone)
 
-            payload.put("requestId", orderDetails.juspaySdkPayload?.requestId)
-            payload.put("service", "in.juspay.hyperpay")
-            sdkPayload.put("action", orderDetails.juspaySdkPayload?.payload?.action)
-            sdkPayload.put("amount", orderDetails.juspaySdkPayload?.payload?.amount?.times(100) ?: 10)
-            sdkPayload.put("order_id", orderDetails.juspaySdkPayload?.payload?.orderId)
-            sdkPayload.put("customerId", orderDetails.juspaySdkPayload?.payload?.customerId)
-            sdkPayload.put("customerEmail", orderDetails.juspaySdkPayload?.payload?.customerEmail)
-            sdkPayload.put("currency", orderDetails.juspaySdkPayload?.payload?.currency)
-            sdkPayload.put("environment", orderDetails.juspaySdkPayload?.payload?.environment)
-            sdkPayload.put("merchantId", orderDetails.juspaySdkPayload?.payload?.merchantId)
-            sdkPayload.put("clientId", orderDetails.juspaySdkPayload?.payload?.clientId)
-            sdkPayload.put("payload", payload)
+            payload.put("requestId", orderDetails.requestId)
+            payload.put("service",  orderDetails.service)
+            payload.put("payload", sdkPayload)
 
-            hyperInstance.initiate(sdkPayload, object : HyperPaymentsCallbackAdapter() {
+            hyperInstance.initiate(payload, object : HyperPaymentsCallbackAdapter() {
                 override fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
                     Log.e("sagar", "onEvent: ${data}", )
                     try {
@@ -476,9 +473,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                             }
                             "initiate_result" -> {
                                 val response: JSONObject = data.optJSONObject("payload")
-//                                response.put("action","quickPay")
-//                                sdkPayload.put("payload", response)
-                                hyperInstance?.process(sdkPayload)
+//
+                                hyperInstance.process(payload)
                             }
                             "process_result" -> {
                                 val response: JSONObject = data.optJSONObject("payload")
@@ -490,7 +486,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 }
             })
          // razorpayOrderId = orderDetails.razorpayOrderId
-            hyperInstance.process(sdkPayload)
+            hyperInstance.process(payload)
 
         } catch (e: Exception) {
             Log.e("sagar", "initializJuspayPayment:2 ${e.message}")
@@ -847,38 +843,38 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         }
     }
 
-    fun initiateJuspaySdk(payloadData: JSONObject) {
-        try {
-            hyperInstance?.initiate(payloadData, object : HyperPaymentsCallbackAdapter() {
-                override fun onEvent(
-                    data: JSONObject,
-                    juspayResponseHandler: JuspayResponseHandler
-                ) {
-                    Log.d("Inside OnEvent ", "initiate")
-                    try {
-                        val event = data.getString("event")
-                        when (event) {
-                            "initiate_result" -> {
-
-                            }
-                            "process_result" -> {
-
-                            }
-                            "hide_loader" -> {
-
-                            }
-                            else -> {
-
-                            }
-                        }
-                    } catch (e: java.lang.Exception) {
-                        Log.d("Came here", e.toString())
-                        e.printStackTrace()
-                    }
-                }
-            })
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-    }
+//    fun initiateJuspaySdk(payloadData: JSONObject) {
+//        try {
+//            hyperInstance?.initiate(payloadData, object : HyperPaymentsCallbackAdapter() {
+//                override fun onEvent(
+//                    data: JSONObject,
+//                    juspayResponseHandler: JuspayResponseHandler
+//                ) {
+//                    Log.d("Inside OnEvent ", "initiate")
+//                    try {
+//                        val event = data.getString("event")
+//                        when (event) {
+//                            "initiate_result" -> {
+//
+//                            }
+//                            "process_result" -> {
+//
+//                            }
+//                            "hide_loader" -> {
+//
+//                            }
+//                            else -> {
+//
+//                            }
+//                        }
+//                    } catch (e: java.lang.Exception) {
+//                        Log.d("Came here", e.toString())
+//                        e.printStackTrace()
+//                    }
+//                }
+//            })
+//        } catch (e: java.lang.Exception) {
+//            e.printStackTrace()
+//        }
+//    }
 }
