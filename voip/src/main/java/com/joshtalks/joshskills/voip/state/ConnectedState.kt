@@ -30,7 +30,7 @@ class ConnectedState(val context: CallContext) : VoipState {
         Log.d("Call State", TAG)
         observe()
         Utils.context?.let { ProximityHelper.getInstance(it)?.start() }
-        //startPaymentTimer(context.request[INTENT_DATA_TOTAL_AMOUNT] as Int, context.request[INTENT_DATA_EXPERT_PRICE_PER_MIN] as Int)
+        context.audioController?.activate()
     }
 
     // Red Button Pressed
@@ -292,6 +292,7 @@ class ConnectedState(val context: CallContext) : VoipState {
     }
 
     private fun moveToLeavingState() {
+        context.audioController?.deactivate()
         scope.launch {
             try {
                 listenerJob?.cancel()

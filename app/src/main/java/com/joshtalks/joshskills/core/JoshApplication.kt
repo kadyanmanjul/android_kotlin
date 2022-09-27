@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -25,9 +26,12 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.ProximityHelper
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.constant.State
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 import java.util.*
 
@@ -37,6 +41,8 @@ class JoshApplication :
     MultiDexApplication(),
     LifecycleEventObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
+    private var isAudioReset = false
+
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
     }
@@ -211,6 +217,11 @@ class JoshApplication :
             Lifecycle.Event.ON_START -> {
                 if(getVoipState() == State.CONNECTED || getVoipState() == State.RECONNECTING)
                     ProximityHelper.getInstance(this)?.start()
+                if(isAudioReset.not()) {
+                    (applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager?)?.mode =
+                        AudioManager.MODE_NORMAL
+                    isAudioReset = true
+                }
                 onAppForegrounded()
             }
             Lifecycle.Event.ON_STOP -> {

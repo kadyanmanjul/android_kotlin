@@ -8,11 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.audiocontroller.AudioController
-import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
-import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
@@ -32,7 +28,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import com.joshtalks.joshskills.base.model.NotificationData as Data
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
@@ -52,7 +47,6 @@ class CallingRemoteService : Service() {
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private var isMediatorInitialise = false
     private val pstnController by lazy { PSTNController(ioScope) }
-    private val audioController: AudioControllerInterface by lazy { AudioController(ioScope) }
     private val serviceEvents = MutableSharedFlow<ServiceEvents>(replay = 0)
 
     // For Testing Purpose
@@ -77,7 +71,6 @@ class CallingRemoteService : Service() {
         }
         registerReceivers()
         observerPstnService()
-        resetAudioRoute()
         showNotification()
         Log.d(TAG, "onCreate: Creating Service")
     }
@@ -268,34 +261,6 @@ class CallingRemoteService : Service() {
         }
     }
 
-    private fun resetAudioRoute() {
-        ioScope.launch {
-            try {
-                audioController.observeAudioRoute().collectLatest {
-                    try{
-                        when (it) {
-                            AudioRouteConstants.BluetoothAudio -> {Log.d(TAG, "observeAudioRoute BluetoothAudio")}
-                            AudioRouteConstants.Default -> {Log.d(TAG, "observeAudioRoute Default" )}
-                            AudioRouteConstants.EarpieceAudio -> {Log.d(TAG, "observeAudioRoute EarpieceAudio")}
-                            AudioRouteConstants.HeadsetAudio -> {Log.d(TAG, "observeAudioRoute HeadsetAudio")}
-                            AudioRouteConstants.SpeakerAudio -> {Log.d(TAG, "observeAudioRoute  SpeakerAudio")}
-                        }
-                    }
-                    catch (e : Exception){
-                        if(e is CancellationException)
-                            throw e
-                        e.printStackTrace()
-                    }
-                }
-                audioController.resetAudioRoute()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                if(e is CancellationException)
-                    throw e
-            }
-        }
-    }
-
     /**
      * Events Which Repository can Use --- Start
      */
@@ -303,7 +268,7 @@ class CallingRemoteService : Service() {
         if (callData != null) {
             mediator.connectCall(category, callData)
             notification.searching()
-            audioController.resetAudioRoute()
+            // TODO: Should use it in Connected State
             expertCallData = callData
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
@@ -320,12 +285,17 @@ class CallingRemoteService : Service() {
         mediator.userAction(if (isMicOn) Action.UNMUTE else Action.MUTE)
     }
 
-    fun changeSpeakerState(isSpeakerOn: Boolean) {
-        if (isSpeakerOn)
-            audioController.switchAudioToSpeaker()
-        else
-            audioController.switchAudioToDefault()
 
+    /**
+     * 1. Connected State
+     *
+     *
+     *
+     * AudioRouteListener - Immutable
+     * AudioController - Audio Switching
+     */
+
+    fun changeSpeakerState(isSpeakerOn: Boolean) {
         mediator.userAction(if(isSpeakerOn) Action.SPEAKER_ON else Action.SPEAKER_OFF)
     }
 
@@ -361,12 +331,10 @@ class CallingRemoteService : Service() {
 
     private fun registerReceivers() {
         pstnController.registerPstnReceiver()
-        audioController.registerAudioControllerReceivers()
     }
 
     private fun unregisterReceivers() {
         pstnController.unregisterPstnReceiver()
-        audioController.unregisterAudioControllerReceivers()
     }
 
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
