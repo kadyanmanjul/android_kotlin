@@ -80,6 +80,7 @@ class WalletFragment : Fragment() {
         viewModel.addedAmount.value?.let { addedAmount ->
             when{
                 addedAmount == "" -> { showToast(getString(R.string.please_select_amount_to_add)) }
+                addedAmount.removeRupees().toInt() > 20000 -> showToast(getString(R.string.maximum_amount_is_inr_20000))
                 addedAmount.removeRupees().toInt() < 50 -> { showToast(getString(R.string.minimum_amount_required)) }
                 else -> {
                     WalletRechargePaymentManager.selectedExpertForCall = null
