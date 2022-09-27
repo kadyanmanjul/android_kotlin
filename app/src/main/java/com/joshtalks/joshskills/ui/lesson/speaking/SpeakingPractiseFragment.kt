@@ -657,13 +657,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
         binding.btnCallWithExpert.setOnClickListener {
             viewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = SPEAKING_PAGE)
-            if (User.getInstance().isVerified) {
-                Intent(requireActivity(), CallWithExpertActivity::class.java).also {
-                    startActivity(it)
-                }
-            } else {
-                navigateToLoginActivity()
+            Intent(requireActivity(), CallWithExpertActivity::class.java).also {
+                startActivity(it)
             }
+//            if (User.getInstance().isVerified) {
+//
+//            } else {
+//                navigateToLoginActivity()
+//            }
         }
 
         binding.btnNextStep.setOnClickListener {
