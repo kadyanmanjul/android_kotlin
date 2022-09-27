@@ -49,6 +49,7 @@ const val NOTIFICATION_DATA = "/notification_data"
 const val MENTOR_NAME = "/mentor_name"
 const val MENTOR_PROFILE = "/mentor_profile"
 const val DEVICE_ID = "/device_id"
+const val IS_FT_ENDED_OR_BLOCKED = "/is_ft_ended_or_blocked"
 
 
 // Content Values
@@ -117,6 +118,7 @@ const val GAME_TEXT_COLUMN = "GAME_TEXT_COLUMN"
 const val COURSE_ID_COLUMN = "COURSE_ID"
 const val FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN = "FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN"
 const val DEVICE_ID_COLUMN = "DEVICE_ID"
+const val FT_ENDED_OR_BLOCKED_COLUMN = "FT_ENDED_OR_BLOCKED_COLUMN"
 
 // Broadcast Receiver
 const val SERVICE_BROADCAST_KEY = "service_broadcast_key"

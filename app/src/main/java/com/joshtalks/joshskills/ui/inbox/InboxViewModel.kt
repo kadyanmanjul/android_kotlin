@@ -9,21 +9,16 @@ import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.notification.NotificationCategory
-import com.joshtalks.joshskills.core.notification.NotificationUtils
-import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.xiaomi.push.ex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.replay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -319,26 +314,5 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun syncPaymentStatus(razorpayOrderId: String, status: PaymentStatus) {
         appDatabase.paymentDao().updatePaymentStatus(razorpayOrderId, status)
-    }
-
-    fun getFreeTrialNotifications() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
-                    PrefManager.getStringValue(
-                        FREE_TRIAL_TEST_ID,
-                        false,
-                        FREE_TRIAL_DEFAULT_TEST_ID
-                    )
-                )
-                AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
-                if (response.isNotEmpty())
-                    PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
-                NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
-                NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
     }
 }

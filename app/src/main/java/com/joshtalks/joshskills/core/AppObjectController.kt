@@ -54,11 +54,6 @@ import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
-import com.moengage.core.DataCenter
-import com.moengage.core.MoEngage
-import com.moengage.core.config.MiPushConfig
-import com.moengage.core.config.NotificationConfig
-import com.moengage.core.enableAdIdTracking
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -318,25 +313,6 @@ class AppObjectController {
         var appUsageStartTime: Long = 0L
 
         private const val cacheSize = 10 * 1024 * 1024.toLong()
-
-        fun initMoEngage() {
-            if (isMoEngageInitialize.not()) {
-                val moEngage = MoEngage.Builder(joshApplication, "DU9ICNBN2A9TTT38BS59KEU6")
-                    .setDataCenter(DataCenter.DATA_CENTER_3)
-                    .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
-                    .configureNotificationMetaData(
-                        NotificationConfig(
-                            R.drawable.ic_status_bar_notification,
-                            R.mipmap.ic_launcher_round
-                        )
-                    )
-                    .build()
-
-                MoEngage.initialiseDefaultInstance(moEngage)
-                enableAdIdTracking(joshApplication)
-                isMoEngageInitialize = true
-            }
-        }
 
         fun generateDeviceId() {
             CoroutineScope(Dispatchers.IO).launch {
