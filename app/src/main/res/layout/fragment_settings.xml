@@ -13,6 +13,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -365,6 +366,44 @@
                     app:layout_constraintTop_toBottomOf="@+id/rate_us_tv" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/terms_conditions_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:background="@color/white"
+                    android:drawablePadding="@dimen/_6sdp"
+                    android:gravity="center_vertical"
+                    android:onClick="@{()->handler.onTermsClicked()}"
+                    android:paddingVertical="@dimen/_12sdp"
+                    android:paddingStart="@dimen/_6sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:text="@string/terms_conditions"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    app:drawableStartCompat="@drawable/ic_terms_condition"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/privacy_policy_tv" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/community_guidelines_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:background="@color/white"
+                    android:drawablePadding="@dimen/_6sdp"
+                    android:gravity="center_vertical"
+                    android:onClick="@{()->handler.onGuidelinesClicked()}"
+                    android:paddingVertical="@dimen/_12sdp"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:text="@string/community_guidelines"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    app:drawableStartCompat="@drawable/ic_comm_guide"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/terms_conditions_tv" />
+
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/sign_out_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -381,7 +420,7 @@
                     app:drawableStartCompat="@drawable/ic_signout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/privacy_policy_tv" />
+                    app:layout_constraintTop_toBottomOf="@+id/community_guidelines_tv" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -446,6 +485,4 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </ScrollView>
-
-
 </layout>
