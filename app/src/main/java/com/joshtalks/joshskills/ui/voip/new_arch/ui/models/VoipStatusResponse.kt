@@ -16,5 +16,5 @@ data class VoipStatusResponse(
     @SerializedName("is_game_enabled")
     val isGameOn: Int?,
     @SerializedName("is_beep_timer_enabled")
-    val isBeepTimerEnabled: Boolean?,
+    val isBeepTimerEnabled: Int?,
 )
