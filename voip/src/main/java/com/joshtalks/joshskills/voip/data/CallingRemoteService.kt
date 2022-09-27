@@ -59,7 +59,7 @@ class CallingRemoteService : Service() {
     var expertCallData = HashMap<String, Any>()
     private val timerScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
 
-    private var beepTimer: BeepTimer? = null
+//    private var beepTimer: BeepTimer? = null
 
     override fun onCreate() {
         Log.d(TAG, "onCreate: ")
@@ -151,7 +151,7 @@ class CallingRemoteService : Service() {
         delay(5000)
         ioScope.cancel()
         syncScope.cancel()
-        beepTimer?.stopBeepSound()
+        BeepTimer.stopBeepSound()
         stopSelf()
     }
 
@@ -276,7 +276,7 @@ class CallingRemoteService : Service() {
     }
 
     fun disconnectCall() {
-        beepTimer?.stopBeepSound()
+        BeepTimer.stopBeepSound()
         stopCallTimer()
         notification.idle(getNotificationData())
         mediator.userAction(Action.DISCONNECT)
@@ -321,7 +321,7 @@ class CallingRemoteService : Service() {
         }
         ioScope.cancel()
         syncScope.cancel()
-        beepTimer?.stopBeepSound()
+        BeepTimer.stopBeepSound()
     }
 
     private fun showNotification() {
@@ -342,12 +342,16 @@ class CallingRemoteService : Service() {
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
         try {
             timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
-            beepTimer = BeepTimer(this)
+//            beepTimer = BeepTimer(this)
             countdownTimerBack = timerScope.launch {
-                delay(timeInMillSec!! - BeepTimer.TIMER_DURATION)
-                beepTimer?.startBeepSound()
-                delay(BeepTimer.TIMER_DURATION)
-                disconnectCall()
+                try {
+                    delay(timeInMillSec!! - BeepTimer.TIMER_DURATION)
+                    BeepTimer.startBeepSound(this@CallingRemoteService)
+                    delay(BeepTimer.TIMER_DURATION)
+                    disconnectCall()
+                } catch (e: Exception){
+
+                }
             }
         }catch (ex:Exception){
             stopCallTimer()
