@@ -33,7 +33,6 @@ const val IS_BEEP_TIMER_ENABLED = "IS_BEEP_TIMER_ENABLED"
 private const val TAG = "PrefManager"
 
 class PrefManager {
-    //s
     companion object {
         lateinit var preferenceManager: SharedPreferences
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
