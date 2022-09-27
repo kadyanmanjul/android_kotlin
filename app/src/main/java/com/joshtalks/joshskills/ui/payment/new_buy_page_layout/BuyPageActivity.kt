@@ -73,6 +73,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.math.BigDecimal
+import java.util.UUID
 import kotlin.collections.HashMap
 
 
@@ -86,6 +87,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     var clickRatingOpen: ImageView? = null
     var courseDescListCard: View? = null
     var priceForPaymentProceed: CourseDetailsList? = null
+    private val hyperInstance by lazy { HyperServices(this) }
 
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
@@ -159,12 +161,62 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
             }
+            initJusPay()
         } else {
             showErrorView()
         }
         NotificationUtils(this).updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
         MarketingAnalytics.openPreCheckoutPage()
         initToolbar()
+    }
+
+    private fun initJusPay() {
+        val payload = createInitiatePayload()
+        hyperInstance.initiate(payload, object : HyperPaymentsCallbackAdapter() {
+            override fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
+                Log.e("sagar", "onEvent: ${data}", )
+                try {
+                    when (data.getString("event")) {
+                        "show_loader" -> {
+                            viewModel.isProcessing.set(true)
+                            showProgressBar()
+                        }
+                        "hide_loader" -> {
+                            // Hide Loader
+                            hideProgressBar()
+                        }
+                        "initiate_result" -> {
+                            val response: JSONObject = data.optJSONObject("payload")
+//
+                            hyperInstance.process(payload)
+                        }
+                        "process_result" -> {
+                            val response: JSONObject = data.optJSONObject("payload")
+                        }
+                    }
+                } catch (e: Exception) {
+                    // merchant code...
+                }
+            }
+        })
+    }
+
+    private fun createInitiatePayload(): JSONObject {
+        val sdkPayload = JSONObject()
+        val innerPayload = JSONObject()
+        try {
+            // generating inner payload
+            innerPayload.put("action", "initiate")
+            innerPayload.put("merchantId", "joshtalks")   //Your Merchant ID here
+            innerPayload.put("clientId", "joshtalks")       //Your Client ID here
+            innerPayload.put("environment", "production")
+            sdkPayload.put("requestId", "" + UUID.randomUUID())
+            sdkPayload.put("service", "in.juspay.hyperpay")
+            sdkPayload.put("payload", innerPayload)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return sdkPayload
     }
 
     override fun initViewState() {
@@ -439,8 +491,6 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         try {
             val payload = JSONObject()
             val sdkPayload = JSONObject()
-            val hyperInstance = HyperServices(this)
-
             sdkPayload.put("action", orderDetails.payload?.action)
             sdkPayload.put("amount", orderDetails.payload?.amount)
             sdkPayload.put("orderId", orderDetails.payload?.orderId)
@@ -458,33 +508,6 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             payload.put("service",  orderDetails.service)
             payload.put("payload", sdkPayload)
 
-            hyperInstance.initiate(payload, object : HyperPaymentsCallbackAdapter() {
-                override fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
-                    Log.e("sagar", "onEvent: ${data}", )
-                    try {
-                        when (data.getString("event")) {
-                            "show_loader" -> {
-                                viewModel.isProcessing.set(true)
-                                showProgressBar()
-                            }
-                            "hide_loader" -> {
-                                // Hide Loader
-                                hideProgressBar()
-                            }
-                            "initiate_result" -> {
-                                val response: JSONObject = data.optJSONObject("payload")
-//
-                                hyperInstance.process(payload)
-                            }
-                            "process_result" -> {
-                                val response: JSONObject = data.optJSONObject("payload")
-                            }
-                        }
-                    } catch (e: Exception) {
-                        // merchant code...
-                    }
-                }
-            })
          // razorpayOrderId = orderDetails.razorpayOrderId
             hyperInstance.process(payload)
 
