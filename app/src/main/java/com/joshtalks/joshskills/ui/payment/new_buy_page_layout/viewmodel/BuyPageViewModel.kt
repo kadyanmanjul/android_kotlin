@@ -241,57 +241,6 @@ class BuyPageViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun getOrderDetails(testId: String, mobileNumber: String, encryptedText: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            //isProcessing.set(true)
-            withContext(Dispatchers.Main) {
-                message.what = SHOW_PROCESSING_DIALOG
-                singleLiveEvent.value = message
-            }
-            try {
-                val data = mutableMapOf(
-                    "encrypted_text" to encryptedText,
-                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
-                    "mobile" to mobileNumber,
-                    "test_id" to testId,
-                    "mentor_id" to Mentor.getInstance().getId()
-                )
-
-                val orderDetailsResponse: Response<JuspayPayLoad> =
-                    AppObjectController.signUpNetworkService.createPaymentOrderV3(data).await()
-                if (orderDetailsResponse.code() == 201) {
-                    val response: JuspayPayLoad = orderDetailsResponse.body()!!
-                    //orderDetailsLiveData.postValue(response)
-                    withContext(Dispatchers.Main) {
-                        message.what = ORDER_DETAILS_VALUE
-                        message.obj = response
-                        singleLiveEvent.value = message
-                    }
-                    //MarketingAnalytics.initPurchaseEvent(data, response)
-                    addPaymentEntry(response)
-                } else {
-                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                }
-            } catch (ex: Exception) {
-                when (ex) {
-                    is HttpException -> {
-                        showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        try {
-                            FirebaseCrashlytics.getInstance().recordException(ex)
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -310,18 +259,6 @@ class BuyPageViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
         }
-    }
-
-    private fun addPaymentEntry(response: JuspayPayLoad) {
-        AppObjectController.appDatabase.paymentDao().inertPaymentEntry(
-            Payment(
-                response.amount,
-                response.joshtalksOrderId,
-                EMPTY,
-                response.payload?.orderId ?: EMPTY,
-                PaymentStatus.CREATED
-            )
-        )
     }
 
     fun onBackPress(view: View) {

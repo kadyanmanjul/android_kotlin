@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout
 
-import `in`.juspay.hypersdk.data.JuspayResponseHandler
-import `in`.juspay.hypersdk.ui.HyperPaymentsCallbackAdapter
 import `in`.juspay.services.HyperServices
 import android.app.Activity
 import android.app.Dialog
@@ -28,7 +26,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.joshtalks.joshskills.repository.server.JuspayPayLoad
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
@@ -37,7 +35,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
@@ -58,6 +57,8 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
+import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
@@ -70,14 +71,11 @@ import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import retrofit2.HttpException
 import java.math.BigDecimal
-import java.util.UUID
-import kotlin.collections.HashMap
 
 
-class BuyPageActivity : BaseActivity() {
+class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     var englishCourseCard: View? = null
     var otherCourseCard: View? = null
@@ -98,6 +96,9 @@ class BuyPageActivity : BaseActivity() {
     private val binding by lazy<ActivityBuyPageBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_buy_page)
     }
+
+    private lateinit var paymentManager: PaymentManager
+
     private var errorView: Stub<ErrorView>? = null
     private var errorShowCount = 0
     private val viewModel by lazy {
@@ -147,6 +148,8 @@ class BuyPageActivity : BaseActivity() {
     override fun initViewBinding() {
         binding.vm = viewModel
         binding.executePendingBindings()
+        paymentManager = PaymentManager(this, viewModel.viewModelScope, this)
+        paymentManager.initializePaymentGateway()
     }
 
     override fun onCreated() {
@@ -161,123 +164,14 @@ class BuyPageActivity : BaseActivity() {
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
             }
-            initJusPay()
+
         } else {
             showErrorView()
         }
+
         NotificationUtils(this).updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
         MarketingAnalytics.openPreCheckoutPage()
         initToolbar()
-    }
-
-    private fun initJusPay() {
-        val payload = createInitiatePayload()
-        //hyperInstance.initiate(payload)
-        hyperInstance.initiate(payload, object : HyperPaymentsCallbackAdapter() {
-            override fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
-                Log.e("sagar", "onEvent1: ${data.getString("event")}")
-                try {
-                    when (data.getString("event")) {
-                        "show_loader" -> {
-                            // viewModel.isProcessing.set(true)
-                        }
-                        "hide_loader" -> {
-                            // Hide Loader
-                            hideProgressBar()
-                        }
-                        "initiate_result" -> {
-                            val response: JSONObject = data.optJSONObject("payload")
-                        }
-                        "process_result" -> {
-                            val response: JSONObject = data.optJSONObject("payload")
-                            val error = data.getBoolean("error")
-                            val status = response.getString("status")
-
-                            Log.e("sagar", "onEvent: 123 $error $status")
-                            if (!error) {
-                                when (status) {
-                                    "charged" -> {
-                                        Log.e("sagar", "onEvent11: $status $response")
-                                        onPaymentSuccess()
-                                        // Successful Transaction
-                                        // check order status via S2S API
-//                                        redirect.putExtra("status", "OrderSuccess")
-//                                        startActivity(redirect)
-
-                                    }
-                                    "cod_initiated" -> {
-                                        Log.e("sagar", "onEvent: $status")
-//                                        redirect.putExtra("status", "CODInitiated")
-//                                        startActivity(redirect)
-                                    }
-                                }
-                            } else {
-                                when (status) {
-                                    "backpressed" -> {
-                                    }
-                                    "user_aborted" -> {
-//                                        // user initiated a txn and pressed back
-//                                        // check order status via S2S API
-//                                        val successIntent = Intent(
-//                                            this@CheckoutActivity,
-//                                            ResponsePage::class.java
-//                                        )
-//                                        redirect.putExtra("status", "UserAborted")
-//                                        startActivity(redirect)
-                                    }
-                                    "pending_vbv" -> {
-                                        Log.e("sagar", "onEvent: $response $status")
-//                                        redirect.putExtra("status", "PendingVBV")
-//                                        startActivity(redirect)
-                                    }
-                                    "authorizing" -> {
-                                        // txn in pending state
-                                        // check order status via S2S API
-//                                        redirect.putExtra("status", "Authorizing")
-//                                        startActivity(redirect)
-                                    }
-                                    "authorization_failed" -> {
-                                        Log.e("sagar", "onEvent: 00")
-                                        onPaymentError()
-//                                        redirect.putExtra("status", "AuthorizationFailed")
-//                                        startActivity(redirect)
-                                    }
-                                    "authentication_failed" -> {
-//                                        redirect.putExtra("status", "AuthenticationFailed")
-//                                        startActivity(redirect)
-                                    }
-                                    "api_failure" -> {
-//                                        redirect.putExtra("status", "APIFailure")
-//                                        startActivity(redirect)
-                                    }
-                                }
-                            }
-                            // block:end:handle-process-result
-                        }
-                    }
-                } catch (e: Exception) {
-                    // merchant code...
-                }
-            }
-        })
-    }
-
-    private fun createInitiatePayload(): JSONObject {
-        val sdkPayload = JSONObject()
-        val innerPayload = JSONObject()
-        try {
-            // generating inner payload
-            innerPayload.put("action", "initiate")
-            innerPayload.put("merchantId", "joshtalks")   //Your Merchant ID here
-            innerPayload.put("clientId", "joshtalks")       //Your Client ID here
-            innerPayload.put("environment", "production")
-            sdkPayload.put("requestId", "" + UUID.randomUUID())
-            sdkPayload.put("service", "in.juspay.hyperpay")
-            sdkPayload.put("payload", innerPayload)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return sdkPayload
     }
 
     override fun initViewState() {
@@ -301,10 +195,6 @@ class BuyPageActivity : BaseActivity() {
                 CLICK_ON_PRICE_CARD -> {
                     setCoursePrices(it.obj as CourseDetailsList, it.arg1)
                 }
-                ORDER_DETAILS_VALUE -> {
-                    //initializeRazorpayPayment(it.obj as OrderDetailResponse)
-                    initializeJuspayPayment(it.obj as JuspayPayLoad)
-                }
                 CLICK_ON_COUPON_APPLY -> {
                     val coupon = it.obj as Coupon
                     updateListItem(coupon)
@@ -323,7 +213,6 @@ class BuyPageActivity : BaseActivity() {
                         2000
                     )
                 }
-                SHOW_PROCESSING_DIALOG -> showProgressBar()
             }
         }
     }
@@ -530,38 +419,6 @@ class BuyPageActivity : BaseActivity() {
             }
     }
 
-    private fun initializeJuspayPayment(orderDetails: JuspayPayLoad) {
-        Log.e("sagar", "initializeJuspayPayment:1 $orderDetails")
-
-        try {
-            val payload = JSONObject()
-            val sdkPayload = JSONObject()
-            sdkPayload.put("action", orderDetails.payload?.action)
-            sdkPayload.put("amount", orderDetails.payload?.amount)
-            sdkPayload.put("orderId", orderDetails.payload?.orderId)
-            sdkPayload.put("customerId", orderDetails.payload?.customerId)
-            sdkPayload.put("customerEmail", orderDetails.payload?.customerEmail)
-            sdkPayload.put("currency", orderDetails.payload?.currency)
-            sdkPayload.put("environment", orderDetails.payload?.environment)
-            sdkPayload.put("merchantId", orderDetails.payload?.merchantId)
-            sdkPayload.put("clientId", orderDetails.payload?.clientId)
-            sdkPayload.put("clientAuthToken", orderDetails.payload?.clientAuthToken)
-            sdkPayload.put("clientAuthTokenExpiry", orderDetails.payload?.clientAuthTokenExpiry)
-            sdkPayload.put("customerPhone", orderDetails.payload?.customerPhone)
-
-            payload.put("requestId", orderDetails.requestId)
-            payload.put("service", orderDetails.service)
-            payload.put("payload", sdkPayload)
-
-            juspayOrderId = orderDetails.payload?.orderId ?: EMPTY
-            hyperInstance.process(payload)
-
-        } catch (e: Exception) {
-            Log.e("sagar", "initializJuspayPayment:2 ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
     fun startPayment() {
         if (Utils.isInternetAvailable().not()) {
             showToast(getString(R.string.internet_not_available_msz))
@@ -575,26 +432,11 @@ class BuyPageActivity : BaseActivity() {
         NotificationUtils(applicationContext).removeScheduledNotification(NotificationCategory.AFTER_BUY_PAGE)
         NotificationUtils(applicationContext).updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
         try {
-            viewModel.getOrderDetails(
-                priceForPaymentProceed?.testId ?: EMPTY,
+            paymentManager.createOrder(priceForPaymentProceed?.testId ?: EMPTY,
                 phoneNumber,
-                priceForPaymentProceed?.encryptedText ?: EMPTY
-            )
+                priceForPaymentProceed?.encryptedText ?: EMPTY)
         } catch (ex: Exception) {
             ex.showAppropriateMsg()
-        }
-    }
-
-    private fun String.verifyPayment() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val data = mapOf("razorpay_order_id" to this@verifyPayment)
-                AppObjectController.commonNetworkService.verifyPayment(data)
-            } catch (ex: HttpException) {
-                ex.printStackTrace()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
         }
     }
 
@@ -611,7 +453,6 @@ class BuyPageActivity : BaseActivity() {
     }
 
     private fun showPaymentProcessingFragment() {
-        // binding.container.visibility = View.GONE
         supportFragmentManager
             .beginTransaction()
             .replace(
@@ -792,15 +633,12 @@ class BuyPageActivity : BaseActivity() {
     }
 
     fun showProgressBar() {
-        Log.e("sagar", "showProgressBar: ")
         lifecycleScope.launch(Dispatchers.Main) {
-            Log.e("sagar", "showProgressBar1: ")
             FullScreenProgressDialog.showProgressBar(this@BuyPageActivity)
         }
     }
 
     fun hideProgressBar() {
-        Log.e("sagar", "hideProgressBar: ")
         lifecycleScope.launch(Dispatchers.Main) {
             FullScreenProgressDialog.hideProgressBar(this@BuyPageActivity)
         }
@@ -837,7 +675,27 @@ class BuyPageActivity : BaseActivity() {
         }
     }
 
-    private fun onPaymentSuccess() {
+    override fun onProcessStart() {
+        showProgressBar()
+    }
+
+    override fun onProcessStop() {
+        hideProgressBar()
+    }
+
+    override fun onPaymentError(errorMsg: String) {
+        verifyPaymentJuspay(paymentManager.getJustPayOrderId())
+        AppObjectController.uiHandler.post {
+            showPaymentFailedDialog()
+        }
+        try {
+            viewModel.removeEntryFromPaymentTable(juspayOrderId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onPaymentSuccess() {
         if (viewModel.isDiscount) {
             viewModel.saveImpression(IMPRESSION_PAY_DISCOUNT)
         } else {
@@ -855,7 +713,7 @@ class BuyPageActivity : BaseActivity() {
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
         }
         // isBackPressDisabled = true
-        verifyPaymentJuspay(juspayOrderId)
+        verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         viewModel.removeEntryFromPaymentTable(juspayOrderId)
         MarketingAnalytics.coursePurchased(
             BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
@@ -892,21 +750,5 @@ class BuyPageActivity : BaseActivity() {
         AppObjectController.uiHandler.postDelayed({
             navigateToStartCourseActivity()
         }, 1000L * 5L)
-    }
-
-    private fun onPaymentPending() {
-
-    }
-
-    private fun onPaymentError() {
-        verifyPaymentJuspay(juspayOrderId)
-        AppObjectController.uiHandler.post {
-            showPaymentFailedDialog()
-        }
-        try {
-            viewModel.removeEntryFromPaymentTable(juspayOrderId)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 }
