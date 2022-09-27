@@ -1076,5 +1076,6 @@
     <string name="offer_for_you">Offer for you</string>
     <string name="insert_code">Insert Code</string>
     <string name="teacher_youtube_link"><u>Serene Paathshala</u></string>
+    <string name="maximum_amount_is_inr_20000">Maximum Amount is INR 20000</string>
 
 </resources>
