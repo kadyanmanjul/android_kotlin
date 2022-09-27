@@ -27,11 +27,13 @@ const val CURRENT_CALL_CATEGORY = "josh_pref_key_call_category"
 const val LAST_RECORDING = "josh_pref_key_agora_call_recording"
 const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"
 const val PROXIMITY_ON = "is_josh_proximity_on"
+const val IS_BEEP_TIMER_ENABLED = "IS_BEEP_TIMER_ENABLED"
 
 
 private const val TAG = "PrefManager"
 
 class PrefManager {
+    //s
     companion object {
         lateinit var preferenceManager: SharedPreferences
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
@@ -177,6 +179,16 @@ class PrefManager {
                 return b
             }
             return null
+        }
+
+        fun setBeepTimerStatus(isEnabled: Boolean) {
+            val editor = preferenceManager.edit()
+            editor.putBoolean(IS_BEEP_TIMER_ENABLED, isEnabled)
+            editor.commit()
+        }
+
+        fun getBeepTimerStatus(): Boolean {
+            return preferenceManager.getBoolean(EXPERT_CALL_DURATION, false)
         }
     }
 }

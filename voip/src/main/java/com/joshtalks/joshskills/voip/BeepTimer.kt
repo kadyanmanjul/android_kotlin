@@ -3,9 +3,7 @@ package com.joshtalks.joshskills.voip
 import android.content.Context
 import android.media.SoundPool
 import android.util.Log
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.*
 
 /**
@@ -28,8 +26,9 @@ class BeepTimer(
     }
 
     fun startBeepSound() {
-        var timer = 0L
-        Log.d("experttimer", "started beep timer")
+        if (PrefManager.getBeepTimerStatus()) {
+            var timer = 0L
+            Log.d("experttimer", "started beep timer")
 
 //        soundPool.setOnLoadCompleteListener { soundPool, i, i2 ->
             coroutineScope.launch {
@@ -41,6 +40,8 @@ class BeepTimer(
                     delay(BEEP_INTERVAL)
                 }
             }
+        }
+
 //        }
     }
 

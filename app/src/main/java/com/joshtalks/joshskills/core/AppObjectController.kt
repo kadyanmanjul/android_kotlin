@@ -486,6 +486,9 @@ class AppObjectController {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         val resp = p2pNetworkService.getVoipNewArchFlag()
+                        com.joshtalks.joshskills.voip.data.local.PrefManager.initServicePref(
+                            joshApplication
+                        )
                         PrefManager.put(
                             SPEED_TEST_FILE_URL,
                             resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg"
@@ -493,6 +496,7 @@ class AppObjectController {
                         PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                         PrefManager.put(SPEED_TEST_FILE_SIZE, resp.testFileSize ?: 100)
                         PrefManager.put(IS_GAME_ON, resp.isGameOn ?: 1)
+                        com.joshtalks.joshskills.voip.data.local.PrefManager.setBeepTimerStatus(resp.isBeepTimerEnabled ?: false)
                     } catch (ex: Exception) {
                         when (ex) {
                             is HttpException -> {

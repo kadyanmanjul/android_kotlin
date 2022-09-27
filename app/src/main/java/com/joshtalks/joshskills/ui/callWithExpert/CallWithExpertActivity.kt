@@ -47,7 +47,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = this.viewModel
-        PrefManager.initServicePref(applicationContext)
+//        PrefManager.initServicePref(applicationContext)
         initToolbar()
         attachObservers()
         attachNavigationChangedListener()
