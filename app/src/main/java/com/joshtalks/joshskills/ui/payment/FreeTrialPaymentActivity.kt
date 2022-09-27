@@ -1053,7 +1053,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             true,
             testId = freeTrialTestId,
             courseName = viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName ?: EMPTY,
-            razorpayPaymentId = razorpayOrderId
+            juspayPaymentId = razorpayOrderId
         )
         //viewModel.updateSubscriptionStatus()
         try {

@@ -114,7 +114,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                 if (orderDetailsResponse.code() == 201) {
                     val response: OrderDetailResponse = orderDetailsResponse.body()!!
                     orderDetailsLiveData.postValue(response)
-                    MarketingAnalytics.initPurchaseEvent(data, response)
+                   // MarketingAnalytics.initPurchaseEvent(data, response)
                     addPaymentEntry(response)
                 } else {
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))

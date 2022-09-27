@@ -27,6 +27,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.repository.server.JuspayPayLoad
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
@@ -63,7 +64,6 @@ import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.razorpay.PaymentResultListener
 import de.hdodenhof.circleimageview.CircleImageView
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
@@ -77,7 +77,7 @@ import java.util.UUID
 import kotlin.collections.HashMap
 
 
-class BuyPageActivity : BaseActivity(), PaymentResultListener {
+class BuyPageActivity : BaseActivity() {
 
     var englishCourseCard: View? = null
     var otherCourseCard: View? = null
@@ -91,7 +91,7 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
-    private var razorpayOrderId = EMPTY
+    private var juspayOrderId = EMPTY
 
     private var countdownTimerBack: CountdownTimerBack? = null
 
@@ -172,14 +172,14 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
     private fun initJusPay() {
         val payload = createInitiatePayload()
+        //hyperInstance.initiate(payload)
         hyperInstance.initiate(payload, object : HyperPaymentsCallbackAdapter() {
             override fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
-                Log.e("sagar", "onEvent: ${data}", )
+                Log.e("sagar", "onEvent1: ${data.getString("event")}")
                 try {
                     when (data.getString("event")) {
                         "show_loader" -> {
-                            viewModel.isProcessing.set(true)
-                            showProgressBar()
+                            // viewModel.isProcessing.set(true)
                         }
                         "hide_loader" -> {
                             // Hide Loader
@@ -187,11 +187,72 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                         }
                         "initiate_result" -> {
                             val response: JSONObject = data.optJSONObject("payload")
-//
-                            hyperInstance.process(payload)
                         }
                         "process_result" -> {
                             val response: JSONObject = data.optJSONObject("payload")
+                            val error = data.getBoolean("error")
+                            val status = response.getString("status")
+
+                            Log.e("sagar", "onEvent: 123 $error $status")
+                            if (!error) {
+                                when (status) {
+                                    "charged" -> {
+                                        Log.e("sagar", "onEvent11: $status $response")
+                                        onPaymentSuccess()
+                                        // Successful Transaction
+                                        // check order status via S2S API
+//                                        redirect.putExtra("status", "OrderSuccess")
+//                                        startActivity(redirect)
+
+                                    }
+                                    "cod_initiated" -> {
+                                        Log.e("sagar", "onEvent: $status")
+//                                        redirect.putExtra("status", "CODInitiated")
+//                                        startActivity(redirect)
+                                    }
+                                }
+                            } else {
+                                when (status) {
+                                    "backpressed" -> {
+                                    }
+                                    "user_aborted" -> {
+//                                        // user initiated a txn and pressed back
+//                                        // check order status via S2S API
+//                                        val successIntent = Intent(
+//                                            this@CheckoutActivity,
+//                                            ResponsePage::class.java
+//                                        )
+//                                        redirect.putExtra("status", "UserAborted")
+//                                        startActivity(redirect)
+                                    }
+                                    "pending_vbv" -> {
+                                        Log.e("sagar", "onEvent: $response $status")
+//                                        redirect.putExtra("status", "PendingVBV")
+//                                        startActivity(redirect)
+                                    }
+                                    "authorizing" -> {
+                                        // txn in pending state
+                                        // check order status via S2S API
+//                                        redirect.putExtra("status", "Authorizing")
+//                                        startActivity(redirect)
+                                    }
+                                    "authorization_failed" -> {
+                                        Log.e("sagar", "onEvent: 00")
+                                        onPaymentError()
+//                                        redirect.putExtra("status", "AuthorizationFailed")
+//                                        startActivity(redirect)
+                                    }
+                                    "authentication_failed" -> {
+//                                        redirect.putExtra("status", "AuthenticationFailed")
+//                                        startActivity(redirect)
+                                    }
+                                    "api_failure" -> {
+//                                        redirect.putExtra("status", "APIFailure")
+//                                        startActivity(redirect)
+                                    }
+                                }
+                            }
+                            // block:end:handle-process-result
                         }
                     }
                 } catch (e: Exception) {
@@ -256,8 +317,13 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
                 COUPON_APPLIED -> couponApplied(it.obj as Coupon)
                 SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
-                    binding.scrollView.smoothScrollTo(binding.buyPageParentContainer.width, binding.buyPageParentContainer.height, 2000)
+                    binding.scrollView.smoothScrollTo(
+                        binding.buyPageParentContainer.width,
+                        binding.buyPageParentContainer.height,
+                        2000
+                    )
                 }
+                SHOW_PROCESSING_DIALOG -> showProgressBar()
             }
         }
     }
@@ -287,7 +353,9 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                 if (buyCourseFeatureModel.expiryTime?.time ?: 0 > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
                     binding.freeTrialTimer.visibility = View.GONE
                 } else {
-                    startTimer((buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis())
+                    startTimer(
+                        (buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis()
+                    )
                 }
             } else {
                 binding.freeTrialTimer.visibility = View.VISIBLE
@@ -301,7 +369,10 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
     private fun makePhoneCall() {
         viewModel.saveImpressionForBuyPageLayout(BUY_PAGE_CALL_CLICKED)
-        Utils.call(this@BuyPageActivity, AppObjectController.getFirebaseRemoteConfig().getString(BUY_PAGE_SUPPORT_PHONE_NUMBER))
+        Utils.call(
+            this@BuyPageActivity,
+            AppObjectController.getFirebaseRemoteConfig().getString(BUY_PAGE_SUPPORT_PHONE_NUMBER)
+        )
     }
 
     private fun updateListItem(coupon: Coupon) {
@@ -325,7 +396,11 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     private fun openRatingAndReviewScreen() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            replace(R.id.buy_page_parent_container, RatingAndReviewFragment.newInstance(testId.toInt()), COURSE_CONTENT)
+            replace(
+                R.id.buy_page_parent_container,
+                RatingAndReviewFragment.newInstance(testId.toInt()),
+                COURSE_CONTENT
+            )
             addToBackStack(COURSE_CONTENT)
         }
     }
@@ -337,9 +412,11 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         binding.shimmer2.visibility = View.GONE
         binding.shimmer2.stopShimmer()
         binding.shimmer2Layout.visibility = View.VISIBLE
-        val courseDetailsInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val courseDetailsInflate: LayoutInflater =
+            getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         if (buyCourseFeatureModel.teacherName == null && buyCourseFeatureModel.teacherImage == null && buyCourseFeatureModel.video == null && buyCourseFeatureModel.youtubeChannel == null) {
-            englishCourseCard = courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
+            englishCourseCard =
+                courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
             binding.courseTypeContainer.removeAllViews()
             binding.courseTypeContainer.addView(englishCourseCard)
             viewModel.isGovernmentCourse.set(false)
@@ -348,13 +425,15 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             otherCourseCard = courseDetailsInflate.inflate(R.layout.other_course_card, null, true)
             binding.courseTypeContainer.removeAllViews()
             binding.courseTypeContainer.addView(otherCourseCard)
-            val teacherVideoButton = otherCourseCard?.findViewById<RelativeLayout>(R.id.play_video_button)
+            val teacherVideoButton =
+                otherCourseCard?.findViewById<RelativeLayout>(R.id.play_video_button)
             teacherVideoButton?.setOnClickListener {
                 viewModel.saveImpressionForBuyPageLayout(PLAY_SAMPLE_VIDEO)
                 playSampleVideo(buyCourseFeatureModel.video ?: EMPTY)
             }
 
-            teacherDetailsCard = courseDetailsInflate.inflate(R.layout.teacher_details_card, null, true)
+            teacherDetailsCard =
+                courseDetailsInflate.inflate(R.layout.teacher_details_card, null, true)
             binding.teacherDetails.removeAllViews()
             binding.teacherDetails.addView(teacherDetailsCard)
 
@@ -400,8 +479,10 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun getCourseDescriptionList(buyCourseFeatureModel: String): View? {
-        val courseDescListInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        courseDescListCard = courseDescListInflate.inflate(R.layout.item_course_description, null, true)
+        val courseDescListInflate: LayoutInflater =
+            getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        courseDescListCard =
+            courseDescListInflate.inflate(R.layout.item_course_description, null, true)
 
         val courseDesc = courseDescListCard?.findViewById<TextView>(R.id.course_desc)
         courseDesc?.text = buyCourseFeatureModel
@@ -412,9 +493,11 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         binding.shimmer3.visibility = View.GONE
         binding.shimmer3.stopShimmer()
         binding.shimmer3Layout.visibility = View.VISIBLE
-        val ratingInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val ratingInflate: LayoutInflater =
+            getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-        teacherRatingAndReviewCard = ratingInflate.inflate(R.layout.teacher_rating_and_review_card, null, true)
+        teacherRatingAndReviewCard =
+            ratingInflate.inflate(R.layout.teacher_rating_and_review_card, null, true)
         binding.teacherRatingAndReview.removeAllViews()
         binding.teacherRatingAndReview.addView(teacherRatingAndReviewCard)
 
@@ -423,7 +506,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
 
         clickRatingOpen = teacherRatingAndReviewCard?.findViewById(R.id.btn_ration_click)
 
-        val teacherRating = teacherRatingAndReviewCard?.findViewById<JoshRatingBar>(R.id.teacher_rating)
+        val teacherRating =
+            teacherRatingAndReviewCard?.findViewById<JoshRatingBar>(R.id.teacher_rating)
         teacherRating?.rating = buyCourseFeatureModel.rating ?: 0.0f
 
         val ratingInText = teacherRatingAndReviewCard?.findViewById<TextView>(R.id.rating_in_text)
@@ -431,7 +515,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     private fun paymentButton() {
-        val paymentInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val paymentInflate: LayoutInflater =
+            getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         proceedButtonCard = paymentInflate.inflate(R.layout.payment_button_card, null, true)
         val paymentButton = proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)
         binding.paymentProceedBtnCard.removeAllViews()
@@ -439,51 +524,11 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         paymentButton?.setOnSingleClickListener {
             startPayment()
         }
-        proceedButtonCard?.findViewById<MaterialTextView>(R.id.text_view_privacy)?.setOnSingleClickListener{
-            showPrivacyPolicyDialog()
-        }
+        proceedButtonCard?.findViewById<MaterialTextView>(R.id.text_view_privacy)
+            ?.setOnSingleClickListener {
+                showPrivacyPolicyDialog()
+            }
     }
-
-//    private fun initializeRazorpayPayment(orderDetails: OrderDetailResponse) {
-//        Log.e("sagar", "initializeRazorpayPayment:1 ")
-//        viewModel.isProcessing.set(true)
-//        binding.progressBar.visibility = View.VISIBLE
-//        val checkout = Checkout()
-//        checkout.setImage(R.mipmap.ic_launcher)
-//        checkout.setKeyID(orderDetails.razorpayKeyId)
-//        try {
-//            val preFill = JSONObject()
-//
-//            if (User.getInstance().email.isNullOrEmpty().not()) {
-//                preFill.put("email", User.getInstance().email)
-//            } else {
-//                preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
-//            }
-//            //preFill.put("contact", "9999999999")
-//
-//            val options = JSONObject()
-//            options.put("key", orderDetails.razorpayKeyId)
-//            options.put("name", "Josh Skills")
-//            try {
-//                options.put(
-//                    "description",
-//                    priceForPaymentProceed?.courseName + "_app"
-//                )
-//            } catch (ex: Exception) {
-//                ex.printStackTrace()
-//            }
-//            options.put("order_id", orderDetails.razorpayOrderId)
-//            options.put("currency", orderDetails.currency)
-//            options.put("amount", orderDetails.amount * 100)
-//            options.put("prefill", preFill)
-//            checkout.open(this, options)
-//            razorpayOrderId = orderDetails.razorpayOrderId
-//            binding.progressBar.visibility = View.GONE
-//        } catch (e: Exception) {
-//            Log.e("sagar", "initializeRazorpayPayment:2 ${e.message}")
-//            e.printStackTrace()
-//        }
-//    }
 
     private fun initializeJuspayPayment(orderDetails: JuspayPayLoad) {
         Log.e("sagar", "initializeJuspayPayment:1 $orderDetails")
@@ -505,10 +550,10 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             sdkPayload.put("customerPhone", orderDetails.payload?.customerPhone)
 
             payload.put("requestId", orderDetails.requestId)
-            payload.put("service",  orderDetails.service)
+            payload.put("service", orderDetails.service)
             payload.put("payload", sdkPayload)
 
-         // razorpayOrderId = orderDetails.razorpayOrderId
+            juspayOrderId = orderDetails.payload?.orderId ?: EMPTY
             hyperInstance.process(payload)
 
         } catch (e: Exception) {
@@ -553,103 +598,16 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         }
     }
 
-    override fun onPaymentError(p0: Int, p1: String?) {
-        // isBackPressDisabled = true
-        viewModel.mentorPaymentStatus.observe(this) {
-            when (it) {
-                true -> {
-                    val freeTrialTestId = Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
-                    if (testId == freeTrialTestId) {
-                        PrefManager.put(IS_COURSE_BOUGHT, true)
-                        PrefManager.put(IS_FREE_TRIAL, false)
-                        PrefManager.put(IS_FREE_TRIAL, false)
-
-                        PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
-                    }
-                    // isBackPressDisabled = true
-                    razorpayOrderId.verifyPayment()
-                    //viewModel.updateSubscriptionStatus()
-
-                    AppObjectController.uiHandler.post {
-                        PrefManager.put(IS_PAYMENT_DONE, true)
-                        showPaymentProcessingFragment()
-                    }
-
-                    AppObjectController.uiHandler.postDelayed({
-                        navigateToStartCourseActivity()
-                    }, 1000L * 5L)
-                }
-                false -> {
-                    AppObjectController.uiHandler.post {
-                        showPaymentFailedDialog()
-                    }
-                }
+    private fun verifyPaymentJuspay(orderId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppObjectController.commonNetworkService.verifyPaymentV3(orderId)
+            } catch (ex: HttpException) {
+                ex.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
-        try {
-            //MarketingAnalytics.paymentFail(razorpayOrderId, testId)
-            viewModel.removeEntryFromPaymentTable(razorpayOrderId)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    @Synchronized
-    override fun onPaymentSuccess(razorpayPaymentId: String) {
-        if (viewModel.isDiscount) {
-            viewModel.saveImpression(IMPRESSION_PAY_DISCOUNT)
-        } else {
-            viewModel.saveImpression(IMPRESSION_PAY_FULL_FEES)
-        }
-        val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-            Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
-        } else {
-            PrefManager.getStringValue(PAID_COURSE_TEST_ID)
-        }
-
-        if (testId == freeTrialTestId) {
-            PrefManager.put(IS_COURSE_BOUGHT, true)
-            PrefManager.put(IS_FREE_TRIAL, false)
-            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
-        }
-        // isBackPressDisabled = true
-        razorpayOrderId.verifyPayment()
-        viewModel.removeEntryFromPaymentTable(razorpayOrderId)
-        MarketingAnalytics.coursePurchased(
-            BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0),
-            true,
-            testId = freeTrialTestId,
-            courseName = priceForPaymentProceed?.courseName ?: EMPTY,
-            razorpayPaymentId = razorpayOrderId
-        )
-        //viewModel.updateSubscriptionStatus()
-        try {
-            val extras: HashMap<String, String> = HashMap()
-            var guestMentorId = EMPTY
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
-                guestMentorId = Mentor.getInstance().getId()
-            }
-            extras["test_id"] = priceForPaymentProceed?.testId.toString()
-            extras["payment_id"] = razorpayPaymentId
-            extras["currency"] = CurrencyType.INR.name
-            extras["amount"] = priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()
-            extras["course_name"] = priceForPaymentProceed?.courseName.toString()
-            extras["device_id"] = Utils.getDeviceId()
-            extras["guest_mentor_id"] = guestMentorId
-            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
-            NotificationUtils(applicationContext).removeAllScheduledNotification()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        AppObjectController.uiHandler.post {
-            PrefManager.put(IS_PAYMENT_DONE, true)
-            showPaymentProcessingFragment()
-        }
-
-        AppObjectController.uiHandler.postDelayed({
-            navigateToStartCourseActivity()
-        }, 1000L * 5L)
     }
 
     private fun showPaymentProcessingFragment() {
@@ -682,8 +640,8 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
             StartCourseActivity.openStartCourseActivity(
                 this,
                 priceForPaymentProceed?.courseName ?: EMPTY,
-                priceForPaymentProceed?.teacherName?: EMPTY,
-                priceForPaymentProceed?.imageUrl?: EMPTY,
+                priceForPaymentProceed?.teacherName ?: EMPTY,
+                priceForPaymentProceed?.imageUrl ?: EMPTY,
                 viewModel.orderDetailsLiveData.value?.joshtalksOrderId ?: 0,
                 priceForPaymentProceed?.testId ?: EMPTY,
                 priceForPaymentProceed?.discountedPrice ?: EMPTY
@@ -783,8 +741,10 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     fun onCouponApply(coupon: Coupon) {
         val dialogView = showCustomDialog(R.layout.coupon_applied_alert_dialog)
         val btnGotIt = dialogView.findViewById<AppCompatTextView>(R.id.got_it_button)
-        dialogView.findViewById<TextView>(R.id.coupon_name_text).text = coupon.couponCode + " applied"
-        dialogView.findViewById<TextView>(R.id.coupon_price_text).text = "You saved upto ₹" + coupon.maxDiscountAmount.toString()
+        dialogView.findViewById<TextView>(R.id.coupon_name_text).text =
+            coupon.couponCode + " applied"
+        dialogView.findViewById<TextView>(R.id.coupon_price_text).text =
+            "You saved upto ₹" + coupon.maxDiscountAmount.toString()
 
         btnGotIt.setOnClickListener {
             dialogView.dismiss()
@@ -832,11 +792,18 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
     }
 
     fun showProgressBar() {
-        FullScreenProgressDialog.showProgressBar(this@BuyPageActivity)
+        Log.e("sagar", "showProgressBar: ")
+        lifecycleScope.launch(Dispatchers.Main) {
+            Log.e("sagar", "showProgressBar1: ")
+            FullScreenProgressDialog.showProgressBar(this@BuyPageActivity)
+        }
     }
 
     fun hideProgressBar() {
-        FullScreenProgressDialog.hideProgressBar(this@BuyPageActivity)
+        Log.e("sagar", "hideProgressBar: ")
+        lifecycleScope.launch(Dispatchers.Main) {
+            FullScreenProgressDialog.hideProgressBar(this@BuyPageActivity)
+        }
     }
 
     fun showErrorView() {
@@ -849,7 +816,11 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
                         viewModel.getValidCouponList(OFFERS)
                     } else {
                         errorView?.get()?.enableRetryBtn()
-                        Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.internet_not_available_msz),
+                            Snackbar.LENGTH_SHORT
+                        )
                             .setAction(getString(R.string.settings)) {
                                 startActivity(
                                     Intent(
@@ -866,38 +837,76 @@ class BuyPageActivity : BaseActivity(), PaymentResultListener {
         }
     }
 
-//    fun initiateJuspaySdk(payloadData: JSONObject) {
-//        try {
-//            hyperInstance?.initiate(payloadData, object : HyperPaymentsCallbackAdapter() {
-//                override fun onEvent(
-//                    data: JSONObject,
-//                    juspayResponseHandler: JuspayResponseHandler
-//                ) {
-//                    Log.d("Inside OnEvent ", "initiate")
-//                    try {
-//                        val event = data.getString("event")
-//                        when (event) {
-//                            "initiate_result" -> {
-//
-//                            }
-//                            "process_result" -> {
-//
-//                            }
-//                            "hide_loader" -> {
-//
-//                            }
-//                            else -> {
-//
-//                            }
-//                        }
-//                    } catch (e: java.lang.Exception) {
-//                        Log.d("Came here", e.toString())
-//                        e.printStackTrace()
-//                    }
-//                }
-//            })
-//        } catch (e: java.lang.Exception) {
-//            e.printStackTrace()
-//        }
-//    }
+    private fun onPaymentSuccess() {
+        if (viewModel.isDiscount) {
+            viewModel.saveImpression(IMPRESSION_PAY_DISCOUNT)
+        } else {
+            viewModel.saveImpression(IMPRESSION_PAY_FULL_FEES)
+        }
+        val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
+            Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+        } else {
+            PrefManager.getStringValue(PAID_COURSE_TEST_ID)
+        }
+
+        if (testId == freeTrialTestId) {
+            PrefManager.put(IS_COURSE_BOUGHT, true)
+            PrefManager.put(IS_FREE_TRIAL, false)
+            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
+        }
+        // isBackPressDisabled = true
+        verifyPaymentJuspay(juspayOrderId)
+        viewModel.removeEntryFromPaymentTable(juspayOrderId)
+        MarketingAnalytics.coursePurchased(
+            BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
+            true,
+            testId = freeTrialTestId,
+            courseName = priceForPaymentProceed?.courseName ?: EMPTY,
+            juspayPaymentId = juspayOrderId
+        )
+        //viewModel.updateSubscriptionStatus()
+        try {
+            val extras: HashMap<String, String> = HashMap()
+            var guestMentorId = EMPTY
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                guestMentorId = Mentor.getInstance().getId()
+            }
+            extras["test_id"] = priceForPaymentProceed?.testId.toString()
+            extras["payment_id"] = juspayOrderId
+            extras["currency"] = CurrencyType.INR.name
+            extras["amount"] = priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()
+            extras["course_name"] = priceForPaymentProceed?.courseName.toString()
+            extras["device_id"] = Utils.getDeviceId()
+            extras["guest_mentor_id"] = guestMentorId
+            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
+            NotificationUtils(applicationContext).removeAllScheduledNotification()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        AppObjectController.uiHandler.post {
+            PrefManager.put(IS_PAYMENT_DONE, true)
+            showPaymentProcessingFragment()
+        }
+
+        AppObjectController.uiHandler.postDelayed({
+            navigateToStartCourseActivity()
+        }, 1000L * 5L)
+    }
+
+    private fun onPaymentPending() {
+
+    }
+
+    private fun onPaymentError() {
+        verifyPaymentJuspay(juspayOrderId)
+        AppObjectController.uiHandler.post {
+            showPaymentFailedDialog()
+        }
+        try {
+            viewModel.removeEntryFromPaymentTable(juspayOrderId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }

@@ -4,14 +4,14 @@ import com.google.gson.annotations.SerializedName
 
 
 data class JuspayPayLoad(
-    @SerializedName("juspay_order_id") var juspayOrderId: String? = null,
-    @SerializedName("requestId") var requestId: String? = null,
-    @SerializedName("service") var service: String? = null,
-    @SerializedName("payload") var payload: PayloadData? = null,
-    @SerializedName("joshtalks_order_id") var joshtalksOrderId: Int? = null,
-    @SerializedName("amount") var amount: Int? = null,
-    @SerializedName("currency") var currency: String? = null,
-    @SerializedName("email") var email: String? = null
+    @SerializedName("juspay_order_id") val juspayOrderId: String,
+    @SerializedName("requestId") val requestId: String? = null,
+    @SerializedName("service") val service: String? = null,
+    @SerializedName("payload") val payload: PayloadData? = null,
+    @SerializedName("joshtalks_order_id") val joshtalksOrderId: Int,
+    @SerializedName("amount") val amount: Double,
+    @SerializedName("currency") val currency: String,
+    @SerializedName("email") val email: String
 )
 
 data class PayloadData(

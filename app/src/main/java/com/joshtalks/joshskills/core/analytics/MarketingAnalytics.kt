@@ -166,7 +166,7 @@ object MarketingAnalytics {
         logFacebook: Boolean = false,
         testId: String = EMPTY,
         courseName: String = EMPTY,
-        razorpayPaymentId: String = EMPTY,
+        juspayPaymentId: String = EMPTY,
     ) {
         val context = AppObjectController.joshApplication
         val params = Bundle().apply {
@@ -185,7 +185,7 @@ object MarketingAnalytics {
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
             bundle.putDouble(FirebaseAnalytics.Param.VALUE, amount.toDouble())
-            bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
+            bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, juspayPaymentId)
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
             FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
             AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_PURCHASED,params)

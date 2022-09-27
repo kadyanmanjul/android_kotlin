@@ -11,9 +11,12 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
+import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.CouponListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.FeatureListAdapter
@@ -34,10 +37,10 @@ import java.net.UnknownHostException
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }
     val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
-    var featureAdapter =  FeatureListAdapter()
-    var couponListAdapter =  CouponListAdapter()
-    var offersListAdapter =  OffersListAdapter()
-    var priceListAdapter =  PriceListAdapter()
+    var featureAdapter = FeatureListAdapter()
+    var couponListAdapter = CouponListAdapter()
+    var offersListAdapter = OffersListAdapter()
+    var priceListAdapter = PriceListAdapter()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
     var informations = ObservableField(EMPTY)
@@ -46,7 +49,6 @@ class BuyPageViewModel : BaseViewModel() {
 
     var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
-    var isProcessing = ObservableBoolean(false)
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
 
     var itemPosition = 0
@@ -56,14 +58,14 @@ class BuyPageViewModel : BaseViewModel() {
     var isOfferOrInsertCodeVisible = ObservableBoolean(false)
 
     val isVideoPopUpShow = ObservableBoolean(false)
-    var couponList:List<Coupon>?= null
+    var couponList: List<Coupon>? = null
 
     var callUsText = ObservableField(EMPTY)
 
     var isCouponApiCall = ObservableBoolean(true)
     var isPriceApiCall = ObservableBoolean(true)
 
-    fun isSeeAllButtonShow() : Boolean {
+    fun isSeeAllButtonShow(): Boolean {
         return PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
     }
 
@@ -81,7 +83,7 @@ class BuyPageViewModel : BaseViewModel() {
                         singleLiveEvent.value = message
                     }
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
 
@@ -89,7 +91,7 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     //This method is for set coupon and offer list on basis of type coupon or offer
-    fun getValidCouponList(methodCallType:String) {
+    fun getValidCouponList(methodCallType: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 isCouponApiCall.set(true)
@@ -100,8 +102,7 @@ class BuyPageViewModel : BaseViewModel() {
                     withContext(mainDispatcher) {
                         if (methodCallType == COUPON) {
                             couponListAdapter.addOffersList(response.body()!!.listOfCoupon)
-                        }
-                        else {
+                        } else {
                             response.body()!!.listOfCoupon?.let { offersListAdapter.addOffersList(it) }
 
                             if (response.body()!!.listOfCoupon?.size ?: 0 >= 1)
@@ -117,10 +118,10 @@ class BuyPageViewModel : BaseViewModel() {
                         message.what = SCROLL_TO_BOTTOM
                         singleLiveEvent.value = message
                     }
-                }else{
+                } else {
                     isCouponApiCall.set(true)
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 isCouponApiCall.set(true)
                 e.printStackTrace()
             }
@@ -134,26 +135,32 @@ class BuyPageViewModel : BaseViewModel() {
     //this method is get price and if pass coupon code then it will return discount price
     fun getCoursePriceList(code: String?) {
         try {
-            viewModelScope.launch(Dispatchers.IO){
+            viewModelScope.launch(Dispatchers.IO) {
                 try {
                     isPriceApiCall.set(true)
-                    val response = buyPageRepo.getPriceList(PriceParameterModel(PrefManager.getStringValue(USER_UNIQUE_ID), Integer.parseInt(testId),code))
+                    val response = buyPageRepo.getPriceList(
+                        PriceParameterModel(
+                            PrefManager.getStringValue(USER_UNIQUE_ID),
+                            Integer.parseInt(testId),
+                            code
+                        )
+                    )
                     if (response.isSuccessful && response.body() != null) {
                         apiStatus.postValue(ApiCallStatus.SUCCESS)
                         isPriceApiCall.set(false)
                         withContext(mainDispatcher) {
                             priceListAdapter.addPriceList(response.body()?.courseDetails)
                         }
-                    }else{
+                    } else {
                         isPriceApiCall.set(true)
                     }
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     isPriceApiCall.set(true)
                     e.printStackTrace()
                 }
 
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             Log.d("BuyPageViewModel.kt", "SAGAR => getCoursePriceList:130 ")
         }
     }
@@ -169,17 +176,16 @@ class BuyPageViewModel : BaseViewModel() {
                         try {
                             getCoursePriceList(it.couponCode)
                             isDiscount = true
-                        }catch (ex:Exception){
+                        } catch (ex: Exception) {
                             Log.d("BuyPageViewModel.kt", "SAGAR => :139 ${ex.message}")
                         }
-                    }
-                    else {
+                    } else {
                         isCouponApplied.set(false)
                         getCoursePriceList(null)
                     }
                 }
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             Log.d("BuyPageViewModel.kt", "SAGAR => :145 ${ex.message}")
         }
     }
@@ -189,17 +195,18 @@ class BuyPageViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    val onItemPriceClick: (CourseDetailsList, Int, Int, String) -> Unit = { it, type, position, cardType ->
-        itemPosition = position
-        when (type) {
-            CLICK_ON_PRICE_CARD -> {
-                message.what = CLICK_ON_PRICE_CARD
-                message.obj = it
-                message.arg1 = position
-                singleLiveEvent.value = message
+    val onItemPriceClick: (CourseDetailsList, Int, Int, String) -> Unit =
+        { it, type, position, cardType ->
+            itemPosition = position
+            when (type) {
+                CLICK_ON_PRICE_CARD -> {
+                    message.what = CLICK_ON_PRICE_CARD
+                    message.obj = it
+                    message.arg1 = position
+                    singleLiveEvent.value = message
+                }
             }
         }
-    }
 
     val onItemCouponClick: (Coupon, Int, Int, String) -> Unit = { it, type, position, couponType ->
         itemPosition = position
@@ -214,28 +221,33 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    fun openCouponListScreen(){
+    fun openCouponListScreen() {
         message.what = OPEN_COUPON_LIST_SCREEN
         singleLiveEvent.value = message
     }
 
-    fun openRatingAndReview(){
+    fun openRatingAndReview() {
         message.what = OPEN_RATING_AND_REVIEW_SCREEN
         singleLiveEvent.value = message
     }
 
-    fun openCourseExplore(){
+    fun openCourseExplore() {
         message.what = OPEN_COURSE_EXPLORE
         singleLiveEvent.value = message
     }
 
-    fun makePhoneCall(){
+    fun makePhoneCall() {
         message.what = MAKE_PHONE_CALL
         singleLiveEvent.value = message
     }
+
     fun getOrderDetails(testId: String, mobileNumber: String, encryptedText: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            isProcessing.set(true)
+            //isProcessing.set(true)
+            withContext(Dispatchers.Main) {
+                message.what = SHOW_PROCESSING_DIALOG
+                singleLiveEvent.value = message
+            }
             try {
                 val data = mutableMapOf(
                     "encrypted_text" to encryptedText,
@@ -250,13 +262,13 @@ class BuyPageViewModel : BaseViewModel() {
                 if (orderDetailsResponse.code() == 201) {
                     val response: JuspayPayLoad = orderDetailsResponse.body()!!
                     //orderDetailsLiveData.postValue(response)
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         message.what = ORDER_DETAILS_VALUE
                         message.obj = response
                         singleLiveEvent.value = message
                     }
                     //MarketingAnalytics.initPurchaseEvent(data, response)
-                    //addPaymentEntry(response)
+                    addPaymentEntry(response)
                 } else {
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
@@ -271,13 +283,12 @@ class BuyPageViewModel : BaseViewModel() {
                     else -> {
                         try {
                             FirebaseCrashlytics.getInstance().recordException(ex)
-                        }catch (ex:Exception){
+                        } catch (ex: Exception) {
                             ex.printStackTrace()
                         }
                     }
                 }
             }
-            isProcessing.set(false)
         }
     }
 
@@ -294,17 +305,6 @@ class BuyPageViewModel : BaseViewModel() {
             }
         }
     }
-    fun checkMentorIdPaid() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
-                val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
-                mentorPaymentStatus.postValue(response["payment"] as Boolean)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     fun removeEntryFromPaymentTable(razorpayOrderId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -312,26 +312,26 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-//    private fun addPaymentEntry(response: OrderDetailResponseV3) {
-//        AppObjectController.appDatabase.paymentDao().inertPaymentEntry(
-//            Payment(
-//                response.payload.amount,
-//                response.joshtalksOrderId,
-//                response.razorpayKeyId,
-//                response.payload.orderId,
-//                PaymentStatus.CREATED
-//            )
-//        )
-//    }
+    private fun addPaymentEntry(response: JuspayPayLoad) {
+        AppObjectController.appDatabase.paymentDao().inertPaymentEntry(
+            Payment(
+                response.amount,
+                response.joshtalksOrderId,
+                EMPTY,
+                response.payload?.orderId ?: EMPTY,
+                PaymentStatus.CREATED
+            )
+        )
+    }
 
     fun onBackPress(view: View) {
         message.what = BUY_PAGE_BACK_PRESS
         singleLiveEvent.value = message
     }
 
-    fun applyEnteredCoupon(code : String) {
+    fun applyEnteredCoupon(code: String) {
         saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED)
-        if (code.isNotBlank()){
+        if (code.isNotBlank()) {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     val response = buyPageRepo.getCouponFromCode(code)
@@ -354,8 +354,8 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    fun saveImpressionForBuyPageLayout(eventName: String, eventData:Int = 0){
-        viewModelScope.launch (Dispatchers.IO){
+    fun saveImpressionForBuyPageLayout(eventName: String, eventData: Int = 0) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 buyPageRepo.saveBuyPageImpression(
                     mapOf(
@@ -363,7 +363,7 @@ class BuyPageViewModel : BaseViewModel() {
                         "event_data" to eventData
                     )
                 )
-            }catch (ex:java.lang.Exception){
+            } catch (ex: java.lang.Exception) {
 
             }
         }
