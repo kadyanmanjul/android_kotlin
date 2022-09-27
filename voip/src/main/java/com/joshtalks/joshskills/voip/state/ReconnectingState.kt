@@ -291,6 +291,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
     }
 
     private fun moveToLeavingState() {
+        context.audioController?.deactivate()
         scope.launch {
             try{
                 listenerJob?.cancel()

@@ -1,20 +1,14 @@
 package com.joshtalks.joshskills.voip.audiocontroller
 
-import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
 import android.util.Log
-import com.joshtalks.joshskills.voip.Utils
-import kotlinx.coroutines.CancellationException
+import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 
 /**
  * Require Permissions :-
@@ -31,134 +25,61 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "AudioController"
 
-class AudioController(val coroutineScope: CoroutineScope) : AudioControllerInterface {
+class AudioController(
+    val coroutineScope: CoroutineScope,
+    val applicationContext: Context,
+    val audioRoute: IAudioRouteListener
+) : IAudioController {
 
-    private val applicationContext = Utils.context
-    private val audioManager = Utils.context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
-    private val audioRouteFlow = MutableSharedFlow<AudioRouteConstants>()
+    private val audioManager =
+        applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
 
-    companion object {
-        private var isSpeakerOn: Boolean = false
-        private var isHeadsetOn: Boolean = false
-        private var isBluetoothOn: Boolean = false
-    }
-
-    private val headsetReceiver by lazy {
-        HeadsetReceiver(coroutineScope)
-    }
-    private val bluetoothReceiver by lazy {
-        BluetoothReceiver(coroutineScope)
-    }
-
-    init {
-        observeAudioRouteReceivers()
-        initAudioRouteVariables()
-    }
-
-    private fun observeAudioRouteReceivers() {
-        coroutineScope.launch {
-            try {
-                headsetReceiver.observeHeadsetEvents().collect {
-                    try {
-                        when (it) {
-                            AudioRouteConstants.Default -> {
-                                changeRouteStatus(isHeadsetOn = false)
-                            }
-                            AudioRouteConstants.HeadsetAudio -> {
-                                changeRouteStatus(isHeadsetOn = true)
-                            }
-                            else -> {}
-                        }
-
-                    } catch (e: Exception) {
-                        if (e is CancellationException)
-                            throw e
-                        e.printStackTrace()
-                    }
-                }
-            } catch (e: Exception) {
-                if (e is CancellationException)
-                    throw e
-                e.printStackTrace()
-            }
-
-        }
-        coroutineScope.launch {
-            try {
-                bluetoothReceiver.observeBluetoothEvents().collect {
-                    try {
-                        when (it) {
-                            AudioRouteConstants.BluetoothAudio -> {
-                                changeRouteStatus(isBluetoothOn = true)
-                            }
-                            AudioRouteConstants.Default -> {
-                                changeRouteStatus(isBluetoothOn = false)
-                            }
-                            else -> {}
-                        }
-                    } catch (e: Exception) {
-                        if (e is CancellationException)
-                            throw e
-                        e.printStackTrace()
-                    }
-                }
-            } catch (e: Exception) {
-                if (e is CancellationException)
-                    throw e
-                e.printStackTrace()
-            }
-
+    override fun activate() {
+        audioRoute.refresh(audioManager)
+        audioRoute.registerAudioControllerReceivers()
+        audioRoute.getCurrentAudioRoute().updateRoute()
+        audioRoute.setRouteListener {
+            audioRoute.getCurrentAudioRoute().updateRoute()
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun initAudioRouteVariables() {
-        Log.d(TAG, "observeAudioRoute initAudioRouteVariables WiredHeadset=${audioManager?.isWiredHeadsetOn} Bluetooth=${isBluetoothHeadsetConnected()}")
-        isBluetoothOn = isBluetoothHeadsetConnected()
-        isHeadsetOn = audioManager?.isWiredHeadsetOn ?: false
-        isSpeakerOn = false
-        changeRouteStatus(isBluetoothOn= isBluetoothOn, isHeadsetOn= isHeadsetOn, isSpeakerOn= isSpeakerOn)
+    override fun switchAudioToSpeaker() {
+        Log.d(TAG, "switchAudioToSpeaker: ")
+        audioRoute.changeSpeakerState(true)
+        audioRoute.getCurrentAudioRoute().updateRoute()
     }
 
-    override fun registerAudioControllerReceivers() {
-        val headsetFilter = IntentFilter().apply {
-            addAction(Intent.ACTION_HEADSET_PLUG)
-        }
-        val bluetoothFilter = IntentFilter().apply {
-            addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
-        }
-        applicationContext?.registerReceiver(headsetReceiver, headsetFilter)
-        applicationContext?.registerReceiver(bluetoothReceiver, bluetoothFilter)
+    override fun switchAudioToDefault() {
+        Log.d(TAG, "switchAudioToDefault: ")
+        audioRoute.changeSpeakerState(false)
+        audioRoute.getCurrentAudioRoute().updateRoute()
     }
 
-    override fun unregisterAudioControllerReceivers() {
-        applicationContext?.unregisterReceiver(headsetReceiver)
-        applicationContext?.unregisterReceiver(bluetoothReceiver)
+    override fun deactivate() {
+        setToDefault()
     }
 
-    override fun observeAudioRoute(): SharedFlow<AudioRouteConstants> {
-        return audioRouteFlow
+    private fun AudioRouteConstants.updateRoute() {
+        Log.d(TAG, "updateRoute: $this")
+        when (this) {
+            AudioRouteConstants.SpeakerAudio -> setSpeakerOn()
+            AudioRouteConstants.BluetoothAudio -> setBluetoothOn()
+            AudioRouteConstants.HeadsetAudio -> setHeadset()
+            AudioRouteConstants.Default -> if (PrefManager.getVoipState() == State.CONNECTED || PrefManager.getVoipState() == State.RECONNECTING)
+                setEarpiece()
+            else
+                setSpeakerOn()
+        }
     }
 
-    override fun getCurrentAudioRoute(): AudioRouteConstants {
-        Log.d(TAG, "observeAudioRoute getCurrentAudioRoute speaker=$isSpeakerOn Bluetooth=$isBluetoothOn WiredHeadset=$isHeadsetOn ")
-        if (isSpeakerOn) {
-            setSpeakerOn()
-            return AudioRouteConstants.SpeakerAudio
-        }
-        if (isBluetoothOn) {
-            setBluetoothOn()
-            return AudioRouteConstants.BluetoothAudio
-        }
-        if (isHeadsetOn) {
-            setHeadset()
-            return AudioRouteConstants.HeadsetAudio
-        }
-        setEarpiece()
-        return AudioRouteConstants.EarpieceAudio
+    private fun setToDefault() {
+        audioRoute.unregisterAudioControllerReceivers()
+        audioRoute.refresh(audioManager)
+        audioRoute.getCurrentAudioRoute().updateRoute()
     }
 
     private fun setSpeakerOn() {
+        Log.d(TAG, "setSpeakerOn: ")
         audioManager?.mode = AudioManager.MODE_NORMAL
         audioManager?.stopBluetoothSco()
         audioManager?.isBluetoothScoOn = false
@@ -172,70 +93,25 @@ class AudioController(val coroutineScope: CoroutineScope) : AudioControllerInter
     }
 
     private fun setBluetoothOn() {
+        Log.d(TAG, "setBluetoothOn: ")
         audioManager?.mode = AudioManager.MODE_IN_COMMUNICATION
         audioManager?.startBluetoothSco()
         audioManager?.isBluetoothScoOn = true
+        audioManager?.isSpeakerphoneOn = false
     }
 
     private fun setHeadset() {
+        Log.d(TAG, "setHeadset: ")
         audioManager?.stopBluetoothSco()
         audioManager?.isBluetoothScoOn = false
         audioManager?.isSpeakerphoneOn = false
     }
 
     private fun setEarpiece() {
+        Log.d(TAG, "setEarpiece: ")
         audioManager?.mode = AudioManager.MODE_IN_COMMUNICATION
         audioManager?.stopBluetoothSco()
         audioManager?.isBluetoothScoOn = false
         audioManager?.isSpeakerphoneOn = false
-    }
-
-    override fun switchAudioToSpeaker() {
-        changeRouteStatus(isSpeakerOn = true)
-    }
-
-    override fun switchAudioToDefault() {
-        changeRouteStatus(isSpeakerOn = false)
-    }
-
-    override fun resetAudioRoute() {
-        initAudioRouteVariables()
-    }
-
-    private fun checkAudioRoute() {
-        emitAudioRoute(getCurrentAudioRoute())
-    }
-
-    private fun emitAudioRoute(audioRoute: AudioRouteConstants) {
-        coroutineScope.launch {
-            try {
-                audioRouteFlow.emit(audioRoute)
-            } catch (e: Exception) {
-                if (e is CancellationException)
-                    throw e
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun changeRouteStatus(isBluetoothOn: Boolean? = null, isHeadsetOn: Boolean? = null, isSpeakerOn: Boolean?=null) {
-        if (isHeadsetOn != null) {
-            Companion.isHeadsetOn = isHeadsetOn
-        }
-        if (isBluetoothOn != null) {
-            Companion.isBluetoothOn = isBluetoothOn
-        }
-        if (isSpeakerOn != null) {
-            Companion.isSpeakerOn = isSpeakerOn
-        }
-        checkAudioRoute()
-    }
-
-    @SuppressLint("MissingPermission")
-   private fun isBluetoothHeadsetConnected(): Boolean {
-        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        return (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled
-                && mBluetoothAdapter.getProfileConnectionState(BluetoothHeadset.HEADSET) == BluetoothHeadset.STATE_CONNECTED)
-
     }
 }

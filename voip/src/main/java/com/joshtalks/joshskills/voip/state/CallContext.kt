@@ -2,6 +2,9 @@ package com.joshtalks.joshskills.voip.state
 
 import android.os.SystemClock
 import android.util.Log
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.audiocontroller.AudioController
+import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteListener
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.constant.Category
@@ -33,6 +36,12 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
     var isRetrying = false
     val durationInMillis by lazy {
         callDurationInMillis()
+    }
+    private val audioRouteListener by lazy {
+        Utils.context?.let { AudioRouteListener(scope, it) }
+    }
+    val audioController by lazy {
+        Utils.context?.let { audioRouteListener?.let { it1 -> AudioController(scope, it, it1) } }
     }
 
     fun hasChannelData() = this::channelData.isInitialized
@@ -86,6 +95,14 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
     fun onError(reason : String) {
         Log.d(TAG, "OnError - ${state}")
         state.onError(reason)
+    }
+
+    fun switchToSpeaker() {
+        audioController?.switchAudioToSpeaker()
+    }
+
+    fun switchToDefault() {
+        audioController?.switchAudioToDefault()
     }
 
     fun closePipe() {

@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.RatingA
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 
-class RatingAndReviewFragment(val testId: Int) : Fragment() {
+class RatingAndReviewFragment : Fragment() {
 
     private val viewModel by lazy {
         ViewModelProvider(requireActivity())[RatingAndReviewViewModel::class.java]
@@ -22,7 +22,9 @@ class RatingAndReviewFragment(val testId: Int) : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.testId = testId
+        arguments?.let {
+            viewModel.testId = it.getInt("TEST_ID")
+        }
         viewModel.fetchReviews()
 
         lifecycleScope.launchWhenStarted {
@@ -41,5 +43,15 @@ class RatingAndReviewFragment(val testId: Int) : Fragment() {
         binding.vm = viewModel
         binding.executePendingBindings()
         return binding.root
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun newInstance(testId: Int) = RatingAndReviewFragment().apply {
+            arguments = Bundle().apply {
+                putInt("TEST_ID", testId)
+            }
+        }
     }
 }

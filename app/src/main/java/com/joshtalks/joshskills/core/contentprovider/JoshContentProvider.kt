@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.isBlocked
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import kotlinx.coroutines.sync.Mutex
 import java.lang.Exception
@@ -79,7 +80,6 @@ class JoshContentProvider : ContentProvider() {
                 cursor.addRow(arrayOf(PrefManager.getStringValue(CURRENT_COURSE_ID,false, DEFAULT_COURSE_ID)))
                 return cursor
             }
-
             IS_COURSE_BOUGHT_OR_FREE_TRIAL -> {
                 val cursor = MatrixCursor(arrayOf(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN))
                 val shouldHaveTapAction = when {
@@ -97,7 +97,18 @@ class JoshContentProvider : ContentProvider() {
                 cursor.addRow(arrayOf(shouldHaveTapAction.toString()))
                 return cursor
             }
-
+            IS_FT_ENDED_OR_BLOCKED -> {
+                val cursor = MatrixCursor(arrayOf(FT_ENDED_OR_BLOCKED_COLUMN))
+                val isBlockedOrFtEnded = when {
+                    isBlocked() -> true
+                    PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false) -> {
+                        PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false)
+                    }
+                    else -> false
+                }
+                cursor.addRow(arrayOf(isBlockedOrFtEnded.toString()))
+                return cursor
+            }
             MENTOR_NAME -> {
                 val cursor = MatrixCursor(arrayOf(MENTOR_NAME_COLUMN))
                 if (PrefManager.getStringValue(USER_NAME)!= EMPTY)
@@ -120,33 +131,70 @@ class JoshContentProvider : ContentProvider() {
                 return cursor
             }
             NOTIFICATION_DATA -> {
-                val cursor =
-                    MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN,
-                        NOTIFICATION_LESSON_COLUMN))
-                try{
-                    val word = AppObjectController.appDatabase.lessonQuestionDao().getRandomWord()
-                    Log.d(TAG, "query: Word ---> ${word.filter { it.word != null }}")
+                val cursor = MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN))
+                val isBlockedOrFtEnded = if (PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false)) {
+                    when {
+                        isBlocked() -> true
+                        else -> PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false)
+                    }
+                } else false
+                return try {
                     cursor.addRow(
                         arrayOf(
-                            word.last { it.word != null }.word?: "Appreciate",
-                            "Practice word of the day",
-                            word.last { it.word != null }.lessonId?: -1,
+                            getNotificationTitle(
+                                PrefManager.getStringValue(CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID),
+                                isBlockedOrFtEnded
+                            ),
+                            getNotificationBody(
+                                PrefManager.getStringValue(
+                                    CURRENT_COURSE_ID,
+                                    defaultValue = DEFAULT_COURSE_ID
+                                ), isBlockedOrFtEnded
+                            )
                         )
                     )
-                    return cursor
-                }catch (e : Exception){
+                    cursor
+                } catch (e: Exception) {
                     cursor.addRow(
                         arrayOf(
-                            "Appreciate",
-                            "Practice word of the day",
-                             -1,
+                            getNotificationTitle(DEFAULT_COURSE_ID, isBlockedOrFtEnded),
+                            getNotificationBody(DEFAULT_COURSE_ID, isBlockedOrFtEnded)
                         )
                     )
-                    return cursor
+                    cursor
                 }
             }
         }
         return null
+    }
+
+    private fun getNotificationTitle(courseId: String, blockedOrFTEnded: Boolean): String {
+        val name = Mentor.getInstance().getUser()?.firstName ?: "User"
+        if (blockedOrFTEnded) return "${name}, JUST ₹2/DAY !!!"
+        return when (courseId) {
+            "151", "1214" -> "$name, English बोलने से आती हैं."
+            "1203"-> "$name, ইংলিশ প্রাকটিস করলে তবেই বলতে পারবেন।"
+            "1206"-> "$name, English ਬੋਲਣ ਨਾਲ ਆਉਂਦੀ ਹੈ।"
+            "1207"-> "$name, English बोलल्याने येते."
+            "1209"-> "$name, English സംസാരിച്ചു  പഠിക്കാം."
+            "1210"-> "$name, பேசினால் தான் ஆங்கிலம் வரும்"
+            "1211"-> "$name, English మాట్లాడితేనే వస్తుంది."
+            else -> "$name, You will learn English by speaking."
+        }
+    }
+
+    private fun getNotificationBody(courseId: String, blockedOrFtEnded: Boolean): String {
+        if (!blockedOrFtEnded) return "Call now"
+        return when(courseId) {
+            "151", "1214" -> "Unlimited Calling, जब चाहें, जहाँ चाहें,  जितना चाहें !!!"
+            "1203"-> "Unlimited Calling, যে কোন সময় যে কোন জায়গায় যতটা আপনি চান"
+            "1206"-> "Unlimited Calling, ਜਦੋਂ ਚਾਹੋ, ਜਿੱਥੇ ਚਾਹੋ, ਜਿਹਨਾਂ ਚਾਹੋ !!!"
+            "1207"-> "Unlimited Calling, केव्हाही, कुठेही, पाहिजे तितके!!!"
+            "1209"-> "Unlimited Calling, എപ്പോൾ വേണമെങ്കിലും,എവിടെ വേണമെങ്കിലും,എത്ര വേണമെങ്കിലും!!!"
+            "1210"-> "Unlimited Calling, எங்கும், எந்நேரத்திலும், அளவில்லாமல்!!!"
+            "1211"-> "Unlimited Calling, ఎప్పుడు కావాలన్న, ఎక్కడ కావాలన్న, ఎంత కావాలన్న !!!"
+            else -> "Unlimited Calling, Anytime, Anywhere!!!"
+        }
     }
 
     override fun getType(uri: Uri): String? {

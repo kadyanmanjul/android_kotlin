@@ -78,7 +78,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         AppObjectController.getNewArchVoipFlag()
         AppObjectController.initObjectInThread()
         VoipPref.initVoipPref(this)
-        AppObjectController.initMoEngage()
         AppObjectController.registerBroadcastReceiver()
     }
 

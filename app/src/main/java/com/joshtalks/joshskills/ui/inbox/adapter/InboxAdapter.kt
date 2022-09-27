@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.YYYY_MM_DD
@@ -178,6 +179,7 @@ class InboxAdapter(
                     tvLastMessage.visibility = View.INVISIBLE
                     freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                     countdownTimerBack?.stop()
+                    PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     MarketingAnalytics.freeTrialEndEvent()
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
                     freeTrialTimer.visibility = View.VISIBLE

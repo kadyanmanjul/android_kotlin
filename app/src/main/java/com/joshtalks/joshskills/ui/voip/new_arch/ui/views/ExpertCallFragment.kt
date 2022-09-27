@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.isValidContextForGlide
 import com.joshtalks.joshskills.databinding.FragmentExpertCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.State
@@ -38,10 +37,6 @@ class ExpertCallFragment : BaseFragment() {
     lateinit var callBinding: FragmentExpertCallBinding
     private var mPlayer: MediaPlayer? = null
     private var scope = CoroutineScope(Dispatchers.Main)
-    private val audioController by lazy {
-        AudioController(CoroutineScope((Dispatchers.IO)))
-    }
-
     private var isFragmentRestarted = false
 
     val vm by lazy {

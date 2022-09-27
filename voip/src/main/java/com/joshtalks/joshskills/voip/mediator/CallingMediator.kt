@@ -230,10 +230,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     UserAction.SPEAKER_ON -> {
                         val envelope = Envelope(Event.SPEAKER_ON_REQUEST)
                         stateChannel.send(envelope)
+                        callContext?.switchToSpeaker()
                     }
                     UserAction.SPEAKER_OFF -> {
                         val envelope = Envelope(Event.SPEAKER_OFF_REQUEST)
                         stateChannel.send(envelope)
+                        callContext?.switchToDefault()
                     }
                     UserAction.TOPIC_IMAGE_CHANGE -> {
                         val envelope = Envelope(Event.TOPIC_IMAGE_CHANGE_REQUEST)
