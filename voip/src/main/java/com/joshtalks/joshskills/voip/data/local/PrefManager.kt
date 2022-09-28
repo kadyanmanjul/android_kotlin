@@ -180,14 +180,15 @@ class PrefManager {
             return null
         }
 
-        fun setBeepTimerStatus(isEnabled: Boolean) {
+        fun setBeepTimerStatus(status: Int) {
+            val isEnabled = status == 0
             val editor = preferenceManager.edit()
             editor.putBoolean(IS_BEEP_TIMER_ENABLED, isEnabled)
             editor.commit()
         }
 
         fun getBeepTimerStatus(): Boolean {
-            return preferenceManager.getBoolean(EXPERT_CALL_DURATION, false)
+            return preferenceManager.getBoolean(IS_BEEP_TIMER_ENABLED, false)
         }
     }
 }
