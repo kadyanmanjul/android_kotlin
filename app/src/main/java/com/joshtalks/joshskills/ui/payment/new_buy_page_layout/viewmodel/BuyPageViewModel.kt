@@ -10,7 +10,7 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
-import com.joshtalks.joshskills.ui.payment.FREE_TRIAL_PAYMENT_TEST_ID
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.CouponListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.FeatureListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.OffersListAdapter

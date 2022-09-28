@@ -142,13 +142,6 @@
             android:name=".ui.senior_student.SeniorStudentActivity"
             android:exported="true" />
         <activity
-            android:name=".ui.payment.FreeTrialPaymentActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".ui.signup.FreeTrialOnBoardActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"

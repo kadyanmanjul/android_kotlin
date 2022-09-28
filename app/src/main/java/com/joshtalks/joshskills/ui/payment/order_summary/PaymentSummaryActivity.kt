@@ -50,22 +50,13 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_S
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.BranchEventName
-import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
@@ -77,23 +68,20 @@ import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import com.razorpay.Checkout
-import com.razorpay.PaymentResultListener
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.math.BigDecimal
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import retrofit2.HttpException
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
+import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
 const val ENGLISH_COURSE_TEST_ID = "102"
@@ -117,16 +105,27 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     private var loginStartFreeTrial = false
     private var is100PointsObtained = false
     private var isHundredPointsActive = false
-    private val viewModel: PaymentSummaryViewModel by lazy { ViewModelProvider(this).get(PaymentSummaryViewModel::class.java) }
-    private val paymentManager: PaymentManager by lazy { PaymentManager(this, viewModel.viewModelScope, this) }
+    private val viewModel: PaymentSummaryViewModel by lazy {
+        ViewModelProvider(this).get(
+            PaymentSummaryViewModel::class.java
+        )
+    }
+    private val paymentManager: PaymentManager by lazy {
+        PaymentManager(
+            this,
+            viewModel.viewModelScope,
+            this
+        )
+    }
+
     companion object {
         fun startPaymentSummaryActivity(
             activity: Activity,
             testId: String,
             hasFreeTrial: Boolean? = null,
             isFromNewFreeTrial: Boolean = false,
-            is100PointsObtained : Boolean? = false,
-            isHundredPointsActive : Boolean = true
+            is100PointsObtained: Boolean? = false,
+            isHundredPointsActive: Boolean = true
         ) {
             Intent(activity, PaymentSummaryActivity::class.java).apply {
                 putExtra(TEST_ID_PAYMENT, testId)
@@ -159,7 +158,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
-        //Checkout.preload(application)
         super.onCreate(savedInstanceState)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PAYMENT_SUMMARY_OPENED.NAME)
             .addUserDetails()
@@ -318,11 +316,21 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 when (paymentSummaryResponse.couponDetails.isPromoCode) {
                     true -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.COUPON_APPLIED)
-                            .addParam(ParamKeys.TEST_ID,viewModel.getPaymentTestId())
-                            .addParam(ParamKeys.COURSE_NAME,viewModel.getCourseName())
-                            .addParam(ParamKeys.COURSE_PRICE,viewModel.getCourseActualAmount())
-                            .addParam(ParamKeys.DISCOUNTED_AMOUNT,viewModel.getCourseDiscountedAmount())
-                            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                            .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
+                            .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
+                            .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
+                            .addParam(
+                                ParamKeys.DISCOUNTED_AMOUNT,
+                                viewModel.getCourseDiscountedAmount()
+                            )
+                            .addParam(
+                                ParamKeys.COURSE_ID,
+                                PrefManager.getStringValue(
+                                    CURRENT_COURSE_ID,
+                                    false,
+                                    DEFAULT_COURSE_ID
+                                )
+                            )
                             .push()
 
                         showToast("Coupon Applied Successfully")
@@ -347,7 +355,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                     }
                     false -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_FAILED)
-                            .addParam(ParamKeys.TEST_ID,viewModel.getPaymentTestId())
+                            .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
                             .push()
                         showToast(getString(R.string.invalid_coupon_code))
                     }
@@ -409,9 +417,9 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 binding.subCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
                         val obj = JSONObject()
-                        obj.put("test id",testId)
+                        obj.put("test id", testId)
                         MixPanelTracker.publishEvent(MixPanelEvent.COURSE_UPGRADED)
-                            .addParam(ParamKeys.TEST_ID,testId)
+                            .addParam(ParamKeys.TEST_ID, testId)
                             .push()
 
                         showSubscriptionDetails(
@@ -438,10 +446,13 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                     .getString(FirebaseRemoteConfigKey.APPLY_COUPON_TEXT)
                 applyCouponText.setOnClickListener {
                     MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_CLICKED)
-                        .addParam(ParamKeys.TEST_ID,viewModel.getPaymentTestId())
-                        .addParam(ParamKeys.COURSE_NAME,viewModel.getCourseName())
-                        .addParam(ParamKeys.COURSE_PRICE,viewModel.getCourseDiscountedAmount())
-                        .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                        .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
+                        .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
+                        .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseDiscountedAmount())
+                        .addParam(
+                            ParamKeys.COURSE_ID,
+                            PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                        )
                         .push()
 
                     openPromoCodeBottomSheet()
@@ -754,11 +765,11 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                         return
                     }
                     prefix == "+91" && viewModel.getCourseDiscountedAmount() >= 1 ->
-                        paymentManager.createOrder(testId,  binding.mobileEt.text.toString(), viewModel.getEncryptedText())
-//                        viewModel.getOrderDetails(
-//                            viewModel.getPaymentTestId(),
-//                            binding.mobileEt.text.toString()
-//                        )
+                        paymentManager.createOrder(
+                            testId,
+                            binding.mobileEt.text.toString(),
+                            viewModel.getEncryptedText()
+                        )
                     else ->
                         uiHandler.post {
                             showChatNPayDialog()
@@ -775,16 +786,22 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 viewModel.getPaymentTestId(),
                 getPhoneNumber()
             )
-            else ->paymentManager.createOrder(viewModel.getPaymentTestId(), getPhoneNumber(), viewModel.getEncryptedText())
-            //viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
+            else -> paymentManager.createOrder(
+                viewModel.getPaymentTestId(),
+                getPhoneNumber(),
+                viewModel.getEncryptedText()
+            )
         }
 
-        if(!loginStartFreeTrial) {
+        if (!loginStartFreeTrial) {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_STARTED)
                 .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
                 .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
                 .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
-                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+                .addParam(
+                    ParamKeys.IS_COUPON_APPLIED,
+                    viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode
+                )
                 .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
                 .push()
         }
@@ -804,19 +821,19 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         var popUpText = " "
-        if(isHundredPointsActive && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID || testId == ENGLISH_COURSE_TEST_ID) {
+        if (isHundredPointsActive && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID || testId == ENGLISH_COURSE_TEST_ID) {
             popUpText = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + testId)
                 .replace("\\n", "\n")
-        }else{
-            popUpText =   if(viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED) && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
-                getString(R.string.free_trial_popup_for_icp)
-            }
-            else {
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
-                    .replace("\\n", "\n")
-            }
+        } else {
+            popUpText =
+                if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED) && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID) {
+                    getString(R.string.free_trial_popup_for_icp)
+                } else {
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
+                        .replace("\\n", "\n")
+                }
         }
         dialogView.findViewById<TextView>(R.id.e_g_motivat).text = popUpText
 
@@ -852,50 +869,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         appAnalytics.addParam(AnalyticsEvent.MOBILE_NUMBER_CLEARED.NAME, true)
     }
 
-    private fun addECommerceEvent(razorpayPaymentId: String) {
-        JoshSkillExecutors.BOUNDED.submit {
-            var guestMentorId = EMPTY
-            if (viewModel.getCourseDiscountedAmount() <= 0) {
-                return@submit
-            }
-            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).resetAnalyticsData()
-            val bundle = Bundle()
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, viewModel.getPaymentTestId())
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, viewModel.getCourseName())
-            bundle.putDouble(FirebaseAnalytics.Param.VALUE, viewModel.getCourseDiscountedAmount())
-            bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
-            bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
-            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
-
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
-                guestMentorId = Mentor.getInstance().getId()
-            }
-
-            val extras: HashMap<String, String> = HashMap()
-            extras["test_id"] = viewModel.getPaymentTestId()
-            extras["payment_id"] = razorpayPaymentId
-            extras["currency"] = CurrencyType.INR.name
-            extras["amount"] = viewModel.getCourseDiscountedAmount().toString()
-            extras["course_name"] = viewModel.getCourseName()
-            extras["device_id"] = Utils.getDeviceId()
-            extras["guest_mentor_id"] = guestMentorId
-            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
-        }
-    }
-
-    private fun String.verifyPayment() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val data = mapOf("razorpay_order_id" to this@verifyPayment)
-                AppObjectController.commonNetworkService.verifyPayment(data)
-            } catch (ex: HttpException) {
-                ex.printStackTrace()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
@@ -922,7 +895,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
     override fun onDestroy() {
         super.onDestroy()
-       // Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
     }
 
@@ -970,7 +942,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
             viewModel.getTeacherName(),
             viewModel.getImageUrl(),
             if (hasOrderId)
-               paymentManager.getJoshTalksId()
+                paymentManager.getJoshTalksId()
             else 0,
             testId,
             viewModel.getCourseDiscountedAmount().toString()
@@ -990,11 +962,12 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
             putExtra(FLOW_FROM, "payment journey")
         }
         startActivity(intent)
-        val broadcastIntent=Intent().apply {
+        val broadcastIntent = Intent().apply {
             action = CALLING_SERVICE_ACTION
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
-        LocalBroadcastManager.getInstance(this@PaymentSummaryActivity).sendBroadcast(broadcastIntent)
+        LocalBroadcastManager.getInstance(this@PaymentSummaryActivity)
+            .sendBroadcast(broadcastIntent)
         this.finish()
     }
 
@@ -1020,23 +993,18 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
-            if(is100PointsObtained){
+            if (is100PointsObtained) {
                 viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
-                viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)
+                viewModel.postGoal(
+                    GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME,
+                    CampaignKeys.HUNDRED_POINTS.NAME
+                )
             }
         }
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
-        MarketingAnalytics.coursePurchased(BigDecimal(paymentManager.getAmount()))
-        MarketingAnalytics.coursePurchased(
-            BigDecimal(paymentManager.getAmount()),
-            true,
-            testId = freeTrialTestId,
-            courseName = "English Course",
-            juspayPaymentId = paymentManager.getJustPayOrderId()
-        )
         NotificationUtils(applicationContext).removeAllScheduledNotification()
         //viewModel.updateSubscriptionStatus()
         if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
@@ -1044,11 +1012,21 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 PAYMENT_MOBILE_NUMBER,
                 prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
             )
-        if (isEcommereceEventFire && (paymentManager.getAmount() > 0) && paymentManager.getJustPayOrderId().isNotEmpty() && viewModel.getPaymentTestId()
+        if (isEcommereceEventFire && (paymentManager.getAmount() > 0) && paymentManager.getJustPayOrderId()
+                .isNotEmpty() && viewModel.getPaymentTestId()
                 .isNotEmpty()
         ) {
             isEcommereceEventFire = false
-            addECommerceEvent(paymentManager.getJustPayOrderId())
+            if (viewModel.getCourseDiscountedAmount() <= 0) {
+                return
+            }
+            MarketingAnalytics.coursePurchased(
+                BigDecimal(paymentManager.getAmount()),
+                true,
+                testId = freeTrialTestId,
+                courseName = "English Course",
+                juspayPaymentId = paymentManager.getJustPayOrderId()
+            )
         }
 
         uiHandler.post {

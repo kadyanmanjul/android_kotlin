@@ -464,13 +464,15 @@
                     app:layout_constraintStart_toStartOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <FrameLayout
+            <RelativeLayout
                 android:id="@+id/progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:elevation="@dimen/_20sdp"
                 android:onClick="@{null}"
+                android:gravity="center"
+                android:background="@color/transparent_blue_alpha_75"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -488,7 +490,7 @@
                     wheel:matProg_rimColor="#33128C7E"
                     wheel:matProg_rimWidth="@dimen/_2sdp" />
 
-            </FrameLayout>
+            </RelativeLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/video_popup"

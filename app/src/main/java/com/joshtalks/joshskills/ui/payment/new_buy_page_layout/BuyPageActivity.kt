@@ -38,8 +38,8 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
@@ -49,7 +49,8 @@ import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
-import com.joshtalks.joshskills.ui.payment.*
+import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
+import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
@@ -65,15 +66,20 @@ import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import de.hdodenhof.circleimageview.CircleImageView
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import retrofit2.HttpException
 import java.math.BigDecimal
 
+const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
+const val SUBSCRIPTION_TEST_ID = "10"
+const val IS_FAKE_CALL = "is_fake_call"
 
 class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
@@ -102,6 +108,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     private val viewModel by lazy {
         ViewModelProvider(this)[BuyPageViewModel::class.java]
     }
+    private val backPressMutex = Mutex(false)
 
     private val paymentManager: PaymentManager by lazy {
         PaymentManager(
@@ -127,6 +134,9 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     override fun getArguments() {
         super.getArguments()
+        if (intent.hasExtra(HAS_NOTIFICATION) && !PrefManager.getBoolValue(IS_FREE_TRIAL)){
+            finish()
+        }
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
                 Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
@@ -504,11 +514,9 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         fun startBuyPageActivity(
             activity: Activity,
             testId: String,
-            expiredTime: Long? = null
         ) {
             Intent(activity, BuyPageActivity::class.java).apply {
                 putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
-                putExtra(FreeTrialPaymentActivity.EXPIRED_TIME, expiredTime)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
@@ -640,13 +648,13 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     fun showProgressBar() {
         lifecycleScope.launch(Dispatchers.Main) {
-            FullScreenProgressDialog.showProgressBar(this@BuyPageActivity)
+            binding.progressBar.visibility = View.VISIBLE
         }
     }
 
     fun hideProgressBar() {
         lifecycleScope.launch(Dispatchers.Main) {
-            FullScreenProgressDialog.hideProgressBar(this@BuyPageActivity)
+            binding.progressBar.visibility = View.GONE
         }
     }
 
@@ -766,9 +774,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onBackPressed() {
-        val backPressHandled = paymentManager.getJuspayBackPress()
-        if (!backPressHandled) {
-            super.onBackPressed()
+        backPressMutex.onMultipleBackPress {
+            val backPressHandled = paymentManager.getJuspayBackPress()
+            if (!backPressHandled) {
+                super.onBackPressed()
+            }
         }
     }
 }

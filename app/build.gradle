@@ -376,8 +376,6 @@ dependencies {
 
     implementation 'io.branch.sdk.android:library:5.1.2'
 
-    //Payment Razor pay
-    implementation 'com.razorpay:checkout:1.6.21'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.github.vipulasri:timelineview:1.1.5'
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.3.0'

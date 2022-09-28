@@ -524,7 +524,6 @@ class ConversationActivity :
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
             ),
-            inboxEntity.expiryDate?.time
         )
     }
 

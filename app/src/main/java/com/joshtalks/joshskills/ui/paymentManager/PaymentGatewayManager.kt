@@ -47,7 +47,6 @@ class PaymentGatewayManager(
                                 when (status) {
                                     "charged" -> {
                                         Log.e("sagar", "onEvent11: $status $response")
-//                                        onPaymentSuccess()
                                         paymentGatewayListener?.onPaymentSuccess()
                                     }
                                     "cod_initiated" -> {
@@ -57,28 +56,28 @@ class PaymentGatewayManager(
                             } else {
                                 when (status) {
                                     "backpressed" -> {
-                                        paymentGatewayListener?.onPaymentError(context.getString(R.string.aborted_msg))
+                                        paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "user_aborted" -> {
-                                        paymentGatewayListener?.onPaymentError(context.getString(R.string.aborted_msg))
+                                        paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "pending_vbv" -> {
-                                        Log.e("sagar", "onEvent: $response $status")
-//
+                                       paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "authorizing" -> {
 
                                     }
                                     "authorization_failed" -> {
-//                                        onPaymentError()
-                                        paymentGatewayListener?.onPaymentError(context.getString(R.string.failed_payment_text))
-//
+                                        paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "authentication_failed" -> {
-                                        paymentGatewayListener?.onPaymentError(context.getString(R.string.failed_payment_text))
+                                        paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "api_failure" -> {
-                                        paymentGatewayListener?.onPaymentError(context.getString(R.string.failed_payment_text))
+                                        paymentGatewayListener?.onPaymentError(status)
+                                    }
+                                    "no internet" -> {
+                                        paymentGatewayListener?.onPaymentError(status)
                                     }
                                 }
                             }

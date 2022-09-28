@@ -6,6 +6,7 @@ import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.util.*
 import java.math.BigDecimal
@@ -163,31 +164,32 @@ object MarketingAnalytics {
         logFacebook: Boolean = false,
         testId: String = EMPTY,
         courseName: String = EMPTY,
-        juspayPaymentId: String = EMPTY,
+        juspayPaymentId: String = EMPTY
     ) {
-        val context = AppObjectController.joshApplication
-        val params = Bundle().apply {
-            putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
-            putString(AppEventsConstants.EVENT_PARAM_CONTENT, "Course")
-            putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, "E-learning")
-            putInt(AppEventsConstants.EVENT_PARAM_NUM_ITEMS, 1)
-            putString(
-                AppEventsConstants.EVENT_PARAM_SUCCESS,
-                AppEventsConstants.EVENT_PARAM_VALUE_YES
-            )
-            putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-        }
-        try {
+        JoshSkillExecutors.BOUNDED.submit {
+            var guestMentorId = EMPTY
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "E-learning")
             bundle.putDouble(FirebaseAnalytics.Param.VALUE, amount.toDouble())
             bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, juspayPaymentId)
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
-            FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
-            AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_PURCHASED,params)
-        }catch (e:Exception){
-            Log.e(TAG, "coursePurchased: ${e.message}")
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication)
+                .logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
+
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                guestMentorId = Mentor.getInstance().getId()
+            }
+
+            val extras: HashMap<String, String> = HashMap()
+            extras["test_id"] = testId
+            extras["payment_id"] = juspayPaymentId
+            extras["currency"] = CurrencyType.INR.name
+            extras["amount"] = amount.toString()
+            extras["course_name"] = "E-learning"
+            extras["device_id"] = Utils.getDeviceId()
+            extras["guest_mentor_id"] = guestMentorId
+            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
         }
     }
 
