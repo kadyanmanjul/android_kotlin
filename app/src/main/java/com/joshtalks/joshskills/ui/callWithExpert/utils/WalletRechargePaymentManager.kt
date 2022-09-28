@@ -5,22 +5,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseData
-import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
-import com.razorpay.Checkout
+import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
+import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import retrofit2.Response
 
 /**
 This class is responsible to process payment for wallet recharge payment.
@@ -31,7 +27,9 @@ class WalletRechargePaymentManager private constructor(
     private var selectedAmount: Amount,
     private val viewModelScope: CoroutineScope,
     private var paymentStatusListener: PaymentStatusListener? = null,
-    private var navController: NavController? = null
+    private var paymentGatewayListener: PaymentGatewayListener? = null,
+    private var navController: NavController? = null,
+    private var paymentManager: PaymentManager? = null
 ) {
 
     private val expertListRepo by lazy {
@@ -48,12 +46,6 @@ class WalletRechargePaymentManager private constructor(
 
 
     fun startPayment() {
-        paymentStatusListener?.onWarmUpStarted()
-        getPaymentData()
-
-    }
-
-    private fun getPaymentData() {
         val data = HashMap<String, Any>()
         data["test_id"] = selectedAmount.id
         data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID, false)
@@ -68,81 +60,14 @@ class WalletRechargePaymentManager private constructor(
                     courseData = response.body()!!.courseData!![0]
 //                    selectedAmount =
 //                        Amount(courseData.actualAmount!!.removePrefix("₹").toFloat().toInt(), courseData.testId.toInt(),)
-                    getOrderDetails(courseData)
+                    paymentManager?.createForWallet(courseData, selectedAmount)
                 } else {
-                    throwError()
+                    paymentGatewayListener?.onWarmUpEnded(activity.getString(R.string.something_went_wrong))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                throwError()
+                paymentGatewayListener?.onWarmUpEnded(activity.getString(R.string.something_went_wrong))
             }
-        }
-    }
-
-    private fun getOrderDetails(courseData: CourseData) {
-        viewModelScope.launch {
-            try {
-                val data = mutableMapOf(
-                    "encrypted_text" to (courseData.encryptedText ?: ""),
-                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
-                    "mobile" to getPhoneNumberOrDefault(),
-                    "test_id" to courseData.testId,
-                    "mentor_id" to Mentor.getInstance().getId(),
-                    "is_micro_payment" to true.toString(),
-                    "wallet_amount" to selectedAmount.amount.toString()
-                )
-
-                val orderDetailsResponse: Response<OrderDetailResponse> =
-                    AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
-                Log.e("sagar", "getOrderDetails: ${orderDetailsResponse.code()}")
-                if (orderDetailsResponse.code() == 201) {
-                    val response: OrderDetailResponse = orderDetailsResponse.body()!!
-                    startPaymentGateway(response)
-//                    MarketingAnalytics.initPurchaseEvent(data, response)
-                } else {
-                    throwError()
-                }
-            } catch (e: Exception) {
-                throwError()
-            }
-        }
-    }
-
-    fun startPaymentGateway(orderDetails: OrderDetailResponse) {
-        val checkout = Checkout()
-        checkout.setImage(R.mipmap.ic_launcher)
-        checkout.setKeyID(orderDetails.razorpayKeyId)
-        try {
-            val preFill = JSONObject()
-
-            if (User.getInstance().email.isNullOrEmpty().not()) {
-                preFill.put("email", User.getInstance().email)
-            } else {
-                preFill.put("email", Utils.getUserPrimaryEmail(activity.applicationContext))
-            }
-            //preFill.put("contact", "9999999999")
-
-            val options = JSONObject()
-            options.put("key", orderDetails.razorpayKeyId)
-            options.put("name", "Josh Skills")
-            try {
-                options.put(
-                    "description",
-                    courseData.courseName + "_app"
-                )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-            options.put("order_id", orderDetails.razorpayOrderId)
-            options.put("currency", orderDetails.currency)
-            options.put("amount", orderDetails.amount * 100)
-            options.put("prefill", preFill)
-            paymentStatusListener?.onWarmUpEnded()
-            checkout.open(activity, options)
-            razorpayOrderId = orderDetails.razorpayOrderId
-        } catch (e: Exception) {
-            e.printStackTrace()
-            paymentStatusListener?.onWarmUpEnded(activity.getString(R.string.something_went_wrong))
         }
     }
 
@@ -200,15 +125,15 @@ class WalletRechargePaymentManager private constructor(
         navController?.let {
             if (isPaymentSuccessful) {
                 activity.onBackPressed()
-                RechargeSuccessFragment.open(activity.supportFragmentManager, amount = selectedAmount.amount, type = "Wallet")
+                RechargeSuccessFragment.open(
+                    activity.supportFragmentManager,
+                    amount = selectedAmount.amount,
+                    type = "Wallet"
+                )
             }
         }
-        paymentStatusListener?.onPaymentFinished(isPaymentSuccessful)
+        paymentGatewayListener?.onPaymentFinished(isPaymentSuccessful)
 
-    }
-
-    fun throwError() {
-        paymentStatusListener?.onWarmUpEnded(activity.getString(R.string.something_went_wrong))
     }
 
     /**
@@ -220,7 +145,9 @@ class WalletRechargePaymentManager private constructor(
         var selectedAmount: Amount? = null,
         var coroutineScope: CoroutineScope? = null,
         var paymentStatusListener: PaymentStatusListener? = null,
-        var navController: NavController? = null
+        var paymentGatewayListener: PaymentGatewayListener? = null,
+        var navController: NavController? = null,
+        var paymentManager: PaymentManager? = null,
     ) {
 
         fun setActivity(activity: AppCompatActivity) = apply { this.activity = activity }
@@ -234,8 +161,14 @@ class WalletRechargePaymentManager private constructor(
         fun setPaymentListener(paymentStatusListener: PaymentStatusListener) =
             apply { this.paymentStatusListener = paymentStatusListener }
 
+        fun setPaymentGatewayListener(paymentGatewayListener: PaymentGatewayListener) =
+            apply { this.paymentGatewayListener = paymentGatewayListener }
+
         fun setNavController(navController: NavController) =
             apply { this.navController = navController }
+
+        fun setPaymentManager(paymentManager: PaymentManager) =
+            apply { this.paymentManager = paymentManager }
 
         fun build(): WalletRechargePaymentManager {
             return WalletRechargePaymentManager(
@@ -243,7 +176,9 @@ class WalletRechargePaymentManager private constructor(
                 selectedAmount!!,
                 coroutineScope!!,
                 paymentStatusListener,
-                navController
+                paymentGatewayListener,
+                navController,
+                paymentManager
             )
         }
 
@@ -257,7 +192,5 @@ class WalletRechargePaymentManager private constructor(
 }
 
 interface PaymentStatusListener {
-    fun onWarmUpStarted()
-    fun onWarmUpEnded(error: String? = null)
     fun onPaymentFinished(isPaymentSuccessful: Boolean)
 }

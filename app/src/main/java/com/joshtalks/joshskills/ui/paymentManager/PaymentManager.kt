@@ -1,12 +1,15 @@
 package com.joshtalks.joshskills.ui.paymentManager
 
 import android.content.Context
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.CourseData
 import com.joshtalks.joshskills.repository.server.JuspayPayLoad
+import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
@@ -75,6 +78,38 @@ class PaymentManager(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    fun createForWallet(courseData: CourseData,selectedAmount: Amount) {
+        coroutineScope.launch {
+            try {
+                paymentGatewayListener?.onProcessStart()
+                val data = mutableMapOf(
+                    "encrypted_text" to (courseData.encryptedText ?: ""),
+                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
+                    "mobile" to getPhoneNumberOrDefault(),
+                    "test_id" to courseData.testId,
+                    "mentor_id" to Mentor.getInstance().getId(),
+                    "is_micro_payment" to true.toString(),
+                    "wallet_amount" to selectedAmount.amount.toString()
+                )
+
+                val orderDetailsResponse: Response<JuspayPayLoad> =
+                    AppObjectController.signUpNetworkService.createPaymentOrderV3(data).await()
+                Log.e("sagar", "getOrderDetails: ${orderDetailsResponse.code()}")
+                if (orderDetailsResponse.code() == 201) {
+                    val response: JuspayPayLoad = orderDetailsResponse.body()!!
+                    withContext(Dispatchers.Main) {
+                        paymentGatewayManager.openPaymentGateway(response)
+                    }
+                    //                    MarketingAnalytics.initPurchaseEvent(data, response)
+                } else {
+                    paymentGatewayListener?.onWarmUpEnded(context.getString(R.string.something_went_wrong))
+                }
+            } catch (e: Exception) {
+                paymentGatewayListener?.onWarmUpEnded(context.getString(R.string.something_went_wrong))
             }
         }
     }

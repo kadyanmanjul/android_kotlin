@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.callWithExpert
 
+import `in`.juspay.services.HyperServices
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -25,10 +26,13 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentMan
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
+import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
+import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.razorpay.PaymentResultListener
 
-class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, PaymentStatusListener {
+class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
+    PaymentGatewayListener {
 
     private lateinit var binding: ActivityCallWithExpertBinding
     private lateinit var balanceTv: TextView
@@ -65,8 +69,10 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
                         .setActivity(this)
                         .setSelectedAmount(it)
                         .setCoroutineScope(viewModel.viewModelScope)
+                        .setPaymentGatewayListener(this)
                         .setPaymentListener(this)
                         .setNavController(navController)
+                        .setPaymentManager(PaymentManager(this, viewModel.viewModelScope, this))
                         .build()
 
                     walletPaymentManager.startPayment()
@@ -132,22 +138,6 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
         viewModel.syncCallDuration()
     }
 
-    override fun onPaymentSuccess(p0: String?) {
-        viewModel.paymentSuccess(true)
-        walletPaymentManager.onPaymentSuccess(p0)
-    }
-
-    override fun onPaymentError(p0: Int, p1: String?) {
-        Log.d("paymenterror", "onPaymentError: and status => $p0 and $p1")
-        walletPaymentManager.onPaymentFailed(p0, p1)
-    }
-
-    override fun onWarmUpStarted() {
-        runOnUiThread {
-            binding.progressBar.visible()
-        }
-    }
-
     override fun onWarmUpEnded(error: String?) {
         runOnUiThread {
             binding.progressBar.gone()
@@ -163,11 +153,38 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentResultListener, Payme
         }
     }
 
+    override fun onJuspayBackPress(hyperServices: HyperServices) {
+        val backPressHandled = hyperServices.onBackPressed()
+        if (!backPressHandled) {
+            onBackPressed()
+        }
+    }
+
     companion object {
         fun open(activity: AppCompatActivity) {
             Intent(activity, CallWithExpertActivity::class.java).also {
                 activity.startActivity(it)
             }
         }
+    }
+
+    override fun onPaymentError(errorMsg: String) {
+        Log.d("paymenterror", "onPaymentError:  $errorMsg")
+        walletPaymentManager.onPaymentFailed(0, errorMsg)
+    }
+
+    override fun onPaymentSuccess() {
+        viewModel.paymentSuccess(true)
+        walletPaymentManager.onPaymentSuccess("onPaymentSuccess")
+    }
+
+    override fun onProcessStart() {
+        runOnUiThread {
+            binding.progressBar.visible()
+        }
+    }
+
+    override fun onProcessStop() {
+
     }
 }

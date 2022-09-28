@@ -683,6 +683,13 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         hideProgressBar()
     }
 
+    override fun onPaymentFinished(isPaymentSuccessful: Boolean) {
+
+    }
+    override fun onWarmUpEnded(error: String?) {
+
+    }
+
     override fun onPaymentError(errorMsg: String) {
         verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         AppObjectController.uiHandler.post {
