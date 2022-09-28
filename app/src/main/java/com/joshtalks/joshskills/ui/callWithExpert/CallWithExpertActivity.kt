@@ -153,13 +153,6 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
         }
     }
 
-    override fun onJuspayBackPress(hyperServices: HyperServices) {
-        val backPressHandled = hyperServices.onBackPressed()
-        if (!backPressHandled) {
-            onBackPressed()
-        }
-    }
-
     companion object {
         fun open(activity: AppCompatActivity) {
             Intent(activity, CallWithExpertActivity::class.java).also {
