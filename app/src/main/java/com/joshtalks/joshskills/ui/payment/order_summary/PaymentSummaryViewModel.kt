@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import kotlinx.coroutines.CoroutineScope
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,6 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var phoneNumber = EMPTY
     var responsePaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
     var responseSubscriptionPaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
-    var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var testId: MutableLiveData<String> = MutableLiveData()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
@@ -67,6 +67,18 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         if (viewState == null) {
             viewState = MutableLiveData()
             viewState!!.value = ViewState.PROCESSING
+        }
+    }
+
+    fun verifyPaymentJuspay(orderId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppObjectController.commonNetworkService.verifyPaymentV3(orderId)
+            } catch (ex: HttpException) {
+                ex.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -97,7 +109,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    private fun getEncryptedText(): String {
+    fun getEncryptedText(): String {
         if (isSubscriptionTipUsed) {
             return responseSubscriptionPaymentSummary.value?.encryptedText.toString()
 
@@ -224,56 +236,56 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun getOrderDetails(testId: String?, mobileNumber: String) {
-        viewState?.postValue(ViewState.PROCESSING)
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                if (testId.isNullOrEmpty().not() && testId.equals("null").not()) {
-                    mTestId = testId!!
-                }
-                val data = mutableMapOf(
-                    "encrypted_text" to getEncryptedText(),
-                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
-                    "mobile" to mobileNumber,
-                    "test_id" to getPaymentTestId()
-                )
-                if (isRegisteredAlready&& User.getInstance().isVerified) {
-                    data["mentor_id"] = Mentor.getInstance().getId()
-                }
-                val paymentDetailsResponse: Response<OrderDetailResponse> =
-                    AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
-                logPayNowAnalyticEvents(paymentDetailsResponse.body()?.razorpayOrderId)
-                if (paymentDetailsResponse.code() == 201) {
-                    val response: OrderDetailResponse = paymentDetailsResponse.body()!!
-                    mPaymentDetailsResponse.postValue(response)
-                    MarketingAnalytics.initPurchaseEvent(data, response)
-                    addPaymentEntry(response)
-                } else if (paymentDetailsResponse.code() == 400) {
-                    showToast("Course already exists with this mobile number. Please login with the entered phone number!", Toast.LENGTH_LONG)
-                } else {
-                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                }
-                viewState?.postValue(ViewState.PROCESSED)
-            } catch (ex: Exception) {
-                when (ex) {
-                    is HttpException -> {
-                        viewState?.postValue(ViewState.ERROR_OCCURED)
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
-                    }
-                    else -> {
-                        viewState?.postValue(ViewState.PROCESSED)
-                        try {
-                            FirebaseCrashlytics.getInstance().recordException(ex)
-                        }catch (ex:Exception){
-                            ex.printStackTrace()
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    fun getOrderDetails(testId: String?, mobileNumber: String) {
+//        viewState?.postValue(ViewState.PROCESSING)
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                if (testId.isNullOrEmpty().not() && testId.equals("null").not()) {
+//                    mTestId = testId!!
+//                }
+//                val data = mutableMapOf(
+//                    "encrypted_text" to getEncryptedText(),
+//                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
+//                    "mobile" to mobileNumber,
+//                    "test_id" to getPaymentTestId()
+//                )
+//                if (isRegisteredAlready&& User.getInstance().isVerified) {
+//                    data["mentor_id"] = Mentor.getInstance().getId()
+//                }
+//                val paymentDetailsResponse: Response<OrderDetailResponse> =
+//                    AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
+//                logPayNowAnalyticEvents(paymentDetailsResponse.body()?.razorpayOrderId)
+//                if (paymentDetailsResponse.code() == 201) {
+//                    val response: OrderDetailResponse = paymentDetailsResponse.body()!!
+//                    mPaymentDetailsResponse.postValue(response)
+//                    MarketingAnalytics.initPurchaseEvent(data, response)
+//                    addPaymentEntry(response)
+//                } else if (paymentDetailsResponse.code() == 400) {
+//                    showToast("Course already exists with this mobile number. Please login with the entered phone number!", Toast.LENGTH_LONG)
+//                } else {
+//                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+//                }
+//                viewState?.postValue(ViewState.PROCESSED)
+//            } catch (ex: Exception) {
+//                when (ex) {
+//                    is HttpException -> {
+//                        viewState?.postValue(ViewState.ERROR_OCCURED)
+//                    }
+//                    is SocketTimeoutException, is UnknownHostException -> {
+//                        viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
+//                    }
+//                    else -> {
+//                        viewState?.postValue(ViewState.PROCESSED)
+//                        try {
+//                            FirebaseCrashlytics.getInstance().recordException(ex)
+//                        }catch (ex:Exception){
+//                            ex.printStackTrace()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private fun logPayNowAnalyticEvents(razorpayOrderId: String?) {
         AppAnalytics.create(AnalyticsEvent.PAY_NOW_CLICKED.NAME)

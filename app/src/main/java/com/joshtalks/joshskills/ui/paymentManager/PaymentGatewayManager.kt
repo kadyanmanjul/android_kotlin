@@ -3,14 +3,11 @@ package com.joshtalks.joshskills.ui.paymentManager
 import `in`.juspay.hypersdk.data.JuspayResponseHandler
 import `in`.juspay.hypersdk.ui.HyperPaymentsCallbackAdapter
 import `in`.juspay.services.HyperServices
-import android.content.Context
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.server.JuspayPayLoad
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.util.*
 
@@ -23,6 +20,8 @@ class PaymentGatewayManager(
 
     var juspayOrderId = EMPTY
     var backPressHandled = false
+    var joshTalksId = 0
+    var amount : Double = 0.0
 
     fun initPaymentGateway() {
         val payload = createInitiatePayload()
@@ -136,6 +135,8 @@ class PaymentGatewayManager(
             Log.e("sagar", "openPaymentGateway: $payload" )
 
             juspayOrderId = orderDetails.payload?.orderId ?: EMPTY
+            joshTalksId = orderDetails.joshtalksOrderId
+            amount = orderDetails.amount
             paymentGatewayListener?.onWarmUpEnded()
             hyperInstance.process(payload)
         } catch (e: Exception) {

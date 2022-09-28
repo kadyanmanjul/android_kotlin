@@ -48,7 +48,6 @@ class BuyPageViewModel : BaseViewModel() {
     var isGovernmentCourse = ObservableBoolean(false)
 
     var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
-    var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
 
     var itemPosition = 0
@@ -114,7 +113,7 @@ class BuyPageViewModel : BaseViewModel() {
                             }
                             couponList = response.body()!!.listOfCoupon
                         }
-                        delay(200)
+                        delay(5200)
                         message.what = SCROLL_TO_BOTTOM
                         singleLiveEvent.value = message
                     }

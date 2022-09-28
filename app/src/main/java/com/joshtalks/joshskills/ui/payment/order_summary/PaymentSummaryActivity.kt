@@ -30,6 +30,7 @@ import androidx.core.text.color
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.credentials.Credential
@@ -69,6 +70,8 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
+import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
+import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -96,8 +99,7 @@ const val ENGLISH_COURSE_TEST_ID = "102"
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = "784"
 const val SUBSCRIPTION_TEST_ID = "10"
 
-class PaymentSummaryActivity : CoreJoshActivity(),
-    PaymentResultListener {
+class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     private var prefix: String = EMPTY
     private lateinit var binding: ActivityPaymentSummaryBinding
     private var testId: String = EMPTY
@@ -107,15 +109,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private lateinit var viewModel: PaymentSummaryViewModel
     private var isEcommereceEventFire = true
     private lateinit var appAnalytics: AppAnalytics
-    private var isBackPressDisabled = false
     private var isRequestHintAppearred = false
     private var couponApplied = false
     private var isFromNewFreeTrial = false
-    private var razorpayOrderId = EMPTY
     private var compositeDisposable = CompositeDisposable()
     private var loginStartFreeTrial = false
     private var is100PointsObtained = false
     private var isHundredPointsActive = false
+    private lateinit var paymentManager: PaymentManager
     companion object {
         fun startPaymentSummaryActivity(
             activity: Activity,
@@ -156,7 +157,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
-        Checkout.preload(application)
+        //Checkout.preload(application)
         super.onCreate(savedInstanceState)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PAYMENT_SUMMARY_OPENED.NAME)
             .addUserDetails()
@@ -182,6 +183,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         subscribeObservers()
         initCountryCode()
         logPaymentAnalyticsEvents()
+        paymentManager = PaymentManager(this, viewModel.viewModelScope, this)
+        paymentManager.initializePaymentGateway()
     }
 
     private fun initViewModel() {
@@ -452,10 +455,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         if (viewModel.hasRegisteredMobileNumber) {
             binding.group1.visibility = View.GONE
         }
-        viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer
-        {
-            initializeRazorpayPayment(it)
-        })
 
         viewModel.isFreeOrderCreated.observe(this, androidx.lifecycle.Observer
         {
@@ -485,12 +484,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 startPayment()
             }
             true
-        }
-
-        if(binding.materialButton.text != AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_PAYMENT_BTN_TXT)) {
-            if(viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED)) {
-                viewModel.postGoal("ICP_BUY_PAGE_SEEN",CampaignKeys.INCREASE_COURSE_PRICE.name)
-            }
         }
     }
 
@@ -624,54 +617,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
-        }
-    }
-
-    private fun initializeRazorpayPayment(response: OrderDetailResponse) {
-        binding.progressBar.visibility = View.VISIBLE
-        val checkout = Checkout()
-        checkout.setImage(R.mipmap.ic_launcher)
-        checkout.setKeyID(response.razorpayKeyId)
-        try {
-            val preFill = JSONObject()
-
-            if (!viewModel.hasRegisteredMobileNumber && User.getInstance().email.isNullOrEmpty()
-                    .not()
-            )
-                preFill.put("email", User.getInstance().email)
-            else
-                preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
-
-            if (!viewModel.hasRegisteredMobileNumber)
-                preFill.put("contact", binding.mobileEt.text.toString())
-            else if (User.getInstance().phoneNumber.isNullOrEmpty().not())
-                preFill.put("contact", User.getInstance().phoneNumber)
-            else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank())
-                preFill.put(
-                    "contact", PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(
-                        SINGLE_SPACE,
-                        EMPTY
-                    )
-                )
-            else
-                preFill.put("contact", "9999999999")
-            val options = JSONObject()
-            options.put("key", response.razorpayKeyId)
-            options.put("name", "Josh Skills")
-            options.put("description", viewModel.getCourseName() + "_app")
-            options.put("order_id", response.razorpayOrderId)
-            options.put("currency", response.currency)
-            options.put("amount", response.amount * 100)
-            options.put("prefill", preFill)
-            checkout.open(this@PaymentSummaryActivity, options)
-            razorpayOrderId = response.razorpayOrderId
-            binding.progressBar.visibility = View.GONE
-            appAnalytics
-                .addParam("razor id", razorpayOrderId)
-                .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, response.joshtalksOrderId)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
@@ -809,10 +754,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         return
                     }
                     prefix == "+91" && viewModel.getCourseDiscountedAmount() >= 1 ->
-                        viewModel.getOrderDetails(
-                            viewModel.getPaymentTestId(),
-                            binding.mobileEt.text.toString()
-                        )
+                        paymentManager.createOrder(testId,  binding.mobileEt.text.toString(), viewModel.getEncryptedText())
+//                        viewModel.getOrderDetails(
+//                            viewModel.getPaymentTestId(),
+//                            binding.mobileEt.text.toString()
+//                        )
                     else ->
                         uiHandler.post {
                             showChatNPayDialog()
@@ -829,7 +775,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 viewModel.getPaymentTestId(),
                 getPhoneNumber()
             )
-            else -> viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
+            else ->paymentManager.createOrder(viewModel.getPaymentTestId(), getPhoneNumber(), viewModel.getEncryptedText())
+            //viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
         }
 
         if(!loginStartFreeTrial) {
@@ -905,101 +852,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         appAnalytics.addParam(AnalyticsEvent.MOBILE_NUMBER_CLEARED.NAME, true)
     }
 
-    override fun onPaymentError(p0: Int, p1: String?) {
-        try {
-            MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_FAILED)
-                .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
-                .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
-                .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
-                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-                .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
-                .push()
-
-           // MarketingAnalytics.paymentFail(razorpayOrderId,testId)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
-        logPaymentStatusAnalyticsEvents(AnalyticsEvent.FAILED_PARAM.NAME, p1)
-        isBackPressDisabled = true
-        uiHandler.post {
-            showPaymentFailedDialog()
-        }
-        viewModel.removeEntryFromPaymentTable(razorpayOrderId)
-    }
-
-    @Synchronized
-    override fun onPaymentSuccess(razorpayPaymentId: String) {
-        if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
-            viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
-        }
-        else if(viewModel.getPaymentTestId() == SUBSCRIPTION_TEST_ID) {
-            viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
-        }
-
-        val obj = JSONObject()
-        obj.put("is paid",true)
-        obj.put("is 100 points obtained in free trial",is100PointsObtained)
-        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-        MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-        MixPanelTracker.mixPanel.people.set(obj)
-        MixPanelTracker.mixPanel.registerSuperProperties(obj)
-
-        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
-        if (testId == freeTrialTestId) {
-            PrefManager.put(IS_COURSE_BOUGHT, true)
-            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
-            if(is100PointsObtained){
-                viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
-                viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)
-            }
-        }
-        appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
-        logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
-        isBackPressDisabled = true
-        razorpayOrderId.verifyPayment()
-        viewModel.removeEntryFromPaymentTable(razorpayOrderId)
-        MarketingAnalytics.coursePurchased(BigDecimal(viewModel.mPaymentDetailsResponse.value?.amount ?: 0.0))
-        //viewModel.updateSubscriptionStatus()
-        if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
-            PrefManager.put(
-                PAYMENT_MOBILE_NUMBER,
-                prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
-            )
-        if (isEcommereceEventFire && (viewModel.mPaymentDetailsResponse.value?.amount!! > 0) && razorpayPaymentId.isNotEmpty() && viewModel.getPaymentTestId()
-                .isNotEmpty()
-        ) {
-            isEcommereceEventFire = false
-            addECommerceEvent(razorpayPaymentId)
-        }
-
-        try {
-            MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_SUCCESS)
-                .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
-                .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
-                .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
-                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-                .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
-                .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL, is100PointsObtained)
-                .push()
-
-            AppAnalytics.create(BranchEventName.PAYMENT_SUCCESSFUL.name).addDeviceId().push()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        uiHandler.post {
-            PrefManager.put(IS_PAYMENT_DONE, true)
-            showPaymentProcessingFragment()
-        }
-
-        uiHandler.postDelayed({
-            navigateToStartCourseActivity(true)
-        }, 1000 * 5)
-    }
-
     private fun addECommerceEvent(razorpayPaymentId: String) {
         JoshSkillExecutors.BOUNDED.submit {
             var guestMentorId = EMPTY
@@ -1051,8 +903,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     override fun onBackPressed() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
-        if (!isBackPressDisabled)
+        val backPressHandled = paymentManager.getJuspayBackPress()
+        if (!backPressHandled) {
             super.onBackPressed()
+        }
     }
 
     override fun onPause() {
@@ -1068,7 +922,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        Checkout.clearUserData(applicationContext)
+       // Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
     }
 
@@ -1090,7 +944,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .replace(
                 R.id.parent_Container,
                 PaymentFailedDialogFragment.newInstance(
-                    viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
+                    paymentManager.getJoshTalksId()
                 ),
                 "Payment Success"
             )
@@ -1115,7 +969,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             viewModel.getTeacherName(),
             viewModel.getImageUrl(),
             if (hasOrderId)
-                viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
+               paymentManager.getJoshTalksId()
             else 0,
             testId,
             viewModel.getCourseDiscountedAmount().toString()
@@ -1127,7 +981,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         showWebViewDialog(url)
     }
-
 
     private fun navigateToLoginActivity() {
         val intent = Intent(this, SignUpActivity::class.java).apply {
@@ -1143,4 +996,72 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         LocalBroadcastManager.getInstance(this@PaymentSummaryActivity).sendBroadcast(broadcastIntent)
         this.finish()
     }
+
+    override fun onPaymentError(errorMsg: String) {
+        viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
+        AppObjectController.uiHandler.post {
+            showPaymentFailedDialog()
+        }
+        try {
+            viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onWarmUpEnded(error: String?) {
+
+    }
+
+    override fun onPaymentSuccess() {
+        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+        if (testId == freeTrialTestId) {
+            PrefManager.put(IS_COURSE_BOUGHT, true)
+            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
+            if(is100PointsObtained){
+                viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
+                viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)
+            }
+        }
+        appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
+        logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
+        viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
+        viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
+        MarketingAnalytics.coursePurchased(BigDecimal(paymentManager.getAmount()))
+        //viewModel.updateSubscriptionStatus()
+        if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
+            PrefManager.put(
+                PAYMENT_MOBILE_NUMBER,
+                prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
+            )
+        if (isEcommereceEventFire && (paymentManager.getAmount() > 0) && paymentManager.getJustPayOrderId().isNotEmpty() && viewModel.getPaymentTestId()
+                .isNotEmpty()
+        ) {
+            isEcommereceEventFire = false
+            addECommerceEvent(paymentManager.getJustPayOrderId())
+        }
+
+        uiHandler.post {
+            PrefManager.put(IS_PAYMENT_DONE, true)
+            showPaymentProcessingFragment()
+        }
+
+        uiHandler.postDelayed({
+            navigateToStartCourseActivity(true)
+        }, 1000 * 5)
+    }
+
+    override fun onProcessStart() {
+        showProgressBar()
+    }
+
+    override fun onProcessStop() {
+        hideProgressBar()
+    }
+
+    override fun onPaymentFinished(isPaymentSuccessful: Boolean) {
+
+    }
+
 }

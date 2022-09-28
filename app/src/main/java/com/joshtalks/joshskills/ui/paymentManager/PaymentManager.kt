@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.paymentManager
 
-import android.content.Context
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -131,5 +130,9 @@ class PaymentManager(
     fun getJustPayOrderId() = paymentGatewayManager.juspayOrderId
 
     fun getJuspayBackPress() = paymentGatewayManager.onBackPressHandle()
+
+    fun getJoshTalksId() = paymentGatewayManager.joshTalksId
+
+    fun getAmount() = paymentGatewayManager.amount
 
 }

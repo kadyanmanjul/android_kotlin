@@ -469,7 +469,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             .replace(
                 R.id.buy_page_parent_container,
                 PaymentFailedDialogFragment.newInstance(
-                    viewModel.orderDetailsLiveData.value?.joshtalksOrderId ?: 0
+                    paymentManager.getJoshTalksId()
                 ),
                 "Payment Success"
             )
@@ -483,7 +483,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 priceForPaymentProceed?.courseName ?: EMPTY,
                 priceForPaymentProceed?.teacherName ?: EMPTY,
                 priceForPaymentProceed?.imageUrl ?: EMPTY,
-                viewModel.orderDetailsLiveData.value?.joshtalksOrderId ?: 0,
+                paymentManager.getJoshTalksId(),
                 priceForPaymentProceed?.testId ?: EMPTY,
                 priceForPaymentProceed?.discountedPrice ?: EMPTY
             )
