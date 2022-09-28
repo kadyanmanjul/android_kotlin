@@ -778,7 +778,7 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
                     PrefManager.getStringValue(
                         FREE_TRIAL_TEST_ID,
                         false,
-                        FREE_TRIAL_DEFAULT_TEST_ID
+                        "None"
                     ),
                     PrefManager.getIntValue(DAILY_NOTIFICATION_COUNT).toString()
                 )

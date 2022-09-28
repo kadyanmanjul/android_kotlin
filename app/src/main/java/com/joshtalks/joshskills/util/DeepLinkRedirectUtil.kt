@@ -63,7 +63,7 @@ object DeepLinkRedirectUtil {
                         activity,
                         jsonParams
                     )
-                DeepLinkRedirect.P2P_FREE_TRIAL_ACTIVITY ->{
+                DeepLinkRedirect.P2P_FREE_TRIAL_ACTIVITY -> {
                     Log.d(TAG, "getIntent: P2P_FREE_TRIAL_ACTIVITY")
                     getP2PActivityFreeTrialIntent(activity, jsonParams)
                 }
@@ -76,18 +76,25 @@ object DeepLinkRedirectUtil {
         }
     }
 
-    fun getIntentForCourseOnboarding(activity: Activity, jsonParams: JSONObject? = null): Intent {
-        if (jsonParams != null && jsonParams.has(DeepLinkData.COURSE_ID.key) && jsonParams.has(DeepLinkData.PLAN_ID.key)) {
-            PrefManager.put(
-                key = SPECIFIC_ONBOARDING,
-                value = AppObjectController.gsonMapper.toJson(
-                    SpecificOnboardingCourseData(
-                        jsonParams.getString(DeepLinkData.COURSE_ID.key),
-                        jsonParams.getString(DeepLinkData.PLAN_ID.key)
-                    )
-                ),
-                isConsistent = true
-            )
+    fun getIntentForCourseOnboarding(
+        activity: Activity,
+        jsonParams: JSONObject? = null,
+        isSpecialCourse: Boolean
+    ): Intent {
+        if (jsonParams != null) {
+            if (isSpecialCourse && jsonParams.has(DeepLinkData.COURSE_ID.key) && jsonParams.has(DeepLinkData.PLAN_ID.key))
+                PrefManager.put(
+                    key = SPECIFIC_ONBOARDING,
+                    value = AppObjectController.gsonMapper.toJson(
+                        SpecificOnboardingCourseData(
+                            jsonParams.getString(DeepLinkData.COURSE_ID.key),
+                            jsonParams.getString(DeepLinkData.PLAN_ID.key)
+                        )
+                    ),
+                    isConsistent = true
+                )
+            else if (jsonParams.has(DeepLinkData.TEST_ID.key))
+                PrefManager.put(FT_COURSE_ONBOARDING, jsonParams.getString(DeepLinkData.TEST_ID.key))
         }
         return FreeTrialOnBoardActivity.getIntent(activity)
     }
@@ -283,6 +290,7 @@ enum class DeepLinkRedirect(val key: String) {
     CUSTOMER_SUPPORT_ACTIVITY("customer_support_activity"),
     LESSON_ACTIVITY("lesson_activity"),
     ONBOARDING("onboarding"),
+    FT_COURSE("ft_course"),
     P2P_FREE_TRIAL_ACTIVITY("p2p_free_trial_activity"),
     LOGIN("login");
 

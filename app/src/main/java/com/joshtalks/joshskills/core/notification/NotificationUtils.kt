@@ -201,6 +201,9 @@ class NotificationUtils(val context: Context) {
         action: NotificationAction?,
         actionData: String?
     ): Intent? {
+        if (PrefManager.getBoolValue(IS_USER_LOGGED_IN, isConsistent = true, defValue = false)) {
+            return Intent(context, LauncherActivity::class.java)
+        }
 
         return when (action) {
             NotificationAction.OPEN_APP -> {

@@ -133,6 +133,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             fetchMentor()
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
+            PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
         }
     }

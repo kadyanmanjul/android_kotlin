@@ -85,7 +85,8 @@ class ConversationViewModel(
     val isFreeTrialCallBlocked = MutableLiveData<String>(null)
     val coursePopupData = MutableLiveData<PurchaseDataResponse?>()
 
-    val isExpertBtnEnabled : MutableLiveData<Boolean> = MutableLiveData()
+    val isExpertBtnEnabled: MutableLiveData<Boolean> = MutableLiveData()
+
     init {
         getExpertBtnVisibility()
     }
@@ -95,7 +96,7 @@ class ConversationViewModel(
             try {
                 val response = AppObjectController.commonNetworkService.getButtonExpertVisibility()
                 if (response.isSuccessful) {
-                    val enabled  = response.body()?.status == true
+                    val enabled = response.body()?.status == true
                     isExpertBtnEnabled.postValue(enabled)
                 }
             } catch (ex: Exception) {
@@ -229,10 +230,11 @@ class ConversationViewModel(
         return viewModelScope.async(Dispatchers.IO) {
             try {
                 AppDirectory.copy(
-                        Compressor.compress(getApplication(),File(path)){
-                            quality(75)
-                            resolution(720,1280)}.absolutePath, path
-                    )
+                    Compressor.compress(getApplication(), File(path)) {
+                        quality(75)
+                        resolution(720, 1280)
+                    }.absolutePath, path
+                )
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -550,13 +552,14 @@ class ConversationViewModel(
             getTopicFromDB(topicId)
         }
     }
-    fun saveMicroPaymentImpression(eventName: String, eventId:String = EMPTY, previousPage:String = EMPTY) {
+
+    fun saveMicroPaymentImpression(eventName: String, eventId: String = EMPTY, previousPage: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
-                    Pair("event_name",eventName),
+                    Pair("event_name", eventName),
                     Pair("expert_id", eventId),
-                    Pair("previous_page",previousPage)
+                    Pair("previous_page", previousPage)
                 )
                 AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
             } catch (ex: Exception) {
@@ -570,7 +573,7 @@ class ConversationViewModel(
             try {
                 val response =
                     AppObjectController.commonNetworkService.getCoursePopUpData(
-                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID),
+                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID },
                         popupName = popupType.name
                     )
                 if (response.isSuccessful) {

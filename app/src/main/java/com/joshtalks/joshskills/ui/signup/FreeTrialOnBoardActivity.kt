@@ -119,6 +119,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             moveToInboxScreen()
             PrefManager.put(IS_GUEST_ENROLLED, true)
             PrefManager.put(IS_PAYMENT_DONE, false)
+        } else if (PrefManager.hasKey(FT_COURSE_ONBOARDING)) {
+            startFreeTrial(PrefManager.getStringValue(FT_COURSE_ONBOARDING))
         } else if (languageActive)
             openChooseLanguageFragment()
         else
@@ -167,9 +169,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     fun startFreeTrial(testId: String) {
         layout.btnStartTrial.pauseAnimation()
         PrefManager.put(FREE_TRIAL_TEST_ID, testId)
-        if (testId == HINDI_TO_ENGLISH_TEST_ID  || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
+        if (testId == HINDI_TO_ENGLISH_TEST_ID || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
             requestWorkerForChangeLanguage("en", canCreateActivity = false)
-        } else{
+        } else {
             requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)
         }
         if (Mentor.getInstance().getId().isNotEmpty()) {
