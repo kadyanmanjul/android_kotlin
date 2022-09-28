@@ -140,6 +140,7 @@ class PaymentGatewayManager(
             joshTalksId = orderDetails.joshtalksOrderId
             amount = orderDetails.amount
 //            paymentGatewayListener?.onWarmUpEnded()
+            paymentGatewayListener?.onWarmUpEnded()
             hyperInstance.process(payload)
         } catch (e: Exception) {
             Log.e("sagar", "initializJuspayPayment:2 ${e.message}")
