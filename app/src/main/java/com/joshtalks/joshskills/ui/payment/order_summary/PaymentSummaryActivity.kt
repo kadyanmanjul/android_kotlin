@@ -1051,4 +1051,8 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
     }
 
+    override fun onPaymentProcessing(orderId: String) {
+        //TODO("Not yet implemented")
+    }
+
 }

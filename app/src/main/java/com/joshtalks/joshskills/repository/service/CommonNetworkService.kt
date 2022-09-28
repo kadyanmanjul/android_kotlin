@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import com.joshtalks.joshskills.ui.callWithExpert.model.*
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
+import com.joshtalks.joshskills.ui.payment.model.VerifyPayment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.*
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
@@ -70,11 +71,8 @@ interface CommonNetworkService {
     @POST("$DIR/payment/verify_v2/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
 
-    @POST("$DIR/payment/verify_v2/")
-    suspend fun verifyPaymentWithResponse(@Body params: Map<String, String>): Response<Any>
-
     @GET("$DIR/payment/verify_v3/")
-    suspend fun verifyPaymentV3(@Query("order_id") orderId: String) : Any
+    suspend fun verifyPaymentV3(@Query("order_id") orderId: String): VerifyPayment
 
     @POST("$DIR/course/certificate/generate/")
     suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>

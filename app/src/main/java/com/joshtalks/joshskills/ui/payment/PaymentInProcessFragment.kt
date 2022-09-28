@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentPaymentInProcessBinding
-import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.payment.viewModel.PaymentInProcessViewModel
 
 class PaymentInProcessFragment : Fragment() {
@@ -23,7 +21,6 @@ class PaymentInProcessFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentPaymentInProcessBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
@@ -31,6 +28,8 @@ class PaymentInProcessFragment : Fragment() {
         return binding.root
     }
 
-
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.verifyPayment(arguments?.getString("ORDER_ID"))
+    }
 }

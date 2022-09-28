@@ -159,6 +159,10 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
         }
     }
 
+    override fun onPaymentProcessing(orderId: String) {
+
+    }
+
     companion object {
         fun open(activity: AppCompatActivity) {
             Intent(activity, CallWithExpertActivity::class.java).also {

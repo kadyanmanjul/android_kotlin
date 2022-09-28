@@ -10,5 +10,5 @@ class PaymentRepository {
         AppObjectController.commonNetworkService
     }
 
-    suspend fun verifyPayment(params: Map<String, String>): Response<Any> = network.verifyPaymentWithResponse(params)
+    suspend fun verifyPayment(orderId: String) = network.verifyPaymentV3(orderId)
 }

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.server.JuspayPayLoad
+import com.joshtalks.joshskills.ui.assessment.fragment.TestSummaryFragment
 import org.json.JSONObject
 import java.util.*
 
@@ -43,6 +44,9 @@ class PaymentGatewayManager(
                             val status = response.getString("status")
 
                             Log.e("sagar", "onEvent: 123 $error $status")
+
+                            paymentGatewayListener?.onPaymentProcessing(juspayOrderId)
+
                             if (!error) {
                                 when (status) {
                                     "charged" -> {
@@ -156,4 +160,5 @@ interface PaymentGatewayListener {
     fun onProcessStart()
     fun onProcessStop()
     fun onPaymentFinished(isPaymentSuccessful: Boolean)
+    fun onPaymentProcessing(orderId: String)
 }

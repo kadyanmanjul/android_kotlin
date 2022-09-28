@@ -9,6 +9,7 @@ import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
@@ -33,6 +34,8 @@ import com.google.android.material.textview.MaterialTextView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
+import com.joshtalks.joshskills.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
@@ -48,6 +51,8 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
+import com.joshtalks.joshskills.ui.group.GroupInfoFragment
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
@@ -227,6 +232,12 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                         binding.buyPageParentContainer.height,
                         2000
                     )
+                }
+                PAYMENT_SUCCESS -> {
+                    showToast("Gg, payment successful")
+                }
+                PAYMENT_FAILED -> {
+                    showPaymentFailedDialog()
                 }
             }
         }
@@ -478,15 +489,12 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             .commitAllowingStateLoss()
     }
 
-    private fun showPaymentFailedDialog(errorMsg: String) {
+    private fun showPaymentFailedDialog() {
         supportFragmentManager
             .beginTransaction()
             .replace(
                 R.id.buy_page_parent_container,
-                PaymentFailedDialogFragment.newInstance(
-                    paymentManager.getJoshTalksId(),
-                    errorMsg
-                ),
+                PaymentFailedDialog.newInstance(paymentManager.getJustPayOrderId()),
                 "Payment Failed"
             )
             .commitAllowingStateLoss()
@@ -700,15 +708,27 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     override fun onPaymentFinished(isPaymentSuccessful: Boolean) {
 
     }
+
+    override fun onPaymentProcessing(orderId: String) {
+        supportFragmentManager.commit {
+            val fragment = PaymentInProcessFragment()
+            val bundle = Bundle().apply {
+                putString("ORDER_ID", orderId)
+            }
+            fragment.arguments = bundle
+            add(R.id.buy_page_parent_container, fragment, "Payment Processing")
+        }
+    }
+
     override fun onWarmUpEnded(error: String?) {
 
     }
 
     override fun onPaymentError(errorMsg: String) {
         verifyPaymentJuspay(paymentManager.getJustPayOrderId())
-        AppObjectController.uiHandler.post {
-            showPaymentFailedDialog(errorMsg)
-        }
+//        AppObjectController.uiHandler.post {
+//            showPaymentFailedDialog(errorMsg)
+//        }
         try {
             viewModel.removeEntryFromPaymentTable(juspayOrderId)
         } catch (e: Exception) {
