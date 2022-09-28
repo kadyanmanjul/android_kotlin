@@ -46,8 +46,6 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
 
     private lateinit var walletPaymentManager: WalletRechargePaymentManager
 
-//    private lateinit var paymentManager: PaymentManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_call_with_expert)
