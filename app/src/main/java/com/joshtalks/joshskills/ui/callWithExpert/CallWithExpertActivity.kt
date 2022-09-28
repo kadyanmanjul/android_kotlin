@@ -54,7 +54,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = this.viewModel
-        PrefManager.initServicePref(applicationContext)
+//        PrefManager.initServicePref(applicationContext)
         paymentManager = PaymentManager(this, viewModel.viewModelScope, this)
         paymentManager.initializePaymentGateway()
         initToolbar()

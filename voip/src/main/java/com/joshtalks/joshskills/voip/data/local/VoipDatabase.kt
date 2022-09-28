@@ -16,7 +16,9 @@ import com.joshtalks.joshskills.voip.recordinganalytics.data.local.RecordingAnal
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntity
 
-// TODO: Will be used to insert Disconnected call Data and Voip Analytics
+/**
+ * Will be used to insert Disconnected call Data and Voip Analytics
+ */
 const val PENDING = 0
 const val SYNCED = 1
 

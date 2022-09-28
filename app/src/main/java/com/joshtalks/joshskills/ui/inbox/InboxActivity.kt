@@ -55,7 +55,9 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -104,7 +106,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         viewModel.handleBroadCastEvents()
         MarketingAnalytics.openInboxPage()
         watchTimeEvent()
-
     }
 
     fun watchTimeEvent(){
@@ -535,8 +536,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initMoEngage()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
-        if (!PrefManager.getBoolValue(FETCHED_SCHEDULED_NOTIFICATION))
-            viewModel.getFreeTrialNotifications()
     }
 
     fun showBuyCourseTooltip(courseId: String) {

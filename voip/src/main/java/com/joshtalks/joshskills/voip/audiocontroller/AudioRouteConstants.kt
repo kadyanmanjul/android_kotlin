@@ -7,6 +7,5 @@ sealed class AudioRouteConstants {
     object BluetoothAudio : AudioRouteConstants()
     object HeadsetAudio : AudioRouteConstants()
     object SpeakerAudio : AudioRouteConstants()
-    object EarpieceAudio : AudioRouteConstants()
     object Default : AudioRouteConstants()
 }

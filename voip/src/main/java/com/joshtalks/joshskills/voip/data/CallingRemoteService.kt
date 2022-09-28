@@ -8,11 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.audiocontroller.AudioController
-import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
-import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
@@ -32,7 +28,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import com.joshtalks.joshskills.base.model.NotificationData as Data
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
@@ -52,7 +47,6 @@ class CallingRemoteService : Service() {
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private var isMediatorInitialise = false
     private val pstnController by lazy { PSTNController(ioScope) }
-    private val audioController: AudioControllerInterface by lazy { AudioController(ioScope) }
     private val serviceEvents = MutableSharedFlow<ServiceEvents>(replay = 0)
 
     // For Testing Purpose
@@ -64,6 +58,8 @@ class CallingRemoteService : Service() {
     var countdownTimerBack: Job? = null
     var expertCallData = HashMap<String, Any>()
     private val timerScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
+
+//    private var beepTimer: BeepTimer? = null
 
     override fun onCreate() {
         Log.d(TAG, "onCreate: ")
@@ -77,7 +73,6 @@ class CallingRemoteService : Service() {
         }
         registerReceivers()
         observerPstnService()
-        observeAudio()
         showNotification()
         Log.d(TAG, "onCreate: Creating Service")
     }
@@ -156,6 +151,7 @@ class CallingRemoteService : Service() {
         delay(5000)
         ioScope.cancel()
         syncScope.cancel()
+        BeepTimer.stopBeepSound()
         stopSelf()
     }
 
@@ -187,9 +183,7 @@ class CallingRemoteService : Service() {
                                         getHangUpIntent()
                                     )
                                     serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
-                                    Log.d(TAG, "SAGAR => observeNetworkEvents:206 ${expertCallData[IS_EXPERT_CALLING]}")
                                     if (expertCallData[IS_EXPERT_CALLING] == "true") {
-                                        Log.d(TAG, "SAGAR => observeNetworkEvents:206")
                                         startCallTimer()
                                     }
                                 }
@@ -268,34 +262,6 @@ class CallingRemoteService : Service() {
         }
     }
 
-    private fun observeAudio() {
-        ioScope.launch {
-            try {
-                audioController.observeAudioRoute().collect {
-                    try{
-                        Log.d(TAG, "observeAudio: $it")
-                        when (it) {
-                            AudioRouteConstants.BluetoothAudio -> {}
-                            AudioRouteConstants.Default -> {}
-                            AudioRouteConstants.EarpieceAudio -> {}
-                            AudioRouteConstants.HeadsetAudio -> {}
-                            AudioRouteConstants.SpeakerAudio -> {}
-                        }
-                    }
-                    catch (e : Exception){
-                        if(e is CancellationException)
-                            throw e
-                        e.printStackTrace()
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                if(e is CancellationException)
-                    throw e
-            }
-        }
-    }
-
     /**
      * Events Which Repository can Use --- Start
      */
@@ -310,6 +276,7 @@ class CallingRemoteService : Service() {
     }
 
     fun disconnectCall() {
+        BeepTimer.stopBeepSound()
         stopCallTimer()
         notification.idle(getNotificationData())
         mediator.userAction(Action.DISCONNECT)
@@ -319,12 +286,17 @@ class CallingRemoteService : Service() {
         mediator.userAction(if (isMicOn) Action.UNMUTE else Action.MUTE)
     }
 
-    fun changeSpeakerState(isSpeakerOn: Boolean) {
-        if (isSpeakerOn)
-            audioController.switchAudioToSpeaker()
-        else
-            audioController.switchAudioToDefault()
 
+    /**
+     * 1. Connected State
+     *
+     *
+     *
+     * AudioRouteListener - Immutable
+     * AudioController - Audio Switching
+     */
+
+    fun changeSpeakerState(isSpeakerOn: Boolean) {
         mediator.userAction(if(isSpeakerOn) Action.SPEAKER_ON else Action.SPEAKER_OFF)
     }
 
@@ -349,6 +321,7 @@ class CallingRemoteService : Service() {
         }
         ioScope.cancel()
         syncScope.cancel()
+        BeepTimer.stopBeepSound()
     }
 
     private fun showNotification() {
@@ -360,21 +333,25 @@ class CallingRemoteService : Service() {
 
     private fun registerReceivers() {
         pstnController.registerPstnReceiver()
-        audioController.registerAudioControllerReceivers()
     }
 
     private fun unregisterReceivers() {
         pstnController.unregisterPstnReceiver()
-        audioController.unregisterAudioControllerReceivers()
     }
 
     fun startTimer(totalWalletAmount: Int, expertPrice: Int):Job? {
         try {
-             timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
-            Log.v("sagar", "timeInSec: $timeInMillSec")
+            timeInMillSec = (((totalWalletAmount / expertPrice) * 60) * 1000).toLong()
+//            beepTimer = BeepTimer(this)
             countdownTimerBack = timerScope.launch {
-                delay(timeInMillSec!!)
-                disconnectCall()
+                try {
+                    delay(timeInMillSec!! - BeepTimer.TIMER_DURATION)
+                    BeepTimer.startBeepSound(this@CallingRemoteService)
+                    delay(BeepTimer.TIMER_DURATION)
+                    disconnectCall()
+                } catch (e: Exception){
+
+                }
             }
         }catch (ex:Exception){
             stopCallTimer()
@@ -393,7 +370,6 @@ class CallingRemoteService : Service() {
     }
 
     fun stopCallTimer() {
-//        storeCallTimingInDb()
         countdownTimerBack?.cancel()
         countdownTimerBack = null
     }
@@ -403,24 +379,17 @@ class CallingRemoteService : Service() {
 // TODO: Need to Change
 class TestNotification(val notiData : Data) : NotificationData {
     override fun setTitle(): String {
-        return if (Utils.courseId == "151" && notiData.title.isNotEmpty()) {
-            notiData.title
-        }else{
-            "Appreciate"
+        return notiData.title.ifEmpty {
+            "User, You will learn English by speaking."
         }
     }
 
     override fun setContent(): String {
-        return if (Utils.courseId == "151" && notiData.subTitle.isNotEmpty()) {
-            notiData.subTitle
-        }else{
-            "Practice word of the day"
-        }
+        return "Call Now"
     }
 
     override fun setTapAction(): PendingIntent? {
-        Log.d(TAG, "setTapAction: ${Utils.courseId } ${Utils.context!!.isFreeTrialOrCourseBought()}")
-        return Utils.context!!.getServiceNotificationIntent(notiData)
+        return openCallScreen()
     }
 }
 

@@ -27,8 +27,6 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.databinding.FragmentCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.voip.audiocontroller.AudioController
-import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -51,9 +49,6 @@ class   CallFragment : BaseFragment() {
 
     private val audioManager by lazy {
         requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    }
-    private val audioController by lazy {
-        AudioController(CoroutineScope((Dispatchers.IO)))
     }
 
     val vm by lazy {

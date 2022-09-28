@@ -26,7 +26,6 @@ data class UserAction(
 	}
 }
 
-// TODO: Different Class
 data class UI(
 
 	@field:SerializedName("type")

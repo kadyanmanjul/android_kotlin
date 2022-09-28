@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
+import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
@@ -119,36 +120,7 @@ object VoipPref {
             showDialogBox(duration, PURCHASE_POPUP)
         }
 
-        deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
-    }
-
-    private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {
-        if (callType == Category.EXPERT.ordinal) {
-            setExpertCallDuration(duration)
-
-            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-                expertDurationMutex.withLock {
-                    try {
-                        val map = HashMap<String, String>()
-                        map["time_spoken_in_seconds"] = duration
-                        map["connected_user_id"] = remoteUserMentorId
-                        map["agora_call_id"] = getLastCallId().toString()
-                        val response =
-                            AppObjectController.commonNetworkService.deductAmountAfterCall(map)
-                        when (response.code()) {
-                            200 -> {
-                                setExpertCallDuration("")
-                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
-                            }
-                            406 -> {
-
-                            }
-                        }
-                    } catch (ex: Exception) {
-                    }
-                }
-            }
-        }
+        ExpertListRepo().deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
     }
 
     // TODO: These function shouldn't be here

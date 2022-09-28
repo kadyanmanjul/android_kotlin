@@ -15,4 +15,6 @@ data class VoipStatusResponse(
     val groupFppStatus: Int?,
     @SerializedName("is_game_enabled")
     val isGameOn: Int?,
+    @SerializedName("is_beep_timer_enabled")
+    val isBeepTimerEnabled: Boolean?,
 )

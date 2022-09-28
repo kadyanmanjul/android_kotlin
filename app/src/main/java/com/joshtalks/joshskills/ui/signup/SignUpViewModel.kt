@@ -457,8 +457,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         )
                     )
                 if (resp.isSuccessful) {
-                    if (!PrefManager.getBoolValue(FETCHED_SCHEDULED_NOTIFICATION))
-                        getFreeTrialNotifications()
+                    getFreeTrialNotifications()
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)
                     getRegisteredFreeTrialCourse()
                     return@launch
@@ -581,8 +580,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 )
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
-                if (response.isNotEmpty())
-                    PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
                 NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
             } catch (e: Exception) {

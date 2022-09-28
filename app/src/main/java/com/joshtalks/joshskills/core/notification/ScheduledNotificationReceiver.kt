@@ -11,9 +11,8 @@ import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.isBlocked
 import kotlinx.coroutines.*
-import java.time.Duration
 
 class ScheduledNotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -63,27 +62,5 @@ class ScheduledNotificationReceiver : BroadcastReceiver() {
                 )
             }
         }
-    }
-
-    private fun isBlocked(): Boolean {
-        val blockStatus = PrefManager.getBlockStatusObject(BLOCK_STATUS)
-        if (blockStatus?.timestamp?.toInt() == 0)
-            return false
-
-        if (checkWithinBlockTimer(blockStatus)) {
-            return true
-        }
-        return false
-    }
-
-    private fun checkWithinBlockTimer(blockStatus: BlockStatusModel?): Boolean {
-        if (blockStatus != null) {
-            val durationInMillis = Duration.ofMinutes(blockStatus.duration.toLong()).toMillis()
-            val unblockTimestamp = blockStatus.timestamp + durationInMillis
-            if (System.currentTimeMillis() <= unblockTimestamp) {
-                return true
-            }
-        }
-        return false
     }
 }

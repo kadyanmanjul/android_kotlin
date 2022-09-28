@@ -5,19 +5,16 @@ import android.app.Application
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.database.Cursor
-import android.graphics.Bitmap
-import android.net.Uri
 import android.util.Log
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.constant.CONTENT_VOIP_STATE_AUTHORITY
-import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE
+import com.joshtalks.joshskills.core.BLOCK_STATUS
+import com.joshtalks.joshskills.core.FT_CALLS_LEFT
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.joshtalks.joshskills.core.PrefManager as CorePrefManager
+import java.time.Duration
 import java.util.*
-
 
 private const val TAG = "Utils"
 
@@ -37,8 +34,8 @@ private fun Cursor?.getStringData(columnName : String) : String {
 
 
 fun getVoipState(): State {
-        val state = PrefManager.getVoipState().ordinal
-        return State.values()[state]
+    val state = PrefManager.getVoipState().ordinal
+    return State.values()[state]
 }
 
 
@@ -66,4 +63,29 @@ private fun bytesToHuman(size: Long): String {
     return floatForm(size.toDouble() / Mb)
 }
 
+fun isBlocked(): Boolean {
+    val blockStatus = CorePrefManager.getBlockStatusObject(BLOCK_STATUS)
+    if (CorePrefManager.getIntValue(FT_CALLS_LEFT, defValue = 15) == 0 &&
+        CorePrefManager.getBoolValue(IS_FREE_TRIAL))
+        return true
+    if (blockStatus?.timestamp?.toInt() == 0)
+        return false
+
+    if (checkWithinBlockTimer(blockStatus))
+        return true
+    return false
+}
+
+private fun checkWithinBlockTimer(blockStatus: BlockStatusModel?): Boolean {
+    if (blockStatus != null) {
+        val durationInMillis = Duration.ofMinutes(blockStatus.duration.toLong()).toMillis()
+        val unblockTimestamp = blockStatus.timestamp + durationInMillis
+        if (System.currentTimeMillis() <= unblockTimestamp) {
+            return true
+        }
+        if (blockStatus.callsLeft == 0)
+            return true
+    }
+    return false
+}
 

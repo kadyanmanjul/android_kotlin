@@ -316,8 +316,6 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     AppObjectController.signUpNetworkService.createFreeOrder(data)
                 if (response.isSuccessful) {
                     isFreeOrderCreated.postValue(true)
-                    if (!PrefManager.getBoolValue(FETCHED_SCHEDULED_NOTIFICATION))
-                        getFreeTrialNotifications(testId)
                 }
             } catch (ex: Exception) {
                 when (ex) {
@@ -450,8 +448,6 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             try {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(testId)
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
-                if (response.isNotEmpty())
-                    PrefManager.put(FETCHED_SCHEDULED_NOTIFICATION, true)
                 NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
             } catch (e: Exception) {
