@@ -300,9 +300,9 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data.mentorId = Mentor.getInstance().getId()
                 }
-                val response =
-                    AppObjectController.signUpNetworkService.createFreeOrder(data)
+                val response = AppObjectController.signUpNetworkService.createFreeOrder(data)
                 if (response.isSuccessful) {
+                    getFreeTrialNotifications(testId)
                     isFreeOrderCreated.postValue(true)
                 }
             } catch (ex: Exception) {

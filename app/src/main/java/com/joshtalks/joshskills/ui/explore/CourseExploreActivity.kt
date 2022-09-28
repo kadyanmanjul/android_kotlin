@@ -112,18 +112,17 @@ class CourseExploreActivity : CoreJoshActivity() {
                             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                                 .addUserDetails()
                                 .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-                            val intent =
-                                Intent(
-                                    AppObjectController.joshApplication,
-                                    SignUpActivity::class.java
-                                )
+                            val intent = Intent(
+                                AppObjectController.joshApplication,
+                                SignUpActivity::class.java
+                            )
                             intent.apply {
                                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 putExtra(FLOW_FROM, "CourseExploreActivity")
                             }
                             lifecycleScope.launch(Dispatchers.IO) {
-                                PrefManager.clearUser()
+                                PrefManager.logoutUser()
                                 AppObjectController.joshApplication.startActivity(intent)
                             }
                         }

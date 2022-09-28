@@ -236,7 +236,7 @@ class Mentor {
         return this
     }
 
-    fun reset() {
+    fun resetMentor() {
         instance = null
     }
 
@@ -245,7 +245,6 @@ class Mentor {
         mentor.user?.let { updateUser(it) }
         update()
     }
-
 
     fun isCurrentUser(): Boolean {
         return getId() == getInstance().getId()
