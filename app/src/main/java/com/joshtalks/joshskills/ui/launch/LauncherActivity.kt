@@ -266,7 +266,13 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                         isConsistent = true
                     ) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
                             && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
-                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams)
+                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, true)
+                    PrefManager.hasKey(
+                        FT_COURSE_ONBOARDING,
+                        isConsistent = true
+                    ) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
+                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, false)
                     (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
                             && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
                     -> {
@@ -275,7 +281,7 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                     }
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) ->
                         Intent(this@LauncherActivity, SignUpActivity::class.java)
-                    PrefManager.getBoolValue(IS_FREE_TRIAL, false, false) ->
+                    PrefManager.getBoolValue(IS_FREE_TRIAL, isConsistent = false, defValue = false) ->
                         Intent(
                             this@LauncherActivity,
                             FreeTrialOnBoardActivity::class.java

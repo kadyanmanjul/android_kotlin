@@ -248,6 +248,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
             ABTestRepository().updateAllCampaigns()
             NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
+            PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
             val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT, false)
             val courseExpiryTime =
                 PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
@@ -459,6 +460,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (resp.isSuccessful) {
                     getFreeTrialNotifications()
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)
+                    PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
                     getRegisteredFreeTrialCourse()
                     return@launch
                 }
@@ -576,7 +578,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     PrefManager.getStringValue(
                         FREE_TRIAL_TEST_ID,
                         false,
-                        FREE_TRIAL_DEFAULT_TEST_ID
+                        "None"
                     )
                 )
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)

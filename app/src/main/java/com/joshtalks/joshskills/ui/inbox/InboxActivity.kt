@@ -85,7 +85,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
-    private var isBbTooltipVisible = false
+    private lateinit var bbTooltip: Balloon
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -108,7 +108,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         watchTimeEvent()
     }
 
-    fun watchTimeEvent(){
+    fun watchTimeEvent() {
         try {
             lifecycleScope.launch {
                 val videoEngageEntity =
@@ -494,11 +494,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         }
 //                        if (PrefManager.hasKey(COUPON_EXPIRY_TIME)) {
 //                            val expiryTime = PrefManager.getLongValue(COUPON_EXPIRY_TIME)
-                        if (isBbTooltipVisible.not())
-                            showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
 //                            else
 //                                PrefManager.removeKey(COUPON_EXPIRY_TIME)
-//                        }
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
@@ -543,25 +541,24 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             BUY_COURSE_INBOX_TOOLTIP + courseId
         )
         if (text.isBlank()) return
-        val balloon = Balloon.Builder(this)
-            .setLayout(R.layout.layout_bb_tip)
-            .setHeight(BalloonSizeSpec.WRAP)
-            .setIsVisibleArrow(true)
-            .setBackgroundColorResource(R.color.bb_tooltip_stroke)
-            .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
-            .setWidthRatio(0.85f)
-            .setDismissWhenTouchOutside(false)
-            .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-            .setLifecycleOwner(this)
-            .setDismissWhenClicked(false)
-            .setOnBalloonDismissListener {
-                isBbTooltipVisible = false
-            }
-            .build()
-        val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
-        textView.text = text
-        balloon.showAlignBottom(buy_english_course)
-        isBbTooltipVisible = true
+        if (this::bbTooltip.isInitialized.not()) {
+            bbTooltip = Balloon.Builder(this)
+                .setLayout(R.layout.layout_bb_tip)
+                .setHeight(BalloonSizeSpec.WRAP)
+                .setIsVisibleArrow(true)
+                .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
+                .setWidthRatio(0.85f)
+                .setDismissWhenTouchOutside(false)
+                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                .setLifecycleOwner(this)
+                .setDismissWhenClicked(false)
+                .build()
+        }
+        bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
+        bbTooltip.isShowing.not().let {
+            bbTooltip.showAlignBottom(buy_english_course)
+        }
     }
 
     override fun onPause() {

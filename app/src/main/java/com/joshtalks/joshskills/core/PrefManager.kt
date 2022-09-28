@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
@@ -87,6 +88,7 @@ const val LEADER_BOARD_OPEN_COUNT = "leader_board_open_count"
 const val P2P_LAST_CALL = "has_p2p_last_call"
 const val SEARCH_HINT_SHOW = "search_hint_show"
 const val ONLINE_HINT_SHOW = "online_hint_show"
+const val IS_USER_LOGGED_IN = "user_logged_in"
 
 const val LAST_FIRESTORE_NOTIFICATION_TIME = "last_firestore_notification_time"
 const val ONLINE_TEST_COMPLETED = "online_test_completed"
@@ -199,6 +201,7 @@ const val LESSON_ACTIVITY_VISIT_COUNT = "LESSON_ACTIVITY_VISIT_COUNT"
 const val COUPON_EXPIRY_TIME = "COUPON_EXPIRY_TIME"
 const val IS_FIRST_TIME_CALL_INITIATED = "IS_FIRST_TIME_CALL_INITIATED"
 const val HAVE_CLEARED_NOTIF_ANALYTICS = "HAVE_CLEARED_NOTIF_ANALYTICS"
+const val FT_COURSE_ONBOARDING = "FT_COURSE_ONBOARDING"
 
 object PrefManager {
 
@@ -409,21 +412,13 @@ object PrefManager {
 
     fun logoutUser() {
         sendBroadcast()
+        clearDatabase()
+        Mentor.getInstance().resetMentor()
         prefManagerCommon?.edit()?.clear()?.apply()
-        LastSyncPrefManager.clear()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
-    }
-
-    fun clearUser() {
-        sendBroadcast()
-        LastSyncPrefManager.clear()
-        prefManagerCommon?.edit()?.clear()?.apply()
-        AppDatabase.clearDatabase()
-        WorkManagerAdmin.instanceIdGenerateWorker()
-        WorkManagerAdmin.appInitWorker()
-        WorkManagerAdmin.appStartWorker()
+        put(IS_USER_LOGGED_IN, value = false, isConsistent = true)
     }
 
     fun clearDatabase() {
