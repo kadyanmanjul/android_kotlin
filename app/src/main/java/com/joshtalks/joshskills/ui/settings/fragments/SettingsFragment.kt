@@ -294,21 +294,24 @@ class SettingsFragment : Fragment() {
 
     fun onPrivacyPolicyClicked() {
         MixPanelTracker.publishEvent(MixPanelEvent.PRIVACY_PROFILE).push()
-        val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
+//        val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
+        val url = "http://staging.joshtalks.org/privacy-policy/"
         (activity as BaseActivity).showWebViewDialog(url)
 
         logEvent(AnalyticsEvent.PRIVACY_POLICY_CLICKED.name)
     }
 
     fun onTermsClicked() { //TODO: Update remote config in terms_conditions_url
-        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+//        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+        val url = "http://staging.joshtalks.org/terms-conditions/"
         (activity as BaseActivity).showWebViewDialog(url)
 
         logEvent(AnalyticsEvent.TERMS_CONDITION_CLICKED.name)
     }
 
     fun onGuidelinesClicked() {
-        val url = AppObjectController.getFirebaseRemoteConfig().getString("community_guidelines_url")
+//        val url = AppObjectController.getFirebaseRemoteConfig().getString("community_guidelines_url")
+        val url = "http://staging.joshtalks.org/community-guidelines/"
         (activity as BaseActivity).showWebViewDialog(url)
 
         logEvent(AnalyticsEvent.COMM_GUIDELINES_CLICKED.name)

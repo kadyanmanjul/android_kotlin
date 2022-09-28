@@ -217,7 +217,8 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     }
 
     fun showPrivacyPolicyDialog() {
-        val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
+//        val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
+        val url = "http://staging.joshtalks.org/privacy-policy/"
         (activity as BaseActivity).showWebViewDialog(url)
     }
 
