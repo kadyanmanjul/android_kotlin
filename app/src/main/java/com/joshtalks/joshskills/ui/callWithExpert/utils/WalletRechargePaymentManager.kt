@@ -50,6 +50,7 @@ class WalletRechargePaymentManager private constructor(
 
 
     fun startPayment() {
+        paymentGatewayListener?.onProcessStart()
         val data = HashMap<String, Any>()
         data["test_id"] = selectedAmount.id
         data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID, false)
