@@ -1081,5 +1081,7 @@
     <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="community_guidelines">Community Guidelines</string>
     <string name="about_us">About Us</string>
+    <string name="payment_processing_with_elipsize">Payment Processing...</string>
+    <string name="this_might_take_upto_a_minute_please_do_not_cloase_the_app">This might take upto a minute. Please do not cloase the app.</string>
 
 </resources>
