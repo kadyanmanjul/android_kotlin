@@ -6,17 +6,10 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.repository.server.JuspayPayLoad
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
-import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
-import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.CouponListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.FeatureListAdapter
@@ -28,11 +21,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.PriceParame
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import kotlinx.coroutines.*
-import retrofit2.HttpException
-import retrofit2.Response
 import timber.log.Timber
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }

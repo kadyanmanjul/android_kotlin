@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseData
 import com.joshtalks.joshskills.repository.server.JuspayPayLoad
@@ -54,6 +55,7 @@ class PaymentManager(
                     AppObjectController.signUpNetworkService.createPaymentOrderV3(data).await()
                 if (orderDetailsResponse.code() == 201) {
                     val response: JuspayPayLoad = orderDetailsResponse.body()!!
+                    MarketingAnalytics.initPurchaseEvent(data, response.amount, response.currency)
                     addPaymentEntry(response)
                     withContext(Dispatchers.Main) {
                         paymentGatewayManager.openPaymentGateway(response)

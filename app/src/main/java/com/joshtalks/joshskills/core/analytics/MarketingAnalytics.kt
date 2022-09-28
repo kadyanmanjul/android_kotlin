@@ -1,18 +1,14 @@
 package com.joshtalks.joshskills.core.analytics
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.repository.server.CourseExploreModel
-import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.util.*
 import java.math.BigDecimal
-import java.util.*
 
 
 object MarketingAnalytics {
@@ -59,7 +55,8 @@ object MarketingAnalytics {
 
     fun initPurchaseEvent(
         data: MutableMap<String, String>,
-        mPaymentDetailsResponse: OrderDetailResponse
+        amount: Double,
+        currency: String
     ) {
         JoshSkillExecutors.BOUNDED.submit {
 
@@ -75,13 +72,13 @@ object MarketingAnalytics {
             params.putInt(AppEventsConstants.EVENT_PARAM_PAYMENT_INFO_AVAILABLE, 1)
             params.putString(
                 AppEventsConstants.EVENT_PARAM_CURRENCY,
-                mPaymentDetailsResponse.currency
+                currency
             )
             params.putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             val facebookEventLogger = AppEventsLogger.newLogger(context)
             facebookEventLogger.logEvent(
                 AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT,
-                mPaymentDetailsResponse.amount,
+                amount,
                 params
             )
 
@@ -91,7 +88,7 @@ object MarketingAnalytics {
                 .setTitle("joshskills")
                 .setContentMetadata(
                     ContentMetadata()
-                        .setPrice(mPaymentDetailsResponse.amount, CurrencyType.INR)
+                        .setPrice(amount, CurrencyType.INR)
                         .setQuantity(1.0)
                         .setContentSchema(BranchContentSchema.COMMERCE_PRODUCT)
                 )

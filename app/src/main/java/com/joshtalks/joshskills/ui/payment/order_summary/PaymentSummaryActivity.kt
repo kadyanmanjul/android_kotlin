@@ -1030,6 +1030,13 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         MarketingAnalytics.coursePurchased(BigDecimal(paymentManager.getAmount()))
+        MarketingAnalytics.coursePurchased(
+            BigDecimal(paymentManager.getAmount()),
+            true,
+            testId = freeTrialTestId,
+            courseName = "English Course",
+            juspayPaymentId = paymentManager.getJustPayOrderId()
+        )
         NotificationUtils(applicationContext).removeAllScheduledNotification()
         //viewModel.updateSubscriptionStatus()
         if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
