@@ -289,7 +289,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         val res =
                             AppObjectController.commonNetworkService.syncPaymentStatus(lastPaymentEntry.razorpayOrderId)
                         val response = res.body()?.toString()
-                        lastPaymentEntry.response = lastPaymentEntry.response.plus(response)
+                        lastPaymentEntry.response = response.toString()
                         appDatabase.paymentDao()
                             .updatePayment(lastPaymentEntry)
 
