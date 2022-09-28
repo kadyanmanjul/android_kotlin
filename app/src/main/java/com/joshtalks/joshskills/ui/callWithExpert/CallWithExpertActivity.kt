@@ -36,6 +36,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
 
     private lateinit var binding: ActivityCallWithExpertBinding
     private lateinit var balanceTv: TextView
+    private val paymentManager: PaymentManager by lazy { PaymentManager(this, viewModel.viewModelScope, this) }
 
     private val viewModel by lazy {
         ViewModelProvider(this)[CallWithExpertViewModel::class.java]
@@ -55,6 +56,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
         initToolbar()
         attachObservers()
         attachNavigationChangedListener()
+        paymentManager.initializePaymentGateway()
     }
 
     private fun attachObservers() {
@@ -72,7 +74,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
                         .setPaymentGatewayListener(this)
                         .setPaymentListener(this)
                         .setNavController(navController)
-                        .setPaymentManager(PaymentManager(this, viewModel.viewModelScope, this))
+                        .setPaymentManager(paymentManager)
                         .build()
 
                     walletPaymentManager.startPayment()
