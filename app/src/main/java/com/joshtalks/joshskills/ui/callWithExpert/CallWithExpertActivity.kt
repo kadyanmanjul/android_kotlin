@@ -45,6 +45,8 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
 
     private lateinit var walletPaymentManager: WalletRechargePaymentManager
 
+    private lateinit var paymentManager: PaymentManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_call_with_expert)
@@ -52,6 +54,8 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
         binding.handler = this
         binding.viewModel = this.viewModel
         PrefManager.initServicePref(applicationContext)
+        paymentManager = PaymentManager(this, viewModel.viewModelScope, this)
+        paymentManager.initializePaymentGateway()
         initToolbar()
         attachObservers()
         attachNavigationChangedListener()
@@ -72,7 +76,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
                         .setPaymentGatewayListener(this)
                         .setPaymentListener(this)
                         .setNavController(navController)
-                        .setPaymentManager(PaymentManager(this, viewModel.viewModelScope, this))
+                        .setPaymentManager(paymentManager)
                         .build()
 
                     walletPaymentManager.startPayment()
@@ -178,6 +182,8 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
     }
 
     override fun onProcessStop() {
-
+        runOnUiThread {
+            binding.progressBar.gone()
+        }
     }
 }

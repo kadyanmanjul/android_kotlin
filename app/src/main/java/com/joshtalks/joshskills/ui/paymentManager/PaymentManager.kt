@@ -108,6 +108,7 @@ class PaymentManager(
                     paymentGatewayListener?.onWarmUpEnded(context.getString(R.string.something_went_wrong))
                 }
             } catch (e: Exception) {
+                e.printStackTrace()
                 paymentGatewayListener?.onWarmUpEnded(context.getString(R.string.something_went_wrong))
             }
         }

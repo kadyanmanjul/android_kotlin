@@ -44,6 +44,10 @@ class WalletRechargePaymentManager private constructor(
 
     private lateinit var razorpayOrderId: String
 
+//    fun initializePaymentGateway(){
+//        paymentManager?.initializePaymentGateway()
+//    }
+
 
     fun startPayment() {
         val data = HashMap<String, Any>()
@@ -74,8 +78,8 @@ class WalletRechargePaymentManager private constructor(
     private fun verifyPayment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val data = mapOf("razorpay_order_id" to razorpayOrderId)
-                AppObjectController.commonNetworkService.verifyPaymentWithResponse(data)
+//                val data = mapOf("razorpay_order_id" to razorpayOrderId)
+                AppObjectController.commonNetworkService.verifyPaymentV3(paymentManager?.getJustPayOrderId() ?: "")
 //                paymentStatusListener?.onPaymentFinished(isPaymentSuccessful)
 
             } catch (e: Exception) {

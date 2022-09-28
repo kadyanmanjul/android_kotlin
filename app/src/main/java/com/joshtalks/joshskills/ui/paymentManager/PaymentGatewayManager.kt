@@ -57,6 +57,7 @@ class PaymentGatewayManager(
                             } else {
                                 when (status) {
                                     "backpressed" -> {
+                                        Log.d("sagar", "onEvent: ")
                                     }
                                     "user_aborted" -> {
 //
@@ -87,6 +88,7 @@ class PaymentGatewayManager(
                     }
                 } catch (e: Exception) {
                     // merchant code...
+                    e.printStackTrace()
                 }
             }
         })
@@ -137,7 +139,7 @@ class PaymentGatewayManager(
             juspayOrderId = orderDetails.payload?.orderId ?: EMPTY
             joshTalksId = orderDetails.joshtalksOrderId
             amount = orderDetails.amount
-            paymentGatewayListener?.onWarmUpEnded()
+//            paymentGatewayListener?.onWarmUpEnded()
             hyperInstance.process(payload)
         } catch (e: Exception) {
             Log.e("sagar", "initializJuspayPayment:2 ${e.message}")
