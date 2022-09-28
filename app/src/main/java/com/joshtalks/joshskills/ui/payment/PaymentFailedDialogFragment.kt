@@ -20,12 +20,14 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentPaymentFailedDialogBinding
 import com.joshtalks.joshskills.ui.help.HelpActivity
+import com.joshtalks.joshskills.ui.payment.order_summary.ERROR_MSG
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryViewModel
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 
 class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentPaymentFailedDialogBinding
     private var transactionId: Int = 0
+    private var errorMsg :String = EMPTY
     private var testId: String = EMPTY
     private val viewModel: PaymentSummaryViewModel by lazy {
         ViewModelProvider(requireActivity()).get(PaymentSummaryViewModel::class.java)
@@ -34,6 +36,7 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             transactionId = it.getInt(TRANSACTION_ID)
+            errorMsg = it.getString(ERROR_MSG)?: EMPTY
         }
     }
 
@@ -61,6 +64,7 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
         ){
             testId = it
         }
+        binding.textView3.text = errorMsg
         binding.retry.setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.RETRY_PAYMENT)
                 .addParam(ParamKeys.TEST_ID,viewModel.getPaymentTestId())
@@ -120,10 +124,11 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(transactionId: Int) =
+        fun newInstance(transactionId: Int, errorMsg:String) =
             PaymentFailedDialogFragment().apply {
                 arguments = Bundle().apply {
                     putInt(TRANSACTION_ID, transactionId)
+                    putString(ERROR_MSG, errorMsg)
                 }
             }
     }

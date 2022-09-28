@@ -970,7 +970,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 }
                 false -> {
                     uiHandler.post {
-                        showPaymentFailedDialog()
+                      //  showPaymentFailedDialog()
                     }
                 }
             }
@@ -1115,18 +1115,19 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .commitAllowingStateLoss()
     }
 
-    private fun showPaymentFailedDialog() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.parent_Container,
-                PaymentFailedDialogFragment.newInstance(
-                    viewModel.orderDetailsLiveData.value?.joshtalksOrderId ?: 0
-                ),
-                "Payment Success"
-            )
-            .commitAllowingStateLoss()
-    }
+//    private fun showPaymentFailedDialog() {
+//        supportFragmentManager
+//            .beginTransaction()
+//            .replace(
+//                R.id.parent_Container,
+//                PaymentFailedDialogFragment.newInstance(
+//                    viewModel.orderDetailsLiveData.value?.joshtalksOrderId ?: 0
+//
+//                ),
+//                "Payment Failed"
+//            )
+//            .commitAllowingStateLoss()
+//    }
 
     private fun navigateToStartCourseActivity() {
         if (PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)

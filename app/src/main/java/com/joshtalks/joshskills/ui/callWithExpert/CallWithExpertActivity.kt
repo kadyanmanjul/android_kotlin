@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.callWithExpert
 
-import `in`.juspay.services.HyperServices
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,14 +11,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.OPEN_WALLET
 import com.joshtalks.joshskills.core.SPEAKING_PAGE
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
-import com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertListFragment
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
 import com.joshtalks.joshskills.ui.callWithExpert.utils.PaymentStatusListener
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
@@ -28,8 +25,6 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
-import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.razorpay.PaymentResultListener
 
 class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
     PaymentGatewayListener {

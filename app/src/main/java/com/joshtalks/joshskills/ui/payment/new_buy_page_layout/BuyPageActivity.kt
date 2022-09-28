@@ -468,15 +468,16 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             .commitAllowingStateLoss()
     }
 
-    private fun showPaymentFailedDialog() {
+    private fun showPaymentFailedDialog(errorMsg: String) {
         supportFragmentManager
             .beginTransaction()
             .replace(
                 R.id.buy_page_parent_container,
                 PaymentFailedDialogFragment.newInstance(
-                    paymentManager.getJoshTalksId()
+                    paymentManager.getJoshTalksId(),
+                    errorMsg
                 ),
-                "Payment Success"
+                "Payment Failed"
             )
             .commitAllowingStateLoss()
     }
@@ -698,7 +699,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     override fun onPaymentError(errorMsg: String) {
         verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         AppObjectController.uiHandler.post {
-            showPaymentFailedDialog()
+            showPaymentFailedDialog(errorMsg)
         }
         try {
             viewModel.removeEntryFromPaymentTable(juspayOrderId)

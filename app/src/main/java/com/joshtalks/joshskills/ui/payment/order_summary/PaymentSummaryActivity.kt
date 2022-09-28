@@ -59,6 +59,7 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
@@ -98,6 +99,7 @@ const val TRANSACTION_ID = "TRANSACTION_ID"
 const val ENGLISH_COURSE_TEST_ID = "102"
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = "784"
 const val SUBSCRIPTION_TEST_ID = "10"
+const val ERROR_MSG = "ERROR_MSG"
 
 class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     private var prefix: String = EMPTY
@@ -936,15 +938,16 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
             .commitAllowingStateLoss()
     }
 
-    private fun showPaymentFailedDialog() {
+    private fun showPaymentFailedDialog(errorMsg: String) {
         supportFragmentManager
             .beginTransaction()
             .replace(
                 R.id.parent_Container,
                 PaymentFailedDialogFragment.newInstance(
-                    paymentManager.getJoshTalksId()
+                    paymentManager.getJoshTalksId(),
+                    errorMsg
                 ),
-                "Payment Success"
+                "Payment Failed"
             )
             .commitAllowingStateLoss()
     }
@@ -998,7 +1001,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     override fun onPaymentError(errorMsg: String) {
         viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         AppObjectController.uiHandler.post {
-            showPaymentFailedDialog()
+            showPaymentFailedDialog(errorMsg)
         }
         try {
             viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
@@ -1027,6 +1030,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         MarketingAnalytics.coursePurchased(BigDecimal(paymentManager.getAmount()))
+        NotificationUtils(applicationContext).removeAllScheduledNotification()
         //viewModel.updateSubscriptionStatus()
         if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
             PrefManager.put(

@@ -57,10 +57,10 @@ class PaymentGatewayManager(
                             } else {
                                 when (status) {
                                     "backpressed" -> {
-                                        Log.d("sagar", "onEvent: ")
+                                        paymentGatewayListener?.onPaymentError(context.getString(R.string.aborted_msg))
                                     }
                                     "user_aborted" -> {
-//
+                                        paymentGatewayListener?.onPaymentError(context.getString(R.string.aborted_msg))
                                     }
                                     "pending_vbv" -> {
                                         Log.e("sagar", "onEvent: $response $status")
@@ -70,7 +70,6 @@ class PaymentGatewayManager(
 
                                     }
                                     "authorization_failed" -> {
-                                        Log.e("sagar", "onEvent: 00")
 //                                        onPaymentError()
                                         paymentGatewayListener?.onPaymentError(context.getString(R.string.failed_payment_text))
 //

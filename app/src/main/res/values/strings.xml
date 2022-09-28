@@ -1041,6 +1041,7 @@
     <string name="turn_on_speaker" translatable="false">Turn on speaker</string>
     <string name="important_info" translatable="false">जरुरी जानकारी</string>
     <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
+    <string name="aborted_msg" translatable="false">Oops, Looks like you have canceled the payment!</string>
 
     <string-array name="amount_list">
         <item>₹ 50</item>
