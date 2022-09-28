@@ -51,7 +51,8 @@ class PaymentGatewayManager(
                                 when (status) {
                                     "charged" -> {
                                         Log.e("sagar", "onEvent11: $status $response")
-                                        paymentGatewayListener?.onPaymentSuccess()
+//                                        onPaymentSuccess()
+//                                        paymentGatewayListener?.onPaymentSuccess()
                                     }
                                     "cod_initiated" -> {
                                         Log.e("sagar", "onEvent: $status")
@@ -156,7 +157,7 @@ class PaymentGatewayManager(
 interface PaymentGatewayListener {
     fun onPaymentError(errorMsg: String)
     fun onWarmUpEnded(error: String? = null)
-    fun onPaymentSuccess()
+//    fun onPaymentSuccess()
     fun onProcessStart()
     fun onProcessStop()
     fun onPaymentFinished(isPaymentSuccessful: Boolean)

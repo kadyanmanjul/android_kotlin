@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.ui.payment.model.PaymentStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PaymentInProcessViewModel : BaseViewModel() {
 
@@ -27,6 +28,8 @@ class PaymentInProcessViewModel : BaseViewModel() {
                 return@launch
             }
             var timer = 0L
+            delay(2000)
+            timer += 2000
             while (timer < TIMER_DURATION) {
                 try {
                     val response = repository.verifyPayment(orderId).message
@@ -51,13 +54,17 @@ class PaymentInProcessViewModel : BaseViewModel() {
         }
     }
 
-    private fun sendSuccess() {
-        message.what = PAYMENT_SUCCESS
-        singleLiveEvent.value = message
+    private suspend fun sendSuccess() {
+        withContext(Dispatchers.Main) {
+            message.what = PAYMENT_SUCCESS
+            singleLiveEvent.value = message
+        }
     }
 
-    private fun sendFailed() {
-        message.what = PAYMENT_FAILED
-        singleLiveEvent.value = message
+    private suspend fun sendFailed() {
+        withContext(Dispatchers.Main) {
+            message.what = PAYMENT_FAILED
+            singleLiveEvent.value = message
+        }
     }
 }

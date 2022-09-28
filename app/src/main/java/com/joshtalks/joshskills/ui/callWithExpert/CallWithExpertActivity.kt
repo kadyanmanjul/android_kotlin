@@ -176,7 +176,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
         walletPaymentManager.onPaymentFailed(0, errorMsg)
     }
 
-    override fun onPaymentSuccess() {
+    private fun onPaymentSuccess() {
         viewModel.paymentSuccess(true)
         walletPaymentManager.onPaymentSuccess("onPaymentSuccess")
     }

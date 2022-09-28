@@ -987,7 +987,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
     }
 
-    override fun onPaymentSuccess() {
+    private fun onPaymentSuccess() {
         val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {

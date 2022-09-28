@@ -233,9 +233,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                         2000
                     )
                 }
-                PAYMENT_SUCCESS -> {
-                    showToast("Gg, payment successful")
-                }
+                PAYMENT_SUCCESS -> onPaymentSuccess()
                 PAYMENT_FAILED -> {
                     showPaymentFailedDialog()
                 }
@@ -716,7 +714,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 putString("ORDER_ID", orderId)
             }
             fragment.arguments = bundle
-            add(R.id.buy_page_parent_container, fragment, "Payment Processing")
+            replace(R.id.buy_page_parent_container, fragment, "Payment Processing")
         }
     }
 
@@ -736,7 +734,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         }
     }
 
-    override fun onPaymentSuccess() {
+    private fun onPaymentSuccess() {
         if (viewModel.isDiscount) {
             viewModel.saveImpression(IMPRESSION_PAY_DISCOUNT)
         } else {
@@ -754,7 +752,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
         }
         // isBackPressDisabled = true
-        verifyPaymentJuspay(paymentManager.getJustPayOrderId())
+//        verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         viewModel.removeEntryFromPaymentTable(juspayOrderId)
         MarketingAnalytics.coursePurchased(
             BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
@@ -785,12 +783,12 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
         AppObjectController.uiHandler.post {
             PrefManager.put(IS_PAYMENT_DONE, true)
-            showPaymentProcessingFragment()
+//            showPaymentProcessingFragment()
         }
 
         AppObjectController.uiHandler.postDelayed({
             navigateToStartCourseActivity()
-        }, 1000L * 5L)
+        }, 2 * 1000L)
     }
 
     override fun onBackPressed() {
