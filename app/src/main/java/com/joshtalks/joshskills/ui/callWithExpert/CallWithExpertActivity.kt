@@ -137,6 +137,13 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
         }
     }
 
+    override fun onBackPressed() {
+        val backPressHandled = paymentManager.getJuspayBackPress()
+        if (!backPressHandled) {
+            super.onBackPressed()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         viewModel.syncCallDuration()
