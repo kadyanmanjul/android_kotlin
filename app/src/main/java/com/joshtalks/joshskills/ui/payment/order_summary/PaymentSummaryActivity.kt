@@ -979,7 +979,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     fun showPrivacyPolicyDialog() {
-        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
         showWebViewDialog(url)
     }
 

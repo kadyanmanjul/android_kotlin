@@ -285,6 +285,13 @@ class SettingsFragment : Fragment() {
         logEvent(AnalyticsEvent.RATE_US_CLICKED.name)
     }
 
+    fun onAboutUsClicked() {
+        val url = "https://www.joshtalks.com/about-josh/"
+        (activity as BaseActivity).showWebViewDialog(url)
+
+        logEvent(AnalyticsEvent.ABOUT_US.name)
+    }
+
     fun onPrivacyPolicyClicked() {
         MixPanelTracker.publishEvent(MixPanelEvent.PRIVACY_PROFILE).push()
         val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
