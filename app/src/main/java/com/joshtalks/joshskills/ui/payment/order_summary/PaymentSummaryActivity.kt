@@ -106,7 +106,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     private val uiHandler = Handler(Looper.getMainLooper())
     lateinit var applyCouponText: AppCompatTextView
     lateinit var multiLineLL: LinearLayout
-    private lateinit var viewModel: PaymentSummaryViewModel
     private var isEcommereceEventFire = true
     private lateinit var appAnalytics: AppAnalytics
     private var isRequestHintAppearred = false
@@ -116,7 +115,8 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     private var loginStartFreeTrial = false
     private var is100PointsObtained = false
     private var isHundredPointsActive = false
-    private lateinit var paymentManager: PaymentManager
+    private val viewModel: PaymentSummaryViewModel by lazy { ViewModelProvider(this).get(PaymentSummaryViewModel::class.java) }
+    private val paymentManager: PaymentManager by lazy { PaymentManager(this, viewModel.viewModelScope, this) }
     companion object {
         fun startPaymentSummaryActivity(
             activity: Activity,
@@ -183,12 +183,10 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         subscribeObservers()
         initCountryCode()
         logPaymentAnalyticsEvents()
-        paymentManager = PaymentManager(this, viewModel.viewModelScope, this)
         paymentManager.initializePaymentGateway()
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this).get(PaymentSummaryViewModel::class.java)
         viewModel.mTestId = testId
         getPaymentDetails(false, testId)
     }

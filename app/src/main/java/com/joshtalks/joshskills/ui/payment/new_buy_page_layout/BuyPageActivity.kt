@@ -97,12 +97,18 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         DataBindingUtil.setContentView(this, R.layout.activity_buy_page)
     }
 
-    private lateinit var paymentManager: PaymentManager
-
     private var errorView: Stub<ErrorView>? = null
     private var errorShowCount = 0
     private val viewModel by lazy {
         ViewModelProvider(this)[BuyPageViewModel::class.java]
+    }
+
+    private val paymentManager: PaymentManager by lazy {
+        PaymentManager(
+            this,
+            viewModel.viewModelScope,
+            this
+        )
     }
 
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -148,7 +154,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     override fun initViewBinding() {
         binding.vm = viewModel
         binding.executePendingBindings()
-        paymentManager = PaymentManager(this, viewModel.viewModelScope, this)
         paymentManager.initializePaymentGateway()
     }
 
