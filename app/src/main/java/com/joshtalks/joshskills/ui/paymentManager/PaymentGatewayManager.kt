@@ -22,6 +22,7 @@ class PaymentGatewayManager(
     val hyperInstance by lazy { HyperServices(context) }
 
     var juspayOrderId = EMPTY
+    var backPressHandled = false
 
     fun initPaymentGateway() {
         val payload = createInitiatePayload()
@@ -57,7 +58,6 @@ class PaymentGatewayManager(
                             } else {
                                 when (status) {
                                     "backpressed" -> {
-                                        paymentGatewayListener?.onJuspayBackPress(hyperInstance)
                                     }
                                     "user_aborted" -> {
 //
@@ -144,6 +144,7 @@ class PaymentGatewayManager(
         }
     }
 
+    fun onBackPressHandle() =  hyperInstance.onBackPressed()
 
 }
 
@@ -154,5 +155,4 @@ interface PaymentGatewayListener {
     fun onProcessStart()
     fun onProcessStop()
     fun onPaymentFinished(isPaymentSuccessful: Boolean)
-    fun onJuspayBackPress(hyperServices: HyperServices)
 }

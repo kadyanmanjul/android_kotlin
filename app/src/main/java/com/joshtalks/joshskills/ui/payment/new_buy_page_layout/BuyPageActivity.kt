@@ -759,10 +759,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         }, 1000L * 5L)
     }
 
-    override fun onJuspayBackPress(hyperServices: HyperServices) {
-        val backPressHandled = hyperInstance.onBackPressed()
+    override fun onBackPressed() {
+        val backPressHandled = paymentManager.getJuspayBackPress()
         if (!backPressHandled) {
-            onBackPressed()
+            super.onBackPressed()
         }
     }
 }

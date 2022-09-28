@@ -130,4 +130,6 @@ class PaymentManager(
 
     fun getJustPayOrderId() = paymentGatewayManager.juspayOrderId
 
+    fun getJuspayBackPress() = paymentGatewayManager.onBackPressHandle()
+
 }
