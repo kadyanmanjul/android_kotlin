@@ -241,8 +241,16 @@
         <value>இது 90 பாடங்கள் கொண்ட திட்டம்.\nஇதை நீங்கள் இலவசமாக ஒரு நாள் முழுக்க பயன்படுத்தலாம். முழு கோர்ஸையும் நீங்கள் 499/- செலுத்தி  பெறலாம்.\n  \nஒரு நாளைக்கு இலவசமாக பயன்படுத்த வேண்டுமா ?</value>
     </entry>
     <entry>
-        <key>terms_condition_url</key>
+        <key>privacy_policy_url</key>
         <value>https://app.joshtalks.org/privacy-policy/</value>
+    </entry>
+    <entry>
+        <key>terms_condition_url</key>
+        <value>https://app.joshtalks.org/terms-conditions/</value>
+    </entry>
+    <entry>
+        <key>community_guidelines_url</key>
+        <value>https://app.joshtalks.org/community-guidelines/</value>
     </entry>
     <entry>
         <key>TOOLTIP_LEADERBOARD_SOTD_1209</key>
