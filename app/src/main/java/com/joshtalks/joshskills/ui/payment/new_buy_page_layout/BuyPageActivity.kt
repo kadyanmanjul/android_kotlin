@@ -327,6 +327,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             englishCourseCard =
                 courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
             binding.courseTypeContainer.removeAllViews()
+            val image = englishCourseCard?.findViewById<ImageView>(R.id.img_skill_logo)
+            image?.setImage(buyCourseFeatureModel.otherCourseImage?: EMPTY)
+            val text = englishCourseCard?.findViewById<TextView>(R.id.sample_text)
+            text?.text = buyCourseFeatureModel.courseName
             binding.courseTypeContainer.addView(englishCourseCard)
             viewModel.isGovernmentCourse.set(false)
         } else {

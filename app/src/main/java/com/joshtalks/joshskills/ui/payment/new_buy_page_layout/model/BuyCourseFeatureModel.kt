@@ -16,7 +16,9 @@ data class BuyCourseFeatureModel(
     @SerializedName("description") var teacherDesc: String? = null,
     @SerializedName("expire_time") var expiryTime: Date? = null,
     @SerializedName("suman_profile") var sumanProfile:String?=null,
-    @SerializedName("call_us_text") var callUsText: String? = null
+    @SerializedName("call_us_text") var callUsText: String? = null,
+    @SerializedName("course_name") var courseName:String?= null,
+    @SerializedName("image_name") var otherCourseImage :String?=null
 )
 
 data class CouponListModel(

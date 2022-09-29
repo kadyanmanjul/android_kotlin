@@ -396,6 +396,7 @@
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_10sdp"
+                            android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                             android:background="@drawable/dotted_line"
                             android:backgroundTint="@color/colorAccent" />
 
@@ -408,6 +409,7 @@
                         android:layout_marginHorizontal="@dimen/_13sdp"
                         android:layout_marginTop="@dimen/_12sdp"
                         android:lines="2"
+                        android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                         android:text="@{vm.callUsText}"
                         android:textAlignment="center"
                         android:textColor="@color/pure_black"
@@ -428,6 +430,7 @@
                         android:elevation="@dimen/_3sdp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
+                        android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                         android:onClick="@{()-> vm.makePhoneCall()}"
                         android:text="Call us"
                         android:textAllCaps="false"
