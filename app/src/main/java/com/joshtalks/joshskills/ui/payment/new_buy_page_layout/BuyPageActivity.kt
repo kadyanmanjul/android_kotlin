@@ -98,6 +98,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     var courseDescListCard: View? = null
     var priceForPaymentProceed: CourseDetailsList? = null
     private val hyperInstance by lazy { HyperServices(this) }
+    var isPaymentInitiated = false
 
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
@@ -436,6 +437,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         binding.paymentProceedBtnCard.removeAllViews()
         binding.paymentProceedBtnCard.addView(proceedButtonCard)
         paymentButton?.setOnSingleClickListener {
+            isPaymentInitiated = true
             startPayment()
         }
         proceedButtonCard?.findViewById<MaterialTextView>(R.id.text_view_privacy)
@@ -503,6 +505,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 },
                 "Payment Failed"
             )
+            disallowAddToBackStack()
         }
     }
 
@@ -802,10 +805,14 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onBackPressed() {
-        backPressMutex.onMultipleBackPress {
-            val backPressHandled = paymentManager.getJuspayBackPress()
-            if (!backPressHandled) {
-                super.onBackPressed()
+        if (!isPaymentInitiated) {
+            super.onBackPressed()
+        } else {
+            backPressMutex.onMultipleBackPress {
+                val backPressHandled = paymentManager.getJuspayBackPress()
+                if (!backPressHandled) {
+                    super.onBackPressed()
+                }
             }
         }
     }
