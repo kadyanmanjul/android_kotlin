@@ -70,18 +70,6 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun verifyPaymentJuspay(orderId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                AppObjectController.commonNetworkService.verifyPaymentV3(orderId)
-            } catch (ex: HttpException) {
-                ex.printStackTrace()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     fun getCourseName(): String {
         if (isSubscriptionTipUsed) {
             return responseSubscriptionPaymentSummary.value?.courseName ?: EMPTY

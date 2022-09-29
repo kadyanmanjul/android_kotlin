@@ -68,9 +68,6 @@ interface CommonNetworkService {
     @PATCH("$DIR/mentor/gaid/{id}/")
     suspend fun mergeMentorWithGAId(@Path("id") id: String, @FieldMap params: Map<String, String>)
 
-    @POST("$DIR/payment/verify_v2/")
-    suspend fun verifyPayment(@Body params: Map<String, String>): Any
-
     @GET("$DIR/payment/verify_v3/")
     suspend fun verifyPaymentV3(@Query("order_id") orderId: String): VerifyPayment
 

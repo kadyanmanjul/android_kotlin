@@ -38,7 +38,7 @@ class PaymentFailedDialogNew : DialogFragment() {
         lateinit var paymentManagerObj:PaymentManager
         lateinit var onCancelClicked: () -> Unit
         @JvmStatic
-        fun newInstance(paymentManager: PaymentManager, onCancelClick: () -> Unit) = PaymentFailedDialogNew().apply {
+        fun newInstance(paymentManager: PaymentManager, onCancelClick: () -> Unit = ({})) = PaymentFailedDialogNew().apply {
                 paymentManagerObj = paymentManager
                 onCancelClicked = onCancelClick
                 arguments = Bundle().apply {

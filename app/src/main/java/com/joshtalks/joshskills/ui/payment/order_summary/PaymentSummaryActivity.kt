@@ -29,6 +29,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.color
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -38,11 +39,13 @@ import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.material.textview.MaterialTextView
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
+import com.joshtalks.joshskills.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_PAYMENT_BTN_TXT
@@ -59,23 +62,21 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
-import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
-import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
+import com.joshtalks.joshskills.ui.payment.*
 import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import io.branch.referral.util.BRANCH_STANDARD_EVENT
-import io.branch.referral.util.CurrencyType
+import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.text.DecimalFormat
@@ -105,6 +106,9 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     private var loginStartFreeTrial = false
     private var is100PointsObtained = false
     private var isHundredPointsActive = false
+    private var event = EventLiveData
+    private val backPressMutex = Mutex(false)
+
     private val viewModel: PaymentSummaryViewModel by lazy {
         ViewModelProvider(this).get(
             PaymentSummaryViewModel::class.java
@@ -233,6 +237,12 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
     @SuppressLint("SetTextI18n")
     private fun subscribeObservers() {
+        event.observe(this) {
+            when(it.what) {
+                PAYMENT_SUCCESS -> onPaymentSuccess()
+                PAYMENT_FAILED -> showPaymentFailedDialog()
+            }
+        }
         viewModel.viewState?.observe(this, androidx.lifecycle.Observer {
             when (it) {
                 PaymentSummaryViewModel.ViewState.INTERNET_NOT_AVAILABLE -> {
@@ -875,10 +885,11 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     override fun onBackPressed() {
-        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
-        val backPressHandled = paymentManager.getJuspayBackPress()
-        if (!backPressHandled) {
-            super.onBackPressed()
+        backPressMutex.onMultipleBackPress {
+            val backPressHandled = paymentManager.getJuspayBackPress()
+            if (!backPressHandled) {
+                super.onBackPressed()
+            }
         }
     }
 
@@ -910,18 +921,20 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
             .commitAllowingStateLoss()
     }
 
-    private fun showPaymentFailedDialog(errorMsg: String) {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
+    private fun showPaymentFailedDialog() {
+        try {
+            viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(
                 R.id.parent_Container,
-                PaymentFailedDialogFragment.newInstance(
-                    paymentManager.getJoshTalksId(),
-                    errorMsg
-                ),
+                PaymentFailedDialogNew.newInstance(paymentManager),
                 "Payment Failed"
             )
-            .commitAllowingStateLoss()
+        }
     }
 
     private fun showChatNPayDialog() {
@@ -972,15 +985,10 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     override fun onPaymentError(errorMsg: String) {
-        viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
-        AppObjectController.uiHandler.post {
-            showPaymentFailedDialog(errorMsg)
-        }
-        try {
-            viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
+//        AppObjectController.uiHandler.post {
+//            showPaymentFailedDialog(errorMsg)
+//        }
     }
 
     override fun onWarmUpEnded(error: String?) {
@@ -1003,7 +1011,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         }
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
-        viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         NotificationUtils(applicationContext).removeAllScheduledNotification()
         //viewModel.updateSubscriptionStatus()
@@ -1031,12 +1038,12 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
         uiHandler.post {
             PrefManager.put(IS_PAYMENT_DONE, true)
-            showPaymentProcessingFragment()
+//            showPaymentProcessingFragment()
         }
 
         uiHandler.postDelayed({
             navigateToStartCourseActivity(true)
-        }, 1000 * 5)
+        }, 1000 * 2L)
     }
 
     override fun onProcessStart() {
@@ -1052,7 +1059,16 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     override fun onPaymentProcessing(orderId: String) {
-        //TODO("Not yet implemented")
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = PaymentInProcessFragment()
+            val bundle = Bundle().apply {
+                putString("ORDER_ID", orderId)
+            }
+            fragment.arguments = bundle
+            replace(R.id.parent_Container, fragment, "Payment Processing")
+            disallowAddToBackStack()
+        }
     }
 
 }

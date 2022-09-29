@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -76,26 +75,12 @@ class WalletRechargePaymentManager private constructor(
         }
     }
 
-    private fun verifyPayment() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-//                val data = mapOf("razorpay_order_id" to razorpayOrderId)
-                AppObjectController.commonNetworkService.verifyPaymentV3(paymentManager?.getJustPayOrderId() ?: "")
-//                paymentStatusListener?.onPaymentFinished(isPaymentSuccessful)
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     fun showErrorToast() {
         showToast("Something Went Wrong, Please Try Again")
     }
 
     fun onPaymentSuccess(status: String?) {
         Log.d(TAG, "onPaymentSuccess: and status => $status")
-//        verifyPayment()
         viewModelScope.launch {
             delay(5000)
             onPaymentFinished(true)
@@ -138,13 +123,11 @@ class WalletRechargePaymentManager private constructor(
             }
         }
         paymentGatewayListener?.onPaymentFinished(isPaymentSuccessful)
-
     }
 
     /**
     Builder for Wallet Payment Manager.
      */
-
     data class Builder(
         var activity: AppCompatActivity? = null,
         var selectedAmount: Amount? = null,
@@ -186,7 +169,6 @@ class WalletRechargePaymentManager private constructor(
                 paymentManager
             )
         }
-
     }
 
     companion object {

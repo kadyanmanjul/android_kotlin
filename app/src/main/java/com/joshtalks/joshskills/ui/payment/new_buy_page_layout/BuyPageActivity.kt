@@ -51,12 +51,9 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
-import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment
-import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
@@ -76,11 +73,9 @@ import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import de.hdodenhof.circleimageview.CircleImageView
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import retrofit2.HttpException
 import java.math.BigDecimal
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
@@ -236,9 +231,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                     )
                 }
                 PAYMENT_SUCCESS -> onPaymentSuccess()
-                PAYMENT_FAILED -> {
-                    showPaymentFailedDialog()
-                }
+                PAYMENT_FAILED -> showPaymentFailedDialog()
             }
         }
     }
@@ -465,29 +458,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         } catch (ex: Exception) {
             ex.showAppropriateMsg()
         }
-    }
-
-    private fun verifyPaymentJuspay(orderId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                AppObjectController.commonNetworkService.verifyPaymentV3(orderId)
-            } catch (ex: HttpException) {
-                ex.printStackTrace()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun showPaymentProcessingFragment() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.buy_page_parent_container,
-                PaymentProcessingFragment.newInstance(),
-                "Payment Processing"
-            )
-            .commitAllowingStateLoss()
     }
 
     private fun showPaymentFailedDialog() {

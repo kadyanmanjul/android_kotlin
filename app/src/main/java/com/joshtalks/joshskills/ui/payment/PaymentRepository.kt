@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.ui.payment
 
 import com.joshtalks.joshskills.core.AppObjectController
-import kotlinx.coroutines.CoroutineScope
-import retrofit2.Response
 
 class PaymentRepository {
 
