@@ -51,7 +51,6 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.ui.group.GroupInfoFragment
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
@@ -490,11 +489,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     private fun showPaymentFailedDialog() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            replace(R.id.buy_page_parent_container,
-                PaymentFailedDialog.newInstance(paymentManager.getJustPayOrderId()),
+            replace(
+                R.id.buy_page_parent_container,
+                PaymentFailedDialogNew.newInstance(paymentManager),
                 "Payment Failed"
             )
-                .addToBackStack("PAYMENT_STACK")
         }
     }
 
@@ -725,15 +724,15 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onPaymentError(errorMsg: String) {
-//        verifyPaymentJuspay(paymentManager.getJustPayOrderId())
+        //verifyPaymentJuspay(paymentManager.getJustPayOrderId())
 //        AppObjectController.uiHandler.post {
 //            showPaymentFailedDialog(errorMsg)
 //        }
-        try {
-            viewModel.removeEntryFromPaymentTable(juspayOrderId)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        try {
+//            viewModel.removeEntryFromPaymentTable(juspayOrderId)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
     }
 
     private fun onPaymentSuccess() {

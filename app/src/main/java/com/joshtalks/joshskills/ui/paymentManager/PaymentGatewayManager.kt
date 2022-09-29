@@ -23,6 +23,7 @@ class PaymentGatewayManager(
     var backPressHandled = false
     var joshTalksId = 0
     var amount : Double = 0.0
+    var juspayPayLoad: JuspayPayLoad? = null
 
     fun initPaymentGateway() {
         val payload = createInitiatePayload()
@@ -61,28 +62,28 @@ class PaymentGatewayManager(
                             } else {
                                 when (status) {
                                     "backpressed" -> {
-                                        paymentGatewayListener?.onPaymentError(status)
+                                       // paymentGatewayListener?.onPaymentError(context.getString(R.string.aborted_msg))
                                     }
                                     "user_aborted" -> {
-                                        paymentGatewayListener?.onPaymentError(status)
+                                       // paymentGatewayListener?.onPaymentError(context.getString(R.string.aborted_msg))
                                     }
                                     "pending_vbv" -> {
-                                       paymentGatewayListener?.onPaymentError(status)
+                                       // paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "authorizing" -> {
 
                                     }
                                     "authorization_failed" -> {
-                                        paymentGatewayListener?.onPaymentError(status)
+                                        // paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "authentication_failed" -> {
-                                        paymentGatewayListener?.onPaymentError(status)
+                                        // paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "api_failure" -> {
-                                        paymentGatewayListener?.onPaymentError(status)
+                                        // paymentGatewayListener?.onPaymentError(status)
                                     }
                                     "no internet" -> {
-                                        paymentGatewayListener?.onPaymentError(status)
+                                        // paymentGatewayListener?.onPaymentError(status)
                                     }
                                 }
                             }
@@ -139,6 +140,7 @@ class PaymentGatewayManager(
 
             Log.e("sagar", "openPaymentGateway: $payload" )
 
+            juspayPayLoad = orderDetails
             juspayOrderId = orderDetails.payload?.orderId ?: EMPTY
             joshTalksId = orderDetails.joshtalksOrderId
             amount = orderDetails.amount

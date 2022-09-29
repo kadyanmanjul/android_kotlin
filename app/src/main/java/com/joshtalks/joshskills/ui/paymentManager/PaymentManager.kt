@@ -122,7 +122,7 @@ class PaymentManager(
                 Payment(
                     response.amount,
                     response.joshtalksOrderId,
-                    EMPTY,
+                    response.juspayOrderId,
                     response.payload?.orderId ?: EMPTY,
                     PaymentStatus.CREATED
                 )
@@ -137,5 +137,9 @@ class PaymentManager(
     fun getJoshTalksId() = paymentGatewayManager.joshTalksId
 
     fun getAmount() = paymentGatewayManager.amount
+
+    fun getJuspayPayload() = paymentGatewayManager.juspayPayLoad
+
+    fun makePaymentForTryAgain(orderDetails: JuspayPayLoad) = paymentGatewayManager.openPaymentGateway(orderDetails)
 
 }
