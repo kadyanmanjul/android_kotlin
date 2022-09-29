@@ -283,7 +283,8 @@ class PointsHistoryActivity : CoreJoshActivity() {
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            )
+            ),
+            "POINTS_HISTORY"
         )
         // finish()
     }

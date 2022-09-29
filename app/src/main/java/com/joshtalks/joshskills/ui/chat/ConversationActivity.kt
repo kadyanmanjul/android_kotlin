@@ -524,6 +524,7 @@ class ConversationActivity :
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
             ),
+            "CONVERSATION_FT_ENDED_BTN"
         )
     }
 
@@ -906,7 +907,8 @@ class ConversationActivity :
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            )
+            ),
+            "CONVERSATION_FT_TIMER"
         )
     }
 

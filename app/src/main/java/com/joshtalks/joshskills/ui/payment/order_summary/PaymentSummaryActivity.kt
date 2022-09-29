@@ -68,6 +68,8 @@ import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.special_practice.utils.GATEWAY_INITIALISED
+import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -984,13 +986,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         this.finish()
     }
 
-    override fun onPaymentError(errorMsg: String) {
-//        viewModel.verifyPaymentJuspay(paymentManager.getJustPayOrderId())
-//        AppObjectController.uiHandler.post {
-//            showPaymentFailedDialog(errorMsg)
-//        }
-    }
-
     override fun onWarmUpEnded(error: String?) {
 
     }
@@ -1047,10 +1042,12 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     override fun onProcessStart() {
+        viewModel.savePaymentImpression(PROCEED_PAYMENT_CLICK, "PAYMENT_SUMMARY")
         showProgressBar()
     }
 
     override fun onProcessStop() {
+        viewModel.savePaymentImpression(GATEWAY_INITIALISED, "PAYMENT_SUMMARY")
         hideProgressBar()
     }
 

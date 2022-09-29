@@ -706,7 +706,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 it1,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                )
+                ),
+                "SPEAKING_BUY_TO_CALL"
             )
         }
     }

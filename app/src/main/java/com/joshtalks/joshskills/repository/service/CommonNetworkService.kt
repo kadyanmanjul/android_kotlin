@@ -416,7 +416,7 @@ interface CommonNetworkService {
     suspend fun savePopupImpression(@Body params: Map<String, String>): Response<Void>
 
     @POST("$DIR/impression/track_buy_course_impression/")
-    suspend fun saveNewBuyPageLayoutImpression(@Body params: Map<String, Any>): Response<Void>
+    suspend fun saveNewBuyPageLayoutImpression(@Body params: Map<String, String>): Response<Void>
 
     @GET("$DIR/micro_payment/expert_call_status/")
     suspend fun getButtonExpertVisibility(): Response<ButtonVisibilityResponse>

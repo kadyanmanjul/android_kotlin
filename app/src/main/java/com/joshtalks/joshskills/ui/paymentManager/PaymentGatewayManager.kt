@@ -157,7 +157,7 @@ class PaymentGatewayManager(
 }
 
 interface PaymentGatewayListener {
-    fun onPaymentError(errorMsg: String)
+//    fun onPaymentError(errorMsg: String)
     fun onWarmUpEnded(error: String? = null)
 //    fun onPaymentSuccess()
     fun onProcessStart()

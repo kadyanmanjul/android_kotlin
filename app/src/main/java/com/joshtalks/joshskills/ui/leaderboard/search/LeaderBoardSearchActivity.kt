@@ -244,7 +244,8 @@ class LeaderBoardSearchActivity : BaseActivity() {
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            )
+            ),
+            "SEARCH_LEADERBOARD_FT_ENDED"
         )
         // finish()
     }

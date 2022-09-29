@@ -124,7 +124,8 @@ class PurchaseDialog : BaseDialogFragment() {
                 requireActivity(),
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                )
+                ),
+                "PURCHASE_DIALOG"
             )
             closeDialog(isPopupIgnored = false)
         } catch (ex: Exception) {

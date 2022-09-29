@@ -72,8 +72,6 @@ import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import de.hdodenhof.circleimageview.CircleImageView
-import io.branch.referral.util.BRANCH_STANDARD_EVENT
-import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -98,6 +96,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
+    private var flowFrom: String = EMPTY
 
     private var countdownTimerBack: CountdownTimerBack? = null
 
@@ -136,8 +135,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     override fun getArguments() {
         super.getArguments()
-        if (intent.hasExtra(HAS_NOTIFICATION) && !PrefManager.getBoolValue(IS_FREE_TRIAL)){
-            finish()
+        if (intent.hasExtra(HAS_NOTIFICATION)) {
+            flowFrom = "NOTIFICATION"
+            if (!PrefManager.getBoolValue(IS_FREE_TRIAL))
+                finish()
         }
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
@@ -146,6 +147,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 PrefManager.getStringValue(PAID_COURSE_TEST_ID)
             }
         }
+        flowFrom = intent.getStringExtra(FLOW_FROM) ?: EMPTY
         Log.d("BuyPageActivity.kt", "SAGAR => getArguments:120 $testId")
 
         if (intent.hasExtra(IS_FAKE_CALL)) {
@@ -186,6 +188,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             showErrorView()
         }
 
+        viewModel.saveImpressionForBuyPageLayout(OPEN_BUY_PAGE_LAYOUT, flowFrom)
         NotificationUtils(this).updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
         MarketingAnalytics.openPreCheckoutPage()
         initToolbar()
@@ -435,6 +438,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         binding.paymentProceedBtnCard.addView(proceedButtonCard)
         paymentButton?.setOnSingleClickListener {
             isPaymentInitiated = true
+            viewModel.saveImpressionForBuyPageLayout(PROCEED_PAYMENT_CLICK, testId)
             startPayment()
         }
         proceedButtonCard?.findViewById<MaterialTextView>(R.id.text_view_privacy)
@@ -505,9 +509,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         fun startBuyPageActivity(
             activity: Activity,
             testId: String,
+            flowFrom: String
         ) {
             Intent(activity, BuyPageActivity::class.java).apply {
                 putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
+                putExtra(FLOW_FROM, flowFrom)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
@@ -685,6 +691,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onProcessStop() {
+        viewModel.saveImpressionForBuyPageLayout(GATEWAY_INITIALISED, "BUY_PAGE_LAYOUT")
         hideProgressBar()
     }
 
@@ -715,10 +722,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onWarmUpEnded(error: String?) {
-
-    }
-
-    override fun onPaymentError(errorMsg: String) {
 
     }
 
@@ -753,11 +756,8 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             e.printStackTrace()
         }
 
-        AppObjectController.uiHandler.post {
-            PrefManager.put(IS_PAYMENT_DONE, true)
-        }
-
         AppObjectController.uiHandler.postDelayed({
+            PrefManager.put(IS_PAYMENT_DONE, true)
             navigateToStartCourseActivity()
         }, 2 * 1000L)
     }
@@ -769,7 +769,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             backPressMutex.onMultipleBackPress {
                 val backPressHandled = paymentManager.getJuspayBackPress()
                 if (!backPressHandled) {
+                    viewModel.saveImpressionForBuyPageLayout(BACK_PRESSED_ON_GATEWAY, "BUY_PAGE_LAYOUT")
                     super.onBackPressed()
+                } else {
+                    viewModel.saveImpressionForBuyPageLayout(BACK_PRESSED_ON_LOADING, "BUY_PAGE_LAYOUT")
                 }
             }
         }

@@ -162,8 +162,8 @@ class BuyPageViewModel : BaseViewModel() {
         try {
             when (type) {
                 CLICK_ON_OFFER_CARD -> {
-                    saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED)
                     if (couponType == APPLY) {
+                        saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, it.couponCode)
                         isCouponApplied.set(true)
                         try {
                             getCoursePriceList(it.couponCode)
@@ -172,6 +172,7 @@ class BuyPageViewModel : BaseViewModel() {
                             Log.d("BuyPageViewModel.kt", "SAGAR => :139 ${ex.message}")
                         }
                     } else {
+                        saveImpressionForBuyPageLayout(COUPON_CODE_REMOVED, it.couponCode)
                         isCouponApplied.set(false)
                         getCoursePriceList(null)
                     }
@@ -259,7 +260,7 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     fun applyEnteredCoupon(code: String) {
-        saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED)
+        saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, code)
         if (code.isNotBlank()) {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
@@ -283,7 +284,7 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    fun saveImpressionForBuyPageLayout(eventName: String, eventData: Int = 0) {
+    fun saveImpressionForBuyPageLayout(eventName: String, eventData: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 buyPageRepo.saveBuyPageImpression(
@@ -293,7 +294,7 @@ class BuyPageViewModel : BaseViewModel() {
                     )
                 )
             } catch (ex: java.lang.Exception) {
-
+                ex.printStackTrace()
             }
         }
     }

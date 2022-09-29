@@ -82,7 +82,8 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
             requireActivity(),
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            )
+            ),
+            "BOTTOM_SHEET_FT_ENDED"
         )
     }
 

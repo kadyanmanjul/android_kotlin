@@ -443,4 +443,19 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
+    fun savePaymentImpression(event: String, eventData: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(
+                    mapOf(
+                        "event_name" to event,
+                        "event_data" to eventData
+                    )
+                )
+            } catch (ex: java.lang.Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 }

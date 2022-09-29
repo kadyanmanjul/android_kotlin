@@ -86,7 +86,7 @@ class PaymentManager(
     fun createForWallet(courseData: CourseData,selectedAmount: Amount) {
         coroutineScope.launch {
             try {
-                paymentGatewayListener?.onProcessStart()
+//                paymentGatewayListener?.onProcessStart()
                 val data = mutableMapOf(
                     "encrypted_text" to (courseData.encryptedText ?: ""),
                     "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),

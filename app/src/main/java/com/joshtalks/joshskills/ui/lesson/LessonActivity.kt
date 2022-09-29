@@ -291,7 +291,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     this@LessonActivity,
                     AppObjectController.getFirebaseRemoteConfig().getString(
                         FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                    )
+                    ),
+                    "LESSON_TOOLBAR_BTN"
                 )
             }
         }

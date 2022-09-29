@@ -419,7 +419,8 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            )
+            ),
+            "LEADERBOARD_FT_ENDED_BTN"
         )
         // finish()
     }

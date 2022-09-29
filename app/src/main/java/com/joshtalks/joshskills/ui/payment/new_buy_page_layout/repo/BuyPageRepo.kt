@@ -25,7 +25,7 @@ class BuyPageRepo {
 
     suspend fun getCouponFromCode(code: String) = AppObjectController.commonNetworkService.getCouponFromCode(code)
 
-    suspend fun saveBuyPageImpression(map: Map<String, Any>) =
+    suspend fun saveBuyPageImpression(map: Map<String, String>) =
         AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(map)
 
 }

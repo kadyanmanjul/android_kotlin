@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.callWithExpert
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +27,8 @@ import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewMo
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
+import com.joshtalks.joshskills.ui.special_practice.utils.GATEWAY_INITIALISED
+import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 
 class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
     PaymentGatewayListener {
@@ -222,10 +223,10 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
         }
     }
 
-    override fun onPaymentError(errorMsg: String) {
-        Log.d("paymenterror", "onPaymentError:  $errorMsg")
-        walletPaymentManager.onPaymentFailed(0, errorMsg)
-    }
+//    override fun onPaymentError(errorMsg: String) {
+//        Log.d("paymenterror", "onPaymentError:  $errorMsg")
+//        walletPaymentManager.onPaymentFailed(0, errorMsg)
+//    }
 
     private fun onPaymentSuccess() {
         viewModel.paymentSuccess(true)
@@ -233,12 +234,14 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
     }
 
     override fun onProcessStart() {
+        viewModel.saveImpressionForPayment(PROCEED_PAYMENT_CLICK, "CALL_WITH_EXPERT")
         runOnUiThread {
             binding.progressBar.visible()
         }
     }
 
     override fun onProcessStop() {
+        viewModel.saveImpressionForPayment(GATEWAY_INITIALISED, "CALL_WITH_EXPERT")
         runOnUiThread {
             binding.progressBar.gone()
         }

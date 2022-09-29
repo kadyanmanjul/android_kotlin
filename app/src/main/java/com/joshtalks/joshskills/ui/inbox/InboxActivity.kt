@@ -157,7 +157,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                )
+                ),
+                "INBOX_TOOLBAR_BTN"
             )
         }
 
@@ -192,7 +193,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                )
+                ),
+                "INBOX_BUY_COURSE_BTN"
             )
 //            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
 //                this,
@@ -404,7 +406,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     this,
                     AppObjectController.getFirebaseRemoteConfig().getString(
                         FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                    )
+                    ),
+                    "INBOX_TRY_AGAIN"
                 )
             }
         } else {

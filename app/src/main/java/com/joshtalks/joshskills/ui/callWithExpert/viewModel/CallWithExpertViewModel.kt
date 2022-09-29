@@ -106,4 +106,19 @@ class CallWithExpertViewModel : BaseViewModel() {
         Log.d("durationsync", "syncCallDuration: ")
         expertListRepo.deductAmountAfterCall()
     }
+
+    fun saveImpressionForPayment(event: String, eventData: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                expertListRepo.saveBuyPageImpression(
+                    mapOf(
+                        "event_name" to event,
+                        "event_data" to eventData
+                    )
+                )
+            } catch (ex: java.lang.Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 }

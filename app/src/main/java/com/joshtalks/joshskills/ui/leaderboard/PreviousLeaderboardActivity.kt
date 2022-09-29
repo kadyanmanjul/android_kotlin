@@ -231,7 +231,8 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            )
+            ),
+            "PREV_LEADERBOARD_FT_ENDED"
         )
         // finish()
     }

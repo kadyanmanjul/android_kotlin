@@ -161,6 +161,8 @@ class ExpertListRepo {
         }
     }
 
+    suspend fun saveBuyPageImpression(map: Map<String, String>) =
+        AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(map)
 }
 
 data class FirstTimeAmount(val isFirstTime: Boolean, val amount: Int)
