@@ -35,6 +35,7 @@ import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
@@ -235,6 +236,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 }
                 PAYMENT_SUCCESS -> onPaymentSuccess()
                 PAYMENT_FAILED -> showPaymentFailedDialog()
+                PAYMENT_PENDING -> showPendingDialog()
             }
         }
     }
@@ -701,12 +703,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     override fun onPaymentProcessing(orderId: String, status: String) {
         if (status == "pending_vbv") {
-            supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                val fragment = PaymentPendingFragment()
-                replace(R.id.buy_page_parent_container, fragment, "Payment Pending")
-                disallowAddToBackStack()
-            }
+            showPendingDialog()
             return
         }
         supportFragmentManager.commit {
@@ -717,6 +714,15 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             }
             fragment.arguments = bundle
             replace(R.id.buy_page_parent_container, fragment, "Payment Processing")
+            disallowAddToBackStack()
+        }
+    }
+
+    private fun showPendingDialog() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = PaymentPendingFragment()
+            replace(R.id.buy_page_parent_container, fragment, "Payment Pending")
             disallowAddToBackStack()
         }
     }

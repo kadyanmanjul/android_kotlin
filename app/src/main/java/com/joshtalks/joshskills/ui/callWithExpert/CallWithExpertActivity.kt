@@ -14,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.OPEN_WALLET
 import com.joshtalks.joshskills.core.SPEAKING_PAGE
@@ -68,8 +69,10 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
         event.observe(this) {
             when (it.what) {
                 PAYMENT_SUCCESS -> onPaymentSuccess()
-                PAYMENT_FAILED -> {
-                    showPaymentFailedDialog()
+                PAYMENT_FAILED -> showPaymentFailedDialog()
+                PAYMENT_PENDING -> {
+                    navController.navigateUp()
+                    navController.navigate(R.id.paymentPendingFragment)
                 }
             }
         }

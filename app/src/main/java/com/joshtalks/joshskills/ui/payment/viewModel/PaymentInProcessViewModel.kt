@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.payment.viewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.ui.payment.PaymentRepository
 import com.joshtalks.joshskills.ui.payment.model.PaymentStatus
@@ -49,13 +50,20 @@ class PaymentInProcessViewModel : BaseViewModel() {
                 timer += LOOP_INTERVAL
                 delay(LOOP_INTERVAL)
             }
-            sendFailed()
+            sendPending()
         }
     }
 
     private suspend fun sendSuccess() {
         withContext(Dispatchers.Main) {
             message.what = PAYMENT_SUCCESS
+            singleLiveEvent.value = message
+        }
+    }
+
+    private suspend fun sendPending() {
+        withContext(Dispatchers.Main) {
+            message.what = PAYMENT_PENDING
             singleLiveEvent.value = message
         }
     }

@@ -45,6 +45,7 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
@@ -243,6 +244,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
             when(it.what) {
                 PAYMENT_SUCCESS -> onPaymentSuccess()
                 PAYMENT_FAILED -> showPaymentFailedDialog()
+                PAYMENT_PENDING -> showPendingDialog()
             }
         }
         viewModel.viewState?.observe(this, androidx.lifecycle.Observer {
@@ -1057,12 +1059,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
     override fun onPaymentProcessing(orderId: String, status: String) {
         if (status == "pending_vbv") {
-            supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                val fragment = PaymentPendingFragment()
-                replace(R.id.parent_Container, fragment, "Payment Pending")
-                disallowAddToBackStack()
-            }
+            showPendingDialog()
             return
         }
         supportFragmentManager.commit {
@@ -1077,4 +1074,12 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         }
     }
 
+    private fun showPendingDialog() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = PaymentPendingFragment()
+            replace(R.id.parent_Container, fragment, "Payment Pending")
+            disallowAddToBackStack()
+        }
+    }
 }
