@@ -170,10 +170,11 @@ object MarketingAnalytics {
             var guestMentorId = EMPTY
             val bundle = Bundle()
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "E-learning")
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
             bundle.putDouble(FirebaseAnalytics.Param.VALUE, amount.toDouble())
             bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, juspayPaymentId)
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
+            bundle.putString(ParamKeys.DEVICE_ID.name , Utils.getDeviceId())
             FirebaseAnalytics.getInstance(AppObjectController.joshApplication)
                 .logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
@@ -186,7 +187,7 @@ object MarketingAnalytics {
             extras["payment_id"] = juspayPaymentId
             extras["currency"] = CurrencyType.INR.name
             extras["amount"] = amount.toString()
-            extras["course_name"] = "E-learning"
+            extras["course_name"] = courseName
             extras["device_id"] = Utils.getDeviceId()
             extras["guest_mentor_id"] = guestMentorId
             BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)

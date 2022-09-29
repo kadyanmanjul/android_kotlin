@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#454545"
-        android:clickable="false"
+        android:clickable="true"
         tools:context=".ui.payment.PaymentFailedDialog">
 
         <com.google.android.material.card.MaterialCardView

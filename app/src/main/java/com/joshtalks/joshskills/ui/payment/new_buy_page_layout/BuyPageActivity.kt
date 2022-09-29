@@ -98,7 +98,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
-    private var juspayOrderId = EMPTY
 
     private var countdownTimerBack: CountdownTimerBack? = null
 
@@ -467,7 +466,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     private fun showPaymentFailedDialog() {
         try {
-            viewModel.removeEntryFromPaymentTable(juspayOrderId)
+            viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -740,31 +739,15 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             PrefManager.put(IS_FREE_TRIAL, false)
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
         }
-        // isBackPressDisabled = true
-//        verifyPaymentJuspay(paymentManager.getJustPayOrderId())
-        viewModel.removeEntryFromPaymentTable(juspayOrderId)
+        viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         MarketingAnalytics.coursePurchased(
             BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
             true,
             testId = freeTrialTestId,
             courseName = priceForPaymentProceed?.courseName ?: EMPTY,
-            juspayPaymentId = juspayOrderId
+            juspayPaymentId = paymentManager.getJustPayOrderId()
         )
-        //viewModel.updateSubscriptionStatus()
         try {
-            val extras: HashMap<String, String> = HashMap()
-            var guestMentorId = EMPTY
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
-                guestMentorId = Mentor.getInstance().getId()
-            }
-            extras["test_id"] = priceForPaymentProceed?.testId.toString()
-            extras["payment_id"] = juspayOrderId
-            extras["currency"] = CurrencyType.INR.name
-            extras["amount"] = priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()
-            extras["course_name"] = priceForPaymentProceed?.courseName.toString()
-            extras["device_id"] = Utils.getDeviceId()
-            extras["guest_mentor_id"] = guestMentorId
-            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
             NotificationUtils(applicationContext).removeAllScheduledNotification()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -772,7 +755,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
         AppObjectController.uiHandler.post {
             PrefManager.put(IS_PAYMENT_DONE, true)
-//            showPaymentProcessingFragment()
         }
 
         AppObjectController.uiHandler.postDelayed({
