@@ -1666,4 +1666,8 @@
         <key>BUY_PAGE_SUPPORT_PHONE_NUMBER</key>
         <value>+918634503202</value>
     </entry>
+    <entry>
+        <key>OFFER_FOR_YOU_TEXT</key>
+        <value>Offer for you</value>
+    </entry>
 </defaults>

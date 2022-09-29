@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.OFFER_FOR_YOU_TEXT
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
@@ -44,6 +45,7 @@ class BuyPageViewModel : BaseViewModel() {
 
     var isCouponApplied = ObservableBoolean(true)
     var isOfferOrInsertCodeVisible = ObservableBoolean(false)
+    var offerForYouText = ObservableField("Offer for you")
 
     val isVideoPopUpShow = ObservableBoolean(false)
     var couponList: List<Coupon>? = null
@@ -93,8 +95,10 @@ class BuyPageViewModel : BaseViewModel() {
                         } else {
                             response.body()!!.listOfCoupon?.let { offersListAdapter.addOffersList(it) }
 
-                            if (response.body()!!.listOfCoupon?.size ?: 0 >= 1)
+                            if ((response.body()!!.listOfCoupon?.size ?: 0) >= 1) {
+                                offerForYouText.set(AppObjectController.getFirebaseRemoteConfig().getString(OFFER_FOR_YOU_TEXT))
                                 isOfferOrInsertCodeVisible.set(true)
+                            }
                             else {
                                 isOfferOrInsertCodeVisible.set(false)
                                 message.what = APPLY_COUPON_BUTTON_SHOW

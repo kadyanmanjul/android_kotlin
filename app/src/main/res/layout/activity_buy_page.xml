@@ -291,7 +291,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
-                                android:text="@string/offer_for_you"
+                                android:text="@{vm.offerForYouText}"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                                 android:textColor="@color/pure_black"
                                 android:textStyle="bold"

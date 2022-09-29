@@ -300,6 +300,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         viewModel.paymentStatus.observe(this, Observer {
             when (it.status) {
                 PaymentStatus.SUCCESS -> {
+                    dismissBbTip()
                     PrefManager.put(IS_APP_RESTARTED, false)
                     initPaymentStatusView(
                         R.drawable.green_rectangle_with_green_stroke,
@@ -314,6 +315,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     PrefManager.put(IS_PAYMENT_DONE, true)
                 }
                 PaymentStatus.FAILED -> {
+                    dismissBbTip()
                     initPaymentStatusView(
                         R.drawable.pink_rectangle_with_red_stroke,
                         R.drawable.ic_payment_exclamation,
@@ -326,6 +328,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     )
                 }
                 PaymentStatus.PROCESSING -> {
+                    dismissBbTip()
                     initPaymentStatusView(
                         R.drawable.yellow_rectangle_with_orange_stroke,
                         R.drawable.ic_payment_exclamation,
@@ -344,6 +347,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         })
+    }
+
+    private fun dismissBbTip(){
+        if (this::bbTooltip.isInitialized && bbTooltip.isShowing){
+            bbTooltip.dismiss()
+        }
     }
 
     private fun initPaymentStatusView(
