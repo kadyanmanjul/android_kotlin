@@ -487,6 +487,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun showPaymentFailedDialog() {
+        try {
+            viewModel.removeEntryFromPaymentTable(juspayOrderId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace(
