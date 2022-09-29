@@ -38,7 +38,6 @@ class PaymentInProcessViewModel : BaseViewModel() {
                             sendSuccess()
                             return@launch
                         }
-                        PaymentStatus.PENDING.type -> continue
                         PaymentStatus.FAILED.type -> {
                             sendFailed()
                             return@launch

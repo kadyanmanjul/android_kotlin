@@ -488,14 +488,14 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun showPaymentFailedDialog() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.buy_page_parent_container,
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.buy_page_parent_container,
                 PaymentFailedDialog.newInstance(paymentManager.getJustPayOrderId()),
                 "Payment Failed"
             )
-            .commitAllowingStateLoss()
+                .addToBackStack("PAYMENT_STACK")
+        }
     }
 
     private fun navigateToStartCourseActivity() {
@@ -709,12 +709,14 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     override fun onPaymentProcessing(orderId: String) {
         supportFragmentManager.commit {
+            setReorderingAllowed(true)
             val fragment = PaymentInProcessFragment()
             val bundle = Bundle().apply {
                 putString("ORDER_ID", orderId)
             }
             fragment.arguments = bundle
             replace(R.id.buy_page_parent_container, fragment, "Payment Processing")
+            disallowAddToBackStack()
         }
     }
 
@@ -723,7 +725,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onPaymentError(errorMsg: String) {
-        verifyPaymentJuspay(paymentManager.getJustPayOrderId())
+//        verifyPaymentJuspay(paymentManager.getJustPayOrderId())
 //        AppObjectController.uiHandler.post {
 //            showPaymentFailedDialog(errorMsg)
 //        }

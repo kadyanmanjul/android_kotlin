@@ -1,13 +1,13 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.joshtalks.joshskills.R
 
-class PaymentFailedDialog : Fragment() {
+class PaymentFailedDialog : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -17,6 +17,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
+        android:clickable="false"
         tools:context=".ui.payment.PaymentInProcessFragment">
 
         <androidx.constraintlayout.widget.Guideline
@@ -35,12 +37,13 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/paymentProcessingLottie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/paymentProcessingHeading"
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="@dimen/_180sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4"
             app:layout_constraintVertical_chainStyle="packed"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
@@ -51,15 +54,13 @@
             android:id="@+id/paymentProcessingHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_24sdp"
             android:fontFamily="@font/open_sans"
             android:text="@string/payment_processing_with_elipsize"
             android:textColor="@color/pure_black"
             android:textSize="@dimen/_16ssp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/textView19"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/paymentProcessingLottie" />
 
@@ -67,15 +68,13 @@
             android:id="@+id/textView19"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
             android:fontFamily="@font/open_sans"
             android:gravity="center"
-            android:text="@string/this_might_take_upto_a_minute_please_do_not_cloase_the_app"
+            android:text="@string/do_not_close_the_app_warning"
             android:textAlignment="center"
             android:textColor="@color/pure_black"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/paymentProcessingHeading" />
 
