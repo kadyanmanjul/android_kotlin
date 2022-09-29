@@ -95,7 +95,7 @@ class WalletRechargePaymentManager private constructor(
 
     fun onPaymentSuccess(status: String?) {
         Log.d(TAG, "onPaymentSuccess: and status => $status")
-        verifyPayment()
+//        verifyPayment()
         viewModelScope.launch {
             delay(5000)
             onPaymentFinished(true)

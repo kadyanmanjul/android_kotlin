@@ -69,7 +69,7 @@ class WalletFragment : Fragment() {
 
         callWithExpertViewModel.paymentSuccessful.observe(viewLifecycleOwner) {
             if (it) {
-                findNavController().navigate(R.id.paymentProcessingFragment)
+//                findNavController().navigate(R.id.paymentProcessingFragment)
                 callWithExpertViewModel.paymentSuccess(false)
             }
         }

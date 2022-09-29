@@ -13,9 +13,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.BaseActivity
+import com.joshtalks.joshskills.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.OPEN_WALLET
 import com.joshtalks.joshskills.core.SPEAKING_PAGE
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
 import com.joshtalks.joshskills.ui.callWithExpert.utils.PaymentStatusListener
@@ -23,15 +25,22 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentMan
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
+import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 
-class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
+class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
     PaymentGatewayListener {
 
     private lateinit var binding: ActivityCallWithExpertBinding
     private lateinit var balanceTv: TextView
-    private val paymentManager: PaymentManager by lazy { PaymentManager(this, viewModel.viewModelScope, this) }
+    private val paymentManager: PaymentManager by lazy {
+        PaymentManager(
+            this,
+            viewModel.viewModelScope,
+            this
+        )
+    }
 
     private val viewModel by lazy {
         ViewModelProvider(this)[CallWithExpertViewModel::class.java]
@@ -54,6 +63,36 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
         attachObservers()
         attachNavigationChangedListener()
         paymentManager.initializePaymentGateway()
+
+        event.observe(this) {
+            when (it.what) {
+                PAYMENT_SUCCESS -> onPaymentSuccess()
+                PAYMENT_FAILED -> {
+                    showPaymentFailedDialog()
+                }
+            }
+        }
+    }
+
+    private fun showPaymentFailedDialog() {
+        PaymentFailedDialogNew.newInstance(paymentManager, onCancelClick = {
+            navController.navigateUp()
+        }).apply {
+            show(supportFragmentManager, "PAYMENT_FAILED")
+        }
+    }
+
+
+    override fun initViewBinding() {
+//        TODO("Not yet implemented")
+    }
+
+    override fun onCreated() {
+//        TODO("Not yet implemented")
+    }
+
+    override fun initViewState() {
+//        TODO("Not yet implemented")
     }
 
     private fun attachObservers() {
@@ -79,9 +118,14 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
             }
         }
 
-        viewModel.isFirstAmount.observe(this){
-            if (it.isFirstTime){
-                RechargeSuccessFragment.open(supportFragmentManager, it.amount, isGifted = true,  type = "FirstTime")
+        viewModel.isFirstAmount.observe(this) {
+            if (it.isFirstTime) {
+                RechargeSuccessFragment.open(
+                    supportFragmentManager,
+                    it.amount,
+                    isGifted = true,
+                    type = "FirstTime"
+                )
             }
         }
     }
@@ -102,11 +146,11 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
             binding.toolbarContainer.ivEarn.gone()
         }
         binding.toolbarContainer.toolbar.menu.clear()
-        if(destination.id == R.id.walletFragment){
+        if (destination.id == R.id.walletFragment) {
             binding.toolbarContainer.toolbar.inflateMenu(R.menu.wallet_menu)
 
             binding.toolbarContainer.toolbar.setOnMenuItemClickListener {
-                when(it.itemId){
+                when (it.itemId) {
                     R.id.transaction_history -> {
                         navController.navigate(R.id.action_wallet_to_transactions)
                     }
@@ -125,7 +169,7 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
                 onBackPressed()
             }
         }
-        with(findViewById<View>(R.id.iv_earn)){
+        with(findViewById<View>(R.id.iv_earn)) {
             setOnClickListener {
                 viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = SPEAKING_PAGE)
             }
@@ -154,13 +198,15 @@ class CallWithExpertActivity : AppCompatActivity(), PaymentStatusListener,
     }
 
     override fun onPaymentFinished(isPaymentSuccessful: Boolean) {
-        if (isPaymentSuccessful){
+        if (isPaymentSuccessful) {
 
         }
     }
 
     override fun onPaymentProcessing(orderId: String) {
-
+        val bundle = Bundle()
+        bundle.putString("ORDER_ID", orderId)
+        navController.navigate(R.id.paymentInProcessFragment, bundle)
     }
 
     companion object {

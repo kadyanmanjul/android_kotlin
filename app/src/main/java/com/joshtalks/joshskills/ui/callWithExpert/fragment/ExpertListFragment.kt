@@ -88,7 +88,7 @@ class ExpertListFragment:BaseFragment() {
 
         viewModel.paymentSuccessful.observe(viewLifecycleOwner) {
             if (it) {
-                findNavController().navigate(R.id.paymentProcessingFragment)
+//                findNavController().navigate(R.id.paymentProcessingFragment)
                 viewModel.paymentSuccess(false)
             }
         }

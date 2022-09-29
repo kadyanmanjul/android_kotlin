@@ -25,18 +25,22 @@ class PaymentFailedDialogNew : DialogFragment() {
         binding.btnTryAgain.setOnClickListener {
             paymentManagerObj.getJuspayPayload()
                 ?.let { it1 -> paymentManagerObj.makePaymentForTryAgain(it1) }
+            dismiss()
         }
 
         binding.btnCancel.setOnClickListener {
-            requireActivity().finish()
+            dismiss()
+            onCancelClicked.invoke()
         }
     }
 
     companion object {
         lateinit var paymentManagerObj:PaymentManager
+        lateinit var onCancelClicked: () -> Unit
         @JvmStatic
-        fun newInstance(paymentManager: PaymentManager) = PaymentFailedDialogNew().apply {
+        fun newInstance(paymentManager: PaymentManager, onCancelClick: () -> Unit) = PaymentFailedDialogNew().apply {
                 paymentManagerObj = paymentManager
+                onCancelClicked = onCancelClick
                 arguments = Bundle().apply {
 
                 }

@@ -54,6 +54,8 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
+import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
+import com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
@@ -496,7 +498,9 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             setReorderingAllowed(true)
             replace(
                 R.id.buy_page_parent_container,
-                PaymentFailedDialogNew.newInstance(paymentManager),
+                PaymentFailedDialogNew.newInstance(paymentManager) {
+                      finish()
+                },
                 "Payment Failed"
             )
         }
