@@ -698,7 +698,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
                 val fragment = PaymentPendingFragment()
-                replace(R.id.parent_Container, fragment, "Payment Pending")
+                replace(R.id.buy_page_parent_container, fragment, "Payment Pending")
                 disallowAddToBackStack()
             }
             return
@@ -720,15 +720,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onPaymentError(errorMsg: String) {
-        //verifyPaymentJuspay(paymentManager.getJustPayOrderId())
-//        AppObjectController.uiHandler.post {
-//            showPaymentFailedDialog(errorMsg)
-//        }
-//        try {
-//            viewModel.removeEntryFromPaymentTable(juspayOrderId)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
+
     }
 
     private fun onPaymentSuccess() {
