@@ -1058,7 +1058,16 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
     }
 
-    override fun onPaymentProcessing(orderId: String) {
+    override fun onPaymentProcessing(orderId: String, status: String) {
+        if (status == "pending_vbv") {
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                val fragment = PaymentPendingFragment()
+                replace(R.id.parent_Container, fragment, "Payment Pending")
+                disallowAddToBackStack()
+            }
+            return
+        }
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val fragment = PaymentInProcessFragment()

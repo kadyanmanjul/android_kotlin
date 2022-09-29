@@ -37,4 +37,9 @@
         tools:layout="@layout/fragment_payment_in_process"
         android:name="com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment"
         android:label="Processing Payment" />
+    <fragment
+        android:id="@+id/paymentPendingFragment"
+        tools:layout="@layout/fragment_payment_pending"
+        android:name="com.joshtalks.joshskills.ui.payment.PaymentPendingFragment"
+        android:label="Pending Payment" />
 </navigation>

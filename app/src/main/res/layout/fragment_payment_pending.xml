@@ -3,6 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.payment.PaymentPendingFragment" />
+
+        <variable
+            name="viewModel"
+            type="com.joshtalks.joshskills.ui.payment.viewModel.PaymentInProcessViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:fontFamily="@font/open_sans"
-                    android:text="Payment Failed"
+                    android:text="Payment Pending"
                     android:textColor="@color/colorAccent"
                     android:textFontWeight="600"
                     android:textSize="@dimen/_16ssp"
@@ -43,10 +54,11 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/appCompatImageView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_33sdp"
+                    android:backgroundTint="#F0A005"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:src="@drawable/ic_payment_error"
+                    android:background="@drawable/schedule_black_24dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/appCompatTextView4" />
@@ -61,15 +73,30 @@
                     android:gravity="center"
                     android:textStyle="bold"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:text="There was an error processing your payment"
+                    android:text="Your payment is currently being processed"
                     android:textColor="@color/pitch_black"
                     android:textSize="@dimen/_13ssp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/appCompatImageView4" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/appCompatTextView7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:fontFamily="@font/open_sans"
+                    android:gravity="center"
+                    android:text="It usually takes 2-3 minutes for the bank to confirm your payment. We will inform you once the status is confirmed"
+                    android:textColor="@color/pitch_black"
+                    android:textSize="@dimen/_8sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/appCompatTextView6" />
+
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_try_again"
+                    android:id="@+id/btn_go_to_inbox"
                     style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -80,32 +107,19 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:paddingVertical="@dimen/_10sdp"
-                    android:text="Try Again"
+                    android:text="Go to Inbox"
                     android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_13ssp"
                     app:cornerRadius="@dimen/_36sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/appCompatTextView6"
+                    android:layout_marginVertical="@dimen/_15sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/appCompatTextView7"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.65"
-                    app:rippleColor="@color/white" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/btn_cancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_12sdp"
-                    android:fontFamily="@font/open_sans"
-                    android:text="@string/cancel"
-                    android:textColor="@color/colorAccent"
-                    android:textFontWeight="600"
-                    android:textSize="@dimen/_14ssp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/btn_try_again" />
+                    app:rippleColor="@color/white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>

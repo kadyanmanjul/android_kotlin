@@ -54,6 +54,7 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment
+import com.joshtalks.joshskills.ui.payment.PaymentPendingFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
@@ -471,7 +472,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             replace(
                 R.id.buy_page_parent_container,
                 PaymentFailedDialogNew.newInstance(paymentManager) {
-                      finish()
+                      onBackPressed()
                 },
                 "Payment Failed"
             )
@@ -688,7 +689,16 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
     }
 
-    override fun onPaymentProcessing(orderId: String) {
+    override fun onPaymentProcessing(orderId: String, status: String) {
+        if (status == "pending_vbv") {
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                val fragment = PaymentPendingFragment()
+                replace(R.id.parent_Container, fragment, "Payment Pending")
+                disallowAddToBackStack()
+            }
+            return
+        }
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val fragment = PaymentInProcessFragment()

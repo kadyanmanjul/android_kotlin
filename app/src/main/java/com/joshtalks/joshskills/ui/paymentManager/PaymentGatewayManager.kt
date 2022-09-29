@@ -46,7 +46,7 @@ class PaymentGatewayManager(
 
                             Log.e("sagar", "onEvent: 123 $error $status")
 
-                            paymentGatewayListener?.onPaymentProcessing(juspayOrderId)
+                            paymentGatewayListener?.onPaymentProcessing(juspayOrderId, status)
 
                             if (!error) {
                                 when (status) {
@@ -163,5 +163,5 @@ interface PaymentGatewayListener {
     fun onProcessStart()
     fun onProcessStop()
     fun onPaymentFinished(isPaymentSuccessful: Boolean)
-    fun onPaymentProcessing(orderId: String)
+    fun onPaymentProcessing(orderId: String, status:String)
 }

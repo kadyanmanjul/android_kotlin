@@ -204,7 +204,11 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
         }
     }
 
-    override fun onPaymentProcessing(orderId: String) {
+    override fun onPaymentProcessing(orderId: String, status:String) {
+        if (status == "pending_vbv"){
+            navController.navigate(R.id.paymentPendingFragment)
+            return
+        }
         val bundle = Bundle()
         bundle.putString("ORDER_ID", orderId)
         navController.navigate(R.id.paymentInProcessFragment, bundle)
