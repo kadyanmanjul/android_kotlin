@@ -75,8 +75,9 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
     }
 
     private fun showPaymentFailedDialog() {
+        navController.navigateUp()
         PaymentFailedDialogNew.newInstance(paymentManager, onCancelClick = {
-            navController.navigateUp()
+//            navController.navigateUp()
         }).apply {
             show(supportFragmentManager, "PAYMENT_FAILED")
         }
