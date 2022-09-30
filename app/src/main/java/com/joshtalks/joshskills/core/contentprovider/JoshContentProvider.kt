@@ -146,10 +146,8 @@ class JoshContentProvider : ContentProvider() {
                                 isBlockedOrFtEnded
                             ),
                             getNotificationBody(
-                                PrefManager.getStringValue(
-                                    CURRENT_COURSE_ID,
-                                    defaultValue = DEFAULT_COURSE_ID
-                                ), isBlockedOrFtEnded
+                                PrefManager.getStringValue(CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID),
+                                isBlockedOrFtEnded
                             )
                         )
                     )

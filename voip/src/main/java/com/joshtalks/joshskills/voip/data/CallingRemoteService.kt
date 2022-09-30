@@ -385,7 +385,9 @@ class TestNotification(val notiData : Data) : NotificationData {
     }
 
     override fun setContent(): String {
-        return "Call Now"
+        return notiData.body.ifEmpty {
+            "Call Now"
+        }
     }
 
     override fun setTapAction(): PendingIntent? {
