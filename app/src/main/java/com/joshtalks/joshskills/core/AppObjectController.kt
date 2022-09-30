@@ -69,7 +69,6 @@ import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -313,26 +312,6 @@ class AppObjectController {
         var appUsageStartTime: Long = 0L
 
         private const val cacheSize = 10 * 1024 * 1024.toLong()
-
-        fun generateDeviceId() {
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    if (PrefManager.getStringValue(USER_UNIQUE_ID).isBlank()) {
-                        delay(200)
-                    }
-                    if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                        val response = signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
-                        if (response.isSuccessful && response.body() != null) {
-                            PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
-                            Branch.getInstance().setIdentity(response.body()!!.gaID)
-                        }
-                    }
-                } catch (e: Throwable) {
-                    LogException.catchException(e)
-                    e.printStackTrace()
-                }
-            }
-        }
 
         fun getVideoTracker():DownloadTracker?{
             return if(Companion::videoDownloadTracker.isInitialized) {
@@ -798,7 +777,6 @@ class StatusCodeInterceptor : Interceptor {
                     if (!IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
                         PrefManager.logoutUser()
                         LastSyncPrefManager.clear()
-                        WorkManagerAdmin.instanceIdGenerateWorker()
                         WorkManagerAdmin.appInitWorker()
                         WorkManagerAdmin.appStartWorker()
                         if (JoshApplication.isAppVisible) {
@@ -817,7 +795,6 @@ class StatusCodeInterceptor : Interceptor {
                     }
                 }
             }
-//        WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
             Timber.i("Status code: %s", response.code)
             response
         }

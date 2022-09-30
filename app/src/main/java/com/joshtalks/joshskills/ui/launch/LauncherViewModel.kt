@@ -152,8 +152,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 GaIDMentorModel.update(resp)
                 PrefManager.put(SERVER_GID_ID, resp.gaidServerDbId)
                 PrefManager.put(EXPLORE_TYPE, exploreType ?: ExploreCardType.NORMAL.name, false)
-//                PrefManager.put(INSTANCE_ID, resp.instanceId)
-//                PrefManager.put(INSTANCE_ID, resp.instanceId, isConsistent = true)
                 getMentorForUser(PrefManager.getStringValue(USER_UNIQUE_ID), testId)
             } catch (ex: Exception) {
                 apiCallStatus.postValue(ApiCallStatus.FAILED)

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
@@ -24,7 +23,6 @@ import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -236,32 +234,6 @@ class CourseExploreActivity : CoreJoshActivity() {
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
             }
-        }
-    }
-
-    private fun registerUserGAID() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val requestRegisterGAId = RequestRegisterGAId()
-                requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
-                requestRegisterGAId.installOn =
-                    InstallReferrerModel.getPrefObject()?.installOn ?: (Date().time / 1000)
-                requestRegisterGAId.utmMedium =
-                    InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
-                requestRegisterGAId.utmSource =
-                    InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
-                val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
-                requestRegisterGAId.exploreCardType =
-                    if (exploreType.isNotBlank()) ExploreCardType.valueOf(exploreType) else null
-                val resp =
-                    AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
-                        .await()
-                PrefManager.put(SERVER_GID_ID, resp.id)
-                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, false)
-            } catch (ex: Throwable) {
-                // LogException.catchException(ex)
-            }
-            loadCourses()
         }
     }
 

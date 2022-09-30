@@ -324,7 +324,6 @@ enum class AnalyticsEvent(val NAME: String) {
     REFERRAL_PAGE("Referral Page V3"),
 
     //Payment Summary Events
-    INSTANCE_ID("Instance Id V3"),
     IS_USER_REGISTERD("is user registered V3"),
     PAYMENT_SUMMARY_OPENED("Payment summary opened V3"),
     PAYMENT_SUMMARY_INITIATED("Payment summary initiated V3"),

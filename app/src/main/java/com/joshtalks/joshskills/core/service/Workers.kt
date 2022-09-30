@@ -37,9 +37,7 @@ import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -167,78 +165,6 @@ class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
     }
 }
 
-class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-
-    override suspend fun doWork(): Result {
-        try {
-            if (PrefManager.hasKey(INSTANCE_ID, true)) {
-                PrefManager.put(INSTANCE_ID, PrefManager.getStringValue(INSTANCE_ID, true), false)
-            }
-            if (PrefManager.hasKey(INSTANCE_ID, false).not()) {
-                val gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
-                val res =
-                    AppObjectController.signUpNetworkService.getInstanceIdAsync(mapOf("gaid" to gaid))
-                if (res.instanceId.isEmpty().not()) {
-                    PrefManager.put(INSTANCE_ID, res.instanceId, false)
-                    PrefManager.put(INSTANCE_ID, res.instanceId, true)
-                }
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-}
-
-class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-
-    override suspend fun doWork(): Result {
-        try {
-            if (PrefManager.hasKey(INSTANCE_ID, false) &&
-                VersionResponse.getInstance().hasVersion().not()
-            ) {
-                val gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
-                val res =
-                    AppObjectController.commonNetworkService.getOnBoardingVersionDetails(mapOf("gaid" to gaid))
-                val sortedInterest =
-                    res.courseInterestTags?.sortedBy { tag -> tag.sortOrder }
-                val sortedCategories =
-                    res.courseCategories?.sortedBy { category -> category.sortOrder }
-                res.courseInterestTags = sortedInterest
-                res.courseCategories = sortedCategories
-                VersionResponse.update(res)
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-            return Result.retry()
-        }
-        return Result.success()
-    }
-}
-
-// TODO: Remove this worker
-//class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
-//    CoroutineWorker(context, workerParams) {
-//    override suspend fun doWork(): Result {
-//        try {
-//            val chatIdList = AppObjectController.appDatabase.chatDao().getSeenByUserMessages()
-//            if (chatIdList.isNullOrEmpty().not()) {
-//                val messageStatusRequestList = mutableListOf<MessageStatusRequest>()
-//                chatIdList.forEach {
-//                    messageStatusRequestList.add(MessageStatusRequest(it))
-//                }
-//                AppObjectController.chatNetworkService.updateMessagesStatus(messageStatusRequestList)
-//            }
-//            return Result.success()
-//        } catch (ex: Throwable) {
-//            LogException.catchException(ex)
-//            return Result.retry()
-//        }
-//    }
-//}
-
 class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -319,7 +245,6 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         WorkManagerAdmin.syncNotificationEngagement()
         AppObjectController.clearDownloadMangerCallback()
-        //WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.syncAppCourseUsage()
         AppAnalytics.updateUser()
         return Result.success()
@@ -555,38 +480,6 @@ class LogAchievementLevelEventWorker(context: Context, workerParams: WorkerParam
     }
 }
 
-class IsUserActiveWorker(context: Context, private var workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
-                val active = workerParams.inputData.getBoolean(IS_ACTIVE, false)
-                val minTimeToApiFire = AppObjectController.getFirebaseRemoteConfig()
-                    .getLong(FirebaseRemoteConfigKey.INTERVAL_TO_FIRE_ACTIVE_API)
-                val lastTimeOfFireApi = PrefManager.getLongValue(LAST_ACTIVE_API_TIME)
-
-                val secDiff =
-                    TimeUnit.SECONDS.convert(
-                        Date().time - lastTimeOfFireApi,
-                        TimeUnit.MILLISECONDS
-                    )
-                Timber.tag("Workers").e("= %s", secDiff)
-                if (secDiff >= minTimeToApiFire || active.not()) {
-                    val data = ActiveUserRequest(Mentor.getInstance().getId(), active)
-//                    AppObjectController.signUpNetworkService.activeUser(data)
-                    PrefManager.put(LAST_ACTIVE_API_TIME, Date().time)
-                }
-                if (active.not()) {
-                    PrefManager.put(LAST_ACTIVE_API_TIME, 0L)
-                }
-            }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-}
-
 class LanguageChangeWorker(var context: Context, private var workerParams: WorkerParameters) :
     ListenableWorker(context, workerParams) {
     override fun startWork(): ListenableFuture<Result> {
@@ -609,7 +502,6 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
                     if (it) {
                         PrefManager.put(USER_LOCALE, language)
                         PrefManager.put(USER_LOCALE_UPDATED, true)
-                        WorkManagerAdmin.startVersionAndFlowWorker()
                         completer.set(Result.success())
                     } else {
                         onErrorToFetch(defaultLanguage)
