@@ -12,6 +12,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import org.slf4j.event.LoggingEvent
 
 class AudioRouteListener(val coroutineScope: CoroutineScope, val applicationContext: Context) :
     IAudioRouteListener {
@@ -85,19 +86,27 @@ class AudioRouteListener(val coroutineScope: CoroutineScope, val applicationCont
     }
 
     override fun registerAudioControllerReceivers() {
-        val headsetFilter = IntentFilter().apply {
-            addAction(Intent.ACTION_HEADSET_PLUG)
+        try {
+            val headsetFilter = IntentFilter().apply {
+                addAction(Intent.ACTION_HEADSET_PLUG)
+            }
+            val bluetoothFilter = IntentFilter().apply {
+                addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
+            }
+            applicationContext?.registerReceiver(headsetReceiver, headsetFilter)
+            applicationContext?.registerReceiver(bluetoothReceiver, bluetoothFilter)
+        }catch (ex:Exception){
+            Log.d(TAG, "registerAudioControllerReceivers: ${ex.message}")
         }
-        val bluetoothFilter = IntentFilter().apply {
-            addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
-        }
-        applicationContext?.registerReceiver(headsetReceiver, headsetFilter)
-        applicationContext?.registerReceiver(bluetoothReceiver, bluetoothFilter)
     }
 
     override fun unregisterAudioControllerReceivers() {
-        applicationContext?.unregisterReceiver(headsetReceiver)
-        applicationContext?.unregisterReceiver(bluetoothReceiver)
+        try {
+            applicationContext?.unregisterReceiver(headsetReceiver)
+            applicationContext?.unregisterReceiver(bluetoothReceiver)
+        }catch (ex:Exception){
+            Log.d(TAG, "unregisterAudioControllerReceivers: ${ex.message}")
+        }
     }
 
     override fun getCurrentAudioRoute(): AudioRouteConstants {
