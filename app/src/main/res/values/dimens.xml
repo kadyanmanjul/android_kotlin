@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <dimen name="dp2">2dp</dimen>
     <dimen name="dp8">8dp</dimen>
-
     <dimen name="dp10">10dp</dimen>
     <dimen name="dp16">16dp</dimen>
-
 
     <dimen name="font_11_5">11.5sp</dimen>
     <dimen name="font_12">12sp</dimen>
@@ -16,19 +13,14 @@
     <dimen name="font_18">18sp</dimen>
     <dimen name="font_20">20sp</dimen>
 
-
-    <!-- Font sizes -->
-
     <!-- View spacing -->
     <dimen name="spacing_large">16dp</dimen>
 
     <dimen name="seek_bar_thickness">2dp</dimen>
     <dimen name="seek_bar_thumb_size">12dp</dimen>
 
-
     <dimen name="tag_height">@dimen/_44sdp</dimen>
     <dimen name="rating_size">@dimen/_48sdp</dimen>
-    <dimen name="score_rating_size">@dimen/_23sdp</dimen>
 
     <dimen name="roundedBottomSheetCornerRadius">16dp</dimen>
     <dimen name="roundedBottomSheetCornerRadiusTopPadding">6dp</dimen>
@@ -44,6 +36,4 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="image_icon_size">90dp</dimen>
-
-
 </resources>

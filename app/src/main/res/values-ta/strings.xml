@@ -87,7 +87,6 @@
     <string name="complete_payment">கட்டணத்தை முடிக்கவும்</string>
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
-    <string name="network_type">இணையம் வகை</string>
     <string name="answer_not_submitted">பதில்கள் சமர்ப்பிக்கப்படவில்லை</string>
     <string name="answer_submitted">பயிற்சி வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது</string>
     <string name="use_tip">குறிப்பு பயன்படுத்த</string>
@@ -250,10 +249,7 @@
     <string name="start_your_7_day_trial">7 நாட்கள் இலவச சந்தா தொடங்கு</string>
     <string name="more_courses_coming_soon">மேலும் வகுப்புகள் விரைவில்</string>
     <string name="tab_tak_practice_karte_rahen">அதுவரை பயிற்சி செய்</string>
-    <string name="stop">அதை நிறுத்து </string>
     <string name="practice_with_partner">ஒரு துணையுடன் பழகுங்கள்</string>
-    <string name="rules_promise">மேலே உள்ள விதிகளை கடைபிடிப்பதாக உறுதியளிக்கிறேன்</string>
-    <string name="call_permission_permanent_message">இந்த அழைப்பிற்கு %s மூலம் பதிலளிக்க, உங்கள் மைக்ரோஃபோனுக்கான அணுகலை Josh Skills வழங்கவும். அமைப்புகள் &amp;gt; அனுமதிகள் என்பதைத் தட்டி, மைக்ரோஃபோனை இயக்கவும்.</string>
     <string name="time_ago_full_seconds">%1$d வினாடிகளுக்கு முன்பு</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">%1$d வினாடிகளுக்கு முன்பு</string>
@@ -320,10 +316,6 @@
     <string name="download_quality">பதிவிறக்க தரம்</string>
     <string name="pending">பரிசீலனையில் உள்ளது</string>
     <string name="submitted">கோரப்பட்டது</string>
-    <string name="ringing">ஒலிக்கிறது</string>
-    <string name="practise_tip_1">மாணவர்களுடன் ஆங்கிலத்தில் பேசப் பழகுங்கள்</string>
-    <string name="practise_tip_2">அன்லிமிடெட் பயிற்சி ஆனால் ஆங்கிலத்தில் மட்டும் செய்யுங்கள்</string>
-    <string name="practise_tip_3">உங்கள் கூட்டாளரை மதிக்கவும், தவறான வார்த்தைகளைப் பயன்படுத்த வேண்டாம்</string>
     <string name="select_country">நாட்டினை தேர்வுசெய்</string>
     <string name="next_class">அடுத்த வகுப்பு</string>
     <string name="enter_country">உங்களது நாட்டை பதிவிடவும்</string>
@@ -389,7 +381,6 @@
     <string name="okay">Okay</string>
     <string name="exam_info">%1$d கேள்விகள் - %2$d நிமிடங்கள் - %3$d மதிப்பெண்கள்</string>
     <string name="you_can_only_attempt_the_certification_exam">%1$d பாடங்களுக்குப் பிறகுதான் நீங்கள் சான்றிதழ் தேர்வை முயற்சிக்க முடியும்</string>
-    <string name="did_not_answer_message"> மாணவர்கள் எவரையும் நாங்கள் கண்டுபிடிக்கவில்லை, மீண்டும் முயற்சிக்கவும்.</string>
     <string name="rank">Rank</string>
     <string name="how_to_pronounce">How to pronounce:</string>
     <string name="auto_logout_message">நீங்கள் வேறொரு மொபைலிருந்து உள்நுழைந்துள்ளதால், இந்த மொபைலில் இருந்து வெளியேறுவீர்கள்.</string>
@@ -406,7 +397,6 @@
     <string name="share_screen_tagline"><b>நான் ஒவ்வொரு நாளும்</b> speaking practice <b>செய்கிறேன் </b> <b>\nபுதிய </b> நபர்களுடன் <b>அழைப்பில்.</b></string>
     <string name="share_with_friends_text">நான் English கற்றுக்கொள்கிறேன்,  இந்த  environment மூலமாக. நீங்களும் ஆங்கிலத்தை கற்றுக்கொள்ளலாம்.</string>
 
-    <string name="free_trial_popup_100_points_header">Josh Skills என்பது வாழ்க்கையில் தீவிரமான மாணவர்களைக் கொண்ட குடும்பமாகும், அவர்கள் கடினமாக உழைத்து முன்னேற விரும்புகிறார்கள். இந்தப் படிப்பில் சேருவதற்கு முன், இந்தப் படிப்பை ஒரு நாள் பயன்படுத்த வேண்டும். இது முற்றிலும் இலவசம். நீங்கள் இன்று 100 புள்ளிகளைப் பெற முயறுங்கள். அடுத்த 24 மணி நேரத்தில் 100 புள்ளிகள் பெற்றால் இலவசமாக முழு கோர்ஸையும் பயன்படுத்தலாம்.</string>
     <string name="tooltip_conversation">உங்கள் வகுப்பு தோழர்கள் யார் என்பதை இங்கே பார்க்கலாம்</string>
     <string name="tooltip_lesson_grammar">இந்த பாடத்தில நீங்கள் உங்கள் Grammar திறமையை தெரிஞ்சு கொள்ளலாம் </string>
     <string name="tooltip_leaderboard_sotd">அன்றைய நாளின் பரபரப்பான மாணவர் "அன்றைய மாணவர்".</string>

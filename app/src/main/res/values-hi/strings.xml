@@ -83,7 +83,6 @@
     <string name="complete_payment">पेमेंट पूर्ण करें</string>
     <string name="bill_detail_header">बिल की जानकारी</string>
     <string name="total_amount">कुल अमाउंट</string>
-    <string name="network_type">नेटवर्क का प्रकार</string>
     <string name="answer_not_submitted">जवाब सबमिट नहीं किए गए</string>
     <string name="answer_submitted">प्रैक्टिस सफलतापूर्वक सबमिट की गयी</string>
     <string name="use_tip">टिप का उपयोग करें</string>
@@ -247,10 +246,7 @@
     <string name="start_your_7_day_trial">"7 दिन का फ्री ट्रायल शुरू करें "</string>
     <string name="more_courses_coming_soon">और क्लासेस जल्द ही आ रही है</string>
     <string name="tab_tak_practice_karte_rahen">"तब तक प्रैक्टिस करते रहे "</string>
-    <string name="stop">"बंद करें "</string>
     <string name="practice_with_partner">"साथी के साथ प्रैक्टिस करें "</string>
-    <string name="rules_promise">मैं ऊपर दिए गए नियमों का पालन करने का प्रॉमिस देता हूं</string>
-    <string name="call_permission_permanent_message">%s से इस कॉल का उत्तर देने के लिए, जोश स्किल्स को अपने माइक्रोफ़ोन को एक्सेस दें। टैप सेटिंग्स> अनुमतियाँ, और माइक्रोफोन ऑन करें।</string>
     <string name="clear_all_media">"सभी मीडिया  क्लियर करें "</string>
     <string name="time_ago_full_seconds">"%1$d सेकंड्स पहले "</string>
     <string name="inbox_header">Josh Skills</string>
@@ -319,10 +315,6 @@
     <string name="download_quality">डाउनलोड क्वालिटी</string>
     <string name="pending">विचाराधीन</string>
     <string name="submitted">निवेदित</string>
-    <string name="ringing">रिंगिंग</string>
-    <string name="practise_tip_1">अंग्रेज़ी में बात करने की प्रैक्टिस करो स्टूडेंट्स के साथ</string>
-    <string name="practise_tip_2">करिये अनलिमिटेड प्रैक्टिस लेकिन सिर्फ अंग्रेज़ी में</string>
-    <string name="practise_tip_3">अपने पार्टनर का आदर करें तथा कृप्या गलत भाषा का उपयोग ना करे </string>
     <string name="select_country">देश चुनिए</string>
     <string name="next_class">अगली कक्षा</string>
     <string name="enter_country">कृपया देश दर्ज करें</string>
@@ -391,7 +383,6 @@
     <string name="okay">ठीक है</string>
     <string name="exam_info">%1$d प्रश्न - %2$d मिनट - %3$d मार्क्स</string>
     <string name="you_can_only_attempt_the_certification_exam">आप केवल %1$d पाठों के बाद प्रमाणन परीक्षा का प्रयास कर सकते हैं</string>
-    <string name="did_not_answer_message">हमें कोई उपयोगकर्ता नहीं मिला, कृपया पुनः प्रयास करें.</string>
     <string name="rank">पद</string>
     <string name="how_to_pronounce">How to pronounce:</string>
     <string name="auto_logout_message">"आपको इस फ़ोन से लॉग आउट किया गया है क्योंकि आपने किसी अन्य फ़ोन से लॉग इन किया है।"</string>
@@ -404,7 +395,6 @@
     <string name="occupation_filed_hint_text">e.g. Manager at Flipkart</string>
     <string name="aspiration_filed">Aspiration</string>
     <string name="aspiration_filed_hint_text">e.g. IAS Officer </string>
-    <string name="free_trial_popup_100_points_header">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\n  \nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</string>
     <string name="tooltip_conversation">आपके सहपाठी कौन है आप यहाँ से देख सकते है</string>
     <string name="tooltip_lesson_grammar">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
     <string name="tooltip_leaderboard_sotd">जो student एक दिन में सबसे ज़्यादा मेहनत करता है वह Student of the Day बनता है</string>

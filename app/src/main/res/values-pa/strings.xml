@@ -88,7 +88,6 @@
     <string name="complete_payment">ਭੁਗਤਾਨ ਨੂੰ ਪੂਰਾ ਕਰੋ</string>
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
-    <string name="network_type">ਨੈੱਟਵਰਕ ਟੀਪੀ </string>
     <string name="answer_not_submitted">ਜਵਾਬ ਦਾਖਲ ਨਹੀਂ ਕੀਤੇ ਗਏ</string>
     <string name="answer_submitted">ਅਭਿਆਸ ਸਫਲਤਾਪੂਰਵਕ ਸਪੁਰਦ ਕੀਤਾ ਗਿਆ</string>
     <string name="use_tip">ਟਿਪ ਦੀ ਵਰਤੋਂ ਕਰੋ</string>
@@ -252,10 +251,7 @@
     <string name="start_your_7_day_trial">"7 ਦਿਨਾਂ ਦੀ ਮੁਫ਼ਤ ਅਜ਼ਮਾਇਸ਼ ਸ਼ੁਰੂ ਕਰੋ"</string>
     <string name="more_courses_coming_soon">ਹੋਰ ਕਲਾਸਾਂ ਜਲਦੀ ਆ ਰਹੀਆਂ ਹਨ</string>
     <string name="tab_tak_practice_karte_rahen">"ਉਦੋਂ ਤੱਕ ਅਭਿਆਸ ਕਰਦੇ ਰਹੋ"</string>
-    <string name="stop">"ਰੋਕੋ "</string>
     <string name="practice_with_partner">"ਸਾਥੀ ਨਾਲ ਅਭਿਆਸ ਕਰੋ"</string>
-    <string name="rules_promise">ਮੈਂ ਉਪਰੋਕਤ ਨਿਯਮਾਂ ਦੀ ਪਾਲਣਾ ਕਰਨ ਦਾ ਵਾਅਦਾ ਕਰਦਾ ਹਾਂ</string>
-    <string name="call_permission_permanent_message">%s ਨਾਲ ਇਸ ਕਾਲ ਦਾ ਜਵਾਬ ਦੇਣ ਲਈ, ਜੋਸ਼ ਸਕਿੱਲਸ ਨੂੰ ਆਪਣੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਤੱਕ ਪਹੁੰਚ ਦਿਓ। ਸੈਟਿੰਗਾਂ &amp;gt; ਅਨੁਮਤੀਆਂ &amp;#39;ਤੇ ਟੈਪ ਕਰੋ, ਅਤੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਚਾਲੂ ਕਰੋ।</string>
     <string name="time_ago_full_seconds">"%1$d ਸਕਿੰਟ ਪਹਿਲਾਂ"</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d ਸਕਿੰਟ ਪਹਿਲਾਂ"</string>
@@ -323,10 +319,6 @@
     <string name="download_quality">ਡਾਊਨਲੋਡ ਗੁਣਵੱਤਾ</string>
     <string name="pending">ਵਿਚਾਰ ਅਧੀਨ</string>
     <string name="submitted">ਬੇਨਤੀ ਕੀਤੀ</string>
-    <string name="ringing">ਘੰਟੀ ਵੱਜ ਰਹੀ ਹੈ</string>
-    <string name="practise_tip_1">ਵਿਦਿਆਰਥੀਆਂ ਨਾਲ ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ ਬੋਲਣ ਦਾ ਅਭਿਆਸ ਕਰੋ</string>
-    <string name="practise_tip_2">ਅਸੀਮਤ ਅਭਿਆਸ ਕਰੋ ਪਰ ਸਿਰਫ਼ ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ</string>
-    <string name="practise_tip_3">ਆਪਣੇ ਸਾਥੀ ਦਾ ਆਦਰ ਕਰੋ ਅਤੇ ਕਿਰਪਾ ਕਰਕੇ ਗਲਤ ਭਾਸ਼ਾ ਦੀ ਵਰਤੋਂ ਨਾ ਕਰੋ</string>
     <string name="select_country">ਦੇਸ਼ ਚੁਣੋ</string>
     <string name="next_class">ਅਗਲੀ ਕਲਾਸ</string>
     <string name="enter_country">ਕਿਰਪਾ ਕਰਕੇ ਦੇਸ਼ ਦਾਖਲ ਕਰੋ</string>
@@ -392,7 +384,6 @@
     <string name="okay">Okay</string>
     <string name="exam_info">%1$d ਸਵਾਲ - %2$d ਮਿੰਟ - %3$d ਅੰਕ</string>
     <string name="you_can_only_attempt_the_certification_exam">ਤੁਸੀਂ ਪਾਠ %1$d ਤੋਂ ਬਾਅਦ ਹੀ ਪ੍ਰਮਾਣੀਕਰਣ ਪ੍ਰੀਖਿਆ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਸਕਦੇ ਹੋ</string>
-    <string name="did_not_answer_message">ਸਾਨੂੰ ਕੋਈ ਉਪਭੋਗਤਾ ਨਹੀਂ ਮਿਲਿਆ, ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
     <string name="rank">Rank</string>
     <string name="how_to_pronounce">How to pronounce:</string>
     <string name="auto_logout_message">ਤੁਸੀਂ ਇਸ ਫ਼ੋਨ ਤੋਂ ਲੌਗ ਆਊਟ ਹੋ ਗਏ ਹੋ ਕਿਉਂਕਿ ਤੁਸੀਂ ਕਿਸੇ ਹੋਰ ਫ਼ੋਨ ਤੋਂ ਲੌਗਇਨ ਕੀਤਾ ਹੈ।</string>
@@ -409,7 +400,6 @@
     <string name="share_screen_tagline"><b>আমি রোজ</b> speaking practice <b>করছি</b> call<b>\nএ</b> নতুন নতুন মানুষের <b>সাথে।</b></string>
     <string name="share_with_friends_text">আমি English শিখছি, যেখানে Environment পাওয়া নতুন লোকের সাথে কথা বলার। তুমিও ইংলিশ শিখতে পার।</string>
 
-    <string name="free_trial_popup_100_points_header">Josh Skills ਉਹਨਾਂ students ਦਾ ਪਰਿਵਾਰ ਹੈ ਜੋ ਆਪਣੀ ਜ਼ਿੰਦਗੀ ਵਿੱਚ serious ਹਨ। ਜੋ ਸਖ਼ਤ ਮਿਹਨਤ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹਨ ਅਤੇ ਅੱਗੇ ਵਧਣਾ ਚਾਹੁੰਦੇ ਹਨ। ਇਸ ਕੋਰਸ ਵਿੱਚ ਦਾਖਲਾ ਲੈਣ ਤੋਂ ਪਹਿਲਾਂ, ਤੁਹਾਨੂੰ ਇੱਕ ਦਿਨ ਇਸ ਕੋਰਸ ਦੀ ਵਰਤੋਂ ਕਰਨੀ ਪਵੇਗੀ। ਇਹ ਬਿਲਕੁਲ ਮੁਫਤ ਹੈ। ਮੈਂ ਇਹ ਦੇਖਣਾ ਚਾਹੁੰਦਾ ਹਾਂ ਕਿ ਤੁਸੀਂ ਅੰਗਰੇਜ਼ੀ ਸਿੱਖਣ ਲਈ ਗੰਭੀਰ ਹੋ। ਤੁਹਾਨੂੰ ਅੱਜ 100 points ਕਮਾਉਣੇ ਪੈਣਗੇ। ਜੇਕਰ ਤੁਸੀਂ ਅਗਲੇ 24 ਘੰਟਿਆਂ ਵਿੱਚ 100 points ਕਮਾ ਲੈਂਦੇ ਹੋ ਤਾਂ ਤੁਸੀਂ ਕੱਲ੍ਹ ਕੋਰਸ ਵਿੱਚ ਦਾਖਲਾ ਲੈ ਸਕਦੇ ਹੋ।</string>
     <string name="tooltip_conversation">ਤੁਹਾਡਾ ਜਮਾਤੀ ਕੌਣ ਹੈ ਤੁਸੀਂ ਇਸਨੂੰ ਇੱਥੇ ਦੇਖ ਸਕਦੇ ਹੋ</string>
     <string name="tooltip_lesson_grammar">ਅੱਜ ਇਸ ਭਾਗ ਵਿੱਚ ਅਸੀਂ ਆਪਣੇ ਵਿਆਕਰਨ ਪੱਧਰ ਦੀ ਜਾਂਚ ਕਰਾਂਗੇ</string>
     <string name="tooltip_leaderboard_sotd">ਇੱਕ ਦਿਨ ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਮਿਹਨਤ ਕਰਨ ਵਾਲੇ ਵਿਦਿਆਰਥੀ ਨੂੰ ਦਿਨ ਦਾ ਵਿਦਿਆਰਥੀ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ।</string>
