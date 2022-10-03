@@ -91,7 +91,6 @@
     <string name="use_tip">టిప్  ఉపయోగించండి</string>
     <string name="type_answer_label">మీ సమాధానాన్ని టైప్ చేయండి</string>
     <string name="upload_answer_label">మీ సమాధానాన్ని అప్‌లోడ్ చేయండి</string>
-    <string name="find_more_course_hint_ftime">హలో %s, మీరు ఈ కోర్సుతో మరింత ఏదైనా నేర్చుకోవాలనుకుంటే, మొదటి 3 రోజుల్లో మీకు ప్రతి కోర్సుపై 50% తగ్గింపు ఉంటుంది.</string>
     <string name="course_overview">Course Overview</string>
 
     <string name="submit_practise_msz">దయచేసి సమర్పించే ముందు మీ పనిని పూర్తి చేయండి</string>
@@ -184,7 +183,6 @@
     <string name="enter_promo_code">ప్రోమో కోడ్‌ని నమోదు చేయండి</string>
     <string name="select_course">కోర్సును ఎంచుకోండి</string>
     <string name="selected">ఎంచుకున్నారు</string>
-    <string name="course_selected">%s కోర్సు</string>
     <string name="start_quiz">క్విజ్ ప్రారంభించు</string>
     <string name="conversational_practise">సంభాషణ అభ్యాసం</string>
     <string name="tap_to_continue">కొనసాగించడానికి ఇక్కడ నొక్కండి</string>
@@ -214,7 +212,6 @@
     <string name="unlock_class_text">తదుపరి తరగతిని అన్‌లాక్ చేయండి</string>
     <string name="start_now">ఇప్పుడే మొదలు పెట్టండి  </string>
     <string name="get_started">ప్రారంభించు</string>
-    <string name="already_a_subscriber">ఇప్పటికే సబ్‌స్క్రైబర్‌గా ఉన్నారా?</string>
     <string name="subscription_feature_3">మీకు నచ్చితే, 7 రోజుల తర్వాత కేవలం 599కి అప్‌గ్రేడ్ చేసుకోవచ్చు!</string>
     <string name="subscription_feature_2">మీరు 7 రోజుల పాటు యాప్‌లోని అన్ని కోర్సులకు అపరిమిత ప్రాప్యతను పొందవచ్చు</string>
     <string name="subscription_feature_1">ఈ పాస్ మీకు 7 రోజుల పాటు అన్ని కోర్సులకు యాక్సెస్ పూర్తి ఉచితంగా ఇస్తుంది </string>
@@ -246,9 +243,6 @@
     <string name="total_interests_selected">ఎంచుకున్న మొత్తం ఆసక్తి</string>
     <string name="click_to_start_the_course">కోర్సును ప్రారంభించడానికి క్లిక్ చేయండి</string>
     <string name="select_interest">ఇంటరెస్ట్ని ఎంచుకోండి</string>
-    <string name="start_your_7_day_trial">7 రోజుల ఉచిత ట్రయల్ ప్రారంభించండి</string>
-    <string name="more_courses_coming_soon">మరిన్ని తరగతులు త్వరలో రానున్నాయి</string>
-    <string name="tab_tak_practice_karte_rahen">అప్పటి వరకు సాధన కొనసాగించు</string>
     <string name="practice_with_partner">పార్టనర్ తో ప్రాక్టీస్ చేయండి</string>
     <string name="time_ago_full_seconds">%1$d సెకన్ల క్రితం</string>
     <string name="inbox_header">Josh Skills</string>
@@ -290,7 +284,6 @@
     <string name="hint_name_field">మీ పేరు?</string>
     <string name="hint_email_field">ఉదాహరణ abc@xyz.com</string>
     <string name="hint_date_field">ఉదాహరణ 01 జనవరి 1990</string>
-    <string name="interest_count">(%1$d/%2$d)</string>
     <string name="select_language">భాష ఎంపిక</string>
     <string name="personal_information">వ్యక్తిగత సమాచారం</string>
     <string name="app_settings">యాప్ సెట్టింగ్‌లు</string>
@@ -305,9 +298,6 @@
     <string name="on">ఆన్ </string>
     <string name="off">ఆఫ్</string>
     <string name="auto_start_prompt_message">యాప్ నేపథ్యంలో ఉన్నప్పుడు నోటిఫికేషన్‌లను స్వీకరించడానికి దయచేసి ఆటోస్టార్ట్‌ను ప్రారంభించండి</string>
-    <string name="select_course_heading_btn">నేను ఈ వస్తువులను పొందాలనుకుంటున్నాను</string>
-    <string name="start_course_free">Start my Courses For Free</string>
-    <string name="buy_pass">అన్ని కోర్సు యాక్సెస్ పాస్‌ను కొనుగోలు చేయండి</string>
     <string name="hint_text_btn">&lt;u&gt;అన్ని కోర్సు యాక్సెస్ పాస్‌ను కొనుగోలు చేయండి&lt;/u&gt;<u>सभी कोर्स एक्सेस पास खरीदें </u></string>
     <string name="rate_us">మాకు రేట్ చేయండి</string>
     <string name="short_seconds">సెకన్లు</string>
@@ -342,7 +332,6 @@
     <string name="next_class_started">తదుపరి తరగతి ప్రారంభమవుతుంది</string>
     <string name="whatsApp_not_installed">WhatsApp ఇన్స్టాల్ చేయబడలేదు</string>
     <string name="invalid_coupon_code">చెల్లని కూపన్ కోడ్. మళ్ళీ ప్రయత్నించండి</string>
-    <string name="interest_message">మీరు %s ఆసక్తులను ఎంచుకోవచ్చు.</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
     <string name="vocabulary">Vocabulary</string>

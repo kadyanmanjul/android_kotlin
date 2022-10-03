@@ -92,7 +92,6 @@
     <string name="use_tip">குறிப்பு பயன்படுத்த</string>
     <string name="type_answer_label">உங்கள் பதிலை தட்டச்சு செய்யவும்</string>
     <string name="upload_answer_label">உங்கள் பதிலை பதிவேற்றவும்</string>
-    <string name="find_more_course_hint_ftime">வணக்கம் %s, இந்த பாடத்திட்டத்தில் நீங்கள் மேலும் ஏதாவது கற்றுக்கொள்ள விரும்பினால், முதல் 3 நாட்களில் ஒவ்வொரு பாடத்திலும் 50% தள்ளுபடி கிடைக்கும்.</string>
     <string name="course_overview">Course Overview</string>
 
     <string name="submit_practise_msz">சமர்ப்பிக்கும் முன் உங்கள் பணியை முடிக்கவும்</string>
@@ -185,7 +184,6 @@
     <string name="enter_promo_code">விளம்பரக் குறியீட்டை உள்ளிடவும்</string>
     <string name="select_course">பாடத்திட்டத்தைத் தேர்ந்தெடு</string>
     <string name="selected">தேர்ந்தெடுக்கப்பட்டது</string>
-    <string name="course_selected">%s பாடநெறி</string>
     <string name="start_quiz">வினாடி வினாவைத் தொடங்கு</string>
     <string name="conversational_practise">உரையாடல் பயிற்சி</string>
     <string name="tap_to_continue">தொடர தட்டவும்</string>
@@ -214,7 +212,6 @@
     <string name="unlock_class_text">அடுத்த வகுப்பைத் திறக்கவும்</string>
     <string name="start_now">இப்போதே தொடங்கு</string>
     <string name="get_started">தொடங்கு</string>
-    <string name="already_a_subscriber">ஏற்கனவே சந்தாதாரரா?</string>
     <string name="subscription_feature_3">நீங்கள் விரும்பினால், 7 நாட்களுக்குப் பிறகு வெறும் 599க்கு மேம்படுத்தலாம்!</string>
     <string name="subscription_feature_2">நீங்கள் 7 நாட்களுக்கு பயன்பாட்டில் உள்ள அனைத்து படிப்புகளுக்கும் வரம்பற்ற அணுகலைப் பெறலாம்</string>
     <string name="subscription_feature_1">இந்த பாஸ் உங்களுக்கு 7 நாட்களுக்கு அனைத்து படிப்புகளுக்கும் அணுகலை வழங்கும் - முற்றிலும் இலவசம்</string>
@@ -246,9 +243,6 @@
     <string name="total_interests_selected">தேர்ந்தெடுக்கப்பட்ட மொத்த ஆர்வம்</string>
     <string name="click_to_start_the_course">படிப்பைத் தொடங்கு என்பதைக் கிளிக் செய்யவும்</string>
     <string name="select_interest">விருப்பத்தைத் தேர்ந்தெடு</string>
-    <string name="start_your_7_day_trial">7 நாட்கள் இலவச சந்தா தொடங்கு</string>
-    <string name="more_courses_coming_soon">மேலும் வகுப்புகள் விரைவில்</string>
-    <string name="tab_tak_practice_karte_rahen">அதுவரை பயிற்சி செய்</string>
     <string name="practice_with_partner">ஒரு துணையுடன் பழகுங்கள்</string>
     <string name="time_ago_full_seconds">%1$d வினாடிகளுக்கு முன்பு</string>
     <string name="inbox_header">Josh Skills</string>
@@ -289,7 +283,6 @@
     <string name="hint_name_field">உங்கள் பெயர்?</string>
     <string name="hint_email_field">உதாரணம் abc@xyz.com</string>
     <string name="hint_date_field">உதாரணம் 01 ஜனவரி 1990</string>
-    <string name="interest_count">(%1$d/%2$d)</string>
     <string name="select_language">மொழி தேர்வு</string>
     <string name="personal_information">தனிப்பட்ட தகவல்</string>
     <string name="app_settings">பயன்பாட்டு அமைப்புகள்</string>
@@ -304,9 +297,6 @@
     <string name="on">அன்று</string>
     <string name="off">ஆஃப்</string>
     <string name="auto_start_prompt_message">ஆப்ஸ் பின்னணியில் இருக்கும்போது அறிவிப்புகளைப் பெற, தானியங்குத் தொடக்கத்தை இயக்கவும்</string>
-    <string name="select_course_heading_btn">நான் இந்த விஷயங்களைப் பெற விரும்புகிறேன்</string>
-    <string name="start_course_free">Start my Courses For Free</string>
-    <string name="buy_pass">அனைத்து பாடநெறி அணுகல் பாஸை வாங்கவும்</string>
     <string name="hint_text_btn">&lt;u&gt;அனைத்து பாடநெறி அணுகல் பாஸை வாங்கவும்&lt;/u&gt;<u>सभी कोर्स एक्सेस पास खरीदें </u></string>
     <string name="rate_us">எங்களை மதிப்பிடு</string>
     <string name="short_seconds">வினாடிகள்</string>
@@ -341,7 +331,6 @@
     <string name="next_class_started">அடுத்த வகுப்பு தொடங்குகிறது</string>
     <string name="whatsApp_not_installed">WhatsApp நிறுவப்படவில்லை</string>
     <string name="invalid_coupon_code">தவறான கூப்பன் குறியீடு. மீண்டும் முயற்சி செய்</string>
-    <string name="interest_message">நீங்கள் %s ஆர்வங்களைத் தேர்ந்தெடுக்கலாம்.</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
     <string name="vocabulary">Vocabulary</string>

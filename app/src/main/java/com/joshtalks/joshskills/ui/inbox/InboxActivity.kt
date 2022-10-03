@@ -43,7 +43,6 @@ import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
-import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
@@ -55,9 +54,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -590,15 +587,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             this,
             COURSE_EXPLORER_CODE,
             courseListSet, state = ActivityEnum.Inbox
-        )
-    }
-
-    override fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean) {
-        OnBoardingActivityNew.startOnBoardingActivity(
-            this,
-            COURSE_EXPLORER_NEW,
-            true,
-            alreadyHaveCourses
         )
     }
 

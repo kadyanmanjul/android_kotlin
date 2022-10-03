@@ -91,7 +91,6 @@
     <string name="use_tip">ടിപ്പ്  ഉപയോഗിക്കുക</string>
     <string name="type_answer_label">നിങ്ങളുടെ ഉത്തരം ടൈപ്പ് ചെയ്യുക</string>
     <string name="upload_answer_label">നിങ്ങളുടെ ഉത്തരം അപ്‌ലോഡ് ചെയ്യുക</string>
-    <string name="find_more_course_hint_ftime">ഹലോ %s, നിങ്ങൾക്ക് ഈ കോഴ്‌സിലൂടെ കൂടുതൽ എന്തെങ്കിലും പഠിക്കണമെങ്കിൽ ആദ്യത്തെ 3 ദിവസങ്ങളിൽ എല്ലാ കോഴ്‌സിനും 50% കിഴിവ് ലഭിക്കും.</string>
     <string name="course_overview">Course Overview</string>
 
     <string name="submit_practise_msz">സബ്മിറ്റ് ചെയ്യുന്നതിന്  മുമ്പ് നിങ്ങളുടെ practices പൂർത്തിയാക്കുക</string>
@@ -184,7 +183,6 @@
     <string name="enter_promo_code">"പ്രമോ കോഡ് നൽകുക"</string>
     <string name="select_course">"കോഴ്‌സ് തിരഞ്ഞെടുക്കുക"</string>
     <string name="selected">"തിരഞ്ഞെടുത്തത്"</string>
-    <string name="course_selected">"%s കോഴ്സ്"</string>
     <string name="start_quiz">"ക്വിസ് ആരംഭിക്കുക"</string>
     <string name="conversational_practise">സംഭാഷണ പരിശീലനം</string>
     <string name="tap_to_continue">"തുടരാൻ ടാപ്പ് ചെയ്യുക"</string>
@@ -213,7 +211,6 @@
     <string name="unlock_class_text">"അടുത്ത ക്ലാസ് തുറക്കുക"</string>
     <string name="start_now">"ഇപ്പോൾ തുടങ്ങുക"</string>
     <string name="get_started">"ആരംഭിക്കുക"</string>
-    <string name="already_a_subscriber">ഇതിനകം ഒരു സബ്സ്ക്രൈബർ ആണോ ?</string>
     <string name="subscription_feature_3">നിങ്ങൾക്കിത് ഇഷ്‌ടമാണെങ്കിൽ, 7 ദിവസത്തിന് ശേഷം വെറും 599-ന് അപ്‌ഗ്രേഡ് ചെയ്യാം!</string>
     <string name="subscription_feature_2">"ആപ്പിലെ എല്ലാ കോഴ്‌സുകളിലേക്കും നിങ്ങൾക്ക് 7 ദിവസത്തേക്ക് പരിധിയില്ലാത്ത ആക്‌സസ് ലഭിക്കും"</string>
     <string name="subscription_feature_1">"ഈ പാസ് നിങ്ങൾക്ക് 7 ദിവസത്തേക്ക് എല്ലാ കോഴ്സുകളിലേക്കും പ്രവേശനം നൽകും - തികച്ചും സൗജന്യം"</string>
@@ -246,9 +243,6 @@
     <string name="total_interests_selected">"തിരഞ്ഞെടുത്ത മൊത്തം താല്പര്യങ്ങൾ "</string>
     <string name="click_to_start_the_course">"ക്ലിക്ക് ചെയ്തു കോഴ്സ് ആരംഭിക്കുക"</string>
     <string name="select_interest">"താൽപ്പര്യം തിരഞ്ഞെടുക്കുക"</string>
-    <string name="start_your_7_day_trial">"7 ദിവസത്തെ സൗജന്യ ട്രയൽ ആരംഭിക്കുക"</string>
-    <string name="more_courses_coming_soon">കൂടുതൽ ക്ലാസുകൾ ഉടൻ വരുന്നു</string>
-    <string name="tab_tak_practice_karte_rahen">"അതുവരെ പരിശീലിക്കുക"</string>
     <string name="practice_with_partner">"ഒരു പങ്കാളിയുമായി പരിശീലിക്കുക"</string>
     <string name="time_ago_full_seconds">"%1$d സെക്കൻഡ് മുമ്പ്"</string>
     <string name="inbox_header">Josh Skills</string>
@@ -290,7 +284,6 @@
     <string name="hint_name_field">നിങ്ങളുടെ പേര്?</string>
     <string name="hint_email_field">ഉദാഹരണം abc@xyz.com</string>
     <string name="hint_date_field">ഉദാഹരണം 01 ജനുവരി 1990</string>
-    <string name="interest_count">(%1$d/%2$d)</string>
     <string name="select_language">ഭാഷ തിരഞ്ഞെടുക്കൽ</string>
     <string name="personal_information">സ്വകാര്യ വിവരം</string>
     <string name="app_settings">അപ്ലിക്കേഷൻ സെറ്റിങ്ങ് </string>
@@ -305,9 +298,6 @@
     <string name="on">ഓൺ</string>
     <string name="off">ഓഫ്</string>
     <string name="auto_start_prompt_message">ആപ്പ് ബാക്ഗ്രൗണ്ടിലായിരിക്കുമ്പോൾ നോട്ടിഫിക്കേഷൻസ് ലഭിക്കാൻ ഓട്ടോസ്റ്റാർട് ചെയ്യുക</string>
-    <string name="select_course_heading_btn">"ഞാൻ ഇവയെല്ലാം നേടാൻ ആഗ്രഹിക്കുന്നു"</string>
-    <string name="start_course_free">Start my Courses For Free</string>
-    <string name="buy_pass">എല്ലാ കോഴ്‌സ് ആക്‌സസ് പാസ് വാങ്ങുക</string>
     <string name="hint_text_btn">&lt;u&gt;എല്ലാ കോഴ്‌സ് ആക്‌സസ് പാസ് വാങ്ങുക&lt;/u&gt;<u>सभी कोर्स एक्सेस पास खरीदें </u></string>
     <string name="rate_us">ഞങ്ങളെ റേറ്റുചെയ്യുക</string>
     <string name="short_seconds">സെക്കന്റുകൾ</string>
@@ -342,7 +332,6 @@
     <string name="next_class_started">അടുത്ത ക്ലാസ് ആരംഭിക്കുന്നു</string>
     <string name="whatsApp_not_installed">WhatsApp ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല</string>
     <string name="invalid_coupon_code">അസാധുവായ കൂപ്പൺ കോഡ്. വീണ്ടും ശ്രമിക്കൂ</string>
-    <string name="interest_message">നിങ്ങൾക്ക് %s താൽപ്പര്യങ്ങൾ തിരഞ്ഞെടുക്കാം.</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
     <string name="vocabulary">Vocabulary</string>

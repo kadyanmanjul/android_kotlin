@@ -137,8 +137,6 @@
 
     <string name="type_answer_label">Type your answer</string>
     <string name="upload_answer_label">Upload your answer</string>
-
-    <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino mai aapke paas har course pe %s off hai </string>
     <string name="course_overview">Course Overview</string>
     <string name="recording_short" translatable="false">The recording should be more than one second!</string>
     <string name="submit_practise_msz">Please complete your task before Submitting</string>
@@ -252,7 +250,6 @@
     <string name="show_details">Show Details</string>
     <string name="select_course">Select Course</string>
     <string name="selected">Selected</string>
-    <string name="course_selected">%s Courses</string>
     <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
     <string name="help_answer">Was this answer helpful?</string>
     <string name="go_home_text">Go home</string>
@@ -314,7 +311,6 @@
     <string name="unlock_class_text">Unlock Next Class</string>
     <string name="start_now">Start Now</string>
     <string name="get_started">Get Started</string>
-    <string name="already_a_subscriber">Already a subscriber?</string>
     <string name="subscription_feature_3">Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</string>
     <string name="subscription_feature_2">7 dino ke liye aap app ke saare courses unlimited access kar sakte hai</string>
     <string name="subscription_feature_1">ye pass aapko saare courses ka access dega for 7 days - completely free</string>
@@ -350,11 +346,7 @@
     <string name="hint_date_field">e.g. 01 Jan 1990</string>
     <string name="total_interests_selected">Total interests selected</string>
     <string name="click_to_start_the_course">Click to start the course</string>
-    <string name="interest_count">(%1$d/%2$d)</string>
     <string name="select_interest">Select Interest</string>
-    <string name="start_your_7_day_trial">Start Your 7 Day Free Trial</string>
-    <string name="more_courses_coming_soon">More Courses Coming Soon</string>
-    <string name="tab_tak_practice_karte_rahen">tab tak practice karte rahe</string>
     <string name="practice_with_partner">Practice With Partner</string>
 
     <string name="clear_all_media" translatable="false">Clear All Media</string>
@@ -378,9 +370,6 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="auto_start_prompt_message">Please enable Autostart to receive notifications when the app is in the background</string>
-    <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
-    <string name="start_course_free">Start my Courses For Free</string>
-    <string name="buy_pass">Buy All Course Access Pass</string>
 
     <string name="hint_text_btn"><u>OK got it </u></string>
     <string name="rate_us">Rate Us</string>
@@ -412,7 +401,6 @@
     <string name="next_class_started">Next Class Started</string>
     <string name="whatsApp_not_installed">WhatsApp not Installed</string>
     <string name="invalid_coupon_code">Invalid Coupon Code. Try Again</string>
-    <string name="interest_message">You can select upto %s interests.</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
     <string name="vocabulary">Vocabulary</string>
