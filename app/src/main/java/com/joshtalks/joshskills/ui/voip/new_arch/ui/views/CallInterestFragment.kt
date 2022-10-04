@@ -11,13 +11,11 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentCallInterestBinding
 import com.joshtalks.joshskills.repository.server.onboarding.CourseInterestTag
 
-
 class CallInterestFragment: BaseFragment() {
 
     lateinit var binding: FragmentCallInterestBinding
     private val interestSet: MutableSet<Int> = hashSetOf()
-    private var maxSelection = 5
-    private var minSelection = 3
+    private var minSelection = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,21 +47,12 @@ class CallInterestFragment: BaseFragment() {
             chip.tag = it.id
             chip.id = it.id!!
             chip.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (interestSet.size == maxSelection && isChecked) {
-                    buttonView.isChecked = false
-                    showToast(
-                        getString(
-                            R.string.interest_message,
-                            maxSelection.toString()
-                        )
-                    )
-                } else {
-                    if (isChecked)
-                        interestSet.add(buttonView.id)
-                    else
-                        interestSet.remove(buttonView.id)
-                    binding.submitBtn.isEnabled = interestSet.size >= minSelection
-                }
+                if (isChecked)
+                    interestSet.add(buttonView.id)
+                else
+                    interestSet.remove(buttonView.id)
+                binding.submitBtn.isEnabled = interestSet.size >= minSelection
+
             }
             binding.interestCg.addView(chip)
         }
