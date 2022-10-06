@@ -38,15 +38,14 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/logo"
-            android:layout_width="@dimen/_85sdp"
-            android:layout_height="@dimen/_51sdp"
+            android:layout_width="@dimen/_143sdp"
+            android:layout_height="@dimen/_84sdp"
             android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_48sdp"
             android:adjustViewBounds="true"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.1"
             app:srcCompat="@drawable/josh_skill_logo" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -57,7 +56,6 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:text="@{onboardingData.title}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/logo"
@@ -82,6 +80,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/course_info_1"
+                    style="@style/BulletPoints"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/_24sdp"
@@ -89,40 +88,30 @@
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_12sdp"
                     android:text="@{onboardingData.courseInfo1}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                    android:textColor="@color/black"
-                    app:drawableStartCompat="@drawable/ic_check_box"
-                    app:drawableTint="@color/right_answer_color"
                     tools:text="90 Day Course" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/course_info_2"
+                    style="@style/BulletPoints"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_check_box"
                     android:drawablePadding="@dimen/_24sdp"
                     android:paddingVertical="@dimen/_2sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_12sdp"
                     android:text="@{onboardingData.courseInfo2}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                    android:textColor="@color/black"
-                    app:drawableTint="@color/right_answer_color"
                     tools:text="Beginner to Advanced" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/course_info_3"
+                    style="@style/BulletPoints"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_check_box"
                     android:drawablePadding="@dimen/_24sdp"
                     android:paddingVertical="@dimen/_2sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_12sdp"
                     android:text="@{onboardingData.courseInfo3}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                    android:textColor="@color/black"
-                    app:drawableTint="@color/right_answer_color"
                     tools:text="English Speaking का माहौल" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -131,26 +120,12 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/btnStartTrial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="@dimen/_14sdp"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/_8sdp"
+            style="@style/AnimatedFlashButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardViewHighlights"
-            app:layout_constraintVertical_bias="0.65"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="lottie/button11.json"
-            app:lottie_imageAssetsFolder="lottie"
-            app:lottie_loop="true"
-            app:lottie_repeatMode="restart"
-            app:lottie_scale="1"
-            app:lottie_speed="1" />
+            app:layout_constraintVertical_bias="0.65" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/btnStartTrialText"
