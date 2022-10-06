@@ -116,6 +116,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 videoEngageEntity?.totalTime?.run {
                     val time = TimeUnit.MILLISECONDS.toMinutes(this).div(10).toInt()
                     MarketingAnalytics.logAchievementLevelEvent(time)
+                    if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                        MarketingAnalytics.logAchievementLevelEventFOrFreeTrial(time)
+                    }
                 }
             }
         } catch (ex: Throwable) {

@@ -449,6 +449,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 SPEAKING_POSITION -> {
                     if (lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                         MarketingAnalytics.logSpeakingSectionCompleted()
+                        if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                            MarketingAnalytics.logSpeakingSectionCompletedForFreeTrial()
+                        }
                     }
                     appDatabase.lessonDao().updateSpeakingSectionStatus(lessonId, status)
                     lessonLiveData.postValue(

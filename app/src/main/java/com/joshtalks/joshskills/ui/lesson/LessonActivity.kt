@@ -843,6 +843,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                                MarketingAnalytics.logLessonCompletedEventForFreeTrial(lesson.lessonNo)
+                            }
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
@@ -875,6 +878,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     if (lessonCompleted) {
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                                MarketingAnalytics.logLessonCompletedEventForFreeTrial(lesson.lessonNo)
+                            }
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
@@ -972,10 +978,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     SPEAKING_POSITION -> {
                         if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
-                            MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_COMPLETED)
-                                .addParam(ParamKeys.LESSON_ID, getLessonId)
-                                .addParam(ParamKeys.LESSON_NUMBER, lesson.lessonNo)
-                                .push()
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                                MarketingAnalytics.logSpeakingSectionCompletedForFreeTrial()
+                            }
                         }
                         lesson.speakingStatus = status
                     }

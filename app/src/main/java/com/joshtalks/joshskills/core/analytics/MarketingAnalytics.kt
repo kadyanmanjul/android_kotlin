@@ -54,6 +54,17 @@ object MarketingAnalytics {
         }
     }
 
+    fun callComplete20MinForFreeTrial() {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+
+            BranchEvent(BRANCH_STANDARD_EVENT.CLICK_AD)
+                .setDescription(BranchEventName.CLICK_AD.name)
+                .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+                .logEvent(context)
+        }
+    }
+
     fun initPurchaseEvent(
         data: MutableMap<String, String>,
         amount: Double,
@@ -213,6 +224,17 @@ object MarketingAnalytics {
         }
     }
 
+    fun logAchievementLevelEventFOrFreeTrial(achievementLevel: Int) {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+
+            BranchEvent(BRANCH_STANDARD_EVENT.SHARE)
+                .setCustomerEventAlias("share")
+                .addCustomDataProperty("level", achievementLevel.toString())
+                .logEvent(context)
+        }
+    }
+
     fun logLessonCompletedEvent(lessonNumber: Int,lessonId: Int) {
         MixPanelTracker.publishEvent(MixPanelEvent.LESSON_COMPLETE)
             .addParam(ParamKeys.LESSON_ID,lessonId)
@@ -234,6 +256,19 @@ object MarketingAnalytics {
                 .logEvent(context)
 
             FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.TUTORIAL_COMPLETE,params)
+        }
+    }
+
+    fun logLessonCompletedEventForFreeTrial(lessonNumber: Int) {
+
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+
+            BranchEvent(BRANCH_STANDARD_EVENT.RATE)
+                .setDescription("User has completed his lesson")
+                .addCustomDataProperty("lesson_number",lessonNumber.toString())
+                .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+                .logEvent(context)
         }
     }
 
@@ -304,6 +339,17 @@ object MarketingAnalytics {
                 .logEvent(context)
 
             FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.LEVEL_UP,params)
+        }
+    }
+
+    fun logSpeakingSectionCompletedForFreeTrial() {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+
+            BranchEvent(BRANCH_STANDARD_EVENT.SUBSCRIBE)
+                .setDescription(BranchEventName.SUBSCRIBE.name)
+                .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+                .logEvent(context)
         }
     }
 
