@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout
 
-import `in`.juspay.services.HyperServices
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
@@ -39,7 +38,6 @@ import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
-import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
@@ -47,7 +45,6 @@ import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -92,7 +89,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     var clickRatingOpen: ImageView? = null
     var courseDescListCard: View? = null
     var priceForPaymentProceed: CourseDetailsList? = null
-    private val hyperInstance by lazy { HyperServices(this) }
     var isPaymentInitiated = false
 
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
@@ -106,7 +102,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private var errorView: Stub<ErrorView>? = null
-    private var errorShowCount = 0
     private val viewModel by lazy {
         ViewModelProvider(this)[BuyPageViewModel::class.java]
     }
