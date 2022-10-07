@@ -103,18 +103,20 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
+            android:name=".ui.voip.new_arch.ui.views.UserInterestActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.payment.new_buy_page_layout.BuyPageActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.callWithExpert.CallWithExpertActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.fpp.SeeAllRequestsActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.fpp.RecentCallActivity"
             android:exported="true"
@@ -496,7 +498,8 @@
             android:theme="@style/AppNoBarTheme" />
         <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
         <activity android:name=".ui.invite_call.InviteFriendActivity" />
-        <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
+        <activity
+            android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
@@ -630,8 +633,7 @@
         </receiver>
         <receiver
             android:name=".core.notification.ScheduledNotificationReceiver"
-            android:exported="false" />
-        <!-- <receiver -->
+            android:exported="false" /> <!-- <receiver -->
         <!-- android:name=".core.service.ServiceStartReceiver" -->
         <!-- android:exported="true"> -->
         <!-- <intent-filter> -->

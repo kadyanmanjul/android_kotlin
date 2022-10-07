@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.call.data.local
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
@@ -20,6 +21,7 @@ import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.local.AGORA_CALL_ID
 import com.joshtalks.joshskills.voip.data.local.LOCAL_USER_AGORA_ID
@@ -102,6 +104,8 @@ object VoipPref {
             editor.putBoolean(IS_FIRST_CALL, false)
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
             NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
+            val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+            ActivityLifecycleCallback.currentActivity.startActivity(intent)
         }
 
 

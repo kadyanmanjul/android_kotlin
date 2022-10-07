@@ -963,5 +963,48 @@
     <string name="about_us" translatable="false">About Us</string>
     <string name="payment_processing_with_elipsize" translatable="false">Payment Processing...</string>
     <string name="do_not_close_the_app_warning" translatable="false">This might take up to a minute. Please do not close the app.</string>
+    <string-array name="amount_list">
+        <item>₹ 50</item>
+        <item>₹ 100</item>
+        <item>₹ 200</item>
+        <item>₹ 300</item>
+        <item>₹ 500</item>
+        <item>₹ 1000</item>
+        <item>₹ 2000</item>
+        <item>₹ 3000</item>
+        <item>₹ 4000</item>
+        <item>₹ 8000</item>
+        <item>₹ 15000</item>
+        <item>₹ 12000</item>
+        <item>₹ 50000</item>
+        <item>₹ 100000</item>
+    </string-array>
+    <string name="rup">\u20B9</string>
+    <string name="please_select_amount_to_add">Please select amount to add</string>
+    <string name="minimum_amount_required">Minimum amount required is INR 50</string>
+    <string name="transaction_history">Transaction History</string>
+    <string name="recharge">Recharge</string>
+    <string name="call_info_copied">call info copied</string>
+    <string name="payment_logs">Payment Logs</string>
+    <string name="wallet_transactions">Wallet Transactions</string>
+    <string name="josh_transaction_id">josh_transaction_id</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
+    <string name="empty"> </string>
+    <string name="ft_calls_left" formatted="false">%s calls left in free trial</string>
+    <string name="english_speaking_course">English Speaking Course</string>
+    <string name="about_the_teacher">About the Teacher</string>
+    <string name="course_ratings_and_reviews">Course Ratings and Reviews</string>
+    <string name="offer_for_you">Offer for you</string>
+    <string name="insert_code">Insert Code</string>
+    <string name="teacher_youtube_link"><u>Serene Paathshala</u></string>
+    <string name="interests_select_same_interest_users_connect">आपके interests select कीजिए ताकी हम आपको same interest के users से connect करवा सकें</string>
+    <string name="practice_call_experience">Practice call का experience बेहतर बनाएँ</string>
+    <string name="english_level">आपकी English का level क्या है ?</string>
+    <string name="maximum_amount_is_inr_20000">Maximum Amount is INR 20000</string>
+    <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="community_guidelines">Community Guidelines</string>
+    <string name="about_us">About Us</string>
+    <string name="payment_processing_with_elipsize">Payment Processing...</string>
+    <string name="do_not_close_the_app_warning">This might take up to a minute. Please do not close the app.</string>
 
 </resources>

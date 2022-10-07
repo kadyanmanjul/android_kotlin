@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.InterestModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.VoipStatusResponse
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 
@@ -111,4 +112,17 @@ interface P2PNetworkService {
 
     @POST("$DIR/fpp/fpp_option/")
     suspend fun showFppDialogNew(@Body params: HashMap<String, Int?>) : Response<HashMap<String,Int>>
+
+    @GET("$DIR/p2p/speaking-level/")
+    suspend fun getUserLevelDetails():Response<Array<HashMap<String,String>>>
+
+    @POST("$DIR/p2p/speaking-level/")
+    suspend fun sendUserSpeakingLevel(@Body params: HashMap<String, Int>) : Response<Any>
+
+    @GET("$DIR/p2p/interests/")
+    suspend fun getUserInterestDetails() : Response<InterestModel>
+
+    @POST("$DIR/p2p/interests/")
+    suspend fun sendUserInterestDetails(@Body params: HashMap<String,List<Int>>) : Response<Any>
+
 }
