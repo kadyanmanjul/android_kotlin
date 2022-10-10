@@ -113,9 +113,6 @@ interface P2PNetworkService {
     @POST("$DIR/fpp/fpp_option/")
     suspend fun showFppDialogNew(@Body params: HashMap<String, Int?>) : Response<HashMap<String,Int>>
 
-    @GET("$DIR/p2p/speaking-level/")
-    suspend fun getUserLevelDetails():Response<Array<HashMap<String,String>>>
-
     @POST("$DIR/p2p/speaking-level/")
     suspend fun sendUserSpeakingLevel(@Body params: HashMap<String, Int>) : Response<Any>
 

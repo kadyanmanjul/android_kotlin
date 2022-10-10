@@ -24,20 +24,6 @@ class CallInterestViewModel(val applicationContext:Application) :AndroidViewMode
 
     init {
         getUserInterests()
-        getUserLevelDetails()
-    }
-
-    fun getUserLevelDetails(){
-        viewModelScope.launch {
-            try {
-                val response = p2pNetworkService.getUserLevelDetails()
-                if (response.isSuccessful){
-                    levelLiveData.postValue(response.body())
-                }
-            }catch (e:Exception){
-                e.printStackTrace()
-            }
-        }
     }
 
     fun sendUserLevel(id:Int){

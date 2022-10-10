@@ -211,5 +211,8 @@
     <color name="golden_color">#FFC645</color>
     <color name="golden_color_transparent">#FBD26F</color>
     <color name="gray_8D">#8D8D8D</color>
+
+    <color name="interest_chip_unselected_text">#646464</color>
+    <color name="interest_chip_bg_selected">#14107BE5</color>
     <color name="golden_color_dark">#FFA41C</color>
 </resources>

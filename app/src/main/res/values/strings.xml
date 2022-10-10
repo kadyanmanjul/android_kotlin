@@ -1001,6 +1001,9 @@
     <string name="practice_call_experience">Practice call का experience बेहतर बनाएँ</string>
     <string name="english_level">आपकी English का level क्या है ?</string>
     <string name="interests">Interests</string>
+    <string name="beginner">Beginner</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="advanced">Advanced</string>
     <string name="maximum_amount_is_inr_20000">Maximum Amount is INR 20000</string>
     <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="community_guidelines">Community Guidelines</string>

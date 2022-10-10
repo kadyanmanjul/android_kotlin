@@ -171,20 +171,9 @@
         <item name="chipStrokeWidth">@dimen/_1sdp</item>
         <item name="android:textColor">@color/interest_chip_text_color_selector</item>
         <item name="android:textAppearance">
-            @style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold
+            @style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold
         </item>
-    </style>
-
-    <style name="EnglishLevelChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
-        <item name="chipBackgroundColor">@color/chip_borderd_selector</item>
-        <item name="chipStrokeColor">@color/interest_chip_bg_color_selector</item>
-        <item name="chipStrokeWidth">@dimen/_1sdp</item>
-        <item name="android:textColor">@color/interest_chip_text_color_selector</item>
-        <item name="android:textAppearance">
-            @style/TextAppearance.JoshTypography.Body_Text_Medium_Regular
-        </item>
-        <item name="android:gravity">center</item>
-        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/_10sdp</item>
     </style>
 
     <style name="ReminderChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">

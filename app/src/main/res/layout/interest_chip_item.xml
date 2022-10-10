@@ -11,9 +11,9 @@
     android:checked="false"
     android:clickable="true"
     android:focusable="true"
-    android:paddingVertical="@dimen/_4sdp"
+    android:paddingVertical="@dimen/_8sdp"
     android:textAlignment="center"
     app:chipEndPadding="@dimen/_6sdp"
     app:chipStartPadding="@dimen/_6sdp"
-    app:rippleColor="@color/button_color"
+    app:rippleColor="@color/interest_chip_bg_selected"
     tools:text="Course Information" />
