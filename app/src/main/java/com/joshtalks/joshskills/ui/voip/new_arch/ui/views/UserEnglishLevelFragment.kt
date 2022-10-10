@@ -12,13 +12,14 @@ import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.START_USER_INTEREST_FRAGMENT
+import com.joshtalks.joshskills.core.INTEREST_FORM_LEVEL_SAVED
+import com.joshtalks.joshskills.core.INTEREST_FORM_LEVEL_SCREEN_OPEN
 import com.joshtalks.joshskills.databinding.FragmentUserEnglishLevelBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 
-
 class UserEnglishLevelFragment : BaseFragment() {
-    lateinit var binding : FragmentUserEnglishLevelBinding
 
+    lateinit var binding : FragmentUserEnglishLevelBinding
     private val viewModel by lazy { ViewModelProvider(this)[CallInterestViewModel::class.java] }
 
     override fun onCreateView(
@@ -30,20 +31,25 @@ class UserEnglishLevelFragment : BaseFragment() {
         return binding.root
     }
     override fun initViewBinding() {
-        viewModel.getUserLevelDetails()
+        //viewModel.getUserLevelDetails()
+        viewModel.saveImpression(INTEREST_FORM_LEVEL_SCREEN_OPEN)
         binding.btnContinue.setOnClickListener {
             val level = binding.levelChipGroup.checkedChipId
             viewModel.sendUserLevel(level)
             viewModel.sendEvent(START_USER_INTEREST_FRAGMENT)
+            viewModel.saveImpression(INTEREST_FORM_LEVEL_SAVED)
         }
 
         binding.levelChipGroup.layoutDirection
 
         viewModel.levelLiveData.observe(this){
+            binding.levelChipGroup.removeAllViews() // to ensure there are no duplicates incase fragment is called from backstack
+
             it.forEach { hash->
                 val chip = LayoutInflater.from(context).inflate(R.layout.english_level_chip_item, null, false) as Chip
                 chip.text = hash["label"]
                 chip.id = hash["id"]?.toInt()?:0
+
                 chip.setOnCheckedChangeListener { _, isChecked ->
                     binding.btnContinue.isEnabled = isChecked
                 }
@@ -53,11 +59,7 @@ class UserEnglishLevelFragment : BaseFragment() {
 
     }
 
-    override fun initViewState() {
+    override fun initViewState() {}
 
-    }
-
-    override fun setArguments() {
-
-    }
+    override fun setArguments() {}
 }

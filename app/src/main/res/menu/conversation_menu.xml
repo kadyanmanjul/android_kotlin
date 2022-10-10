@@ -43,6 +43,13 @@
         app:showAsAction="collapseActionView" />
 
     <item
+        android:id="@+id/menu_interest"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:title="@string/interests"
+        app:showAsAction="collapseActionView"/>
+
+    <item
         android:id="@+id/menu_restart_course"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"

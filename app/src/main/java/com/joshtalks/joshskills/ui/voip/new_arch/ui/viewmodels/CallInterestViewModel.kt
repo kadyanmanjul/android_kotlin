@@ -7,10 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.InterestModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class CallInterestViewModel(val applicationContext:Application) :AndroidViewModel(applicationContext){
 
@@ -22,6 +24,7 @@ class CallInterestViewModel(val applicationContext:Application) :AndroidViewMode
 
     init {
         getUserInterests()
+        getUserLevelDetails()
     }
 
     fun getUserLevelDetails(){
@@ -53,7 +56,7 @@ class CallInterestViewModel(val applicationContext:Application) :AndroidViewMode
         viewModelScope.launch {
             try {
                 val hash = hashMapOf<String,List<Int>>()
-                hash["level"] = ids
+                hash["interest_ids"] = ids
                 p2pNetworkService.sendUserInterestDetails(hash)
             }catch (e:Exception){
                 e.printStackTrace()
@@ -66,6 +69,7 @@ class CallInterestViewModel(val applicationContext:Application) :AndroidViewMode
             try {
                 val response = p2pNetworkService.getUserInterestDetails()
                 if (response.isSuccessful){
+                    interestLiveData.value?.clear() // to ensure there are no duplicates incase fragment is called from backstack
                     interestLiveData.postValue(response.body())
                 }
             }catch (e:Exception){
@@ -81,6 +85,20 @@ class CallInterestViewModel(val applicationContext:Application) :AndroidViewMode
         viewModelScope.launch {
             withContext(Dispatchers.Main) {
                 singleLiveEvent.value = msg
+            }
+        }
+    }
+
+    fun saveImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
             }
         }
     }

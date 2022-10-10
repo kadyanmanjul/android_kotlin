@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.CLOSE_INTEREST_ACTIVITY
 import com.joshtalks.joshskills.constants.START_USER_INTEREST_FRAGMENT
+import com.joshtalks.joshskills.core.INTEREST_FORM_BACKPRESSED
 import com.joshtalks.joshskills.databinding.ActivityUserInterestBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
@@ -18,10 +19,18 @@ class UserInterestActivity : BaseActivity() {
 
     val viewModel by lazy { ViewModelProvider(this)[CallInterestViewModel::class.java] }
 
+    private var isEditCall = false
+
     private val backPressMutex = Mutex(false)
 
     override fun onCreated() {
-        addEnglishLevelFragment()
+        isEditCall = intent.getBooleanExtra("isEditCall",false)
+
+        if (isEditCall){    // if opened from menu, to edit, only show interest fragment
+            addInterestFragment()
+        }else{  // if normal call then show english level frag first
+            addEnglishLevelFragment()
+        }
     }
 
     override fun initViewBinding() {
@@ -45,8 +54,12 @@ class UserInterestActivity : BaseActivity() {
 
     private fun addInterestFragment(){
         supportFragmentManager.commit {
-            replace(R.id.container_Interests,CallInterestFragment(),"Interest Fragment")
-                .addToBackStack("User English Level Fragment")
+            if (isEditCall){
+                replace(R.id.container_Interests,CallInterestFragment(isEditCall),"Interest Fragment")
+            }else{
+                replace(R.id.container_Interests,CallInterestFragment(isEditCall),"Interest Fragment")
+                    .addToBackStack("User English Level Fragment")
+            }
         }
     }
 
@@ -54,17 +67,20 @@ class UserInterestActivity : BaseActivity() {
         when(supportFragmentManager.findFragmentById(R.id.container_Interests)){
             is CallInterestFragment ->{
                 backPressMutex.onMultipleBackPress {
+                    viewModel.saveImpression(INTEREST_FORM_BACKPRESSED)
                     super.onBackPressed()
                 }
             }
 
             is UserEnglishLevelFragment ->{
                 backPressMutex.onMultipleBackPress {
+                    viewModel.saveImpression(INTEREST_FORM_BACKPRESSED)
                     super.onBackPressed()
                 }
             }
 
             else->{
+                viewModel.saveImpression(INTEREST_FORM_BACKPRESSED)
                 super.onBackPressed()
             }
         }

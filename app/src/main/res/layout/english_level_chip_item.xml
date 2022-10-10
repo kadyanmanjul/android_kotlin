@@ -13,6 +13,7 @@
     android:checked="false"
     android:clickable="true"
     android:focusable="true"
+    android:gravity="center"
     app:chipCornerRadius="@dimen/_10sdp"
     android:paddingVertical="@dimen/_24sdp"
     android:paddingHorizontal="@dimen/_24sdp"

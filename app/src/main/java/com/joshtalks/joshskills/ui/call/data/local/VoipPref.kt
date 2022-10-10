@@ -104,7 +104,9 @@ object VoipPref {
             editor.putBoolean(IS_FIRST_CALL, false)
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
             NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
+
             val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+            intent.putExtra("isEditCall",false)
             ActivityLifecycleCallback.currentActivity.startActivity(intent)
         }
 

@@ -115,6 +115,10 @@ import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
@@ -218,6 +222,7 @@ class ConversationActivity :
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
     private lateinit var unlockClassViewModel: UnlockClassViewModel
+    private val interestViewModel by lazy { ViewModelProvider(this)[CallInterestViewModel::class.java] }
     val event = EventLiveData
     private val conversationAdapter: ConversationAdapter by lazy {
         ConversationAdapter(
@@ -636,6 +641,12 @@ class ConversationActivity :
                             this,
                             inboxEntity.conversation_id
                         )
+                    }
+                    R.id.menu_interest ->{
+                        val intent = Intent(this,UserInterestActivity::class.java)
+                        intent.putExtra("isEditCall",true)
+                        startActivity(intent)
+                        interestViewModel.saveImpression(INTEREST_FORM_OPEN_MENU_EDIT)
                     }
                     R.id.menu_restart_course -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)
