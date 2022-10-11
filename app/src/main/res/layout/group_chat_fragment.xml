@@ -169,7 +169,7 @@
                 android:minHeight="@dimen/_34sdp"
                 android:onClick="@{() -> vm.openEmojiKeyboard(true)}"
                 android:paddingVertical="@dimen/_2sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 android:textColor="@color/pitch_black"
                 android:textColorHint="@color/gray_9E" />
         </LinearLayout>
@@ -251,7 +251,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/_8sdp"
                     android:text="This group is a Closed group. To chat and call members of this group please send Request to join."
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular" />
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
 

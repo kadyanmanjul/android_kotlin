@@ -51,7 +51,7 @@
                 android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="start"
                 android:textColor="@color/black"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 app:layout_constraintStart_toStartOf="@+id/title"
                 app:layout_constraintTop_toBottomOf="@+id/title"
                 tools:ignore="MissingPrefix"
@@ -59,7 +59,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/date"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

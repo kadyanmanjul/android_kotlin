@@ -11,7 +11,7 @@
     android:clickable="true"
     android:focusable="true"
     android:textAlignment="center"
-    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+    android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
     app:chipCornerRadius="@dimen/_8sdp"
     app:chipEndPadding="@dimen/_10sdp"
     app:chipMinHeight="@dimen/_32sdp"

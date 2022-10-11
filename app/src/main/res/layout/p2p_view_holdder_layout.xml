@@ -38,7 +38,7 @@
                         android:layout_gravity="start|center"
                         android:gravity="center"
                         android:paddingBottom="@dimen/_5sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                     android:textColor="@color/black"
                     android:visibility="gone"
                         tools:visibility="visible"

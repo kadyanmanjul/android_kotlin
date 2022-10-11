@@ -17,7 +17,7 @@
         app:strokeWidth="1dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             android:id="@+id/choice_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

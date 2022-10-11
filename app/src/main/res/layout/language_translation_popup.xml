@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:paddingVertical="@dimen/_4sdp"
             android:text="Meaning"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             android:textColor="@color/gray_79"
             app:layout_constraintStart_toStartOf="@id/txtPhonetic"
             app:layout_constraintTop_toBottomOf="@id/txtPhonetic" />
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
             android:text="@string/how_to_pronounce"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             android:textColor="@color/gray_79"
             app:layout_constraintStart_toStartOf="@id/txtMeaning"
             app:layout_constraintTop_toBottomOf="@id/txtMeaning" />

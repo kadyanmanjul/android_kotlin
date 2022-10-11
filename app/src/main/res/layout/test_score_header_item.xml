@@ -13,7 +13,7 @@
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_12sdp"
             android:textColor="@color/dark_grey"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Well done Akshat, you scored" />
@@ -25,7 +25,7 @@
             android:layout_marginStart="@dimen/_12sdp"
             tools:text="100/100"
             android:textColor="@color/dark_grey"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/welcome_msg" />
 
@@ -58,7 +58,7 @@
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:textColor="@color/dark_grey"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider"

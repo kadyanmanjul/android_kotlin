@@ -105,7 +105,7 @@
             android:gravity="center"
             android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
             android:text="@string/privacy_label"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
             android:textColor="@color/grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

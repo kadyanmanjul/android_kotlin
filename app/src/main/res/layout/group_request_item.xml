@@ -58,7 +58,7 @@
                 android:layout_marginEnd="@dimen/_12sdp"
                 android:layout_marginBottom="@dimen/_6sdp"
                 android:text="@{itemData.answer}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 android:textColor="@color/gray_6F"
                 app:layout_constraintBottom_toTopOf="@id/allow_to_join"
                 app:layout_constraintEnd_toEndOf="parent"

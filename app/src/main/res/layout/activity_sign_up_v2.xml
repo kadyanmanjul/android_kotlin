@@ -60,7 +60,7 @@
                 android:gravity="start"
                 android:onClick="@{()->handler.onSkipPressed()}"
                 android:text="@string/skip"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 android:textColor="#687C90"
                 android:textSize="@dimen/_12ssp"
                 android:visibility="gone"

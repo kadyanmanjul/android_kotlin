@@ -48,7 +48,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/audio"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 android:textColor="@color/black" />
 
         </LinearLayout>
@@ -78,7 +78,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/camera"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 android:textColor="@color/black" />
 
         </LinearLayout>
@@ -109,7 +109,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/gallery"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 android:textColor="@color/black" />
 
         </LinearLayout>

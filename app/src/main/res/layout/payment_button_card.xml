@@ -39,7 +39,7 @@
         android:gravity="center"
         android:text="@string/privacy_label"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
         android:textColor="@color/grey"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"

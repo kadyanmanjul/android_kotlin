@@ -29,7 +29,7 @@
             android:layout_marginTop="@dimen/_32sdp"
             android:text="@{handler.isLanguageFragment ? @string/language_text : @string/goal_text}"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

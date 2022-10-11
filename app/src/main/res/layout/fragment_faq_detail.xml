@@ -42,7 +42,7 @@
                     android:id="@+id/faq_answers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                     android:textColor="@color/dark_grey"
                     tool:text="Faq answer" />
 
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_24sdp"
                 android:text="@string/help_answer"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 app:layout_constraintBottom_toTopOf="@+id/go_home"
                 app:layout_constraintStart_toStartOf="parent" />
 

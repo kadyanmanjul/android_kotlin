@@ -20,7 +20,7 @@
             android:layout_toStartOf="@+id/img_dismiss"
             android:layout_toLeftOf="@+id/img_dismiss"
             android:text="@string/select_country"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:textColor="@android:color/secondary_text_light" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -94,7 +94,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="@string/no_result_found"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
         android:textColor="@android:color/primary_text_light"
         android:visibility="gone" />
 

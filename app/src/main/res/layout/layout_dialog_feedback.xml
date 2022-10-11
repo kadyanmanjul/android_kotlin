@@ -132,7 +132,7 @@
                         android:layout_marginEnd="@dimen/_6sdp"
                         android:gravity="center"
                         android:padding="@dimen/_6sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         app:contentPadding="@dimen/_8sdp"

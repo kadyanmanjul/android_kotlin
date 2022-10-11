@@ -51,7 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/text_90"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                     tools:text="@string/retry_miss_call_verify" />
         </LinearLayout>
     </LinearLayout>

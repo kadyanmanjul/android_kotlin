@@ -25,6 +25,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|center"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
         android:textColor="@color/white" />
 </FrameLayout>

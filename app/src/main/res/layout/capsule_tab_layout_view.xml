@@ -14,7 +14,7 @@
         android:layout_gravity="center_horizontal"
         android:maxLines="1"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
         app:autoSizeMaxTextSize="@dimen/_10ssp"
         app:autoSizeMinTextSize="@dimen/_8ssp"
         app:autoSizeTextType="uniform"

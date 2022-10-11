@@ -20,7 +20,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:gravity="center"
             android:text="@string/instructions"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

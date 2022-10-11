@@ -38,7 +38,7 @@
                 android:paddingBottom="@dimen/_8sdp"
                 android:text="@string/permission_dialog_description"
                 android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 android:textColor="@color/grey"
                 android:visibility="invisible"
                 app:cornerRadius="@dimen/_12sdp"

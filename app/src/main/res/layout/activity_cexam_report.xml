@@ -79,7 +79,7 @@
                         android:padding="@dimen/_4sdp"
                         android:singleLine="true"
                         android:text="@string/examination_result"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
                         android:textColor="@color/white" />
                 </RelativeLayout>
 

@@ -153,7 +153,7 @@
             android:layout_marginStart="@dimen/_14sdp"
             android:layout_marginEnd="@dimen/_4sdp"
             android:text="Provide an optional group icon "
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
             app:layout_constraintBottom_toBottomOf="@id/img_group"
             app:layout_constraintStart_toEndOf="@id/img_group"
             app:layout_constraintTop_toTopOf="@id/img_group" />

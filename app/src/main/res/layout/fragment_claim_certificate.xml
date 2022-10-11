@@ -244,7 +244,7 @@
                         android:gravity="center"
                         android:text="@string/certificate_generate_message"
                         android:textColor="@color/white"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                         android:visibility="invisible" />
 
                 <ProgressBar

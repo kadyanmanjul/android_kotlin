@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:gravity="start|center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 android:textColor="@color/black"
                 android:visibility="gone" />
 
@@ -232,7 +232,7 @@
                 android:layout_marginTop="@dimen/_16sdp"
                 android:gravity="start|center"
                 android:text="This is the description of the question"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 android:textColor="@color/black"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -271,7 +271,7 @@
                     android:maxLines="8"
                     android:padding="@dimen/_4sdp"
                     android:singleLine="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                     android:textColor="@color/black"
                     android:textColorHint="@color/emoji_bg_color"
                     android:textCursorDrawable="@drawable/cursor_drawable"
@@ -514,7 +514,7 @@
                         android:layout_alignEnd="@id/submit_practise_seekbar"
                         android:layout_marginTop="@dimen/_20sdp"
                         android:paddingEnd="@dimen/_12sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                         android:textColor="@color/gray_9E"
                         app:layout_goneMarginTop="@dimen/spacing_large" />
                 </RelativeLayout>

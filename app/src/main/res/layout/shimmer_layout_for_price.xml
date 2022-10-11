@@ -81,7 +81,7 @@
                             android:paddingHorizontal="@dimen/_8sdp"
                             android:paddingVertical="@dimen/_4sdp"
                             android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                             android:textColor="@color/white"
                             android:textStyle="bold"
                             app:textAllCaps="false" />
