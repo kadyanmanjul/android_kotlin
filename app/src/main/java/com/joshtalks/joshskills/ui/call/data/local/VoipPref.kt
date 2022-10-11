@@ -105,6 +105,7 @@ object VoipPref {
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
             NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
 
+            //TODO: show form after rating for paid user; for FT user, only form shown
             val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
             intent.putExtra("isEditCall",false)
             ActivityLifecycleCallback.currentActivity.startActivity(intent)
