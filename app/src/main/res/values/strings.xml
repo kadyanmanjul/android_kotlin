@@ -205,8 +205,9 @@
     <string name="bilkul_nahi">No</string>
 
     <!-- Signup V2 Screen  -->
-    <string name="otp_verify_label">Apna OTP verify kare</string>
+    <string name="otp_verify_label">Verify your number</string>
     <string name="otp_received_message" formatted="false">Enter the OTP you received on \n  %s </string>
+    <string name="waiting_to_detect">Waiting to automatically detect an SMS sent to <b>%s</b>. Wrong number?</string>
     <string name="edit_number">Edit number</string>
     <string name="register">Register</string>
     <string name="your_name">Your Name</string>
@@ -941,6 +942,31 @@
         <item>₹ 50000</item>
         <item>₹ 100000</item>
     </string-array>
+    <string name="rup">\u20B9</string>
+    <string name="please_select_amount_to_add">Please select amount to add</string>
+    <string name="minimum_amount_required">Minimum amount required is INR 50</string>
+    <string name="transaction_history">Transaction History</string>
+    <string name="recharge">Recharge</string>
+    <string name="call_info_copied">call info copied</string>
+    <string name="payment_logs">Payment Logs</string>
+    <string name="wallet_transactions">Wallet Transactions</string>
+    <string name="josh_transaction_id">josh_transaction_id</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
+    <string name="empty"> </string>
+    <string name="ft_calls_left" formatted="false">%s calls left in free trial</string>
+    <string name="english_speaking_course">English Speaking Course</string>
+    <string name="about_the_teacher">About the Teacher</string>
+    <string name="course_ratings_and_reviews">Course Ratings and Reviews</string>
+    <string name="offer_for_you">Offer for you</string>
+    <string name="insert_code">Insert Code</string>
+    <string name="teacher_youtube_link"><u>Serene Paathshala</u></string>
+    <string name="maximum_amount_is_inr_20000">Maximum Amount is INR 20000</string>
+    <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="community_guidelines">Community Guidelines</string>
+    <string name="about_us">About Us</string>
+    <string name="resend_code">Resend code</string>
+    <string name="payment_processing_with_elipsize">Payment Processing...</string>
+    <string name="do_not_close_the_app_warning">This might take up to a minute. Please do not close the app.</string>
     <string name="default_disconnect_dialog_title">Are you sure you want to disconnect the call?</string>
     <string name="default_disconnect_dialog_text">Disconnecting calls frequently may lead to account suspension</string>
     <string name="please_select_amount_to_add" translatable="false">Please select amount to add</string>

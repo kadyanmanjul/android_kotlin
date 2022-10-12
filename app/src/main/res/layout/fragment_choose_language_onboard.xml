@@ -17,19 +17,15 @@
         android:focusable="true"
         android:background="@color/white">
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title"
             style="@style/Normal"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_40sdp"
-            android:gravity="center"
+            android:layout_marginTop="@dimen/_16sdp"
             android:maxLines="2"
-            android:layout_marginTop="@dimen/_32sdp"
             android:text="@{handler.isLanguageFragment ? @string/language_text : @string/goal_text}"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -215,4 +215,5 @@
     <color name="gray_8D">#8D8D8D</color>
     <color name="golden_color_dark">#FFA41C</color>
     <color name="text_subdued">#6d7175</color>
+    <color name="critical">#de350b</color>
 </resources>

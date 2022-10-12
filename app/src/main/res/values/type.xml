@@ -48,8 +48,22 @@
     </style>
 
     <style name="TextAppearance.JoshTypography.CaptionRegular" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="fontPath">fonts/NotoSans-Regula.ttf</item>
+        <item name="fontPath">fonts/NotoSans-Regular.ttf</item>
         <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">0.00</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.CaptionMedium" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontPath">fonts/NotoSans-Medium.ttf</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">0.00</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.SubHeadingRegular2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontPath">fonts/NotoSans-Regular.ttf</item>
+        <item name="android:textSize">@dimen/_14ssp</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
         <item name="android:letterSpacing">0.00</item>
     </style>

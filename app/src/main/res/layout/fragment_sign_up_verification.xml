@@ -1,235 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
-                name="handler"
-                type="com.joshtalks.joshskills.ui.signup.SignUpVerificationFragment" />
+            name="handler"
+            type="com.joshtalks.joshskills.ui.signup.SignUpVerificationFragment" />
 
         <variable
-                name="viewModel"
-                type="com.joshtalks.joshskills.ui.signup.SignUpViewModel" />
+            name="viewModel"
+            type="com.joshtalks.joshskills.ui.signup.SignUpViewModel" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/_4sdp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/_16sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/_16sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineSubStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/_24sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineSubEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/_24sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/_16sdp" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_view_1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_32sdp"
-                android:gravity="center"
-                android:text="@string/otp_verify_label"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
-                android:textColor="@color/black"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.95" />
+            android:id="@+id/text_view_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/otp_verify_label"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+            android:textColor="@color/black"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guidelineSubStart"
+            app:layout_constraintTop_toTopOf="@+id/guidelineTop"
+            app:layout_constraintWidth_default="percent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_view_2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:gravity="center"
-                android:text="@string/otp_received_message"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/grey"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_view_1"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.75" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_edit_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:gravity="center"
-                android:onClick="@{()->handler.editNumber()}"
-                android:padding="@dimen/_4sdp"
-                android:text="@string/edit_number"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                android:textColor="@color/button_color"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_view_2" />
 
         <com.joshtalks.codeinputview.OtpTextView
-                android:id="@+id/otp_view_2"
-                style="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_28sdp"
-                android:textColor="@color/black"
-                app:bar_enabled="false"
-                app:cursor_visible="@dimen/_1sdp"
-                app:height="@dimen/_38sdp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_edit_number"
-                app:length="4"
-                app:otp_box_background="@drawable/rect_with_bound"
-                app:otp_box_background_active="@drawable/rect_with_bound"
-                app:underline_width="0dp"
-                app:width="@dimen/_38sdp" />
+            android:id="@+id/otp_view_2"
+            style="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_24sdp"
+            android:textColor="@color/black"
+            app:bar_enabled="false"
+            app:box_margin_left="@dimen/_10sdp"
+            app:box_margin_right="@dimen/_10sdp"
+            app:cursor_visible="@dimen/_1sdp"
+            app:height="@dimen/_48sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.507"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+            app:length="4"
+            app:otp_box_background="@drawable/rect_with_bound"
+            app:otp_box_background_active="@drawable/rect_with_bound"
+            app:underline_width="0dp"
+            app:width="@dimen/_48sdp" />
+
+        <TextView
+            android:id="@+id/waitingToDetect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_34sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:gravity="center"
+            android:onClick="@{()->handler.editNumber()}"
+            android:text="@{handler.waitingToDetectText()}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionMedium"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/otp_view_2"
+            tools:text="Waiting to automatically detect an SMS sent to +91 77329 71460. Wrong number?" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_wrong_otp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:gravity="center"
-                android:text="@string/wrong_otp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                android:textColor="@color/error_color"
-                android:visibility="invisible"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/otp_view_2"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.8"
-                tools:visibility="visible" />
+            android:id="@+id/tv_wrong_otp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@string/wrong_otp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionMedium"
+            android:textColor="@color/critical"
+            android:visibility="invisible"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/waitingToDetect"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            tools:visibility="visible" />
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/otp_cl"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:visibility="gone"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_wrong_otp"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.85"
-                tools:visibility="visible">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_otp_timer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
-                    android:textColor="@color/green"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.15"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    tools:text="00:55" />
+        <TextView
+            android:id="@+id/resendCodeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_32sdp"
+            android:text="@string/resend_code"
+            android:layout_marginStart="@dimen/_34sdp"
+            android:enabled="false"
+            android:onClick="@{()->handler.regeneratedOTP()}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular2"
+            android:textColor="@drawable/enable_disable_selector"
+            app:layout_constraintEnd_toStartOf="@+id/tv_otp_timer"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_wrong_otp" />
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_view_3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_12sdp"
-                    android:gravity="start"
-                    android:text="@string/otp_wait_message"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/dark_grey"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/tv_otp_timer"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.6" />
+        <TextView
+            android:id="@+id/tv_otp_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular2"
+            android:textColor="@color/disabled"
+            app:layout_constraintBottom_toBottomOf="@+id/resendCodeTv"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/_34sdp"
+            app:layout_constraintStart_toEndOf="@+id/resendCodeTv"
+            app:layout_constraintTop_toTopOf="@+id/resendCodeTv"
+            tools:text="01:00" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/otp_resend_cl"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:background="@drawable/top_bottom_side_line_bg"
-                android:visibility="gone"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_wrong_otp"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.88"
-                tools:visibility="visible">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_view_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:text="@string/did_not_received_message"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/dark_grey"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tv_resend_otp"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent" />
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_resend_otp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rect_with_bound"
-                    android:gravity="center"
-                    android:onClick="@{()->handler.regeneratedOTP()}"
-                    android:paddingStart="@dimen/_16sdp"
-                    android:paddingTop="@dimen/_8sdp"
-                    android:paddingEnd="@dimen/_16sdp"
-                    android:paddingBottom="@dimen/_8sdp"
-                    android:text="@string/resend"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/dark_grey"
-                    app:drawableTint="@color/dark_grey"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/text_view_4"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.4"
-                    app:rippleColor="@color/white" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_verify"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_16sdp"
-                android:backgroundTint="@color/button_color"
-                android:clickable="true"
-                android:focusable="true"
-                android:maxLines="1"
-                android:onClick="@{()->handler.verifyOTP()}"
-                android:paddingTop="@dimen/_12sdp"
-                android:paddingBottom="@dimen/_12sdp"
-                android:text="@string/next"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
-                app:cornerRadius="@dimen/_32sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.75"
-                app:rippleColor="@color/white" />
+            android:id="@+id/btn_verify"
+            style="@style/Primary_Button_Filled"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_24sdp"
+            android:onClick="@{()->handler.verifyOTP()}"
+            android:text="@string/next"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toTopOf="@+id/text_view_privacy"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view_privacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_40sdp"
+            android:gravity="center"
+            android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
+            android:text="@string/privacy_label"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
