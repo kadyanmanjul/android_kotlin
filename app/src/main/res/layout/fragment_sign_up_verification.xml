@@ -59,7 +59,7 @@
                 android:onClick="@{()->handler.editNumber()}"
                 android:padding="@dimen/_4sdp"
                 android:text="@string/edit_number"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                 android:textColor="@color/button_color"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

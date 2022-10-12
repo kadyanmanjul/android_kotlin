@@ -2,8 +2,13 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -278,6 +283,21 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 SignUpProfileForFreeTrialFragment(),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
+        }
+    }
+
+    fun loginText(): Spannable {
+        val isLoggedIn = PrefManager.getBoolValue(LOGIN_ONBOARDING, defValue = false)
+        return if (isLoggedIn){
+            val text = getString(R.string.not_a_user_sign_up)
+            val spannable = SpannableString(text)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.primary_500)), 12, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable
+        } else {
+            val text = getString(R.string.already_a_user_login)
+            val spannable = SpannableString(text)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.primary_500)), 16, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable
         }
     }
 

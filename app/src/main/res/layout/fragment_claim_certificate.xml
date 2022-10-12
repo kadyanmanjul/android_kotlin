@@ -110,7 +110,7 @@
                     android:gravity="center|start"
                     android:paddingStart="@dimen/_12sdp"
                     android:text="@string/name"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="@+id/et_name"
                     app:layout_constraintStart_toStartOf="parent"
@@ -126,7 +126,7 @@
                     android:gravity="center|start"
                     android:paddingStart="@dimen/_12sdp"
                     android:text="@string/email"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="@+id/et_email"
                     app:layout_constraintStart_toStartOf="parent"
@@ -159,7 +159,7 @@
 
                 <com.google.android.material.button.MaterialButton
                         android:id="@+id/claim_download_cert_btn"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

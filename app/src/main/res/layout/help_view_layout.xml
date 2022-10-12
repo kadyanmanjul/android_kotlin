@@ -34,7 +34,7 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:gravity="start|center"
             android:lines="1"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/fl_container"
             app:layout_constraintStart_toEndOf="@+id/fl_container"

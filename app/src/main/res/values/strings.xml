@@ -370,6 +370,8 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="auto_start_prompt_message">Please enable Autostart to receive notifications when the app is in the background</string>
+    <string name="already_a_user_login">Already a user? <font color='#107BE5'>Log in</font></string>
+    <string name="not_a_user_sign_up">Not a user? <font color='#107BE5'>Sign Up</font></string>
 
     <string name="hint_text_btn"><u>OK got it </u></string>
     <string name="rate_us">Rate Us</string>
@@ -566,7 +568,7 @@
     <string name="fname_error_toast" translatable="false">Father name cannot be empty!</string>
     <string name="my_batch" translatable="false">My Batch</string>
     <string name="privacy_policy" translatable="false">Privacy Policy</string>
-    <string name="privacy_label" translatable="false">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
+    <string name="privacy_label" translatable="false">By continuing you consent to share your information with Josh Skills &amp; agree to <font color='#107BE5'><u>Josh Skills’ Privacy Policy</u></font></string>
 
     <string name="grammar_btn_text_check" translatable="false">चेक करें</string>
     <string name="grammar_btn_text_continue" translatable="false">जारी रखें</string>

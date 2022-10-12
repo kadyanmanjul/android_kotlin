@@ -154,7 +154,7 @@
             android:textColor="@color/black"
             android:layout_marginBottom="@dimen/_24sdp"
             app:layout_constraintBottom_toTopOf="@+id/text_view_privacy"
-            tools:text="Already a user? Log in" />
+            tools:text="@string/already_a_user_login" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_privacy"

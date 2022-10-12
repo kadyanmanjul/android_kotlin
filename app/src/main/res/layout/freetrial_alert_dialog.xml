@@ -33,7 +33,7 @@
         android:layout_marginTop="@dimen/_4sdp"
         android:gravity="top"
         android:text="@string/free_trial_dialog_desc"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
         android:textColor="#99000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"

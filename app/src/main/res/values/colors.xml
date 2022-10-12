@@ -61,6 +61,7 @@
 
     <!-- ______________New App Colors_______________-->
     <color name="button_color">#107BE5</color>
+    <color name="primary_500">#107BE5</color>
     <color name="light_blue">#C5E5FE</color>
     <color name="lightest_blue">#EDF2F8</color>
     <color name="black">#172344</color>
@@ -82,6 +83,7 @@
     <color name="sent_bg_7a">#7AF3E0</color>
     <color name="received_bg_BC">#BCDCFD</color>
     <color name="grey_E8">#E8E8E8</color>
+    <color name="disabled">#E8E8E8</color>
     <color name="bg_green_80">#DCF8C6</color>
     <color name="text_green_100">#128C7E</color>
     <color name="sent_msg_background">#E2FFC7</color>
@@ -212,4 +214,5 @@
     <color name="golden_color_transparent">#FBD26F</color>
     <color name="gray_8D">#8D8D8D</color>
     <color name="golden_color_dark">#FFA41C</color>
+    <color name="text_subdued">#6d7175</color>
 </resources>

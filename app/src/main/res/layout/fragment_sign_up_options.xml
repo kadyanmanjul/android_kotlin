@@ -15,27 +15,47 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/_16sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/_16sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/_16sdp" />
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_2"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_32sdp"
-            android:gravity="center"
+            android:layout_marginStart="@dimen/_24sdp"
             android:text="@string/confirm_number"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:textColor="@color/black"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.8" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guidelineTop"
+            app:layout_constraintWidth_default="percent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/et_container"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:background="@drawable/mobile_no_bg"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_33sdp"
+            android:background="@drawable/mobile_no_bg_v2"
             android:paddingStart="@dimen/_12sdp"
             android:paddingTop="@dimen/_10sdp"
             android:paddingEnd="@dimen/_12sdp"
@@ -43,12 +63,11 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_view_2"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.75">
+            app:layout_constraintWidth_default="percent">
 
             <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                 android:id="@+id/country_code_picker"
-                style="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                style="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -57,7 +76,7 @@
                 app:ccpDialog_allowSearch="true"
                 app:ccpDialog_backgroundColor="@color/wh_f4"
                 app:ccpDialog_fastScroller_bubbleColor="@color/checkmark_blue"
-                app:ccpDialog_fastScroller_bubbleTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                app:ccpDialog_fastScroller_bubbleTextAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                 app:ccpDialog_fastScroller_handleColor="@color/colorAccent"
                 app:ccpDialog_initialScrollToSelection="true"
                 app:ccpDialog_keyboardAutoPopup="false"
@@ -102,7 +121,7 @@
                 android:lines="1"
                 android:maxLength="13"
                 android:paddingStart="@dimen/_8sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 app:backgroundTint="@color/white"
@@ -136,43 +155,36 @@
             android:id="@+id/info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:gravity="center"
             android:text="@string/missed_call_verify_message"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/grey"
+            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_container"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/et_container" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Primary_Button_Outlined"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_24sdp"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
             android:onClick="@{()->handler.loginViaPhoneNumber()}"
-            android:paddingTop="@dimen/_12sdp"
-            android:paddingBottom="@dimen/_12sdp"
             android:text="@string/missed_call_label"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-            android:textColor="@color/button_color"
             android:visibility="visible"
-            app:cornerRadius="@dimen/_32sdp"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/info"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.7"
-            app:rippleColor="@color/white"
-            app:strokeColor="@color/button_color" />
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/info" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/progress_bar_group"
@@ -219,19 +231,16 @@
             android:id="@+id/view_separator"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:paddingVertical="@dimen/_12sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_login"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.8">
+            android:layout_marginTop="@dimen/_12sdp"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/btn_login">
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
                 android:layout_gravity="center"
-                android:background="@color/grey" />
+                android:background="@color/disabled" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
@@ -242,39 +251,25 @@
                 android:paddingEnd="@dimen/_6sdp"
                 android:text="@string/or"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/grey" />
+                android:textColor="@color/text_subdued" />
 
         </FrameLayout>
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/text_view_1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:gravity="center"
-            android:text="@string/join_social_text"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-            android:textColor="@color/grey"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_separator"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_truecaller_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()->handler.loginViaTrueCaller()}"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.301"
+            app:layout_constraintEnd_toStartOf="@+id/btn_google"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+            app:layout_constraintTop_toBottomOf="@+id/view_separator"
             app:srcCompat="@drawable/ic_truecaller"
             tools:visibility="visible" />
 
@@ -283,31 +278,30 @@
             android:id="@+id/btn_google"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="12dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
+            android:layout_marginStart="@dimen/_20sdp"
             android:onClick="@{()->handler.loginViaGoogle()}"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_truecaller_login"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btn_truecaller_login"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+            app:layout_constraintTop_toTopOf="@+id/btn_truecaller_login"
             app:srcCompat="@drawable/ic_google" />
+
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_privacy"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginHorizontal="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_40sdp"
             android:gravity="center"
             android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
             android:text="@string/privacy_label"
             android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-            android:textColor="@color/grey"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_google"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintWidth_default="percent" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/random_phone"
