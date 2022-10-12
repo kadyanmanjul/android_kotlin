@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -44,7 +45,6 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
             viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
             viewModel.saveImpression(INTEREST_FORM_SKIP_PRESSED)
         }
-
         binding.submitBtn.setOnClickListener {
             val id = binding.interestCg.checkedChipIds
             viewModel.sendUserInterest(id)

@@ -171,9 +171,10 @@
         <item name="chipStrokeWidth">@dimen/_1sdp</item>
         <item name="android:textColor">@color/interest_chip_text_color_selector</item>
         <item name="android:textAppearance">
-            @style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold
+            @style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold
         </item>
-        <item name="android:padding">@dimen/_10sdp</item>
+        <item name="android:padding">@dimen/_20sdp</item>
+        <item name="minHeight">@dimen/_20sdp</item>
     </style>
 
     <style name="ReminderChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
