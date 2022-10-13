@@ -12,7 +12,6 @@ import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLOSE_INTEREST_ACTIVITY
-import com.joshtalks.joshskills.constants.SHOW_BUY_POPUP_FT
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentCallInterestBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
@@ -50,11 +49,9 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
             PrefManager.put(IS_INTEREST_FORM_FILLED, true)
 
             // if freetrial user submits form, show buy popup
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
-                viewModel.sendEvent(SHOW_BUY_POPUP_FT)
-            }else{
-                viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
-            }
+
+            viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
+
 
         }
 
