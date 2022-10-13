@@ -70,9 +70,12 @@
         <item name="android:textColorPrimary">@color/colorAccent</item>
         <item name="android:colorControlNormal">@color/colorAccent</item>
     </style>
+
     <style name="YearPickerAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:textColor">#FF4081</item>  // you can change the color of the yearPiker dialog
-        <item name="android:textColorPrimary">#FF4081</item> // you can change the color of the yearPiker dialog
+        <item name="android:textColor">#FF4081</item>
+        // you can change the color of the yearPiker dialog
+        <item name="android:textColorPrimary">#FF4081</item>
+        // you can change the color of the yearPiker dialog
     </style>
 
 
@@ -619,7 +622,7 @@
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
-<!--    style of dialog box-->
+    <!--    style of dialog box-->
     <style name="dialog_theme" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
@@ -711,5 +714,9 @@
         <item name="android:textCursorDrawable">@drawable/cursor_drawable</item>
         <item name="android:textSize">@dimen/_14ssp</item>
         <item name="android:background">@drawable/mobile_no_bg_v2</item>
+    </style>
+
+    <style name="JoshInputField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/disabled</item>
     </style>
 </resources>

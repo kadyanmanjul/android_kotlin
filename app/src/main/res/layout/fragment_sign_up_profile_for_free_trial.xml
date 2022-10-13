@@ -22,22 +22,22 @@
             android:id="@+id/guidelineBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintGuide_end="@dimen/_40sdp"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="@dimen/_40sdp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="@dimen/_24sdp"/>
+            app:layout_constraintGuide_begin="@dimen/_24sdp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineEnd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="@dimen/_24sdp"/>
+            app:layout_constraintGuide_end="@dimen/_24sdp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_name"
@@ -53,13 +53,12 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameRoot"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_33sdp"
             android:hint="@string/hint_name_field"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
-            app:boxBackgroundColor="@color/disabled"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/text_view_name">
 
@@ -67,11 +66,11 @@
                 android:id="@+id/name_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
                 android:clickable="true"
                 android:digits="@string/allowed_name_characters"
                 android:focusable="true"
                 android:gravity="start"
-                android:backgroundTint="@color/white"
                 android:imeOptions="actionNext"
                 android:inputType="textCapWords"
                 android:lines="1"
@@ -87,58 +86,21 @@
                 android:textCursorDrawable="@drawable/cursor_drawable" />
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:id="@+id/cardView2"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginHorizontal="@dimen/_28sdp"-->
-<!--            app:cardCornerRadius="@dimen/_4sdp"-->
-<!--            app:cardElevation="@dimen/_4sdp"-->
-<!--            android:layout_marginTop="@dimen/_50sdp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/nameRoot">-->
-
-<!--            <androidx.appcompat.widget.AppCompatEditText-->
-<!--                android:id="@+id/name_edit_text"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@color/name_field_color"-->
-<!--                android:clickable="true"-->
-<!--                android:digits="@string/allowed_name_characters"-->
-<!--                android:focusable="true"-->
-<!--                android:gravity="start"-->
-<!--                android:hint="@string/hint_name_field"-->
-<!--                android:imeOptions="actionNext"-->
-<!--                android:inputType="textCapWords"-->
-<!--                android:lines="1"-->
-<!--                android:maxLength="24"-->
-<!--                android:maxLines="1"-->
-<!--                android:minLines="1"-->
-<!--                android:paddingStart="@dimen/_14sdp"-->
-<!--                android:paddingTop="@dimen/_14sdp"-->
-<!--                android:paddingEnd="@dimen/_14sdp"-->
-<!--                android:paddingBottom="@dimen/_14sdp"-->
-<!--                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textColorHint="@color/light_grey"-->
-<!--                android:textCursorDrawable="@drawable/cursor_drawable" />-->
-
-<!--        </androidx.cardview.widget.CardView>-->
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login"
             style="@style/Primary_Button_Filled"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_24sdp"
             android:onClick="@{()->handler.submitProfile()}"
             android:text="@string/continue_label"
             android:textAllCaps="false"
-            android:layout_marginBottom="@dimen/_24sdp"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/text_view_privacy"
+            app:layout_constraintVertical_bias="1.0"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
-            app:layout_constraintStart_toStartOf="@+id/guidelineStart"/>
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/nameRoot" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_privacy"
