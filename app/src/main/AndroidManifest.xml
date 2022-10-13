@@ -805,6 +805,10 @@
 <!--            android:name=".core.service.BackgroundService"-->
 <!--            android:enabled="true"-->
 <!--            android:exported="false" />-->
+        <service
+            android:name=".core.notification.StickyNotificationService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

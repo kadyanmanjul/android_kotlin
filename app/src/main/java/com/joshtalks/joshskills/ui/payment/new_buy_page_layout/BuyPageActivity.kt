@@ -39,7 +39,6 @@ import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
-import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
@@ -511,11 +510,13 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         fun startBuyPageActivity(
             activity: Activity,
             testId: String,
-            flowFrom: String
+            flowFrom: String,
+            coupon: String = EMPTY
         ) {
             Intent(activity, BuyPageActivity::class.java).apply {
                 putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
                 putExtra(FLOW_FROM, flowFrom)
+                putExtra(COUPON_CODE, coupon)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
