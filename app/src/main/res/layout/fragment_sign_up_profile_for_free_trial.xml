@@ -66,24 +66,7 @@
                 android:id="@+id/name_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
-                android:clickable="true"
-                android:digits="@string/allowed_name_characters"
-                android:focusable="true"
-                android:gravity="start"
-                android:imeOptions="actionNext"
-                android:inputType="textCapWords"
-                android:lines="1"
-                android:maxLength="24"
-                android:maxLines="1"
-                android:minLines="1"
-                android:paddingStart="@dimen/_14sdp"
-                android:paddingTop="@dimen/_14sdp"
-                android:paddingEnd="@dimen/_14sdp"
-                android:paddingBottom="@dimen/_14sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                android:textColor="@color/text_default"
-                android:textCursorDrawable="@drawable/cursor_drawable" />
+                style="@style/JoshNameEditText" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton

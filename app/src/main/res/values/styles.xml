@@ -20,6 +20,7 @@
         <item name="windowActionBar">false</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:statusBarColor">@color/white</item>
     </style>
 
     <style name="AppThemeDark" parent="Theme.MaterialComponents.Light.DarkActionBar">
@@ -718,5 +719,30 @@
 
     <style name="JoshInputField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/disabled</item>
+    </style>
+
+    <style name="JoshEditText">
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">start</item>
+        <item name="android:lines">1</item>
+        <item name="android:paddingStart">@dimen/_14sdp</item>
+        <item name="android:paddingTop">@dimen/_14sdp</item>
+        <item name="android:paddingEnd">@dimen/_14sdp</item>
+        <item name="android:paddingBottom">@dimen/_14sdp</item>
+        <item name="android:textAppearance">@style/TextAppearance.JoshTypography.SubHeadingRegular
+        </item>
+        <item name="android:textColor">@color/text_default</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_drawable</item>
+    </style>
+
+    <style name="JoshNameEditText" parent="JoshEditText">
+        <item name="android:digits">@string/allowed_name_characters</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:inputType">textCapWords</item>
+        <item name="android:maxLength">24</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:minLines">1</item>
     </style>
 </resources>
