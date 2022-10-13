@@ -6,7 +6,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
             android:foreground="?attr/selectableItemBackground"
-            android:background="@drawable/mobile_no_bg_v2"
             android:layout_width="match_parent"
             android:layout_marginBottom="@dimen/_16sdp"
             android:layout_height="wrap_content">
