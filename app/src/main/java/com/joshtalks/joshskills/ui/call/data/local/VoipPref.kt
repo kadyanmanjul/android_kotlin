@@ -129,18 +129,32 @@ object VoipPref {
             if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
 
                 // to open both level and interest forms:
-                val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-                intent.putExtra("isEditCall",false)
-                ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                if (PrefManager.getBoolValue(IS_LEVEL_FORM_FILLED, defValue = false).not()){
+                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+                    intent.putExtra("isEditCall",false)
+                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                }
+                else if (PrefManager.getBoolValue(IS_INTEREST_FORM_FILLED, defValue = false).not()){
+                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+                    intent.putExtra("isEditCall",true)
+                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                }
+                else{
+                    showDialogBox(duration, CALL_RATING)
+                }
 
             }
-            else if (PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 0 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
+            else if (PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 0 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1) {
                 // to open interest form only:
-                val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-                intent.putExtra("isEditCall",true)
-                ActivityLifecycleCallback.currentActivity.startActivity(intent)
-            }
-            else{
+                if (PrefManager.getBoolValue(IS_INTEREST_FORM_FILLED, defValue = false).not()) {
+                    val intent = Intent(ActivityLifecycleCallback.currentActivity, UserInterestActivity::class.java)
+                    intent.putExtra("isEditCall", true)
+                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                } else {
+                    showDialogBox(duration, CALL_RATING)
+                }
+
+            }else{
                 showDialogBox(duration, CALL_RATING)
             }
 
@@ -149,7 +163,7 @@ object VoipPref {
             if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
 
                 // to open both level and interest forms:
-                if (PrefManager.getBoolValue(IS_LEVEL_FORM_FILLED, defValue = false)){//TODO:ADD .NOT()
+                if (PrefManager.getBoolValue(IS_LEVEL_FORM_FILLED, defValue = false).not()){
                     val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
                     intent.putExtra("isEditCall",false)
                     ActivityLifecycleCallback.currentActivity.startActivity(intent)

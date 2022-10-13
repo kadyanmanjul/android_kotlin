@@ -2,26 +2,17 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_CALL_DURATION
 import com.joshtalks.joshskills.constants.CLOSE_INTEREST_ACTIVITY
-import com.joshtalks.joshskills.constants.SHOW_BUY_POPUP_FT
 import com.joshtalks.joshskills.constants.START_USER_INTEREST_FRAGMENT
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.ActivityUserInterestBinding
-import com.joshtalks.joshskills.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
-import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 
 class UserInterestActivity : BaseActivity() {
@@ -56,10 +47,6 @@ class UserInterestActivity : BaseActivity() {
 
                 CLOSE_INTEREST_ACTIVITY -> finish()
 
-                SHOW_BUY_POPUP_FT -> {
-                    showPurchaseDialog(prefManager.getLong(PREF_KEY_LAST_CALL_DURATION,0))
-                    //TODO: add some mechanism to close activity after dialog is dismissed
-                }
             }
         }
     }
@@ -77,27 +64,6 @@ class UserInterestActivity : BaseActivity() {
             }else{
                 replace(R.id.container_Interests,CallInterestFragment(isEditCall),"Interest Fragment")
                     .addToBackStack("User English Level Fragment")
-            }
-        }
-    }
-
-    private fun showPurchaseDialog(duration: Long) {
-        CoroutineScope(Dispatchers.IO + VoipPref.coroutineExceptionHandler).launch {
-            try {
-                val resp =
-                    AppObjectController.commonNetworkService.getCoursePopUpData(
-                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID),
-                        popupName = PurchasePopupType.SPEAKING_COMPLETED.name,
-                        callCount = PrefManager.getIntValue(FT_CALLS_LEFT),
-                        callDuration = duration
-                    )
-                resp.body()?.let {
-                    if (it.couponCode != null && it.couponExpiryTime != null)
-                        PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
-                    PurchaseDialog.newInstance(it).show(supportFragmentManager,"PurchaseDialog")
-                }
-            } catch (ex: Exception) {
-                Log.d("sagar", "showPurchaseDialog: ${ex.message}")
             }
         }
     }
