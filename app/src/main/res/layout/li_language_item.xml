@@ -8,32 +8,20 @@
             android:foreground="?attr/selectableItemBackground"
             android:background="@drawable/mobile_no_bg_v2"
             android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/_16sdp"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvLanguage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="start"
                 app:layout_constraintHorizontal_bias="0"
-                android:imeOptions="actionNext"
-                android:inputType="textCapWords"
-                android:lines="1"
-                android:maxLines="1"
-                android:minLines="1"
-                android:paddingStart="@dimen/_14sdp"
-                android:paddingTop="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_10sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.HeadingMedium"
-                android:textColor="@color/text_subdued"
-                android:textColorHint="@color/language_item_bg"
-                android:textCursorDrawable="@drawable/cursor_drawable"
-                android:textSize="@dimen/_14ssp"
                 tools:text="Find a new or a better job"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/Option" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
