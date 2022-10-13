@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.signup
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -17,9 +19,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.facebook.*
-import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -32,13 +32,20 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
@@ -56,34 +63,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
-private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
+const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
 
 class SignUpActivity : BaseActivity() {
 
     private lateinit var appAnalytics: AppAnalytics
     private val viewModel: SignUpViewModel by lazy {
-        ViewModelProvider(this).get(SignUpViewModel::class.java)
+        ViewModelProvider(this)[SignUpViewModel::class.java]
     }
     private val viewModelForDpUpload: UserProfileViewModel by lazy {
-        ViewModelProvider(this).get(UserProfileViewModel::class.java)
+        ViewModelProvider(this)[UserProfileViewModel::class.java]
     }
     private lateinit var binding: ActivitySignUpV2Binding
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var compositeDisposable = CompositeDisposable()
+    private var shouldStartFreeTrial: Boolean = false
 
-    // var verification: Verification? = null
-    // private var sinchConfig: Config? = null
     private lateinit var auth: FirebaseAuth
-
-    /*init {
-        sinchConfig = SinchVerification.config()
-            .applicationKey(BuildConfig.SINCH_API_KEY)
-            .appHash(AppSignatureHelper(AppObjectController.joshApplication).appSignatures[0])
-            .context(AppObjectController.joshApplication)
-            .build()
-    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN.NAME)
@@ -101,15 +99,26 @@ class SignUpActivity : BaseActivity() {
             )
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
+        shouldStartFreeTrial = intent.getBooleanExtra(START_FREE_TRIAL, false)
         addViewModelObserver()
         initLoginFeatures()
         setupTrueCaller()
-        if (User.getInstance().isVerified && isUserProfileComplete()) {
+        if (PrefManager.hasKey(FT_ONBOARDING_NEXT_STEP)) {
+            viewModel.updateFTSignUpStatus(SignUpStepStatus.valueOf(PrefManager.getStringValue(FT_ONBOARDING_NEXT_STEP)))
+        } else if (User.getInstance().isVerified && isUserProfileComplete()) {
             openProfileDetailFragment(false)
         } else if (User.getInstance().isVerified && !isRegProfileComplete()) {
             openProfileDetailFragment(true)
         } else {
-            openSignUpOptionsFragment()
+            if (isVariantActive(VariantKeys.NEW_LOGIN_BEFORE_NAME)) {
+                openSignUpOptionsFragment()
+            } else if (isVariantActive(VariantKeys.NEW_LANGUAGE_ENABLED)) {
+                openChooseLanguageFragment()
+            } else if (isVariantActive(VariantKeys.ORIGINAL_LOGIN_FLOW)) {
+                openSignUpNameFragment()
+            } else {
+                openSignUpOptionsFragment()
+            }
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -122,6 +131,9 @@ class SignUpActivity : BaseActivity() {
                 SignUpStepStatus.RequestForOTP -> {
                     openNumberVerificationFragment()
                 }
+                SignUpStepStatus.LanguageSelection -> {
+                    openChooseLanguageFragment()
+                }
                 SignUpStepStatus.ProfileInCompleted -> {
                     binding.ivBack.visibility = View.GONE
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -132,6 +144,16 @@ class SignUpActivity : BaseActivity() {
                     isFirstTime = true
                     viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER_ENROLL)
                     openProfileDetailFragment(true)
+                }
+                SignUpStepStatus.NameSubmitted -> {
+                    if (isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME)) {
+                        openSignUpOptionsFragment()
+                    } else {
+                        viewModel.startFreeTrial(Mentor.getInstance().getId())
+                    }
+                }
+                SignUpStepStatus.StartTrial -> {
+                    viewModel.startFreeTrial(Mentor.getInstance().getId())
                 }
                 SignUpStepStatus.ProfileCompleted -> {
                     binding.ivBack.visibility = View.GONE
@@ -185,7 +207,12 @@ class SignUpActivity : BaseActivity() {
 
             }
         }
-
+        viewModel.freeTrialEntity.observe(this) {
+            if (it != null) {
+                hideProgressBar()
+                moveToConversationScreen(it)
+            }
+        }
         viewModelForDpUpload.apiCallStatus.observe(this, Observer
         {
             when (it) {
@@ -204,6 +231,70 @@ class SignUpActivity : BaseActivity() {
                 }
             }
         })
+    }
+
+    private fun openChooseLanguageFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                ChooseLanguageOnBoardFragment.newInstance(),
+                ChooseLanguageOnBoardFragment::class.java.name
+            )
+        }
+    }
+
+    fun openChooseGoalFragment() {
+        supportFragmentManager.commit(true) {
+            addToBackStack(ChooseGoalOnBoardFragment::class.java.name)
+            replace(
+                R.id.container,
+                ChooseGoalOnBoardFragment.newInstance(),
+                ChooseGoalOnBoardFragment::class.java.name
+            )
+        }
+    }
+
+    fun onLanguageSelected(testId: String) {
+        PrefManager.put(FREE_TRIAL_TEST_ID, testId)
+        viewModel.postGoal(GoalKeys.LANGUAGE_SELECTED)
+        if (testId == HINDI_TO_ENGLISH_TEST_ID && isVariantActive(VariantKeys.ENGLISH_FOR_GOVT_EXAM_ENABLED)) {
+            openChooseGoalFragment()
+        } else {
+            openSignUpNameFragment()
+        }
+    }
+
+    fun onGoalSelected(testId: String) {
+        PrefManager.put(FREE_TRIAL_TEST_ID, testId)
+        viewModel.postGoal(GoalKeys.REASON_SELECTED)
+        if (testId == HINDI_TO_ENGLISH_TEST_ID || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
+            requestWorkerForChangeLanguage("en", canCreateActivity = false)
+        } else {
+            requestWorkerForChangeLanguage(Utils.getLangCodeFromlangTestId(testId), canCreateActivity = false)
+        }
+        if (isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME))
+            openSignUpNameFragment()
+        else
+            startFreeTrial(testId)
+    }
+
+    fun startFreeTrial(testId: String) {
+        PrefManager.put(FREE_TRIAL_TEST_ID, testId)
+        if (testId == HINDI_TO_ENGLISH_TEST_ID || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
+            requestWorkerForChangeLanguage("en", canCreateActivity = false)
+        } else {
+            requestWorkerForChangeLanguage(Utils.getLangCodeFromlangTestId(testId), canCreateActivity = false)
+        }
+        if (Mentor.getInstance().getId().isNotEmpty()) {
+            if (TruecallerSDK.getInstance().isUsable)
+                trueCallerLogin()
+            else {
+                viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED_JI_HAAN)
+                openSignUpNameFragment()
+            }
+        }
     }
 
     private fun logLoginSuccessAnalyticsEvent(from: String?) {
@@ -245,9 +336,7 @@ class SignUpActivity : BaseActivity() {
     }
 
 
-
     private fun setupTrueCaller() {
-        var isSuccess = false
         val trueScope = TruecallerSdkScope.Builder(this, object : ITrueCallback {
             override fun onFailureProfileShared(trueError: TrueError) {
                 hideProgressBar()
@@ -268,6 +357,7 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
+                viewModel.postGoal(GoalKeys.TRUECALLER_SELECTED)
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION_CONTD)
                     .addParam(ParamKeys.IS_SUCCESS, true)
@@ -309,6 +399,17 @@ class SignUpActivity : BaseActivity() {
                 R.id.container,
                 SignUpProfileFragment.newInstance(isRegistrationScreenFirstTime),
                 SignUpProfileFragment::class.java.name
+            )
+        }
+    }
+
+    private fun openSignUpNameFragment() {
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                SignUpProfileForFreeTrialFragment(),
+                SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
     }
@@ -453,11 +554,8 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    private fun handleFirebaseAuth(
-        accountUser: FirebaseUser?
-    ) {
+    private fun handleFirebaseAuth(accountUser: FirebaseUser?) {
         if (accountUser != null) {
-
             viewModel.signUpUsingSocial(
                 LoginViaStatus.GMAIL,
                 accountUser.uid,
@@ -534,133 +632,6 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    //Use link = https://developers.sinch.com/docs/verification-for-android
-    /*private fun verificationThroughSinch(
-        countryCode: String,
-        phoneNumber: String,
-        verificationVia: VerificationVia
-    ) {
-        if (phoneNumber.isEmpty()) {
-            return
-        }
-        val listener = object : VerificationListener {
-            override fun onInitiationFailed(e: Exception) {
-                viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
-                e.printStackTrace()
-            }
-
-            override fun onVerified() {
-                viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
-            }
-
-            override fun onInitiated(p0: InitiationResult) {
-                viewModel.verificationStatus.postValue(VerificationStatus.INITIATED)
-            }
-
-            override fun onVerificationFailed(e: Exception) {
-                e.printStackTrace()
-                when (e) {
-                    is InvalidInputException -> {
-                        viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
-                        // Incorrect number or code provided
-                    }
-                    is CodeInterceptionException -> {
-                        // Intercepting the verification code automatically failed, input the code manually with verify()
-                    }
-                    is IncorrectCodeException -> {
-                        viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
-
-                        // The verification code provided was incorrect
-                    }
-                    is ServiceErrorException -> {
-                        viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
-                        // Sinch service error
-                    }
-                    else -> {
-                        // Other system error, such as UnknownHostException in case of network error
-                    }
-                }
-                e.printStackTrace()
-            }
-
-            override fun onVerificationFallback() {
-            }
-        }
-        // var defaultRegion: String? = PhoneNumberUtils.getDefaultCountryIso(this)
-        var defaultRegion: String? = "IN"
-
-        if (defaultRegion.isNullOrEmpty()) {
-            defaultRegion = CountryCodePicker.getRegion(countryCode)
-        }
-
-        AppAnalytics.create(AnalyticsEvent.SINCH_TEST.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.USER_PHONE_NUMBER.NAME, phoneNumber)
-            .addParam(AnalyticsEvent.COUNTRY_FLAG_CHANGED.NAME, countryCode)
-            .addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion ?: "NULL")
-            .addParam(AnalyticsEvent.VERIFICATION_VIA_SINCH_TEST.NAME, verificationVia.toString())
-            .push()
-
-        val pnu: PhoneNumberUtil = PhoneNumberUtil.createInstance(applicationContext)
-        var phoneNumberInE164: String
-        try {
-            val pn: Phonenumber.PhoneNumber = pnu.parse(phoneNumber, defaultRegion)
-            val pnE164: String = pnu.format(pn, PhoneNumberUtil.PhoneNumberFormat.E164)
-            phoneNumberInE164 = if (pnE164.isNotEmpty()) {
-                pnE164
-            } else {
-                PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultRegion)
-            }
-        } catch (ex: Throwable) {
-            phoneNumberInE164 = countryCode + phoneNumber
-            LogException.catchException(ex)
-        }
-
-        if (verificationVia == VerificationVia.FLASH_CALL) {
-            flashCallVerificationPermissionCheck {
-                verificationViaFLASHCallUsingSinch(sinchConfig, phoneNumberInE164, listener)
-            }
-        } else {
-            verificationViaSMSUsingSinch(
-                sinchConfig,
-                countryCode,
-                phoneNumber,
-                phoneNumberInE164,
-                listener
-            )
-        }
-    }
-
-    private fun verificationViaSMSUsingSinch(
-        config: Config?,
-        countryCode: String,
-        phoneNumber: String,
-        phoneNumberInE164: String,
-        listener: VerificationListener
-    ) {
-        viewModel.loginAnalyticsEvent(VerificationVia.SMS.name)
-        verification =
-            SinchVerification.createSmsVerification(config, phoneNumberInE164, listener)
-        verification?.initiate()
-        viewModel.countryCode = countryCode
-        viewModel.phoneNumber = phoneNumber
-        openNumberVerificationFragment()
-        viewModel.registerSMSReceiver()
-    }
-
-    private fun verificationViaFLASHCallUsingSinch(
-        config: Config?,
-        phoneNumberInE164: String,
-        listener: VerificationListener
-    ) {
-        viewModel.loginAnalyticsEvent(VerificationVia.FLASH_CALL.name)
-        verification =
-            SinchVerification.createFlashCallVerification(config, phoneNumberInE164, listener)
-        verification?.initiate()
-    }*/
-
-    //Use link = https://docs.truecaller.com/truecaller-sdk/android/integrating-with-your-app/verifying-non-truecaller-users
     private fun verificationThroughTrueCaller(
         phoneNumber: String
     ) {
@@ -759,5 +730,38 @@ class SignUpActivity : BaseActivity() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onDestroy()
     }
+
+    fun moveToConversationScreen(inboxEntity: InboxEntity) {
+        PrefManager.put(CURRENT_COURSE_ID, inboxEntity.courseId)
+        PendingIntent.getActivities(
+            this,
+            (System.currentTimeMillis() and 0xfffffff).toInt(),
+            arrayOf(
+                Intent(this, InboxActivity::class.java).apply {
+                    putExtra(FLOW_FROM, "free trial onboarding journey")
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                },
+                ConversationActivity.getConversationActivityIntent(this, inboxEntity)
+            ),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        ).send()
+    }
+
+    private fun isVariantActive(variantKey: VariantKeys) = viewModel.abTestRepository.isVariantActive(variantKey)
+
+    companion object {
+        private const val START_FREE_TRIAL = "start_free_trial"
+
+        @JvmStatic
+        fun start(context: Context, flowFrom: String, shouldStartFreeTrial: Boolean = false) {
+            val starter = Intent(context, SignUpActivity::class.java)
+                .putExtra(FLOW_FROM, flowFrom)
+                .putExtra(START_FREE_TRIAL, shouldStartFreeTrial)
+            context.startActivity(starter)
+        }
+    }
+
+
 }
 

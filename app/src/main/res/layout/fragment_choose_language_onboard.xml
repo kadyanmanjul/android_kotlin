@@ -17,65 +17,6 @@
         android:focusable="true"
         android:background="@color/white">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorPrimary"
-                android:contentInsetStart="0dp"
-                android:contentInsetLeft="0dp"
-                android:contentInsetEnd="0dp"
-                android:contentInsetRight="0dp"
-                android:minHeight="?attr/actionBarSize"
-                app:contentInsetEnd="0dp"
-                app:contentInsetEndWithActions="0dp"
-                app:contentInsetLeft="0dp"
-                app:contentInsetRight="0dp"
-                app:contentInsetStart="0dp"
-                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/button_color"
-                    android:paddingStart="@dimen/_4sdp"
-                    android:paddingEnd="@dimen/_4sdp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="@dimen/_4sdp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical|start"
-                        android:paddingTop="@dimen/_6sdp"
-                        android:paddingBottom="@dimen/_6sdp"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_arrow_back"
-                        tools:visibility="visible" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </com.google.android.material.appbar.MaterialToolbar>
-
-        </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title"
@@ -93,7 +34,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="@string/goal_text"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvChooseLanguage"
@@ -116,7 +57,7 @@
             android:layout_height="0dp"
             android:inflatedId="@+id/error_view"
             android:layout="@layout/error_view_stub"
-            app:layout_constraintTop_toBottomOf="@id/linearLayout"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:visibility="gone"
@@ -126,7 +67,7 @@
             android:id="@+id/progress"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/linearLayout"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

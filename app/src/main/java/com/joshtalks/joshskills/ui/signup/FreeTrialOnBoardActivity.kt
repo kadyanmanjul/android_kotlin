@@ -5,14 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.*
@@ -31,7 +30,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
 
-const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 const val HINDI_TO_ENGLISH_TEST_ID = "784"
 const val ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID = "1906"
 const val USER_CREATED_SUCCESSFULLY = 1002
@@ -40,9 +38,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
-        ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
+        ViewModelProvider(this)[FreeTrialOnBoardViewModel::class.java]
     }
-    private val liveEvent = EventLiveData
     private var languageActive = false
     private var eftActive = false
     private var is100PointsActive = false
@@ -59,15 +56,30 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
-        layout.isLogin = PrefManager.getBoolValue(LOGIN_ONBOARDING, defValue = false)
-        if (intent.getBooleanExtra(SHOW_SIGN_UP_FRAGMENT, false) &&
-            Mentor.getInstance().getId().isNotEmpty()
-        ) {
-            openProfileDetailFragment()
-        }
         initABTest()
         initOnboardingCourse()
         addViewModelObservers()
+        PrefManager.getBoolValue(LOGIN_ONBOARDING, defValue = false).let { isLogin ->
+            layout.btnStartTrialText.apply {
+                text = if (isLogin) "Sign In" else
+                    "Start Now"
+                setOnClickListener {
+                    if (isLogin)
+                        signUp(it)
+                    else {
+                        viewModel.postGoal(GoalKeys.START_NOW_BUTTON_CLICKED)
+                        startTrial(it)
+                    }
+                }
+            }
+            layout.txtLogin.apply {
+                text = if (isLogin) "Not a user? Sign Up" else "Already a user? Log in"
+                setOnClickListener {
+                    if (isLogin) startTrial(it)
+                    else signUp(it)
+                }
+            }
+        }
     }
 
     private fun initOnboardingCourse() {
@@ -97,7 +109,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.liveEvent.observe(this) {
             when (it.what) {
                 IS_USER_EXIST -> moveToInboxScreen()
-                USER_CREATED_SUCCESSFULLY -> openProfileDetailFragment()
+                USER_CREATED_SUCCESSFULLY -> openSignUpNameFragment()
             }
         }
         initTrueCallerUI()
@@ -121,14 +133,15 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             PrefManager.put(IS_PAYMENT_DONE, false)
         } else if (PrefManager.hasKey(FT_COURSE_ONBOARDING)) {
             startFreeTrial(PrefManager.getStringValue(FT_COURSE_ONBOARDING))
-        } else if (languageActive)
-            openChooseLanguageFragment()
-        else
+        } else if (languageActive) {
+            signUp(v, shouldStartFreeTrial = true)
+        } else {
             startFreeTrial(language.testId)
+        }
     }
 
     private fun addViewModelObservers() {
-        viewModel.signUpStatus.observe(this, androidx.lifecycle.Observer {
+        viewModel.signUpStatus.observe(this) {
             hideProgressBar()
             when (it) {
                 SignUpStepStatus.ProfileInCompleted -> {
@@ -137,20 +150,20 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                         PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
                         PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
                     }
-                    openProfileDetailFragment()
+                    openSignUpNameFragment()
                 }
                 SignUpStepStatus.SignUpCompleted, SignUpStepStatus.ERROR -> {
-                    openProfileDetailFragment()
+                    openSignUpNameFragment()
                 }
-                else -> return@Observer
+                else -> return@observe
             }
-        })
+        }
         viewModel.progressBarStatus.observe(this) {
             showProgressBar()
         }
     }
 
-    fun signUp(v: View) {
+    fun signUp(v: View, shouldStartFreeTrial: Boolean = false) {
         MixPanelTracker.publishEvent(MixPanelEvent.LOGIN).push()
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
@@ -159,10 +172,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
                 .push()
             viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER)
-            val intent = Intent(this@FreeTrialOnBoardActivity, SignUpActivity::class.java).apply {
-                putExtra(FLOW_FROM, "free trial onboarding journey")
-            }
-            startActivity(intent)
+            SignUpActivity.start(
+                this@FreeTrialOnBoardActivity,
+                "free trial onboarding journey",
+                shouldStartFreeTrial
+            )
         }
     }
 
@@ -179,7 +193,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 openTrueCallerBottomSheet()
             else {
                 viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED_JI_HAAN)
-                openProfileDetailFragment()
+                openSignUpNameFragment()
             }
         }
     }
@@ -213,7 +227,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 MixPanelTracker.publishEvent(MixPanelEvent.USE_ANOTHER_METHOD).push()
                 hideProgressBar()
                 viewModel.saveTrueCallerImpression(IMPRESSION_TC_USER_ANOTHER)
-                openProfileDetailFragment()
+                openSignUpNameFragment()
             }
 
             if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
@@ -222,7 +236,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
 
         override fun onVerificationRequired(p0: TrueError?) {
-            openProfileDetailFragment()
+            openSignUpNameFragment()
         }
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
@@ -256,15 +270,12 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         startActivity(intent)
     }
 
-    private fun openProfileDetailFragment() {
+    private fun openSignUpNameFragment() {
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(
-                    viewModel.userName ?: EMPTY,
-                    viewModel.isVerified
-                ),
+                SignUpProfileForFreeTrialFragment(),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
@@ -294,30 +305,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             return
         }
         super.onBackPressed()
-    }
-
-    fun openChooseLanguageFragment() {
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        supportFragmentManager.commit(true) {
-            addToBackStack(null)
-            replace(
-                R.id.container,
-                ChooseLanguageOnBoardFragment.newInstance(),
-                ChooseLanguageOnBoardFragment::class.java.name
-            )
-        }
-    }
-
-    fun openGoalFragment() {
-        viewModel.saveImpression(REASON_SCREEN_OPENED)
-        supportFragmentManager.commit(true) {
-            addToBackStack(ChooseGoalOnBoardFragment::class.java.name)
-            replace(
-                R.id.container,
-                ChooseGoalOnBoardFragment.newInstance(),
-                ChooseGoalOnBoardFragment::class.java.name
-            )
-        }
     }
 
     fun initABTest() {

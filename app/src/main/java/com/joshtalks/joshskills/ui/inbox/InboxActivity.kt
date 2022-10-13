@@ -563,7 +563,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     .setHeight(BalloonSizeSpec.WRAP)
                     .setIsVisibleArrow(true)
                     .setBackgroundColorResource(R.color.bb_tooltip_stroke)
-                    .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
+                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
                     .setWidthRatio(0.85f)
                     .setDismissWhenTouchOutside(false)
                     .setBalloonAnimation(BalloonAnimation.OVERSHOOT)

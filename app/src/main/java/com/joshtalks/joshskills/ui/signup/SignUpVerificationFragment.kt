@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.TIMEOUT_TIME
 import com.joshtalks.joshskills.core.VerificationStatus
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -211,6 +212,7 @@ class SignUpVerificationFragment : Fragment() {
                 (requireActivity() as SignUpActivity).verification?.verify(binding.otpView2.otp)
             } else {*/
             startProgress()
+            viewModel.postGoal(GoalKeys.OTP_SUBMITTED)
             viewModel.verifyOTP(binding.otpView2.otp)
             //}
             AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)

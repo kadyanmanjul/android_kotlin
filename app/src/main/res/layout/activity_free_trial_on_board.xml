@@ -14,9 +14,6 @@
             name="onboardingData"
             type="com.joshtalks.joshskills.repository.server.onboarding.OnboardingCourseData" />
 
-        <variable
-            name="isLogin"
-            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -162,8 +159,6 @@
             android:layout_gravity="center"
             android:elevation="@dimen/_2sdp"
             android:gravity="center"
-            android:text="@{isLogin ? `Sign In` : `Start Now`}"
-            android:onClick="@{isLogin ? handler::signUp : handler::startTrial}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:textColor="@color/white"
             app:cornerRadius="@dimen/_32sdp"
@@ -180,9 +175,7 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:onClick="@{isLogin ? handler::startTrial : handler::signUp}"
             android:padding="@dimen/_4sdp"
-            android:text="@{isLogin ? `Not a user? Sign Up` : `Already a user? Log in`}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@+id/btnStartTrial"
