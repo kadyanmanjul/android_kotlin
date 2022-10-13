@@ -165,13 +165,24 @@
         <item name="android:textColor">@color/choice_chip_text_color_selector</item>
     </style>
 
+    <style name="TextAppearance.JoshTypography.Interest_Heading_SemiBold" parent="TextAppearance.MaterialComponents.Headline3">
+        <item name="fontPath">@font/opensans_semibold</item>
+        <item name="android:textSize">@dimen/_24ssp</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.Interest_Chip_Text" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontPath">@font/opensans_semibold</item>
+        <item name="android:textSize">@dimen/_13ssp</item>
+    </style>
+
     <style name="InterestChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/chip_borderd_selector</item>
         <item name="chipStrokeColor">@color/interest_chip_bg_color_selector</item>
         <item name="chipStrokeWidth">@dimen/_1sdp</item>
         <item name="android:textColor">@color/interest_chip_text_color_selector</item>
+        <item name="fontFamily">@font/opensans_semibold</item>
         <item name="android:textAppearance">
-            @style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold
+            @style/TextAppearance.JoshTypography.Interest_Chip_Text
         </item>
         <item name="android:padding">@dimen/_20sdp</item>
         <item name="minHeight">@dimen/_20sdp</item>

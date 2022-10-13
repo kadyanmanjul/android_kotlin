@@ -22,17 +22,17 @@
             android:id="@+id/interest_title_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/practice_call_experience"
             android:layout_marginStart="@dimen/_12sdp"
-            android:layout_marginEnd="@dimen/_28sdp"
             android:layout_marginTop="@dimen/_36sdp"
+            android:layout_marginEnd="@dimen/_28sdp"
+            android:fontFamily="@font/opensans_semibold"
             android:lineSpacingExtra="-8dp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-            android:fontFamily="@font/open_sans_semibold"
+            android:text="@string/practice_call_experience"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Interest_Heading_SemiBold"
             android:textColor="@color/pitch_black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/interest_subtitle_tv"

@@ -377,7 +377,6 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                             null
                         )
                         closeSheet()
-                        //TODO: launch interest form from here?
                     }
                     count += 1
                 }

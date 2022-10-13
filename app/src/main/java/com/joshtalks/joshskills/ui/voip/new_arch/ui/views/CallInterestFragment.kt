@@ -2,21 +2,19 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLOSE_INTEREST_ACTIVITY
-import com.joshtalks.joshskills.core.INTEREST_FORM_INTEREST_SCREEN_OPEN
-import com.joshtalks.joshskills.core.INTEREST_FORM_SAVED
-import com.joshtalks.joshskills.core.INTEREST_FORM_SKIP_PRESSED
+import com.joshtalks.joshskills.constants.SHOW_BUY_POPUP_FT
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentCallInterestBinding
-import com.joshtalks.joshskills.repository.server.onboarding.CourseInterestTag
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 
 class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
@@ -48,8 +46,16 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
         binding.submitBtn.setOnClickListener {
             val id = binding.interestCg.checkedChipIds
             viewModel.sendUserInterest(id)
-            viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
             viewModel.saveImpression(INTEREST_FORM_SAVED)
+            PrefManager.put(IS_INTEREST_FORM_FILLED, true)
+
+            // if freetrial user submits form, show buy popup
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                viewModel.sendEvent(SHOW_BUY_POPUP_FT)
+            }else{
+                viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
+            }
+
         }
 
         viewModel.interestLiveData.observe(this){
@@ -58,7 +64,7 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
                 val chip = LayoutInflater.from(context).inflate(R.layout.interest_chip_item, null, false) as Chip
                 chip.text = item.label
                 chip.id = item.id
-
+                chip.typeface = Typeface.create(ResourcesCompat.getFont(requireContext(),R.font.opensans_semibold),Typeface.NORMAL)
                 if (isEditCall){
                     if (item.is_selected == 1){
                         chip.isChecked = true

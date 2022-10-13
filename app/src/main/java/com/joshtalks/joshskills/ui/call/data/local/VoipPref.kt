@@ -104,15 +104,6 @@ object VoipPref {
             editor.putBoolean(IS_FIRST_CALL, false)
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
             NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
-
-            //TODO: show form after rating for paid user; for FT user, only form shown
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL).not()){
-                //TODO: first show rating and after that launch form
-            }else{
-                val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-                intent.putExtra("isEditCall",false)
-                ActivityLifecycleCallback.currentActivity.startActivity(intent)
-            }
         }
 
 
@@ -135,9 +126,58 @@ object VoipPref {
 
         // TODO: These logic shouldn't be here
         if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
-            showDialogBox(duration, CALL_RATING)
+            if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
+
+                // to open both level and interest forms:
+                val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+                intent.putExtra("isEditCall",false)
+                ActivityLifecycleCallback.currentActivity.startActivity(intent)
+
+            }
+            else if (PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 0 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
+                // to open interest form only:
+                val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+                intent.putExtra("isEditCall",true)
+                ActivityLifecycleCallback.currentActivity.startActivity(intent)
+            }
+            else{
+                showDialogBox(duration, CALL_RATING)
+            }
+
         } else if (duration != 0L && PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal) {
-            showDialogBox(duration, PURCHASE_POPUP)
+            // enabled flag is to check if the feature is enabled (backend controlled) and filled flags is to check if form is filled or not
+            if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
+
+                // to open both level and interest forms:
+                if (PrefManager.getBoolValue(IS_LEVEL_FORM_FILLED, defValue = false)){//TODO:ADD .NOT()
+                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+                    intent.putExtra("isEditCall",false)
+                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                }
+                else if (PrefManager.getBoolValue(IS_INTEREST_FORM_FILLED, defValue = false).not()){
+                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+                    intent.putExtra("isEditCall",true)
+                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                }
+                else{
+                    showDialogBox(duration, PURCHASE_POPUP)
+                }
+
+            }
+            else if (PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 0 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
+                // to open interest form only:
+                if (PrefManager.getBoolValue(IS_INTEREST_FORM_FILLED, defValue = false).not()){
+                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+                    intent.putExtra("isEditCall",true)
+                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                }
+                else{
+                    showDialogBox(duration, PURCHASE_POPUP)
+                }
+            }else{
+                showDialogBox(duration, PURCHASE_POPUP)
+            }
+
         }
 
         ExpertListRepo().deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)

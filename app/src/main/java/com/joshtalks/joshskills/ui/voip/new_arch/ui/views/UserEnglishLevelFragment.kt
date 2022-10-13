@@ -9,8 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.START_USER_INTEREST_FRAGMENT
-import com.joshtalks.joshskills.core.INTEREST_FORM_LEVEL_SAVED
-import com.joshtalks.joshskills.core.INTEREST_FORM_LEVEL_SCREEN_OPEN
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentUserEnglishLevelBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 
@@ -32,6 +31,7 @@ class UserEnglishLevelFragment : BaseFragment() {
         binding.btnContinue.setOnClickListener {
             val level = binding.radioBtnGroup.checkedRadioButtonId
             viewModel.sendUserLevel(level)
+            PrefManager.put(IS_LEVEL_FORM_FILLED, true)
             viewModel.sendEvent(START_USER_INTEREST_FRAGMENT)
             viewModel.saveImpression(INTEREST_FORM_LEVEL_SAVED)
         }
