@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_COUPON_APPLY
-import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_OFFER_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
 import kotlinx.coroutines.*
 

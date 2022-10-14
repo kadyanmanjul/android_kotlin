@@ -462,6 +462,13 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             }
         }
 
+        if (buyCourseFeatureModel.knowMore!=null) {
+            binding.btnKnowMoreAboutCourse.text = buyCourseFeatureModel.knowMore + " >>"
+            binding.btnKnowMoreAboutCourse.visibility = View.VISIBLE
+            binding.view9.visibility = View.VISIBLE
+        }else{
+            binding.view9.visibility = View.GONE
+        }
         binding.btnKnowMoreAboutCourse.setOnClickListener {
             CourseDetailsActivity.startCourseDetailsActivity(
                 this,

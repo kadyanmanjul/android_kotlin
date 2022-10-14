@@ -79,14 +79,19 @@ class BuyPageViewModel : BaseViewModel() {
                         callUsText.set(response.body()?.callUsText)
                         isVideoAbTestEnable = response.body()?.isVideo
                         isNewFreeTrialEnable = response.body()?.timerBannerText
-                        if (response.body()?.knowMore != null)
-                            isKnowMoreCourse = response.body()?.knowMore
+                        isKnowMoreCourse = if (response.body()?.knowMore != null)
+                            response.body()?.knowMore
                         else
-                            isKnowMoreCourse = EMPTY
+                            null
                         priceText.set(response.body()?.priceEnglishText)
                         message.what = BUY_COURSE_LAYOUT_DATA
                         message.obj = response.body()!!
                         singleLiveEvent.value = message
+                        if (isKnowMoreCourse==null && isVideoAbTestEnable == null && isNewFreeTrialEnable == null) {
+                            delay(5200)
+                            message.what = SCROLL_TO_BOTTOM
+                            singleLiveEvent.value = message
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -121,11 +126,6 @@ class BuyPageViewModel : BaseViewModel() {
                                 singleLiveEvent.value = message
                             }
                             couponList = response.body()!!.listOfCoupon
-                        }
-                        if ((isKnowMoreCourse.equals(EMPTY) || isKnowMoreCourse==null) && isVideoAbTestEnable == null && isNewFreeTrialEnable == null) {
-                            delay(5200)
-                            message.what = SCROLL_TO_BOTTOM
-                            singleLiveEvent.value = message
                         }
                     }
                 } else {
@@ -238,14 +238,16 @@ class BuyPageViewModel : BaseViewModel() {
     val onItemCouponClick: (Coupon, Int, Int, String) -> Unit = { it, type, position, couponType ->
         when (type) {
             CLICK_ON_COUPON_APPLY -> {
-                onItemClick(it, CLICK_ON_OFFER_CARD, 1, couponType)
                 if (couponAppliedCode.get() != it.couponCode) {
                     if (couponType == APPLY) {
+                        onItemClick(it, CLICK_ON_OFFER_CARD, 1, couponType)
                         message.what = CLICK_ON_COUPON_APPLY
                         message.obj = it
                         message.arg1 = position
                         singleLiveEvent.value = message
                     }
+                }else{
+                    showToast("Coupon already applied")
                 }
             }
         }
