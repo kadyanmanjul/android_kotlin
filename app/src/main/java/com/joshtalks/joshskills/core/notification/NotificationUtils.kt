@@ -491,7 +491,10 @@ class NotificationUtils(val context: Context) {
                     serviceIntent.putExtra("sticky_body", notificationObject.contentText)
                     serviceIntent.putExtra("coupon_code", jsonObj.getString("coupon_code"))
                     serviceIntent.putExtra("expiry_time", jsonObj.getLong("expiry_time") * 1000L)
-                    context.startService(serviceIntent)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        context.startForegroundService(serviceIntent)
+                    else
+                        context.startService(serviceIntent)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

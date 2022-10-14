@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_HIGH
 import androidx.core.app.NotificationManagerCompat
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
@@ -18,14 +19,14 @@ import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.ui.special_practice.utils.FLOW_FROM
-import timber.log.Timber
-import java.lang.Thread.sleep
-import kotlin.concurrent.thread
+import kotlinx.coroutines.*
 
 class StickyNotificationService : Service() {
 
     private val notificationId = (System.currentTimeMillis() and 0xfffffff).toInt()
-    private var firstUpdate = true
+    private var shouldUpdate = true
+    private var serviceRunning = false
+    private var job: Job? = null
     private lateinit var notificationBuilder: NotificationCompat.Builder
 
     override fun onCreate() {
@@ -34,25 +35,27 @@ class StickyNotificationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
-        val endTime = intent?.extras?.getLong("expiry_time") ?: 3600000
-        val timeDiff = endTime - System.currentTimeMillis().plus(offsetTime)
+        if (!serviceRunning) {
+            serviceRunning = true
+            val couponCode = intent?.extras?.getString("coupon_code") ?: "ENG10"
+            var endTime = intent?.extras?.getLong("expiry_time") ?: 3600000
+            val title = intent?.extras?.getString("sticky_title") ?: "Do you know?"
+            val body = intent?.extras?.getString("sticky_body") ?: "You'll miss an offer if you don't click on this notification"
 
-        val title = intent?.extras?.getString("sticky_title") ?: "Do you know?"
-        val body = intent?.extras?.getString("sticky_body") ?: "You'll miss an offer if you don't click on this notification"
+            updateJob(title, body, couponCode, endTime)
 
-        thread {
-            while (System.currentTimeMillis().plus(offsetTime) < endTime) {
-                updateNotification(
-                    title = title,
-                    body = body,
-                    coupon = intent?.extras?.getString("coupon_code") ?: "ENG10",
-                    ((endTime - System.currentTimeMillis().plus(offsetTime)).toFloat() / timeDiff),
-                    timeDiff
-                )
-                sleep(10000)
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = AppObjectController.utilsAPIService.updateNotificationStatus(
+                        mapOf(Pair("coupon_code", couponCode))
+                    )
+                    shouldUpdate = true
+                    endTime = (response["expiry_time"] as Double).toLong() * 1000L
+                    updateJob(title, body, couponCode, endTime)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
-            stopSelf()
         }
 
         return START_STICKY
@@ -119,7 +122,7 @@ class StickyNotificationService : Service() {
     }
 
     private fun updateNotification(title: String, body: String, coupon: String, time: Float, timeDiff: Long) {
-        if (firstUpdate) {
+        if (shouldUpdate) {
             notificationBuilder.setContentIntent(getPendingIntent(coupon))
             notificationBuilder.contentView.setTextViewText(R.id.notification_title, title)
             notificationBuilder.contentView.setTextViewText(R.id.notification_body, body)
@@ -129,10 +132,29 @@ class StickyNotificationService : Service() {
                 null,
                 true
             )
-            firstUpdate = false
+            shouldUpdate = false
         }
         notificationBuilder.contentView.setProgressBar(R.id.notification_progress, 100, (100 - (time * 100)).toInt(), false)
         NotificationManagerCompat.from(this).notify(notificationId, notificationBuilder.build())
+    }
+
+    private fun updateJob(title: String, body: String, couponCode: String, endTime: Long) {
+        job?.cancel()
+        val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
+        val timeDiff = endTime - System.currentTimeMillis().plus(offsetTime)
+        job = CoroutineScope(Dispatchers.Main).launch {
+            while (System.currentTimeMillis().plus(offsetTime) < endTime) {
+                updateNotification(
+                    title = title,
+                    body = body,
+                    coupon = couponCode,
+                    ((endTime - System.currentTimeMillis().plus(offsetTime)).toFloat() / timeDiff),
+                    timeDiff
+                )
+                delay(10000)
+            }
+            stopSelf()
+        }
     }
 
     private fun getRemoteView(): RemoteViews {
