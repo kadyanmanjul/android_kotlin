@@ -73,10 +73,11 @@
 
                     <LinearLayout
                         android:id="@+id/ll"
-                        android:layout_width="@dimen/_150sdp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:layout_marginVertical="@dimen/_14sdp"
-                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
                         android:orientation="vertical">
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -87,7 +88,7 @@
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                             android:textColor="@color/pure_black"
                             android:textStyle="bold"
-                            tools:text="vjhvjhvhjhvhjvhjvkuyfutyfufcyiccc yictycyicyicyitctyck tyydvhjdfcvhjdvchjdsvchjdscv dhjv chjdbvcuiergberuifguiregfiuerfgiurefgiurefgiuergfiurehgui" />
+                            tools:text="yictycyicyicyitctyck tyydvhjdfcvhjdvchjdsvchjdscv dhjv chjdbvcuiergberuifguiregfiuerfgiurefgiurefgiuergfiurehgui" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/coupon_save_percent"
