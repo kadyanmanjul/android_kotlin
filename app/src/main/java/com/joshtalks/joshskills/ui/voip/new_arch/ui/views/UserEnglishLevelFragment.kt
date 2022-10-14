@@ -31,7 +31,7 @@ class UserEnglishLevelFragment : BaseFragment() {
         binding.btnContinue.setOnClickListener {
             val level = binding.radioBtnGroup.checkedRadioButtonId
             viewModel.sendUserLevel(level)
-            PrefManager.put(IS_LEVEL_FORM_FILLED, true)
+            PrefManager.put(IS_LEVEL_DETAILS_ENABLED, 0)
             viewModel.sendEvent(START_USER_INTEREST_FRAGMENT)
             viewModel.saveImpression(INTEREST_FORM_LEVEL_SAVED)
         }

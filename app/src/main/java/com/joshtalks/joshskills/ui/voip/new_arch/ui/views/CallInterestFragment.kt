@@ -46,13 +46,8 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
             val id = binding.interestCg.checkedChipIds
             viewModel.sendUserInterest(id)
             viewModel.saveImpression(INTEREST_FORM_SAVED)
-            PrefManager.put(IS_INTEREST_FORM_FILLED, true)
-
-            // if freetrial user submits form, show buy popup
-
+            PrefManager.put(IS_INTEREST_FORM_ENABLED, 0)
             viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
-
-
         }
 
         viewModel.interestLiveData.observe(this){
