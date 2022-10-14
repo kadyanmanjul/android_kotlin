@@ -664,7 +664,7 @@
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingHorizontal">@dimen/_8sdp</item>
+        <item name="android:paddingHorizontal" tools:targetApi="o">@dimen/_8sdp</item>
         <item name="lottie_autoPlay">true</item>
         <item name="lottie_fileName">lottie/button11.json</item>
         <item name="lottie_imageAssetsFolder">lottie</item>
