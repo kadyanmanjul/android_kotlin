@@ -40,5 +40,7 @@ data class PriceParameterModel(
     @SerializedName("test_id")
     val testId: Int,
     @SerializedName("code")
-    val code: String? = null
+    val code: String? = null,
+    @SerializedName("is_mentor_coupon")
+    val isSpecificMentorCoupon: Boolean?= null
 )

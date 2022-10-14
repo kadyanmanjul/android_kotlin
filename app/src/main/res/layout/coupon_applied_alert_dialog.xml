@@ -1,93 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/_248sdp"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:layout_centerInParent="true"
-    android:background="@drawable/rounded_rectangle_attach"
-    android:backgroundTint="@color/white"
-    android:elevation="@dimen/_5sdp"
-    app:cardCornerRadius="@dimen/_12sdp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/_44sdp"
+        android:layout_height="@dimen/_44sdp"
+        android:elevation="@dimen/_10sdp"
+        android:scaleType="fitXY"
+        android:layout_marginBottom="@dimen/_minus22sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/main_card_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_offer_new" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/main_card_view"
+        android:layout_width="@dimen/_248sdp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
-        android:orientation="vertical">
+        android:background="@drawable/rounded_rectangle_attach"
+        android:backgroundTint="@color/white"
+        android:elevation="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        app:cardCornerRadius="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/coupon_name_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginHorizontal="@dimen/_18sdp"
-            android:layout_marginTop="@dimen/_25sdp"
-            android:gravity="center"
-            android:lineSpacingExtra="0dp"
-            android:lines="1"
-            android:maxLines="1"
-            android:text="JOSHIT applied"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-            android:textColor="@color/pure_black"
-            android:textStyle="bold" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/coupon_price_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/coupon_name_text"
-            android:layout_centerHorizontal="true"
-            android:layout_marginHorizontal="@dimen/_18sdp"
-            android:layout_marginTop="@dimen/_13sdp"
-            android:gravity="center"
-            android:lineSpacingExtra="0dp"
-            android:lines="1"
-            android:maxLines="1"
-            android:text="You saved ₹100.00 "
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
-            android:textColor="@color/pure_black"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/coupon_name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:gravity="center"
+                android:lineSpacingExtra="0dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:text="JOSHIT applied"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                android:textColor="#6D7175" />
 
-        <TextView
-            android:id="@+id/with_this_coupon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/coupon_price_text"
-            android:layout_centerHorizontal="true"
-            android:layout_marginHorizontal="@dimen/_18sdp"
-            android:gravity="center"
-            android:lineSpacingExtra="0dp"
-            android:lines="1"
-            android:maxLines="1"
-            android:text="with this coupon"
-            android:textAlignment="center"
-            android:textColor="@color/pure_black"
-            android:textSize="@dimen/_15sdp" />
+            <TextView
+                android:id="@+id/coupon_price_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/coupon_name_text"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="upto ₹50.00 saved with this coupon "
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                android:textColor="@color/pure_black" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/got_it_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/coupon_price_text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:layout_marginBottom="@dimen/_14sdp"
+                android:clickable="true"
+                android:elevation="0dp"
+                android:focusable="true"
+                android:stateListAnimator="@null"
+                android:text="YAY!"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+                app:rippleColor="@color/white" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/got_it_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/_14sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:clickable="true"
-            android:elevation="0dp"
-            android:focusable="true"
-            android:stateListAnimator="@null"
-            android:layout_below="@+id/with_this_coupon"
-            android:text="@string/got_it"
-            android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-            android:textColor="@color/colorAccent"
-            android:textStyle="bold"
-            app:rippleColor="@color/white" />
-
-    </RelativeLayout>
-
-</com.google.android.material.card.MaterialCardView>
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/card_confetti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/_65sdp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4"
+        app:lottie_autoPlay="false"
+        app:lottie_fileName="lottie/confetti.json"
+        app:lottie_imageAssetsFolder="lottie"
+        app:lottie_loop="false"
+        app:lottie_repeatMode="restart"
+        app:lottie_scale="1"
+        app:lottie_speed="1.5"
+        android:visibility="gone" />
+</androidx.constraintlayout.widget.ConstraintLayout>

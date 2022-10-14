@@ -280,33 +280,37 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
         val isLastCall = PrefManager.getBoolValue(P2P_LAST_CALL)
         if (lbOpenCount >= 4 || isLastCall) {
-            val balloon = Balloon.Builder(this)
-                .setText(
+            try {
+                val balloon = Balloon.Builder(this)
+                    .setText(
                         getString(R.string.tooltip_search_anyone)
-                )
-                .setTextSize(15F)
-                .setTextColor(ContextCompat.getColor(this, R.color.black))
-                .setArrowOrientation(ArrowOrientation.TOP)
-                .setDismissWhenTouchOutside(true)
-                .setCornerRadius(10f)
-                .setWidthRatio(0.85f)
-                .setArrowPosition(0.82f)
-                .setPadding(8)
-                .setMarginTop(12)
-                .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
-                .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
-                .setOverlayPadding(4f) // sets a padding value of the overlay shape in
-                .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
-                .setDismissWhenOverlayClicked(false) // disable di
-                .setBackgroundColorResource(R.color.white)
-                .setBalloonAnimation(BalloonAnimation.CIRCULAR)
-                .setLifecycleOwner(this)
-                .setDismissWhenClicked(true)
-                .setArrowOrientation(ArrowOrientation.BOTTOM)
-                .build()
-            balloon.showAlignBottom(iv_earn)
-            PrefManager.put(SEARCH_HINT_SHOW, true)
-            isTooltipShow = true
+                    )
+                    .setTextSize(15F)
+                    .setTextColor(ContextCompat.getColor(this, R.color.black))
+                    .setArrowOrientation(ArrowOrientation.TOP)
+                    .setDismissWhenTouchOutside(true)
+                    .setCornerRadius(10f)
+                    .setWidthRatio(0.85f)
+                    .setArrowPosition(0.82f)
+                    .setPadding(8)
+                    .setMarginTop(12)
+                    .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
+                    .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
+                    .setOverlayPadding(4f) // sets a padding value of the overlay shape in
+                    .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
+                    .setDismissWhenOverlayClicked(false) // disable di
+                    .setBackgroundColorResource(R.color.white)
+                    .setBalloonAnimation(BalloonAnimation.CIRCULAR)
+                    .setLifecycleOwner(this)
+                    .setDismissWhenClicked(true)
+                    .setArrowOrientation(ArrowOrientation.BOTTOM)
+                    .build()
+                balloon.showAlignBottom(iv_earn)
+                PrefManager.put(SEARCH_HINT_SHOW, true)
+                isTooltipShow = true
+            }catch (ex:Exception){
+                Log.d(TAG, "addSearchTooltip: ${ex.message}")
+            }
         }
     }
 

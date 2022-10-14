@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel
 
+import android.graphics.Outline
 import android.util.Log
 import android.view.View
+import android.view.ViewOutlineProvider
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.OFFER_FOR_YOU_TEXT
+import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
@@ -23,6 +26,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.util.Date
 
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }
@@ -40,7 +44,6 @@ class BuyPageViewModel : BaseViewModel() {
     var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
 
-    var itemPosition = 0
     var isDiscount = false
 
     var isCouponApplied = ObservableBoolean(true)
@@ -54,6 +57,10 @@ class BuyPageViewModel : BaseViewModel() {
 
     var isCouponApiCall = ObservableBoolean(true)
     var isPriceApiCall = ObservableBoolean(true)
+    var isKnowMoreCourse = ObservableField(EMPTY)
+    var priceText = ObservableField(EMPTY)
+    var isVideoAbTestEnable:Boolean? = null
+    var isNewFreeTrialEnable:String?=null
 
     fun isSeeAllButtonShow(): Boolean {
         return PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
@@ -68,6 +75,13 @@ class BuyPageViewModel : BaseViewModel() {
                     withContext(mainDispatcher) {
                         featureAdapter.addFeatureList(response.body()?.features)
                         callUsText.set(response.body()?.callUsText)
+                        isVideoAbTestEnable = response.body()?.isVideo
+                        isNewFreeTrialEnable = response.body()?.timerBannerText
+                        if (response.body()?.knowMore != null)
+                            isKnowMoreCourse.set(response.body()?.knowMore)
+                        else
+                            isKnowMoreCourse.set(EMPTY)
+                        priceText.set(response.body()?.priceEnglishText)
                         message.what = BUY_COURSE_LAYOUT_DATA
                         message.obj = response.body()!!
                         singleLiveEvent.value = message
@@ -106,9 +120,11 @@ class BuyPageViewModel : BaseViewModel() {
                             }
                             couponList = response.body()!!.listOfCoupon
                         }
-                        delay(5200)
-                        message.what = SCROLL_TO_BOTTOM
-                        singleLiveEvent.value = message
+                        if (isKnowMoreCourse.equals(EMPTY) || isVideoAbTestEnable == null || isNewFreeTrialEnable == null) {
+                            delay(5200)
+                            message.what = SCROLL_TO_BOTTOM
+                            singleLiveEvent.value = message
+                        }
                     }
                 } else {
                     isCouponApiCall.set(true)
@@ -125,7 +141,7 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     //this method is get price and if pass coupon code then it will return discount price
-    fun getCoursePriceList(code: String?) {
+    fun getCoursePriceList(code: String?, isSpecificMentorCoupon:Boolean?, validDuration:Date?) {
         try {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
@@ -134,14 +150,15 @@ class BuyPageViewModel : BaseViewModel() {
                         PriceParameterModel(
                             PrefManager.getStringValue(USER_UNIQUE_ID),
                             Integer.parseInt(testId),
-                            code
+                            code,
+                            isSpecificMentorCoupon
                         )
                     )
                     if (response.isSuccessful && response.body() != null) {
                         apiStatus.postValue(ApiCallStatus.SUCCESS)
                         isPriceApiCall.set(false)
                         withContext(mainDispatcher) {
-                            priceListAdapter.addPriceList(response.body()?.courseDetails)
+                            priceListAdapter.addPriceList(response.body()?.courseDetails, validDuration, isSpecificMentorCoupon)
                         }
                     } else {
                         isPriceApiCall.set(true)
@@ -158,7 +175,6 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     val onItemClick: (Coupon, Int, Int, String) -> Unit = { it, type, position, couponType ->
-        itemPosition = position
         try {
             when (type) {
                 CLICK_ON_OFFER_CARD -> {
@@ -166,15 +182,24 @@ class BuyPageViewModel : BaseViewModel() {
                         saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, it.couponCode)
                         isCouponApplied.set(true)
                         try {
-                            getCoursePriceList(it.couponCode)
+                            Log.e("sagar", "${it}: ", )
+                            getCoursePriceList(it.couponCode, it.isMentorSpecificCoupon, it.validDuration)
                             isDiscount = true
                         } catch (ex: Exception) {
                             Log.d("BuyPageViewModel.kt", "SAGAR => :139 ${ex.message}")
                         }
+                        if (position!=1) {
+                            message.what = APPLY_COUPON_FROM_BUY_PAGE
+                            message.obj = it
+                            singleLiveEvent.value = message
+                        }
                     } else {
+                        if (it.isMentorSpecificCoupon == null){
+                            getValidCouponList(OFFERS)
+                        }
                         saveImpressionForBuyPageLayout(COUPON_CODE_REMOVED, it.couponCode)
                         isCouponApplied.set(false)
-                        getCoursePriceList(null)
+                        getCoursePriceList(null, null,null)
                     }
                 }
             }
@@ -190,7 +215,6 @@ class BuyPageViewModel : BaseViewModel() {
 
     val onItemPriceClick: (CourseDetailsList, Int, Int, String) -> Unit =
         { it, type, position, cardType ->
-            itemPosition = position
             when (type) {
                 CLICK_ON_PRICE_CARD -> {
                     message.what = CLICK_ON_PRICE_CARD
@@ -201,15 +225,18 @@ class BuyPageViewModel : BaseViewModel() {
             }
         }
 
+    //I am making position means come from Insert coupon flow
+    // position = 1 come from insert flow
     val onItemCouponClick: (Coupon, Int, Int, String) -> Unit = { it, type, position, couponType ->
-        itemPosition = position
         when (type) {
             CLICK_ON_COUPON_APPLY -> {
-                onItemClick(it, CLICK_ON_OFFER_CARD, position, APPLY)
-                message.what = CLICK_ON_COUPON_APPLY
-                message.obj = it
-                message.arg1 = position
-                singleLiveEvent.value = message
+                onItemClick(it, CLICK_ON_OFFER_CARD, 1, couponType)
+                if (couponType == APPLY) {
+                    message.what = CLICK_ON_COUPON_APPLY
+                    message.obj = it
+                    message.arg1 = position
+                    singleLiveEvent.value = message
+                }
             }
         }
     }
@@ -277,7 +304,7 @@ class BuyPageViewModel : BaseViewModel() {
                         showToast("Coupon code is not valid or expired")
                     }
                 } catch (e: Exception) {
-                    showToast("Coupon code is not valid or expired")
+                    showToast("Oops Something went wrong")
                     e.printStackTrace()
                 }
             }
@@ -298,4 +325,35 @@ class BuyPageViewModel : BaseViewModel() {
             }
         }
     }
+
+    fun showRecordedVideoUi(
+        view: JoshVideoPlayer,
+        videoUrl: String
+    ) {
+        try {
+            view.seekToStart()
+            view.setUrl(videoUrl)
+            view.onStart()
+            view.fitToScreen()
+            view.setFullScreenListener {
+                message.what = AB_TEST_VIDEO
+                message.obj = videoUrl
+                singleLiveEvent.value = message
+            }
+
+            viewModelScope.launch {
+                view.downloadStreamPlay()
+            }
+
+            view.outlineProvider = object : ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: Outline) {
+                    outline.setRoundRect(0, 0, view.width, view.height, 15f)
+                }
+            }
+            view.clipToOutline = true
+        } catch (ex: Exception) {
+            Timber.d(ex)
+        }
+    }
+
 }

@@ -144,7 +144,6 @@ class PaymentGatewayManager(
             juspayOrderId = orderDetails.payload?.orderId ?: EMPTY
             joshTalksId = orderDetails.joshtalksOrderId
             amount = orderDetails.amount
-//            paymentGatewayListener?.onWarmUpEnded()
             hyperInstance.process(payload)
         } catch (e: Exception) {
             Log.e("sagar", "initializJuspayPayment:2 ${e.message}")
@@ -157,9 +156,7 @@ class PaymentGatewayManager(
 }
 
 interface PaymentGatewayListener {
-//    fun onPaymentError(errorMsg: String)
     fun onWarmUpEnded(error: String? = null)
-//    fun onPaymentSuccess()
     fun onProcessStart()
     fun onProcessStop()
     fun onPaymentFinished(isPaymentSuccessful: Boolean)

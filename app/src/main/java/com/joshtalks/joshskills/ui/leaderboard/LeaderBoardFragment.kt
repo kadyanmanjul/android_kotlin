@@ -483,31 +483,35 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                         //    delay(250)
                         val item =
                             binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
-                        val balloon = Balloon.Builder(requireContext())
-                            .setText(
+                        try {
+                            val balloon = Balloon.Builder(requireContext())
+                                .setText(
                                     getString(R.string.tooltip_online_status)
-                            )
-                            .setTextSize(15F)
-                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                            .setDismissWhenTouchOutside(true)
-                            .setCornerRadius(12f)
-                            .setWidth(BalloonSizeSpec.WRAP)
-                            .setArrowOrientation(ArrowOrientation.BOTTOM)
-                            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-                            .setPadding(8)
-                            .setMarginTop(8)
-                            .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
-                            .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
-                            //  .setOverlayPadding(2f) // sets a padding value of the overlay shape in
-                            .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
-                            .setDismissWhenOverlayClicked(false) // disable di
-                            .setBackgroundColorResource(R.color.white)
-                            .setBalloonAnimation(BalloonAnimation.FADE)
-                            .setLifecycleOwner(this@LeaderBoardFragment)
-                            .setDismissWhenClicked(true)
-                            .build()
-                        balloon.showAlignBottom(item.onlineStatusLayout)
-                        PrefManager.put(ONLINE_HINT_SHOW, true)
+                                )
+                                .setTextSize(15F)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                                .setDismissWhenTouchOutside(true)
+                                .setCornerRadius(12f)
+                                .setWidth(BalloonSizeSpec.WRAP)
+                                .setArrowOrientation(ArrowOrientation.BOTTOM)
+                                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                                .setPadding(8)
+                                .setMarginTop(8)
+                                .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
+                                .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
+                                //  .setOverlayPadding(2f) // sets a padding value of the overlay shape in
+                                .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
+                                .setDismissWhenOverlayClicked(false) // disable di
+                                .setBackgroundColorResource(R.color.white)
+                                .setBalloonAnimation(BalloonAnimation.FADE)
+                                .setLifecycleOwner(this@LeaderBoardFragment)
+                                .setDismissWhenClicked(true)
+                                .build()
+                            balloon.showAlignBottom(item.onlineStatusLayout)
+                            PrefManager.put(ONLINE_HINT_SHOW, true)
+                        }catch (ex:Exception){
+                            Log.d(TAG, "addOnlineTooltip: ${ex.message}")
+                        }
                     } else {
                         showAnotherTooltip()
                     }

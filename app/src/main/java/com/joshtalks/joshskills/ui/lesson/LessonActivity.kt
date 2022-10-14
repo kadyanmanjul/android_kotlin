@@ -52,6 +52,7 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.lessonNo2Complete
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -843,6 +844,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                                MarketingAnalytics.logLessonCompletedEventForFreeTrial(lesson.lessonNo)
+                            }
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
@@ -875,6 +879,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     if (lessonCompleted) {
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                                MarketingAnalytics.logLessonCompletedEventForFreeTrial(lesson.lessonNo)
+                            }
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
@@ -972,10 +979,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     SPEAKING_POSITION -> {
                         if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
-                            MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_COMPLETED)
-                                .addParam(ParamKeys.LESSON_ID, getLessonId)
-                                .addParam(ParamKeys.LESSON_NUMBER, lesson.lessonNo)
-                                .push()
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                                MarketingAnalytics.logSpeakingSectionCompletedForFreeTrial()
+                            }
                         }
                         lesson.speakingStatus = status
                     }
@@ -1131,25 +1137,29 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         }
         val text = AppObjectController.getFirebaseRemoteConfig().getString(key.plus(courseId))
         if (text.isBlank()) return
-        val balloon = Balloon.Builder(this)
-            .setLayout(R.layout.layout_bb_tip)
-            .setHeight(BalloonSizeSpec.WRAP)
-            .setIsVisibleArrow(true)
-            .setBackgroundColorResource(R.color.bb_tooltip_stroke)
-            .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
-            .setWidthRatio(0.85f)
-            .setDismissWhenTouchOutside(true)
-            .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-            .setLifecycleOwner(this)
-            .setDismissWhenClicked(true)
-            .setAutoDismissDuration(4000L)
-            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+        try {
+            val balloon = Balloon.Builder(this)
+                .setLayout(R.layout.layout_bb_tip)
+                .setHeight(BalloonSizeSpec.WRAP)
+                .setIsVisibleArrow(true)
+                .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
+                .setWidthRatio(0.85f)
+                .setDismissWhenTouchOutside(true)
+                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                .setLifecycleOwner(this)
+                .setDismissWhenClicked(true)
+                .setAutoDismissDuration(4000L)
+                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
 //            .setPreferenceName(key)
 //            .setShowCounts(3)
-            .build()
-        val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
-        textView.text = text
-        balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade))
+                .build()
+            val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+            textView.text = text
+            balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade))
+        }catch (ex:Exception){
+            Log.d(TAG, "showBuyCourseTooltip: ${ex.message}")
+        }
     }
 
     private fun isOnlineTestCompleted(): Boolean {
@@ -1217,6 +1227,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private fun setTabCompletionStatus() {
         try {
             viewModel.lessonLiveData.value?.let { lesson ->
+                if (lesson.lessonNo == 2){
+                    lessonNo2Complete()
+                }
                 if (lesson.lessonNo >= 2) {
                     PrefManager.put(LESSON_TWO_OPENED, true)
                 }

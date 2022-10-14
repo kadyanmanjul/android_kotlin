@@ -282,6 +282,7 @@ class FirebaseRemoteConfigKey {
         const val BUY_COURSE_VOCABULARY_TOOLTIP = "BUY_COURSE_VOCABULARY_TOOLTIP_"
         const val BUY_PAGE_SUPPORT_PHONE_NUMBER = "BUY_PAGE_SUPPORT_PHONE_NUMBER"
         const val OFFER_FOR_YOU_TEXT = "OFFER_FOR_YOU_TEXT"
+        const val DIGITAL_CARD_TEXT = "DIGITAL_CARD_TEXT"
     }
 }
 

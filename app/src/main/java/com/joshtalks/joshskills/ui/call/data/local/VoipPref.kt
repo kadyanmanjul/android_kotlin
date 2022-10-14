@@ -111,6 +111,15 @@ object VoipPref {
 
         if (duration.inSeconds() >= 1200) {
             MarketingAnalytics.callComplete20Min()
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                MarketingAnalytics.callComplete20MinForFreeTrial()
+            }
+        }
+
+        if (duration.inSeconds() >= 600) {
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                MarketingAnalytics.callComplete10MinForFreeTrial()
+            }
         }
 
         // TODO: These logic shouldn't be here
