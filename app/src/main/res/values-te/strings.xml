@@ -400,4 +400,7 @@
     <string name="referral_share_text">నేను Bharat లోని Best Teachers నుండి Spoken English మరియు Personality Development నేర్చుకుంటున్నాను 💪.  ఇప్పుడు నాతో ప్రారంభించండి.నా నుండి తీసుకో Rs.** OFF.  Use my code ****. Download the app by clicking on the link:</string>
     <string name="sign_up_profile_occupation_aspiration_text">ఈ Information మీ Practice Partners కు కనిపిస్తుంది</string>
 
+    <string name="practice_call_experience">Practice call యొక్క experience ని బాగుపరుచుకోండి</string>
+    <string name="interests_select_same_interest_users_connect">మీ interests select చేసుకోండి ఎందుకంటే మీ లాంటి same interest ఉన్న users తో connect చేయగలుగుతాము</string>
+    <string name="english_level">మీ ఇంగ్లీష్ స్థాయి ఏమిటి</string>
 </resources>

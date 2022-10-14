@@ -399,4 +399,7 @@
     <string name="free_trial_popup_for_icp">यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹799 में खरीद सकते हैं\n  \nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
     <string name="sign_up_profile_occupation_aspiration_text">यह Information आपके Practice partners को दिखाई देगी।</string>
 
+    <string name="interests_select_same_interest_users_connect">आपके interests select कीजिए ताकी हम आपको same interest के users से connect करवा सकें</string>
+    <string name="practice_call_experience">Practice call का experience बेहतर बनाएँ</string>
+    <string name="english_level">आपकी English का level क्या है ?</string>
 </resources>

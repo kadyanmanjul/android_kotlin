@@ -399,4 +399,7 @@
     <string name="referral_share_text">நான் Bharat இன் சிறந்த ஆசிரியர்களிடம் ஸ்போக்கன் இங்கிலீஷ் மற்றும் ஆளுமை மேம்பாட்டைக் கற்றுக்கொள்கிறேன்  வாருங்கள் இன்றிலிருந்து நாம் சேர்ந்து கற்கலாம்  இதோ என்னிடமிருந்து உங்களுக்கான Rs. ** OFF:  Use my code ****. Download the app by clicking on the link:</string>
     <string name="sign_up_profile_occupation_aspiration_text">இந்தத் information உங்கள் பயிற்சி Practice Partnerகளுக்குத் தெரியும்</string>
 
+    <string name="practice_call_experience">உங்கள் Practice Callன் experienceஐ சிறந்ததாக்குங்கள்</string>
+    <string name="interests_select_same_interest_users_connect">உங்கள் interests select செய்யுங்கள், அப்போதான் அதே interests உள்ள Usersடன் நாங்கள் உங்களை Connect செய்ய முடியும்</string>
+    <string name="english_level">நீங்கள் ஆங்கிலம் का level क्या ह ?</string>
 </resources>
