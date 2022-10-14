@@ -40,12 +40,14 @@ class BuyPageViewModel : BaseViewModel() {
     var informations = ObservableField(EMPTY)
     var testId: String = FREE_TRIAL_PAYMENT_TEST_ID
     var isGovernmentCourse = ObservableBoolean(false)
+    var manualCoupon = ObservableField(EMPTY)
 
     var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
 
     var isDiscount = false
 
+    var couponAppliedCode = ObservableField(EMPTY)
     var isCouponApplied = ObservableBoolean(true)
     var isOfferOrInsertCodeVisible = ObservableBoolean(false)
     var offerForYouText = ObservableField("Offer for you")
@@ -57,7 +59,7 @@ class BuyPageViewModel : BaseViewModel() {
 
     var isCouponApiCall = ObservableBoolean(true)
     var isPriceApiCall = ObservableBoolean(true)
-    var isKnowMoreCourse = ObservableField(EMPTY)
+    var isKnowMoreCourse:String?=null
     var priceText = ObservableField(EMPTY)
     var isVideoAbTestEnable:Boolean? = null
     var isNewFreeTrialEnable:String?=null
@@ -78,9 +80,9 @@ class BuyPageViewModel : BaseViewModel() {
                         isVideoAbTestEnable = response.body()?.isVideo
                         isNewFreeTrialEnable = response.body()?.timerBannerText
                         if (response.body()?.knowMore != null)
-                            isKnowMoreCourse.set(response.body()?.knowMore)
+                            isKnowMoreCourse = response.body()?.knowMore
                         else
-                            isKnowMoreCourse.set(EMPTY)
+                            isKnowMoreCourse = EMPTY
                         priceText.set(response.body()?.priceEnglishText)
                         message.what = BUY_COURSE_LAYOUT_DATA
                         message.obj = response.body()!!
@@ -120,7 +122,7 @@ class BuyPageViewModel : BaseViewModel() {
                             }
                             couponList = response.body()!!.listOfCoupon
                         }
-                        if (isKnowMoreCourse.equals(EMPTY) || isVideoAbTestEnable == null || isNewFreeTrialEnable == null) {
+                        if ((isKnowMoreCourse.equals(EMPTY) || isKnowMoreCourse==null) && isVideoAbTestEnable == null && isNewFreeTrialEnable == null) {
                             delay(5200)
                             message.what = SCROLL_TO_BOTTOM
                             singleLiveEvent.value = message
@@ -179,24 +181,30 @@ class BuyPageViewModel : BaseViewModel() {
             when (type) {
                 CLICK_ON_OFFER_CARD -> {
                     if (couponType == APPLY) {
-                        saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, it.couponCode)
-                        isCouponApplied.set(true)
-                        try {
-                            Log.e("sagar", "${it}: ", )
-                            getCoursePriceList(it.couponCode, it.isMentorSpecificCoupon, it.validDuration)
-                            isDiscount = true
-                        } catch (ex: Exception) {
-                            Log.d("BuyPageViewModel.kt", "SAGAR => :139 ${ex.message}")
-                        }
-                        if (position!=1) {
-                            message.what = APPLY_COUPON_FROM_BUY_PAGE
-                            message.obj = it
-                            singleLiveEvent.value = message
+                        if (couponAppliedCode.get() != it.couponCode){
+                            saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, it.couponCode)
+                            isCouponApplied.set(true)
+                            if (it.couponCode != manualCoupon.get())
+                                couponAppliedCode.set(it.couponCode)
+                            try {
+                                getCoursePriceList(it.couponCode, it.isMentorSpecificCoupon, it.validDuration)
+                                isDiscount = true
+                            } catch (ex: Exception) {
+                                Log.d("BuyPageViewModel.kt", "SAGAR => :139 ${ex.message}")
+                            }
+                            if (position!=1) {
+                                message.what = APPLY_COUPON_FROM_BUY_PAGE
+                                message.obj = it
+                                singleLiveEvent.value = message
+                            }
+                        }else{
+                            showToast("Coupon already applied")
                         }
                     } else {
                         if (it.isMentorSpecificCoupon == null){
                             getValidCouponList(OFFERS)
                         }
+                        couponAppliedCode.set(EMPTY)
                         saveImpressionForBuyPageLayout(COUPON_CODE_REMOVED, it.couponCode)
                         isCouponApplied.set(false)
                         getCoursePriceList(null, null,null)
@@ -231,11 +239,13 @@ class BuyPageViewModel : BaseViewModel() {
         when (type) {
             CLICK_ON_COUPON_APPLY -> {
                 onItemClick(it, CLICK_ON_OFFER_CARD, 1, couponType)
-                if (couponType == APPLY) {
-                    message.what = CLICK_ON_COUPON_APPLY
-                    message.obj = it
-                    message.arg1 = position
-                    singleLiveEvent.value = message
+                if (couponAppliedCode.get() != it.couponCode) {
+                    if (couponType == APPLY) {
+                        message.what = CLICK_ON_COUPON_APPLY
+                        message.obj = it
+                        message.arg1 = position
+                        singleLiveEvent.value = message
+                    }
                 }
             }
         }
@@ -289,6 +299,7 @@ class BuyPageViewModel : BaseViewModel() {
     fun applyEnteredCoupon(code: String) {
         saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, code)
         if (code.isNotBlank()) {
+            manualCoupon.set(code)
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     val response = buyPageRepo.getCouponFromCode(code)

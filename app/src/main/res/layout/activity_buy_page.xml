@@ -303,7 +303,7 @@
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_10sdp"
-                            android:visibility="@{vm.isKnowMoreCourse().isEmpty() ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{vm.isKnowMoreCourse() == null ? View.GONE : View.VISIBLE}"
                             android:background="@drawable/dotted_line"
                             android:backgroundTint="@color/colorAccent" />
 
@@ -327,7 +327,7 @@
                             android:stateListAnimator="@null"
                             android:paddingTop="@dimen/_5sdp"
                             android:textAlignment="center"
-                            android:visibility="@{vm.isKnowMoreCourse().isEmpty() ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{vm.isKnowMoreCourse() == null ? View.GONE : View.VISIBLE}"
                             android:text="@{vm.isKnowMoreCourse() + ` >>`}"
                             android:layout_marginTop="@dimen/_24sdp"
                             android:textStyle="bold"

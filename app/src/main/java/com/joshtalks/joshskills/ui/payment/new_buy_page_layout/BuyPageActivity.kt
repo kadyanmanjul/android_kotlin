@@ -451,6 +451,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             certificateTextView?.text = buyCourseFeatureModel.certificateText
             certificateImage?.setImage(buyCourseFeatureModel.certificateUrl?: EMPTY)
             certificateTitle?.text = AppObjectController.getFirebaseRemoteConfig().getString(DIGITAL_CARD_TEXT)
+            binding.courseDescList.removeAllViews()
             binding.courseDescList.addView(certificateCard)
         }else{
             buyCourseFeatureModel.information?.forEach { it ->

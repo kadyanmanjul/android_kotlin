@@ -46,10 +46,7 @@ class CouponCardFragment : BaseFragment() {
     override fun initViewState() {
         liveData.observe(this) {
             when (it.what) {
-//                CLICK_ON_COUPON_APPLY -> {
-//                    showToast("Coupon applied")
-//                    requireActivity().onBackPressed()
-//                }
+
             }
         }
 
