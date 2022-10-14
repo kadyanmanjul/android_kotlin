@@ -130,14 +130,10 @@ object VoipPref {
 
                 // to open both level and interest forms:
                 if (PrefManager.getBoolValue(IS_LEVEL_FORM_FILLED, defValue = false).not()){
-                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-                    intent.putExtra("isEditCall",false)
-                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                    startLevelAndInterestForm()
                 }
                 else if (PrefManager.getBoolValue(IS_INTEREST_FORM_FILLED, defValue = false).not()){
-                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-                    intent.putExtra("isEditCall",true)
-                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                    startInterestFormOnly()
                 }
                 else{
                     showDialogBox(duration, CALL_RATING)
@@ -147,9 +143,7 @@ object VoipPref {
             else if (PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 0 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1) {
                 // to open interest form only:
                 if (PrefManager.getBoolValue(IS_INTEREST_FORM_FILLED, defValue = false).not()) {
-                    val intent = Intent(ActivityLifecycleCallback.currentActivity, UserInterestActivity::class.java)
-                    intent.putExtra("isEditCall", true)
-                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                    startInterestFormOnly()
                 } else {
                     showDialogBox(duration, CALL_RATING)
                 }
@@ -164,14 +158,10 @@ object VoipPref {
 
                 // to open both level and interest forms:
                 if (PrefManager.getBoolValue(IS_LEVEL_FORM_FILLED, defValue = false).not()){
-                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-                    intent.putExtra("isEditCall",false)
-                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                    startLevelAndInterestForm()
                 }
                 else if (PrefManager.getBoolValue(IS_INTEREST_FORM_FILLED, defValue = false).not()){
-                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-                    intent.putExtra("isEditCall",true)
-                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                    startInterestFormOnly()
                 }
                 else{
                     showDialogBox(duration, PURCHASE_POPUP)
@@ -181,9 +171,7 @@ object VoipPref {
             else if (PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 0 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
                 // to open interest form only:
                 if (PrefManager.getBoolValue(IS_INTEREST_FORM_FILLED, defValue = false).not()){
-                    val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-                    intent.putExtra("isEditCall",true)
-                    ActivityLifecycleCallback.currentActivity.startActivity(intent)
+                    startInterestFormOnly()
                 }
                 else{
                     showDialogBox(duration, PURCHASE_POPUP)
@@ -195,6 +183,48 @@ object VoipPref {
         }
 
         ExpertListRepo().deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
+        deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
+    }
+
+    private fun startInterestFormOnly(){
+        val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+        intent.putExtra("isEditCall",true)
+        ActivityLifecycleCallback.currentActivity.startActivity(intent)
+    }
+
+    private fun startLevelAndInterestForm(){
+        val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
+        intent.putExtra("isEditCall",false)
+        ActivityLifecycleCallback.currentActivity.startActivity(intent)
+    }
+
+    private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {
+        if (callType == Category.EXPERT.ordinal) {
+            setExpertCallDuration(duration)
+
+            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+                expertDurationMutex.withLock {
+                    try {
+                        val map = HashMap<String, String>()
+                        map["time_spoken_in_seconds"] = duration
+                        map["connected_user_id"] = remoteUserMentorId
+                        map["agora_call_id"] = getLastCallId().toString()
+                        val response =
+                            AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                        when (response.code()) {
+                            200 -> {
+                                setExpertCallDuration("")
+                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
+                            }
+                            406 -> {
+
+                            }
+                        }
+                    } catch (ex: Exception) {
+                    }
+                }
+            }
+        }
     }
 
     // TODO: These function shouldn't be here
