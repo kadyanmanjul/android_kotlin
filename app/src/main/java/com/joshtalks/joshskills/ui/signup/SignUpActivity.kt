@@ -66,7 +66,7 @@ import java.util.*
 const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
 
-class SignUpActivity : BaseActivity() {
+class SignUpActivity : ThemedBaseActivity() {
 
     private lateinit var appAnalytics: AppAnalytics
     private val viewModel: SignUpViewModel by lazy {
