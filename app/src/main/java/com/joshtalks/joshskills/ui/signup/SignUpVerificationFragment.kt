@@ -15,18 +15,14 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.codeinputview.OTPListener
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.SignUpStepStatus
-import com.joshtalks.joshskills.core.TIMEOUT_TIME
-import com.joshtalks.joshskills.core.VerificationStatus
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpVerificationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
@@ -58,7 +54,7 @@ class SignUpVerificationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -81,6 +77,10 @@ class SignUpVerificationFragment : Fragment() {
 
             override fun onInteractionListener() {
             }
+        }
+        // STOPSHIP: Only for testing
+        if (BuildConfig.DEBUG) {
+            binding.otpView2.otp = "0000"
         }
 
         binding.textView2.text = getString(

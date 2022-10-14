@@ -130,7 +130,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
 
 
     fun onGoalSelected(goalSelectionResponse: GoalSelectionResponse) {
-        if (goalSelectionResponse.testId != null) {
+        if (goalSelectionResponse.testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
             viewModel.saveImpression(REASON_GOVT_EXAM_CLICKED)
             viewModel.postGoal(GoalKeys.GOVT_EXAMS_SELECTED)
         } else {

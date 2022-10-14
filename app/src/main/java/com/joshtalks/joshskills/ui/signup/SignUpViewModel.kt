@@ -51,7 +51,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val signUpStatus: LiveData<SignUpStepStatus> = _signUpStatus
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
-    val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
     var resendAttempt: Int = 1
     var incorrectAttempt: Int = 0
     var currentTime: Long = 0
@@ -67,6 +66,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     val service = AppObjectController.signUpNetworkService
     val abTestRepository by lazy { ABTestRepository() }
     val freeTrialEntity: MutableLiveData<InboxEntity> = MutableLiveData()
+    var shouldStartFreeTrial: Boolean = false
 
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
@@ -301,11 +301,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun analyzeUserProfile(isNewUser: Boolean) {
         val user = User.getInstance()
-        if (isNewUser && abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_BEFORE_NAME)) {
-            return updateFTSignUpStatus(SignUpStepStatus.LanguageSelection)
-        }
-        if (isNewUser && abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME)) {
-            return _signUpStatus.postValue(SignUpStepStatus.StartTrial)
+        if (shouldStartFreeTrial) {
+            if (isNewUser && abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_BEFORE_NAME)) {
+                return updateFTSignUpStatus(SignUpStepStatus.LanguageSelection)
+            }
+            if (isNewUser && abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME)) {
+                return updateFTSignUpStatus(SignUpStepStatus.StartTrial)
+            }
         }
         if (user.phoneNumber.isNullOrEmpty() && user.firstName.isNullOrEmpty()) {
             return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
@@ -325,17 +327,14 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         return EMPTY
     }
 
-    fun checkMentorIdPaid() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
-                val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
-                if (response != null) {
-                    mentorPaymentStatus.postValue(response["payment"] as Boolean)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    suspend fun hasMentorPaid(): Boolean {
+        try {
+            val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
+            val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
+            return response["payment"] as? Boolean ?: false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
         }
     }
 
@@ -343,6 +342,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                if (map["is_free_trial"] == "Y" && hasMentorPaid()) {
+                    _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+                    return@launch
+                }
                 val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
                 val phoneNumberComingFromTrueCaller = User.getInstance().phoneNumber ?: EMPTY
                 if (response.isSuccessful) {

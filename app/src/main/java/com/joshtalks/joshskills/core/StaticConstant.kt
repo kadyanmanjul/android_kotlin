@@ -6,10 +6,6 @@ enum class SignUpStepStatus {
     RequestForOTP, ReGeneratedOTP, ProfileCompleted, ProfilePicUploaded, StartAfterPicUploaded, ProfilePicSkipped,
     ProfileInCompleted, SignUpResendOTP, SignUpWithoutRegister,
     WRONG_OTP, ERROR, LanguageSelection, NameSubmitted, StartTrial;
-
-    fun get(text: String): SignUpStepStatus {
-        return valueOf(text)
-    }
 }
 
 enum class ApiCallStatus {

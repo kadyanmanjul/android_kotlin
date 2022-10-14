@@ -79,7 +79,6 @@ class SignUpActivity : BaseActivity() {
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var compositeDisposable = CompositeDisposable()
-    private var shouldStartFreeTrial: Boolean = false
 
     private lateinit var auth: FirebaseAuth
 
@@ -99,23 +98,26 @@ class SignUpActivity : BaseActivity() {
             )
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
-        shouldStartFreeTrial = intent.getBooleanExtra(START_FREE_TRIAL, false)
+        viewModel.shouldStartFreeTrial = intent.getBooleanExtra(START_FREE_TRIAL, false)
         addViewModelObserver()
         initLoginFeatures()
         setupTrueCaller()
         if (PrefManager.hasKey(FT_ONBOARDING_NEXT_STEP)) {
-            viewModel.updateFTSignUpStatus(SignUpStepStatus.valueOf(PrefManager.getStringValue(FT_ONBOARDING_NEXT_STEP)))
-        } else if (User.getInstance().isVerified && isUserProfileComplete()) {
-            openProfileDetailFragment(false)
-        } else if (User.getInstance().isVerified && !isRegProfileComplete()) {
-            openProfileDetailFragment(true)
+            SignUpStepStatus.valueOf(PrefManager.getStringValue(FT_ONBOARDING_NEXT_STEP)).let {
+                viewModel.updateFTSignUpStatus(it)
+            }
+        } else if (viewModel.shouldStartFreeTrial.not()) {
+            if (User.getInstance().isVerified && isUserProfileComplete()) {
+                openProfileDetailFragment(false)
+            } else if (User.getInstance().isVerified && !isRegProfileComplete()) {
+                openProfileDetailFragment(true)
+            } else
+                openSignUpOptionsFragment()
         } else {
             if (isVariantActive(VariantKeys.NEW_LOGIN_BEFORE_NAME)) {
                 openSignUpOptionsFragment()
             } else if (isVariantActive(VariantKeys.NEW_LANGUAGE_ENABLED)) {
                 openChooseLanguageFragment()
-            } else if (isVariantActive(VariantKeys.ORIGINAL_LOGIN_FLOW)) {
-                openSignUpNameFragment()
             } else {
                 openSignUpOptionsFragment()
             }
@@ -146,11 +148,7 @@ class SignUpActivity : BaseActivity() {
                     openProfileDetailFragment(true)
                 }
                 SignUpStepStatus.NameSubmitted -> {
-                    if (isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME)) {
-                        openSignUpOptionsFragment()
-                    } else {
-                        viewModel.startFreeTrial(Mentor.getInstance().getId())
-                    }
+                    openSignUpOptionsFragment()
                 }
                 SignUpStepStatus.StartTrial -> {
                     viewModel.startFreeTrial(Mentor.getInstance().getId())
@@ -269,32 +267,7 @@ class SignUpActivity : BaseActivity() {
     fun onGoalSelected(testId: String) {
         PrefManager.put(FREE_TRIAL_TEST_ID, testId)
         viewModel.postGoal(GoalKeys.REASON_SELECTED)
-        if (testId == HINDI_TO_ENGLISH_TEST_ID || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
-            requestWorkerForChangeLanguage("en", canCreateActivity = false)
-        } else {
-            requestWorkerForChangeLanguage(Utils.getLangCodeFromlangTestId(testId), canCreateActivity = false)
-        }
-        if (isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME))
-            openSignUpNameFragment()
-        else
-            startFreeTrial(testId)
-    }
-
-    fun startFreeTrial(testId: String) {
-        PrefManager.put(FREE_TRIAL_TEST_ID, testId)
-        if (testId == HINDI_TO_ENGLISH_TEST_ID || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
-            requestWorkerForChangeLanguage("en", canCreateActivity = false)
-        } else {
-            requestWorkerForChangeLanguage(Utils.getLangCodeFromlangTestId(testId), canCreateActivity = false)
-        }
-        if (Mentor.getInstance().getId().isNotEmpty()) {
-            if (TruecallerSDK.getInstance().isUsable)
-                trueCallerLogin()
-            else {
-                viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED_JI_HAAN)
-                openSignUpNameFragment()
-            }
-        }
+        openSignUpNameFragment()
     }
 
     private fun logLoginSuccessAnalyticsEvent(from: String?) {
@@ -365,15 +338,18 @@ class SignUpActivity : BaseActivity() {
             }
 
         })
-            .consentMode(TruecallerSdkScope.CONSENT_MODE_POPUP)
+            .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
+            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
             .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
-            .footerType(TruecallerSdkScope.FOOTER_TYPE_SKIP)
+            .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
             .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
             .build()
         TruecallerSDK.init(trueScope)
         if (TruecallerSDK.getInstance().isUsable) {
             val locale = Locale(PrefManager.getStringValue(USER_LOCALE))
             TruecallerSDK.getInstance().setLocale(locale)
+        } else {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED)
         }
     }
 
@@ -381,6 +357,8 @@ class SignUpActivity : BaseActivity() {
         binding.skip.visibility = View.GONE
         binding.ivHelp.visibility = View.GONE
         binding.ivPrivacy.visibility = View.VISIBLE
+        if (TruecallerSDK.getInstance().isUsable)
+            trueCallerLogin()
         supportFragmentManager.commit(true) {
             addToBackStack(SignUpOptionsFragment::class.java.name)
             replace(
@@ -404,6 +382,12 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun openSignUpNameFragment() {
+        val testId = PrefManager.getStringValue(FREE_TRIAL_TEST_ID)
+        if (testId == HINDI_TO_ENGLISH_TEST_ID || testId == ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID)
+            requestWorkerForChangeLanguage("en", canCreateActivity = false)
+        else
+            requestWorkerForChangeLanguage(Utils.getLangCodeFromlangTestId(testId), canCreateActivity = false)
+
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
@@ -582,7 +566,10 @@ class SignUpActivity : BaseActivity() {
                         }
                         LoginViaStatus.TRUECALLER -> {
                             showProgressBar()
-                            trueCallerLogin()
+                            if (TruecallerSDK.getInstance().isUsable)
+                                trueCallerLogin()
+                            else
+                                showToast(getString(R.string.something_went_wrong))
                         }
                         LoginViaStatus.NUMBER_VERIFY -> {
                             viewModel.signUpAfterPhoneVerify(it.countryCode, it.mNumber)
@@ -601,6 +588,8 @@ class SignUpActivity : BaseActivity() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         supportFragmentManager.popBackStackImmediate()
         if (supportFragmentManager.backStackEntryCount == 0) {
+            if (PrefManager.getStringValue(USER_LOCALE) != "en")
+                requestWorkerForChangeLanguage("en", canCreateActivity = false)
             this@SignUpActivity.finish()
             return
         }

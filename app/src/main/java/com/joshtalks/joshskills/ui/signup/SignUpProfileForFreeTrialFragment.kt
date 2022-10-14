@@ -70,7 +70,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     }
 
     private fun addObservers() {
-        binding.nameEditText.setOnEditorActionListener { v, actionId, event ->
+        binding.nameEditText.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEND -> {
                     submitProfile()
@@ -96,12 +96,6 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 }
             }
         })
-        viewModel.mentorPaymentStatus.observe(viewLifecycleOwner, {
-            when (it) {
-                true -> moveToInboxScreen()
-                false -> submitForFreeTrial()
-            }
-        })
     }
 
     fun submitProfile() {
@@ -119,11 +113,10 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
             showToast(getString(R.string.name_error_toast))
             return
         }
+        submitForFreeTrial()
         binding.btnLogin.isEnabled = false
-        viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
-
         if(username.isNullOrEmpty()) {
             MixPanelTracker.publishEvent(MixPanelEvent.REGISTER_WITH_NAME)
                 .addParam(ParamKeys.NAME_ENTERED,true)
@@ -136,9 +129,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                     .push()
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
             }
-        }
-        else if(!username.isNullOrEmpty() && username==name)
-        {
+        } else if(!username.isNullOrEmpty() && username==name) {
             MixPanelTracker.publishEvent(MixPanelEvent.REGISTER_WITH_NAME)
                 .addParam(ParamKeys.NAME_CHANGED,false)
                 .push()
@@ -149,7 +140,6 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
         requestMap["is_free_trial"] = "Y"
-
         viewModel.completingProfile(requestMap, isUserVerified)
         viewModel.postGoal(GoalKeys.NAME_SUBMITTED)
         viewModel.postGoal(GoalKeys.NAME_SELECTED)
