@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -39,7 +38,7 @@ const val HINDI_TO_ENGLISH_TEST_ID = "784"
 const val ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID = "1906"
 const val USER_CREATED_SUCCESSFULLY = 1002
 
-class FreeTrialOnBoardActivity : CoreJoshActivity() {
+class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
