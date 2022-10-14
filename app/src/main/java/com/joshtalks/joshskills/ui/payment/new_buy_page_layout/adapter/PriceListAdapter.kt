@@ -8,18 +8,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ItemNewPriceCardBinding
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_PRICE_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
+import kotlinx.coroutines.*
+import java.util.Date
 
 class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
     RecyclerView.Adapter<PriceListAdapter.PriceListViewHolder>() {
     var itemClick: ((CourseDetailsList, Int, Int, String) -> Unit)? = null
     var prevHolder: PriceListViewHolder? = null
+    var expireAt: Date?=null
+    var isMentorSpecificCoupon: Boolean? =null
+    private var freeTrialTimerJob: Job? = null
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PriceListViewHolder {
         val binding = ItemNewPriceCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -64,9 +70,12 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
 
     override fun getItemCount(): Int = priceList?.size ?: 0
 
-    fun addPriceList(members: List<CourseDetailsList>?) {
+    fun addPriceList(members: List<CourseDetailsList>?, validDuration:Date?, isSpecificMentorCoupon:Boolean?) {
         Log.d("PriceListAdapter.kt", "SAGAR => addPriceList:60 ")
         priceList = members
+        expireAt = validDuration
+        isMentorSpecificCoupon = isSpecificMentorCoupon
+        freeTrialTimerJob?.cancel()
         notifyDataSetChanged()
     }
 
@@ -78,17 +87,54 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
         RecyclerView.ViewHolder(binding.root) {
         fun setData(priceList: CourseDetailsList?, position: Int) {
             binding.itemData = priceList
-            binding.discountPrice.text = priceList?.actualAmount + " "
+            binding.discountPrice.text = "MRP: ${priceList?.actualAmount} "
             binding.discountPrice.paintFlags = binding.discountPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
-            binding.originalPrice.text = priceList?.discountedPrice + " "
-            binding.pricePerDay.text = priceList?.perDayPrice +" "
-            if (priceList?.couponText != EMPTY) {
-                binding.discountTxt.visibility = View.VISIBLE
-            }
-            else {
+            binding.originalPrice.text = priceList?.discountedPrice + "/yr"
+            binding.executePendingBindings()
+            if ((expireAt?.time?.minus(System.currentTimeMillis())?:0) > 0L){
+                startFreeTrialTimer(expireAt?.time?.minus(System.currentTimeMillis())?: 0)
+            }else{
                 binding.discountTxt.visibility = View.GONE
             }
-            binding.executePendingBindings()
+        }
+
+        fun startFreeTrialTimer(endTimeInMilliSeconds: Long) {
+            try {
+                var newTime = endTimeInMilliSeconds - 1000
+                if (isMentorSpecificCoupon!=null) {
+                    binding.discountTxt.visibility = View.VISIBLE
+                    binding.discountTxt.text =
+                        "Offer ends in " + UtilTime.timeFormatted(newTime) + ". Hurry up!"
+                }else{
+                    binding.discountTxt.visibility = View.GONE
+                }
+                freeTrialTimerJob = scope.launch {
+                    while (true) {
+                        delay(1000)
+                        newTime -= 1000
+                        if (isActive) {
+                            withContext(Dispatchers.Main) {
+                                if (isMentorSpecificCoupon!=null) {
+                                    binding.discountTxt.visibility = View.VISIBLE
+                                    binding.discountTxt.text =
+                                        "Offer ends in " + UtilTime.timeFormatted(newTime) + ". Hurry up!"
+                                }else{
+                                    binding.discountTxt.visibility = View.GONE
+                                }
+                            }
+                            if (newTime <= 0) {
+                                withContext(Dispatchers.Main) {
+                                    binding.discountTxt.visibility = View.GONE
+                                }
+                                break
+                            }
+                        } else
+                            break
+                    }
+                }
+            } catch (ex: Exception) {
+                Log.e("sagar", "startFreeTrialTimer: ${ex.message}")
+            }
         }
     }
 }

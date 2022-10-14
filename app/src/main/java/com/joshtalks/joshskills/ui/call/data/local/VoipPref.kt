@@ -116,6 +116,12 @@ object VoipPref {
             }
         }
 
+        if (duration.inSeconds() >= 600) {
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+                MarketingAnalytics.callComplete10MinForFreeTrial()
+            }
+        }
+
         // TODO: These logic shouldn't be here
         if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
             showDialogBox(duration, CALL_RATING)

@@ -21,7 +21,7 @@
             android:layout_height="23dp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginBottom="@dimen/_minus10sdp"
-            android:layout_marginEnd="@dimen/_21sdp"
+            android:layout_marginEnd="@dimen/_29sdp"
             app:srcCompat="@drawable/recommended"
             android:elevation="@dimen/_10sdp"
             android:scaleType="fitXY"
@@ -35,7 +35,8 @@
             android:id="@+id/price_card_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_13sdp"
+            android:layout_marginEnd="@dimen/_18sdp"
             android:layout_marginTop="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_6sdp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -72,7 +73,7 @@
 
                     <LinearLayout
                         android:id="@+id/ll"
-                        android:layout_width="@dimen/_157sdp"
+                        android:layout_width="@dimen/_150sdp"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="@dimen/_14sdp"
                         android:layout_marginStart="@dimen/_10sdp"
@@ -86,7 +87,7 @@
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                             android:textColor="@color/pure_black"
                             android:textStyle="bold"
-                            tools:text="vjhvjhvhjhvhjvhjvkuyfutyfufcyiccc yictycyicyicyitctyck tyy" />
+                            tools:text="vjhvjhvhjhvhjvhjvkuyfutyfufcyiccc yictycyicyicyitctyck tyydvhjdfcvhjdvchjdsvchjdscv dhjv chjdbvcuiergberuifguiregfiuerfgiurefgiurefgiuergfiurehgui" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/coupon_save_percent"
@@ -94,7 +95,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:background="@drawable/green_rectangle_without_solid"
-                            android:backgroundTint="#28BF60"
+                            android:backgroundTint="#107BE5"
                             android:gravity="center"
                             android:paddingHorizontal="@dimen/_8sdp"
                             android:paddingVertical="@dimen/_4sdp"
@@ -112,10 +113,23 @@
 
                     <LinearLayout
                         android:id="@+id/lll"
-                        android:layout_width="@dimen/_53sdp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_12sdp"
                         android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/original_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:letterSpacing="0"
+                            android:textAlignment="textEnd"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                            android:textColor="@color/pure_black"
+                            android:textStyle="bold"
+                            tools:text="₹4399/yr" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/discount_price"
@@ -128,34 +142,6 @@
                             android:textColor="#888888"
                             tools:text="₹840" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/original_price"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_20sdp"
-                            android:layout_gravity="end"
-                            android:gravity="end"
-                            android:letterSpacing="0"
-                            android:textAlignment="textEnd"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                            android:textColor="@color/pure_black"
-                            android:textStyle="bold"
-                            tools:text="₹4399" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/price_per_day"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="end"
-                            android:layout_marginBottom="@dimen/_5sdp"
-                            android:gravity="end"
-                            android:lineSpacingMultiplier="0"
-                            android:paddingEnd="@dimen/_2sdp"
-                            android:textAlignment="textEnd"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal11_Regular"
-                            android:textColor="#A62E2D"
-                            android:textStyle="italic"
-                            tools:text="₹3/day " />
-
                     </LinearLayout>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -165,22 +151,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_20sdp"
                     android:background="@drawable/green_rectangle_without_solid_one_side_corner"
-                    android:backgroundTint="#28BF60"
-                    android:gravity="center_horizontal"
-                    android:text="@{itemData.couponText}"
-                    android:paddingHorizontal="@dimen/_8sdp"
-                    android:paddingVertical="@dimen/_2sdp"
+                    android:backgroundTint="@color/golden_color"
+                    android:text="Offer ends in 59:30. Hurry up!"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:gravity="center_vertical"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                    android:textColor="@color/white"
+                    android:textColor="#253858"
                     android:textStyle="bold"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/llll"
                     app:textAllCaps="false"
-                    tools:text="kjnfdjkvndjfkvnfdjkvndkfjv" />
+                    tools:text="Offer ends in 59:30. Hurry up!" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,11 +18,17 @@ data class BuyCourseFeatureModel(
     @SerializedName("suman_profile") var sumanProfile:String?=null,
     @SerializedName("call_us_text") var callUsText: String? = null,
     @SerializedName("course_name") var courseName:String?= null,
-    @SerializedName("image_name") var otherCourseImage :String?=null
+    @SerializedName("image_name") var otherCourseImage :String?=null,
+    @SerializedName("certificate_text") var certificateText :String?=null,
+    @SerializedName("certificate_url") var certificateUrl: String? = null,
+    @SerializedName("know_more") var knowMore: String? = null,
+    @SerializedName("bp_text") val priceEnglishText: String? = null,
+    @SerializedName("banner_text") val timerBannerText: String? = null,
+    @SerializedName("ab_test_video_url") val abTestVideoUrl: String? = null,
+    @SerializedName("is_video") val isVideo:Boolean? = null
 )
 
 data class CouponListModel(
-    @SerializedName("first_impression") var firstImpression: String,
     @SerializedName("coupons") var listOfCoupon: MutableList<Coupon>? = null
 )
 
@@ -31,5 +37,6 @@ data class Coupon(
     @SerializedName("amount_percent") val amountPercent: Int,
     @SerializedName("expire_at") val validDuration: Date,
     @SerializedName("max_discount_amount") val maxDiscountAmount: Int,
+    @SerializedName("is_mentor_coupon") val isMentorSpecificCoupon: Boolean? = null,
     var isCouponSelected: Int = 0
 )

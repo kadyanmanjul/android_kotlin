@@ -57,11 +57,31 @@ object MarketingAnalytics {
     fun callComplete20MinForFreeTrial() {
         JoshSkillExecutors.BOUNDED.submit {
             val context = AppObjectController.joshApplication
+            val params = Bundle().apply {
+                putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            }
 
             BranchEvent(BRANCH_STANDARD_EVENT.CLICK_AD)
                 .setDescription(BranchEventName.CLICK_AD.name)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
+
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.GENERATE_LEAD,params)
+        }
+    }
+
+    fun callComplete10MinForFreeTrial(){
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+            val params = Bundle().apply {
+                putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            }
+
+            BranchEvent(BRANCH_STANDARD_EVENT.INITIATE_STREAM)
+                .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+                .logEvent(context)
+
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.POST_SCORE,params)
         }
     }
 
@@ -227,11 +247,16 @@ object MarketingAnalytics {
     fun logAchievementLevelEventFOrFreeTrial(achievementLevel: Int) {
         JoshSkillExecutors.BOUNDED.submit {
             val context = AppObjectController.joshApplication
+            val params = Bundle().apply {
+                putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            }
 
             BranchEvent(BRANCH_STANDARD_EVENT.SHARE)
                 .setCustomerEventAlias("share")
                 .addCustomDataProperty("level", achievementLevel.toString())
                 .logEvent(context)
+
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SHARE,params)
         }
     }
 
@@ -263,12 +288,16 @@ object MarketingAnalytics {
 
         JoshSkillExecutors.BOUNDED.submit {
             val context = AppObjectController.joshApplication
-
+            val params = Bundle().apply {
+                putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            }
             BranchEvent(BRANCH_STANDARD_EVENT.RATE)
                 .setDescription("User has completed his lesson")
                 .addCustomDataProperty("lesson_number",lessonNumber.toString())
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
+
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.REFUND,params)
         }
     }
 
@@ -345,11 +374,15 @@ object MarketingAnalytics {
     fun logSpeakingSectionCompletedForFreeTrial() {
         JoshSkillExecutors.BOUNDED.submit {
             val context = AppObjectController.joshApplication
-
+            val params = Bundle().apply {
+                putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            }
             BranchEvent(BRANCH_STANDARD_EVENT.SUBSCRIBE)
                 .setDescription(BranchEventName.SUBSCRIBE.name)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 .logEvent(context)
+
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.VIEW_PROMOTION,params)
         }
     }
 
@@ -388,6 +421,21 @@ object MarketingAnalytics {
                 .logEvent(context)
 
             FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.LEVEL_START,params)
+        }
+    }
+
+    fun lessonNo2Complete(){
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+            val params = Bundle().apply {
+                putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+            }
+
+            BranchEvent(BRANCH_STANDARD_EVENT.SPEND_CREDITS)
+                .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+                .logEvent(context)
+
+            FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SPEND_VIRTUAL_CURRENCY,params)
         }
     }
 }

@@ -552,27 +552,31 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     fun showBuyCourseTooltip(courseId: String) {
-        val text = AppObjectController.getFirebaseRemoteConfig().getString(
-            BUY_COURSE_INBOX_TOOLTIP + courseId
-        )
-        if (text.isBlank()) return
-        if (this::bbTooltip.isInitialized.not()) {
-            bbTooltip = Balloon.Builder(this)
-                .setLayout(R.layout.layout_bb_tip)
-                .setHeight(BalloonSizeSpec.WRAP)
-                .setIsVisibleArrow(true)
-                .setBackgroundColorResource(R.color.bb_tooltip_stroke)
-                .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
-                .setWidthRatio(0.85f)
-                .setDismissWhenTouchOutside(false)
-                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                .setLifecycleOwner(this)
-                .setDismissWhenClicked(false)
-                .build()
-        }
-        bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
-        bbTooltip.isShowing.not().let {
-            bbTooltip.showAlignBottom(buy_english_course)
+        try {
+            val text = AppObjectController.getFirebaseRemoteConfig().getString(
+                BUY_COURSE_INBOX_TOOLTIP + courseId
+            )
+            if (text.isBlank()) return
+            if (this::bbTooltip.isInitialized.not()) {
+                bbTooltip = Balloon.Builder(this)
+                    .setLayout(R.layout.layout_bb_tip)
+                    .setHeight(BalloonSizeSpec.WRAP)
+                    .setIsVisibleArrow(true)
+                    .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                    .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
+                    .setWidthRatio(0.85f)
+                    .setDismissWhenTouchOutside(false)
+                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                    .setLifecycleOwner(this)
+                    .setDismissWhenClicked(false)
+                    .build()
+            }
+            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
+            bbTooltip.isShowing.not().let {
+                bbTooltip.showAlignBottom(buy_english_course)
+            }
+        }catch (ex:Exception){
+
         }
     }
 
