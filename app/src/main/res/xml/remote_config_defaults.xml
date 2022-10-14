@@ -1702,4 +1702,81 @@
         <key>VOIP_DISCONNECT_DIALOG_MESSAGE_1207</key>
         <value>वारंवार calls डिस्कनेक्ट केल्याने account suspend होऊ शकते</value>
     </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_MESSAGE_1207</key>
+        <value>वारंवार calls डिस्कनेक्ट केल्याने account suspend होऊ शकते</value>
+    </entry>
+    <entry>
+        <key>VOIP_SEARCHING_SCREEN_RULE_DEFAULT</key>
+       <value>[
+           {
+           "title": "Zaroori Jankari",
+           "items": [
+           {
+           "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/call.png",
+           "title": "Avoid short calls",
+           "content": "Have longer conversations in English with your partner. Kyoki, English bolne se aati hai."
+           },
+           {
+           "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/avoid.png",
+           "title": "No bad behaviour",
+           "content": "Inappropriate behaviour will lead to permanent account suspension."
+           },
+           {
+           "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/star.png",
+           "title": "Maintain good rating",
+           "content": "Be kind and courteous. No hate speech or bullying."
+           }
+           ]
+           }
+           ]</value>
+    </entry>
+    <entry>
+        <key>VOIP_SEARCHING_SCREEN_TIPS</key>
+        <value>[
+            {
+            "title": "Speaking Tips",
+            "items": [
+            {
+            "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/greet.png",
+            "title": "Greet other students",
+            "content": [
+            "Hi, how are you?",
+            "Good Evening. How have you been?"
+            ]
+            },
+            {
+            "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/hobbies.png",
+            "title": "Talk about interests",
+            "content": [
+            "What is your favourite movie?",
+            "What is your favourite song?"
+            ]
+            }
+            ]
+            },
+            {
+            "title": "Speaking Tips",
+            "items": [
+            {
+            "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/greet.png",
+            "title": "Talk about future goals",
+            "content": [
+            "What is your dream job?",
+            "What are your goals in life?"
+            ]
+            },
+            {
+            "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/goals.png",
+            "title": "Talk about sports",
+            "content": [
+            "What is your favourite sport?",
+            "Do you play any sport"
+            ]
+            }
+            ]
+            }
+            ]</value>
+    </entry>
+
 </defaults>

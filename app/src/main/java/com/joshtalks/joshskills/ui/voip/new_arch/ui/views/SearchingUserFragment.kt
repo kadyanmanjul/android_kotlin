@@ -1,31 +1,57 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SEARCHING_SCREEN_RULES
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SEARCHING_SCREEN_RULES_DEFAULT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SEARCHING_SCREEN_TIPS
 import com.joshtalks.joshskills.databinding.FragmentSearchingUserBinding
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.SearchingRule
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.SearchingTip
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.SearchUserAdapter
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.lang.reflect.Type
+import kotlin.random.Random
+import com.joshtalks.joshskills.core.PrefManager as CorePrefManager
+
+const val SEARCHING_SCREEN_COUNT = "SEARCHING_SCREEN_COUNT"
 
 class SearchingUserFragment : BaseFragment() {
 
     lateinit var searchingUserBinding: FragmentSearchingUserBinding
-    private var timer: CountDownTimer? = null
-    private var isFragmentRestarted = false
-
+    private val gson = Gson()
 
     val voiceCallViewModel by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
+    }
+
+    val vm by lazy {
+        ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
+    }
+
+    val adapter by lazy {
+        SearchUserAdapter(context = requireContext())
     }
 
     override fun onCreateView(
@@ -34,58 +60,129 @@ class SearchingUserFragment : BaseFragment() {
     ): View {
         searchingUserBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_searching_user, container, false)
+        searchingUserBinding.listOfReason.adapter = adapter
+        searchingUserBinding.listOfReason.layoutManager = LinearLayoutManager(requireContext())
         return searchingUserBinding.root
     }
 
     override fun initViewBinding() {
-        searchingUserBinding.progressBar.max = 100
-        searchingUserBinding.progressBar.progress = 0
+        searchingUserBinding.vm = vm
         searchingUserBinding.executePendingBindings()
-    }
-
-    override fun initViewState() {
-        startProgressBarCountDown()
-    }
-
-    override fun setArguments() {}
-
-    private fun startProgressBarCountDown() {
-        requireActivity().runOnUiThread {
-            searchingUserBinding.progressBar.max = 100
-            searchingUserBinding.progressBar.progress = 0
-            timer = object : CountDownTimer(5000, 500) {
-                override fun onTick(millisUntilFinished: Long) {
-                    val diff = searchingUserBinding.progressBar.progress + 10
-                    fillProgressBar(diff)
-                }
-
-                override fun onFinish() {
-                    startProgressBarCountDown()
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            withContext(Dispatchers.IO) {
+                try {
+                    val count = CorePrefManager.getIntValue(SEARCHING_SCREEN_COUNT, true, 0)
+                    when (count) {
+                        0 -> {
+                            val json = AppObjectController.getFirebaseRemoteConfig().getString(
+                                SEARCHING_SCREEN_TIPS
+                            )
+                            val listType: Type =
+                                object : TypeToken<List<SearchingTip?>?>() {}.type
+                            val tips: List<SearchingTip> = gson.fromJson(json, listType)
+                            withContext(Dispatchers.Main) {
+                                searchingUserBinding.imageViewPh.text = tips.first().title
+                                adapter.items = tips.first().items
+                                adapter.notifyDataSetChanged()
+                                CorePrefManager.put(SEARCHING_SCREEN_COUNT, 1, true)
+                                searchingUserBinding.executePendingBindings()
+                            }
+                        }
+                        1 -> {
+                            val json = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(SEARCHING_SCREEN_TIPS)
+                            val listType: Type =
+                                object : TypeToken<List<SearchingTip?>?>() {}.type
+                            val tips: List<SearchingTip> = gson.fromJson(json, listType)
+                            withContext(Dispatchers.Main) {
+                                searchingUserBinding.imageViewPh.text = tips.last().title
+                                searchingUserBinding.listOfReason.adapter = SearchUserAdapter(
+                                    tips.last().items,
+                                    this@SearchingUserFragment.requireContext()
+                                )
+                                CorePrefManager.put(SEARCHING_SCREEN_COUNT, 2, true)
+                                searchingUserBinding.executePendingBindings()
+                            }
+                        }
+                        2 -> {
+                            val json = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(
+                                    "$SEARCHING_SCREEN_RULES${
+                                        CorePrefManager.getStringValue(
+                                            CURRENT_COURSE_ID
+                                        )
+                                    }"
+                                ).ifBlank {
+                                    AppObjectController.getFirebaseRemoteConfig()
+                                        .getString(SEARCHING_SCREEN_RULES_DEFAULT)
+                                }
+                            val listType: Type =
+                                object : TypeToken<List<SearchingRule?>?>() {}.type
+                            val rules: List<SearchingRule> = gson.fromJson(json, listType)
+                            withContext(Dispatchers.Main) {
+                                searchingUserBinding.imageViewPh.text = rules.first().title
+                                searchingUserBinding.listOfReason.adapter = SearchUserAdapter(
+                                    rules.first().items,
+                                    this@SearchingUserFragment.requireContext()
+                                )
+                                CorePrefManager.put(SEARCHING_SCREEN_COUNT, 3, true)
+                                searchingUserBinding.executePendingBindings()
+                            }
+                        }
+                        3 -> {
+                            val json = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(SEARCHING_SCREEN_TIPS)
+                            val listType: Type =
+                                object : TypeToken<List<SearchingTip?>?>() {}.type
+                            val tips: List<SearchingTip> = gson.fromJson(json, listType)
+                            val randomIndex = Random.Default.nextInt(0, tips.size)
+                            withContext(Dispatchers.Main) {
+                                searchingUserBinding.imageViewPh.text = tips[randomIndex].title
+                                searchingUserBinding.listOfReason.adapter = SearchUserAdapter(
+                                    tips[randomIndex].items,
+                                    this@SearchingUserFragment.requireContext()
+                                )
+                                CorePrefManager.put(SEARCHING_SCREEN_COUNT, 4, true)
+                                searchingUserBinding.executePendingBindings()
+                            }
+                        }
+                        4 -> {
+                            val json = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(
+                                    "$SEARCHING_SCREEN_RULES${
+                                        CorePrefManager.getStringValue(
+                                            CURRENT_COURSE_ID
+                                        )
+                                    }"
+                                ).ifBlank {
+                                    AppObjectController.getFirebaseRemoteConfig()
+                                        .getString(SEARCHING_SCREEN_RULES_DEFAULT)
+                                }
+                            val listType: Type =
+                                object : TypeToken<List<SearchingRule?>?>() {}.type
+                            val rules: List<SearchingRule> = gson.fromJson(json, listType)
+                            val randomIndex = Random.Default.nextInt(0, rules.size)
+                            withContext(Dispatchers.Main) {
+                                searchingUserBinding.imageViewPh.text = rules[randomIndex].title
+                                searchingUserBinding.listOfReason.adapter = SearchUserAdapter(
+                                    rules[randomIndex].items,
+                                    this@SearchingUserFragment.requireContext()
+                                )
+                                CorePrefManager.put(SEARCHING_SCREEN_COUNT, 3, true)
+                                searchingUserBinding.executePendingBindings()
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
-            timer?.start()
         }
     }
 
-    private fun fillProgressBar(diff: Int) {
-        val animation: ObjectAnimator =
-            ObjectAnimator.ofInt(
-                searchingUserBinding.progressBar,
-                "progress",
-                searchingUserBinding.progressBar.progress,
-                diff
-            )
-        animation.startDelay = 0
-        animation.duration = 250
-        animation.interpolator = AccelerateDecelerateInterpolator()
-        animation.start()
-    }
+    override fun initViewState() {}
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        timer?.cancel()
-        timer = null
-    }
+    override fun setArguments() {}
 
     override fun onResume() {
         super.onResume()
@@ -103,4 +200,6 @@ class SearchingUserFragment : BaseFragment() {
             replaceCallUserFragment()
         }
     }
+
+
 }
