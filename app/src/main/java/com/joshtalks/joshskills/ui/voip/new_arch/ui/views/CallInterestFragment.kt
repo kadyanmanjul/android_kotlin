@@ -62,13 +62,14 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
                 chip.text = item.label
                 chip.id = item.id
                 chip.typeface = Typeface.create(ResourcesCompat.getFont(requireContext(),R.font.opensans_semibold),Typeface.NORMAL)
-                if (isEditCall){
-                    if (item.is_selected == 1){
-                        chip.isChecked = true
-                        selectedInterestSet.add(chip.id)
-                        interestSet.add(chip.id)
-                    }
+
+                if (item.is_selected == 1){
+                    chip.isChecked = true
+                    selectedInterestSet.add(chip.id)
+                    interestSet.add(chip.id)
+                    binding.submitBtn.isEnabled = isEditCall.not()  // if it is not edit call; i.e user had filled from menu, then enable user to submit with pre-selected options
                 }
+
 
                 chip.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked)
@@ -76,7 +77,11 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
                     else
                         interestSet.remove(buttonView.id)
                     // two conditions, selected items should be greater than 1 and should not be the same
-                    binding.submitBtn.isEnabled = (interestSet.size >= minSelection) && interestSet!=selectedInterestSet
+                    if (isEditCall){
+                        binding.submitBtn.isEnabled = (interestSet.size >= minSelection) && interestSet!=selectedInterestSet
+                    }else{
+                        binding.submitBtn.isEnabled = (interestSet.size >= minSelection)
+                    }
 
                 }
                 binding.interestCg.addView(chip)
