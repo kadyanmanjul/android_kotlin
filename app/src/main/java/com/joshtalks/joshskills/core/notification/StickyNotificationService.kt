@@ -38,7 +38,7 @@ class StickyNotificationService : Service() {
         if (!serviceRunning) {
             serviceRunning = true
             val couponCode = intent?.extras?.getString("coupon_code") ?: "ENG10"
-            var endTime = intent?.extras?.getLong("expiry_time") ?: 3600000
+            var endTime = intent?.extras?.getLong("expiry_time") ?: 3600000L
             val title = intent?.extras?.getString("sticky_title") ?: "Do you know?"
             val body = intent?.extras?.getString("sticky_body") ?: "You'll miss an offer if you don't click on this notification"
 

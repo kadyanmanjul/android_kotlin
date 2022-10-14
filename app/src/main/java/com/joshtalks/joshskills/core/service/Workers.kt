@@ -7,8 +7,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.SystemClock
 import android.text.format.DateUtils
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -32,25 +34,24 @@ import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
-import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
-import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.special_practice.utils.COUPON_CODE
+import com.joshtalks.joshskills.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
+import kotlinx.coroutines.*
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 import kotlin.system.exitProcess
-import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import timber.log.Timber
 
@@ -346,6 +347,144 @@ class BackgroundNotificationWorker(val context: Context, workerParams: WorkerPar
     private fun removeNotification() {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(NOTIF_ID)
+    }
+}
+
+class StickyNotificationWorker(val context: Context, val workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
+
+    private val notificationId = (System.currentTimeMillis() and 0xfffffff).toInt()
+    private var shouldUpdate = true
+    private var job: Job? = null
+    private lateinit var notificationBuilder: NotificationCompat.Builder
+
+    override suspend fun doWork(): Result {
+        return try {
+            buildNotification(getPendingIntent())
+
+            val couponCode = workerParams.inputData.getString("coupon_code") ?: "ENG10"
+            var endTime = workerParams.inputData.getLong("expiry_time", 3600000L)
+            val title = workerParams.inputData.getString("sticky_title") ?: "Do you know?"
+            val body = workerParams.inputData.getString("sticky_body") ?: "You'll miss an offer if you don't click on this notification"
+
+            updateJob(title, body, couponCode, endTime)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = AppObjectController.utilsAPIService.updateNotificationStatus(
+                        mapOf(Pair("coupon_code", couponCode))
+                    )
+                    shouldUpdate = true
+                    endTime = (response["expiry_time"] as Double).toLong() * 1000L
+                    updateJob(title, body, couponCode, endTime)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            Result.success()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure()
+        }
+    }
+
+    private fun getPendingIntent(code: String = EMPTY): PendingIntent {
+        val notificationIntent = Intent(context, BuyPageActivity::class.java).apply {
+            putExtra(FLOW_FROM, "Sticky Notification")
+            putExtra(COUPON_CODE, code)
+            putExtra(HAS_NOTIFICATION, true)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        return PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    private fun buildNotification(pendingIntent: PendingIntent): Notification {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannelData.UPDATES
+        notificationBuilder = NotificationCompat.Builder(context, channel.id)
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setOngoing(true)
+            .setAutoCancel(false)
+            .setOnlyAlertOnce(true)
+            .setContentTitle(context.getString(R.string.app_name))
+            .setContentText("Fetching all your notifications!")
+            .setContentIntent(pendingIntent)
+            .setDefaults(Notification.FLAG_ONGOING_EVENT)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            notificationBuilder.priority = NotificationCompat.PRIORITY_HIGH
+        }
+
+        val remoteView = getRemoteView()
+
+        notificationBuilder.setCustomContentView(remoteView)
+        if (Build.VERSION.SDK_INT >= 29) {
+            notificationBuilder.apply {
+                setCustomHeadsUpContentView(remoteView)
+                setCustomBigContentView(remoteView)
+                setCustomContentView(remoteView)
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channel.id,
+                channel.type,
+                NotificationManager.IMPORTANCE_LOW
+            )
+
+            notificationBuilder.setChannelId(channel.id)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+
+        val notification = notificationBuilder.build()
+        notification.flags = Notification.FLAG_NO_CLEAR
+
+        return notification
+    }
+
+    private fun updateNotification(title: String, body: String, coupon: String, time: Float, timeDiff: Long) {
+        if (shouldUpdate) {
+            notificationBuilder.setContentIntent(getPendingIntent(coupon))
+            notificationBuilder.contentView.setTextViewText(R.id.notification_title, title)
+            notificationBuilder.contentView.setTextViewText(R.id.notification_body, body)
+            notificationBuilder.contentView.setChronometer(
+                R.id.notification_timer,
+                SystemClock.elapsedRealtime() + timeDiff,
+                null,
+                true
+            )
+            shouldUpdate = false
+        }
+        notificationBuilder.contentView.setProgressBar(R.id.notification_progress, 100, (100 - (time * 100)).toInt(), false)
+        NotificationManagerCompat.from(context).notify(notificationId, notificationBuilder.build())
+    }
+
+    private fun updateJob(title: String, body: String, couponCode: String, endTime: Long) {
+        job?.cancel()
+        val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
+        val timeDiff = endTime - System.currentTimeMillis().plus(offsetTime)
+        job = CoroutineScope(Dispatchers.Main).launch {
+            while (System.currentTimeMillis().plus(offsetTime) < endTime) {
+                updateNotification(
+                    title = title,
+                    body = body,
+                    coupon = couponCode,
+                    ((endTime - System.currentTimeMillis().plus(offsetTime)).toFloat() / timeDiff),
+                    timeDiff
+                )
+                delay(10000)
+            }
+        }
+    }
+
+    private fun getRemoteView(): RemoteViews {
+        val remoteView = RemoteViews(context.packageName, R.layout.coupon_code_notification)
+        remoteView.setTextViewText(R.id.notification_title, "Sticky Notification")
+        remoteView.setTextViewText(R.id.notification_body, "This is the notification body")
+        remoteView.setChronometerCountDown(R.id.notification_timer, true)
+        remoteView.setProgressBar(R.id.notification_progress, 100, 0, false)
+        return remoteView
     }
 }
 

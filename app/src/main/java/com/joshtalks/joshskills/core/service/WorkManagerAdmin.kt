@@ -152,6 +152,31 @@ object WorkManagerAdmin {
             .cancelAllWorkByTag(BackgroundNotificationWorker::class.java.name)
     }
 
+    fun setStickyNotificationWorker(title: String?, body: String?, coupon: String, expiry: Long) {
+        val data = workDataOf(
+            "sticky_title" to title,
+            "sticky_body" to body,
+            "coupon_code" to coupon,
+            "expiry_time" to expiry,
+        )
+        removeStickyNotificationWorker()
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<StickyNotificationWorker>()
+            .setInputData(data)
+            .setConstraints(constraints)
+            .addTag(StickyNotificationWorker::class.java.name)
+            .build()
+
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
+
+    fun removeStickyNotificationWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .cancelAllWorkByTag(StickyNotificationWorker::class.java.name)
+    }
 
     fun getLanguageChangeWorker(language: String): UUID {
         val data = workDataOf(LANGUAGE_CODE to language)

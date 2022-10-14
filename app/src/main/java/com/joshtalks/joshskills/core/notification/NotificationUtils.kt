@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.client_side.AlarmUtil
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -491,6 +492,13 @@ class NotificationUtils(val context: Context) {
                     serviceIntent.putExtra("sticky_body", notificationObject.contentText)
                     serviceIntent.putExtra("coupon_code", jsonObj.getString("coupon_code"))
                     serviceIntent.putExtra("expiry_time", jsonObj.getLong("expiry_time") * 1000L)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                        WorkManagerAdmin.setStickyNotificationWorker(
+                            title = notificationObject.contentTitle,
+                            body = notificationObject.contentText,
+                            coupon = jsonObj.getString("coupon_code"),
+                            expiry = jsonObj.getLong("expiry_time") * 1000L
+                        )
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                         context.startForegroundService(serviceIntent)
                     else
