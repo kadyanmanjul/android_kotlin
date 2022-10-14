@@ -180,10 +180,11 @@
             android:text="@string/missed_call_label"
             android:textAllCaps="false"
             android:visibility="visible"
-            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/info" />
 
         <androidx.constraintlayout.widget.Group

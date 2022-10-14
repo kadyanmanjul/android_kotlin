@@ -58,10 +58,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
-        binding.nameEditText.apply {
-            requestFocus()
-            performClick()
-        }
+        binding.nameEditText.requestFocus()
         initUI()
     }
 

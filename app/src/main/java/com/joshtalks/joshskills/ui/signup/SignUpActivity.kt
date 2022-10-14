@@ -356,7 +356,7 @@ class SignUpActivity : ThemedBaseActivity() {
     private fun openSignUpOptionsFragment() {
         binding.skip.visibility = View.GONE
         binding.ivHelp.visibility = View.GONE
-        binding.ivPrivacy.visibility = View.VISIBLE
+//        binding.ivPrivacy.visibility = View.VISIBLE
         if (TruecallerSDK.getInstance().isUsable)
             trueCallerLogin()
         supportFragmentManager.commit(true) {
@@ -403,7 +403,7 @@ class SignUpActivity : ThemedBaseActivity() {
     private fun openProfilePicUpdateFragment() {
         binding.skip.visibility = View.VISIBLE
         binding.ivHelp.visibility = View.GONE
-        binding.ivPrivacy.visibility = View.GONE
+//        binding.ivPrivacy.visibility = View.GONE
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(

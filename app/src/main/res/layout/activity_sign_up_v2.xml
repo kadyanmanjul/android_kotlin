@@ -51,11 +51,10 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 android:textColor="#687C90"
                 android:textSize="@dimen/_12ssp"
-                android:layout_marginTop="@dimen/_8sdp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/iv_help"
-                app:layout_constraintTop_toBottomOf="@+id/iv_privacy"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -69,19 +68,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_help_outline" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_privacy"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:background="@drawable/ic_privacy_policy"
-                android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
-                android:padding="@dimen/_4sdp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
