@@ -640,7 +640,6 @@ class NotificationUtils(val context: Context) {
             val lessonId = obj.getInt(LessonActivity.LESSON_ID)
             putExtra(LessonActivity.LESSON_ID, lessonId)
             putExtra(LessonActivity.IS_DEMO, false)
-            putExtra(LessonActivity.IS_NEW_GRAMMAR, obj.getBoolean(LessonActivity.IS_NEW_GRAMMAR))
             putExtra(
                 LessonActivity.IS_LESSON_COMPLETED,
                 obj.getBoolean(LessonActivity.IS_LESSON_COMPLETED)
@@ -667,7 +666,6 @@ class NotificationUtils(val context: Context) {
                 putExtra(LessonActivity.LESSON_ID, 20)
             }
             putExtra(LessonActivity.IS_DEMO, false)
-            putExtra(LessonActivity.IS_NEW_GRAMMAR, false)
             putExtra(LessonActivity.IS_LESSON_COMPLETED, false)
             putExtra(LessonActivity.LESSON_SECTION, SPEAKING_POSITION)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)

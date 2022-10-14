@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SHOW_NEW_GRAMMAR_ENABLED
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -103,7 +104,6 @@ import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -229,10 +229,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         }
         viewModel.isFreeTrail = PrefManager.getBoolValue(IS_FREE_TRIAL)
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
-        lessonIsNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
-            IS_NEW_GRAMMAR,
-            false
-        ) else false
 
         if (intent.hasExtra(IS_LESSON_COMPLETED)) {
             isLesssonCompleted = intent.getBooleanExtra(IS_LESSON_COMPLETED, false)
@@ -403,7 +399,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 titleView.text =
                     getString(R.string.lesson_no, it.lessonNo)
                 lessonNumber = it.lessonNo
-                lessonIsNewGrammar = it.isNewGrammar
+                lessonIsNewGrammar =
+                    it.isNewGrammar && if (lessonNumber == 1) {
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getBoolean(SHOW_NEW_GRAMMAR_ENABLED)
+                    } else true
             }
             MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_OPENED)
                 .addParam(ParamKeys.LESSON_ID, getLessonId)
@@ -1433,7 +1433,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     companion object {
         const val LESSON_ID = "lesson_id"
         const val IS_DEMO = "is_demo"
-        const val IS_NEW_GRAMMAR = "is_new_grammar"
         const val IS_LESSON_COMPLETED = "is_lesson_completed"
         private const val WHATSAPP_URL = "whatsapp_url"
         private const val TEST_ID = "test_id"
@@ -1448,13 +1447,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             whatsappUrl: String? = null,
             testId: Int? = null,
             conversationId: String? = null,
-            isNewGrammar: Boolean = false,
             isLessonCompleted: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             // TODO: Pass Free Trail Status
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)
-            putExtra(IS_NEW_GRAMMAR, isNewGrammar)
             putExtra(IS_LESSON_COMPLETED, isLessonCompleted)
             putExtra(CONVERSATION_ID, conversationId)
             if (isDemo) {

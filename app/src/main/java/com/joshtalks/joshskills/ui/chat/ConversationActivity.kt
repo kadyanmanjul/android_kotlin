@@ -1935,7 +1935,6 @@ class ConversationActivity :
                                     this,
                                     it.lessonId,
                                     conversationId = inboxEntity.conversation_id,
-                                    isNewGrammar = it.isNewGrammar,
                                     isLessonCompleted = it.isLessonCompleted,
                                 ),
                                 LESSON_REQUEST_CODE
