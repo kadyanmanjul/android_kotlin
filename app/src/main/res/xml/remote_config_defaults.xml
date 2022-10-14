@@ -1670,4 +1670,36 @@
         <key>OFFER_FOR_YOU_TEXT</key>
         <value>Offer for you</value>
     </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_TITLE_151</key>
+        <value>Are you sure you want to disconnect the call?</value>
+    </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_MESSAGE_151</key>
+        <value>लगातार calls कट करने पर आपका account suspend हो सकता है।</value>
+    </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_TITLE_1211</key>
+        <value>Are you sure you want to disconnect the call?</value>
+    </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_MESSAGE_1211</key>
+        <value>నిరంతర calls కట్ చేయడం కారణంగా మీ account suspend అవ్వచ్చు .</value>
+    </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_TITLE_1210</key>
+        <value>Are you sure you want to disconnect the call?</value>
+    </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_MESSAGE_1210</key>
+        <value>నిరంతర calls కట్ చేయడం కారణంగా మీ account suspend అవ్వచ్చు .</value>
+    </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_TITLE_1207</key>
+        <value>Are you sure you want to disconnect the call?</value>
+    </entry>
+    <entry>
+        <key>VOIP_DISCONNECT_DIALOG_MESSAGE_1207</key>
+        <value>वारंवार calls डिस्कनेक्ट केल्याने account suspend होऊ शकते</value>
+    </entry>
 </defaults>

@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 import android.app.Activity
 import android.app.Application
 import android.os.Message
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -231,18 +233,26 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     // User Action
     fun disconnectCall(v: View) {
-        Log.d(TAG, "Disconnect Call :Red Button Press")
         CallAnalytics.addAnalytics(
-            event = EventName.DISCONNECTED_BY_RED_BUTTON,
+            event = EventName.RED_BUTTON_PRESSED,
             agoraCallId = PrefManager.getAgraCallId().toString(),
             agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
             extra = PrefManager.getVoipState().name
         )
-        disconnect()
+        Log.d(TAG, "Disconnect Call :Red Button Press")
+        val duration = SystemClock.elapsedRealtime() - VoipPref.getStartTimeStamp()
+        Log.d("Bhaskar", "Duration = $duration")
+        if (duration < 2 * 60 * 1000) {
+            val msg = Message.obtain().apply {
+                what = SHOW_DISCONNECT_DIALOG
+            }
+            singleLiveEvent.value = msg
+        }
+        else
+            disconnect()
     }
 
     fun disconnect() {
-        Log.d(TAG, "disconnect: ")
         repository.disconnectCall()
     }
 

@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.Manifest
-import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
@@ -14,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.PermissionUtils.callingPermissionPermanentlyDeniedDialog
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
@@ -29,20 +31,21 @@ import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.sync.Mutex
 import java.io.File
+import com.joshtalks.joshskills.core.PrefManager as CorePrefManager
 
 private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
     private var isServiceBounded = false
-    var recordingPermissionAlert: AlertDialog? = null
-    var file : File? = null
-    var currentFileName : String? = null
+    var file: File? = null
+    var currentFileName: String? = null
+    lateinit var dialog: AlertDialog
 
-    companion object{
+    companion object {
         var showDialog = true
-        var recordData : Intent? = null
-        var recordResultCode : Int? = null
+        var recordData: Intent? = null
+        var recordResultCode: Int? = null
     }
 
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
@@ -61,7 +64,11 @@ class VoiceCallActivity : BaseActivity() {
                 vm.isPermissionGranted.set(true)
             } else {
                 Log.d(TAG, "requestPermissionsLauncher: not given")
-                Toast.makeText(applicationContext,"Please Allow Permissions to make call",Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    applicationContext,
+                    "Please Allow Permissions to make call",
+                    Toast.LENGTH_LONG
+                ).show()
                 finishAndRemoveTask()
             }
         }
@@ -98,7 +105,7 @@ class VoiceCallActivity : BaseActivity() {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     )
                 )
-            }else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && Build.VERSION.SDK_INT <= Build.VERSION_CODES.R ){
+            } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
                 requestPermissionsLauncher.launch(
                     arrayOf(
                         Manifest.permission.RECORD_AUDIO,
@@ -109,7 +116,7 @@ class VoiceCallActivity : BaseActivity() {
 
                         )
                 )
-            }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 requestPermissionsLauncher.launch(
                     arrayOf(
                         Manifest.permission.RECORD_AUDIO,
@@ -121,7 +128,7 @@ class VoiceCallActivity : BaseActivity() {
                     )
                 )
             }
-        }else{
+        } else {
             callingPermissionPermanentlyDeniedDialog(
                 this,
                 message = R.string.call_start_permission_message
@@ -131,7 +138,10 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun getArguments() {
         vm.source = getSource()
-        vm.callType = Category.values()[intent.getIntExtra(INTENT_DATA_CALL_CATEGORY, PrefManager.getCallCategory().ordinal)]
+        vm.callType = Category.values()[intent.getIntExtra(
+            INTENT_DATA_CALL_CATEGORY,
+            PrefManager.getCallCategory().ordinal
+        )]
 
         Log.d(TAG, "getArguments: ${vm.source}  ${vm.callType}")
 
@@ -165,23 +175,29 @@ class VoiceCallActivity : BaseActivity() {
                 vm.callData[INTENT_DATA_COURSE_ID] = courseId ?: "0"
                 vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
             }
-            Category.FPP ->{
+            Category.FPP -> {
                 val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
                 vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
-                vm.callData[INTENT_DATA_FPP_NAME] = intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
+                vm.callData[INTENT_DATA_FPP_NAME] =
+                    intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
             }
             Category.GROUP -> {
                 val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
                 val groupId = intent?.getStringExtra(INTENT_DATA_GROUP_ID)
                 vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
-                vm.callData[INTENT_DATA_GROUP_ID] = groupId ?: "0"}
+                vm.callData[INTENT_DATA_GROUP_ID] = groupId ?: "0"
+            }
             Category.EXPERT -> {
                 val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
                 vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
-                vm.callData[INTENT_DATA_EXPERT_PRICE_PER_MIN] = intent?.getStringExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN).toString()
-                vm.callData[INTENT_DATA_TOTAL_AMOUNT] = intent?.getStringExtra(INTENT_DATA_TOTAL_AMOUNT).toString()
-                vm.callData[IS_EXPERT_CALLING] = intent?.getStringExtra(IS_EXPERT_CALLING).toString()
-                vm.callData[INTENT_DATA_FPP_NAME] = intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
+                vm.callData[INTENT_DATA_EXPERT_PRICE_PER_MIN] =
+                    intent?.getStringExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN).toString()
+                vm.callData[INTENT_DATA_TOTAL_AMOUNT] =
+                    intent?.getStringExtra(INTENT_DATA_TOTAL_AMOUNT).toString()
+                vm.callData[IS_EXPERT_CALLING] =
+                    intent?.getStringExtra(IS_EXPERT_CALLING).toString()
+                vm.callData[INTENT_DATA_FPP_NAME] =
+                    intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
             }
         }
     }
@@ -192,7 +208,8 @@ class VoiceCallActivity : BaseActivity() {
         val groupId = intent?.getStringExtra(INTENT_DATA_GROUP_ID)
         Log.d(TAG, "getSource: $topicId  $mentorId  $groupId")
 
-        val shouldOpenCallFragment = ((topicId == EMPTY || topicId==null) && mentorId == null && groupId == null )
+        val shouldOpenCallFragment =
+            ((topicId == EMPTY || topicId == null) && mentorId == null && groupId == null)
         return if (shouldOpenCallFragment && PrefManager.getVoipState() == State.IDLE)
             FROM_INCOMING_CALL
         else if (shouldOpenCallFragment)
@@ -245,7 +262,7 @@ class VoiceCallActivity : BaseActivity() {
             when (it.what) {
                 CALL_INITIATED_EVENT -> {
                     when (vm.callType) {
-                        Category.PEER_TO_PEER ->{
+                        Category.PEER_TO_PEER -> {
                             replaceCallUserFragment()
                         }
                         Category.GROUP -> {
@@ -257,6 +274,10 @@ class VoiceCallActivity : BaseActivity() {
                 CLOSE_CALL_SCREEN -> {
                     finishAndRemoveTask()
                 }
+                SHOW_DISCONNECT_DIALOG -> {
+                    showDialog()
+                }
+
                 else -> {
                     if (it.what < 0) {
                         showToast("Error Occurred")
@@ -313,19 +334,19 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        if(isCallingPermissionEnabled(this)) {
-            if(!isServiceBounded) {
+        if (isCallingPermissionEnabled(this)) {
+            if (!isServiceBounded) {
                 vm.boundService(this)
                 isServiceBounded = true
             }
-        }else{
+        } else {
             getPermissions()
         }
     }
 
     override fun onStop() {
         super.onStop()
-        if(isServiceBounded) {
+        if (isServiceBounded) {
             vm.unboundService(this)
             isServiceBounded = false
         }
@@ -341,6 +362,55 @@ class VoiceCallActivity : BaseActivity() {
             super.onBackPressed()
             vm.backPress()
         }
+    }
+
+    private fun showDialog() {
+        if (::dialog.isInitialized)
+            dialog.dismiss()
+        val dialogTitle = AppObjectController.getFirebaseRemoteConfig()
+            .getString(
+                "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TITLE}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
+            )
+        val dialogMsg = AppObjectController.getFirebaseRemoteConfig()
+            .getString(
+                "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TEXT}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
+            )
+        val builder = AlertDialog.Builder(this).apply {
+            setTitle( dialogTitle.ifBlank { getString(R.string.default_disconnect_dialog_title) })
+            setMessage(
+                dialogMsg.ifBlank { getString(R.string.default_disconnect_dialog_text) }
+            )
+            setCancelable(true)
+            setPositiveButton("No") { p0, p1 ->
+                CallAnalytics.addAnalytics(
+                    event = EventName.DISCONNECT_DIALOG_NO_PRESSED,
+                    agoraCallId = PrefManager.getAgraCallId().toString(),
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
+                    extra = PrefManager.getVoipState().name
+                )
+                dialog.dismiss()
+            }
+            setNegativeButton("Yes") { p0, p1 ->
+                CallAnalytics.addAnalytics(
+                    event = EventName.DISCONNECTED_BY_DIALOG,
+                    agoraCallId = PrefManager.getAgraCallId().toString(),
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
+                    extra = PrefManager.getVoipState().name
+                )
+                vm.disconnect()
+            }
+        }
+        dialog = builder.create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
+        }
+        dialog.show()
+        CallAnalytics.addAnalytics(
+            event = EventName.DISCONNECT_DIALOG_SHOWN,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
+            extra = PrefManager.getVoipState().name
+        )
     }
 
 }
