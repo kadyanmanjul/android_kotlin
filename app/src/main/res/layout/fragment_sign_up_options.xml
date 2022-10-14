@@ -265,6 +265,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
+            android:layout_marginEnd="20sp"
             android:onClick="@{()->handler.loginViaTrueCaller()}"
             android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/btn_google"
@@ -279,12 +280,11 @@
             android:id="@+id/btn_google"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_14sdp"
             android:onClick="@{()->handler.loginViaGoogle()}"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_truecaller_login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btn_truecaller_login"
-            app:layout_constraintTop_toTopOf="@+id/btn_truecaller_login"
+            app:layout_constraintTop_toBottomOf="@+id/view_separator"
             app:srcCompat="@drawable/ic_google" />
 
 
