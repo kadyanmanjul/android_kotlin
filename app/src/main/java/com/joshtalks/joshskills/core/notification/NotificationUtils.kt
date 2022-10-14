@@ -201,7 +201,7 @@ class NotificationUtils(val context: Context) {
         action: NotificationAction?,
         actionData: String?
     ): Intent? {
-        if (PrefManager.getBoolValue(IS_USER_LOGGED_IN, isConsistent = true, defValue = false)) {
+        if (PrefManager.getBoolValue(IS_USER_LOGGED_IN, isConsistent = true, defValue = false).not()) {
             return Intent(context, LauncherActivity::class.java)
         }
 
@@ -483,6 +483,23 @@ class NotificationUtils(val context: Context) {
                     }
                 return intent
             }
+            NotificationAction.STICKY_COUPON -> {
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val serviceIntent = Intent(context, StickyNotificationService::class.java)
+                    serviceIntent.putExtra("sticky_title", notificationObject.contentTitle)
+                    serviceIntent.putExtra("sticky_body", notificationObject.contentText)
+                    serviceIntent.putExtra("coupon_code", jsonObj.getString("coupon_code"))
+                    serviceIntent.putExtra("expiry_time", jsonObj.getLong("expiry_time") * 1000L)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        context.startForegroundService(serviceIntent)
+                    else
+                        context.startService(serviceIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null
+            }
             else -> {
                 return null
             }
@@ -623,7 +640,6 @@ class NotificationUtils(val context: Context) {
             val lessonId = obj.getInt(LessonActivity.LESSON_ID)
             putExtra(LessonActivity.LESSON_ID, lessonId)
             putExtra(LessonActivity.IS_DEMO, false)
-            putExtra(LessonActivity.IS_NEW_GRAMMAR, obj.getBoolean(LessonActivity.IS_NEW_GRAMMAR))
             putExtra(
                 LessonActivity.IS_LESSON_COMPLETED,
                 obj.getBoolean(LessonActivity.IS_LESSON_COMPLETED)
@@ -650,7 +666,6 @@ class NotificationUtils(val context: Context) {
                 putExtra(LessonActivity.LESSON_ID, 20)
             }
             putExtra(LessonActivity.IS_DEMO, false)
-            putExtra(LessonActivity.IS_NEW_GRAMMAR, false)
             putExtra(LessonActivity.IS_LESSON_COMPLETED, false)
             putExtra(LessonActivity.LESSON_SECTION, SPEAKING_POSITION)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)

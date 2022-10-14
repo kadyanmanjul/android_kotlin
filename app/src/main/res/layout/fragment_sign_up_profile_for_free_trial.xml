@@ -18,31 +18,6 @@
         android:clickable="true"
         android:focusable="true">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/linearLayoutCompat"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/button_color"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_message_title"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginHorizontal="@dimen/_24sdp"
-                android:gravity="start|center"
-                android:singleLine="true"
-                android:text="@string/registration"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/white" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_name"
             android:layout_width="wrap_content"
@@ -55,7 +30,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.15" />
 
         <androidx.cardview.widget.CardView
@@ -144,7 +119,7 @@
             android:background="@color/transparent_black"
             android:elevation="10dp"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_bar"

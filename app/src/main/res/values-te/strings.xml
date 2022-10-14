@@ -86,13 +86,11 @@
     <string name="complete_payment">పేమెంట్ను పూర్తి చేయండి</string>
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
-    <string name="network_type">నెట్వర్క్ రకం</string>
     <string name="answer_not_submitted">సమాధానాలు సమర్పించబడలేదు</string>
     <string name="answer_submitted">ప్రాక్టీస్ విజయవంతంగా సమర్పించబడింది</string>
     <string name="use_tip">టిప్  ఉపయోగించండి</string>
     <string name="type_answer_label">మీ సమాధానాన్ని టైప్ చేయండి</string>
     <string name="upload_answer_label">మీ సమాధానాన్ని అప్‌లోడ్ చేయండి</string>
-    <string name="find_more_course_hint_ftime">హలో %s, మీరు ఈ కోర్సుతో మరింత ఏదైనా నేర్చుకోవాలనుకుంటే, మొదటి 3 రోజుల్లో మీకు ప్రతి కోర్సుపై 50% తగ్గింపు ఉంటుంది.</string>
     <string name="course_overview">Course Overview</string>
 
     <string name="submit_practise_msz">దయచేసి సమర్పించే ముందు మీ పనిని పూర్తి చేయండి</string>
@@ -185,7 +183,6 @@
     <string name="enter_promo_code">ప్రోమో కోడ్‌ని నమోదు చేయండి</string>
     <string name="select_course">కోర్సును ఎంచుకోండి</string>
     <string name="selected">ఎంచుకున్నారు</string>
-    <string name="course_selected">%s కోర్సు</string>
     <string name="start_quiz">క్విజ్ ప్రారంభించు</string>
     <string name="conversational_practise">సంభాషణ అభ్యాసం</string>
     <string name="tap_to_continue">కొనసాగించడానికి ఇక్కడ నొక్కండి</string>
@@ -215,7 +212,6 @@
     <string name="unlock_class_text">తదుపరి తరగతిని అన్‌లాక్ చేయండి</string>
     <string name="start_now">ఇప్పుడే మొదలు పెట్టండి  </string>
     <string name="get_started">ప్రారంభించు</string>
-    <string name="already_a_subscriber">ఇప్పటికే సబ్‌స్క్రైబర్‌గా ఉన్నారా?</string>
     <string name="subscription_feature_3">మీకు నచ్చితే, 7 రోజుల తర్వాత కేవలం 599కి అప్‌గ్రేడ్ చేసుకోవచ్చు!</string>
     <string name="subscription_feature_2">మీరు 7 రోజుల పాటు యాప్‌లోని అన్ని కోర్సులకు అపరిమిత ప్రాప్యతను పొందవచ్చు</string>
     <string name="subscription_feature_1">ఈ పాస్ మీకు 7 రోజుల పాటు అన్ని కోర్సులకు యాక్సెస్ పూర్తి ఉచితంగా ఇస్తుంది </string>
@@ -247,13 +243,7 @@
     <string name="total_interests_selected">ఎంచుకున్న మొత్తం ఆసక్తి</string>
     <string name="click_to_start_the_course">కోర్సును ప్రారంభించడానికి క్లిక్ చేయండి</string>
     <string name="select_interest">ఇంటరెస్ట్ని ఎంచుకోండి</string>
-    <string name="start_your_7_day_trial">7 రోజుల ఉచిత ట్రయల్ ప్రారంభించండి</string>
-    <string name="more_courses_coming_soon">మరిన్ని తరగతులు త్వరలో రానున్నాయి</string>
-    <string name="tab_tak_practice_karte_rahen">అప్పటి వరకు సాధన కొనసాగించు</string>
-    <string name="stop">ఆపండి</string>
     <string name="practice_with_partner">పార్టనర్ తో ప్రాక్టీస్ చేయండి</string>
-    <string name="rules_promise">పై నిబంధనలకు కట్టుబడి ఉంటానని వాగ్దానం చేస్తున్నాను</string>
-    <string name="call_permission_permanent_message">%sతో ఈ కాల్‌కి సమాధానం ఇవ్వడానికి, మీ మైక్రోఫోన్‌కు Josh Skills యాక్సెస్ ఇవ్వండి. సెట్టింగ్‌లు &gt; అనుమతులు నొక్కండి మరియు మైక్రోఫోన్‌ను ఆన్ చేయండి.</string>
     <string name="time_ago_full_seconds">%1$d సెకన్ల క్రితం</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">%1$d సెకన్ల క్రితం</string>
@@ -294,7 +284,6 @@
     <string name="hint_name_field">మీ పేరు?</string>
     <string name="hint_email_field">ఉదాహరణ abc@xyz.com</string>
     <string name="hint_date_field">ఉదాహరణ 01 జనవరి 1990</string>
-    <string name="interest_count">(%1$d/%2$d)</string>
     <string name="select_language">భాష ఎంపిక</string>
     <string name="personal_information">వ్యక్తిగత సమాచారం</string>
     <string name="app_settings">యాప్ సెట్టింగ్‌లు</string>
@@ -309,9 +298,6 @@
     <string name="on">ఆన్ </string>
     <string name="off">ఆఫ్</string>
     <string name="auto_start_prompt_message">యాప్ నేపథ్యంలో ఉన్నప్పుడు నోటిఫికేషన్‌లను స్వీకరించడానికి దయచేసి ఆటోస్టార్ట్‌ను ప్రారంభించండి</string>
-    <string name="select_course_heading_btn">నేను ఈ వస్తువులను పొందాలనుకుంటున్నాను</string>
-    <string name="start_course_free">Start my Courses For Free</string>
-    <string name="buy_pass">అన్ని కోర్సు యాక్సెస్ పాస్‌ను కొనుగోలు చేయండి</string>
     <string name="hint_text_btn">&lt;u&gt;అన్ని కోర్సు యాక్సెస్ పాస్‌ను కొనుగోలు చేయండి&lt;/u&gt;<u>सभी कोर्स एक्सेस पास खरीदें </u></string>
     <string name="rate_us">మాకు రేట్ చేయండి</string>
     <string name="short_seconds">సెకన్లు</string>
@@ -321,10 +307,6 @@
     <string name="download_quality">డౌన్‌లోడ్ నాణ్యత</string>
     <string name="pending">పరిశీలనలో ఉన్నది</string>
     <string name="submitted">అభ్యర్థించారు</string>
-    <string name="ringing">మోగుతోంది</string>
-    <string name="practise_tip_1">విద్యార్థులతో ఆంగ్లంలో మాట్లాడటం ప్రాక్టీస్ చేయండి</string>
-    <string name="practise_tip_2">అపరిమిత ప్రాక్టీస్ చేయండి కానీ ఆంగ్లంలో మాత్రమే మాట్లాడండి </string>
-    <string name="practise_tip_3">మీ పార్టనర్ ని గౌరవించండి మరియు దయచేసి అసభ్య పదజాలాన్ని ఉపయోగించవద్దు</string>
     <string name="select_country">దేశం ఎంచుకోండి</string>
     <string name="next_class">తదుపరి తరగతి</string>
     <string name="enter_country">దయచేసి దేశంలోకి ప్రవేశించండి</string>
@@ -350,7 +332,6 @@
     <string name="next_class_started">తదుపరి తరగతి ప్రారంభమవుతుంది</string>
     <string name="whatsApp_not_installed">WhatsApp ఇన్స్టాల్ చేయబడలేదు</string>
     <string name="invalid_coupon_code">చెల్లని కూపన్ కోడ్. మళ్ళీ ప్రయత్నించండి</string>
-    <string name="interest_message">మీరు %s ఆసక్తులను ఎంచుకోవచ్చు.</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
     <string name="vocabulary">Vocabulary</string>
@@ -390,7 +371,6 @@
     <string name="okay">Okay</string>
     <string name="exam_info">%1$d ప్రశ్నలు - %2$d నిమిషాలు - %3$d మార్కులు</string>
     <string name="you_can_only_attempt_the_certification_exam">మీరు %1$d పాఠాల తర్వాత మాత్రమే ధృవీకరణ పరీక్షను ప్రయత్నించవచ్చు</string>
-    <string name="did_not_answer_message">మేము వినియోగదారులను కనుగొనలేదు, దయచేసి మళ్లీ ప్రయత్నించండి.</string>
     <string name="rank">Rank</string>
     <string name="how_to_pronounce">How to pronounce:</string>
     <string name="auto_logout_message">మీరు మరొక ఫోన్ నుండి లాగిన్ అయినందున మీరు ఈ ఫోన్ నుండి లాగ్ అవుట్ అయ్యారు.</string>
@@ -407,7 +387,6 @@
     <string name="share_screen_tagline"><b>আমি রোজ</b> speaking practice <b>করছি</b> call<b>\nএ</b> নতুন নতুন মানুষের <b>সাথে।</b></string>
     <string name="share_with_friends_text">আমি English শিখছি, যেখানে Environment পাওয়া নতুন লোকের সাথে কথা বলার। তুমিও ইংলিশ শিখতে পার।</string>
 
-    <string name="free_trial_popup_100_points_header">Josh Skills என்பது வாழ்க்கையில் தீவிரமான மாணவர்களைக் கொண்ட குடும்பமாகும், அவர்கள் கடினமாக உழைத்து முன்னேற விரும்புகிறார்கள். இந்தப் படிப்பில் சேருவதற்கு முன், இந்தப் படிப்பை ஒரு நாள் பயன்படுத்த வேண்டும். இது முற்றிலும் இலவசம். நீங்கள் இன்று 100 புள்ளிகளைப் பெற முயறுங்கள். அடுத்த 24 மணி நேரத்தில் 100 புள்ளிகள் பெற்றால் இலவசமாக முழு கோர்ஸையும் பயன்படுத்தலாம்.</string>
     <string name="tooltip_conversation">మీ క్లాస్‌మేట్స్ ఎవరో మీరు ఇక్కడ నుండి చూడవచ్చు</string>
     <string name="tooltip_lesson_grammar">ఈరోజు ఈ భాగంలో మన వ్యాకరణం స్థాయిని తెలుసుకుందాం</string>
     <string name="tooltip_leaderboard_sotd">ఎవరైతే ఒక రోజులో అందరికంటే ఎక్కువ కష్టపడతారో వారు స్టూడెంట్ ఆఫ్ ది డే అవుతారు</string>

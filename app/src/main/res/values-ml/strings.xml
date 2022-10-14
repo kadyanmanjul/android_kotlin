@@ -86,13 +86,11 @@
     <string name="complete_payment">പേയ്മെന്റ് പൂർത്തിയാക്കുക</string>
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
-    <string name="network_type">Network type</string>
     <string name="answer_not_submitted">ഉത്തരങ്ങൾ സമർപ്പിച്ചിട്ടില്ല</string>
     <string name="answer_submitted">പ്രാക്ടീസ് വിജയകരമായി സമർപ്പിച്ചു</string>
     <string name="use_tip">ടിപ്പ്  ഉപയോഗിക്കുക</string>
     <string name="type_answer_label">നിങ്ങളുടെ ഉത്തരം ടൈപ്പ് ചെയ്യുക</string>
     <string name="upload_answer_label">നിങ്ങളുടെ ഉത്തരം അപ്‌ലോഡ് ചെയ്യുക</string>
-    <string name="find_more_course_hint_ftime">ഹലോ %s, നിങ്ങൾക്ക് ഈ കോഴ്‌സിലൂടെ കൂടുതൽ എന്തെങ്കിലും പഠിക്കണമെങ്കിൽ ആദ്യത്തെ 3 ദിവസങ്ങളിൽ എല്ലാ കോഴ്‌സിനും 50% കിഴിവ് ലഭിക്കും.</string>
     <string name="course_overview">Course Overview</string>
 
     <string name="submit_practise_msz">സബ്മിറ്റ് ചെയ്യുന്നതിന്  മുമ്പ് നിങ്ങളുടെ practices പൂർത്തിയാക്കുക</string>
@@ -185,7 +183,6 @@
     <string name="enter_promo_code">"പ്രമോ കോഡ് നൽകുക"</string>
     <string name="select_course">"കോഴ്‌സ് തിരഞ്ഞെടുക്കുക"</string>
     <string name="selected">"തിരഞ്ഞെടുത്തത്"</string>
-    <string name="course_selected">"%s കോഴ്സ്"</string>
     <string name="start_quiz">"ക്വിസ് ആരംഭിക്കുക"</string>
     <string name="conversational_practise">സംഭാഷണ പരിശീലനം</string>
     <string name="tap_to_continue">"തുടരാൻ ടാപ്പ് ചെയ്യുക"</string>
@@ -214,7 +211,6 @@
     <string name="unlock_class_text">"അടുത്ത ക്ലാസ് തുറക്കുക"</string>
     <string name="start_now">"ഇപ്പോൾ തുടങ്ങുക"</string>
     <string name="get_started">"ആരംഭിക്കുക"</string>
-    <string name="already_a_subscriber">ഇതിനകം ഒരു സബ്സ്ക്രൈബർ ആണോ ?</string>
     <string name="subscription_feature_3">നിങ്ങൾക്കിത് ഇഷ്‌ടമാണെങ്കിൽ, 7 ദിവസത്തിന് ശേഷം വെറും 599-ന് അപ്‌ഗ്രേഡ് ചെയ്യാം!</string>
     <string name="subscription_feature_2">"ആപ്പിലെ എല്ലാ കോഴ്‌സുകളിലേക്കും നിങ്ങൾക്ക് 7 ദിവസത്തേക്ക് പരിധിയില്ലാത്ത ആക്‌സസ് ലഭിക്കും"</string>
     <string name="subscription_feature_1">"ഈ പാസ് നിങ്ങൾക്ക് 7 ദിവസത്തേക്ക് എല്ലാ കോഴ്സുകളിലേക്കും പ്രവേശനം നൽകും - തികച്ചും സൗജന്യം"</string>
@@ -247,14 +243,7 @@
     <string name="total_interests_selected">"തിരഞ്ഞെടുത്ത മൊത്തം താല്പര്യങ്ങൾ "</string>
     <string name="click_to_start_the_course">"ക്ലിക്ക് ചെയ്തു കോഴ്സ് ആരംഭിക്കുക"</string>
     <string name="select_interest">"താൽപ്പര്യം തിരഞ്ഞെടുക്കുക"</string>
-    <string name="start_your_7_day_trial">"7 ദിവസത്തെ സൗജന്യ ട്രയൽ ആരംഭിക്കുക"</string>
-    <string name="more_courses_coming_soon">കൂടുതൽ ക്ലാസുകൾ ഉടൻ വരുന്നു</string>
-    <string name="tab_tak_practice_karte_rahen">"അതുവരെ പരിശീലിക്കുക"</string>
-    <string name="stop">"നിർത്തൂ"</string>
     <string name="practice_with_partner">"ഒരു പങ്കാളിയുമായി പരിശീലിക്കുക"</string>
-    <string name="rules_promise">മേൽപ്പറഞ്ഞ നിയമങ്ങൾ പാലിക്കുമെന്ന് ഞാൻ വാഗ്ദാനം ചെയ്യുന്നു</string>
-    <string name="call_permission_permanent_message">%s ഉപയോഗിച്ച് ഈ കോളിന് ഉത്തരം നൽകാൻ, നിങ്ങളുടെ മൈക്രോഫോണിലേക്ക് Josh Skills-ന് ആക്‌സസ് നൽകുക.സെറ്റിംഗ്സ് &gt;
-  അനുമതികൾ ടാപ്പുചെയ്‌ത് മൈക്രോഫോൺ ഓണാക്കുക.</string>
     <string name="time_ago_full_seconds">"%1$d സെക്കൻഡ് മുമ്പ്"</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d സെക്കൻഡ് മുമ്പ്"</string>
@@ -295,7 +284,6 @@
     <string name="hint_name_field">നിങ്ങളുടെ പേര്?</string>
     <string name="hint_email_field">ഉദാഹരണം abc@xyz.com</string>
     <string name="hint_date_field">ഉദാഹരണം 01 ജനുവരി 1990</string>
-    <string name="interest_count">(%1$d/%2$d)</string>
     <string name="select_language">ഭാഷ തിരഞ്ഞെടുക്കൽ</string>
     <string name="personal_information">സ്വകാര്യ വിവരം</string>
     <string name="app_settings">അപ്ലിക്കേഷൻ സെറ്റിങ്ങ് </string>
@@ -310,9 +298,6 @@
     <string name="on">ഓൺ</string>
     <string name="off">ഓഫ്</string>
     <string name="auto_start_prompt_message">ആപ്പ് ബാക്ഗ്രൗണ്ടിലായിരിക്കുമ്പോൾ നോട്ടിഫിക്കേഷൻസ് ലഭിക്കാൻ ഓട്ടോസ്റ്റാർട് ചെയ്യുക</string>
-    <string name="select_course_heading_btn">"ഞാൻ ഇവയെല്ലാം നേടാൻ ആഗ്രഹിക്കുന്നു"</string>
-    <string name="start_course_free">Start my Courses For Free</string>
-    <string name="buy_pass">എല്ലാ കോഴ്‌സ് ആക്‌സസ് പാസ് വാങ്ങുക</string>
     <string name="hint_text_btn">&lt;u&gt;എല്ലാ കോഴ്‌സ് ആക്‌സസ് പാസ് വാങ്ങുക&lt;/u&gt;<u>सभी कोर्स एक्सेस पास खरीदें </u></string>
     <string name="rate_us">ഞങ്ങളെ റേറ്റുചെയ്യുക</string>
     <string name="short_seconds">സെക്കന്റുകൾ</string>
@@ -322,10 +307,6 @@
     <string name="download_quality">ഡൗൺലോഡ് നിലവാരം</string>
     <string name="pending">പരിഗണനയിലാണ്</string>
     <string name="submitted">submitted</string>
-    <string name="ringing">ringing</string>
-    <string name="practise_tip_1">വിദ്യാർത്ഥികളുമായി ഇംഗ്ലീഷിൽ സംസാരിക്കാൻ പരിശീലിക്കുക</string>
-    <string name="practise_tip_2">അൺലിമിറ്റഡ് പ്രാക്ടീസ് ചെയ്യുക എന്നാൽ ഇംഗ്ലീഷിൽ മാത്രം</string>
-    <string name="practise_tip_3">നിങ്ങളുടെ പങ്കാളിയെ ബഹുമാനിക്കുക, മോശമായ ഭാഷ ഉപയോഗിക്കരുത്</string>
     <string name="select_country">രാജ്യം തിരഞ്ഞെടുക്കുക</string>
     <string name="next_class">അടുത്ത ക്ലാസ്</string>
     <string name="enter_country">ദയവായി രാജ്യത്ത് പ്രവേശിക്കുക</string>
@@ -351,7 +332,6 @@
     <string name="next_class_started">അടുത്ത ക്ലാസ് ആരംഭിക്കുന്നു</string>
     <string name="whatsApp_not_installed">WhatsApp ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല</string>
     <string name="invalid_coupon_code">അസാധുവായ കൂപ്പൺ കോഡ്. വീണ്ടും ശ്രമിക്കൂ</string>
-    <string name="interest_message">നിങ്ങൾക്ക് %s താൽപ്പര്യങ്ങൾ തിരഞ്ഞെടുക്കാം.</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
     <string name="vocabulary">Vocabulary</string>
@@ -391,7 +371,6 @@
     <string name="okay">Okay</string>
     <string name="exam_info">%1$d ചോദ്യങ്ങൾ - %2$d മിനിറ്റ് - %3$d മാർക്ക്</string>
     <string name="you_can_only_attempt_the_certification_exam">%1$d പാഠങ്ങൾക്ക് ശേഷം മാത്രമേ നിങ്ങൾക്ക് സർട്ടിഫിക്കേഷൻ പരീക്ഷയ്ക്ക് ശ്രമിക്കാനാകൂ</string>
-    <string name="did_not_answer_message">ഞങ്ങൾ ഉപയോക്താക്കളെ ആരെയും കണ്ടെത്തിയില്ല, ദയവായി വീണ്ടും ശ്രമിക്കുക.</string>
     <string name="rank">Rank</string>
     <string name="how_to_pronounce">How to pronounce:</string>
     <string name="auto_logout_message">"നിങ്ങൾ മറ്റൊരു ഫോണിൽ നിന്ന് ലോഗിൻ ചെയ്‌തിരിക്കുന്നതിനാൽ ഈ ഫോണിൽ നിന്ന് ലോഗ് ഔട്ട് ചെയ്‌തു."</string>
@@ -408,7 +387,6 @@
     <string name="share_screen_tagline"><b>ഞാൻ ദിവസവും</b> speaking practice <b>ചെയ്യുന്നു</b> call<b>\nലൂടെ</b> പുതിയ പുതിയ <b>ആളുകളോടൊപ്പം.</b></string>
     <string name="share_with_friends_text">ഞാൻ English പഠിക്കുകയാണ്, environment ലഭ്യമാവുന്നിടത്ത്, പുതിയ ആളുകളുമായി സംസാരിക്കാൻ ഇനി  മടിക്കേണ്ടതില്ല, നിങ്ങൾക്കും പഠിക്കാം എന്നോടൊപ്പം.</string>
 
-    <string name="free_trial_popup_100_points_header">ജീവിതത്തിൽ Serious ആയ വിദ്യാർത്ഥികളുടെ കുടുംബമാണ് ജോഷ് Skills .കഠിനാധ്വാനം ചെയ്യാനും മുന്നോട്ട് പോകാനും ആഗ്രഹിക്കുന്നവർ. ഈ കോഴ്‌സിൽ ചേരുന്നതിന് മുമ്പ്, നിങ്ങൾ ഒരു ദിവസം ഈ കോഴ്‌സ് ഉപയോഗിക്കേണ്ടതുണ്ട്. ഇത് തികച്ചും സൗജന്യമാണ്.\\n \\n  ഇംഗ്ലീഷ് പഠിക്കുന്നതിൽ നിങ്ങൾ എത്രത്തോളം Serious ആണെന്ന് ഞങ്ങൾ കാണാൻ ആഗ്രഹിക്കുന്നു. നിങ്ങൾ ഇന്ന് 100 പോയ്ന്റ്സ് നേടാൻ ശ്രമിക്കുക. അടുത്ത 24 മണിക്കൂറിനുള്ളിൽ നിങ്ങൾ 100 പോയ്ന്റ്സ് നേടിയാൽ നിങ്ങൾക്ക് നാളെ കോഴ്‌സിൽ പ്രവേശനം നേടാം.</string>
     <string name="tooltip_conversation">നിങ്ങളുടെ സഹപാഠികൾ ആരൊക്കെയാണെന്നു ഇവിടെ കാണുവാൻ സാധിക്കുന്നതാണ്</string>
     <string name="tooltip_lesson_grammar">ഇന്നത്തെ ഈ ഭാഗത്തിൽ നമുക്ക് നമ്മുടെ grammar level മനസിലാക്കാം.</string>
     <string name="tooltip_leaderboard_sotd">ഒരു ദിവസം ഏറ്റവും അധികം പ്രയത്നിക്കുന്ന STUDENT "student of the day" ആകുന്നതാണ്.</string>

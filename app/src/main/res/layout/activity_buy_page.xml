@@ -100,6 +100,115 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
 
+                        <RelativeLayout
+                            android:id="@+id/free_trial_timer_new_ui"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:layout_marginTop="@dimen/_13sdp"
+                            android:background="@drawable/ic_timer_banner"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginHorizontal="@dimen/_16sdp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/timer_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_10sdp"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:layout_marginBottom="@dimen/_8sdp"
+                                android:textStyle="bold"
+                                android:textColor="#253858"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                                android:text="Unlimited access for 1 year @ just ₹450" />
+
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:id="@+id/time_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/timer_text"
+                                android:layout_marginBottom="@dimen/_12sdp"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/txt_hours"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/_4sdp"
+                                    android:background="@drawable/golden_color_with_solid_transparent"
+                                    android:padding="@dimen/_5sdp"
+                                    android:text="23"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                                    android:textColor="#253858"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/_4sdp"
+                                    android:layout_height="@dimen/_16sdp"
+                                    android:textColor="@color/pure_black"
+                                    android:layout_marginEnd="@dimen/_4sdp"
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@drawable/ic_colon" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/txt_minute"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/_4sdp"
+                                    android:background="@drawable/golden_color_with_solid_transparent"
+                                    android:padding="@dimen/_5sdp"
+                                    android:text="23"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                                    android:textColor="#253858"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/_4sdp"
+                                    android:layout_height="@dimen/_16sdp"
+                                    android:textColor="@color/pure_black"
+                                    android:layout_marginEnd="@dimen/_4sdp"
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@drawable/ic_colon" />
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/txt_second"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/golden_color_with_solid_transparent"
+                                    android:padding="@dimen/_5sdp"
+                                    android:text="23"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                                    android:textColor="#253858"
+                                    android:textStyle="bold" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+                        </RelativeLayout>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/video_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginHorizontal="@dimen/_16sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:visibility="visible"
+                            android:background="@drawable/round_rect_default"
+                            app:cardCornerRadius="@dimen/_8sdp">
+
+                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                                android:id="@+id/video_player"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_154sdp"
+                                android:layout_gravity="center"
+                                android:background="#000"
+                                android:focusable="true"
+                                app:controller_layout_id="@layout/layout_live_player_controller"
+                                app:layout_constraintDimensionRatio="1.78"
+                                tools:visibility="visible" />
+                        </com.google.android.material.card.MaterialCardView>
+
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/course_type_container"
                             android:layout_width="match_parent"
@@ -188,14 +297,45 @@
                             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                             app:spanCount="2" />
 
+                        <View
+                            android:id="@+id/view9"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:visibility="@{vm.isKnowMoreCourse().isEmpty() ? View.GONE : View.VISIBLE}"
+                            android:background="@drawable/dotted_line"
+                            android:backgroundTint="@color/colorAccent" />
+
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/course_desc_list"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginTop="@dimen/_20sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
                             android:orientation="vertical"
                             android:visibility="visible" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/btnKnowMoreAboutCourse"
+                            android:layout_width="@dimen/_195sdp"
+                            android:layout_height="@dimen/_28sdp"
+                            android:gravity="center_horizontal"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:layout_gravity="center_horizontal"
+                            android:stateListAnimator="@null"
+                            android:paddingTop="@dimen/_5sdp"
+                            android:textAlignment="center"
+                            android:visibility="@{vm.isKnowMoreCourse().isEmpty() ? View.GONE : View.VISIBLE}"
+                            android:text="@{vm.isKnowMoreCourse() + ` >>`}"
+                            android:layout_marginTop="@dimen/_24sdp"
+                            android:textStyle="bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/colorAccent"
+                            android:textAllCaps="false"
+                            app:rippleColor="@color/white"
+                            />
 
                         <View
                             android:id="@+id/view3"
@@ -273,9 +413,11 @@
                         android:id="@+id/shimmer4_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
                         android:orientation="vertical"
                         android:visibility="@{vm.isCouponApiCall ? View.GONE : View.VISIBLE}"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/shimmer4">
 
@@ -367,13 +509,24 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/shimmer5" >
 
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{vm.priceText}"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:textAlignment="center"
+                            android:textStyle="bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            />
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/course_price_list"
                             onPriceItemClick="@{vm.onItemPriceClick}"
                             priceListAdapter="@{vm.priceListAdapter}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_13sdp"
                             android:orientation="vertical"
                             android:visibility="@{vm.isPriceApiCall ? View.GONE : View.VISIBLE}"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -445,7 +598,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.core.widget.NestedScrollView>
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/payment_container"
@@ -522,7 +674,7 @@
                     android:elevation="@dimen/_10sdp"
                     app:layout_constraintEnd_toEndOf="@id/video_view"
                     app:layout_constraintTop_toTopOf="@id/video_view"
-                    app:srcCompat="@drawable/ic_cancel_black_24dp__4__1" />
+                    app:srcCompat="@drawable/ic_cancel_black" />
 
                 <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
                     android:id="@+id/video_view"

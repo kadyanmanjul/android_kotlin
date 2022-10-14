@@ -1016,22 +1016,23 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 PAYMENT_MOBILE_NUMBER,
                 prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
             )
-        if (isEcommereceEventFire && (paymentManager.getAmount() > 0) && paymentManager.getJustPayOrderId()
-                .isNotEmpty() && viewModel.getPaymentTestId()
-                .isNotEmpty()
-        ) {
-            isEcommereceEventFire = false
-            if (viewModel.getCourseDiscountedAmount() <= 0) {
-                return
-            }
-            MarketingAnalytics.coursePurchased(
-                BigDecimal(paymentManager.getAmount()),
-                true,
-                testId = freeTrialTestId,
-                courseName = "English Course",
-                juspayPaymentId = paymentManager.getJustPayOrderId()
-            )
-        }
+//        if (isEcommereceEventFire && (paymentManager.getAmount() > 0) && paymentManager.getJustPayOrderId()
+//                .isNotEmpty() && viewModel.getPaymentTestId()
+//                .isNotEmpty()
+//        ) {
+//            isEcommereceEventFire = false
+//            if (viewModel.getCourseDiscountedAmount() <= 0) {
+//                return
+//            }
+//        }
+
+        MarketingAnalytics.coursePurchased(
+            BigDecimal(paymentManager.getAmount()),
+            true,
+            testId = freeTrialTestId,
+            courseName = "English Course",
+            juspayPaymentId = paymentManager.getJustPayOrderId()
+        )
 
         uiHandler.post {
             PrefManager.put(IS_PAYMENT_DONE, true)

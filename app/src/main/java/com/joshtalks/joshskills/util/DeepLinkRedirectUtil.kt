@@ -224,9 +224,8 @@ object DeepLinkRedirectUtil {
             LessonActivity.getActivityIntent(
                 activity,
                 lessonId = lesson.id,
-                isNewGrammar = lesson.isNewGrammar,
-                isLessonCompleted = lesson.status == LESSON_STATUS.CO,
                 conversationId = conversationId,
+                isLessonCompleted = lesson.status == LESSON_STATUS.CO,
             ).apply {
                 if (speakingSection) putExtra(LessonActivity.LESSON_SECTION, SPEAKING_POSITION)
                 sendPendingIntentForActivityList(

@@ -400,13 +400,6 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".ui.newonboarding.OnBoardingActivityNew"
-            android:alwaysRetainTaskState="true"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
             android:name=".ui.settings.SettingsActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
@@ -805,6 +798,10 @@
 <!--            android:name=".core.service.BackgroundService"-->
 <!--            android:enabled="true"-->
 <!--            android:exported="false" />-->
+        <service
+            android:name=".core.notification.StickyNotificationService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

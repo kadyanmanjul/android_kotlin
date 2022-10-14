@@ -406,7 +406,7 @@
                             android:layout_marginEnd="@dimen/_minus12sdp"
                             android:elevation="@dimen/_10sdp"
                             android:onClick="@{vm.closeIntroVideoPopUpUi}"
-                            android:src="@drawable/ic_cancel_black_24dp__4__1"
+                            android:src="@drawable/ic_cancel_black"
                             app:layout_constraintEnd_toEndOf="@id/video_view"
                             app:layout_constraintTop_toTopOf="@id/video_view" />
 

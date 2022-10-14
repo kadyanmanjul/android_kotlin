@@ -14,8 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_7sdp"
-        android:elevation="@dimen/_60sdp"
-        app:cardElevation="@dimen/_6sdp"
         app:strokeColor="@color/colorAccent"
         app:strokeWidth="@dimen/_1sdp"
         app:cardCornerRadius="@dimen/_6sdp">

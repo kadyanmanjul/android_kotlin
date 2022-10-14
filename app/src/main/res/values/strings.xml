@@ -11,8 +11,6 @@
     <string name="not_now">Not Now</string>
     <string name="not_now_underline"><u>Not Now</u></string>
     <string name="settings" translatable="false">Settings</string>
-    <string name="quiz_game" translatable="false">Quiz Game</string>
-    <string name="build_your_team" translatable="false">Build your team</string>
     <string name="header_congratulation">Congratulations</string>
 
     <string name="name">Name</string>
@@ -20,7 +18,6 @@
 
     <string name="gallery">Gallery</string>
     <string name="audio">Audio</string>
-
     <string name="camera">Camera</string>
 
     <string name="short_seconds">sec</string>
@@ -57,7 +54,7 @@
     <string name="buy_course" translatable="false">Buy Course</string>
     <string name="start_learning">Start Learning</string>
     <string name="upgrade">Upgrade</string>
-    <string name="upgrade_now">Upgrade Now</string>
+    <string name="upgrade_now" translatable="false">Upgrade Now</string>
     <string name="done">Done</string>
 
 
@@ -76,12 +73,10 @@
     <string name="confirm_number">Confirm your number</string>
     <string name="send_otp">Send OTP</string>
 
-
     <string name="or">OR</string>
 
     <string name="no_new_message_arrive">No new classes</string>
     <string name="something_went_wrong">Oops! Something Went Wrong</string>
-
 
     <string name="time_ago_now">few moments ago</string>
     <string name="time_ago_full_seconds">%1$d seconds ago</string>
@@ -135,7 +130,6 @@
     <string name="complete_payment">Complete Payment</string>
 
     <string name="bill_detail_header">Bill Details</string>
-    <string name="network_type">Network Type</string>
 
     <string name="answer_not_submitted">Answer not submitted</string>
     <string name="answer_submitted">Practice Successfully Submitted</string>
@@ -143,9 +137,6 @@
 
     <string name="type_answer_label">Type your answer</string>
     <string name="upload_answer_label">Upload your answer</string>
-
-
-    <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino mai aapke paas har course pe %s off hai </string>
     <string name="course_overview">Course Overview</string>
     <string name="recording_short" translatable="false">The recording should be more than one second!</string>
     <string name="submit_practise_msz">Please complete your task before Submitting</string>
@@ -208,12 +199,9 @@
     <string name="tip_discount">%s OFF</string>
     <string name="order_summary">Order Summary</string>
     <string name="apply_coupon">Apply Coupon</string>
-    <string name="coupon_applied" translatable="false">Coupon Applied</string>
     <string name="be_calm">Be Calm</string>
     <string name="dont_close">&amp; don\'t close this window</string>
     <string name="processing">We are processing your payment.\n This may take some time</string>
-
-
     <string name="bilkul_nahi">No</string>
 
     <!-- Signup V2 Screen  -->
@@ -262,7 +250,6 @@
     <string name="show_details">Show Details</string>
     <string name="select_course">Select Course</string>
     <string name="selected">Selected</string>
-    <string name="course_selected">%s Courses</string>
     <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
     <string name="help_answer">Was this answer helpful?</string>
     <string name="go_home_text">Go home</string>
@@ -324,7 +311,6 @@
     <string name="unlock_class_text">Unlock Next Class</string>
     <string name="start_now">Start Now</string>
     <string name="get_started">Get Started</string>
-    <string name="already_a_subscriber">Already a subscriber?</string>
     <string name="subscription_feature_3">Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</string>
     <string name="subscription_feature_2">7 dino ke liye aap app ke saare courses unlimited access kar sakte hai</string>
     <string name="subscription_feature_1">ye pass aapko saare courses ka access dega for 7 days - completely free</string>
@@ -360,18 +346,8 @@
     <string name="hint_date_field">e.g. 01 Jan 1990</string>
     <string name="total_interests_selected">Total interests selected</string>
     <string name="click_to_start_the_course">Click to start the course</string>
-    <string name="interest_count">(%1$d/%2$d)</string>
     <string name="select_interest">Select Interest</string>
-    <string name="start_your_7_day_trial">Start Your 7 Day Free Trial</string>
-    <string name="more_courses_coming_soon">More Courses Coming Soon</string>
-    <string name="tab_tak_practice_karte_rahen">tab tak practice karte rahe</string>
-
-    <string name="stop">Stop</string>
     <string name="practice_with_partner">Practice With Partner</string>
-    <string name="rules_promise">I promise to follow the above rules</string>
-
-    <string name="call_permission_permanent_message">To answer this call from %s , allow Josh Skills access to your microphone . Tap Settings > Permissions, and turn Microphone on .</string>
-
 
     <string name="clear_all_media" translatable="false">Clear All Media</string>
     <string name="download_quality">Download Quality</string>
@@ -394,20 +370,13 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="auto_start_prompt_message">Please enable Autostart to receive notifications when the app is in the background</string>
-    <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
-    <string name="start_course_free">Start my Courses For Free</string>
-    <string name="buy_pass">Buy All Course Access Pass</string>
 
     <string name="hint_text_btn"><u>OK got it </u></string>
     <string name="rate_us">Rate Us</string>
     <string name="pending">Pending</string>
     <string name="submitted">Submitted</string>
-    <string name="ringing">Ringing</string>
     <string name="p2p_notification_setting" translatable="false">Speaking partner notifications</string>
     <string name="p2p_proximity_setting" translatable="false">Proximity Sensor</string>
-    <string name="practise_tip_1">English mei baat karne ki practice karo students ke saath</string>
-    <string name="practise_tip_2">Kariye Unlimited Practice, but only in English</string>
-    <string name="practise_tip_3">Apne Partner ki respect karein aur abusive language na use karein</string>
     <string name="select_country">Select country</string>
     <string name="next_class">Next Class</string>
     <string name="ex_referralcode">eg. L3ARN</string>
@@ -432,7 +401,6 @@
     <string name="next_class_started">Next Class Started</string>
     <string name="whatsApp_not_installed">WhatsApp not Installed</string>
     <string name="invalid_coupon_code">Invalid Coupon Code. Try Again</string>
-    <string name="interest_message">You can select upto %s interests.</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
     <string name="vocabulary">Vocabulary</string>
@@ -471,22 +439,12 @@
     <string name="call_back" translatable="false">CALL BACK</string>
     <string name="finding_practise_partner" translatable="false">Finding a Practice Partner</string>
     <string name="searching_info_text" translatable="false">1. Make sure you do longer calls, English bolne se aati hai. \n2. Strict action will be taken against Inappropriate behavior. \n3. Frequent short calls may lead to calling suspension.</string>
-    <string name="rating" translatable="false">Rating</string>
-    <string name="rate_your_practise_partner" translatable="false">Rate Your  Practice Partner</string>
-    <string name="confidence" translatable="false">Confidence: </string>
-    <string name="pronunciation" translatable="false">Pronunciation: </string>
-    <string name="eagerness_to_learn" translatable="false">Eagerness to Learn: </string>
-    <string name="was_the_respect_fullness" translatable="false">Was Respectful: </string>
-    <string name="submit_feedback" translatable="false">Submit Feedback</string>
     <string name="speak_practise_title" translatable="false">Welcome to \n Practice with Partner</string>
     <string name="today_topic" translatable="false">Today\'s Topic</string>
     <string name="call_practice_partner" translatable="false">Call Practice Partner</string>
-    <string name="call_partner" translatable="false">Call Partner</string>
     <string name="pp_message" translatable="false">In this practice you have to speak to a practice partner for %s minute</string>
     <string name="pp_messages" translatable="false">In this practice you have to speak to a practice partner for %s minutes</string>
-    <string name="pp_calling" translatable="false">Calling Favorite Practice Partner</string>
 
-    <string name="speaking_time_msz" translatable="false">Speaking time\n %s minutes</string>
     <string name="spoke_with" translatable="false">Spoke for %s minutes with  %s</string>
 
     <string name="redo_quiz">Redo Quiz</string>
@@ -531,15 +489,6 @@
     <string name="minutes_history" translatable="false">Minutes Spoken History</string>
     <string name="go_to_profile" translatable="false">Go to Profile</string>
 
-    <!-- _______________________CometChat Strings________________________-->
-    <string name="search" translatable="false">Search</string>
-
-    <!-- Preference Titles -->
-
-    <!-- Messages Preferences -->
-
-    <!-- Sync Preferences -->
-
     <string name="loremIpsum" translatable="false">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
         Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer
         took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,
@@ -551,7 +500,6 @@
         took a galley of type and scrambled it to make a type specimen book.</string>
     <string name="grant_storage_permission" translatable="false">Please grant storage permission from app setting</string>
     <string name="call" translatable="false">Call</string>
-    <string name="exit" translatable="false">Exit</string>
     <string name="incorrect" translatable="false">Incorrect</string>
     <string name="add" translatable="false">Add</string>
     <string name="group_title" translatable="false">Groups</string>
@@ -563,7 +511,6 @@
     <string name="exam_info">%1$d Questions - %2$d Minutes - %3$d Marks</string>
     <string name="you_can_only_attempt_the_certification_exam">You can only attempt the Certification exam after %1$d lessons</string>
     <string name="exam_title" translatable="false">%s Certification Exam</string>
-    <string name="did_not_answer_message">We did not find any user, please retry.</string>
     <string name="max_unread_count" translatable="false">99+</string>
     <string name="reading_practice" translatable="false">Reading Practice</string>
     <string name="reading_sub_title" translatable="false">Neeche diye gai lino ko padhe</string>
@@ -592,12 +539,6 @@
     <string name="closed_group_desc" translatable="false">Ye group ek closed group h. Iss group ko join karne k liye Admin ko aapko Allow karna hoga. En Questions k answers de dijiye taki aapko group  me allow kiya jaye </string>
 
     <string name="favorite_p2p_title" translatable="false">Favorite Practice Partner Calling</string>
-    <string name="p2p_title" translatable="false">Practice Partner calling</string>
-    <string name="group_p2p_title" translatable="false">Call From Group</string>
-    <string name="p2p_subtitle" translatable="false">Speaking Practice</string>
-    <string name="reconnecting" translatable="false">Reconnecting</string>
-    <string name="hold_call" translatable="false">Call On Hold</string>
-    <string name="call_start_permission_message_rational" translatable="false">Please allow permissions on your device settings to start speakingGo to settings --> permissions and enable Microphone, Phone and Storage </string>
     <string name="call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone, Phone and Storage </string>
     <string name="demo_call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone, Phone and Storage </string>
     <string name="spoke_for_minute" translatable="false">Spoke for %1$s </string>
@@ -610,10 +551,7 @@
     <string name="mute" translatable="false">Mute</string>
     <string name="speaker" translatable="false">Speaker</string>
     <string name="call_favorite_practice_partner" translatable="false">Call Favorite Practice Partner</string>
-    <string name="topic" translatable="false">Topic</string>
     <string name="student" translatable="false">Student</string>
-    <string name="yes_excited" translatable="false">Yes, I am excited</string>
-    <string name="existing_user" translatable="false">Existing User?</string>
     <string name="call_engage_record_message">Can\'t record practice while on a call</string>
     <string name="call_engage_initiate_call_message">Can\'t initiate a new call while already on a call</string>
     <string name="tap_to_return_to_call" translatable="false">Tap to return to call</string>
@@ -652,8 +590,6 @@
     <string name="label_vocab_spotlight_2" translatable="false">Appreciate का सही उच्चारण क्या है यहां से देखे</string>
     <string name="label_vocab_spotlight_3" translatable="false">अब ये तीन वाक्यों को साथ में पढ़ कर बोले</string>
     <string name="label_reading_spotlight" translatable="false">इस भाग में हम अपनी रीडिंग की प्रैक्टिस करेंगे</string>
-    <string name="price" translatable="false">MRP: <strike>%s</strike></string>
-    <string name="savings" translatable="false"><i>Save %s</i></string>
     <string name="label_become_senior_student" translatable="false"><u>How to become a Senior Student?</u></string>
     <string name="label_become_senior_student2" translatable="false"><u>Become a Senior Student</u></string>
     <string name="label_senior_student" translatable="false">%sis a Senior Student</string>
@@ -663,42 +599,8 @@
     <string name="my_day_review_title" translatable="false">"My day in review"</string>
 
     <string name="ignore_ui_msg" translatable="false">Element only for UI purpose</string>
-    <string name="play_with_favourite" translatable="false">Play with\nFavourite\nPractice \nPartner</string>
-    <string name="play_with_random" translatable="false">Play with\nRandom\nPlayer</string>
-    <string name="favourite_practice_partner" translatable="false">Favourite Practice Partners</string>
-
-    <string name="your_team_mate" translatable="false">Harsh is your team mate</string>
-    <string name="make_new_te" translatable="false">Make New Team</string>
-    <string name="play_again_" translatable="false">Play Again\nwith Opponent</string>
-    <string name="has_invited" translatable="false">has invited you to play</string>
-    <string name="friend_request" translatable="false">Sent you friend request</string>
-
-    <string name="can_t_play_" translatable="false">Can"'"t Play Right Now</string>
-    <string name="alreadt_start" translatable="false">Already started the game</string>
-    <string name="accept" translatable="false">Accept</string>
-
-    <string name="match_bonus" translatable="false">Winning \Bonus </string>
-    <string name="opponent_wo" translatable="false">Opponent Won!</string>
-
-    <string name="round_1" translatable="false">ROUND</string>
-    <string name="get_ready_" translatable="false">Get Ready!</string>
-
-    <string name="cornelius_f" translatable="false">Cornelius uygurytg fuygvuirycv fhjvbuo</string>
-    <string name="arthur_weas" translatable="false">Arthur Weasely</string>
-    <string name="professor_m" translatable="false">Professor\nMcGonagall</string>
-    <string name="albus_dumbl" translatable="false">Albus Dumbledore</string>
-    <string name="user_name" translatable="false">Sagar</string>
-    <string name="fiften" translatable="false">15</string>
     <string name="zero" translatable="false">0</string>
 
-    <string name="lets_play_again" translatable="false">Click on Play Again to play another game with</string>
-    <string name="winner" translatable="false">Winner!</string>
-    <string name="team_2" translatable="false">Team 2</string>
-    <string name="team_1" translatable="false">Team 1</string>
-    <string name="match_score" translatable="false">Match\n Score</string>
-    <string name="score_text" translatable="false">110</string>
-    <string name="bonus_marks" translatable="false">5</string>
-    <string name="total" translatable="false">Total</string>
     <string name="total_students_enrolled" translatable="false">%s students enrolled</string>
     <string name="edit_profile" translatable="false">Edit Profile</string>
     <string name="no_awards_others" translatable="false">%s has not won any awards yet.\n\nIf you ever connect with them motivate them and let them know that they can do it</string>
@@ -733,7 +635,6 @@
     <string name="education_occupation_text" translatable="false">Education and Occupation</string>
     <string name="education_text" translatable="false">Education</string>
     <string name="occupation_text" translatable="false">Occupation</string>
-    <string name="see_course_list" translatable="false">See course list</string>
     <string name="record_video" translatable="false">Record Video</string>
     <string name="record_and_submit_video" translatable="false">Record your video and submit the practice</string>
     <string name="submit_your_practice" translatable="false">Submit your practice</string>
@@ -760,8 +661,6 @@
     <string name="spoke_minutes" translatable="false">Spoke for 20 minutes</string>
     <string name="recording_start_permission_message" translatable="false">"To start recording video, please allow permission"</string>
 
-    <string name="download_syllabus_23_pages" translatable="false">Download Syllabus<b> • </b>15 pages</string>
-    <string name="the_ultimate_spoken_english_n_course_syllabus" translatable="false">The Ultimate Spoken English \nCourse Syllabus</string>
     <string name="achieve_100_points_to_buy" translatable="false">Achieve 100 points to buy</string>
     <string name="select_friend" translatable="false">Select friends</string>
     <string name="total_help_me" translatable="false">You have helped 4 people start learning English</string>
@@ -777,9 +676,6 @@
     <string name="start_learning_english" translatable="false">start learning English</string>
     <string name="course_restart_success" translatable="false">Course Restarted Successfully</string>
     <string name="course_restart_fail" translatable="false">Course Can Not Restart</string>
-    <string name="help_learning" translatable="false">You have helped 4 people start learning English</string>
-    <string name="free_trial_dialog_ji_haan_text" translatable="false">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\\n  \\nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</string>
-    <string name="achieve_100_points_first" translatable="false">Achieve 100 points first</string>
     <string name="language_text" translatable="false">
         <font color="@android:color/black">I want to</font>
         <font color="#107BE5">speak English confidently</font>
@@ -844,7 +740,6 @@
     <string name="year_format" translatable="false">YYYY</string>
     <string name="allowed_name_characters" translatable="false">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM</string>
     <string name="allowed_name_characters_with_number" translatable="false">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM1234567890</string>
-    <string name="discussion_topic" translatable="false">Discussion Topic</string>
 
     <string name="submit_report_btn" translatable="false">Submit</string>
 
@@ -945,7 +840,6 @@
         <item>West Bengal</item>
     </string-array>
 
-    <string name="free_trial_popup_100_points_header">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\n  \nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</string>
     <string name="tooltip_conversation">आपके सहपाठी कौन है आप यहाँ से देख सकते है</string>
     <string name="tooltip_lesson_grammar">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
     <string name="tooltip_leaderboard_sotd">जो student एक दिन में सबसे ज़्यादा मेहनत करता है वह Student of the Day बनता है</string>
@@ -959,7 +853,6 @@
     <string name="referral_share_text">"Mai Bharat 🇮🇳 ke best teachers se Spoken English aur Personality Development seekh raha hu. Mere saath seekhna abhi shuru karo 💪. Ye lo meri taraf se tumhe ₹** OFF: Use my code ****. Download the app by clicking on the link"</string>
     <string name="free_trial_popup_for_icp" translatable="false">यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹799 में खरीद सकते हैं\n  \nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
     <string name="send_fpp_text" translatable="false">Send Favorite Practice Partner request</string>
-    <string name="dialog_record_call_text" translatable="false"><u>A copy of recording will also get saved in your phone</u></string>
     <string name="btn_share_on_whatsapp" translatable="false">Share on Whatsapp</string>
     <string name="btn_share_on_facebook" translatable="false">Share on Facebook</string>
     <string name="btn_share_on_instagram" translatable="false">Share on Instagram</string>
@@ -995,14 +888,7 @@
     <string name="state" translatable="false">State</string>
     <string name="_6_digits_pin_code" translatable="false">6 digits PIN Code</string>
 
-    <string name="recording_text" translatable="false"> of the game will get</string>
-    <string name="recording_text_after" translatable="false">Waiting for your partner to start the game</string>
-    <string name="guess_the_word" translatable="false">Guess The Word</string>
-    <string name="describe_your_word_without_saying_it_and_your_partner_will_guess_it" translatable="false">निचे दिए गए word को बोलना नहीं है, hint देकर समझाना है। आपके practice partner word को guess करेंगे।</string>
-    <string name="your_word" translatable="false">My Word</string>
-    <string name="stars" translatable="false">*********</string>
     <string name="video_error" translatable="false">Sorry unable to process your video please retry after some time</string>
-    <string name="wait_for_your_partner_to_click_next" translatable="false">Wait for your partner to click next</string>
     <string name="image_button_to_move_left" translatable="false">Image button to move left</string>
     <string name="image_button_to_move_right" translatable="false">Image button to move right</string>
     <string name="warning" translatable="false">WARNING</string>
@@ -1012,25 +898,21 @@
         यह application उन serious students के लिए बनाई गयी है जिनके दिल में Josh है English सीखने का और आगे बढ़ने का.
         अगर आपकी future की calls भी बहुत छोटी जाती हैं, तो आपकी calling को बंद भी किया जा सकता है.\n
         \n Thank you. Best of luck! </string>
-    <string name="you_have_reached_limit_freetrial">You have reached your calling limit in Free Trial</string>
-    <string name="buy_course_to_continue_calling"><u>Buy course to continue calling</u></string>
-    <string name="grammar_completed">Grammar Completed!</string>
-    <string name="call_with_expert">Call With Expert</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="available_balance">Available Balance</string>
-    <string name="enter_amount_in_inr">Select Amount in INR</string>
-    <string name="proceed">Proceed</string>
-    <string name="your_recharge_is_successful">Your Recharge is successful!</string>
-    <string name="continue_call_with_suman_sharma">%1$s Continue call with %1$s?</string>
-    <string name="talk_to_expert">Talk To Expert</string>
-    <string name="add_money_to_wallet">Add money to wallet</string>
-    <string name="added_to_your_account">%1$s Added To Your Account</string>
-    <string name="wallet_gift_description">%1$s gift के तौर पर मैं आपको ₹%2$s दे रहा हूँ ताकि आप अपनी पहली Expert Call बिल्कुल मुफ्त में try कर पायें</string>
-    <string name="thankyou_sir">Thank you Sir</string>
-    <string name="minimum_balance_of_5_minutes_inr_210_0_is_required_to_start_call_with_expert">Minimum balance of 5 minutes (INR %1$s) is required to start call with %2$s</string>
-    <string name="recharge_now">Recharge Now</string>
-    <string name="tip_90_users_recharge_for_10_mins_or_more">Tip: 90% users recharge for 10 mins or more.</string>
+    <string name="you_have_reached_limit_freetrial" translatable="false">You have reached your calling limit in Free Trial</string>
+    <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
+    <string name="grammar_completed" translatable="false">Grammar Completed!</string>
+    <string name="call_with_expert" translatable="false">Call With Expert</string>
+    <string name="available_balance" translatable="false">Available Balance</string>
+    <string name="enter_amount_in_inr" translatable="false">Select Amount in INR</string>
+    <string name="proceed" translatable="false">Proceed</string>
+    <string name="your_recharge_is_successful" translatable="false">Your Recharge is successful!</string>
+    <string name="talk_to_expert" translatable="false">Talk To Expert</string>
+    <string name="added_to_your_account" translatable="false">%1$s Added To Your Account</string>
+    <string name="wallet_gift_description" translatable="false">%1$s gift के तौर पर मैं आपको ₹%2$s दे रहा हूँ ताकि आप अपनी पहली Expert Call बिल्कुल मुफ्त में try कर पायें</string>
+    <string name="thankyou_sir" translatable="false">Thank you Sir</string>
+    <string name="minimum_balance_of_5_minutes" translatable="false">Minimum balance of 5 minutes (INR %1$s) is required to start call with %2$s</string>
+    <string name="recharge_now" translatable="false">Recharge Now</string>
+    <string name="tip_90_users_recharge_for_10_mins_or_more" translatable="false">Tip: 90% users recharge for 10 mins or more.</string>
     <string name="success_payment_text" translatable="false">Payment Successful</string>
     <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting \n (Note : Please Restart your App)</string>
     <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
@@ -1038,8 +920,6 @@
     <string name="processing_payment_text" translatable="false">Processing Payment</string>
     <string name="processing_payment_desc" translatable="false">Your payment confirmation is taking longer than usual. Status will be updated within 3-4 hours. If unsuccessful,  any money deducted will be refunded within 3-5 working days\n\nआपकी payment की confirmation ज़रूरत से थोड़ा ज़्यादा time ले रही हैं 3-4 hours में आपकी payment का status update कर दिया जायेगा अगर payment unsuccessful रहती हैं, तो वह amount आप तक 3-5 working days में पहुँच जायेगा आप दोबारा try कर सकते है \n</string>
     <string name="failed_payment_call_text" translatable="false">In case of any queries contact support:</string>
-    <string name="turn_on_speaker" translatable="false">Turn on speaker</string>
-    <string name="important_info" translatable="false">जरुरी जानकारी</string>
     <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
     <string name="aborted_msg" translatable="false">Oops, Looks like you have canceled the payment!</string>
 
@@ -1085,5 +965,27 @@
     <string name="do_not_close_the_app_warning">This might take up to a minute. Please do not close the app.</string>
     <string name="default_disconnect_dialog_title">Are you sure you want to disconnect the call?</string>
     <string name="default_disconnect_dialog_text">Disconnecting calls frequently may lead to account suspension</string>
+    <string name="please_select_amount_to_add" translatable="false">Please select amount to add</string>
+    <string name="minimum_amount_required" translatable="false">Minimum amount required is INR 50</string>
+    <string name="transaction_history" translatable="false">Transaction History</string>
+    <string name="recharge" translatable="false">Recharge</string>
+    <string name="call_info_copied" translatable="false">call info copied</string>
+    <string name="payment_logs" translatable="false">Payment Logs</string>
+    <string name="wallet_transactions" translatable="false">Wallet Transactions</string>
+    <string name="josh_transaction_id" translatable="false">josh_transaction_id</string>
+    <string name="copied_to_clipboard" translatable="false">Copied to Clipboard</string>
+    <string name="empty" translatable="false"> </string>
+    <string name="ft_calls_left" formatted="false" translatable="false">%s calls left in free trial</string>
+    <string name="english_speaking_course" translatable="false">English Speaking Course</string>
+    <string name="about_the_teacher" translatable="false">About the Teacher</string>
+    <string name="course_ratings_and_reviews" translatable="false">Course Ratings and Reviews</string>
+    <string name="insert_code" translatable="false">Insert Code</string>
+    <string name="teacher_youtube_link" translatable="false"><u>Serene Paathshala</u></string>
+    <string name="maximum_amount_is_inr_20000" translatable="false">Maximum Amount is INR 20000</string>
+    <string name="terms_conditions" translatable="false"><![CDATA[Terms & Conditions]]></string>
+    <string name="community_guidelines" translatable="false">Community Guidelines</string>
+    <string name="about_us" translatable="false">About Us</string>
+    <string name="payment_processing_with_elipsize" translatable="false">Payment Processing...</string>
+    <string name="do_not_close_the_app_warning" translatable="false">This might take up to a minute. Please do not close the app.</string>
 
 </resources>

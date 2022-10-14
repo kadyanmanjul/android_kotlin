@@ -1,10 +1,15 @@
 package com.joshtalks.joshskills.core
 
+
 enum class SignUpStepStatus {
     SignUpStepFirst, SignUpStepSecond, SignUpCompleted,
-    RequestForOTP, ReGeneratedOTP, ProfileCompleted,ProfilePicUploaded,StartAfterPicUploaded,ProfilePicSkipped,
+    RequestForOTP, ReGeneratedOTP, ProfileCompleted, ProfilePicUploaded, StartAfterPicUploaded, ProfilePicSkipped,
     ProfileInCompleted, SignUpResendOTP, SignUpWithoutRegister,
-    WRONG_OTP, ERROR
+    WRONG_OTP, ERROR, LanguageSelection, NameSubmitted, StartTrial;
+
+    fun get(text: String): SignUpStepStatus {
+        return valueOf(text)
+    }
 }
 
 enum class ApiCallStatus {
@@ -37,14 +42,16 @@ const val MAX_YEAR = 6
 const val ALPHA_MAX = 1F
 const val ALPHA_MIN = 0.45F
 
-const val ERROR ="Error"
+const val ERROR = "Error"
 
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
 const val ARG_PLACEHOLDER_URL = "placeholder_image_url"
 
 enum class RegistrationMethods(val type: String) {
-    MOBILE_NUMBER("Mobile Number"), TRUE_CALLER("True Caller"), GOOGLE("Google"), FACEBOOK("Facebook"), REGISTER_WITH_NUMBER("REGISTER_WITH_NUMBER")
+    MOBILE_NUMBER("Mobile Number"), TRUE_CALLER("True Caller"), GOOGLE("Google"), FACEBOOK("Facebook"), REGISTER_WITH_NUMBER(
+        "REGISTER_WITH_NUMBER"
+    )
 }
 
 enum class GENDER(val gValue: String) {
@@ -264,6 +271,7 @@ class FirebaseRemoteConfigKey {
 
         //Enable/disable invitation for call
         const val IS_INVITATION_FOR_CALL_ENABLED = "IS_INVITATION_FOR_CALL_ENABLED"
+
         // Enable/disable post address change
         const val POSTAL_ADDRESS = "POSTAL_ADDRESS"
         const val POSTAL_ADDRESS_SUBHEADING_CERT_FORM = "POSTAL_ADDRESS_SUBHEADING_CERT_FORM"
@@ -287,6 +295,9 @@ class FirebaseRemoteConfigKey {
         const val BUY_COURSE_VOCABULARY_TOOLTIP = "BUY_COURSE_VOCABULARY_TOOLTIP_"
         const val BUY_PAGE_SUPPORT_PHONE_NUMBER = "BUY_PAGE_SUPPORT_PHONE_NUMBER"
         const val OFFER_FOR_YOU_TEXT = "OFFER_FOR_YOU_TEXT"
+        const val DIGITAL_CARD_TEXT = "DIGITAL_CARD_TEXT"
+
+        const val SHOW_NEW_GRAMMAR_ENABLED = "SHOW_NEW_GRAMMAR_ENABLED"
     }
 }
 

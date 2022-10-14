@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 
@@ -29,18 +30,9 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
-    private var username = EMPTY
-    private var isUserVerified = false
+    private var username = User.getInstance().firstName
+    private var isUserVerified = User.getInstance().isVerified
     private var isNameEntered = false
-
-    companion object {
-        fun newInstance(name: String, isVerified: Boolean) = SignUpProfileForFreeTrialFragment().apply {
-            arguments = Bundle().apply {
-                username = name
-                isUserVerified = isVerified
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,17 +79,6 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 else -> false
             }
         }
-        viewModel.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            when (it) {
-                SignUpStepStatus.ProfileCompleted -> {
-                    viewModel.startFreeTrial(Mentor.getInstance().getId())
-                }
-                else -> {
-                    hideProgress()
-                    return@Observer
-                }
-            }
-        })
         viewModel.apiStatus.observe(viewLifecycleOwner, {
             when (it) {
                 ApiCallStatus.START -> {
@@ -115,35 +96,12 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 }
             }
         })
-        viewModel.freeTrialEntity.observe(viewLifecycleOwner) {
-            if (it != null) {
-                hideProgress()
-                moveToConversationScreen(it)
-            }
-        }
         viewModel.mentorPaymentStatus.observe(viewLifecycleOwner, {
             when (it) {
                 true -> moveToInboxScreen()
                 false -> submitForFreeTrial()
             }
         })
-    }
-
-    fun moveToConversationScreen(inboxEntity: InboxEntity) {
-        PrefManager.put(CURRENT_COURSE_ID,inboxEntity.courseId)
-        PendingIntent.getActivities(
-            activity,
-            (System.currentTimeMillis() and 0xfffffff).toInt(),
-            arrayOf(
-                Intent(requireActivity(), InboxActivity::class.java).apply {
-                    putExtra(FLOW_FROM, "free trial onboarding journey")
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                },
-                ConversationActivity.getConversationActivityIntent(requireActivity(), inboxEntity)
-            ),
-            PendingIntent.FLAG_UPDATE_CURRENT
-        ).send()
     }
 
     fun submitProfile() {
@@ -194,6 +152,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
         viewModel.completingProfile(requestMap, isUserVerified)
         viewModel.postGoal(GoalKeys.NAME_SUBMITTED)
+        viewModel.postGoal(GoalKeys.NAME_SELECTED)
     }
 
     private fun moveToInboxScreen() {

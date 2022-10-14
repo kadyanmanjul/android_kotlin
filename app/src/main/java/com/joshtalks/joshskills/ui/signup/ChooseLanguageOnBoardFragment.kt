@@ -50,9 +50,11 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
     }
 
     override fun initViewState() {
-        initRV()
-        binding.ivBack.setOnClickListener {
-            requireActivity().onBackPressed()
+        val linearLayoutManager = LinearLayoutManager(activity)
+        languageAdapter.setLanguageItemClickListener(this::onLanguageSelected)
+        binding.rvChooseLanguage.apply {
+            layoutManager = linearLayoutManager
+            adapter = languageAdapter
         }
     }
 
@@ -89,7 +91,11 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
                         viewModel.getAvailableLanguages()
                     } else {
                         errorView?.get()?.enableRetryBtn()
-                        Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.internet_not_available_msz),
+                            Snackbar.LENGTH_SHORT
+                        )
                             .setAction(getString(R.string.settings)) {
                                 startActivity(
                                     Intent(
@@ -132,30 +138,15 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
         viewModel.abTestRepository.apply {
             eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
             is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
-            isGovernmentCourseActive = isVariantActive(VariantKeys.ENGLISH_FOR_GOVT_EXAM_ENABLED)
         }
     }
-
-    private fun initRV() {
-        val linearLayoutManager = LinearLayoutManager(activity)
-        languageAdapter.setLanguageItemClickListener(this::onLanguageSelected)
-        binding.rvChooseLanguage.apply {
-            layoutManager = linearLayoutManager
-            adapter = languageAdapter
-        }
-    }
-
 
     fun onLanguageSelected(language: ChooseLanguages) {
         if (language.testId == HINDI_TO_ENGLISH_TEST_ID) {
             viewModel.postGoal(GoalKeys.HINDI_LANG_SELECTED)
         }
         try {
-            if (language.testId == HINDI_TO_ENGLISH_TEST_ID && isGovernmentCourseActive) {
-                (requireActivity() as FreeTrialOnBoardActivity).openGoalFragment()
-            } else {
-                language.let { (requireActivity() as FreeTrialOnBoardActivity).startFreeTrial(it.testId) }
-            }
+            (requireActivity() as SignUpActivity).onLanguageSelected(language.testId)
         } catch (e: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }

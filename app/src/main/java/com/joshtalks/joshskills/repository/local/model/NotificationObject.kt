@@ -175,7 +175,10 @@ enum class NotificationAction(val type: String) {
     CALL_RECORDING_NOTIFICATION("call_recording_notification"),
 
     @SerializedName("initiate_random_call")
-    INITIATE_RANDOM_CALL("initiate_random_call");
+    INITIATE_RANDOM_CALL("initiate_random_call"),
+
+    @SerializedName("sticky_coupon")
+    STICKY_COUPON("sticky_coupon");
 
     companion object {
         fun getEnumFromValue(value: String?): NotificationAction? {

@@ -202,6 +202,7 @@ const val COUPON_EXPIRY_TIME = "COUPON_EXPIRY_TIME"
 const val IS_FIRST_TIME_CALL_INITIATED = "IS_FIRST_TIME_CALL_INITIATED"
 const val HAVE_CLEARED_NOTIF_ANALYTICS = "HAVE_CLEARED_NOTIF_ANALYTICS"
 const val FT_COURSE_ONBOARDING = "FT_COURSE_ONBOARDING"
+const val FT_ONBOARDING_NEXT_STEP = "FT_COURSE_ONBOARDING_DATA"
 
 object PrefManager {
 
@@ -415,7 +416,6 @@ object PrefManager {
         clearDatabase()
         Mentor.getInstance().resetMentor()
         prefManagerCommon?.edit()?.clear()?.apply()
-        WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
         put(IS_USER_LOGGED_IN, value = false, isConsistent = true)

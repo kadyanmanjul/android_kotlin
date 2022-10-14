@@ -20,4 +20,7 @@ interface UtilsAPIService {
 
     @GET("$DIR/notification/client_side/")
     suspend fun getFTScheduledNotifications(@Query("test_id") course: String = "None", @Query("daily") daily: String = "None"): List<ScheduleNotification>
+
+    @PATCH("$DIR/notification/update_status/")
+    suspend fun updateNotificationStatus(@Body mapOf: Map<String, Any>): Map<String, Any>
 }

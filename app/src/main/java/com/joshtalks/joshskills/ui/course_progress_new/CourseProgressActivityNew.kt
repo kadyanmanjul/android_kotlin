@@ -251,7 +251,6 @@ class CourseProgressActivityNew : CoreJoshActivity(), CourseProgressAdapter.Prog
                             this@CourseProgressActivityNew,
                             item.lessonId,
                             conversationId = intent.getStringExtra(CONVERSATION_ID),
-                            isNewGrammar = item.isNewGrammar ?: false,
                             isLessonCompleted = lessonModel.status == LESSON_STATUS.CO
                         )
                     )

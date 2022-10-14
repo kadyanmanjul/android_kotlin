@@ -9,7 +9,6 @@ import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.JoshSkillExecutors;
 import com.joshtalks.joshskills.core.PrefManager;
-import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
 import static com.joshtalks.joshskills.core.PrefManagerKt.IS_FREE_TRIAL;
 import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
 import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
@@ -276,8 +275,6 @@ public class AppAnalytics {
                 parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
             if (!User.getInstance().getPhoneNumber().isEmpty())
                 parameters.put(AnalyticsEvent.USER_PHONE_NUMBER.getNAME(), User.getInstance().getPhoneNumber());
-            if (PrefManager.INSTANCE != null && !PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false, EMPTY).isEmpty())
-                parameters.put(AnalyticsEvent.INSTANCE_ID.getNAME(), PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false, EMPTY));
         } catch (Exception ignored) {
         }
         return this;

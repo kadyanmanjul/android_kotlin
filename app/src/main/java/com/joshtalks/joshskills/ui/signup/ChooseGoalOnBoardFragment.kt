@@ -46,9 +46,11 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
     }
 
     override fun initViewState() {
-        initRV()
-        binding.ivBack.setOnClickListener {
-            requireActivity().onBackPressed()
+        val linearLayoutManager = LinearLayoutManager(activity)
+        goalAdapter.setGoalItemClickListener(this::onGoalSelected)
+        binding.rvChooseLanguage.apply {
+            layoutManager = linearLayoutManager
+            adapter = goalAdapter
         }
     }
 
@@ -126,15 +128,6 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
         }
     }
 
-    private fun initRV() {
-        val linearLayoutManager = LinearLayoutManager(activity)
-        goalAdapter.setGoalItemClickListener(this::onGoalSelected)
-        binding.rvChooseLanguage.apply {
-            layoutManager = linearLayoutManager
-            adapter = goalAdapter
-        }
-    }
-
 
     fun onGoalSelected(goalSelectionResponse: GoalSelectionResponse) {
         if (goalSelectionResponse.testId != null) {
@@ -144,7 +137,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
             viewModel.saveImpression(REASON_OTHERS_CLICKED)
         }
         try {
-            (requireActivity() as FreeTrialOnBoardActivity).startFreeTrial(
+            (requireActivity() as SignUpActivity).onGoalSelected(
                 goalSelectionResponse.testId ?: HINDI_TO_ENGLISH_TEST_ID
             )
         } catch (e: Exception) {

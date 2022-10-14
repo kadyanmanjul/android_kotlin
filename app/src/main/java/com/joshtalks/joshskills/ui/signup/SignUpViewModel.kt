@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -23,12 +24,14 @@ import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
+import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
@@ -36,8 +39,6 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
@@ -101,6 +102,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     fun signUpUsingSMS(cCode: String, mNumber: String) {
         progressBarStatus.postValue(true)
+        postGoal(GoalKeys.PHONE_NUMBER_SUBMITTED)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 loginAnalyticsEvent(VerificationVia.SMS.name)
@@ -202,7 +204,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val response = service.verifyOTP(reqObj)
                 if (response.isSuccessful) {
                     response.body()?.run {
-
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
                             RegistrationMethods.MOBILE_NUMBER
@@ -243,8 +244,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             Mentor.getInstance().updateUser(user)
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
-            fetchMentor()
-//            WorkManagerAdmin.userActiveStatusWorker(true)
+            fetchMentor(isNewUser = loginResponse.isUserExist.not())
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
             ABTestRepository().updateAllCampaigns()
             NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
@@ -280,7 +280,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun fetchMentor() {
+    private fun fetchMentor(isNewUser: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = service.getPersonalProfileAsync(Mentor.getInstance().getId())
@@ -290,7 +290,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     User.update(it)
                 }
                 AppAnalytics.updateUser()
-                analyzeUserProfile()
+                analyzeUserProfile(isNewUser)
                 return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
@@ -299,8 +299,14 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun analyzeUserProfile() {
+    private fun analyzeUserProfile(isNewUser: Boolean) {
         val user = User.getInstance()
+        if (isNewUser && abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_BEFORE_NAME)) {
+            return updateFTSignUpStatus(SignUpStepStatus.LanguageSelection)
+        }
+        if (isNewUser && abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME)) {
+            return _signUpStatus.postValue(SignUpStepStatus.StartTrial)
+        }
         if (user.phoneNumber.isNullOrEmpty() && user.firstName.isNullOrEmpty()) {
             return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
@@ -313,7 +319,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun getPath(loginViaStatus: LoginViaStatus): String {
-         if (LoginViaStatus.GMAIL == loginViaStatus) {
+        if (LoginViaStatus.GMAIL == loginViaStatus) {
             return "gmail"
         }
         return EMPTY
@@ -346,7 +352,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                             it.phoneNumber = phoneNumberComingFromTrueCaller
                         }
                         User.getInstance().updateFromResponse(it)
-                        _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
+                        if (map.getOrDefault("is_free_trial", EMPTY) == "Y")
+                            if (abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME))
+                                updateFTSignUpStatus(SignUpStepStatus.NameSubmitted)
+                            else
+                                updateFTSignUpStatus(SignUpStepStatus.StartTrial)
+                        else
+                            _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
                     }
                     return@launch
                 }
@@ -458,6 +470,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         )
                     )
                 if (resp.isSuccessful) {
+                    postGoal(GoalKeys.FREE_TRIAL_STARTED)
                     getFreeTrialNotifications()
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)
                     PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
@@ -479,8 +492,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val response = AppObjectController.chatNetworkService.getRegisteredCourses()
                 if (response.isEmpty().not()) {
                     patchDeviceDetails()
-                    AppObjectController.appDatabase.courseDao().insertRegisterCourses(response).let{
-                        AppObjectController.appDatabase.courseDao().getRegisterCourseMinimal().let{
+                    AppObjectController.appDatabase.courseDao().insertRegisterCourses(response).let {
+                        AppObjectController.appDatabase.courseDao().getRegisterCourseMinimal().let {
                             freeTrialEntity.postValue(it.firstOrNull())
                         }
                     }
@@ -588,6 +601,18 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 e.printStackTrace()
             }
         }
+    }
+
+    fun updateFTSignUpStatus(signUpStepStatus: SignUpStepStatus) {
+        if (signUpStepStatus == SignUpStepStatus.StartTrial) {
+            PrefManager.removeKey(FT_ONBOARDING_NEXT_STEP)
+        } else {
+            PrefManager.put(
+                FT_ONBOARDING_NEXT_STEP,
+                value = signUpStepStatus.name
+            )
+        }
+        _signUpStatus.postValue(signUpStepStatus)
     }
 
     fun postGoal(goalKeys: GoalKeys) {

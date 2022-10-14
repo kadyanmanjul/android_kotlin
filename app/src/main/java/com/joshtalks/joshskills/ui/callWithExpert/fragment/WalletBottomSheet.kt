@@ -44,7 +44,7 @@ class WalletBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.minimumBalance.text = getString(
-            R.string.minimum_balance_of_5_minutes_inr_210_0_is_required_to_start_call_with_expert,
+            R.string.minimum_balance_of_5_minutes,
             amount.toString(),
             speakerName
         )

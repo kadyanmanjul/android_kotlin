@@ -88,13 +88,11 @@
     <string name="complete_payment">পেমেন্ট সম্পূর্ণ করুন</string>
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
-    <string name="network_type">নেটওয়ার্ক টাইপ</string>
     <string name="answer_not_submitted">উত্তর জমা দেওয়া হয়নি</string>
     <string name="answer_submitted">প্র্যাক্টিস সফলভাবে জমা দেওয়া হয়েছে</string>
     <string name="use_tip">টিপ ব্যবহার করুন</string>
     <string name="type_answer_label">তোমার উত্তর টাইপ করুন </string>
     <string name="upload_answer_label">আপনার উত্তর আপলোড করুন</string>
-    <string name="find_more_course_hint_ftime">হ্যালো %s, আপনি যদি এই কোর্সের মাধ্যমে আরও কিছু শিখতে চান তাহলে প্রথম 3 দিনের মধ্যে প্রতিটি কোর্সে 50% ছাড় পাবেন।</string>
     <string name="course_overview">Course Overview</string>
 
     <string name="submit_practise_msz">জমা দেওয়ার আগে আপনার টাস্ক সম্পূর্ণ করুন</string>
@@ -187,7 +185,6 @@
     <string name="enter_promo_code">"প্রোমো কোড লিখুন"</string>
     <string name="select_course">"কোর্স বেছে নিন"</string>
     <string name="selected">"নির্বাচিত"</string>
-    <string name="course_selected">"%s কোর্স"</string>
     <string name="start_quiz">"কুইজ শুরু করুন"</string>
     <string name="conversational_practise">কনভারসেশন প্র্যাক্টিস </string>
     <string name="tap_to_continue">"চালিয়ে যেতে ক্লিক করুন"</string>
@@ -216,7 +213,6 @@
     <string name="unlock_class_text">"পরবর্তী ক্লাস আনলক করুন"</string>
     <string name="start_now">"এখুনি শুরু করুন"</string>
     <string name="get_started">"শুরু"</string>
-    <string name="already_a_subscriber">আগের থেকেই সাবস্ক্রাইব করেছেন?</string>
     <string name="subscription_feature_3">আপনি যদি এটি পছন্দ করেন, আপনি 7 দিন পরে মাত্র 599-এ আপগ্রেড করতে পারেন!</string>
     <string name="subscription_feature_2">"আপনি 7 দিনের জন্য অ্যাপের সমস্ত কোর্স সীমাহীন ভাবে বেবহার করতে পারেন"</string>
     <string name="subscription_feature_1">"এই পাসটি আপনাকে 7 দিনের জন্য সমস্ত কোর্সে অ্যাক্সেস দেবে - একেবারে বিনামূল্যে"</string>
@@ -248,13 +244,7 @@
     <string name="total_interests_selected">"মোট নির্বাচিত সুদ"</string>
     <string name="click_to_start_the_course">"কোর্স শুরু করুন" এ ক্লিক করুন</string>
     <string name="select_interest">"আগ্রহ নির্বাচন করুন"</string>
-    <string name="start_your_7_day_trial">"৭ দিনের ফ্রি ট্রায়াল শুরু করুন"</string>
-    <string name="more_courses_coming_soon">আরো ক্লাস শীঘ্রই আসছে</string>
-    <string name="tab_tak_practice_karte_rahen">"তখন পর্যন্ত অনুশীলন চালিয়ে যান"</string>
-    <string name="stop">"বন্ধ কর "</string>
     <string name="practice_with_partner">"একজন অংশীদারের সাথে প্র্যাক্টিস করুন"</string>
-    <string name="rules_promise">আমি উপরের নিয়মগুলি মেনে চলার প্রতিশ্রুতি দিচ্ছি</string>
-    <string name="call_permission_permanent_message">%s-এর সাথে এই কলের উত্তর দিতে, Josh Skills কে আপনার মাইক্রোফোনে অ্যাক্সেস দিন। সেটিংস &amp;gt; অনুমতিতে আলতো চাপুন এবং মাইক্রোফোন চালু করুন।</string>
     <string name="time_ago_full_seconds">"%1$d সেকেন্ড আগে"</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d সেকেন্ড আগে"</string>
@@ -295,7 +285,6 @@
     <string name="hint_name_field">তোমার নাম?</string>
     <string name="hint_email_field">উদাহরণ abc@xyz.com</string>
     <string name="hint_date_field">উদাহরণ 01 জানুয়ারী 1990</string>
-    <string name="interest_count">(%1$d/%2$d)</string>
     <string name="select_language">ভাষা নির্বাচন</string>
     <string name="personal_information">ব্যক্তিগত তথ্য</string>
     <string name="app_settings">অ্যাপ সেটিংস</string>
@@ -310,9 +299,6 @@
     <string name="on">চালু</string>
     <string name="off">বন্ধ</string>
     <string name="auto_start_prompt_message">অ্যাপটি ব্যাকগ্রাউন্ডে থাকলে নোটিফিকেশন পেতে অটোস্টার্ট চালু করুন</string>
-    <string name="select_course_heading_btn">"আমি এই জিনিস পেতে চাই"</string>
-    <string name="start_course_free">Start my Courses For Free</string>
-    <string name="buy_pass">সমস্ত কোর্স এর অ্যাক্সেস পাস কিনুন</string>
     <string name="hint_text_btn">&lt;u&gt;সমস্ত কোর্স অ্যাক্সেস পাস কিনুন&lt;/u&gt;<u>सभी कोर्स एक्सेस पास खरीदें </u></string>
     <string name="rate_us">আমাদের ব্যাপারে আপনার মতামত দিন</string>
     <string name="short_seconds">সেকেন্ড</string>
@@ -322,10 +308,6 @@
     <string name="download_quality">ডাউনলোড কোয়ালিটি</string>
     <string name="pending">বিবেচনার মধ্যে</string>
     <string name="submitted">অনুরোধ</string>
-    <string name="ringing">Ringing </string>
-    <string name="practise_tip_1">শিক্ষার্থীদের সাথে ইংরেজিতে কথা বলার অভ্যাস করুন</string>
-    <string name="practise_tip_2">সীমাহীন অনুশীলন করুন তবে শুধুমাত্র ইংরেজিতে</string>
-    <string name="practise_tip_3">আপনার সঙ্গীকে সম্মান করুন এবং অনুগ্রহ করে অশ্লীল ভাষা ব্যবহার করবেন না</string>
     <string name="select_country">দেশ নির্বাচন করুন</string>
     <string name="next_class">পরবর্তী ক্লাস</string>
     <string name="enter_country">দেশের নাম লিখুন </string>
@@ -351,7 +333,6 @@
     <string name="next_class_started">পরবর্তী ক্লাস শুরু হয়</string>
     <string name="whatsApp_not_installed">হোয়াটসঅ্যাপ ইনস্টল করা নেই</string>
     <string name="invalid_coupon_code">অকার্যকর কুপন কোড. আবার চেষ্টা কর</string>
-    <string name="interest_message">আপনি %s আগ্রহ নির্বাচন করতে পারেন।</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
     <string name="vocabulary">Vocabulary</string>
@@ -391,7 +372,6 @@
     <string name="okay">Okay</string>
     <string name="exam_info">%1$d প্রশ্ন - %2$d মিনিট - %3$d মার্কস</string>
     <string name="you_can_only_attempt_the_certification_exam">আপনি শুধুমাত্র পাঠ %1$d পরে সার্টিফিকেশন পরীক্ষা চেষ্টা করতে পারেন</string>
-    <string name="did_not_answer_message">আমরা কোনো ব্যবহারকারী খুঁজে পাইনি, আবার চেষ্টা করুন.</string>
     <string name="rank">Rank</string>
     <string name="how_to_pronounce">How to pronounce:</string>
     <string name="auto_logout_message">"আপনি এই ফোন থেকে লগ আউট হয়েছেন কারণ আপনি অন্য ফোন থেকে লগ ইন করেছেন।"</string>
@@ -408,7 +388,6 @@
     <string name="share_screen_tagline"><b>আমি রোজ</b> speaking practice <b>করছি</b> call<b>\nএ</b> নতুন নতুন মানুষের <b>সাথে।</b></string>
     <string name="share_with_friends_text">আমি English শিখছি, যেখানে Environment পাওয়া নতুন লোকের সাথে কথা বলার। তুমিও ইংলিশ শিখতে পার।</string>
 
-    <string name="free_trial_popup_100_points_header">Josh Skills ওই students এর পরিবার, যেখানে Students রা নিজের Life নিয়ে অনেক serious.এই Course টি তে enroll হওয়ার পর, আপনি একদিন এই কোর্স টি কে একদম বিনামূল্যে বেবহার করবেন। আপনাকে 24 ঘণ্টা থেকে 100 Points কামাতে হবে। আপনি কালকে কোর্স এ অ্যাডমিশন নিতে পারেন। </string>
     <string name="tooltip_conversation">তোমার সহপাঠি কে? এখানে দেখতে পারবেন</string>
     <string name="tooltip_lesson_grammar">আজ এই ভাগে আমরা আমাদের গ্রামার এর লেভেল কে চেক করব</string>
     <string name="tooltip_leaderboard_sotd">যেই স্টুডেন্ট এক দিনে সব থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা ডে বানানো হয়।</string>

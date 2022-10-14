@@ -128,6 +128,7 @@ data class FirestoreNewNotificationObject(
             NotificationAction.ACTION_OPEN_FPP_REQUESTS.type -> NotificationAction.ACTION_OPEN_FPP_REQUESTS
             NotificationAction.EMERGENCY_NOTIFICATION.type -> NotificationAction.EMERGENCY_NOTIFICATION
             NotificationAction.INITIATE_RANDOM_CALL.type -> NotificationAction.INITIATE_RANDOM_CALL
+            NotificationAction.STICKY_COUPON.type -> NotificationAction.STICKY_COUPON
             NotificationAction.ACTION_FPP_INCOMING_CALL.type -> NotificationAction.ACTION_FPP_INCOMING_CALL
             NotificationAction.ACTION_P2P_INCOMING_CALL.type -> NotificationAction.ACTION_P2P_INCOMING_CALL
             else -> null

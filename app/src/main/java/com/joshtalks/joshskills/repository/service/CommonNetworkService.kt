@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
 import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledRequest
 import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledResponse
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
 import com.joshtalks.joshskills.repository.server.points.PointsInfoResponse
 import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryResponse
@@ -35,7 +34,6 @@ import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.userprofile.models.*
-import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -44,9 +42,6 @@ interface CommonNetworkService {
 
     @GET("$DIR/support/category_v2/")
     suspend fun getHelpCategoryV2(): Response<List<FAQCategory>>
-
-    @POST("$DIR/mentor/gaid/")
-    fun registerGAIdAsync(@Body requestRegisterGAId: RequestRegisterGAId): Deferred<RequestRegisterGAId>
 
     @GET("$DIR/mentor/restore_id/{id}/")
     suspend fun getFreshChatRestoreIdAsync(@Path("id") id: String): FreshChatRestoreIDResponse
@@ -145,9 +140,6 @@ interface CommonNetworkService {
     suspend fun getFppStatusInProfile(
         @Path("user_profile_mentor_id") mentorId: String
     ): Response<FppStatusInProfileResponse>
-
-    @POST("$DIR/version/onboarding/")
-    suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
 
     @POST("$DIR/voicecall/feedback")
     suspend fun feedbackVoipCallAsync(@Body request: RequestVoipRating): Response<FeedbackVoipResponse>
@@ -400,8 +392,8 @@ interface CommonNetworkService {
     @GET("$DIR/course/buy_course_feature/")
     suspend fun getCourseFeatureDetails(@Query("test_id") testId: Int): Response<BuyCourseFeatureModel>
 
-    @GET("$DIR/course/get_valid_coupons/")
-    suspend fun getValidCoupon(@Query("first_impression") firstImpression: Long): Response<CouponListModel>
+    @GET("$DIR/course/get_user_coupons/")
+    suspend fun getValidCoupon(): Response<CouponListModel>
 
     @GET("$DIR/course/get_coupon_code/")
     suspend fun getCouponFromCode(@Query("code") code: String): Response<Coupon>

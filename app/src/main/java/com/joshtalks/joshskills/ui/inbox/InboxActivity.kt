@@ -43,7 +43,6 @@ import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
-import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
@@ -55,9 +54,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -552,27 +549,31 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     fun showBuyCourseTooltip(courseId: String) {
-        val text = AppObjectController.getFirebaseRemoteConfig().getString(
-            BUY_COURSE_INBOX_TOOLTIP + courseId
-        )
-        if (text.isBlank()) return
-        if (this::bbTooltip.isInitialized.not()) {
-            bbTooltip = Balloon.Builder(this)
-                .setLayout(R.layout.layout_bb_tip)
-                .setHeight(BalloonSizeSpec.WRAP)
-                .setIsVisibleArrow(true)
-                .setBackgroundColorResource(R.color.bb_tooltip_stroke)
-                .setArrowDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_yellow_stroke))
-                .setWidthRatio(0.85f)
-                .setDismissWhenTouchOutside(false)
-                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                .setLifecycleOwner(this)
-                .setDismissWhenClicked(false)
-                .build()
-        }
-        bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
-        bbTooltip.isShowing.not().let {
-            bbTooltip.showAlignBottom(buy_english_course)
+        try {
+            val text = AppObjectController.getFirebaseRemoteConfig().getString(
+                BUY_COURSE_INBOX_TOOLTIP + courseId
+            )
+            if (text.isBlank()) return
+            if (this::bbTooltip.isInitialized.not()) {
+                bbTooltip = Balloon.Builder(this)
+                    .setLayout(R.layout.layout_bb_tip)
+                    .setHeight(BalloonSizeSpec.WRAP)
+                    .setIsVisibleArrow(true)
+                    .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
+                    .setWidthRatio(0.85f)
+                    .setDismissWhenTouchOutside(false)
+                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                    .setLifecycleOwner(this)
+                    .setDismissWhenClicked(false)
+                    .build()
+            }
+            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
+            bbTooltip.isShowing.not().let {
+                bbTooltip.showAlignBottom(buy_english_course)
+            }
+        }catch (ex:Exception){
+
         }
     }
 
@@ -586,15 +587,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             this,
             COURSE_EXPLORER_CODE,
             courseListSet, state = ActivityEnum.Inbox
-        )
-    }
-
-    override fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean) {
-        OnBoardingActivityNew.startOnBoardingActivity(
-            this,
-            COURSE_EXPLORER_NEW,
-            true,
-            alreadyHaveCourses
         )
     }
 

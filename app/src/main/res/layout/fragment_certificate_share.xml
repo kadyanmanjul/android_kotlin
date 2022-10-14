@@ -143,7 +143,7 @@
                     android:textColor="@color/btn_share_facebook"
                     android:textSize="@dimen/_12ssp"
                     app:cornerRadius="@dimen/_18sdp"
-                    app:icon="@drawable/ic_facebook_certi"
+                    app:icon="@drawable/ic_facebook"
                     app:iconGravity="textStart"
                     app:iconSize="@dimen/_16sdp"
                     app:iconTint="@null"
