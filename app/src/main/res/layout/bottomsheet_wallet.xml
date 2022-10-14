@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/_12ssp"
         android:textColor="@color/txt_red"
-        tools:text="@string/minimum_balance_of_5_minutes_inr_210_0_is_required_to_start_call_with_expert"
+        tools:text="@string/minimum_balance_of_5_minutes"
         app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@+id/guidelineStart"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop" />

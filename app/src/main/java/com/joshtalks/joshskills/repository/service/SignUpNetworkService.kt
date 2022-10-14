@@ -27,9 +27,6 @@ interface SignUpNetworkService {
         @Body requestSocialSignUp: RequestSocialSignUp
     ): LoginResponse
 
-    @POST("$DIR/mentor/instance/")
-    suspend fun getInstanceIdAsync(@Body params: Map<String, String?>): InstanceIdResponse
-
     @POST("$DIR/mentor/device_gaid_id/")
     suspend fun getGaid(@Body params: Map<String, String?>): Response<GaIdResponse>
 

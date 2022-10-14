@@ -212,7 +212,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
                         if (isSubscriptionStarted && isSubscriptionEnd.not()) {
                             openCourseExplorer()
                         } else {
-                            openCourseSelectionExplorer(true)
+                            openCourseExplorer()
                         }
                         logEvent(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
                     }
@@ -221,5 +221,4 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
         }
     }
     abstract fun openCourseExplorer()
-    abstract fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean = false)
 }

@@ -416,7 +416,6 @@ object PrefManager {
         clearDatabase()
         Mentor.getInstance().resetMentor()
         prefManagerCommon?.edit()?.clear()?.apply()
-        WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
         put(IS_USER_LOGGED_IN, value = false, isConsistent = true)

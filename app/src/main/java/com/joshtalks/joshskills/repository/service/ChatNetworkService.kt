@@ -57,9 +57,6 @@ interface ChatNetworkService {
     @POST("$DIR/engage/image/")
     suspend fun engageImage(@Body messageObject: Any)
 
-    @PATCH("$DIR/chat/message/list/")
-    suspend fun updateMessagesStatus(@Body messageObject: Any)
-
     @POST("$DIR/practice/engagement/")
     suspend fun submitPracticeAsync(@Body requestEngage: RequestEngage): Response<PracticeEngagement>
 

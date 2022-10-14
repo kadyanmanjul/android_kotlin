@@ -41,7 +41,6 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(workerList)
             .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
-//            mutableListOf(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<AppUsageSyncWorker>().build(),
@@ -101,30 +100,6 @@ object WorkManagerAdmin {
             OneTimeWorkRequestBuilder<RegenerateFCMTokenWorker>().build()
         )
     }
-
-//    fun readMessageUpdating() {
-//        val constraints = Constraints.Builder()
-//            .setRequiredNetworkType(NetworkType.CONNECTED)
-//            .build()
-//        val workRequest = PeriodicWorkRequest.Builder(
-//            MessageReadPeriodicWorker::class.java,
-//            30,
-//            TimeUnit.MINUTES,
-//            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-//            TimeUnit.MILLISECONDS
-//        )
-//            .setConstraints(constraints)
-//            .setInitialDelay(1, TimeUnit.MINUTES)
-//            .addTag(MessageReadPeriodicWorker::class.java.simpleName)
-//            .build()
-//
-//        WorkManager.getInstance(AppObjectController.joshApplication)
-//            .enqueueUniquePeriodicWork(
-//                MessageReadPeriodicWorker::class.java.simpleName,
-//                ExistingPeriodicWorkPolicy.KEEP,
-//                workRequest
-//            )
-//    }
 
     fun syncAppCourseUsage() {
         val constraints = Constraints.Builder()
@@ -221,24 +196,6 @@ object WorkManagerAdmin {
             .enqueue(workRequest)
     }
 
-    //TODO : Remove this function and all code related to it
-    fun userActiveStatusWorker(status: Boolean) {
-        val data = workDataOf(IS_ACTIVE to status)
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val workRequest = OneTimeWorkRequestBuilder<IsUserActiveWorker>()
-            .setInputData(data)
-            .setInitialDelay(1, TimeUnit.SECONDS)
-            .setConstraints(constraints)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
-            "Active_Api",
-            ExistingWorkPolicy.KEEP,
-            workRequest
-        )
-    }
-
     fun setFakeCallNotificationWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .cancelAllWorkByTag(FakeCallNotificationWorker::class.java.name)
@@ -254,16 +211,6 @@ object WorkManagerAdmin {
                 .build()
             WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         }
-    }
-
-    fun startVersionAndFlowWorker() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val workRequest = OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>()
-            .setConstraints(constraints)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
     fun userAppUsage(status: Boolean) {
@@ -297,15 +244,4 @@ object WorkManagerAdmin {
             workRequest
         )
     }
-
-    fun instanceIdGenerateWorker() {
-        val workRequest = OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>()
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
-            "Instance_id_Api",
-            ExistingWorkPolicy.REPLACE,
-            workRequest
-        )
-    }
-
 }

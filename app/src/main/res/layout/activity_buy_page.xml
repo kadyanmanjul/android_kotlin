@@ -674,7 +674,7 @@
                     android:elevation="@dimen/_10sdp"
                     app:layout_constraintEnd_toEndOf="@id/video_view"
                     app:layout_constraintTop_toTopOf="@id/video_view"
-                    app:srcCompat="@drawable/ic_cancel_black_24dp__4__1" />
+                    app:srcCompat="@drawable/ic_cancel_black" />
 
                 <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
                     android:id="@+id/video_view"
