@@ -24,6 +24,7 @@
                 android:id="@+id/text_view_1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_32sdp"
                 android:gravity="center"
                 android:text="@string/otp_verify_label"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
