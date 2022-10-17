@@ -387,7 +387,9 @@ class SignUpActivity : BaseActivity() {
             requestWorkerForChangeLanguage("en", canCreateActivity = false)
         else
             requestWorkerForChangeLanguage(Utils.getLangCodeFromlangTestId(testId), canCreateActivity = false)
-
+        if (isVariantActive(VariantKeys.ORIGINAL_LOGIN_FLOW) && TruecallerSDK.getInstance().isUsable) {
+            trueCallerLogin()
+        }
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
