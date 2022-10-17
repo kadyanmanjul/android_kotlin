@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.constants.INIT_LIST_TOOLTIP
 import com.joshtalks.joshskills.constants.OPEN_POPUP_MENU
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentGroupListBinding
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
@@ -168,6 +169,9 @@ class GroupListFragment : BaseFragment() {
                     data.lastMessage = "${countDetails?.memberCount} members, ${countDetails?.onlineCount} online"
                     data.unreadCount = "0"
                     data as GroupItemData
+                }
+                groupList.filter { group ->
+                    group.getGroupCategory() != DM_CHAT
                 }
                 withContext(Dispatchers.Main) { vm.adapter.submitData(PagingData.from(groupList)) }
             }
