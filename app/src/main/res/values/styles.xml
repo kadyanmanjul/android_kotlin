@@ -663,7 +663,7 @@
         <item name="android:gravity">center</item>
         <item name="android:paddingHorizontal" tools:targetApi="o">@dimen/_8sdp</item>
         <item name="lottie_autoPlay">true</item>
-        <item name="lottie_fileName">lottie/button_v3.json</item>
+        <item name="lottie_fileName">lottie/button_v4.json</item>
         <item name="lottie_imageAssetsFolder">lottie</item>
         <item name="lottie_loop">true</item>
         <item name="lottie_repeatMode">restart</item>
