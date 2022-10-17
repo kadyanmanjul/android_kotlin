@@ -85,7 +85,7 @@ class StickyNotificationService : Service() {
             .setAutoCancel(false)
             .setOnlyAlertOnce(true)
             .setContentTitle(getString(R.string.app_name))
-            .setContentText("Fetching all your notifications!")
+            .setContentText("Claim your coupon by clicking this notification")
             .setContentIntent(pendingIntent)
             .setDefaults(Notification.FLAG_ONGOING_EVENT)
 

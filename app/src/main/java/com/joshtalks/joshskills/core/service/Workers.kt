@@ -352,7 +352,7 @@ class BackgroundNotificationWorker(val context: Context, workerParams: WorkerPar
 
 class StickyNotificationWorker(val context: Context, val workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
-    private val notificationId = (System.currentTimeMillis() and 0xfffffff).toInt()
+    private val notificationId = 10206
     private var shouldUpdate = true
     private var job: Job? = null
     private lateinit var notificationBuilder: NotificationCompat.Builder
@@ -398,7 +398,7 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
         return PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    private fun buildNotification(pendingIntent: PendingIntent): Notification {
+    private fun buildNotification(pendingIntent: PendingIntent) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channel = NotificationChannelData.UPDATES
         notificationBuilder = NotificationCompat.Builder(context, channel.id)
@@ -407,7 +407,7 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
             .setAutoCancel(false)
             .setOnlyAlertOnce(true)
             .setContentTitle(context.getString(R.string.app_name))
-            .setContentText("Fetching all your notifications!")
+            .setContentText("Claim your coupon by clicking this notification")
             .setContentIntent(pendingIntent)
             .setDefaults(Notification.FLAG_ONGOING_EVENT)
 
@@ -440,7 +440,7 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
         val notification = notificationBuilder.build()
         notification.flags = Notification.FLAG_NO_CLEAR
 
-        return notification
+        notificationManager.notify(notificationId, notification)
     }
 
     private fun updateNotification(title: String, body: String, coupon: String, time: Float, timeDiff: Long) {
