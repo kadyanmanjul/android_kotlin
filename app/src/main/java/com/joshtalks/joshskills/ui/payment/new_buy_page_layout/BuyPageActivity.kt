@@ -47,6 +47,8 @@ import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
+import com.joshtalks.joshskills.core.notification.StickyNotificationService
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
@@ -880,6 +882,8 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         )
         try {
             NotificationUtils(applicationContext).removeAllScheduledNotification()
+            WorkManagerAdmin.removeStickyNotificationWorker(this)
+            stopService(Intent(this, StickyNotificationService::class.java))
         } catch (e: Exception) {
             e.printStackTrace()
         }

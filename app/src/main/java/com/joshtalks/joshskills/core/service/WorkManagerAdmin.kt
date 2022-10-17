@@ -1,23 +1,12 @@
 package com.joshtalks.joshskills.core.service
 
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.PrefManager
+import android.app.NotificationManager
+import android.content.Context
+import androidx.work.*
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
@@ -173,9 +162,13 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-    fun removeStickyNotificationWorker() {
+    fun removeStickyNotificationWorker(context: Context? = null) {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .cancelAllWorkByTag(StickyNotificationWorker::class.java.name)
+        context?.let {
+            val notificationManager = it.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(StickyNotificationWorker.notificationId)
+        }
     }
 
     fun getLanguageChangeWorker(language: String): UUID {

@@ -352,7 +352,9 @@ class BackgroundNotificationWorker(val context: Context, workerParams: WorkerPar
 
 class StickyNotificationWorker(val context: Context, val workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
-    private val notificationId = 10206
+    companion object {
+        const val notificationId = 10206
+    }
     private var shouldUpdate = true
     private var job: Job? = null
     private lateinit var notificationBuilder: NotificationCompat.Builder

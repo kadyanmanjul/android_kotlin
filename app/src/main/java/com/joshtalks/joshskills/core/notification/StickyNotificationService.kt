@@ -65,6 +65,11 @@ class StickyNotificationService : Service() {
         return null
     }
 
+    override fun onDestroy() {
+        stopSelf()
+        super.onDestroy()
+    }
+
     private fun getPendingIntent(code: String = EMPTY): PendingIntent {
         val notificationIntent = Intent(this, BuyPageActivity::class.java).apply {
             putExtra(FLOW_FROM, "Sticky Notification")
