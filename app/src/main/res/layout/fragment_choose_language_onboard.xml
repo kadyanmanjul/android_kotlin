@@ -17,6 +17,21 @@
         android:focusable="true"
         android:background="@color/white">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_begin="@dimen/_24sdp"
+            android:orientation="vertical" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_end="@dimen/_24sdp"
+            android:orientation="vertical" />
+
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title"
             style="@style/Normal"
@@ -27,25 +42,24 @@
             android:text="@{handler.isLanguageFragment ? @string/language_text : @string/goal_text}"
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="@string/goal_text"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/goal_text" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvChooseLanguage"
-            android:clickable="true"
-            android:focusable="true"
-            android:contextClickable="true"
             android:layout_width="0dp"
-            android:layout_marginHorizontal="@dimen/_24sdp"
-            tools:listitem="@layout/li_language_item"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/_22sdp"
-            app:layout_constraintTop_toBottomOf="@id/title" />
+            android:clickable="true"
+            android:contextClickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            tools:listitem="@layout/li_language_item" />
 
         <ViewStub
             android:id="@+id/error_view"

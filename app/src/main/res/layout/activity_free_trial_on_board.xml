@@ -137,6 +137,7 @@
             android:focusable="true"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
+            android:text="@{handler.loginText()}"
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             android:textColor="@color/black"
             android:layout_marginBottom="@dimen/_24sdp"

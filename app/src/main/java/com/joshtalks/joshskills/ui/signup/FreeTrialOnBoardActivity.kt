@@ -77,12 +77,9 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
                     }
                 }
             }
-            layout.txtLogin.apply {
-                text = if (isLogin) "Not a user? Sign Up" else "Already a user? Log in"
-                setOnClickListener {
-                    if (isLogin) startTrial(it)
-                    else signUp(it)
-                }
+            layout.txtLogin.setOnClickListener {
+                if (isLogin) startTrial(it)
+                else signUp(it)
             }
         }
     }
@@ -144,6 +141,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
             startFreeTrial(language.testId)
         }
     }
+
 
     private fun addViewModelObservers() {
         viewModel.signUpStatus.observe(this) {
