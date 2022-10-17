@@ -233,23 +233,28 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     // User Action
     fun disconnectCall(v: View) {
-        CallAnalytics.addAnalytics(
-            event = EventName.RED_BUTTON_PRESSED,
-            agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
-            extra = PrefManager.getVoipState().name
-        )
-        Log.d(TAG, "Disconnect Call :Red Button Press")
         val duration = SystemClock.elapsedRealtime() - VoipPref.getStartTimeStamp()
-        Log.d("Bhaskar", "Duration = $duration")
         if (duration < 2 * 60 * 1000) {
+            CallAnalytics.addAnalytics(
+                event = EventName.RED_BUTTON_PRESSED,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
+                extra = PrefManager.getVoipState().name
+            )
             val msg = Message.obtain().apply {
                 what = SHOW_DISCONNECT_DIALOG
             }
             singleLiveEvent.value = msg
         }
-        else
+        else {
+            CallAnalytics.addAnalytics(
+                event = EventName.DISCONNECTED_BY_RED_BUTTON,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
+                extra = PrefManager.getVoipState().name
+            )
             disconnect()
+        }
     }
 
     fun disconnect() {
