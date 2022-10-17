@@ -43,6 +43,10 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
             holder.binding.checkIcon.setBackgroundResource(R.drawable.ic_radio_button_checked)
             holder.binding.checkIcon.backgroundTintList = ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.colorAccent)
             holder.binding.priceRootView.background =  ColorDrawable(ContextCompat.getColor(AppObjectController.joshApplication, R.color.selected_color_trans))
+        }else{
+            if (prevHolder != null && prevHolder == holder) {
+                itemClick?.invoke(priceList?.get(position)!!, CLICK_ON_PRICE_CARD, position, REMOVE)
+            }
         }
         holder.binding.priceCardView.setOnClickListener {
             if (priceList?.get(position) != null) {

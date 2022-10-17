@@ -102,11 +102,11 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     //This method is for set coupon and offer list on basis of type coupon or offer
-    fun getValidCouponList(methodCallType: String) {
+    fun getValidCouponList(methodCallType: String, testId:Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 isCouponApiCall.set(true)
-                val response = buyPageRepo.getCouponList()
+                val response = buyPageRepo.getCouponList(testId)
                 if (response.isSuccessful && response.body() != null) {
                     isCouponApiCall.set(false)
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
@@ -202,7 +202,7 @@ class BuyPageViewModel : BaseViewModel() {
                         }
                     } else {
                         if (it.isMentorSpecificCoupon == null){
-                            getValidCouponList(OFFERS)
+                            getValidCouponList(OFFERS, Integer.parseInt(testId))
                         }
                         couponAppliedCode.set(EMPTY)
                         saveImpressionForBuyPageLayout(COUPON_CODE_REMOVED, it.couponCode)

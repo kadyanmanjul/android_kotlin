@@ -11,7 +11,7 @@ class BuyPageRepo {
     //it's need test id
     suspend fun getFeatureList(testId:Int) = AppObjectController.commonNetworkService.getCourseFeatureDetails(testId)
 
-    suspend fun getCouponList() = AppObjectController.commonNetworkService.getValidCoupon()
+    suspend fun getCouponList(testId: Int) = AppObjectController.commonNetworkService.getValidCoupon(testId)
 
     suspend fun getPriceList(params: PriceParameterModel) = AppObjectController.commonNetworkService.getCoursePriceList(params)
 

@@ -393,7 +393,7 @@ interface CommonNetworkService {
     suspend fun getCourseFeatureDetails(@Query("test_id") testId: Int): Response<BuyCourseFeatureModel>
 
     @GET("$DIR/course/get_user_coupons/")
-    suspend fun getValidCoupon(): Response<CouponListModel>
+    suspend fun getValidCoupon(@Query("test_id") testId: Int): Response<CouponListModel>
 
     @GET("$DIR/course/get_coupon_code/")
     suspend fun getCouponFromCode(@Query("code") code: String): Response<Coupon>

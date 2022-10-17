@@ -106,7 +106,7 @@
                             android:layout_height="wrap_content"
                             android:visibility="gone"
                             android:layout_marginTop="@dimen/_13sdp"
-                            android:background="@drawable/ic_timer_banner"
+                            android:background="@drawable/ic_transparent_color_img"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             android:layout_marginHorizontal="@dimen/_16sdp">

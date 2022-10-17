@@ -60,7 +60,7 @@ class CouponCardFragment : BaseFragment() {
     }
 
     fun addObserver(){
-        vm.getValidCouponList(COUPON)
+        vm.getValidCouponList(COUPON,Integer.parseInt(vm.testId))
     }
 
     companion object {

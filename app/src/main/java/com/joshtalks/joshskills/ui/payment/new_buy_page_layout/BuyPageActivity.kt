@@ -194,7 +194,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         if (Utils.isInternetAvailable()) {
             viewModel.getCourseContent()
             viewModel.getCoursePriceList(null,null, null)
-            viewModel.getValidCouponList(OFFERS)
+            viewModel.getValidCouponList(OFFERS,Integer.parseInt(testId))
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
             }
@@ -309,9 +309,19 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                     startTimer((buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis(),buyCourseFeatureModel)
                 }
             } else {
-                binding.freeTrialTimerNewUi.visibility = View.GONE
-                binding.freeTrialTimer.visibility = View.VISIBLE
-                binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                if (buyCourseFeatureModel.timerBannerText!=null){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
+                    }else{
+                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
+                    }
+                    binding.freeTrialTimerNewUi.visibility = View.VISIBLE
+                    binding.timeText.visibility = View.GONE
+                    binding.timerText.text = getString(R.string.free_trial_ended)
+                }else{
+                    binding.freeTrialTimer.visibility = View.VISIBLE
+                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                }
                 PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             }
         } else {
@@ -333,6 +343,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun setCoursePrices(list: CourseDetailsList, position: Int) {
+        Log.e("sagar", "setCoursePrices: ${list.discountedPrice}" )
         priceForPaymentProceed = list
         proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text = "Pay ${priceForPaymentProceed?.discountedPrice?: "Pay ₹499"}"
     }
@@ -473,7 +484,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             CourseDetailsActivity.startCourseDetailsActivity(
                 this,
                 testId.toInt(),
-                this@BuyPageActivity.javaClass.simpleName,
+                startedFrom = this@BuyPageActivity.javaClass.simpleName,
                 buySubscription = false
             )
         }
@@ -523,6 +534,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         binding.paymentProceedBtnCard.removeAllViews()
         binding.paymentProceedBtnCard.addView(proceedButtonCard)
         paymentButton?.setOnSingleClickListener {
+            binding.videoPlayer.onPause()
             isPaymentInitiated = true
             viewModel.saveImpressionForBuyPageLayout(PROCEED_PAYMENT_CLICK, testId)
             startPayment()
@@ -712,6 +724,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 AppObjectController.uiHandler.post {
                     val freeTrailTime = UtilTime.timeFormatted(millis).split(":")
                     if (buyCourseFeatureModel.timerBannerText!=null){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                            binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
+                        }else{
+                            binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
+                        }
                         binding.freeTrialTimerNewUi.visibility = View.VISIBLE
                         binding.timerText.text = buyCourseFeatureModel.timerBannerText
                         binding.txtHours.text = freeTrailTime[0]
@@ -728,11 +745,14 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             }
 
             override fun onTimerFinish() {
-                binding.freeTrialTimer.visibility = View.VISIBLE
-                binding.freeTrialTimerNewUi.visibility = View.GONE
-                binding.timerText.text = getString(R.string.free_trial_ended)
+                if (buyCourseFeatureModel.timerBannerText!=null){
+                    binding.timeText.visibility = View.GONE
+                    binding.timerText.text = getString(R.string.free_trial_ended)
+                }else{
+                    binding.freeTrialTimer.visibility = View.VISIBLE
+                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                }
                 PrefManager.put(IS_FREE_TRIAL_ENDED, true)
-                binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
             }
         }
         countdownTimerBack?.startTimer()
@@ -766,7 +786,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                     if (Utils.isInternetAvailable()) {
                         viewModel.getCourseContent()
                         viewModel.getCoursePriceList(null,null,null)
-                        viewModel.getValidCouponList(OFFERS)
+                        viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
                     } else {
                         errorView?.get()?.enableRetryBtn()
                         Snackbar.make(

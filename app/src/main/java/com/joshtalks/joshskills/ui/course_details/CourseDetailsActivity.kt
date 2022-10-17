@@ -119,6 +119,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
+
+        if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity"){
+            binding.priceContainer.visibility = View.GONE
+        }else{
+            binding.priceContainer.visibility = View.VISIBLE
+        }
         if(testId == ENGLISH_COURSE_TEST_ID || testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
             initABTest()
         }else{
