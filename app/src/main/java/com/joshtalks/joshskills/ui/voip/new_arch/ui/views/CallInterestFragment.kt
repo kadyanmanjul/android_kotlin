@@ -37,6 +37,7 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
         viewModel.saveImpression(INTEREST_FORM_INTEREST_SCREEN_OPEN)
         if (isEditCall){
             binding.skipBtn.visibility = View.GONE
+            viewModel.getUserInterests()
         }
         binding.skipBtn.setOnClickListener {
             viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
@@ -46,7 +47,6 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
             val id = binding.interestCg.checkedChipIds
             viewModel.sendUserInterest(id)
             viewModel.saveImpression(INTEREST_FORM_SAVED)
-            PrefManager.put(IS_INTEREST_FORM_ENABLED, 0)
             viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
         }
 

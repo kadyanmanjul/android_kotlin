@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.voip.inSeconds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import timber.log.Timber
 
 private const val TAG = "VoipPref"
 
@@ -92,7 +93,7 @@ object VoipPref {
         editor.putString(PREF_KEY_FPP_FLAG, showFpp)
         editor.putString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, remoteUserMentorId)
         editor.commit()
-
+        getInterestFormStatus(duration,callType)
         if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) && duration.inSeconds() >= 300 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
             editor.putBoolean(IS_FIRST_CALL, false)
             editor.putBoolean(IS_FIRST_5MIN_CALL, false)
@@ -125,36 +126,55 @@ object VoipPref {
         }
 
         // TODO: These logic shouldn't be here
-        if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
-            if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
-                startLevelAndInterestForm()
-            }
-            else if (PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 0 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1) {
-                startInterestFormOnly()
-            }else{
-                showDialogBox(duration, CALL_RATING)
-            }
-
-        } else if (duration != 0L && PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal) {
-            if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
-                startLevelAndInterestForm()
-            }
-            else if (PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 0 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
-                startInterestFormOnly()
-
-            }else{
-                showDialogBox(duration, PURCHASE_POPUP)
-            }
-        }
 
         ExpertListRepo().deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
         deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
     }
 
-    private fun startInterestFormOnly(){
-        val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-        intent.putExtra("isEditCall",true)
-        ActivityLifecycleCallback.currentActivity.startActivity(intent)
+    fun getInterestFormStatus(duration:Long, callType:Int){
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch  {
+            try {
+                val resp = AppObjectController.p2pNetworkService.getFormSubmitStatus()
+                if(resp.isSuccessful){
+                    val toShowLevelAndInterestForm =  resp.body()?.get("show_screen") ?: 0
+
+                    if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
+                        if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
+                            if (toShowLevelAndInterestForm == 1){
+                                startLevelAndInterestForm()
+                            }
+                            else{
+                                showDialogBox(duration, CALL_RATING)
+                            }
+                        }
+                        else{
+                            showDialogBox(duration, CALL_RATING)
+                        }
+
+                    } else if (duration != 0L && PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal) {
+                        if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
+                            if (toShowLevelAndInterestForm == 1){
+                                startLevelAndInterestForm()
+                            }
+                            else{
+                                showDialogBox(duration, PURCHASE_POPUP)
+                            }
+                        }
+                        else{
+                            showDialogBox(duration, PURCHASE_POPUP)
+                        }
+                    }
+                }else{
+                    if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal){
+                        showDialogBox(duration, CALL_RATING)
+                    }else{
+                        showDialogBox(duration, PURCHASE_POPUP)
+                    }
+                }
+            }catch (ex: Exception){
+                Timber.e(ex)
+            }
+        }
     }
 
     private fun startLevelAndInterestForm(){
