@@ -1759,7 +1759,7 @@
             "title": "Speaking Tips",
             "items": [
             {
-            "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/greet.png",
+            "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/goals.png",
             "title": "Talk about future goals",
             "content": [
             "What is your dream job?",
@@ -1767,11 +1767,11 @@
             ]
             },
             {
-            "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/goals.png",
+            "icon": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/searching_screen/sports.png",
             "title": "Talk about sports",
             "content": [
             "What is your favourite sport?",
-            "Do you play any sport"
+            "Do you play any sport?"
             ]
             }
             ]
