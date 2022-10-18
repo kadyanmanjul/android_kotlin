@@ -494,6 +494,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     if (isSubscriptionCourseBought) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = true
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = false
+                        findMoreLayout.findViewById<View>(R.id.top_line).isVisible = true
+                        findMoreLayout.findViewById<View>(R.id.below_line).isVisible = true
                     } else if (isCapsuleCourseBought.not()) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = true
                         try {
@@ -509,6 +511,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
 //                            else
 //                                PrefManager.removeKey(COUPON_EXPIRY_TIME)
+                        findMoreLayout.findViewById<View>(R.id.top_line).isVisible = false
+                        findMoreLayout.findViewById<View>(R.id.below_line).isVisible = false
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {

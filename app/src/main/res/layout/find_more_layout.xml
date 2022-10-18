@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="top"
+        android:visibility="gone"
         android:background="@color/gray_e6"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent" />
@@ -73,9 +74,11 @@
         app:constraint_referenced_ids="find_more,buy_english_course" />
 
     <View
+        android:id="@+id/below_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"
+        android:visibility="gone"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@color/lighter_grey"
         android:orientation="horizontal"

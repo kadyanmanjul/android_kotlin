@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip.favorite
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.ActionMode
@@ -21,6 +22,7 @@ import com.joshtalks.joshskills.voip.constant.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FavoriteListActivity : BaseFppActivity() {
 
@@ -49,8 +51,12 @@ class FavoriteListActivity : BaseFppActivity() {
 
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean {
             if (item.itemId == R.id.action_delete) {
-                viewModel.deleteFavoriteUserFromList()
-                mode?.finish()
+                scope.launch {
+                    viewModel.deleteFavoriteUserFromList()
+                    withContext(Dispatchers.Main) {
+                        mode?.finish()
+                    }
+                }
             }
             return true
         }

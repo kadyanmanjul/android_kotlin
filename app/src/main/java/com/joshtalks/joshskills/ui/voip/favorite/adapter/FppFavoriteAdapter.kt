@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.favorite.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,8 +51,11 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
     }
 
     suspend fun removeAndUpdated() {
-        val oldItem = items.clone() as List<FavoriteCaller>
-        val newList = items.filter { it.selected.not() }
+        val oldItem = mutableListOf<FavoriteCaller>()
+        oldItem.addAll(items)
+        val newList = items.filter { !it.selected }
+        items.clear()
+        items.addAll(newList)
         withContext(Dispatchers.Main) {
             val diffResult = DiffUtil.calculateDiff(FavoriteDiffUtilCallback(oldItem, newList))
             diffResult.dispatchUpdatesTo(this@FppFavoriteAdapter)
@@ -166,11 +170,13 @@ class FavoriteDiffUtilCallback(val favoriteList : List<FavoriteCaller>, val newF
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return favoriteList[oldItemPosition].mentorId == newFavoriteList[newItemPosition].mentorId
+        val check = favoriteList[oldItemPosition].mentorId == newFavoriteList[newItemPosition].mentorId
+        return check
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return favoriteList[oldItemPosition].name == newFavoriteList[newItemPosition].name && favoriteList[oldItemPosition].image == newFavoriteList[newItemPosition].image && favoriteList[oldItemPosition].selected == newFavoriteList[newItemPosition].selected
+        val check = favoriteList[oldItemPosition].name == newFavoriteList[newItemPosition].name && favoriteList[oldItemPosition].image == newFavoriteList[newItemPosition].image && favoriteList[oldItemPosition].selected == newFavoriteList[newItemPosition].selected
+        return check
     }
 
 }

@@ -122,6 +122,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
         if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity"){
             binding.priceContainer.visibility = View.GONE
+            binding.txtExtraHint.visibility = View.GONE
         }else{
             binding.priceContainer.visibility = View.VISIBLE
         }

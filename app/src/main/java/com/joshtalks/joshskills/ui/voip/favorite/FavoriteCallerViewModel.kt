@@ -8,12 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
@@ -46,15 +44,13 @@ class FavoriteCallerViewModel : BaseViewModel() {
         }
     }
 
-    fun deleteUsersFromFavoriteList(list: MutableList<FavoriteCaller>) {
-        viewModelScope.launch(Dispatchers.IO) {
+    suspend fun deleteUsersFromFavoriteList(list: MutableList<FavoriteCaller>) {
             try {
                 favoriteCallerDao.updateFavoriteCallerStatus(list.map { it.id })
                 deleteFavoriteUsers()
             } catch (ex: Exception) {
                 Timber.d(ex)
             }
-        }
     }
 
     private fun fetchFavoriteCallersFromApi() {
@@ -96,19 +92,18 @@ class FavoriteCallerViewModel : BaseViewModel() {
         }
     }
 
-    private fun deleteFavoriteUsers() {
-        viewModelScope.launch(Dispatchers.IO) {
+    private suspend fun deleteFavoriteUsers() {
             try {
-                val list = favoriteCallerDao.getRemoveFromFavoriteCallers()
-                if (list.isEmpty()) {
-                    return@launch
+                val deletedList = favoriteCallerDao.getRemoveFromFavoriteCallers()
+                if (deletedList.isEmpty()) {
+                    return
                 }
-                if (Utils.isInternetAvailable()){
+                if (Utils.isInternetAvailable()) {
                     val requestParams: HashMap<String, List<Int>> = HashMap()
-                    requestParams["mentor_ids"] = list
+                    requestParams["mentor_ids"] = deletedList
                     val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
                     if (response.isSuccessful) {
-                        favoriteCallerDao.removeFromFavorite(list)
+                        favoriteCallerDao.removeFromFavorite(deletedList)
                     }
                 }else{
                     showToast("No Internet Connection")
@@ -116,7 +111,6 @@ class FavoriteCallerViewModel : BaseViewModel() {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-        }
     }
 
     fun onBackPress(view: View) {
@@ -203,15 +197,15 @@ class FavoriteCallerViewModel : BaseViewModel() {
         }
     }
 
-    fun deleteFavoriteUserFromList() {
-        showToast(getDeleteMessage())
-        scope.launch {
-            adapter.removeAndUpdated()
+    suspend fun deleteFavoriteUserFromList() {
+        withContext(Dispatchers.Main) {
+            showToast(getDeleteMessage())
+        }
+        adapter.removeAndUpdated()
             deleteUsersFromFavoriteList(deleteRecords.toMutableList())
             if (adapter.getItemSize() <= 0) {
                 isEmptyCardShow.set(true)
             }
-        }
     }
 
     private fun getDeleteMessage(): String {

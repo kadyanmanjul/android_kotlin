@@ -1692,7 +1692,7 @@
     </entry>
     <entry>
         <key>VOIP_DISCONNECT_DIALOG_MESSAGE_1210</key>
-        <value>నిరంతర calls కట్ చేయడం కారణంగా మీ account suspend అవ్వచ్చు .</value>
+        <value>அடிக்கடி callகளை துண்டிப்பது account  இடைநிறுத்தத்திற்கு வழிவகுக்கும்" .</value>
     </entry>
     <entry>
         <key>VOIP_DISCONNECT_DIALOG_TITLE_1207</key>
