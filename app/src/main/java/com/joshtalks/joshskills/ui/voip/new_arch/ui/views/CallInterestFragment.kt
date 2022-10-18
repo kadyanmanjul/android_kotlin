@@ -37,7 +37,6 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
         viewModel.saveImpression(INTEREST_FORM_INTEREST_SCREEN_OPEN)
         if (isEditCall){
             binding.skipBtn.visibility = View.GONE
-            viewModel.getUserInterests()
         }
         binding.skipBtn.setOnClickListener {
             viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
