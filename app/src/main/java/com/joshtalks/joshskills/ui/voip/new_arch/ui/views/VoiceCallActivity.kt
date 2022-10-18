@@ -373,10 +373,14 @@ class VoiceCallActivity : BaseActivity() {
             )
 
         val builder = AlertDialog.Builder(this).apply {
-            setTitle( dialogTitle.ifBlank { getString(R.string.default_disconnect_dialog_title) })
-            setMessage(
-                getConformationDialogMessage()
-            )
+            if(vm.callType == Category.PEER_TO_PEER)
+                setTitle( dialogTitle.ifBlank { getString(R.string.default_disconnect_dialog_title) })
+            if(vm.callType == Category.PEER_TO_PEER)
+                setMessage(
+                    getConformationDialogMessage()
+                )
+            else
+                setMessage(dialogTitle.ifBlank { getString(R.string.default_disconnect_dialog_title) })
             setCancelable(true)
             setPositiveButton("No") { p0, p1 ->
                 CallAnalytics.addAnalytics(
@@ -411,13 +415,10 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     private fun getConformationDialogMessage() : String {
-        return if(vm.callType == Category.PEER_TO_PEER)
-            AppObjectController.getFirebaseRemoteConfig()
+            return AppObjectController.getFirebaseRemoteConfig()
                 .getString(
                     "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TEXT}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
-                )
-        else
-            ""
+                ).ifBlank { getString(R.string.default_disconnect_dialog_text) }
     }
 
 }
