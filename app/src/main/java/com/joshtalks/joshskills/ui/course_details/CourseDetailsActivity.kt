@@ -159,7 +159,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         ) {
             showTooltip(remainingTrialDays)
         } else {
-            binding.txtExtraHint.visibility = View.VISIBLE
+            if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
+                binding.txtExtraHint.visibility = View.GONE
+            else
+                binding.txtExtraHint.visibility = View.VISIBLE
             binding.continueTip.visibility = View.GONE
         }
         subscribeLiveData()
@@ -202,7 +205,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             }
             else -> {
                 binding.continueTip.visibility = View.GONE
-                binding.txtExtraHint.visibility = View.VISIBLE
+                if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
+                    binding.txtExtraHint.visibility = View.GONE
+                else
+                    binding.txtExtraHint.visibility = View.VISIBLE
             }
         }
     }

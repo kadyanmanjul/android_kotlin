@@ -620,7 +620,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     fun postGoal(goalKeys: GoalKeys) {
         viewModelScope.launch {
-            abTestRepository.postGoal(goalKeys.NAME)
+            if (PrefManager.getStringValue(API_TOKEN).isNotEmpty())
+                abTestRepository.postGoal(goalKeys.NAME)
         }
     }
 }

@@ -47,7 +47,14 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
     inner class CouponViewHolder(val binding: ItemCouponCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun setData(members: Coupon?, position: Int) {
-            startFreeTrialTimer(members?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0, members, position)
+            if (members?.validDuration?.time?.minus(System.currentTimeMillis())!! > 0L)
+                startFreeTrialTimer(
+                    members?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0,
+                    members,
+                    position
+                )
+            else
+                binding.txtCouponExpireTime.text = "Coupon expired"
             with(binding) {
                 this.txtCouponCode.text = members?.couponCode
                 this.couponDesc.text =
