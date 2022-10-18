@@ -17,23 +17,14 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
-import com.joshtalks.joshskills.ui.assessment.view.Stub
-import com.joshtalks.joshskills.ui.inbox.extra.NewUserLayout
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
-import kotlinx.coroutines.flow.collectLatest
 
 abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppUpdateHandler {
     private var isFromOnBoarding: Boolean = true
-    private var newUserLayoutStub: Stub<NewUserLayout>? = null
     protected var inAppUpdateManager: InAppUpdateManager? = null
     private var versionResponse: VersionResponse? = null
     private lateinit var activityRef: WeakReference<AppCompatActivity>
@@ -100,27 +91,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
 //            }
 //        }
 //    }
-
-    protected fun initNewUserTip() {
-        lifecycleScope.launchWhenStarted {
-            delay(250)
-            if (isFromOnBoarding) {
-                newUserLayoutStub = Stub(findViewById(R.id.new_user_layout_stub))
-                newUserLayoutStub?.let { view ->
-                    view.resolved()
-                    if (view.resolved().not()) {
-                        view.get().addCallback(object : NewUserLayout.Callback {
-                            override fun callback(name: String) {
-                                this@InboxBaseActivity.logEvent(AnalyticsEvent.OK_GOT_IT_CLICKED.NAME)
-                                viewModel.logInboxEngageEvent()
-                                view.get().removeAllViews()
-                            }
-                        })
-                    }
-                }
-            }
-        }
-    }
 
     protected suspend fun checkInAppUpdate() {
         val forceUpdateMinVersion =

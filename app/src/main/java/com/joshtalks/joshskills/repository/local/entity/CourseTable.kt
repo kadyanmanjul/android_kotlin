@@ -69,7 +69,10 @@ data class Course(
     @SerializedName("is_extend_ft_applicable") val isFreeTrialExtended: Boolean = false,
 
     @ColumnInfo(name = "form_submitted")
-    @SerializedName("form_submitted") val formSubmitted: Boolean = false
+    @SerializedName("form_submitted") val formSubmitted: Boolean = false,
+
+    @ColumnInfo(name = "bb_tip_text")
+    @SerializedName("bb_tip_text") val bbTipText: String? = null
 
 ) : Serializable
 

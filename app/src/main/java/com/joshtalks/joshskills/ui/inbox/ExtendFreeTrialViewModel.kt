@@ -34,8 +34,6 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
     private val message = Message()
     val isProgressVisible = ObservableBoolean(false)
 
-
-
     fun extendFreeTrial() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -72,8 +70,7 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
     private fun getCourseData() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val courseListResponse =
-                    repository.getCourseData()
+                val courseListResponse = repository.getCourseData()
                 if (courseListResponse != null && courseListResponse.isEmpty().not()) {
                     PrefManager.put(CURRENT_COURSE_ID,courseListResponse[0].courseId)
                     withContext(Dispatchers.Main){

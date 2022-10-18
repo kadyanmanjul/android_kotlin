@@ -87,8 +87,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 if (Utils.isInternetAvailable()) {
-                    val courseListResponse =
-                        AppObjectController.chatNetworkService.getRegisteredCourses()
+                    val courseListResponse = AppObjectController.chatNetworkService.getRegisteredCourses()
                     if (courseListResponse.isEmpty()) {
                         appDatabase.courseDao().deleteAllCourses()
                         _registerCourseLocalData.emit(emptyList())

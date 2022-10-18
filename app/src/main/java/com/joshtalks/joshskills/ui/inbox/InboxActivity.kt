@@ -99,7 +99,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initView()
         addLiveDataObservable()
         addAfterTime()
-        //showInAppReview()
         viewModel.handleGroupTimeTokens()
         viewModel.handleBroadCastEvents()
         MarketingAnalytics.openInboxPage()
@@ -194,26 +193,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
     }
 
-//    private fun showInAppReview() {
-//        showToast("Call")
-//        val manager = FakeReviewManager(applicationContext)
-//        manager.requestReviewFlow().addOnCompleteListener { request ->
-//            if (request.isSuccessful) {
-//                Log.e("sagar", "showInAppReview: ${request.result}")
-//                val reviewInfo = request.result
-//                manager.launchReviewFlow(this, reviewInfo).addOnCompleteListener { result ->
-//                    if (result.isSuccessful) {
-//                       showToast("Review Success")
-//                    } else {
-//                        showToast("Review Failed")
-//                    }
-//                }
-//            }else{
-//                showToast(request.exception?.message ?: "")
-//            }
-//        }
-//    }
-
     private fun openPopupMenu(view: View) {
         if (popupMenu == null) {
             popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
@@ -229,7 +208,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     R.id.menu_help -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                         openHelpActivity()
-//                        CallWithExpertActivity.open(this)
                     }
                     R.id.menu_settings -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.SETTINGS).push()
@@ -417,12 +395,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (isTryAgainVisible) {
             tryAgain.visibility = View.VISIBLE
             tryAgain.setOnClickListener {
-//                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//                    this,
-//                    AppObjectController.getFirebaseRemoteConfig().getString(
-//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                    )
-//                )
                 BuyPageActivity.startBuyPageActivity(
                     this,
                     AppObjectController.getFirebaseRemoteConfig().getString(
@@ -456,11 +428,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (items.isEmpty()) {
             return
         }
-//        if(!PrefManager.getBoolValue(IS_LOCALE_UPDATED_IN_SETTINGS) && !PrefManager.getBoolValue(
-//                IS_LOCALE_UPDATED_IN_INBOX)) {
-//            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
-//            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
-//        }
         dismissProgressDialog()
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
@@ -482,6 +449,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                             haveFreeTrialCourse = true
                             PrefManager.put(IS_FREE_TRIAL, true)
                         }
+                        if (inboxEntity.bbTipText?.isNotBlank() == true)
+                            runOnUiThread {
+                                showExploreBBTip(inboxEntity.bbTipText)
+                            }
                     }
                     temp.addAll(courseList)
                     if (courseList.isNullOrEmpty().not()) {
@@ -527,11 +498,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-//                        if (PrefManager.hasKey(COUPON_EXPIRY_TIME)) {
-//                            val expiryTime = PrefManager.getLongValue(COUPON_EXPIRY_TIME)
                         showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
-//                            else
-//                                PrefManager.removeKey(COUPON_EXPIRY_TIME)
                         findMoreLayout.findViewById<View>(R.id.top_line).isVisible = false
                         findMoreLayout.findViewById<View>(R.id.below_line).isVisible = false
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
@@ -597,8 +564,36 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             bbTooltip.isShowing.not().let {
                 bbTooltip.showAlignBottom(buy_english_course)
             }
-        }catch (ex:Exception){
+        } catch (_: Exception) {
+        }
+    }
 
+    private fun showExploreBBTip(bbTipText: String) {
+        try {
+            explore_courses.isVisible = true
+            if (this::bbTooltip.isInitialized.not()) {
+                bbTooltip = Balloon.Builder(this)
+                    .setLayout(R.layout.layout_bb_tip)
+                    .setHeight(BalloonSizeSpec.WRAP)
+                    .setIsVisibleArrow(true)
+                    .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
+                    .setWidthRatio(0.85f)
+                    .setDismissWhenTouchOutside(false)
+                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                    .setLifecycleOwner(this)
+                    .setDismissWhenClicked(false)
+                    .build()
+            }
+            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = bbTipText
+            bbTooltip.isShowing.not().let {
+                bbTooltip.showAlignBottom(explore_courses)
+            }
+        } catch (_: Exception) {
+        }
+
+        explore_courses.setOnClickListener {
+            courseExploreClick()
         }
     }
 
