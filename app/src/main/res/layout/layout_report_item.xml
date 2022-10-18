@@ -17,6 +17,6 @@
         android:paddingRight="@dimen/_12sdp"
         android:paddingBottom="@dimen/_10sdp"
         android:text="@{issue.option}"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
         android:textColor="@color/report_black" />
 </layout>

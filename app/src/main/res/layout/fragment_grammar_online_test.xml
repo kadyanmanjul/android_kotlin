@@ -40,7 +40,7 @@
                     android:paddingBottom="@dimen/_8sdp"
                     android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
@@ -55,7 +55,7 @@
                     android:paddingVertical="@dimen/_8sdp"
                     android:text="1 of 3"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -74,7 +74,7 @@
                     android:paddingHorizontal="@dimen/_14sdp"
                     android:paddingVertical="@dimen/_3sdp"
                     android:text="आगे बढ़े"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
@@ -172,7 +172,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
                     android:text="@string/grammar_lock_text"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                     android:textColor="@color/grammar_red_color_dark" />
             </com.google.android.material.card.MaterialCardView>
 
@@ -231,7 +231,7 @@
                 android:textAlignment="center"
                 android:gravity="center"
                 android:text="@{handler.getTestCompletedDescription()}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/score"
                 app:layout_constraintEnd_toEndOf="parent"

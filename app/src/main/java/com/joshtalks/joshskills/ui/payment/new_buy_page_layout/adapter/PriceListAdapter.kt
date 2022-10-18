@@ -95,7 +95,7 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
             binding.discountPrice.paintFlags = binding.discountPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
             binding.originalPrice.text = priceList?.discountedPrice + "/yr"
             binding.executePendingBindings()
-            if ((expireAt?.time?.minus(System.currentTimeMillis())?:0) > 0L){
+            if ((expireAt?.time?.minus(System.currentTimeMillis())?:0) > 0L && isMentorSpecificCoupon!=null){
                 startFreeTrialTimer(expireAt?.time?.minus(System.currentTimeMillis())?: 0)
             }else{
                 binding.discountTxt.visibility = View.GONE

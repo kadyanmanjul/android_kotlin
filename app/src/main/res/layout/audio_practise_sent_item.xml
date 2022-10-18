@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="end"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 android:textColor="@color/light_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

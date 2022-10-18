@@ -11,7 +11,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_6sdp"

@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_48sdp"
             android:text="@string/verification_failed"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

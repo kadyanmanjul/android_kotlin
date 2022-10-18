@@ -371,15 +371,16 @@ class VoiceCallActivity : BaseActivity() {
             .getString(
                 "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TITLE}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
             )
-        val dialogMsg = AppObjectController.getFirebaseRemoteConfig()
-            .getString(
-                "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TEXT}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
-            )
+
         val builder = AlertDialog.Builder(this).apply {
-            setTitle( dialogTitle.ifBlank { getString(R.string.default_disconnect_dialog_title) })
-            setMessage(
-                dialogMsg.ifBlank { getString(R.string.default_disconnect_dialog_text) }
-            )
+            if(vm.callType == Category.PEER_TO_PEER)
+                setTitle( dialogTitle.ifBlank { getString(R.string.default_disconnect_dialog_title) })
+            if(vm.callType == Category.PEER_TO_PEER)
+                setMessage(
+                    getConformationDialogMessage()
+                )
+            else
+                setMessage(dialogTitle.ifBlank { getString(R.string.default_disconnect_dialog_title) })
             setCancelable(true)
             setPositiveButton("No") { p0, p1 ->
                 CallAnalytics.addAnalytics(
@@ -411,6 +412,13 @@ class VoiceCallActivity : BaseActivity() {
             agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
             extra = PrefManager.getVoipState().name
         )
+    }
+
+    private fun getConformationDialogMessage() : String {
+            return AppObjectController.getFirebaseRemoteConfig()
+                .getString(
+                    "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TEXT}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
+                ).ifBlank { getString(R.string.default_disconnect_dialog_text) }
     }
 
 }

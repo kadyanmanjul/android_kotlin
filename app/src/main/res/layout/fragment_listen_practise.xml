@@ -37,7 +37,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/sub_title_tv"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

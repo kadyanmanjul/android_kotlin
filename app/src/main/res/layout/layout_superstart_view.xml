@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
         android:gravity="start"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+        android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
         android:textColor="@color/demo_app_black_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

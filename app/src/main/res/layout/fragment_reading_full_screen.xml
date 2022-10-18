@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_6sdp"
                 android:text="Creating Your Video..."
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 android:textColor="@color/grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

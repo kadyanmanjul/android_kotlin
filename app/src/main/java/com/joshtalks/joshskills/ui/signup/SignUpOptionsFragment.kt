@@ -48,7 +48,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up_options, container, false)
         binding.lifecycleOwner = this

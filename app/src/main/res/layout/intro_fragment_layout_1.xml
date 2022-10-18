@@ -23,7 +23,7 @@
             android:layout_marginTop="@dimen/_22sdp"
             android:gravity="center_horizontal"
             android:text="@string/vocabulary_completed"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_16ssp"
             app:autoSizeMaxTextSize="@dimen/_18ssp"

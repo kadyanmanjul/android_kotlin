@@ -104,7 +104,7 @@
                 android:gravity="start"
                 android:maxLines="1"
                 android:text="@string/click_to_start_the_course"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 android:textColor="@color/dark_grey"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_image"

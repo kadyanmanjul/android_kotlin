@@ -58,7 +58,7 @@
                     android:ellipsize="marquee"
                     android:gravity="start|center"
                     android:maxLength="16"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                     android:textColor="@color/black"
                     app:drawableStartCompat="@drawable/ic_pdf"
                     app:layout_constraintBottom_toBottomOf="parent"

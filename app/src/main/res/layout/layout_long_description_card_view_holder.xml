@@ -27,7 +27,7 @@
             android:layout_below="@id/title"
             android:layout_marginTop="@dimen/_8sdp"
             android:gravity="fill"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

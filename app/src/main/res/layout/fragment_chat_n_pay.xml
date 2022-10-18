@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/complete_payment"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/view"
                 app:layout_constraintEnd_toEndOf="parent"

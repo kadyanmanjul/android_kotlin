@@ -66,7 +66,7 @@ import java.util.*
 const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
 
-class SignUpActivity : BaseActivity() {
+class SignUpActivity : ThemedBaseActivity() {
 
     private lateinit var appAnalytics: AppAnalytics
     private val viewModel: SignUpViewModel by lazy {
@@ -356,7 +356,7 @@ class SignUpActivity : BaseActivity() {
     private fun openSignUpOptionsFragment() {
         binding.skip.visibility = View.GONE
         binding.ivHelp.visibility = View.GONE
-        binding.ivPrivacy.visibility = View.VISIBLE
+//        binding.ivPrivacy.visibility = View.VISIBLE
         if (TruecallerSDK.getInstance().isUsable)
             trueCallerLogin()
         supportFragmentManager.commit(true) {
@@ -403,7 +403,7 @@ class SignUpActivity : BaseActivity() {
     private fun openProfilePicUpdateFragment() {
         binding.skip.visibility = View.VISIBLE
         binding.ivHelp.visibility = View.GONE
-        binding.ivPrivacy.visibility = View.GONE
+//        binding.ivPrivacy.visibility = View.GONE
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(

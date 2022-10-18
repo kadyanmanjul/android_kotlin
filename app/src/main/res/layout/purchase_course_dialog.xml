@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:text="@string/onboarding_course_heading"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/_12sdp" />
 
@@ -57,7 +57,7 @@
                 android:layout_marginTop="@dimen/_16sdp"
                 android:gravity="center"
                 android:text="@{purchaseData.popUpTitle}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                 android:textColor="@color/pure_black"
                 android:textSize="@dimen/_24sdp"
                 tools:text="Get 10% OFF" />
@@ -83,7 +83,7 @@
                 android:background="@drawable/bg_black_dashed_rectangle"
                 android:gravity="center"
                 android:text="@{purchaseData.couponCode}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                 android:textColor="@color/pure_black"
                 android:textSize="@dimen/_24sdp"
                 android:visibility="@{purchaseData.couponCode != null ? View.VISIBLE : View.GONE}"

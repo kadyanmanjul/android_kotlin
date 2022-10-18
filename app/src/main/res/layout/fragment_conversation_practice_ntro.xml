@@ -8,7 +8,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_title"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
@@ -37,7 +37,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_sub_header"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"

@@ -70,7 +70,7 @@
                             android:gravity="start"
                             android:singleLine="true"
                             android:text="@string/course_overview"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                             android:textColor="@color/black" />
                     </RelativeLayout>
 
@@ -143,7 +143,7 @@
                                 android:marqueeRepeatLimit="marquee_forever"
                                 android:paddingTop="@dimen/_4sdp"
                                 android:singleLine="true"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                                 android:textColor="@color/black"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/user_image"
@@ -211,7 +211,7 @@
                                     android:gravity="top|end"
                                     android:marqueeRepeatLimit="marquee_forever"
                                     android:singleLine="true"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                                     android:textColor="@color/white"
                                     tools:text="Sample test" />
                             </LinearLayout>

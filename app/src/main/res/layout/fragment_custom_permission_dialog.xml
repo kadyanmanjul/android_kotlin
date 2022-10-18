@@ -49,7 +49,7 @@
                 android:text="@string/permission_dialog_description"
                 android:textSize="@dimen/_14ssp"
                 android:fontFamily="@font/open_sans"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                 android:textColor="@color/black" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -88,7 +88,7 @@
                 android:layout_marginBottom="@dimen/_20sdp"
                 android:onClick="@{() -> fragment.cancel()}"
                 android:text="@string/not_now_underline"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                 app:layout_constraintEnd_toEndOf="@id/view"
                 app:layout_constraintStart_toStartOf="@id/view"
                 app:layout_constraintTop_toBottomOf="@+id/tv_select_address" />

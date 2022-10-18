@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
             android:gravity="end|center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
             android:textColor="#9467A6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_value" />

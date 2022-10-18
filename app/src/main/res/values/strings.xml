@@ -205,8 +205,9 @@
     <string name="bilkul_nahi">No</string>
 
     <!-- Signup V2 Screen  -->
-    <string name="otp_verify_label">Apna OTP verify kare</string>
+    <string name="otp_verify_label">Verify your number</string>
     <string name="otp_received_message" formatted="false">Enter the OTP you received on \n  %s </string>
+    <string name="waiting_to_detect">Waiting to automatically detect an SMS sent to <b>%s</b>. Wrong number?</string>
     <string name="edit_number">Edit number</string>
     <string name="register">Register</string>
     <string name="your_name">Your Name</string>
@@ -370,6 +371,8 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="auto_start_prompt_message">Please enable Autostart to receive notifications when the app is in the background</string>
+    <string name="already_a_user_login">Already a user? <font color='#107BE5'>Log in</font></string>
+    <string name="not_a_user_sign_up">Not a user? <font color='#107BE5'>Sign Up</font></string>
 
     <string name="hint_text_btn"><u>OK got it </u></string>
     <string name="rate_us">Rate Us</string>
@@ -566,7 +569,7 @@
     <string name="fname_error_toast" translatable="false">Father name cannot be empty!</string>
     <string name="my_batch" translatable="false">My Batch</string>
     <string name="privacy_policy" translatable="false">Privacy Policy</string>
-    <string name="privacy_label" translatable="false">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
+    <string name="privacy_label" translatable="false">By continuing you consent to share your information with Josh Skills &amp; agree to <font color='#107BE5'><u>Josh Skills’ Privacy Policy</u></font></string>
 
     <string name="grammar_btn_text_check" translatable="false">चेक करें</string>
     <string name="grammar_btn_text_continue" translatable="false">जारी रखें</string>
@@ -939,8 +942,10 @@
         <item>₹ 50000</item>
         <item>₹ 100000</item>
     </string-array>
-    <string name="default_disconnect_dialog_title">Are you sure you want to disconnect the call?</string>
-    <string name="default_disconnect_dialog_text">Disconnecting calls frequently may lead to account suspension</string>
+    <string name="rup">\u20B9</string>
+    <string name="offer_for_you" translatable="false">Offer for you</string>
+    <string name="default_disconnect_dialog_title" translatable="false">Are you sure you want to disconnect the call?</string>
+    <string name="default_disconnect_dialog_text" translatable="false">Disconnecting calls frequently may lead to account suspension</string>
     <string name="please_select_amount_to_add" translatable="false">Please select amount to add</string>
     <string name="minimum_amount_required" translatable="false">Minimum amount required is INR 50</string>
     <string name="transaction_history" translatable="false">Transaction History</string>
@@ -971,5 +976,6 @@
     <string name="intermediate" translatable="false">Intermediate</string>
     <string name="advanced" translatable="false">Advanced</string>
     <string name="skip_smallcase" translatable="false">skip</string>
+    <string name="resend_code">Resend Code</string>
 
 </resources>

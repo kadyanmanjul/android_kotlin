@@ -155,7 +155,7 @@
                                 android:layout_marginTop="@dimen/_10sdp"
                                 android:layout_marginRight="@dimen/_10sdp"
                                 android:text="@{vm.wordText}"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
                                 android:textColor="@color/pure_black"
                                 tools:text="@string/text_temp">
 

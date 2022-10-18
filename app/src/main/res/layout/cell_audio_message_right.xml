@@ -161,7 +161,7 @@
                     android:layout_alignStart="@id/fl_seek_bar"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                     android:textColor="@color/gray_9E"
                     app:layout_goneMarginTop="@dimen/spacing_large"
                     tools:text="00:24" />
@@ -176,7 +176,7 @@
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:gravity="center|end"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                     android:textColor="@color/gray_9E"
                     app:layout_goneMarginTop="@dimen/spacing_large"
                     tools:ignore="MissingPrefix"

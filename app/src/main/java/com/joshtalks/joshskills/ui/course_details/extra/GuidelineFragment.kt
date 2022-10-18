@@ -55,7 +55,7 @@ class GuidelineFragment : Fragment() {
     private fun getTextView(text: String): AppCompatTextView {
         val textView = AppCompatTextView(requireContext())
         textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-        TextViewCompat.setTextAppearance(textView, R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular)
+        TextViewCompat.setTextAppearance(textView, R.style.TextAppearance_JoshTypography_BodyRegular)
         val spanString = SpannableString(text)
         spanString.setSpan(
             IconMarginSpan(

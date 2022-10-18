@@ -49,7 +49,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
+class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitListener {
     var APP_PACKAGE_COUNT = 2
     private var testId: String? = null
     private val viewModel: LauncherViewModel by lazy {

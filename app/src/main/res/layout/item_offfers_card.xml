@@ -53,7 +53,7 @@
                 android:lines="2"
                 android:text="Coupon will expire in 30:00 minutes "
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 android:textColor="@color/black_0.7_alpha" />
 
         </LinearLayout>

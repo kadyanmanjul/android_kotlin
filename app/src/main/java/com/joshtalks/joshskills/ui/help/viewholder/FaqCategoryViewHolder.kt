@@ -92,7 +92,7 @@ class FaqCategoryViewHolder(
         if (position != 1) {
             TextViewCompat.setTextAppearance(
                 categoryNameTV,
-                R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular
+                R.style.TextAppearance_JoshTypography_BodyRegular
             )
             cardView.strokeColor = ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,

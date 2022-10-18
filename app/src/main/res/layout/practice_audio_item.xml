@@ -74,7 +74,7 @@
             android:layout_below="@+id/practise_seekbar"
             android:layout_alignRight="@+id/practise_seekbar"
             android:layout_marginTop="@dimen/_20sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
             android:textColor="@color/gray_9E"
             app:layout_goneMarginTop="@dimen/spacing_large"
             tools:text="just now" />

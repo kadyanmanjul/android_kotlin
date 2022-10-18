@@ -115,7 +115,7 @@
             android:onClick="@{vm::sendBatchSelected}"
             android:text="@string/live_classes_timing"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             android:textColor="@color/white"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"

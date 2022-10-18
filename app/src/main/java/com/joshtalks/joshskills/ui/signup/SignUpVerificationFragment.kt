@@ -1,7 +1,12 @@
 package com.joshtalks.joshskills.ui.signup
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,10 +88,6 @@ class SignUpVerificationFragment : Fragment() {
             binding.otpView2.otp = "0000"
         }
 
-        binding.textView2.text = getString(
-            R.string.otp_received_message,
-            viewModel.countryCode + " " + viewModel.phoneNumber
-        )
         viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
             it?.run {
                 if (this == SignUpStepStatus.ReGeneratedOTP || this == SignUpStepStatus.WRONG_OTP) {
@@ -169,8 +170,7 @@ class SignUpVerificationFragment : Fragment() {
 
     private fun startVerificationTimer() {
         timer?.cancel()
-        binding.otpCl.visibility = View.VISIBLE
-        binding.otpResendCl.visibility = View.GONE
+        binding.resendCodeTv.isEnabled = false
         timer = object : CountDownTimer(TIMEOUT_TIME, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 lastTime = millisUntilFinished.toInt()
@@ -195,9 +195,9 @@ class SignUpVerificationFragment : Fragment() {
     fun onTimeoutSMSVerification() {
         AppObjectController.uiHandler.post {
             if (isResumed) {
-                binding.tvOtpTimer.text = EMPTY
-                binding.otpCl.visibility = View.GONE
-                binding.otpResendCl.visibility = View.VISIBLE
+//                binding.tvOtpTimer.text = EMPTY
+//                binding.tvOtpTimer.visibility = View.GONE
+                binding.resendCodeTv.isEnabled = true
             }
         }
     }
@@ -254,6 +254,21 @@ class SignUpVerificationFragment : Fragment() {
 
         }
         binding.btnVerify.isEnabled = false
+    }
+
+    fun waitingToDetectText(): Spannable {
+        val phNum = "${viewModel.countryCode} ${viewModel.phoneNumber}"
+        val text = getString(R.string.waiting_to_detect, phNum)
+        val spannable = SpannableString(text)
+        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireActivity(), R.color.pure_black)), 47, 47 + phNum.length + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(StyleSpan(Typeface.BOLD),47, 47 + phNum.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireActivity(), R.color.primary_500)), 47 + phNum.length + 2, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannable
+    }
+
+    fun showPrivacyPolicyDialog() {
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
+        (activity as BaseActivity).showWebViewDialog(url)
     }
 
     private fun hideProgress() {
