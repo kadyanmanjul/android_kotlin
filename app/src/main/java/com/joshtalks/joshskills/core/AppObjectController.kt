@@ -100,7 +100,8 @@ private val IGNORE_UNAUTHORISED = setOf(
     "$DIR/voicecall/agora_call_feedback/",
     "$DIR/voicecall/agora_call_feedback_submit/",
     "$DIR/voicecall/call_rating/",
-    "$DIR/fpp/block/"
+    "$DIR/fpp/block/",
+    "$DIR/ab_test/track_conversion/"
 )
 
 class AppObjectController {
@@ -774,7 +775,8 @@ class StatusCodeInterceptor : Interceptor {
                         AppObjectController.joshApplication.packageName
                     )
                 ) {
-                    if (!IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
+//                  if (!IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
+                    IGNORE_UNAUTHORISED.firstOrNull { path -> chain.request().url.toString().contains(path) }?.let {
                         PrefManager.logoutUser()
                         LastSyncPrefManager.clear()
                         WorkManagerAdmin.appInitWorker()

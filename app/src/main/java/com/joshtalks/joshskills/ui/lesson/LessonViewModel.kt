@@ -1160,7 +1160,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun getCoursePopupData(popupType: PurchasePopupType) {
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL)) return
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)) return
         viewModelScope.launch {
             try {
                 val response =
