@@ -66,6 +66,8 @@ class StickyNotificationService : Service() {
     }
 
     override fun onDestroy() {
+        job?.cancel()
+        stopForeground(true)
         stopSelf()
         super.onDestroy()
     }
@@ -158,6 +160,7 @@ class StickyNotificationService : Service() {
                 )
                 delay(10000)
             }
+            stopForeground(true)
             stopSelf()
         }
     }

@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -414,6 +415,9 @@ object PrefManager {
     }
 
     fun logoutUser() {
+        val appContext = AppObjectController.joshApplication
+        WorkManagerAdmin.removeStickyNotificationWorker(appContext)
+        appContext.stopService(Intent(appContext, StickyNotificationService::class.java))
         sendBroadcast()
         clearDatabase()
         Mentor.getInstance().resetMentor()
