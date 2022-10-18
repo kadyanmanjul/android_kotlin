@@ -16,8 +16,8 @@
         android:background="@color/white"
         android:fillViewport="true"
         android:layout_marginTop="@dimen/_24sdp"
-        android:paddingStart="@dimen/_8sdp"
-        android:paddingEnd="@dimen/_8sdp"
+        android:paddingStart="@dimen/_24sdp"
+        android:paddingEnd="@dimen/_24sdp"
         android:scrollbarThumbHorizontal="@null"
         android:scrollbarThumbVertical="@null">
 
@@ -31,16 +31,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:gravity="start"
-                    android:text="@string/your_name"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/dark_grey" />
-
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/name_edit_text"
                     android:layout_width="match_parent"
@@ -48,7 +38,7 @@
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/mobile_no_bg"
                     android:gravity="start"
-                    android:hint="@string/hint_name_field"
+                    android:hint="@string/name"
                     android:imeOptions="actionNext"
                     android:inputType="textCapWords"
                     android:lines="1"
