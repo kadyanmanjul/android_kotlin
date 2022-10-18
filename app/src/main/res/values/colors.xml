@@ -221,4 +221,5 @@
     <color name="golden_color_dark">#FFA41C</color>
     <color name="text_subdued">#6d7175</color>
     <color name="critical">#de350b</color>
+    <color name="surface_information">#ECF5FE</color>
 </resources>

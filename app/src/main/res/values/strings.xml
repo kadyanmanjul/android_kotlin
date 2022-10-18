@@ -978,4 +978,5 @@
     <string name="skip_smallcase" translatable="false">skip</string>
     <string name="resend_code">Resend Code</string>
 
+    <string name="mrp_strike_thru" translatable="false"><strike>MRP: ₹2999.0</strike></string>
 </resources>

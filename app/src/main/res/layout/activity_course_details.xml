@@ -51,10 +51,7 @@
                     android:paddingBottom="@dimen/_6sdp"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_arrow_back" />
-
-
             </com.google.android.material.appbar.CollapsingToolbarLayout>
-
         </com.google.android.material.appbar.AppBarLayout>
 
         <com.mindorks.placeholderview.PlaceHolderView
@@ -64,7 +61,6 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:itemCount="1"
             tools:listitem="@layout/course_overview_view_holder" />
-
 
         <com.pnikosis.materialishprogress.ProgressWheel
             android:id="@+id/progress_bar"
@@ -81,7 +77,6 @@
             wheel:matProg_progressIndeterminate="true"
             wheel:matProg_rimWidth="@dimen/_2sdp" />
 
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/go_to_top"
             android:layout_width="wrap_content"
@@ -94,11 +89,11 @@
             android:onClick="@{()->handler.goToTop()}"
             android:padding="@dimen/_6sdp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_up_arrow_drawable"
             android:visibility="gone"
             app:layout_anchor="@id/buy_course_ll"
             app:layout_anchorGravity="right|top"
-            app:layout_collapseMode="parallax" />
+            app:layout_collapseMode="parallax"
+            app:srcCompat="@drawable/ic_up_arrow_drawable" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/link_to_whatsapp"
@@ -109,11 +104,11 @@
             android:onClick="@{()->handler.openWhatsapp()}"
             android:padding="@dimen/_4sdp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/ic_whatsapp_payment"
             android:visibility="gone"
             app:layout_anchor="@id/buy_course_ll"
             app:layout_anchorGravity="right|top"
             app:layout_collapseMode="parallax"
+            app:srcCompat="@drawable/ic_whatsapp_payment"
             tools:visibility="visible" />
 
         <LinearLayout
@@ -123,42 +118,23 @@
             android:layout_gravity="bottom"
             android:orientation="vertical"
             android:visibility="gone"
-            app:layout_anchor="@id/placeHolderView"
             app:layout_anchorGravity="bottom"
             tools:visibility="visible">
-
-            <com.joshtalks.joshskills.ui.course_details.extra.CourseDetailTooltipView
-                android:id="@+id/continue_tip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginHorizontal="@dimen/_16ssp"
-                android:layout_marginTop="@dimen/_6sdp"
-                android:layout_marginBottom="@dimen/_minus8sdp"
-                android:elevation="2dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/btn_start_course"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.9"
-                tools:visibility="visible" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txt_extra_hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/light_grey"
+                android:background="@color/surface_information"
                 android:gravity="center"
                 android:paddingVertical="@dimen/_2sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                android:textColor="@color/colorPrimary"
                 android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/footer_buy_course"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="Save ₹ 1700 if you join today!"
+                tools:text="Save ₹1700 if you join today!"
                 tools:visibility="visible" />
 
             <View
@@ -171,58 +147,53 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:paddingVertical="@dimen/_4sdp"
+                android:paddingStart="@dimen/_12sdp"
                 android:visibility="gone"
-                android:paddingHorizontal="@dimen/_8sdp"
-                android:paddingVertical="@dimen/_4sdp">
+                tools:visibility="visible">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                    android:id="@+id/txt_actual_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
-                    app:layout_constraintBottom_toTopOf="@+id/txt_discounted_price"
-                    app:layout_constraintEnd_toEndOf="@+id/txt_discounted_price"
-                    app:layout_constraintStart_toStartOf="@+id/txt_discounted_price"
-                    tools:text="$1999" />
-
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <TextView
                     android:id="@+id/txt_discounted_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:paddingBottom="@dimen/_2sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
+                    android:paddingBottom="0dp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.LargeSemiBold"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:text="$2999.0" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="₹2999" />
 
-                <com.google.android.material.textview.MaterialTextView
+                <TextView
+                    android:id="@+id/txt_actual_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_minus4sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold"
+                    android:textColor="@color/critical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txt_discounted_price"
+                    tools:text="MRP: ₹1999" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_start_course"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_13sdp"
                     android:background="@drawable/round_rectangle_for_course_expo"
                     android:backgroundTint="@color/button_color"
                     android:gravity="center"
                     android:onClick="@{()->handler.buyCourse()}"
-                    android:paddingVertical="@dimen/_8sdp"
-                    android:text="@string/start_course"
+                    android:text="@string/buy_now"
                     android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                     android:textColor="@color/white"
                     app:cornerRadius="@dimen/_32sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1"
-                    app:layout_constraintStart_toEndOf="@+id/txt_discounted_price"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.75" />
+                    app:layout_constraintStart_toEndOf="@+id/txt_actual_price"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </LinearLayout>
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </layout>

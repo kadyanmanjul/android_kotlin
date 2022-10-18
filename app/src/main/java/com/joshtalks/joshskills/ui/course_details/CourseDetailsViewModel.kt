@@ -44,10 +44,8 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 val requestParams: HashMap<String, String> = HashMap()
                 requestParams["test_id"] = testId
                 requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
-//                if (Mentor.getInstance().getId().isNotEmpty()) {
                 requestParams["mentor_id"] = Mentor.getInstance().getId()
-                val response =
-                    AppObjectController.commonNetworkService.getCourseDetails(requestParams)
+                val response = AppObjectController.commonNetworkService.getCourseDetails(requestParams)
                 if (response.isSuccessful) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                     courseDetailsLiveData.postValue(response.body())

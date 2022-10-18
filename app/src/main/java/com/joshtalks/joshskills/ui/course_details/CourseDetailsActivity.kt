@@ -18,10 +18,10 @@ import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
@@ -31,6 +31,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
@@ -56,9 +57,13 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
+import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -120,15 +125,15 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
 
-        if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity"){
+        if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity") {
             binding.priceContainer.visibility = View.GONE
             binding.txtExtraHint.visibility = View.GONE
-        }else{
+        } else {
             binding.priceContainer.visibility = View.VISIBLE
         }
-        if(testId == ENGLISH_COURSE_TEST_ID || testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
+        if (testId == ENGLISH_COURSE_TEST_ID || testId == ENGLISH_FREE_TRIAL_1D_TEST_ID) {
             initABTest()
-        }else{
+        } else {
             if (testId != 0) {
                 getCourseDetails(testId)
             } else {
@@ -153,9 +158,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             && freeTrialData?.is7DFTBought == true
             && (SubscriptionData.getMapObject()?.isSubscriptionBought == true).not()
             && remainingTrialDays in 0..7
-            && PrefManager.getBoolValue(
-                SHOW_COURSE_DETAIL_TOOLTIP
-            )
+            && PrefManager.getBoolValue(SHOW_COURSE_DETAIL_TOOLTIP)
         ) {
             showTooltip(remainingTrialDays)
         } else {
@@ -163,48 +166,42 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 binding.txtExtraHint.visibility = View.GONE
             else
                 binding.txtExtraHint.visibility = View.VISIBLE
-            binding.continueTip.visibility = View.GONE
+//            binding.continueTip.visibility = View.GONE
         }
         subscribeLiveData()
 
         MarketingAnalytics.openPreCheckoutPage()
     }
+
     private fun initABTest() {
         viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, testId.toString())
     }
 
     private fun showTooltip(remainingTrialDays: Int) {
-
         when (remainingTrialDays) {
             5, 6, 7 -> {
                 val offerPercentage =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString("COURSE_MAX_OFFER_PER")
+                    AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
 
                 val text = String.format(
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString("BUY_COURSE_OFFER_HINT"),
+                    AppObjectController.getFirebaseRemoteConfig().getString("BUY_COURSE_OFFER_HINT"),
                     offerPercentage,
-                    "${
-                        PrefManager.getIntValue(
-                            REMAINING_TRIAL_DAYS
-                        ).minus(4)
-                    }"
+                    "${PrefManager.getIntValue(REMAINING_TRIAL_DAYS).minus(4)}"
                 )
 
-                binding.continueTip.setText(text)
+//                binding.continueTip.setText(text)
                 binding.txtExtraHint.visibility = View.GONE
-                binding.continueTip.visibility = View.VISIBLE
+//                binding.continueTip.visibility = View.VISIBLE
             }
             3, 4 -> {
                 val text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.BUY_COURSE_LAST_DAY_OFFER_HINT)
 
-                binding.continueTip.setText(text)
+//                binding.continueTip.setText(text)
                 binding.txtExtraHint.visibility = View.GONE
             }
             else -> {
-                binding.continueTip.visibility = View.GONE
+//                binding.continueTip.visibility = View.GONE
                 if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
                     binding.txtExtraHint.visibility = View.GONE
                 else
@@ -216,43 +213,39 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private fun initView() {
         linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
-        binding.placeHolderView.builder.setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
-        binding.placeHolderView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > 0) {
-                    visibleBuyButton()
-                }
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dy > 100) {
-                    visibleBuyButton()
-                }
-            }
-        })
+        binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
+        visibleBuyButton()
+//        binding.placeHolderView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                super.onScrollStateChanged(recyclerView, newState)
+//                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > 0) {
+//                    visibleBuyButton()
+//                }
+//            }
+//
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//                if (dy > 100) {
+//                    visibleBuyButton()
+//                }
+//            }
+//        })
         binding.placeHolderView.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                R.drawable.list_divider
-            )
+            DividerItemDecoration(this, R.drawable.list_divider)
         )
     }
 
-    fun visibleBuyButton() {
+    private fun visibleBuyButton() {
         if (binding.buyCourseLl.visibility == View.GONE) {
             val transition: Transition = Slide(Gravity.BOTTOM)
-            transition.duration = 800
+            transition.duration = 2000
             transition.interpolator = LinearInterpolator()
             transition.addTarget(binding.buyCourseLl)
             TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
-            if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL)
-                    .isNullOrBlank()
-                    .not() && (PrefManager.getStringValue(CURRENT_COURSE_ID)== DEFAULT_COURSE_ID)
+            if (intent.hasExtra(WHATSAPP_URL) &&
+                intent.getStringExtra(WHATSAPP_URL).isNullOrBlank().not() &&
+                (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
             ) {
                 binding.linkToWhatsapp.visibility = View.VISIBLE
             }
@@ -260,14 +253,14 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     private fun subscribeLiveData() {
-        viewModel.courseDetailsLiveData.observe(this, { data ->
-            if(data.totalPoints?:0 > 100){
+        viewModel.courseDetailsLiveData.observe(this) { data ->
+            if ((data.totalPoints ?: 0) > 100) {
                 isPointsScoredMoreThanEqualTo100 = true
             }
 
-            if(is100PointsActive && testId == ENGLISH_COURSE_TEST_ID ) {
-                expiredTime = data?.expiredDate?.time?:0L
-                if (isPointsScoredMoreThanEqualTo100  || expiredTime <= System.currentTimeMillis()) {
+            if (is100PointsActive && testId == ENGLISH_COURSE_TEST_ID) {
+                expiredTime = data?.expiredDate?.time ?: 0L
+                if (isPointsScoredMoreThanEqualTo100 || expiredTime <= System.currentTimeMillis()) {
                     binding.btnStartCourse.isEnabled = true
                     binding.btnStartCourse.alpha = 1f
                 } else if (!isPointsScoredMoreThanEqualTo100 && expiredTime > System.currentTimeMillis()) {
@@ -291,11 +284,13 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                         data.paymentData.discountedAmount
                     )
             } else {
-                binding.txtExtraHint.visibility=View.GONE
+                binding.txtExtraHint.visibility = View.GONE
+            }
+            if (data.paymentData.bbTipText.isNullOrEmpty().not()) {
+                showBbTooltip(data.paymentData.bbTipText!!)
             }
             if (data.version.isNotBlank()) {
                 appAnalytics.addParam(VERSION, PrefManager.getStringValue(VERSION))
-
                 PrefManager.put(VERSION, data.version)
             }
             binding.txtActualPrice.paintFlags =
@@ -318,9 +313,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
             updateButtonText(data.paymentData.discountedAmount.substring(1).toDouble())
 
-        })
+        }
 
-        viewModel.apiCallStatusLiveData.observe(this, {
+        viewModel.apiCallStatusLiveData.observe(this) {
             binding.progressBar.visibility = View.GONE
             if (it == ApiCallStatus.FAILED) {
                 val imageUrl =
@@ -348,13 +343,36 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             } else if (it == ApiCallStatus.START) {
                 showMoveToInboxScreen()
             }
-        })
+        }
 
         viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 is100PointsActive =
                     (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
             }
+        }
+    }
+
+    private fun showBbTooltip(bbTipText: String) {
+        try {
+            val bbTooltip = Balloon.Builder(this)
+                    .setLayout(R.layout.layout_bb_tip)
+                    .setHeight(BalloonSizeSpec.WRAP)
+                    .setIsVisibleArrow(true)
+                    .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
+                    .setWidthRatio(0.85f)
+                    .setDismissWhenTouchOutside(false)
+                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                    .setLifecycleOwner(this)
+                    .setDismissWhenClicked(false)
+                    .build()
+
+            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = bbTipText
+            bbTooltip.isShowing.not().let {
+                bbTooltip.showAlignBottom(binding.buyCourseLl)
+            }
+        } catch (_: Exception) {
         }
     }
 
@@ -575,7 +593,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             }
         }
     }
-
 
     override fun onResume() {
         super.onResume()
