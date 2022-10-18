@@ -734,8 +734,21 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                         binding.freeTrialTimerNewUi.visibility = View.VISIBLE
                         binding.timerText.text = buyCourseFeatureModel.timerBannerText
                         binding.txtHours.text = freeTrailTime[0]
-                        binding.txtMinute.text = freeTrailTime[1]
-                        binding.txtSecond.text = freeTrailTime[2]
+                        if (freeTrailTime.getOrNull(1) != null)
+                            binding.txtMinute.text = freeTrailTime[1]
+                        else {
+                            binding.txtHours.text = "00"
+                            binding.txtMinute.text = "00"
+                            binding.txtSecond.text = freeTrailTime[0]
+                        }
+                        if (freeTrailTime.getOrNull(2) != null) {
+                            binding.txtSecond.text = freeTrailTime[2]
+                        }
+                        else {
+                            binding.txtHours.text = "00"
+                            binding.txtMinute.text = freeTrailTime[0]
+                            binding.txtSecond.text = freeTrailTime[1]
+                        }
                     }else{
                         binding.freeTrialTimer.visibility = View.VISIBLE
                         binding.freeTrialTimer.text = getString(

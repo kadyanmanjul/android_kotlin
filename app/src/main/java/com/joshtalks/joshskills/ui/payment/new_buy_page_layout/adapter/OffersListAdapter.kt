@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.ItemOfffersCardBinding
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_OFFER_CARD
@@ -55,13 +56,14 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L) {
                 holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 holder.binding.btnApply.text = APPLY
+                holder.binding.couponExpireText.visibility = View.VISIBLE
             } else {
                 holder.changeTextColor(holder.binding, offersList[position], position)
                 holder.binding.couponExpireText.visibility = View.VISIBLE
             }
         }
 
-        holder.binding.btnApply.setOnClickListener {
+        holder.binding.btnApply.setOnSingleClickListener {
             if (offersList[holder.bindingAdapterPosition].isCouponSelected == 0) {
                 offersList[0].isCouponSelected = 0
                 offersList[holder.bindingAdapterPosition].isCouponSelected = 1
@@ -125,11 +127,14 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         RecyclerView.ViewHolder(binding.root) {
         fun setData(coupon: Coupon?, position: Int) {
             binding.executePendingBindings()
-            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L) {
-                startFreeTrialTimer(coupon?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0, coupon, position)
+            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && coupon?.isMentorSpecificCoupon!=null) {
+                startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), coupon, position)
             }else{
                 changeTextColor(binding, coupon,position)
-                binding.couponExpireText.visibility = View.VISIBLE
+                if (coupon?.isMentorSpecificCoupon != null)
+                    binding.couponExpireText.visibility = View.VISIBLE
+                else
+                    binding.couponExpireText.visibility = View.GONE
             }
         }
 
