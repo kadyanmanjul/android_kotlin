@@ -206,6 +206,7 @@ const val IS_LEVEL_DETAILS_ENABLED = "IS_LEVEL_DETAILS_ENABLED"
 const val IS_INTEREST_FORM_ENABLED = "IS_INTEREST_FORM_ENABLED"
 const val FT_COURSE_ONBOARDING = "FT_COURSE_ONBOARDING"
 const val FT_ONBOARDING_NEXT_STEP = "FT_COURSE_ONBOARDING_DATA"
+const val STICKY_COUPON_DATA = "STICKY_COUPON_DATA"
 
 object PrefManager {
 
@@ -416,7 +417,7 @@ object PrefManager {
 
     fun logoutUser() {
         val appContext = AppObjectController.joshApplication
-        WorkManagerAdmin.removeStickyNotificationWorker(appContext)
+        WorkManagerAdmin.removeStickyNotificationWorker()
         appContext.stopService(Intent(appContext, StickyNotificationService::class.java))
         sendBroadcast()
         clearDatabase()

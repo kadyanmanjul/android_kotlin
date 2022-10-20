@@ -162,13 +162,11 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-    fun removeStickyNotificationWorker(context: Context? = null) {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .cancelAllWorkByTag(StickyNotificationWorker::class.java.name)
-        context?.let {
-            val notificationManager = it.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.cancel(StickyNotificationWorker.notificationId)
-        }
+    fun removeStickyNotificationWorker() {
+        val context = AppObjectController.joshApplication
+        WorkManager.getInstance(context).cancelAllWorkByTag(StickyNotificationWorker::class.java.name)
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(StickyNotificationWorker.notificationId)
     }
 
     fun getLanguageChangeWorker(language: String): UUID {

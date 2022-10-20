@@ -11,19 +11,19 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_HIGH
 import androidx.core.app.NotificationManagerCompat
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.ui.special_practice.utils.FLOW_FROM
 import kotlinx.coroutines.*
+import org.json.JSONObject
+import timber.log.Timber
 
 class StickyNotificationService : Service() {
 
-    private val notificationId = (System.currentTimeMillis() and 0xfffffff).toInt()
+    private val notificationId = 10206
+    private var endTime: Long = 0L
     private var shouldUpdate = true
     private var serviceRunning = false
     private var job: Job? = null
@@ -38,7 +38,7 @@ class StickyNotificationService : Service() {
         if (!serviceRunning) {
             serviceRunning = true
             val couponCode = intent?.extras?.getString("coupon_code") ?: "ENG10"
-            var endTime = intent?.extras?.getLong("expiry_time") ?: 3600000L
+            endTime = intent?.extras?.getLong("expiry_time") ?: 3600000L
             val title = intent?.extras?.getString("sticky_title") ?: "Do you know?"
             val body = intent?.extras?.getString("sticky_body") ?: "You'll miss an offer if you don't click on this notification"
 
@@ -51,6 +51,7 @@ class StickyNotificationService : Service() {
                     )
                     shouldUpdate = true
                     endTime = (response["expiry_time"] as Double).toLong() * 1000L
+                    updatePrefValue(endTime)
                     updateJob(title, body, couponCode, endTime)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -158,10 +159,23 @@ class StickyNotificationService : Service() {
                     ((endTime - System.currentTimeMillis().plus(offsetTime)).toFloat() / timeDiff),
                     timeDiff
                 )
+                if (System.currentTimeMillis().plus(offsetTime) > endTime)
+                    onDestroy()
                 delay(10000)
             }
-            stopForeground(true)
-            stopSelf()
+            onDestroy()
+        }
+    }
+
+    private fun updatePrefValue(endTime: Long) {
+        try {
+            val jsonObject = JSONObject(PrefManager.getStringValue(STICKY_COUPON_DATA))
+            Timber.tag("SukeshTest").e("1: $jsonObject")
+            jsonObject.put("expiry_time", endTime.div(1000))
+            Timber.tag("SukeshTest").e("2: $jsonObject")
+            PrefManager.put(STICKY_COUPON_DATA, jsonObject.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

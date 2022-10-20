@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.util.ReminderUtil
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import kotlinx.coroutines.*
+import org.json.JSONObject
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
@@ -377,6 +378,7 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
                     )
                     shouldUpdate = true
                     endTime = (response["expiry_time"] as Double).toLong() * 1000L
+                    updatePrefValue(endTime)
                     updateJob(title, body, couponCode, endTime)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -477,6 +479,16 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
                 )
                 delay(10000)
             }
+        }
+    }
+
+    private fun updatePrefValue(endTime: Long) {
+        try {
+            val jsonObject = JSONObject(PrefManager.getStringValue(STICKY_COUPON_DATA))
+            jsonObject.put("expiry_time", endTime.div(1000))
+            PrefManager.put(STICKY_COUPON_DATA, jsonObject.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

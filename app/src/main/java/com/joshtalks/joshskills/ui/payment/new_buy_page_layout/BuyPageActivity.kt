@@ -895,7 +895,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         )
         try {
             NotificationUtils(applicationContext).removeAllScheduledNotification()
-            WorkManagerAdmin.removeStickyNotificationWorker(this)
+            WorkManagerAdmin.removeStickyNotificationWorker()
             stopService(Intent(this, StickyNotificationService::class.java))
         } catch (e: Exception) {
             e.printStackTrace()
