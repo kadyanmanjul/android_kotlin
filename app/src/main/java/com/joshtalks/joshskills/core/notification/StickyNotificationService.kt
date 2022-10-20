@@ -44,17 +44,19 @@ class StickyNotificationService : Service() {
 
             updateJob(title, body, couponCode, endTime)
 
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val response = AppObjectController.utilsAPIService.updateNotificationStatus(
-                        mapOf(Pair("coupon_code", couponCode))
-                    )
-                    shouldUpdate = true
-                    endTime = (response["expiry_time"] as Double).toLong() * 1000L
-                    updatePrefValue(endTime)
-                    updateJob(title, body, couponCode, endTime)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+            if (intent?.extras?.getBoolean("start_from_inbox") == false) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val response = AppObjectController.utilsAPIService.updateNotificationStatus(
+                            mapOf(Pair("coupon_code", couponCode))
+                        )
+                        shouldUpdate = true
+                        endTime = (response["expiry_time"] as Double).toLong() * 1000L
+                        updatePrefValue(endTime)
+                        updateJob(title, body, couponCode, endTime)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
         }
@@ -170,9 +172,7 @@ class StickyNotificationService : Service() {
     private fun updatePrefValue(endTime: Long) {
         try {
             val jsonObject = JSONObject(PrefManager.getStringValue(STICKY_COUPON_DATA))
-            Timber.tag("SukeshTest").e("1: $jsonObject")
             jsonObject.put("expiry_time", endTime.div(1000))
-            Timber.tag("SukeshTest").e("2: $jsonObject")
             PrefManager.put(STICKY_COUPON_DATA, jsonObject.toString())
         } catch (e: Exception) {
             e.printStackTrace()

@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Activity
+import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.service.notification.StatusBarNotification
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -36,6 +38,7 @@ import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
+import com.joshtalks.joshskills.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -56,6 +59,7 @@ import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
@@ -144,12 +148,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         btn_upgrade.setOnClickListener {
-//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//                this@InboxActivity,
-//                AppObjectController.getFirebaseRemoteConfig().getString(
-//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                )
-//            )
             BuyPageActivity.startBuyPageActivity(
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
@@ -193,12 +191,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 ),
                 "INBOX_BUY_COURSE_BTN"
             )
-//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//                this,
-//                AppObjectController.getFirebaseRemoteConfig().getString(
-//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                )
-//            )
         }
     }
 
@@ -258,6 +250,36 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         lifecycleScope.launchWhenResumed {
             processIntent(intent)
             checkInAppUpdate()
+            checkCouponNotification()
+        }
+    }
+
+    private fun checkCouponNotification() {
+        try {
+            val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notifications: Array<StatusBarNotification> = mNotificationManager.activeNotifications
+            for (notification in notifications) {
+                if (notification.id == 10206) {
+                    return
+                }
+            }
+            val json = JSONObject(PrefManager.getStringValue(STICKY_COUPON_DATA))
+            val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
+            val endTime = json.getLong("expiry_time") * 1000L
+            if (System.currentTimeMillis().plus(offsetTime) < endTime) {
+                val serviceIntent = Intent(this, StickyNotificationService::class.java)
+                serviceIntent.putExtra("sticky_title", json.getString("sticky_title"))
+                serviceIntent.putExtra("sticky_body", json.getString("sticky_body"))
+                serviceIntent.putExtra("coupon_code", json.getString("coupon_code"))
+                serviceIntent.putExtra("expiry_time", json.getLong("expiry_time") * 1000L)
+                serviceIntent.putExtra("start_from_inbox", true)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    startForegroundService(serviceIntent)
+                else
+                    startService(serviceIntent)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

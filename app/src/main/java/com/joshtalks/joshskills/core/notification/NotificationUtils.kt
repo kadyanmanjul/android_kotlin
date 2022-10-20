@@ -492,7 +492,7 @@ class NotificationUtils(val context: Context) {
                     serviceIntent.putExtra("sticky_body", notificationObject.contentText)
                     serviceIntent.putExtra("coupon_code", jsonObj.getString("coupon_code"))
                     serviceIntent.putExtra("expiry_time", jsonObj.getLong("expiry_time") * 1000L)
-                    PrefManager.put(STICKY_COUPON_DATA, actionData!!)
+                    addValueToPref(jsonObj, notificationObject.contentTitle, notificationObject.contentText)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         WorkManagerAdmin.setStickyNotificationWorker(
                             title = notificationObject.contentTitle,
@@ -698,6 +698,12 @@ class NotificationUtils(val context: Context) {
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         return rIntent
+    }
+
+    private fun addValueToPref(json: JSONObject, title: String?, body: String?) {
+        json.put("sticky_title", title)
+        json.put("sticky_body", body)
+        PrefManager.put(STICKY_COUPON_DATA, json.toString())
     }
 
     fun getDataFromMoengage(intentData: Bundle): Map<String, String?> {
