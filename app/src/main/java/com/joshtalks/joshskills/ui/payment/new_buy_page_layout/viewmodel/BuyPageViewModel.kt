@@ -186,6 +186,8 @@ class BuyPageViewModel : BaseViewModel() {
                             isCouponApplied.set(true)
                             if (it.couponCode != manualCoupon.get())
                                 couponAppliedCode.set(it.couponCode)
+                            else
+                                couponAppliedCode.set(manualCoupon.get())
                             try {
                                 getCoursePriceList(it.couponCode, it.isMentorSpecificCoupon, it.validDuration)
                                 isDiscount = true
@@ -198,7 +200,8 @@ class BuyPageViewModel : BaseViewModel() {
                                 singleLiveEvent.value = message
                             }
                         }else{
-                            showToast("Coupon already applied")
+                            if (it.isMentorSpecificCoupon!=null)
+                                showToast("Coupon already applied")
                         }
                     } else {
                         if (it.isMentorSpecificCoupon == null){

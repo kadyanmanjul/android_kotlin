@@ -105,6 +105,7 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
             binding.rootCard.isEnabled = false
             binding.txtCouponCode.setTextColor(grayColor)
             binding.txtCouponExpireTime.text = "Coupon expired"
+            freeTrialTimerJob?.cancel()
             binding.txtCouponExpireTime.setTextColor(grayColor)
             binding.couponDesc.setTextColor(grayColor)
             binding.saveMoney.setTextColor(grayColor)

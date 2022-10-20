@@ -53,11 +53,12 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             offersList[position]
                 .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
         } else {
-            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L) {
+            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && offersList[position].isMentorSpecificCoupon!=null) {
                 holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 holder.binding.btnApply.text = APPLY
                 holder.binding.couponExpireText.visibility = View.VISIBLE
             } else {
+                offersList[position].let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
                 holder.changeTextColor(holder.binding, offersList[position], position)
                 holder.binding.couponExpireText.visibility = View.VISIBLE
             }
@@ -113,8 +114,19 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     override fun getItemCount(): Int = offersList.size
 
     fun addOffersList(members: MutableList<Coupon>) {
-        offersList.clear()
-        offersList.addAll(members)
+        val listToAdd = mutableListOf<Coupon>()
+        if (offersList.isNullOrEmpty()){
+            offersList.addAll(members)
+        }else {
+            members.forEach { coupon ->
+                val itemInOffer = offersList.filter { it.couponCode == coupon.couponCode }
+                if (itemInOffer.isNullOrEmpty().not()) {
+                    listToAdd.addAll(itemInOffer)
+                }
+            }
+            offersList.clear()
+            offersList.addAll(listToAdd)
+        }
         freeTrialTimerJob?.cancel()
         notifyDataSetChanged()
     }
@@ -186,6 +198,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 binding.rootCard.isEnabled = false
                 binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 binding.couponExpireText.text = "Coupon expired"
+                freeTrialTimerJob?.cancel()
                 binding.couponExpireText.setTextColor(grayColor)
                 binding.couponDiscountPercent.setTextColor(grayColor)
                 binding.btnApply.isEnabled = false
