@@ -82,6 +82,7 @@
             android:layout_marginBottom="@dimen/_24sdp"
             android:onClick="@{()->handler.submitProfile()}"
             android:text="@string/continue_label"
+            android:layout_marginTop="@dimen/_24sdp"
             android:textAllCaps="false"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/text_view_privacy"
