@@ -143,9 +143,8 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         }
 
         if (user.email.isNullOrEmpty().not()) {
-            binding.textViewEmail.visibility = View.VISIBLE
             binding.emailEditText.setText(user.email)
-            binding.emailEditText.visibility = View.VISIBLE
+            binding.emailInputLayout.visibility = View.VISIBLE
         }
 
         if (user.phoneNumber.isNullOrEmpty().not()) {
@@ -154,7 +153,6 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             if (length > 10) {
                 binding.phoneNumberEt.setText(word.substring(length - 10))
                 binding.etContainer.visibility = View.VISIBLE
-                binding.textViewPhone.visibility = View.VISIBLE
                 binding.countryCodePicker.isEnabled = false
                 binding.countryCodePicker.isClickable = false
                 binding.countryCodePicker.setCcpClickable(false)
@@ -167,16 +165,14 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             if (mobileNumber.isNullOrEmpty().not()) {
                 binding.phoneNumberEt.setText(mobileNumber[1])
                 binding.etContainer.visibility = View.VISIBLE
-                binding.textViewPhone.visibility = View.VISIBLE
             }
         }
 
         if (binding.phoneNumberEt.text.isNullOrEmpty() && user.email.isNullOrEmpty()) {
-            binding.textViewEmail.visibility = View.VISIBLE
             binding.emailEditText.isFocusableInTouchMode = true
             binding.emailEditText.isClickable = true
             binding.emailEditText.isEnabled = true
-            binding.emailEditText.visibility = View.VISIBLE
+            binding.emailInputLayout.visibility = View.VISIBLE
         }
         if (user.occupation.isNullOrEmpty().not()) {
             binding.occupationEditText.setText(user.occupation)
@@ -204,10 +200,8 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         binding.emailEditText.setOnClickListener {
             emailSelectionHint()
         }
-        val toggleListener = View.OnClickListener {
-            disableAllGenderView()
-            enableSelectedGenderView(it)
-            gender = when (it.id) {
+        binding.genderToggle.setOnCheckedChangeListener { radioGroup, i ->
+            gender = when (i) {
                 R.id.tv_male_gender -> {
                     GENDER.MALE
                 }
@@ -219,9 +213,6 @@ class SignUpProfileFragment : BaseSignUpFragment() {
                 }
             }
         }
-        binding.tvMaleGender.setOnClickListener(toggleListener)
-        binding.tvFemaleGender.setOnClickListener(toggleListener)
-        binding.tvOtherGender.setOnClickListener(toggleListener)
     }
 
     private fun disableAllGenderView() {

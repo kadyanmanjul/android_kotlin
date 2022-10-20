@@ -1041,7 +1041,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:text="@string/occupation"
+                        android:text="@string/occupation_heading"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/colorPrimary"
                         android:visibility="gone"

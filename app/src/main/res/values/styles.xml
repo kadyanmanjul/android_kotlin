@@ -739,6 +739,15 @@
 
     <style name="JoshInputField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/disabled</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_8sdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_8sdp</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/_8sdp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_8sdp</item>
+    </style>
+
+    <style name="JoshInputFieldWithHelper" parent="JoshInputField">
+        <item name="helperTextTextAppearance">@style/TextAppearance.JoshTypography.CaptionRegular</item>
+        <item name="helperTextTextColor">@color/text_subdued</item>
     </style>
 
     <style name="JoshEditText">
@@ -764,5 +773,12 @@
         <item name="android:maxLength">24</item>
         <item name="android:maxLines">1</item>
         <item name="android:minLines">1</item>
+    </style>
+
+    <style name="JoshRadioButton">
+        <item name="android:paddingStart">@dimen/_5sdp</item>
+        <item name="buttonTint">@color/disabled</item>
+        <item name="android:textAppearance">@style/TextAppearance.JoshTypography.SubHeadingRegular
+        </item>
     </style>
 </resources>

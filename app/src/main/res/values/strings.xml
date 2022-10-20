@@ -695,7 +695,8 @@
     <string name="favourite_josh_talk" translatable="false">Favourite Josh Talk :</string>
     <string name="youtube_link" translatable="false">https://www.youtube.com/watch?v=uetRaRuCOwU</string>
     <string name="education_and_occupation" translatable="false">Education and Occupation</string>
-    <string name="occupation" translatable="false">Occupation :</string>
+    <string name="occupation_heading" translatable="false">Occupation :</string>
+    <string name="occupation" translatable="false">Occupation</string>
     <string name="aspiring_ias_officer" translatable="false">Aspiring IAS officer</string>
     <string name="at_josh_talks" translatable="false">at Josh Talks</string>
     <string name="education" translatable="false">Education :</string>
@@ -714,6 +715,7 @@
     <string name="your_full_name" translatable="false">Your Full Name</string>
     <string name="time_format" translatable="false">DD/MM/YYYY</string>
     <string name="ex_aspiring_ias_officer" translatable="false">E.g.- Aspiring IAS Officer</string>
+    <string name="ex_ias_officer" translatable="false">E.g.- IAS Officer</string>
     <string name="paste_link_to_your_favourite_josh_talk_here" translatable="false">Paste link to your favourite josh talk here</string>
     <string name="add_education_details" translatable="false">Add Education Details</string>
     <string name="subject_degree" translatable="false">Subject / Degree</string>

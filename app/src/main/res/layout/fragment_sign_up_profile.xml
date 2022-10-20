@@ -13,9 +13,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_24sdp"
         android:background="@color/white"
         android:fillViewport="true"
-        android:layout_marginTop="@dimen/_24sdp"
         android:paddingStart="@dimen/_24sdp"
         android:paddingEnd="@dimen/_24sdp"
         android:scrollbarThumbHorizontal="@null"
@@ -31,90 +31,54 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/name_edit_text"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/nameInputLayout"
+                    style="@style/JoshInputField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:background="@drawable/mobile_no_bg"
-                    android:gravity="start"
-                    android:hint="@string/name"
-                    android:imeOptions="actionNext"
-                    android:inputType="textCapWords"
-                    android:lines="1"
-                    android:digits="@string/allowed_name_characters"
-                    android:maxLength="24"
-                    android:maxLines="1"
-                    android:minLines="1"
-                    android:paddingStart="@dimen/_14sdp"
-                    android:paddingTop="@dimen/_10sdp"
-                    android:paddingEnd="@dimen/_14sdp"
-                    android:paddingBottom="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/light_grey"
-                    android:textCursorDrawable="@drawable/cursor_drawable" />
+                    android:hint="@string/name">
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:gravity="start"
-                    android:text="@string/email_address"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/dark_grey"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/name_edit_text"
+                        style="@style/JoshNameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/email_edit_text"
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/emailInputLayout"
+                    style="@style/JoshInputField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:background="@drawable/mobile_no_bg"
-                    android:clickable="false"
-                    android:enabled="false"
-                    android:focusable="false"
-                    android:gravity="start"
-                    android:hint="@string/hint_email_field"
-                    android:imeOptions="actionNext"
-                    android:inputType="textCapSentences|textEmailAddress"
-                    android:lines="1"
-                    android:maxLength="60"
-                    android:maxLines="1"
-                    android:minLines="1"
-                    android:paddingStart="@dimen/_14sdp"
-                    android:paddingTop="@dimen/_10sdp"
-                    android:paddingEnd="@dimen/_14sdp"
-                    android:paddingBottom="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/light_grey"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/email"
                     android:visibility="gone"
-                    tools:visibility="visible" />
+                    tools:visibility="visible">
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:gravity="start"
-                    android:text="@string/phone_number"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/dark_grey"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/email_edit_text"
+                        style="@style/JoshEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapSentences|textEmailAddress"
+                        android:lines="1"
+                        android:maxLength="60"
+                        android:minLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-
                     android:id="@+id/et_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:background="@drawable/mobile_no_bg"
+                    android:layout_height="@dimen/_48sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="@drawable/mobile_no_bg_v2"
                     android:paddingStart="@dimen/_14sdp"
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingEnd="@dimen/_14sdp"
@@ -124,7 +88,7 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                         android:id="@+id/country_code_picker"
-                        style="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        style="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -176,6 +140,7 @@
                         android:enabled="false"
                         android:focusable="false"
                         android:gravity="start|center"
+                        android:hint="@string/mobile_number"
                         android:imeOptions="actionDone"
                         android:importantForAutofill="no"
                         android:inputType="phone"
@@ -183,9 +148,9 @@
                         android:maxLength="13"
                         android:paddingStart="@dimen/_8sdp"
                         android:paddingEnd="@dimen/_4sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
+                        android:textColor="@color/text_default"
+                        android:textColorHint="@color/text_light"
                         app:backgroundTint="@color/white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/iv_tick"
@@ -200,208 +165,134 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:gravity="center_vertical|start"
-                        app:srcCompat="@drawable/ic_small_tick"
                         android:tint="@color/colorPrimary"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_small_tick"
                         tools:visibility="visible" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_dob"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:gravity="start"
-                    android:text="@string/date_of_birth"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/dark_grey" />
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/dob_edit_text"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/dobInputLayout"
+                    style="@style/JoshInputField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:background="@drawable/mobile_no_bg"
-                    android:clickable="true"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:gravity="start"
-                    android:hint="@string/hint_date_field"
-                    android:imeOptions="actionNone"
-                    android:importantForAutofill="no"
-                    android:inputType="none"
-                    android:onClick="@{()->handler.selectDateOfBirth()}"
-                    android:paddingStart="@dimen/_14sdp"
-                    android:paddingTop="@dimen/_10sdp"
-                    android:paddingEnd="@dimen/_14sdp"
-                    android:paddingBottom="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/light_grey" />
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/date_of_birth">
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_gender"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:gravity="start"
-                    android:text="@string/gender"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/dark_grey" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/dob_edit_text"
+                        style="@style/JoshEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:gravity="start"
+                        android:imeOptions="actionNone"
+                        android:importantForAutofill="no"
+                        android:inputType="none"
+                        android:onClick="@{()->handler.selectDateOfBirth()}"
+                        tools:ignore="KeyboardInaccessibleWidget" />
 
-                <LinearLayout
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <RadioGroup
                     android:id="@+id/gender_toggle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:orientation="horizontal">
 
-                    <com.google.android.material.textview.MaterialTextView
+                    <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/tv_male_gender"
-                        android:layout_width="@dimen/_85sdp"
+                        style="@style/JoshRadioButton"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/mobile_no_bg"
-                        android:duplicateParentState="true"
-                        android:gravity="center"
-                        android:paddingStart="@dimen/_20sdp"
-                        android:paddingTop="@dimen/_8sdp"
-                        android:paddingEnd="@dimen/_20sdp"
-                        android:paddingBottom="@dimen/_8sdp"
-                        android:text="@string/male"
-                        android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                        android:textColor="@color/dark_grey"
-                        app:rippleColor="@color/white" />
+                        android:layout_weight="1"
+                        android:text="@string/male" />
 
-                    <com.google.android.material.textview.MaterialTextView
+                    <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/tv_female_gender"
-                        android:layout_width="@dimen/_85sdp"
+                        style="@style/JoshRadioButton"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:background="@drawable/mobile_no_bg"
-                        android:duplicateParentState="true"
-                        android:gravity="center"
-                        android:paddingStart="@dimen/_20sdp"
-                        android:paddingTop="@dimen/_8sdp"
-                        android:paddingEnd="@dimen/_20sdp"
-                        android:paddingBottom="@dimen/_8sdp"
-                        android:text="@string/female"
-                        android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                        android:textColor="@color/dark_grey"
-                        app:rippleColor="@color/white" />
+                        android:layout_weight="1"
+                        android:text="@string/female" />
 
-                    <com.google.android.material.textview.MaterialTextView
+                    <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/tv_other_gender"
-                        android:layout_width="@dimen/_85sdp"
+                        style="@style/JoshRadioButton"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:background="@drawable/mobile_no_bg"
-                        android:duplicateParentState="true"
-                        android:gravity="center"
-                        android:paddingStart="@dimen/_20sdp"
-                        android:paddingTop="@dimen/_8sdp"
-                        android:paddingEnd="@dimen/_20sdp"
-                        android:paddingBottom="@dimen/_8sdp"
-                        android:text="@string/other"
-                        android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                        android:textColor="@color/dark_grey"
-                        app:rippleColor="@color/white" />
-                </LinearLayout>
+                        android:layout_weight="1"
+                        android:text="@string/other" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_occupation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:gravity="start"
-                    android:text="@string/occupation_field"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/dark_grey" />
+                </RadioGroup>
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/occupation_edit_text"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/occupationInputLayout"
+                    style="@style/JoshInputFieldWithHelper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:background="@drawable/mobile_no_bg"
-                    android:gravity="start"
-                    android:hint="@string/occupation_filed_hint_text"
-                    android:imeOptions="actionNext"
-                    android:inputType="textCapWords"
-                    android:lines="1"
-                    android:digits="@string/allowed_name_characters"
-                    android:maxLength="24"
-                    android:maxLines="1"
-                    android:minLines="1"
-                    android:paddingStart="@dimen/_14sdp"
-                    android:paddingTop="@dimen/_10sdp"
-                    android:paddingEnd="@dimen/_14sdp"
-                    android:paddingBottom="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/light_grey"
-                    android:textCursorDrawable="@drawable/cursor_drawable" />
+                    app:helperText="@string/occupation_filed_hint_text"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/occupation">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/occupation_edit_text"
+                        style="@style/JoshEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="@string/allowed_name_characters"
+                        android:gravity="start"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapWords"
+                        android:lines="1"
+                        android:maxLength="24"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:textCursorDrawable="@drawable/cursor_drawable" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/aspirationInputLayout"
+                    style="@style/JoshInputFieldWithHelper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:helperText="@string/ex_ias_officer"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/aspiration_filed">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/aspiration_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/JoshEditText"
+                        android:digits="@string/allowed_name_characters"
+                        android:gravity="start"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapWords"
+                        android:lines="1"
+                        android:maxLength="24"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:textCursorDrawable="@drawable/cursor_drawable" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:textAppearance="BodyMed"
                     android:text="@string/sign_up_profile_occupation_aspiration_text"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:textColor="@color/dark_grey"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_aspiration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:gravity="start"
-                    android:text="@string/aspiration_filed"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/dark_grey" />
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/aspiration_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:background="@drawable/mobile_no_bg"
-                    android:gravity="start"
-                    android:hint="@string/aspiration_filed_hint_text"
-                    android:imeOptions="actionNext"
-                    android:inputType="textCapWords"
-                    android:lines="1"
-                    android:digits="@string/allowed_name_characters"
-                    android:maxLength="24"
-                    android:maxLines="1"
-                    android:minLines="1"
-                    android:paddingStart="@dimen/_14sdp"
-                    android:paddingTop="@dimen/_10sdp"
-                    android:paddingEnd="@dimen/_14sdp"
-                    android:paddingBottom="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/light_grey"
-                    android:textCursorDrawable="@drawable/cursor_drawable" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sign_up_profile_occupation_aspiration_text"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:textColor="@color/dark_grey"/>
+                    android:textColor="@color/text_subdued" />
 
             </LinearLayout>
 
@@ -412,7 +303,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_login"
-                    style="@style/Widget.MaterialComponents.Button"
+                    style="@style/Primary_Button_Filled"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_16sdp"
@@ -421,19 +312,12 @@
                     android:focusable="true"
                     android:maxLines="1"
                     android:onClick="@{()->handler.submitProfile()}"
-                    android:paddingTop="@dimen/_12sdp"
-                    android:paddingBottom="@dimen/_12sdp"
                     android:text="@string/next"
                     android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/white"
-                    app:cornerRadius="@dimen/_32sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.8"
-                    app:rippleColor="@color/white" />
+                    app:layout_constraintWidth_default="percent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
