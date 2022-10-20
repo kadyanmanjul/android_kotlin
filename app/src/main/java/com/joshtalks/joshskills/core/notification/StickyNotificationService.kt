@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.ui.special_practice.utils.FLOW_FROM
 import kotlinx.coroutines.*
 import org.json.JSONObject
-import timber.log.Timber
 
 class StickyNotificationService : Service() {
 
@@ -69,6 +68,8 @@ class StickyNotificationService : Service() {
     }
 
     override fun onDestroy() {
+        val nMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        nMgr.cancel(notificationId)
         job?.cancel()
         stopForeground(true)
         stopSelf()
@@ -144,13 +145,15 @@ class StickyNotificationService : Service() {
             )
             shouldUpdate = false
         }
+        if ((time * 100) <= 0)
+            onDestroy()
         notificationBuilder.contentView.setProgressBar(R.id.notification_progress, 100, (100 - (time * 100)).toInt(), false)
         NotificationManagerCompat.from(this).notify(notificationId, notificationBuilder.build())
     }
 
     private fun updateJob(title: String, body: String, couponCode: String, endTime: Long) {
         job?.cancel()
-        val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
+        val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true).minus(5000)
         val timeDiff = endTime - System.currentTimeMillis().plus(offsetTime)
         job = CoroutineScope(Dispatchers.Main).launch {
             while (System.currentTimeMillis().plus(offsetTime) < endTime) {
@@ -161,8 +164,6 @@ class StickyNotificationService : Service() {
                     ((endTime - System.currentTimeMillis().plus(offsetTime)).toFloat() / timeDiff),
                     timeDiff
                 )
-                if (System.currentTimeMillis().plus(offsetTime) > endTime)
-                    onDestroy()
                 delay(10000)
             }
             onDestroy()

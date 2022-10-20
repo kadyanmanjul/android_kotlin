@@ -400,10 +400,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     getString(R.string.lesson_no, it.lessonNo)
                 lessonNumber = it.lessonNo
                 lessonIsNewGrammar =
-                    it.isNewGrammar && if (lessonNumber == 1) {
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getBoolean(SHOW_NEW_GRAMMAR_ENABLED)
-                    } else true
+                    it.isNewGrammar && (if (lessonNumber == 1) {
+                        AppObjectController.getFirebaseRemoteConfig().getBoolean(SHOW_NEW_GRAMMAR_ENABLED)
+                    } else true)
             }
             MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_OPENED)
                 .addParam(ParamKeys.LESSON_ID, getLessonId)

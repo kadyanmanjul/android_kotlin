@@ -1,9 +1,6 @@
 package com.joshtalks.joshskills.core.service
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -358,6 +355,7 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
     }
     private var shouldUpdate = true
     private var job: Job? = null
+    private var endTime: Long = 0
     private lateinit var notificationBuilder: NotificationCompat.Builder
 
     override suspend fun doWork(): Result {
@@ -365,7 +363,7 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
             buildNotification(getPendingIntent())
 
             val couponCode = workerParams.inputData.getString("coupon_code") ?: "ENG10"
-            var endTime = workerParams.inputData.getLong("expiry_time", 3600000L)
+            endTime = workerParams.inputData.getLong("expiry_time", 3600000L)
             val title = workerParams.inputData.getString("sticky_title") ?: "Do you know?"
             val body = workerParams.inputData.getString("sticky_body") ?: "You'll miss an offer if you don't click on this notification"
 
@@ -460,8 +458,16 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
             )
             shouldUpdate = false
         }
+        if ((time) <= 0)
+            stopWorker()
         notificationBuilder.contentView.setProgressBar(R.id.notification_progress, 100, (100 - (time * 100)).toInt(), false)
         NotificationManagerCompat.from(context).notify(notificationId, notificationBuilder.build())
+    }
+
+    private fun stopWorker() {
+        val nMgr = context.getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+        nMgr.cancel(notificationId)
+        WorkManagerAdmin.removeStickyNotificationWorker()
     }
 
     private fun updateJob(title: String, body: String, couponCode: String, endTime: Long) {
@@ -479,6 +485,7 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
                 )
                 delay(10000)
             }
+            stopWorker()
         }
     }
 
