@@ -8,7 +8,6 @@
         android:id="@+id/img_skill_logo"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_200sdp"
-        android:layout_marginHorizontal="@dimen/_20sdp"
         android:src="@drawable/josh_skill_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

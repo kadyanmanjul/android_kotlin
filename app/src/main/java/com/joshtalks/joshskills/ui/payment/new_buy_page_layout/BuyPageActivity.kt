@@ -157,13 +157,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             if (!PrefManager.getBoolValue(IS_FREE_TRIAL))
                 finish()
         }
-        if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
-            testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
+        testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
                 Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
             } else {
                 PrefManager.getStringValue(PAID_COURSE_TEST_ID)
             }
-        }
         flowFrom = intent.getStringExtra(FLOW_FROM) ?: EMPTY
         Log.d("BuyPageActivity.kt", "SAGAR => getArguments:120 $testId")
 
@@ -171,13 +169,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
-        }
-        if (testId.isBlank()) {
-            testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-                Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
-            } else {
-                PrefManager.getStringValue(PAID_COURSE_TEST_ID)
-            }
         }
         Log.d("BuyPageActivity.kt", "SAGAR => getArguments:97 $testId")
     }
