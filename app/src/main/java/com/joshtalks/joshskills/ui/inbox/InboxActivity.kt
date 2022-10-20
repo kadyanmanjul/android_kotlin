@@ -256,27 +256,29 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun checkCouponNotification() {
         try {
-            val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val notifications: Array<StatusBarNotification> = mNotificationManager.activeNotifications
-            for (notification in notifications) {
-                if (notification.id == 10206) {
-                    return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                            val notifications: Array<StatusBarNotification> = mNotificationManager.activeNotifications
+                for (notification in notifications) {
+                    if (notification.id == 10206) {
+                        return
+                    }
                 }
-            }
-            val json = JSONObject(PrefManager.getStringValue(STICKY_COUPON_DATA))
-            val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
-            val endTime = json.getLong("expiry_time") * 1000L
-            if (System.currentTimeMillis().plus(offsetTime) < endTime) {
-                val serviceIntent = Intent(this, StickyNotificationService::class.java)
-                serviceIntent.putExtra("sticky_title", json.getString("sticky_title"))
-                serviceIntent.putExtra("sticky_body", json.getString("sticky_body"))
-                serviceIntent.putExtra("coupon_code", json.getString("coupon_code"))
-                serviceIntent.putExtra("expiry_time", json.getLong("expiry_time") * 1000L)
-                serviceIntent.putExtra("start_from_inbox", true)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    startForegroundService(serviceIntent)
-                else
-                    startService(serviceIntent)
+                val json = JSONObject(PrefManager.getStringValue(STICKY_COUPON_DATA))
+                val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
+                val endTime = json.getLong("expiry_time") * 1000L
+                if (System.currentTimeMillis().plus(offsetTime) < endTime) {
+                    val serviceIntent = Intent(this, StickyNotificationService::class.java)
+                    serviceIntent.putExtra("sticky_title", json.getString("sticky_title"))
+                    serviceIntent.putExtra("sticky_body", json.getString("sticky_body"))
+                    serviceIntent.putExtra("coupon_code", json.getString("coupon_code"))
+                    serviceIntent.putExtra("expiry_time", json.getLong("expiry_time") * 1000L)
+                    serviceIntent.putExtra("start_from_inbox", true)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        startForegroundService(serviceIntent)
+                    else
+                        startService(serviceIntent)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
