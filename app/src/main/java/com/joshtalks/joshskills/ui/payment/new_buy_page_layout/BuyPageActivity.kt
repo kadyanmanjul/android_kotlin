@@ -888,6 +888,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             juspayPaymentId = paymentManager.getJustPayOrderId()
         )
         try {
+            PrefManager.put(STICKY_COUPON_DATA, EMPTY)
             NotificationUtils(applicationContext).removeAllScheduledNotification()
             WorkManagerAdmin.removeStickyNotificationWorker()
             stopService(Intent(this, StickyNotificationService::class.java))

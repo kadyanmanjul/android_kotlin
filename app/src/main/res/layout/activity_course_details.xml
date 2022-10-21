@@ -195,5 +195,10 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/details_parent_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

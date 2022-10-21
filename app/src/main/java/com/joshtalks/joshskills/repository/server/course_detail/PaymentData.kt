@@ -20,6 +20,7 @@ data class PaymentData(
     @SerializedName("bb_tip_text")
     val bbTipText: String?,
 
-
+    @SerializedName("encrypted_text")
+    val encryptedText: String?
 
 ) : Parcelable

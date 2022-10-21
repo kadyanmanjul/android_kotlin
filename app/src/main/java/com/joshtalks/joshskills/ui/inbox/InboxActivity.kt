@@ -236,7 +236,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                            val notifications: Array<StatusBarNotification> = mNotificationManager.activeNotifications
+                val notifications: Array<StatusBarNotification> = mNotificationManager.activeNotifications
                 for (notification in notifications) {
                     if (notification.id == 10206) {
                         return
@@ -585,7 +585,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     .setDismissWhenClicked(false)
                     .build()
             }
-            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = bbTipText
+            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text =
+                bbTipText.replace("__username__", Mentor.getInstance().getUser()?.firstName ?: "User")
             bbTooltip.isShowing.not().let {
                 bbTooltip.showAlignBottom(explore_courses)
             }

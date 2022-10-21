@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.DownloadManager
 import android.content.*
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.graphics.Paint
 import android.location.Location
 import android.net.Uri
@@ -12,15 +13,18 @@ import android.os.Bundle
 import android.os.Environment
 import android.view.Gravity
 import android.view.View
+import android.view.View.GONE
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -33,24 +37,42 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.constants.PAYMENT_PENDING
+import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.course_detail.*
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.ui.course_details.viewholder.*
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
+import com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment
+import com.joshtalks.joshskills.ui.payment.PaymentPendingFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
+import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
+import com.joshtalks.joshskills.ui.special_practice.utils.BACK_PRESSED_ON_GATEWAY
+import com.joshtalks.joshskills.ui.special_practice.utils.BACK_PRESSED_ON_LOADING
+import com.joshtalks.joshskills.ui.special_practice.utils.GATEWAY_INITIALISED
+import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
+import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.subscription.TRIAL_TEST_ID
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
+import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.skydoves.balloon.OnBalloonClickListener
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -63,15 +85,16 @@ import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import java.math.BigDecimal
 
 const val ENGLISH_COURSE_TEST_ID = 102
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
 
-class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
+class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGatewayListener {
 
     private lateinit var binding: ActivityCourseDetailsBinding
     private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
@@ -87,6 +110,16 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     var expiredTime: Long = 0L
     var isPointsScoredMoreThanEqualTo100 = false
+    private var shouldStartPayment = false
+    private var isPaymentInitiated = false
+    private lateinit var bbTooltip: Balloon
+    private val backPressMutex = Mutex(false)
+    private var event = EventLiveData
+    lateinit var dialog: AlertDialog
+
+    private val paymentManager: PaymentManager by lazy {
+        PaymentManager(this, viewModel.viewModelScope, this)
+    }
 
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
     private var loginFreeTrial = false
@@ -169,8 +202,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 //            binding.continueTip.visibility = View.GONE
         }
         subscribeLiveData()
-
         MarketingAnalytics.openPreCheckoutPage()
+        paymentManager.initializePaymentGateway()
     }
 
     private fun initABTest() {
@@ -253,6 +286,13 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     private fun subscribeLiveData() {
+        event.observe(this) {
+            when (it.what) {
+                PAYMENT_SUCCESS -> onPaymentSuccess()
+                PAYMENT_FAILED -> showPaymentFailedDialog()
+                PAYMENT_PENDING -> showPendingDialog()
+            }
+        }
         viewModel.courseDetailsLiveData.observe(this) { data ->
             if ((data.totalPoints ?: 0) > 100) {
                 isPointsScoredMoreThanEqualTo100 = true
@@ -287,7 +327,13 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 binding.txtExtraHint.visibility = View.GONE
             }
             if (data.paymentData.bbTipText.isNullOrEmpty().not()) {
-                showBbTooltip(data.paymentData.bbTipText!!)
+                showBbTooltip(
+                    data.paymentData.bbTipText!!,
+                    data.paymentData.discountedAmount.substring(1).toDouble() != 0.0
+                )
+            }
+            if (data.paymentData.encryptedText.isNullOrEmpty().not()) {
+                shouldStartPayment = true
             }
             if (data.version.isNotBlank()) {
                 appAnalytics.addParam(VERSION, PrefManager.getStringValue(VERSION))
@@ -353,9 +399,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         }
     }
 
-    private fun showBbTooltip(bbTipText: String) {
+    private fun showBbTooltip(bbTipText: String, shouldShow: Boolean) {
         try {
-            val bbTooltip = Balloon.Builder(this)
+            if (shouldShow) {
+                bbTooltip = Balloon.Builder(this)
                     .setLayout(R.layout.layout_bb_tip)
                     .setHeight(BalloonSizeSpec.WRAP)
                     .setIsVisibleArrow(true)
@@ -368,9 +415,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     .setDismissWhenClicked(false)
                     .build()
 
-            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = bbTipText
-            bbTooltip.isShowing.not().let {
-                bbTooltip.showAlignBottom(binding.buyCourseLl)
+                bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text =
+                    bbTipText.replace("__username__", Mentor.getInstance().getUser()?.firstName ?: "User")
+                bbTooltip.isShowing.not().let {
+                    bbTooltip.showAlignBottom(binding.buyCourseLl)
+                }
             }
         } catch (_: Exception) {
         }
@@ -383,7 +432,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun getCourseDetails(testId: Int) {
         viewModel.fetchCourseDetails(testId.toString())
-
     }
 
     private fun getViewHolder(card: Card): CourseDetailsBaseCell? {
@@ -711,8 +759,16 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     fun buyCourse() {
-        PrefManager.getBoolValue(IS_TRIAL_ENDED)
-        if (buySubscription) {
+        if (shouldStartPayment) {
+            isPaymentInitiated = true
+            dismissBbTip()
+            paymentManager.createOrder(
+                testId.toString(),
+                Mentor.getInstance().getUser()?.phoneNumber ?: "+919999999999",
+                viewModel.getEncryptedText()
+            )
+            return
+        } else if (buySubscription) {
             val tempTestId = PrefManager.getIntValue(SUBSCRIPTION_TEST_ID)
             logStartCourseAnalyticEvent(tempTestId)
             PaymentSummaryActivity.startPaymentSummaryActivity(
@@ -762,6 +818,16 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial, is100PointsObtained = isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID && is100PointsActive, isHundredPointsActive = is100PointsActive)
             }
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
+        }
+    }
+
+    private fun dismissBbTip() {
+        try {
+            if (this::bbTooltip.isInitialized && bbTooltip.isShowing) {
+                bbTooltip.dismiss()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -917,8 +983,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun updateButtonText(discountedPrice: Double) {
         if (discountedPrice == 0.0) {
+            shouldStartPayment = false
+            binding.txtExtraHint.visibility = GONE
             binding.btnStartCourse.text = getString(R.string.start_free_course)
             binding.btnStartCourse.textSize = 16f
+            dismissBbTip()
         }
 
         val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
@@ -939,7 +1008,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     .getString("${FirebaseRemoteConfigKey.FREE_TRIAL_COURSE_DETAIL_BTN_TXT}_$testId")
         }
     }
-
 
     companion object {
         const val KEY_TEST_ID = "test-id"
@@ -987,13 +1055,154 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         }
     }
 
-    override fun onBalloonClick(view: View) {
-
+    private fun showPendingDialog() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = PaymentPendingFragment()
+            replace(R.id.details_parent_container, fragment, "Payment Pending")
+            disallowAddToBackStack()
+        }
     }
+
+    override fun onBalloonClick(view: View) {}
 
     override fun onBackPressed() {
-        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
-        super.onBackPressed()
+        if (!isPaymentInitiated) {
+            showBackPressDialog()
+        } else {
+            backPressMutex.onMultipleBackPress {
+                val backPressHandled = paymentManager.getJuspayBackPress()
+                if (!backPressHandled) {
+                    viewModel.savePaymentImpression(BACK_PRESSED_ON_GATEWAY, "COURSE_DETAILS")
+                    super.onBackPressed()
+                } else {
+                    viewModel.savePaymentImpression(BACK_PRESSED_ON_LOADING, "COURSE_DETAILS")
+                }
+            }
+        }
     }
 
+    private fun showBackPressDialog() {
+        if (::dialog.isInitialized)
+            dialog.dismiss()
+        val builder = AlertDialog.Builder(this).apply {
+            setTitle("${Mentor.getInstance().getUser()?.firstName ?: "User"}, are you sure that you don't want this course?")
+            setMessage("ये Gift हर student को नहीं मिलता!")
+            setCancelable(false)
+            setPositiveButton("Buy Now") { p0, p1 ->
+                isPaymentInitiated = true
+                dismissBbTip()
+                paymentManager.createOrder(
+                    testId.toString(),
+                    Mentor.getInstance().getUser()?.phoneNumber ?: "+919999999999",
+                    viewModel.getEncryptedText()
+                )
+            }
+            setNegativeButton("Later") { p0, p1 ->
+                super.onBackPressed()
+            }
+        }
+        dialog = builder.create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED)
+        }
+        dialog.show()
+    }
+
+    private fun navigateToStartCourseActivity(hasOrderId: Boolean) {
+        StartCourseActivity.openStartCourseActivity(
+            this,
+            viewModel.getCourseName(),
+            viewModel.getTeacherName(),
+            viewModel.getImageUrl(),
+            if (hasOrderId)
+                paymentManager.getJoshTalksId()
+            else 0,
+            testId.toString(),
+            viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount.toString()
+        )
+        this@CourseDetailsActivity.finish()
+    }
+
+    private fun logPaymentStatusAnalyticsEvents(status: String, reason: String? = "Completed") {
+        AppAnalytics.create(AnalyticsEvent.PAYMENT_STATUS_NEW.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.PAYMENT_STATUS.NAME, status)
+            .addParam(AnalyticsEvent.REASON.NAME, reason)
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, viewModel.getCourseName())
+            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+            .addParam("test_id", testId)
+            .addParam(AnalyticsEvent.COURSE_PRICE.NAME, viewModel.courseDetailsLiveData.value?.paymentData?.actualAmount).push()
+    }
+
+    private fun onPaymentSuccess() {
+        appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
+        logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
+        viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
+        NotificationUtils(applicationContext).removeAllScheduledNotification()
+
+        MarketingAnalytics.coursePurchased(
+            BigDecimal(paymentManager.getAmount()),
+            true,
+            testId = testId.toString(),
+            courseName = "English Course",
+            juspayPaymentId = paymentManager.getJustPayOrderId()
+        )
+
+        uiHandler.post {
+            PrefManager.put(IS_PAYMENT_DONE, true)
+        }
+
+        uiHandler.postDelayed({
+            navigateToStartCourseActivity(true)
+        }, 1000 * 2L)
+    }
+
+    private fun showPaymentFailedDialog() {
+        try {
+            viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(
+                R.id.details_parent_container,
+                PaymentFailedDialogNew.newInstance(paymentManager),
+                "Payment Failed"
+            )
+        }
+    }
+
+    override fun onWarmUpEnded(error: String?) {}
+
+    override fun onProcessStart() {
+        viewModel.savePaymentImpression(PROCEED_PAYMENT_CLICK, "COURSE_DETAILS")
+        showProgressBar()
+    }
+
+    override fun onProcessStop() {
+        viewModel.savePaymentImpression(GATEWAY_INITIALISED, "COURSE_DETAILS")
+        hideProgressBar()
+    }
+
+    override fun onPaymentFinished(isPaymentSuccessful: Boolean) {}
+
+    override fun onPaymentProcessing(orderId: String, status: String) {
+        if (status == "pending_vbv") {
+            showPendingDialog()
+            return
+        }
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = PaymentInProcessFragment()
+            val bundle = Bundle().apply {
+                putString("ORDER_ID", orderId)
+            }
+            fragment.arguments = bundle
+            replace(R.id.details_parent_container, fragment, "Payment Processing")
+            disallowAddToBackStack()
+        }
+    }
 }

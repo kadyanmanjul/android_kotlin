@@ -4,10 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
@@ -19,7 +16,6 @@ import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
 
 class CourseDetailsViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
@@ -100,6 +96,55 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun savePaymentImpression(event: String, eventData: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(
+                    mapOf(
+                        "event_name" to event,
+                        "event_data" to eventData
+                    )
+                )
+            } catch (ex: java.lang.Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun getEncryptedText(): String {
+        return courseDetailsLiveData.value?.paymentData?.encryptedText ?: EMPTY
+    }
+
+    fun removeEntryFromPaymentTable(razorpayOrderId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
+        }
+    }
+
+    fun getCourseName(): String {
+        return try {
+            courseDetailsLiveData.value?.cards?.get(0)?.data?.get("name")?.asString ?: EMPTY
+        } catch (e: Exception) {
+            EMPTY
+        }
+    }
+
+    fun getTeacherName(): String {
+        return try {
+            courseDetailsLiveData.value?.cards?.get(0)?.data?.get("teacher_name")?.asString ?: EMPTY
+        } catch (e: Exception) {
+            EMPTY
+        }
+    }
+
+    fun getImageUrl(): String {
+        return try {
+            courseDetailsLiveData.value?.cards?.filter { it.sequenceNumber == 4 }?.get(0)?.data?.get("dp_url")?.asString ?: EMPTY
+        } catch (e: Exception) {
+            EMPTY
         }
     }
 }
