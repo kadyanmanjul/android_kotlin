@@ -21,6 +21,9 @@ data class PaymentData(
     val bbTipText: String?,
 
     @SerializedName("encrypted_text")
-    val encryptedText: String?
+    val encryptedText: String?,
+
+    @SerializedName("before_discount_amount")
+    val beforeDiscountAmt: String?
 
 ) : Parcelable

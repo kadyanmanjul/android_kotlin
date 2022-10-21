@@ -326,6 +326,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             } else {
                 binding.txtExtraHint.visibility = View.GONE
             }
+            if (data.paymentData.beforeDiscountAmt.isNullOrEmpty().not()) {
+                binding.txtDiscountedPrice.setTextColor(R.color.colorPrimary)
+                binding.txtBeforeDiscountAmt.text = data.paymentData.beforeDiscountAmt
+                binding.txtBeforeDiscountAmt.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            }
             if (data.paymentData.bbTipText.isNullOrEmpty().not()) {
                 showBbTooltip(
                     data.paymentData.bbTipText!!,
