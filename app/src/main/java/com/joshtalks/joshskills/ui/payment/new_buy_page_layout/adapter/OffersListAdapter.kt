@@ -1,14 +1,15 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter
 
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ItemOfffersCardBinding
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
@@ -137,6 +138,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
 
     inner class OfferListViewHolder(val binding: ItemOfffersCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        var countdownTimerBack: CountDownTimer? = null
         fun setData(coupon: Coupon?, position: Int) {
             binding.executePendingBindings()
             if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && coupon?.isMentorSpecificCoupon!=null) {
@@ -152,37 +154,32 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
 
         fun startFreeTrialTimer(endTimeInMilliSeconds: Long, coupon: Coupon? ,position: Int) {
             try {
-                var newTime = endTimeInMilliSeconds - 1000
-                if (coupon?.isMentorSpecificCoupon!=null) {
-                    binding.couponExpireText.text =
-                        "Coupon will expire in " + UtilTime.timeFormatted(newTime)
-                }else{
-                    binding.couponExpireText.visibility = View.GONE
-                }
-                freeTrialTimerJob = scope.launch {
-                    while (true) {
-                        delay(1000)
-                        newTime -= 1000
-                        if (isActive) {
-                            withContext(Dispatchers.Main) {
+                if (countdownTimerBack!=null)
+                    countdownTimerBack?.cancel()
+
+                countdownTimerBack = object : CountDownTimer(endTimeInMilliSeconds, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        if (countdownTimerBack != null) {
+                            AppObjectController.uiHandler.post {
                                 if (coupon?.isMentorSpecificCoupon!=null) {
                                     binding.couponExpireText.text =
-                                        "Coupon will expire in " + UtilTime.timeFormatted(newTime)
+                                        "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
                                 }else{
                                     binding.couponExpireText.visibility = View.GONE
                                 }
                             }
-                            if (newTime <= 0) {
-                                withContext(Dispatchers.Main) {
-                                    changeTextColor(binding, coupon,position)
-                                    binding.couponExpireText.visibility = View.VISIBLE
-                                }
-                                break
+                        }
+                    }
+
+                    override fun onFinish() {
+                            AppObjectController.uiHandler.post {
+                                changeTextColor(binding, coupon,position)
+                                binding.couponExpireText.visibility = View.VISIBLE
+                                countdownTimerBack?.cancel()
                             }
-                        } else
-                            break
                     }
                 }
+                countdownTimerBack?.start()
             } catch (ex: Exception) {
                 Log.e("sagar", "startFreeTrialTimer: ${ex.message}")
             }

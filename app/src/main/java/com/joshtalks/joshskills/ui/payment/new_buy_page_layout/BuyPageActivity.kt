@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -75,6 +76,7 @@ import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -208,8 +210,8 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 }
                 BUY_COURSE_LAYOUT_DATA -> {
                     try {
-                        dynamicCardCreation(it.obj as BuyCourseFeatureModel)
                         paymentButton()
+                        dynamicCardCreation(it.obj as BuyCourseFeatureModel)
                         clickRatingOpen?.setOnClickListener {
                             openRatingAndReviewScreen()
                         }
@@ -309,6 +311,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                     binding.freeTrialTimerNewUi.visibility = View.VISIBLE
                     binding.timeText.visibility = View.GONE
                     binding.timerText.text = getString(R.string.free_trial_ended)
+                    binding.timerText.gravity = Gravity.CENTER_HORIZONTAL
                 }else{
                     binding.freeTrialTimer.visibility = View.VISIBLE
                     binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
@@ -451,7 +454,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
         if (buyCourseFeatureModel.certificateText !=null && buyCourseFeatureModel.certificateUrl != null){
             certificateTextView?.text = buyCourseFeatureModel.certificateText
-            certificateImage?.setImage(buyCourseFeatureModel.certificateUrl?: EMPTY)
+            uiHandler.postDelayed({
+                certificateImage?.setImage(buyCourseFeatureModel.certificateUrl?: EMPTY)
+                certificateImage?.visibility = View.VISIBLE
+            },1000)
             certificateTitle?.text = AppObjectController.getFirebaseRemoteConfig().getString(DIGITAL_CARD_TEXT)
             binding.courseDescList.removeAllViews()
             binding.courseDescList.addView(certificateCard)

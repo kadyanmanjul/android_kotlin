@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter
 
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ItemCouponCardBinding
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
@@ -18,8 +20,6 @@ import kotlinx.coroutines.*
 class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
     RecyclerView.Adapter<CouponListAdapter.CouponViewHolder>() {
     var itemClick: ((Coupon, Int, Int, String) -> Unit)? = null
-    private var freeTrialTimerJob: Job? = null
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CouponViewHolder {
         val binding = ItemCouponCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -46,6 +46,8 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
 
     inner class CouponViewHolder(val binding: ItemCouponCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        var countdownTimerBack: CountDownTimer? = null
+
         fun setData(members: Coupon?, position: Int) {
             if (members?.validDuration?.time?.minus(System.currentTimeMillis())!! > 0L)
                 startFreeTrialTimer(
@@ -72,26 +74,26 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
 
         fun startFreeTrialTimer(endTimeInMilliSeconds: Long, coupon: Coupon?, position: Int) {
             try {
-                var newTime = endTimeInMilliSeconds - 1000
-                binding.txtCouponExpireTime.text = "Coupon will expire in " + UtilTime.timeFormatted(newTime)
-                freeTrialTimerJob = scope.launch {
-                    while (true) {
-                        delay(1000)
-                        newTime -= 1000
-                        if (isActive) {
-                            withContext(Dispatchers.Main) {
-                                binding.txtCouponExpireTime.text = "Coupon will expire in " + UtilTime.timeFormatted(newTime)
+                if (countdownTimerBack!=null)
+                    countdownTimerBack?.cancel()
+
+                countdownTimerBack = object : CountDownTimer(endTimeInMilliSeconds, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        if (countdownTimerBack != null) {
+                            AppObjectController.uiHandler.post {
+                                binding.txtCouponExpireTime.text = "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
                             }
-                            if (newTime <= 0) {
-                                withContext(Dispatchers.Main) {
-                                    changeTextColors(binding, coupon, position)
-                                }
-                                break
-                            }
-                        } else
-                            break
+                        }
+                    }
+
+                    override fun onFinish() {
+                        AppObjectController.uiHandler.post {
+                            changeTextColors(binding, coupon, position)
+                            countdownTimerBack?.cancel()
+                        }
                     }
                 }
+                countdownTimerBack?.start()
             } catch (ex: Exception) {
                 Log.e("sagar", "startFreeTrialTimer: ${ex.message}")
             }
@@ -105,7 +107,6 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
             binding.rootCard.isEnabled = false
             binding.txtCouponCode.setTextColor(grayColor)
             binding.txtCouponExpireTime.text = "Coupon expired"
-            freeTrialTimerJob?.cancel()
             binding.txtCouponExpireTime.setTextColor(grayColor)
             binding.couponDesc.setTextColor(grayColor)
             binding.saveMoney.setTextColor(grayColor)
