@@ -19,8 +19,10 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/inbox_nested_scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:fillViewport="true"
         android:scrollbars="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -55,26 +57,32 @@
                     tools:visibility="gone" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/explore_courses"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_marginBottom="@dimen/_32sdp"
-                android:background="@drawable/round_rectangle"
-                android:paddingBottom="@dimen/_4sdp"
-                android:paddingHorizontal="@dimen/_20ssp"
-                android:text="@string/explorer_courses"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:rippleColor="@color/white"
-                tools:visibility="visible" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_18sdp"
+        android:layout_weight="0"
+        android:clipToPadding="false"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/_12sdp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/explore_courses"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:background="@drawable/round_rectangle"
+            android:paddingHorizontal="@dimen/_20ssp"
+            android:paddingBottom="@dimen/_4sdp"
+            android:text="@string/explorer_courses"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold"
+            android:visibility="gone"
+            app:rippleColor="@color/white"
+            tools:visibility="visible" />
+    </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

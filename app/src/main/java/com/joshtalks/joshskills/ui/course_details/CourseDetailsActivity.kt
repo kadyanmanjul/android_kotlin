@@ -21,6 +21,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -327,7 +328,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
                 binding.txtExtraHint.visibility = View.GONE
             }
             if (data.paymentData.beforeDiscountAmt.isNullOrEmpty().not()) {
-                binding.txtDiscountedPrice.setTextColor(R.color.colorPrimary)
+                binding.txtDiscountedPrice.setTextColor(Color.parseColor("#107BE5"))
                 binding.txtBeforeDiscountAmt.text = data.paymentData.beforeDiscountAmt
                 binding.txtBeforeDiscountAmt.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
             }
@@ -425,6 +426,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
                 bbTooltip.isShowing.not().let {
                     bbTooltip.showAlignBottom(binding.buyCourseLl)
                 }
+                val scale = resources.displayMetrics.density
+                val dpAsPixels = (110 * scale + 0.5f).toInt()
+                binding.placeHolderView.updatePadding(0, 0, 0, dpAsPixels)
             }
         } catch (_: Exception) {
         }
@@ -1151,7 +1155,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             BigDecimal(paymentManager.getAmount()),
             true,
             testId = testId.toString(),
-            courseName = "English Course",
+            courseName = viewModel.getCourseName(),
             juspayPaymentId = paymentManager.getJustPayOrderId()
         )
 

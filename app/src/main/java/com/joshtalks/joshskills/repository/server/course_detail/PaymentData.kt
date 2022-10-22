@@ -23,7 +23,7 @@ data class PaymentData(
     @SerializedName("encrypted_text")
     val encryptedText: String?,
 
-    @SerializedName("before_discount_amount")
+    @SerializedName("before_discounted_amount")
     val beforeDiscountAmt: String?
 
 ) : Parcelable

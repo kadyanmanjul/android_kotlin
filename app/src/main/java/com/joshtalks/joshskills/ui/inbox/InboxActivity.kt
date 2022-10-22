@@ -18,6 +18,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -347,6 +348,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
                 }
             }
+            if (paymentStatusView.isVisible) {
+                val scale = resources.displayMetrics.density
+                val dpAsPixels = (100 * scale + 0.5f).toInt()
+                inbox_nested_scroll.updatePadding(0, 0, 0, dpAsPixels)
+            }
         })
     }
 
@@ -388,11 +394,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             )
         )
         icon.imageTintList = ContextCompat.getColorStateList(this, colorTintIcon)
-
+        val shouldOpenBuyPage = PrefManager.getBoolValue(IS_FREE_TRIAL)
         title.setTextColor(ContextCompat.getColor(this, textColor))
         title.text = getString(titleTextID)
         description.text = getString(descTextId)
-        if (isTryAgainVisible) {
+        if (isTryAgainVisible && shouldOpenBuyPage) {
             tryAgain.visibility = View.VISIBLE
             tryAgain.setOnClickListener {
                 BuyPageActivity.startBuyPageActivity(
@@ -590,6 +596,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             bbTooltip.isShowing.not().let {
                 bbTooltip.showAlignBottom(explore_courses)
             }
+            val scale = resources.displayMetrics.density
+            var dpAsPixels = (170 * scale + 0.5f).toInt()
+            if (paymentStatusView.isVisible)
+                dpAsPixels = (100 * scale + 0.5f).toInt()
+            inbox_nested_scroll.updatePadding(0, 0, 0, dpAsPixels)
         } catch (_: Exception) {
         }
 

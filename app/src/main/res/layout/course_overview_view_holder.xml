@@ -73,8 +73,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/txtTeacherName"
                 tools:itemCount="1"
                 tools:listitem="@layout/course_overview_media_item" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
