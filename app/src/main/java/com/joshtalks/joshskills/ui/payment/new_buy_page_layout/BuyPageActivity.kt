@@ -160,7 +160,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
                 Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
             } else {
-                PrefManager.getStringValue(PAID_COURSE_TEST_ID)
+                PrefManager.getStringValue(PAID_COURSE_TEST_ID, defaultValue = FREE_TRIAL_PAYMENT_TEST_ID)
             }
         flowFrom = intent.getStringExtra(FLOW_FROM) ?: EMPTY
         Log.d("BuyPageActivity.kt", "SAGAR => getArguments:120 $testId")
@@ -187,7 +187,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         if (Utils.isInternetAvailable()) {
             viewModel.getCourseContent()
             viewModel.getCoursePriceList(null,null, null)
-            viewModel.getValidCouponList(OFFERS,Integer.parseInt(testId))
+            if (testId.isEmpty())
+                viewModel.getValidCouponList(OFFERS, Integer.parseInt(FREE_TRIAL_PAYMENT_TEST_ID))
+            else
+                viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
             }
