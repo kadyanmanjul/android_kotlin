@@ -184,8 +184,9 @@ class StickyNotificationService : Service() {
         val remoteView = RemoteViews(packageName, R.layout.coupon_code_notification)
         remoteView.setTextViewText(R.id.notification_title, "Sticky Notification")
         remoteView.setTextViewText(R.id.notification_body, "This is the notification body")
-        remoteView.setChronometerCountDown(R.id.notification_timer, true)
         remoteView.setProgressBar(R.id.notification_progress, 100, 0, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            remoteView.setChronometerCountDown(R.id.notification_timer, true)
         return remoteView
     }
 }
