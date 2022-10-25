@@ -60,9 +60,9 @@ class UserInterestActivity : BaseActivity() {
     private fun addInterestFragment(){
         supportFragmentManager.commit {
             if (isEditCall){
-                replace(R.id.container_Interests,CallInterestFragment(isEditCall),"Interest Fragment")
+                replace(R.id.container_Interests,CallInterestFragment.newInstance(isEditCall),"Interest Fragment")
             }else{
-                replace(R.id.container_Interests,CallInterestFragment(isEditCall),"Interest Fragment")
+                replace(R.id.container_Interests,CallInterestFragment.newInstance(isEditCall),"Interest Fragment")
                     .addToBackStack("User English Level Fragment")
             }
         }

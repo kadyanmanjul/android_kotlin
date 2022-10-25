@@ -12,11 +12,13 @@ import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLOSE_INTEREST_ACTIVITY
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.INTEREST_FORM_INTEREST_SCREEN_OPEN
+import com.joshtalks.joshskills.core.INTEREST_FORM_SAVED
+import com.joshtalks.joshskills.core.INTEREST_FORM_SKIP_PRESSED
 import com.joshtalks.joshskills.databinding.FragmentCallInterestBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 
-class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
+class CallInterestFragment: BaseFragment() {
 
     lateinit var binding: FragmentCallInterestBinding
     private val interestSet: MutableSet<Int> = hashSetOf()
@@ -86,5 +88,18 @@ class CallInterestFragment(val isEditCall:Boolean): BaseFragment() {
     override fun initViewState() {}
 
     override fun setArguments() {}
+
+    companion object {
+        var isEditCall: Boolean = false
+
+        @JvmStatic
+        fun newInstance(isEditCallData: Boolean) =
+            CallInterestFragment()
+                .apply {
+                    arguments = Bundle().apply {
+                        isEditCall = isEditCallData
+                    }
+                }
+    }
 
 }
