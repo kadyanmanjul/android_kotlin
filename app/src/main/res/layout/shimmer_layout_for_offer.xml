@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/tv_course_name"
+        android:id="@+id/tv_course_name_shimmer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -42,6 +42,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_course_name" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_name_shimmer_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

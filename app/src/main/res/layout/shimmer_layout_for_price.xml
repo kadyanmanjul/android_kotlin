@@ -46,7 +46,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/profile_image"
+                        android:id="@+id/profile_image_shimmer"
                         android:layout_width="@dimen/_27sdp"
                         android:layout_height="@dimen/_27sdp"
                         android:layout_marginStart="@dimen/_15sdp"
@@ -61,7 +61,7 @@
                         android:orientation="vertical">
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/course_name"
+                            android:id="@+id/course_name_shimmer"
                             android:layout_width="@dimen/_130sdp"
                             android:layout_height="@dimen/_25sdp"
                             android:background="@drawable/bg_rounded_corner"
@@ -70,7 +70,7 @@
                             android:textStyle="bold" />
 
                         <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/coupon_save_percent"
+                            android:id="@+id/coupon_save_percent_shimmer"
                             android:layout_width="@dimen/_100sdp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
@@ -96,7 +96,7 @@
                         android:orientation="vertical">
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/discount_price"
+                            android:id="@+id/discount_price_shimmer"
                             android:layout_width="@dimen/_50sdp"
                             android:layout_height="@dimen/_15sdp"
                             android:layout_gravity="end"
@@ -104,7 +104,7 @@
                             android:gravity="end" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/original_price"
+                            android:id="@+id/original_price_shimmer"
                             android:layout_width="@dimen/_50sdp"
                             android:layout_height="@dimen/_15sdp"
                             android:layout_gravity="end"
@@ -113,7 +113,7 @@
                             android:gravity="end" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/price_per_day"
+                            android:id="@+id/price_per_day_shimmer"
                             android:layout_width="@dimen/_50sdp"
                             android:layout_height="@dimen/_15sdp"
                             android:layout_gravity="end"
