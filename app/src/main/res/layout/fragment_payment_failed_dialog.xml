@@ -81,7 +81,7 @@
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:gravity="center_horizontal"
             android:text="@string/title"
-            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingMedium"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingRegular"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintEnd_toEndOf="parent"

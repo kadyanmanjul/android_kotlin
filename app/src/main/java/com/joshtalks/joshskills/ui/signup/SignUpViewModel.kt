@@ -67,6 +67,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     val abTestRepository by lazy { ABTestRepository() }
     val freeTrialEntity: MutableLiveData<InboxEntity> = MutableLiveData()
     var shouldStartFreeTrial: Boolean = false
+    val toolbarTitle = MutableLiveData<String>()
 
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
@@ -623,5 +624,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             if (PrefManager.getStringValue(API_TOKEN).isNotEmpty())
                 abTestRepository.postGoal(goalKeys.NAME)
         }
+    }
+
+    fun setToolbarTitle(title: String) {
+        toolbarTitle.postValue(title)
     }
 }

@@ -68,6 +68,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.setToolbarTitle(getString(R.string.complete_registration))
         viewModel.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it) {
                 SignUpStepStatus.ERROR -> {
@@ -311,5 +312,9 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         binding.btnLogin.hideProgress(R.string.register)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.setToolbarTitle("")
+    }
 
 }

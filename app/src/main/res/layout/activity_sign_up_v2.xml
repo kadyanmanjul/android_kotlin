@@ -8,6 +8,10 @@
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.signup.SignUpActivity" />
+
+        <variable
+            name="viewmodel"
+            type="com.joshtalks.joshskills.ui.signup.SignUpViewModel" />
     </data>
 
     <RelativeLayout
@@ -39,6 +43,19 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_back"
                 app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/toolbarTitleTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_back"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:textColor="@color/text_default"
+                android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                android:text="@{viewmodel.toolbarTitle}"
+                tools:text="Complete registration" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/skip"

@@ -714,8 +714,8 @@
     <string name="change_profile_photo" translatable="false">Change Profile Photo</string>
     <string name="your_full_name" translatable="false">Your Full Name</string>
     <string name="time_format" translatable="false">DD/MM/YYYY</string>
-    <string name="ex_aspiring_ias_officer" translatable="false">E.g.- Aspiring IAS Officer</string>
-    <string name="ex_ias_officer" translatable="false">E.g.- IAS Officer</string>
+    <string name="ex_aspiring_ias_officer" translatable="false">E.g. Aspiring IAS Officer</string>
+    <string name="ex_ias_officer" translatable="false">e.g. IAS Officer</string>
     <string name="paste_link_to_your_favourite_josh_talk_here" translatable="false">Paste link to your favourite josh talk here</string>
     <string name="add_education_details" translatable="false">Add Education Details</string>
     <string name="subject_degree" translatable="false">Subject / Degree</string>
@@ -968,6 +968,7 @@
     <string name="terms_conditions" translatable="false"><![CDATA[Terms & Conditions]]></string>
     <string name="community_guidelines" translatable="false">Community Guidelines</string>
     <string name="about_us" translatable="false">About Us</string>
+    <string name="complete_registration" translatable="false">Complete registration</string>
     <string name="payment_processing_with_elipsize" translatable="false">Payment Processing...</string>
     <string name="do_not_close_the_app_warning" translatable="false">This might take up to a minute. Please do not close the app.</string>
     <string name="interests_select_same_interest_users_connect">आपके interests select कीजिए ताकी हम आपको same interest के users से connect करवा सकें</string>

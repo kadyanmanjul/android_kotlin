@@ -98,6 +98,7 @@ class SignUpActivity : ThemedBaseActivity() {
             )
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
+        binding.lifecycleOwner = this
         viewModel.shouldStartFreeTrial = intent.getBooleanExtra(START_FREE_TRIAL, false)
         addViewModelObserver()
         initLoginFeatures()
