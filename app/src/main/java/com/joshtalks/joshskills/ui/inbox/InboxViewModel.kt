@@ -243,11 +243,11 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         null
                     }
                 }
+                PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
                 val response = AppObjectController.signUpNetworkService.userActive(
                     Mentor.getInstance().getId(),
                     mapOf("gaid" to gaid, "device_id" to Utils.getDeviceId())
                 )
-                PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
                 if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
                     Mentor.deleteUserCredentials(true)
                     Mentor.deleteUserData()

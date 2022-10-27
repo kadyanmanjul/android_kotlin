@@ -88,6 +88,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
     private lateinit var bbTooltip: Balloon
+    private var isCapsuleCourseBought = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -394,11 +395,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             )
         )
         icon.imageTintList = ContextCompat.getColorStateList(this, colorTintIcon)
-        val shouldOpenBuyPage = PrefManager.getBoolValue(IS_FREE_TRIAL)
         title.setTextColor(ContextCompat.getColor(this, textColor))
         title.text = getString(titleTextID)
         description.text = getString(descTextId)
-        if (isTryAgainVisible && shouldOpenBuyPage) {
+        if (isTryAgainVisible && !isCapsuleCourseBought) {
             tryAgain.visibility = View.VISIBLE
             tryAgain.setOnClickListener {
                 BuyPageActivity.startBuyPageActivity(
@@ -483,7 +483,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 inboxAdapter.addItems(temp)
                 val capsuleCourse = temp.firstOrNull { it.isCapsuleCourse }
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
-                val isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
+                isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
                     if (paymentStatusView.visibility != View.VISIBLE) {
                         findMoreLayout.visibility = View.VISIBLE

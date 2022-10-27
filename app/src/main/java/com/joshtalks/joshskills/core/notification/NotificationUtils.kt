@@ -486,24 +486,26 @@ class NotificationUtils(val context: Context) {
             }
             NotificationAction.STICKY_COUPON -> {
                 try {
-                    val jsonObj = JSONObject(actionData ?: EMPTY)
-                    val serviceIntent = Intent(context, StickyNotificationService::class.java)
-                    serviceIntent.putExtra("sticky_title", notificationObject.contentTitle)
-                    serviceIntent.putExtra("sticky_body", notificationObject.contentText)
-                    serviceIntent.putExtra("coupon_code", jsonObj.getString("coupon_code"))
-                    serviceIntent.putExtra("expiry_time", jsonObj.getLong("expiry_time") * 1000L)
-                    addValueToPref(jsonObj, notificationObject.contentTitle, notificationObject.contentText)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        WorkManagerAdmin.setStickyNotificationWorker(
-                            title = notificationObject.contentTitle,
-                            body = notificationObject.contentText,
-                            coupon = jsonObj.getString("coupon_code"),
-                            expiry = jsonObj.getLong("expiry_time") * 1000L
-                        )
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                        context.startForegroundService(serviceIntent)
-                    else
-                        context.startService(serviceIntent)
+                    if (PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()) {
+                        val jsonObj = JSONObject(actionData ?: EMPTY)
+                        val serviceIntent = Intent(context, StickyNotificationService::class.java)
+                        serviceIntent.putExtra("sticky_title", notificationObject.contentTitle)
+                        serviceIntent.putExtra("sticky_body", notificationObject.contentText)
+                        serviceIntent.putExtra("coupon_code", jsonObj.getString("coupon_code"))
+                        serviceIntent.putExtra("expiry_time", jsonObj.getLong("expiry_time") * 1000L)
+                        addValueToPref(jsonObj, notificationObject.contentTitle, notificationObject.contentText)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            WorkManagerAdmin.setStickyNotificationWorker(
+                                title = notificationObject.contentTitle,
+                                body = notificationObject.contentText,
+                                coupon = jsonObj.getString("coupon_code"),
+                                expiry = jsonObj.getLong("expiry_time") * 1000L
+                            )
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                            context.startForegroundService(serviceIntent)
+                        else
+                            context.startService(serviceIntent)
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

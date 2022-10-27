@@ -277,12 +277,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             transition.addTarget(binding.buyCourseLl)
             TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
-            if (intent.hasExtra(WHATSAPP_URL) &&
-                intent.getStringExtra(WHATSAPP_URL).isNullOrBlank().not() &&
-                (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
-            ) {
-                binding.linkToWhatsapp.visibility = View.VISIBLE
-            }
         }
     }
 
@@ -970,26 +964,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
         )
     }
 
-    fun openWhatsapp() {
-        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_WHATSAPP_CLICKED)
-            .addParam(ParamKeys.TEST_ID,testId)
-            .addParam(ParamKeys.COURSE_NAME,courseName)
-            .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-            .push()
-        try {
-            val whatsappIntent = Intent(Intent.ACTION_VIEW)
-            whatsappIntent.data = Uri.parse(intent.getStringExtra(WHATSAPP_URL))
-            whatsappIntent.apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            startActivity(whatsappIntent)
-        }catch (ex: ActivityNotFoundException ){
-            ex.printStackTrace()
-            showToast(getString(R.string.whatsApp_not_installed))
-        }
-    }
-
     private fun updateButtonText(discountedPrice: Double) {
         if (discountedPrice == 0.0) {
             shouldStartPayment = false
@@ -1101,13 +1075,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             setMessage("ये Gift हर student को नहीं मिलता!")
             setCancelable(false)
             setPositiveButton("Buy Now") { p0, p1 ->
-                isPaymentInitiated = true
-                dismissBbTip()
-                paymentManager.createOrder(
-                    testId.toString(),
-                    Mentor.getInstance().getUser()?.phoneNumber ?: "+919999999999",
-                    viewModel.getEncryptedText()
-                )
+                buyCourse()
             }
             setNegativeButton("Later") { p0, p1 ->
                 super.onBackPressed()

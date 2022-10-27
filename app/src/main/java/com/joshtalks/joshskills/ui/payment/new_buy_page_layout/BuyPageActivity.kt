@@ -850,6 +850,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun showPendingDialog() {
+        PrefManager.put(STICKY_COUPON_DATA, EMPTY)
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val fragment = PaymentPendingFragment()
