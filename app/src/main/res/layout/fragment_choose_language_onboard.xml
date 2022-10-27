@@ -45,7 +45,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/goal_text" />
+            tools:text="I want to speak english confidently from ..." />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvChooseLanguage"

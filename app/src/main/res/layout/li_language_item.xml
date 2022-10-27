@@ -13,9 +13,8 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvLanguage"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_40sdp"
                 android:inputType="textNoSuggestions"
-                app:layout_constraintHorizontal_bias="0"
                 tools:text="Find a new or a better job"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

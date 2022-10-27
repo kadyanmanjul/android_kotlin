@@ -775,9 +775,10 @@
         <item name="android:minLines">1</item>
     </style>
 
-    <style name="JoshRadioButton">
+    <style name="JoshRadioButton" parent="Theme.AppCompat.Light">
         <item name="android:paddingStart">@dimen/_5sdp</item>
-        <item name="buttonTint">@color/disabled</item>
+        <item name="colorControlNormal">@color/disabled</item>
+        <item name="colorControlActivated">@color/primary_500</item>
         <item name="android:textAppearance">@style/TextAppearance.JoshTypography.SubHeadingRegular
         </item>
     </style>

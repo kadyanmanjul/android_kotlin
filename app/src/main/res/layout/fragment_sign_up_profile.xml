@@ -204,20 +204,22 @@
                     android:id="@+id/gender_toggle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:orientation="horizontal">
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/tv_male_gender"
-                        style="@style/JoshRadioButton"
+                        android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
+                        android:checked="true"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/male" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/tv_female_gender"
-                        style="@style/JoshRadioButton"
+                        android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -225,7 +227,7 @@
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/tv_other_gender"
-                        style="@style/JoshRadioButton"
+                        android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
