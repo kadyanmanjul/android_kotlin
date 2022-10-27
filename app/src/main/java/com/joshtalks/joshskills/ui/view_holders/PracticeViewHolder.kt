@@ -112,7 +112,7 @@ class PracticeViewHolder(
             if (this.practiceEngagement.isNullOrEmpty()) {
                 sBuilder.append(getAppContext().getString(R.string.pending))
                 layoutP.gravity = android.view.Gravity.START
-                setResourceInImageView(imageView, R.drawable.ic_pattern)
+                setResourceInImageView(imageView, R.drawable.ic_wave_special_new)
                 rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
                 subRootView.layoutParams = layoutP
                 subRootView.setBackgroundResource(R.drawable.incoming_message_same_bg)
@@ -125,7 +125,7 @@ class PracticeViewHolder(
             } else {
                 sBuilder.append(getAppContext().getString(R.string.submitted))
                 tvSubmitAnswer.visibility = android.view.View.GONE
-                setResourceInImageView(imageView, R.drawable.ic_practise_submit_bg)
+                setResourceInImageView(imageView, R.drawable.ic_wave_special_new)
                 rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
                 layoutP.gravity = android.view.Gravity.END
                 subRootView.layoutParams = layoutP

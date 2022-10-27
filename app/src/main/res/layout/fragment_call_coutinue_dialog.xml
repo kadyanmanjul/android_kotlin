@@ -48,7 +48,7 @@
                 android:layout_width="@dimen/_74sdp"
                 android:layout_height="@dimen/_74sdp"
                 expertImage="@{handler}"
-                android:src="@drawable/img_5"
+                android:src="@drawable/josh_skill"
                 app:civ_border_color="@color/expert_border_color"
                 app:civ_border_width="1.5dp"
                 app:layout_constraintStart_toStartOf="parent"

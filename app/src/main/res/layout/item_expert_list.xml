@@ -41,10 +41,10 @@
                     android:layout_width="@dimen/_74sdp"
                     android:layout_height="@dimen/_74sdp"
                     expertImage="@{item}"
-                    android:src="@drawable/remote_user_image"
+                    android:src="@drawable/josh_skill"
                     app:civ_border_color="@color/expert_border_color"
                     app:civ_border_width="1.5dp"
-                    tools:src="@drawable/remote_user_image" />
+                    tools:src="@drawable/josh_skill" />
 
                 <RatingBar
                     android:id="@+id/ratingBar"

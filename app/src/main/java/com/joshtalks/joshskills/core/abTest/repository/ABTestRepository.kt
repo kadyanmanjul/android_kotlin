@@ -47,13 +47,13 @@ class ABTestRepository {
                 }
             }
 
-            val exp = "experiment_started"
-            val obj = JSONObject()
-            MixPanelTracker.mixPanel.track("$$exp", obj)
-            MixPanelTracker.mixPanel.registerSuperProperties(prop)
-            MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-            MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-            MixPanelTracker.mixPanel.people.set(prop)
+//            val exp = "experiment_started"
+//            val obj = JSONObject()
+//            MixPanelTracker.mixPanel.track("$$exp", obj)
+//            MixPanelTracker.mixPanel.registerSuperProperties(prop)
+//            MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+//            MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+//            MixPanelTracker.mixPanel.people.set(prop)
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }

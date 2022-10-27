@@ -265,7 +265,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
 
     fun addAnalytics() {
         val isAppOpenedForFirstTime = PrefManager.getBoolValue(IS_APP_OPENED_FOR_FIRST_TIME, true, true)
-        MixPanelTracker.mixPanel.track("app session")
+        //MixPanelTracker.mixPanel.track("app session")
         if (isAppOpenedForFirstTime) {
             PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
             MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()

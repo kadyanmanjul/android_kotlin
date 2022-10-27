@@ -56,9 +56,9 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                     isProgressVisible.notifyChange()
                     showToast(AppObjectController.joshApplication.getString(R.string.unextendable_freetrial))
                 }
-                MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-                MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-                MixPanelTracker.mixPanel.people.set(obj)
+//                MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+//                MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+//                MixPanelTracker.mixPanel.people.set(obj)
             }catch (ex : Exception){
                 isProgressVisible.set(false)
                 isProgressVisible.notifyChange()

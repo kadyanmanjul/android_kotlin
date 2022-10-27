@@ -160,46 +160,6 @@ fun MaterialCardView.setBottomCardBackground(callType: Boolean) {
     }
 }
 
-@BindingAdapter("setBackgroundForLocalUser")
-fun ImageView.setBackgroundForLocalUser(imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty())
-        Glide.with(this).load(imageUrl)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .apply(bitmapTransform(BlurTransformation(24)))
-            .into(this)
-    else
-        Glide.with(this)
-            .load(R.drawable.local_user_default_image)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .into(this)
-}
-
-@BindingAdapter("setBackgroundForRemoteUser")
-fun ImageView.setBackgroundForRemoteUser(imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty())
-        Glide.with(this).load(imageUrl)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .apply(bitmapTransform(BlurTransformation(24)))
-            .into(this)
-    else
-        Glide.with(this)
-            .load(R.drawable.remote_user_image)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .into(this)
-}
-
-
-@BindingAdapter("loadGif")
-fun ImageView.loadGif(imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty())
-        Glide.with(this).load(imageUrl).into(DrawableImageViewTarget(this))
-    else
-        Glide.with(this)
-            .load(R.drawable.remote_user_image)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .into(this)
-}
-
 @BindingAdapter("setWord","setColor")
 fun AppCompatTextView.setWord(word: String?,color:String?) {
     if (!word.isNullOrEmpty()){

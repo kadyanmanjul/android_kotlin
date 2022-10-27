@@ -129,14 +129,57 @@
             app:cpb_progressbar_width="@dimen/_4sdp"
             app:cpb_round_border="true" />
 
-        <ImageView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/fpp_no_requests"
-            android:layout_width="@dimen/_217sdp"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/_93sdp"
             android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_quick_view_no_requests"
-            android:visibility="@{vm.hasSeeAllRequest ? View.GONE : View.VISIBLE}" />
+            android:layout_marginHorizontal="@dimen/_41sdp"
+            android:clipToPadding="true"
+            android:visibility="@{vm.hasSeeAllRequest ? View.GONE : View.VISIBLE}"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="0dp"
+            tools:cardBackgroundColor="@color/white"
+            tools:cardPreventCornerOverlap="false">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/empty_card_bg_color">
+
+
+                <TextView
+                    android:id="@+id/norcy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/_17sdp"
+                    android:text="No favorite request yet"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
+                    android:textColor="@color/pure_black"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text"
+                    android:layout_width="@dimen/_166sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/norcy"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="@dimen/_17sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="0dp"
+                    android:lines="2"
+                    android:maxLines="2"
+                    android:text="You will be able to see you favorite practice partner request here."
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    android:textColor="@color/empty_text_color" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </RelativeLayout>
 </layout>

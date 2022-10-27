@@ -133,16 +133,16 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                                 PrefManager.put(MY_COLOR_CODE, it, false)
                             }
                         }
-                        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-                        MixPanelTracker.mixPanel.people.identify(
-                            PrefManager.getStringValue(
-                                USER_UNIQUE_ID
-                            )
-                        )
-                        val prop = JSONObject()
-                        prop.put("total points", response.body()?.points)
-                        prop.put("total min spoken", response.body()?.minutesSpoken)
-                        MixPanelTracker.mixPanel.people.set(prop)
+//                        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+//                        MixPanelTracker.mixPanel.people.identify(
+//                            PrefManager.getStringValue(
+//                                USER_UNIQUE_ID
+//                            )
+//                        )
+//                        val prop = JSONObject()
+//                        prop.put("total points", response.body()?.points)
+//                        prop.put("total min spoken", response.body()?.minutesSpoken)
+//                        MixPanelTracker.mixPanel.people.set(prop)
                         userData.postValue(response.body()!!)
                         PrefManager.put(
                             IS_PROFILE_FEATURE_ACTIVE,

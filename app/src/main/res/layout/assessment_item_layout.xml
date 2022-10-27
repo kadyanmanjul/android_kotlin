@@ -34,7 +34,7 @@
                 android:adjustViewBounds="true"
                 app:tint="@color/white_ef"
                 android:scaleType="fitXY"
-                app:srcCompat="@drawable/ic_pattern"
+                app:srcCompat="@drawable/ic_wave_special_new"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

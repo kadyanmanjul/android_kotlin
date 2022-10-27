@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.mixpanel.android.mpmetrics.MixpanelAPI
+//import com.mixpanel.android.mpmetrics.MixpanelAPI
 import kotlinx.coroutines.sync.Mutex
 import org.json.JSONObject
 
@@ -14,12 +14,12 @@ object MixPanelTracker {
     private var eventName: String = ""
     private var params = JSONObject()
 
-    val mixPanel: MixpanelAPI by lazy {
-        MixpanelAPI.getInstance(
-            AppObjectController.joshApplication,
-            "4c574e3a5e6b933a0e55c88239f6e994"
-        )
-    }
+//    val mixPanel: MixpanelAPI by lazy {
+//        MixpanelAPI.getInstance(
+//            AppObjectController.joshApplication,
+//            "4c574e3a5e6b933a0e55c88239f6e994"
+//        )
+//    }
 
     fun publishEvent(event: Event): MixPanelTracker {
         eventName = event.value

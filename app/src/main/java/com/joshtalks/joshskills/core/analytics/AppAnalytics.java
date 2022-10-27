@@ -133,9 +133,9 @@ public class AppAnalytics {
         profileUpdate.put("User Type", user.getUserType());
         profileUpdate.put("Gender", user.getGender());
 
-        MixPanelTracker.INSTANCE.getMixPanel().alias(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
-        MixPanelTracker.INSTANCE.getMixPanel().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
-        MixPanelTracker.INSTANCE.getMixPanel().getPeople().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+//        MixPanelTracker.INSTANCE.getMixPanel().alias(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+//        MixPanelTracker.INSTANCE.getMixPanel().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+//        MixPanelTracker.INSTANCE.getMixPanel().getPeople().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
 
         JSONObject obj = new JSONObject();
         try {
@@ -152,15 +152,15 @@ public class AppAnalytics {
             e.printStackTrace();
         }
 
-        MixPanelTracker.INSTANCE.getMixPanel().getPeople().set(obj);
+//        MixPanelTracker.INSTANCE.getMixPanel().getPeople().set(obj);
 
-        JSONObject props = new JSONObject();
-        try {
-            props.put("is paid", !PrefManager.INSTANCE.getBoolValue(IS_FREE_TRIAL, false, true));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        MixPanelTracker.INSTANCE.getMixPanel().registerSuperProperties(props);
+//        JSONObject props = new JSONObject();
+//        try {
+//            props.put("is paid", !PrefManager.INSTANCE.getBoolValue(IS_FREE_TRIAL, false, true));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+       // MixPanelTracker.INSTANCE.getMixPanel().registerSuperProperties(props);
     }
 
     private static void updateFirebaseSdkUser() {

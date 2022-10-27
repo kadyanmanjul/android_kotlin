@@ -560,16 +560,16 @@ class ConversationActivity :
     }
 
     private fun initToolbar() {
-        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-        MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+//        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+//        MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         var obj = JSONObject()
         if (inboxEntity.isCourseBought) {
             obj.put("is paid", true)
         } else {
             obj.put("is paid", false)
         }
-        MixPanelTracker.mixPanel.people.set(obj)
-        MixPanelTracker.mixPanel.registerSuperProperties(obj)
+//        MixPanelTracker.mixPanel.people.set(obj)
+//        MixPanelTracker.mixPanel.registerSuperProperties(obj)
         try {
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)

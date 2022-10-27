@@ -39,7 +39,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:background="@drawable/white_button_round_enabled"
                 android:gravity="center_vertical|start"
-                android:src="@drawable/img_5"
+                android:src="@drawable/josh_skill"
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
