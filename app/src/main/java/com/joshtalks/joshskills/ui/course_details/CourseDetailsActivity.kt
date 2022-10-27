@@ -1076,9 +1076,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
     override fun onBalloonClick(view: View) {}
 
     override fun onBackPressed() {
-        if (!isPaymentInitiated) {
+        if (viewModel.getCoursePrice() == 0.0)
+            super.onBackPressed()
+        else if (!isPaymentInitiated)
             showBackPressDialog()
-        } else {
+        else {
             backPressMutex.onMultipleBackPress {
                 val backPressHandled = paymentManager.getJuspayBackPress()
                 if (!backPressHandled) {

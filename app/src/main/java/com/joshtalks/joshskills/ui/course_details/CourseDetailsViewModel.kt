@@ -147,4 +147,8 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
             EMPTY
         }
     }
+
+    fun getCoursePrice(): Double {
+        return courseDetailsLiveData.value?.paymentData?.discountedAmount?.substring(1)?.toDouble() ?: 0.0
+    }
 }

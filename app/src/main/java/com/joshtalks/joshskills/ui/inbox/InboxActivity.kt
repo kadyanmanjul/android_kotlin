@@ -597,7 +597,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 bbTooltip.showAlignBottom(explore_courses)
             }
             val scale = resources.displayMetrics.density
-            var dpAsPixels = (170 * scale + 0.5f).toInt()
+            var dpAsPixels = (190 * scale + 0.5f).toInt()
             if (paymentStatusView.isVisible)
                 dpAsPixels = (100 * scale + 0.5f).toInt()
             inbox_nested_scroll.updatePadding(0, 0, 0, dpAsPixels)
