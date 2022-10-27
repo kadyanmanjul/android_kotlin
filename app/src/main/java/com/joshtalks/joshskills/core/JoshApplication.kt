@@ -13,7 +13,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController.Companion.getLocalBroadcastManager
 import com.joshtalks.joshskills.core.AppObjectController.Companion.restoreIdReceiver
 import com.joshtalks.joshskills.core.AppObjectController.Companion.unreadCountChangeReceiver
@@ -24,20 +23,12 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.voip.ProximityHelper
 import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.voip.ProximityHelper
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.constant.State
-import com.moengage.core.DataCenter
-import com.moengage.core.MoEngage
-import com.moengage.core.config.MiPushConfig
-import com.moengage.core.config.NotificationConfig
-import com.moengage.core.enableAdIdTracking
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
 import java.util.*
 
@@ -78,7 +69,6 @@ class JoshApplication :
         // TODO: Need to be removed
         Branch.getAutoInstance(this)
         turnOnStrictMode()
-        initMoEngage()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
     }
 
@@ -86,23 +76,6 @@ class JoshApplication :
         super.onTerminate()
         getLocalBroadcastManager().unregisterReceiver(restoreIdReceiver)
         getLocalBroadcastManager().unregisterReceiver(unreadCountChangeReceiver)
-    }
-
-    private fun initMoEngage() {
-        val moEngage =
-            MoEngage.Builder(AppObjectController.joshApplication, "DU9ICNBN2A9TTT38BS59KEU6")
-                .setDataCenter(DataCenter.DATA_CENTER_3)
-                .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
-                .configureNotificationMetaData(
-                    NotificationConfig(
-                        R.drawable.ic_status_bar_notification,
-                        R.mipmap.ic_launcher_round
-                    )
-                )
-                .build()
-
-        MoEngage.initialiseDefaultInstance(moEngage)
-        enableAdIdTracking(AppObjectController.joshApplication)
     }
 
     private fun turnOnStrictMode() {

@@ -445,10 +445,6 @@ dependencies {
 
     implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.4.1'
 
-    //moengage
-    implementation(moengage.core)
-    implementation(moengage.pushAmp)
-    implementation(moengage.pushAmpPlus)
     implementation("com.google.android.gms:play-services-ads-identifier:18.0.1")
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
 

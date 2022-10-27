@@ -52,8 +52,9 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.util.FileUploadService
-import com.moengage.core.analytics.MoEAnalyticsHelper
-import com.skydoves.balloon.*
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
+import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
@@ -270,14 +271,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         processIntent(intent)
         this.intent = intent
         handleIntentAction()
-    }
-
-    private fun initMoEngage() {
-        if (!PrefManager.getBoolValue(MOENGAGE_USER_CREATED)) {
-            viewModel.initializeMoEngageUser()
-            PrefManager.put(MOENGAGE_USER_CREATED, true)
-            MoEAnalyticsHelper.setUniqueId(this, Mentor.getInstance().getId())
-        }
     }
 
     fun showProgressDialog(msg: String) {
@@ -541,7 +534,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         initABTest()
-        initMoEngage()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
     }

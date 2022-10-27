@@ -81,7 +81,6 @@ import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.ui.userprofile.models.Award
-import com.moengage.core.MoECoreHelper
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -463,7 +462,6 @@ abstract class BaseActivity :
             }
 
             try {
-                MoECoreHelper.logoutUser(this@BaseActivity)
                 AppObjectController.signUpNetworkService.signoutUser(Mentor.getInstance().getId())
                 val broadcastIntent = Intent().apply {
                     action = CALLING_SERVICE_ACTION

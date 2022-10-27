@@ -163,7 +163,6 @@ class NotificationAnalytics {
     enum class Channel(val action: String) {
         FCM("fcm"),
         FIRESTORE("firestore"),
-        MOENGAGE("moengage"),
         API("API"),
         GROUPS("groups"),
         PUBNUB("PUBNUB"),

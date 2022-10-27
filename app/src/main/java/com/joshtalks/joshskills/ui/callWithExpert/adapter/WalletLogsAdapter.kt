@@ -9,10 +9,10 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ItemWalletPaymentLogBinding
 import com.joshtalks.joshskills.ui.callWithExpert.model.WalletLogs
-import com.moengage.core.internal.utils.MoEUtils.getSystemService
 
 class WalletLogsAdapter():PagingDataAdapter<WalletLogs,WalletLogsAdapter.LogsViewHolder>(LogsDiffUtilCallbacks()) {
     inner class LogsViewHolder(val itemBinding: ItemWalletPaymentLogBinding):RecyclerView.ViewHolder(itemBinding.root){
@@ -20,7 +20,7 @@ class WalletLogsAdapter():PagingDataAdapter<WalletLogs,WalletLogsAdapter.LogsVie
             with(itemBinding){
                 itemBinding.item = item
                 itemBinding.imgCopy.setOnClickListener {
-                    val clipboardManager = getSystemService(itemView.context,CLIPBOARD_SERVICE) as ClipboardManager
+                    val clipboardManager =  AppObjectController.joshApplication.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                     val clipData = ClipData.newPlainText(
                         itemView.context.getString(R.string.josh_transaction_id),
                         itemBinding.txtVCrdId.text

@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -28,7 +29,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.moengage.core.internal.utils.getSystemService
 import kotlin.properties.Delegates
 
 class CertificateShareFragment : CoreJoshFragment() {
@@ -235,7 +235,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
                                 val downloadManager: DownloadManager =
-                                    getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
+                                    AppObjectController.joshApplication.getSystemService(Context.DOWNLOAD_SERVICE) as (DownloadManager)
 
                                 val downloadUri = Uri.parse(url)
 
@@ -280,7 +280,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                         //retrieving the file
                         viewModel.progressBarVisibility.set(false)
                         val downloadedFileId = it.getLong(DownloadManager.EXTRA_DOWNLOAD_ID)
-                        val downloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
+                        val downloadManager = AppObjectController.joshApplication.getSystemService(Context.DOWNLOAD_SERVICE) as (DownloadManager)
                         val uri: Uri? = downloadManager.getUriForDownloadedFile(downloadedFileId)
                         when (packageName) {
                             PKG_AFTER_COM_WHATSAPP -> {

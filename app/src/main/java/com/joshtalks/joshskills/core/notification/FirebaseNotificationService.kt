@@ -6,30 +6,18 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.core.ApiRespStatus
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.JoshApplication.Companion.isAppVisible
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.moengage.firebase.MoEFireBaseHelper
-import com.moengage.pushbase.MoEPushHelper
-import java.lang.reflect.Type
-import kotlin.collections.set
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import org.json.JSONObject
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.reflect.Modifier
+import java.lang.reflect.Type
 import java.text.DateFormat
 import java.util.*
 
@@ -57,7 +45,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             e.printStackTrace()
         }
         PrefManager.put(FCM_TOKEN, token)
-        MoEFireBaseHelper.getInstance().passPushToken(applicationContext, token)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
         }
@@ -106,23 +93,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            else if (MoEPushHelper.getInstance()
-                    .isFromMoEngagePlatform(remoteMessage.data) && JSONObject(remoteMessage.data["gcm_alert"]).has("isCustom")
-            ) {
-                val dataJson = JSONObject(remoteMessage.data["gcm_alert"])
-                remoteMessage.data["title"] = dataJson["title"].toString()
-                remoteMessage.data["body"] = dataJson["body"].toString()
-                remoteMessage.data["action"] = dataJson["client_action"].toString()
-                remoteMessage.data["action_data"] = dataJson["action_data"].toString()
-                remoteMessage.data["id"] = dataJson["notification_id"].toString()
-                NotificationUtils(this)
-                    .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.MOENGAGE)
-                MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
-                return
-            } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
-                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
-                return
-            } else if (remoteMessage.data.containsKey("is_group")) {
+           else if (remoteMessage.data.containsKey("is_group")) {
                 NotificationUtils(this)
                     .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.GROUPS)
                 NotificationUtils(this).pushAnalytics(remoteMessage.data["group_id"])
@@ -140,14 +111,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         if (!isAppVisible) {
             Timber.tag(FirebaseNotificationService::class.java.name).e("intent : ${intent.extras}")
 
-            val intentData = intent.extras
             var channel = NotificationAnalytics.Channel.FCM
-            val data = if (intentData?.getString("push_from").equals(NotificationAnalytics.Channel.MOENGAGE.action))
-                intentData?.let {
-                    channel = NotificationAnalytics.Channel.MOENGAGE
-                    NotificationUtils(this).getDataFromMoengage(it)
-                }
-            else if (intent.extras?.containsKey("action") == true && intent.extras?.containsKey("id") == true)
+            val data =  if (intent.extras?.containsKey("action") == true && intent.extras?.containsKey("id") == true)
                 mapOf(
                     Pair("action", intent.extras?.getString("action")),
                     Pair("action_data", intent.extras?.getString("action_data")),

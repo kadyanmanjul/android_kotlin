@@ -141,7 +141,6 @@ class AppObjectController {
         private var isRemoteConfigInitialize = false
         private var isCrashAnalyticsInitialize = false
         private var isFontsInitialize = false
-        private var isMoEngageInitialize = false
         private var isGroupInitialize = false
         private var isObservingFirestore = false
         private var isListeningBroadCast = false
