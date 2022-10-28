@@ -672,7 +672,7 @@
     </style>
 
     <style name="BulletPoints" parent="TextAppearance.JoshTypography.SubHeadingBold_2">
-        <item name="drawableStartCompat">@drawable/ic_check</item>
+        <item name="drawableStartCompat">@drawable/ic_check_filled</item>
     </style>
 
     <style name="AnimatedFlashButton">
@@ -716,6 +716,7 @@
         <item name="cornerRadius">@dimen/_32sdp</item>
         <item name="rippleColor">@color/white</item>
         <item name="elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
     </style>
 
     <style name="Option">

@@ -10,7 +10,7 @@
             type="com.joshtalks.joshskills.ui.signup.SignUpProfileFragment" />
     </data>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/_24sdp"
@@ -41,6 +41,8 @@
                         android:id="@+id/name_edit_text"
                         style="@style/JoshNameEditText"
                         android:layout_width="match_parent"
+                        android:singleLine="true"
+                        android:imeOptions="actionNext"
                         android:layout_height="wrap_content" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -210,7 +212,6 @@
                         android:id="@+id/tv_male_gender"
                         android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
-                        android:checked="true"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/male" />
@@ -251,6 +252,7 @@
                         android:gravity="start"
                         android:imeOptions="actionNext"
                         android:inputType="textCapWords"
+                        android:singleLine="true"
                         android:lines="1"
                         android:maxLength="24"
                         android:maxLines="1"
@@ -275,9 +277,10 @@
                         style="@style/JoshEditText"
                         android:digits="@string/allowed_name_characters"
                         android:gravity="start"
-                        android:imeOptions="actionNext"
+                        android:imeOptions="actionDone"
                         android:inputType="textCapWords"
                         android:lines="1"
+                        android:singleLine="true"
                         android:maxLength="24"
                         android:maxLines="1"
                         android:minLines="1"
@@ -322,6 +325,6 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </layout>

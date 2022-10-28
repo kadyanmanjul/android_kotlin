@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.NonNull
@@ -83,6 +84,7 @@ class SignUpActivity : ThemedBaseActivity() {
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("signup", "onCreate: ")
         appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
