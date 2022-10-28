@@ -164,12 +164,11 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:gravity="center_vertical|start"
-                        android:tint="@color/colorPrimary"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_small_tick"
+                        app:srcCompat="@drawable/ic_check"
                         tools:visibility="visible" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -216,7 +215,7 @@
                         android:layout_weight="1"
                         android:text="@string/male" />
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
+                    <RadioButton
                         android:id="@+id/tv_female_gender"
                         android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
@@ -224,7 +223,7 @@
                         android:layout_weight="1"
                         android:text="@string/female" />
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
+                    <RadioButton
                         android:id="@+id/tv_other_gender"
                         android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
