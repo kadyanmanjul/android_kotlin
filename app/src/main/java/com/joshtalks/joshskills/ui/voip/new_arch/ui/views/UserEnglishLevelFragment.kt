@@ -27,7 +27,7 @@ class UserEnglishLevelFragment : BaseFragment() {
         return binding.root
     }
     override fun initViewBinding() {
-        viewModel.saveImpression(INTEREST_FORM_LEVEL_SCREEN_OPEN)
+        viewModel.saveImpression(INTEREST_FORM_LEVEL_SCREEN_SHOWN)
         binding.btnContinue.setOnClickListener {
             val level = binding.radioBtnGroup.checkedRadioButtonId
             viewModel.sendUserLevel(level)

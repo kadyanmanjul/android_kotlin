@@ -12,7 +12,7 @@ import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLOSE_INTEREST_ACTIVITY
-import com.joshtalks.joshskills.core.INTEREST_FORM_INTEREST_SCREEN_OPEN
+import com.joshtalks.joshskills.core.INTEREST_FORM_INTEREST_SCREEN_SHOWN
 import com.joshtalks.joshskills.core.INTEREST_FORM_SAVED
 import com.joshtalks.joshskills.core.INTEREST_FORM_SKIP_PRESSED
 import com.joshtalks.joshskills.databinding.FragmentCallInterestBinding
@@ -40,7 +40,7 @@ class CallInterestFragment: BaseFragment() {
             binding.skipBtn.visibility = View.GONE
         }else{
             // only send the impression if the form is shown after a call
-            viewModel.saveImpression(INTEREST_FORM_INTEREST_SCREEN_OPEN)
+            viewModel.saveImpression(INTEREST_FORM_INTEREST_SCREEN_SHOWN)
         }
         binding.skipBtn.setOnClickListener {
             viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
