@@ -747,7 +747,7 @@ class NotificationUtils(val context: Context) {
                 intent.putExtra("id", it.id)
                 val pendingIntent = PendingIntent.getBroadcast(
                     context.applicationContext,
-                    it.id.toInt(),
+                    it.id.hashCode(),
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
@@ -764,7 +764,7 @@ class NotificationUtils(val context: Context) {
                 val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
                 intent.putExtra("id", it)
                 val pendingIntent =
-                    PendingIntent.getBroadcast(context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    PendingIntent.getBroadcast(context.applicationContext, it.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
                 AlarmUtil(context).deleteAlarm(pendingIntent)
             }
         }
@@ -783,7 +783,7 @@ class NotificationUtils(val context: Context) {
                 val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
                 intent.putExtra("id", it)
                 val pendingIntent = PendingIntent.getBroadcast(
-                    context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+                    context.applicationContext, it.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT
                 )
                 AlarmUtil(context).deleteAlarm(pendingIntent)
             } catch (ex: Exception) {
