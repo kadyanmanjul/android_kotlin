@@ -36,9 +36,11 @@ class CallInterestFragment: BaseFragment() {
     }
 
     override fun initViewBinding() {
-        viewModel.saveImpression(INTEREST_FORM_INTEREST_SCREEN_OPEN)
         if (isEditCall){
             binding.skipBtn.visibility = View.GONE
+        }else{
+            // only send the impression if the form is shown after a call
+            viewModel.saveImpression(INTEREST_FORM_INTEREST_SCREEN_OPEN)
         }
         binding.skipBtn.setOnClickListener {
             viewModel.sendEvent(CLOSE_INTEREST_ACTIVITY)
