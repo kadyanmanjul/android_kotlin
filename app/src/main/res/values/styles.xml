@@ -739,10 +739,13 @@
 
     <style name="JoshInputField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/disabled</item>
+        <item name="android:layout_height">@dimen/_48sdp</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/_8sdp</item>
         <item name="boxCornerRadiusBottomStart">@dimen/_8sdp</item>
         <item name="boxCornerRadiusTopEnd">@dimen/_8sdp</item>
         <item name="boxCornerRadiusTopStart">@dimen/_8sdp</item>
+        <item name="hintTextColor">@color/text_subdued</item>
+        <item name="boxStrokeColor">@color/text_input_box_stroke_color</item>
     </style>
 
     <style name="JoshInputFieldWithHelper" parent="JoshInputField">

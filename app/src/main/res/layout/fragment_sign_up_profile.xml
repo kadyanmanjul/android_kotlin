@@ -35,7 +35,6 @@
                     android:id="@+id/nameInputLayout"
                     style="@style/JoshInputField"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:hint="@string/name">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -208,7 +207,7 @@
                     android:layout_marginTop="@dimen/_12sdp"
                     android:orientation="horizontal">
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
+                    <RadioButton
                         android:id="@+id/tv_male_gender"
                         android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
