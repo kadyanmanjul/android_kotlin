@@ -16,10 +16,12 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager as CorePrefManager
+import com.joshtalks.joshskills.core.BLOCK_STATUS
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
@@ -32,6 +34,7 @@ import kotlinx.coroutines.*
 import java.util.ArrayDeque
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.time.Duration
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -87,7 +90,16 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             isListening  = true
                             listenUIState()
                             listenVoipEvents()
-                            connectCall()
+                            if (checkBlockStatusInSP().not())
+                                connectCall()
+                            else {
+                                val msg = Message.obtain().apply {
+                                    what = CLOSE_CALL_SCREEN
+                                }
+                                withContext(Dispatchers.Main) {
+                                    singleLiveEvent.value = msg
+                                }
+                            }
                         }
                     }
                 }
@@ -332,5 +344,31 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun unboundService(activity: Activity) {
         voipLog?.log("unbound Service")
         repository.stopService(activity)
+    }
+
+
+    private fun checkBlockStatusInSP(): Boolean {
+        val blockStatus = CorePrefManager.getBlockStatusObject(BLOCK_STATUS)
+        if (blockStatus?.timestamp?.toInt() == 0 && blockStatus.duration == 0)
+            return false
+
+        if (checkWithinBlockTimer(blockStatus)) {
+            return true
+        } else {
+            CorePrefManager.putPrefObject(BLOCK_STATUS, BlockStatusModel(0, 0, "", 0))
+            return false
+        }
+    }
+
+    private fun checkWithinBlockTimer(blockStatus: BlockStatusModel?): Boolean {
+        if (blockStatus != null) {
+            val durationInMillis = Duration.ofMinutes(blockStatus.duration.toLong()).toMillis()
+            val unblockTimestamp = blockStatus.timestamp + durationInMillis
+            val currentTimestamp = System.currentTimeMillis()
+            if (currentTimestamp < unblockTimestamp) {
+                return true
+            }
+        }
+        return false
     }
 }
