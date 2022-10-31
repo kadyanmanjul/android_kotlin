@@ -1782,8 +1782,4 @@
         <key>DIGITAL_CARD_TEXT</key>
         <value>Digital Course Certificate</value>
     </entry>
-    <entry>
-        <key>SHOW_NEW_GRAMMAR_ENABLED</key>
-        <value>false</value>
-    </entry>
 </defaults>

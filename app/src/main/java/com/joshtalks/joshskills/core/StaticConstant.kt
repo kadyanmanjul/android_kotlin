@@ -292,8 +292,6 @@ class FirebaseRemoteConfigKey {
         const val BUY_PAGE_SUPPORT_PHONE_NUMBER = "BUY_PAGE_SUPPORT_PHONE_NUMBER"
         const val OFFER_FOR_YOU_TEXT = "OFFER_FOR_YOU_TEXT"
         const val DIGITAL_CARD_TEXT = "DIGITAL_CARD_TEXT"
-
-        const val SHOW_NEW_GRAMMAR_ENABLED = "SHOW_NEW_GRAMMAR_ENABLED"
     }
 }
 

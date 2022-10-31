@@ -401,7 +401,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
 
     private fun showBbTooltip(bbTipText: String, shouldShow: Boolean) {
         try {
-            if (shouldShow) {
+            if (shouldShow && (intent.getStringExtra(STARTED_FROM) != "BuyPageActivity")) {
                 bbTooltip = Balloon.Builder(this)
                     .setLayout(R.layout.layout_bb_tip)
                     .setHeight(BalloonSizeSpec.WRAP)
@@ -1050,7 +1050,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
     override fun onBalloonClick(view: View) {}
 
     override fun onBackPressed() {
-        if (viewModel.getCoursePrice() == 0.0)
+        if (viewModel.getCoursePrice() == 0.0 || intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
             super.onBackPressed()
         else if (!isPaymentInitiated)
             showBackPressDialog()

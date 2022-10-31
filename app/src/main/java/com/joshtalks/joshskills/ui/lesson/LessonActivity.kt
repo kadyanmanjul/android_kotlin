@@ -48,7 +48,6 @@ import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SHOW_NEW_GRAMMAR_ENABLED
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -396,13 +395,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             this
         ) {
             viewModel.lessonLiveData.value?.let {
-                titleView.text =
-                    getString(R.string.lesson_no, it.lessonNo)
+                titleView.text = getString(R.string.lesson_no, it.lessonNo)
                 lessonNumber = it.lessonNo
-                lessonIsNewGrammar =
-                    it.isNewGrammar && (if (lessonNumber == 1) {
-                        AppObjectController.getFirebaseRemoteConfig().getBoolean(SHOW_NEW_GRAMMAR_ENABLED)
-                    } else true)
+                lessonIsNewGrammar = it.isNewGrammar
             }
             MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_OPENED)
                 .addParam(ParamKeys.LESSON_ID, getLessonId)
