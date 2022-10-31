@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -85,7 +86,8 @@ class SignUpVerificationFragment : Fragment() {
         }
         // STOPSHIP: Only for testing
         if (BuildConfig.DEBUG) {
-            binding.otpView2.otp = "0000"
+            // TODO: uncomment this.
+//            binding.otpView2.otp = "0000"
         }
 
         viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
@@ -114,8 +116,8 @@ class SignUpVerificationFragment : Fragment() {
                         RxBus2.publish(
                             LoginViaEventBus(
                                 LoginViaStatus.NUMBER_VERIFY,
-                                viewModel.countryCode,
-                                viewModel.phoneNumber
+                                viewModel.countryCode.get()!!,
+                                viewModel.phoneNumber.get()!!
                             )
                         )
                     }
@@ -256,21 +258,10 @@ class SignUpVerificationFragment : Fragment() {
         binding.btnVerify.isEnabled = false
     }
 
-    fun waitingToDetectText(): Spannable {
-        val phNum = "${viewModel.countryCode} ${viewModel.phoneNumber}"
-        val text = getString(R.string.waiting_to_detect, phNum)
-        val spannable = SpannableString(text)
-        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireActivity(), R.color.pure_black)), 47, 47 + phNum.length + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannable.setSpan(StyleSpan(Typeface.BOLD),47, 47 + phNum.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireActivity(), R.color.primary_500)), 47 + phNum.length + 2, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return spannable
-    }
-
     fun showPrivacyPolicyDialog() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
         (activity as BaseActivity).showWebViewDialog(url)
     }
-
     private fun hideProgress() {
         binding.btnVerify.isEnabled = true
         binding.btnVerify.hideProgress(R.string.next)

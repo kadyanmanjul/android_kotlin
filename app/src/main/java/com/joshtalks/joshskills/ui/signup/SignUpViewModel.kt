@@ -60,8 +60,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     val otpField = ObservableField<String>()
     var context: JoshApplication = getApplication()
-    var phoneNumber = String()
-    var countryCode = String()
+    var phoneNumber = ObservableField<String>("")
+    var countryCode = ObservableField<String>("")
+//    var phWithCountryCode = "$countryCode $phoneNumber"
     var loginViaStatus: LoginViaStatus? = null
     val service = AppObjectController.signUpNetworkService
     val abTestRepository by lazy { ABTestRepository() }
@@ -109,8 +110,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 loginAnalyticsEvent(VerificationVia.SMS.name)
                 val reqObj = mapOf("country_code" to cCode, "mobile" to mNumber)
                 service.getOtpForNumberAsync(reqObj)
-                countryCode = cCode
-                phoneNumber = mNumber
+                countryCode.set(cCode)
+                phoneNumber.set(mNumber)
                 delay(500)
                 _signUpStatus.postValue(SignUpStepStatus.RequestForOTP)
                 registerSMSReceiver()
@@ -126,7 +127,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val reqObj = mapOf("country_code" to countryCode, "mobile" to phoneNumber)
+                val reqObj = mapOf("country_code" to countryCode.get()!!, "mobile" to phoneNumber.get()!!)
                 service.getOtpForNumberAsync(reqObj)
                 _signUpStatus.postValue(SignUpStepStatus.ReGeneratedOTP)
                 return@launch
@@ -198,8 +199,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val reqObj = RequestVerifyOTP(
                     PrefManager.getStringValue(USER_UNIQUE_ID),
-                    countryCode,
-                    phoneNumber,
+                    countryCode.get()!!,
+                    phoneNumber.get()!!,
                     otp ?: otpField.get()!!
                 )
                 val response = service.verifyOTP(reqObj)

@@ -13,6 +13,8 @@
             name="viewModel"
             type="com.joshtalks.joshskills.ui.signup.SignUpViewModel" />
 
+        <import type="android.text.Html"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -101,13 +103,12 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:gravity="center"
             android:onClick="@{()->handler.editNumber()}"
-            android:text="@{handler.waitingToDetectText()}"
+            android:text="@{Html.fromHtml(@string/waiting_to_detect(viewModel.countryCode, viewModel.phoneNumber))}"
             android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
-            android:textColor="@color/text_subdued"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/otp_view_2"
-            tools:text="Waiting to automatically detect an SMS sent to +91 77329 71460. Wrong number?" />
+            tools:text="@string/waiting_to_detect" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_wrong_otp"

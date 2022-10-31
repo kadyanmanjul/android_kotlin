@@ -207,7 +207,8 @@
     <!-- Signup V2 Screen  -->
     <string name="otp_verify_label">Verify your number</string>
     <string name="otp_received_message" formatted="false">Enter the OTP you received on \n  %s </string>
-    <string name="waiting_to_detect">Waiting to automatically detect an SMS sent to <b>%s</b>. Wrong number?</string>
+<!--    <string name="waiting_to_detect">Waiting to automatically detect an SMS sent to <font color='#253858'><b>%1$s %2$s</b></font>. <font color='#107be5'>Wrong number?</font></string>-->
+    <string name="waiting_to_detect">Waiting to automatically detect an SMS sent to <![CDATA[<b>%1$s %2$s</b>]]>. <![CDATA[<font color=#107be5>Wrong number?</font>]]></string>
     <string name="edit_number">Edit number</string>
     <string name="register">Register</string>
     <string name="your_name">Your Name</string>
