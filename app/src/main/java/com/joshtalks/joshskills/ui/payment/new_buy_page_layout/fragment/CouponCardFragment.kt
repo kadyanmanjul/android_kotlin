@@ -29,7 +29,7 @@ class CouponCardFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCoupanCardBinding.inflate(inflater, container, false)
-        binding.vm  = vm
+        binding.vm = vm
         binding.executePendingBindings()
         return binding.root
     }
@@ -59,8 +59,8 @@ class CouponCardFragment : BaseFragment() {
 
     }
 
-    fun addObserver(){
-        vm.getValidCouponList(COUPON,Integer.parseInt(vm.testId))
+    fun addObserver() {
+        vm.getValidCouponList(COUPON, Integer.parseInt(vm.testId))
     }
 
     companion object {

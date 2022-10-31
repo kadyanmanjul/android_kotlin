@@ -14,7 +14,6 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -85,15 +84,6 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
             )
             if (mobileNumber.isNullOrEmpty().not()) {
                 binding.mobileEt.setText(mobileNumber[1])
-            }
-        }
-        if (BuildConfig.DEBUG) {
-            binding.randomPhone.apply {
-                visibility = View.VISIBLE
-                setOnClickListener {
-                    binding.mobileEt.setText((6000000000..9999999999).random().toString())
-                    loginViaPhoneNumber()
-                }
             }
         }
     }

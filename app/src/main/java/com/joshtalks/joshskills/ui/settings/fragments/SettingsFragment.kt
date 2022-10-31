@@ -121,7 +121,13 @@ class SettingsFragment : Fragment() {
             Log.d("ProximityHelper", "onViewCreated: ")
             VoipPrefManager.updateProximitySettings(isChecked)
         }
-        binding.p2pProximity.isChecked = VoipPrefManager.isProximitySensorOn()
+
+        if (VoipPrefManager.isPrefManagerInitialize().not()) {
+            VoipPrefManager.initServicePref(AppObjectController.joshApplication)
+            binding.p2pProximity.isChecked = VoipPrefManager.isProximitySensorOn()
+        } else {
+            binding.p2pProximity.isChecked = VoipPrefManager.isProximitySensorOn()
+        }
 
         if (PrefManager.getBoolValue(IS_FREE_TRIAL,false,false) && User.getInstance().isVerified.not()){
             binding.personalInfoTv.isEnabled = false

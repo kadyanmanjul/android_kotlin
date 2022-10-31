@@ -2100,21 +2100,23 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun observeNetwork() {
-        compositeDisposable.add(
-            ReactiveNetwork.observeNetworkConnectivity(requireContext())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { connectivity ->
-                    internetAvailableFlag =
-                        connectivity.state() == NetworkInfo.State.CONNECTED && connectivity.available()
-                    if (!internetAvailableFlag && videoDownPath == null) {
-                        disableSubmitButton()
-                        showToast("Internet not available")
-                    } else {
-                        enableSubmitButton()
+        if (isAdded && activity!=null) {
+            compositeDisposable.add(
+                ReactiveNetwork.observeNetworkConnectivity(requireActivity())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { connectivity ->
+                        internetAvailableFlag =
+                            connectivity.state() == NetworkInfo.State.CONNECTED && connectivity.available()
+                        if (!internetAvailableFlag && videoDownPath == null) {
+                            disableSubmitButton()
+                            showToast("Internet not available")
+                        } else {
+                            enableSubmitButton()
+                        }
                     }
-                }
-        )
+            )
+        }
     }
 
 }

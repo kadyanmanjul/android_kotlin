@@ -163,14 +163,12 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 PrefManager.getStringValue(PAID_COURSE_TEST_ID, defaultValue = FREE_TRIAL_PAYMENT_TEST_ID)
             }
         flowFrom = intent.getStringExtra(FLOW_FROM) ?: EMPTY
-        Log.d("BuyPageActivity.kt", "SAGAR => getArguments:120 $testId")
 
         if (intent.hasExtra(IS_FAKE_CALL)) {
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
-        Log.d("BuyPageActivity.kt", "SAGAR => getArguments:97 $testId")
     }
 
     override fun initViewBinding() {
@@ -187,10 +185,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         if (Utils.isInternetAvailable()) {
             viewModel.getCourseContent()
             viewModel.getCoursePriceList(null,null, null)
-            if (testId.isEmpty())
-                viewModel.getValidCouponList(OFFERS, Integer.parseInt(FREE_TRIAL_PAYMENT_TEST_ID))
-            else
-                viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
+            viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
             }

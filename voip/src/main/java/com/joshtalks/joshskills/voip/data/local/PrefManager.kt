@@ -48,6 +48,10 @@ class PrefManager {
             )
         }
 
+        fun isPrefManagerInitialize():Boolean {
+            return ::preferenceManager.isInitialized
+        }
+
         fun getLatestPubnubMessageTime(): Long {
             return preferenceManager.getLong(LATEST_PUBNUB_MESSAGE_TIME, 0L)
         }

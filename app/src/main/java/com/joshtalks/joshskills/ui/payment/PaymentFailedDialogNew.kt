@@ -12,8 +12,7 @@ class PaymentFailedDialogNew : DialogFragment() {
     lateinit var binding: DialogPaymentFailedNewBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = DialogPaymentFailedNewBinding.inflate(inflater, container, false)
         binding.executePendingBindings()
@@ -23,9 +22,14 @@ class PaymentFailedDialogNew : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnTryAgain.setOnClickListener {
-            paymentManagerObj.getJuspayPayload()
-                ?.let { it1 -> paymentManagerObj.makePaymentForTryAgain(it1) }
-            dismiss()
+            if (isPaymentManagerObjInit()) {
+                paymentManagerObj.getJuspayPayload()
+                    ?.let { it1 -> paymentManagerObj.makePaymentForTryAgain(it1) }
+                dismiss()
+            } else {
+                dismiss()
+                onCancelClicked.invoke()
+            }
         }
 
         binding.btnCancel.setOnClickListener {
@@ -35,15 +39,21 @@ class PaymentFailedDialogNew : DialogFragment() {
     }
 
     companion object {
-        lateinit var paymentManagerObj:PaymentManager
+        lateinit var paymentManagerObj: PaymentManager
         lateinit var onCancelClicked: () -> Unit
+
         @JvmStatic
-        fun newInstance(paymentManager: PaymentManager, onCancelClick: () -> Unit = ({})) = PaymentFailedDialogNew().apply {
+        fun newInstance(paymentManager: PaymentManager, onCancelClick: () -> Unit = ({})) =
+            PaymentFailedDialogNew().apply {
                 paymentManagerObj = paymentManager
                 onCancelClicked = onCancelClick
                 arguments = Bundle().apply {
 
                 }
             }
+
+        fun isPaymentManagerObjInit(): Boolean {
+            return this::paymentManagerObj.isInitialized
+        }
     }
 }

@@ -449,11 +449,15 @@ object Utils {
     fun sdpToPx(dimen: Int) = AppObjectController.joshApplication.resources.getDimension(dimen)
 
     fun call(context: Context, phoneNumber: String) {
-        val intent = Intent(Intent.ACTION_DIAL).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            intent.data = Uri.parse("tel:$phoneNumber")
+            context.startActivity(intent)
+        }catch (ex:Exception){
+            showToast("No application found that can handle this link")
         }
-        intent.data = Uri.parse("tel:$phoneNumber")
-        context.startActivity(intent)
     }
 
     fun openUrl(url: String, context: Context) {

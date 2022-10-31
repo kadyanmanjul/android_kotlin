@@ -30,10 +30,6 @@ class PaymentManager(
 
     private lateinit var paymentGatewayManager: PaymentGatewayManager
 
-    private val paymentRepository by lazy {
-        BuyPageRepo()
-    }
-
     fun initializePaymentGateway() {
         paymentGatewayManager = PaymentGatewayManager(context, paymentGatewayListener)
         paymentGatewayManager.initPaymentGateway()

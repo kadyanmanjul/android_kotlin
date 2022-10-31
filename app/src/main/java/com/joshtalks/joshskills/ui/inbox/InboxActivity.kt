@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
@@ -457,7 +458,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     if (courseList.isNullOrEmpty().not()) {
                         val capsuleCourse = courseList[0]
                         PrefManager.put(CURRENT_COURSE_ID, capsuleCourse.courseId)
-                        PrefManager.put(PAID_COURSE_TEST_ID, capsuleCourse.paidTestId ?: "")
+                        PrefManager.put(PAID_COURSE_TEST_ID, capsuleCourse.paidTestId ?: FREE_TRIAL_PAYMENT_TEST_ID)
                     }
                 }
 

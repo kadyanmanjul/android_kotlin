@@ -864,8 +864,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                         message = R.string.call_start_permission_message
                                     )
                                     return
-                                } else {
-                                    showToast(getString(R.string.something_went_wrong))
                                 }
                             }
                             if (flag) {
