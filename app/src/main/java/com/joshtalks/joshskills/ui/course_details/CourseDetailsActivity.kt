@@ -160,8 +160,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
         }
 
         if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity") {
-            binding.priceContainer.visibility = View.GONE
-            binding.txtExtraHint.visibility = View.GONE
+            binding.priceContainer.visibility = GONE
+            binding.txtExtraHint.visibility = GONE
         } else {
             binding.priceContainer.visibility = View.VISIBLE
         }
@@ -197,7 +197,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             showTooltip(remainingTrialDays)
         } else {
             if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
-                binding.txtExtraHint.visibility = View.GONE
+                binding.txtExtraHint.visibility = GONE
             else
                 binding.txtExtraHint.visibility = View.VISIBLE
 //            binding.continueTip.visibility = View.GONE
@@ -224,7 +224,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
                 )
 
 //                binding.continueTip.setText(text)
-                binding.txtExtraHint.visibility = View.GONE
+                binding.txtExtraHint.visibility = GONE
 //                binding.continueTip.visibility = View.VISIBLE
             }
             3, 4 -> {
@@ -232,12 +232,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
                     .getString(FirebaseRemoteConfigKey.BUY_COURSE_LAST_DAY_OFFER_HINT)
 
 //                binding.continueTip.setText(text)
-                binding.txtExtraHint.visibility = View.GONE
+                binding.txtExtraHint.visibility = GONE
             }
             else -> {
 //                binding.continueTip.visibility = View.GONE
                 if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
-                    binding.txtExtraHint.visibility = View.GONE
+                    binding.txtExtraHint.visibility = GONE
                 else
                     binding.txtExtraHint.visibility = View.VISIBLE
             }
@@ -248,7 +248,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
         linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
-        visibleBuyButton()
 //        binding.placeHolderView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 //            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 //                super.onScrollStateChanged(recyclerView, newState)
@@ -270,12 +269,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
     }
 
     private fun visibleBuyButton() {
-        if (binding.buyCourseLl.visibility == View.GONE) {
-            val transition: Transition = Slide(Gravity.BOTTOM)
-            transition.duration = 2000
-            transition.interpolator = LinearInterpolator()
-            transition.addTarget(binding.buyCourseLl)
-            TransitionManager.beginDelayedTransition(binding.coordinator, transition)
+        if (binding.buyCourseLl.visibility == GONE) {
+//            val transition: Transition = Slide(Gravity.BOTTOM)
+//            transition.duration = 2000
+//            transition.interpolator = LinearInterpolator()
+//            transition.addTarget(binding.buyCourseLl)
+//            TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
         }
     }
@@ -289,6 +288,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             }
         }
         viewModel.courseDetailsLiveData.observe(this) { data ->
+            visibleBuyButton()
             if ((data.totalPoints ?: 0) > 100) {
                 isPointsScoredMoreThanEqualTo100 = true
             }
@@ -319,7 +319,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
                         data.paymentData.discountedAmount
                     )
             } else {
-                binding.txtExtraHint.visibility = View.GONE
+                binding.txtExtraHint.visibility = GONE
             }
             if (data.paymentData.beforeDiscountAmt.isNullOrEmpty().not()) {
                 binding.txtDiscountedPrice.setTextColor(Color.parseColor("#107BE5"))
@@ -362,7 +362,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
         }
 
         viewModel.apiCallStatusLiveData.observe(this) {
-            binding.progressBar.visibility = View.GONE
+            binding.progressBar.visibility = GONE
             if (it == ApiCallStatus.FAILED) {
                 val imageUrl =
                     AppObjectController.getFirebaseRemoteConfig()
