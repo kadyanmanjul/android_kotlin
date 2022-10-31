@@ -141,7 +141,7 @@
                             android:foreground="?android:attr/selectableItemBackground"
                             android:gravity="start|center"
                             android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                             android:textColor="@color/white"
                             tools:text="Spoken English Course for a" />
 
@@ -261,6 +261,11 @@
                             android:textColor="@color/white"
                             android:visibility="invisible"
                             tools:visibility="visible" />
+
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/user_root_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
                     </RelativeLayout>
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -323,8 +328,8 @@
                         android:maxLines="1"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                        android:textColor="@color/text_default"
                         android:visibility="@{vm.isProfileLoading ? View.GONE : View.VISIBLE}"
                         app:layout_constraintHorizontal_bias="0"
                         app:layout_constraintStart_toEndOf="@id/user_pic"
@@ -354,8 +359,8 @@
                         android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginBottom="@dimen/_4sdp"
                         android:text="@string/age"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/text_default"
                         android:visibility="@{vm.isProfileLoading ? View.GONE : View.VISIBLE}"
                         app:layout_constraintStart_toStartOf="@id/user_name"
                         app:layout_constraintTop_toBottomOf="@id/user_name" />
@@ -365,8 +370,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_4sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/grey_7A"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/text_subdued"
                         app:layout_constraintStart_toEndOf="@id/user_age_text"
                         app:layout_constraintTop_toTopOf="@id/user_age_text"
                         tools:text="22" />
@@ -378,8 +383,8 @@
                         android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginBottom="@dimen/_4sdp"
                         android:text="@string/hometown"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/text_default"
                         android:visibility="@{vm.isProfileLoading ? View.GONE : View.VISIBLE}"
                         tools:visibility="@{vm.isProfileLoading ? View.GONE : View.VISIBLE}"
                         app:layout_constraintStart_toStartOf="@id/user_age_text"
@@ -393,8 +398,8 @@
                         android:clickable="false"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/grey_7A"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/text_subdued"
                         app:layout_constraintStart_toEndOf="@id/txt_label_hometown"
                         app:layout_constraintTop_toTopOf="@id/txt_label_hometown"
                         tools:text="Patiala is my home town which" />
@@ -405,8 +410,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="@dimen/_4sdp"
                         android:text="@string/batch"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/text_default"
                         android:visibility="@{vm.isProfileLoading ? View.GONE : View.VISIBLE}"
                         app:layout_constraintStart_toStartOf="@id/txt_label_hometown"
                         app:layout_constraintTop_toBottomOf="@id/txt_label_hometown" />
@@ -416,8 +421,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_4sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/grey_7A"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/text_subdued"
                         app:layout_constraintStart_toEndOf="@id/joined_on_text"
                         app:layout_constraintTop_toTopOf="@id/joined_on_text"
                         tools:text="22 Oct 2020" />
@@ -588,8 +593,8 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/previous_dp"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textColor="@color/black" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                            android:textColor="@color/text_default" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/label_view_more_dp"
@@ -630,8 +635,8 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/highlights"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textColor="@color/black" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                            android:textColor="@color/text_default" />
 
                     </RelativeLayout>
 
@@ -661,8 +666,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                            android:textColor="@color/white"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.LargeSemiBold"
+                            android:textColor="@color/pure_white"
                             android:textSize="@dimen/_18ssp"
                             tools:text="22,234" />
 
@@ -672,8 +677,8 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:text="@string/points"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                            android:textColor="@color/white" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                            android:textColor="@color/pure_white" />
 
                     </LinearLayout>
 
@@ -722,8 +727,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                            android:textColor="@color/white"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.LargeSemiBold"
+                            android:textColor="@color/pure_white"
                             android:textSize="@dimen/_18ssp"
                             tools:text="8322" />
 
@@ -733,8 +738,8 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:text="@string/user_min_text"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                            android:textColor="@color/white" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                            android:textColor="@color/pure_white" />
 
                     </LinearLayout>
 
@@ -759,8 +764,8 @@
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:text="@string/future_goals"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/primary_500"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/seperatorBasicDetails"
@@ -774,8 +779,8 @@
                         android:layout_marginTop="@dimen/_2sdp"
                         android:layout_marginRight="@dimen/_10sdp"
                         android:text="@string/aspiring_ias_officer"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                        android:textColor="@color/text_default"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtLabelFutureGoals"
@@ -802,8 +807,8 @@
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:text="@string/favourite_josh_talk"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/primary_500"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/seperatorFavouriteJoshTalk"
@@ -907,7 +912,7 @@
                         android:layout_marginHorizontal="@dimen/_16sdp"
                         android:layout_marginVertical="@dimen/_14sdp"
                         android:text="@string/label_senior_student"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
                         android:textColor="#687C90"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -972,8 +977,8 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/fpp_text"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textColor="@color/black" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                            android:textColor="@color/text_default" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/view_all_fpp"
@@ -1030,8 +1035,8 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/education_and_occupation"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textColor="@color/black" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                            android:textColor="@color/text_default" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -1042,8 +1047,8 @@
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_12sdp"
                         android:text="@string/occupation_heading"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/primary_500"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/education_occupation_layout"
@@ -1056,8 +1061,8 @@
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/aspiring_ias_officer"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                        android:textColor="@color/text_default"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtLabelOccupation"
@@ -1070,8 +1075,8 @@
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/at_josh_talks"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                        android:textColor="@color/text_subdued"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtOccupation"
@@ -1098,8 +1103,8 @@
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_6sdp"
                         android:text="@string/education"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/primary_500"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/seperator_education_details"
@@ -1112,8 +1117,8 @@
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/b_tech"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                        android:textColor="@color/text_default"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/label_education"
@@ -1126,8 +1131,8 @@
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/from_vit_2023"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                        android:textColor="@color/black"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                        android:textColor="@color/text_subdued"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txt_degree"
@@ -1200,8 +1205,8 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/awards_cabinet"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textColor="@color/black" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                            android:textColor="@color/text_default" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/label_view_more_awards"
@@ -1311,8 +1316,8 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/groups"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textColor="@color/black" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                            android:textColor="@color/text_default" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/label_view_more_groups"
@@ -1403,8 +1408,8 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/courses"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textColor="@color/black" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                            android:textColor="@color/text_default" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/label_view_more_courses"
@@ -1447,10 +1452,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/user_root_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
     </FrameLayout>
 </layout>
 
