@@ -12,9 +12,7 @@ import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLOSE_INTEREST_ACTIVITY
-import com.joshtalks.joshskills.core.INTEREST_FORM_INTEREST_SCREEN_OPEN
-import com.joshtalks.joshskills.core.INTEREST_FORM_SAVED
-import com.joshtalks.joshskills.core.INTEREST_FORM_SKIP_PRESSED
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentCallInterestBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 
@@ -36,6 +34,20 @@ class CallInterestFragment: BaseFragment() {
     }
 
     override fun initViewBinding() {
+
+       val userInterestText  = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.USER_INTEREST_TEXT.plus(
+                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+        )
+
+        val userInterestSubheading = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.USER_INTEREST_TEXT_SUB_HEADING.plus(
+                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+        )
+
+        binding.interestTitleTv.text = userInterestText
+        binding.interestSubtitleTv.text = userInterestSubheading
+
         viewModel.saveImpression(INTEREST_FORM_INTEREST_SCREEN_OPEN)
         if (isEditCall){
             binding.skipBtn.visibility = View.GONE

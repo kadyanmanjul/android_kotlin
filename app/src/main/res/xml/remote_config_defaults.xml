@@ -1778,8 +1778,99 @@
             }
             ]</value>
     </entry>
+
     <entry>
         <key>DIGITAL_CARD_TEXT</key>
         <value>Digital Course Certificate</value>
     </entry>
+
+    <entry>
+        <key>USER_INTEREST_TEXT_1203</key>
+        <value>আপনার Practice Call Experience আরও ভাল করুন</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_1206</key>
+        <value>Practice call ਦਾ experience ਬੇਹਤਰ ਬਣਾਓ</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_1207</key>
+        <value>Practice Call चा experience बनवा अजून चांगल</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_1209</key>
+        <value>Practice call experience അനുഭവം മെച്ചപ്പെടുത്തൂ</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_1210</key>
+        <value>உங்கள் Practice Callன் experienceஐ சிறந்ததாக்குங்கள்</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_1211</key>
+        <value>Practice call యొక్క experience ని బాగుపరుచుకోండి</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_151</key>
+        <value>Practice call का experience बेहतर बनाएँ</value>
+    </entry>
+
+
+    <entry>
+        <key>USER_INTEREST_TEXT_SUB_HEADING_1203</key>
+        <value>আপনার Interests নির্বাচন করুন যাতে আমরা আপনাকে same interest ব্যবহারকারীদের সাথে সংযুক্ত করতে পারি</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_SUB_HEADING_1206</key>
+        <value>ਆਪਣੇ interests select ਕਰੋ ਜੋ ਕਿ ਅੱਸੀਂ ਤੁਹਾਨੂੰ same interest ਦੇ users ਦੇ connect ਕਰਵਾ ਪਾਈਐ</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_SUB_HEADING_1207</key>
+        <value>आपले interest select करा जेणेकरून आम्ही आपणांस same interest च्या users सोबत connect करू शकू.</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_SUB_HEADING_1209</key>
+        <value>നിങ്ങളുടെ interests  select ചെയ്യുക, അതുവഴി ഞങ്ങൾക്ക് നിങ്ങളുടെ same interests ഉള്ള users ആയി connect ചെയ്യാൻ കഴിയും</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_SUB_HEADING_1210</key>
+        <value>உங்கள் interests select செய்யுங்கள், அப்போதான் அதே interests உள்ள Usersடன் நாங்கள் உங்களை Connect செய்ய முடியும்</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_SUB_HEADING_1211</key>
+        <value>మీ interests select చేసుకోండి ఎందుకంటే మీ లాంటి same interest ఉన్న users తో connect చేయగలుగుతాము</value>
+    </entry>
+    <entry>
+        <key>USER_INTEREST_TEXT_SUB_HEADING_151</key>
+        <value>आपके interests select कीजिए ताकी हम आपको same interest के users से connect करवा सकें</value>
+    </entry>
+
+
+    <entry>
+        <key>USER_ENGLISH_LEVEL_1203</key>
+        <value>আপনার ইংরেজি স্তর কি?</value>
+    </entry>
+    <entry>
+        <key>USER_ENGLISH_LEVEL_1206</key>
+        <value>ਤੁਹਾਡਾ ਅੰਗਰੇਜ਼ੀ ਪੱਧਰ ਕੀ ਹੈ ?</value>
+    </entry>
+    <entry>
+        <key>USER_ENGLISH_LEVEL_1207</key>
+        <value>तुमची इंग्रजीची पातळी काय आहे?</value>
+    </entry>
+    <entry>
+        <key>USER_ENGLISH_LEVEL_1209</key>
+        <value>നിങ്ങളുടെ ഇംഗ്ലീഷ് ലെവൽ എന്താണ്?</value>
+    </entry>
+    <entry>
+        <key>USER_ENGLISH_LEVEL_1210</key>
+        <value>உங்கள் ஆங்கில நிலை என்ன?</value>
+    </entry>
+    <entry>
+        <key>USER_ENGLISH_LEVEL_1211</key>
+        <value>আপনার ইংরেজি স্তর কি?</value>
+    </entry>
+    <entry>
+        <key>USER_ENGLISH_LEVEL_151</key>
+        <value>आपकी English का level क्या है ?</value>
+    </entry>
+
 </defaults>

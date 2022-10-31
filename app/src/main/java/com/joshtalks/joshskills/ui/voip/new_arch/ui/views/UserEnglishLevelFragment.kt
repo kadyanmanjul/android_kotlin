@@ -35,6 +35,11 @@ class UserEnglishLevelFragment : BaseFragment() {
             viewModel.saveImpression(INTEREST_FORM_LEVEL_SAVED)
         }
 
+        binding.txtVHeading.text = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.USER_ENGLISH_LEVEL.plus(
+                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+        )
+
         binding.btnLevelBeginner.setOnClickListener {
             binding.btnContinue.isEnabled = true
         }
