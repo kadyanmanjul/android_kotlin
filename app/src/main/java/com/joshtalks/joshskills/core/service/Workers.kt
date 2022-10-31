@@ -99,7 +99,6 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        AppObjectController.facebookEventLogger.flush()
 
         FirebaseAnalytics.getInstance(AppObjectController.joshApplication).resetAnalyticsData()
         AppObjectController.getFetchObject().awaitFinish()

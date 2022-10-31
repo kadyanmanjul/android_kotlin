@@ -1,16 +1,13 @@
 package com.joshtalks.joshskills.core.analytics
 
 import android.os.Bundle
-import android.util.Log
 import com.facebook.appevents.AppEventsConstants
-import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.util.*
 import java.math.BigDecimal
-
 
 object MarketingAnalytics {
 
@@ -25,10 +22,6 @@ object MarketingAnalytics {
                 val params = Bundle().apply {
                     putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 }
-                AppObjectController.facebookEventLogger.logEvent(
-                    AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT,
-                    params
-                )
                 FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SIGN_UP,params)
                 BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_STREAM).addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_STREAM)
@@ -42,8 +35,6 @@ object MarketingAnalytics {
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT,params)
 
             BranchEvent(BRANCH_STANDARD_EVENT.VIEW_ITEM.name)
                 .setDescription(BranchEventName.CALL_COMPLETED_20MIN.name)
@@ -107,12 +98,6 @@ object MarketingAnalytics {
                 currency
             )
             params.putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(
-                AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT,
-                amount,
-                params
-            )
 
             // branch init event
             val buo = BranchUniversalObject()
@@ -142,8 +127,6 @@ object MarketingAnalytics {
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACHIEVED_LEVEL,params)
 
             BranchEvent(BRANCH_STANDARD_EVENT.ACHIEVE_LEVEL)
                 .setDescription(BranchEventName.CALL_COMPLETED_5MIN.name)
@@ -174,13 +157,9 @@ object MarketingAnalytics {
     fun openInboxPage() {
         val context = AppObjectController.joshApplication
         // Facebook Event
-        AppEventsLogger.activateApp(context)
         val params = Bundle().apply {
             putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
         }
-        val facebookEventLogger = AppEventsLogger.newLogger(context)
-        facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_SCHEDULE,params)
-
         // Branch Events
         BranchEvent(AppEventsConstants.EVENT_NAME_SCHEDULE)
             .setCustomerEventAlias("inbox_screen")
@@ -232,8 +211,6 @@ object MarketingAnalytics {
             val params = Bundle()
             params.putString(AppEventsConstants.EVENT_PARAM_LEVEL, achievementLevel.toString())
             params.putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CONTACT, params)
 
             BranchEvent(AppEventsConstants.EVENT_NAME_CONTACT)
                 .setCustomerEventAlias("achieve_level")
@@ -271,8 +248,6 @@ object MarketingAnalytics {
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_SUBMIT_APPLICATION,params)
 
             BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_TUTORIAL)
                 .setDescription("User has completed his lesson")
@@ -305,12 +280,6 @@ object MarketingAnalytics {
         JoshSkillExecutors.BOUNDED.submit {
             //Facebook event
             val context = AppObjectController.joshApplication
-            val params = Bundle().apply {
-                putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
-            }
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_SEARCHED,params)
-
             //Branch event
             BranchEvent(BRANCH_STANDARD_EVENT.SEARCH)
                 .addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
@@ -337,12 +306,9 @@ object MarketingAnalytics {
 
     fun openAppFirstTime(){
         JoshSkillExecutors.BOUNDED.submit {
-            val context = AppObjectController.joshApplication
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP,params)
 
             BranchEvent(BRANCH_STANDARD_EVENT.VIEW_CART)
                 .setDescription(BranchEventName.APP_OPENED_FIRST_TIME.name)
@@ -359,8 +325,6 @@ object MarketingAnalytics {
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION,params)
 
             BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION)
                 .setDescription(BranchEventName.SPEAKING_COMPLETED.name)
@@ -392,8 +356,6 @@ object MarketingAnalytics {
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_DONATE,params)
 
             BranchEvent(AppEventsConstants.EVENT_NAME_DONATE)
                 .setDescription(BranchEventName.OPENED_PRE_CHECKOUT_PAGE.name)
@@ -412,8 +374,6 @@ object MarketingAnalytics {
             val params = Bundle().apply {
                 putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             }
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_START_TRIAL,params)
 
             BranchEvent(BRANCH_STANDARD_EVENT.START_TRIAL)
                 .setDescription(BranchEventName.START_TRIAL.name)

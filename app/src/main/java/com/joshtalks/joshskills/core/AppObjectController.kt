@@ -13,9 +13,6 @@ import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.airbnb.lottie.L
-import com.facebook.FacebookSdk
-import com.facebook.LoggingBehavior
-import com.facebook.appevents.AppEventsLogger
 import com.freshchat.consumer.sdk.Freshchat
 import com.freshchat.consumer.sdk.FreshchatConfig
 import com.freshchat.consumer.sdk.FreshchatNotificationConfig
@@ -288,10 +285,6 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        lateinit var facebookEventLogger: AppEventsLogger
-            private set
-
-        @JvmStatic
         var freshChat: Freshchat? = null
             private set
 
@@ -324,7 +317,6 @@ class AppObjectController {
         fun init() {
             CoroutineScope(Dispatchers.IO).launch {
                 ActivityLifecycleCallback.register(joshApplication)
-                AppEventsLogger.activateApp(joshApplication)
                 initUserExperionCam()
                 initFacebookService(joshApplication)
                 observeFirestore()
@@ -377,12 +369,12 @@ class AppObjectController {
                 override fun onReceive(context: Context, intent: Intent) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            val restoreId = AppObjectController.freshChat?.user?.restoreId ?: EMPTY
+                            val restoreId = freshChat?.user?.restoreId ?: EMPTY
                             if (restoreId.isBlank().not()) {
                                 PrefManager.put(RESTORE_ID, restoreId)
                                 val requestMap = mutableMapOf<String, String?>()
                                 requestMap["restore_id"] = restoreId
-                                AppObjectController.commonNetworkService.postFreshChatRestoreIDAsync(
+                                commonNetworkService.postFreshChatRestoreIDAsync(
                                     PrefManager.getStringValue(USER_UNIQUE_ID),
                                     requestMap
                                 )
@@ -502,25 +494,8 @@ class AppObjectController {
 
         private fun initFacebookService(context: Context) {
             CoroutineScope(Dispatchers.IO).launch {
-                if (FacebookSdk.isInitialized().not()) {
-                    FacebookSdk.fullyInitialize()
-                }
-                FacebookSdk.setAutoLogAppEventsEnabled(false)
-                FacebookSdk.setLimitEventAndDataUsage(context, true)
-                facebookEventLogger = AppEventsLogger.newLogger(context)
-                facebookEventLogger.flush()
-
                 if (BuildConfig.DEBUG) {
                     initStethoLibrary(context)
-                    FacebookSdk.setIsDebugEnabled(true)
-                    FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
-                    FacebookSdk.addLoggingBehavior(LoggingBehavior.CACHE)
-                    FacebookSdk.addLoggingBehavior(LoggingBehavior.DEVELOPER_ERRORS)
-                    FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_INFO)
-                    FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_WARNING)
-                    FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS)
-                    FacebookSdk.setCodelessDebugLogEnabled(true)
-                    FacebookSdk.setMonitorEnabled(true)
                 }
             }
         }
@@ -666,7 +641,7 @@ class AppObjectController {
                     .enableFileExistChecks(false)
                     .build()
                 Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
-                fetch = Fetch.Impl.getInstance(fetchConfiguration)
+                fetch = Fetch.getInstance(fetchConfiguration)
             }
             return fetch as Fetch
         }
