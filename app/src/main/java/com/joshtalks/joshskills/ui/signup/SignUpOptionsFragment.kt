@@ -226,7 +226,6 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         verificationService = if (defaultRegion == "IN") {
             VerificationService.SMS_COUNTRY
         } else {
-            // VerificationService.SINCH
             VerificationService.SMS_COUNTRY
         }
         callVerificationService()

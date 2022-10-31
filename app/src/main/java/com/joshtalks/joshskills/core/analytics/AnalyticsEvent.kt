@@ -75,7 +75,6 @@ enum class AnalyticsEvent(val NAME: String) {
     TRUECALLER_OTP_PARAM("Truecaller OTP V3"),
     GMAIL_PARAM("Gmail V3"),
     FACEBOOK_PARAM("Facebook V3"),
-    SINCH_PARAM("Sinch V3"),
     STATUS("Status param V3"),
     USER_DETAILS("User Details V3"),
     SUCCESS_PARAM("Status success V3"),
@@ -342,9 +341,6 @@ enum class AnalyticsEvent(val NAME: String) {
     WHATSAPP_CLICKED_PAYMENT_OTHER_COUNTRY("Whatsapp Clicked for other country payment V3"),
     COUNTRY_ISO_CODE("Country iso code V3"),
     TRANSACTION_ID("Transaction id V3"),
-
-    SINCH_TEST("Sinch phone number test V3"),
-    VERIFICATION_VIA_SINCH_TEST("Verification via test V3"),
 
     // landing page extra events
     MEET_ME_CLICKED("meet_me_clicked v3"),

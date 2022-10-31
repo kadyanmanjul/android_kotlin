@@ -607,11 +607,7 @@ class SignUpActivity : ThemedBaseActivity() {
         service: VerificationService = VerificationService.SMS_COUNTRY,
         verificationVia: VerificationVia = VerificationVia.SMS
     ) {
-
         when (service) {
-            VerificationService.SINCH -> {
-                // verificationThroughSinch(countryCode, phoneNumber, verificationVia)
-            }
             VerificationService.TRUECALLER -> {
                 verificationThroughTrueCaller(phoneNumber)
             }

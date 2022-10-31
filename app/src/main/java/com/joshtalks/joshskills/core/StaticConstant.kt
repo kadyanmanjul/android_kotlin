@@ -62,7 +62,7 @@ enum class USER_PROFILE_FLOW_FROM(val value: String) {
 }
 
 enum class VerificationService {
-    TRUECALLER, SINCH, SMS_COUNTRY
+    TRUECALLER, SMS_COUNTRY
 }
 
 enum class VerificationVia {
