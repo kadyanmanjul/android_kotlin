@@ -10,7 +10,7 @@
             android:layout_height="wrap_content">
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold24"
             android:id="@+id/tv_question"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

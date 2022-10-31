@@ -21,7 +21,7 @@
             android:layout_marginHorizontal="@dimen/_24sdp"
             android:text="@string/finding_practise_partner"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.LargeBold"
             android:textSize="@dimen/_22ssp"
             android:textColor="@color/black"
             android:textStyle="bold"

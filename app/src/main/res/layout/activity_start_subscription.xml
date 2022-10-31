@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/unlimited_learning"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+                android:textAppearance="@style/TextAppearance.JoshTypography.XLargeSemiBold"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

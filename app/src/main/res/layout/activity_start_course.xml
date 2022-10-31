@@ -70,7 +70,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:gravity="center"
             android:text="@string/starting_title"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+            android:textAppearance="@style/TextAppearance.JoshTypography.XLargeSemiBold"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

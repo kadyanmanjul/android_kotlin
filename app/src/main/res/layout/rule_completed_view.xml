@@ -51,7 +51,7 @@
             android:layout_marginTop="@dimen/_24sdp"
             android:text="@string/amazing"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.LargeBold"
             android:textColor="@color/transparent_black_alpha_70"
             android:textStyle="bold" />
 

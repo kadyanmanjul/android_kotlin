@@ -17,7 +17,7 @@
             android:backgroundTint="@color/media_tv_bg"
             android:gravity="center"
             android:padding="@dimen/_12sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+            android:textAppearance="@style/TextAppearance.JoshTypography.XLargeSemiBold"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
             android:visibility="gone"
             tools:visibility="visible" />

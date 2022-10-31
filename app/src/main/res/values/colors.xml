@@ -61,7 +61,6 @@
 
     <!-- ______________New App Colors_______________-->
     <color name="button_color">#107BE5</color>
-    <color name="primary_500">#107BE5</color>
     <color name="light_blue">#C5E5FE</color>
     <color name="lightest_blue">#EDF2F8</color>
     <color name="black">#172344</color>
@@ -83,11 +82,8 @@
     <color name="sent_bg_7a">#7AF3E0</color>
     <color name="received_bg_BC">#BCDCFD</color>
     <color name="grey_E8">#E8E8E8</color>
-    <color name="disabled">#E8E8E8</color>
     <color name="bg_green_80">#DCF8C6</color>
     <color name="text_green_100">#128C7E</color>
-    <color name="text_default">#253858</color>
-    <color name="text_light">#d3d7de</color>
     <color name="sent_msg_background">#E2FFC7</color>
     <color name="yellow">#FDD853</color>
     <color name="white_ef">#EFEFEF</color>
@@ -219,8 +215,29 @@
     <color name="interest_chip_unselected_text">#646464</color>
     <color name="interest_chip_bg_selected">#14107BE5</color>
     <color name="golden_color_dark">#FFA41C</color>
-    <color name="text_subdued">#6d7175</color>
-    <color name="critical">#de350b</color>
     <color name="surface_information">#ECF5FE</color>
     <color name="mtrl_textinput_default_box_stroke_color">#E8E8E8</color>
+
+<!--    latest color palette-->
+    <color name="success">#00875a</color>
+    <color name="pure_white">#ffffff</color>
+    <color name="warning">#ffc645</color>
+    <color name="surface_surface_critical">#fff5f5</color>
+    <color name="surface_surface_success">#f3fff2</color>
+    <color name="surface_surface_warning">#fef7d1</color>
+    <color name="surface_surface_information">#ecf5fe</color>
+    <color name="primary_400">#9fcaf5</color>
+    <color name="icon_default">#253858</color>
+    <color name="icon_disabled">#dedfe0</color>
+    <color name="icon_subdued">#6d7175</color>
+    <color name="decorative_one">#fb2e7c</color>
+    <color name="decorative_two">#3add03</color>
+    <color name="decorative_three">#09c9db</color>
+    <color name="decorative_four">#560fbc</color>
+    <color name="text_subdued">#6d7175</color>
+    <color name="disabled">#e8e8e8</color>
+    <color name="text_light">#d3d7de</color>
+    <color name="primary_500">#107be5</color>
+    <color name="text_default">#253858</color>
+    <color name="critical">#de350b</color>
 </resources>

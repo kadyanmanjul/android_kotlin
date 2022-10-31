@@ -39,7 +39,7 @@
                 android:paddingStart="@dimen/_16sdp"
                 android:paddingEnd="@dimen/_16sdp"
                 android:text="@string/verification_failed"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold24"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

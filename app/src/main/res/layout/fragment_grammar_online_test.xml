@@ -246,7 +246,7 @@
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:textAlignment="center"
                 android:visibility="invisible"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+                android:textAppearance="@style/TextAppearance.JoshTypography.XLargeSemiBold"
                 android:textColor="#000000"
                 app:layout_constraintBottom_toTopOf="@+id/score_start_btn"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -307,7 +307,7 @@
                 android:layout_gravity="center_horizontal"
                 android:text="@string/grammar_completed"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.LargeBold"
                 android:textColor="@color/transparent_black_alpha_70"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat3"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -346,7 +346,7 @@
                     android:layout_marginTop="@dimen/_24sdp"
                     android:text="बहुत खूब!"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.LargeBold"
                     android:textColor="@color/transparent_black_alpha_70"
                     android:textStyle="bold" />
 

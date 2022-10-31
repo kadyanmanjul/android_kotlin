@@ -20,7 +20,7 @@
         wheel:matProg_rimWidth="@dimen/_2sdp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/progress_bar"
