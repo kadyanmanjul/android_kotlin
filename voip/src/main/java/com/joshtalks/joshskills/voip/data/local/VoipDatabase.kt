@@ -71,5 +71,5 @@ interface DisconnectCallDao {
     suspend fun insertDisconnectedData(data: DisconnectCallEntity)
 
     @Query(value = "DELETE from voip_disconnect_table WHERE status = 1")
-    suspend fun delete()
+    suspend fun delete(): Int
 }

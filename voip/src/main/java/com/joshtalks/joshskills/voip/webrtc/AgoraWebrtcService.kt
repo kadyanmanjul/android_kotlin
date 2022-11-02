@@ -238,6 +238,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                             CallState.UserLeftChannel -> {
                                 eventFlow.emit(callState)
                             }
+                            else -> {}
                         }
                     } catch (e: Exception) {
                         if (e is CancellationException)

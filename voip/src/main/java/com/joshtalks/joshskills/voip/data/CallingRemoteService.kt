@@ -205,6 +205,7 @@ class CallingRemoteService : Service() {
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
                                 }
+                                else -> {}
                             }
                         }
                         catch (e : Exception){

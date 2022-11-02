@@ -241,6 +241,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         val envelope = Envelope(Event.TOPIC_IMAGE_CHANGE_REQUEST)
                         stateChannel.send(envelope)
                     }
+                    else -> {}
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
@@ -363,6 +364,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 stateChannel.send(envelope)
                             }
 
+                            else -> {}
                         }
                     } catch (e: Exception) {
                         if (e is CancellationException)
@@ -469,6 +471,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     stateChannel.send(envelope)
                 }
             }
+            else -> {}
         }
     }
     override suspend fun handleIncomingCall(map: HashMap<String, String>) {
