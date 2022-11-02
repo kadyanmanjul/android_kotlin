@@ -113,7 +113,15 @@ class AlarmReceiver : BroadcastReceiver() {
             )
         val dismissIntent = Intent(applicationContext, AlarmNotifDismissReceiver::class.java)
         val dismissPendingIntent: PendingIntent =
-            PendingIntent.getBroadcast(applicationContext, 1, dismissIntent, 0)
+            PendingIntent.getBroadcast(
+                applicationContext,
+                1,
+                dismissIntent,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    PendingIntent.FLAG_IMMUTABLE
+                else
+                    0
+            )
 
         builder.setDeleteIntent(dismissPendingIntent)
 
@@ -149,7 +157,15 @@ class AlarmReceiver : BroadcastReceiver() {
         val intent = Intent(this, destination)
 
 // flags and request code are 0 for the purpose of demonstration
-        return PendingIntent.getActivity(this, 0, intent, 0)
+        return PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.FLAG_IMMUTABLE
+            else
+                0
+        )
     }
 
     companion object {

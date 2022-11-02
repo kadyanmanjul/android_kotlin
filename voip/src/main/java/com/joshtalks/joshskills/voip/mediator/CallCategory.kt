@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.mediator
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.widget.RemoteViews
 import com.joshtalks.joshskills.voip.Utils
 
@@ -36,7 +37,15 @@ interface CallCategory {
     @SuppressLint("UnspecifiedImmutableFlag")
     fun acceptAction() : PendingIntent {
         val callingActivity = Intent("com.joshtalks.joshskills.voip.CallActivity")
-        return PendingIntent.getActivity(Utils.context, ACCEPT_REQUEST_CODE, callingActivity, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivity(
+            Utils.context,
+            ACCEPT_REQUEST_CODE,
+            callingActivity,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            else
+                PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     fun onNotificationClick() : String {

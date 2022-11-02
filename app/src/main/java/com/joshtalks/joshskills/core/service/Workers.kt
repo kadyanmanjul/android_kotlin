@@ -308,7 +308,15 @@ class BackgroundNotificationWorker(val context: Context, workerParams: WorkerPar
 
     private fun buildNotification() {
         val notificationIntent = Intent(context, InboxActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            notificationIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.FLAG_IMMUTABLE
+            else
+                0
+        )
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notificationBuilder = NotificationCompat.Builder(context, NOTIF_CHANNEL_ID)
@@ -396,7 +404,15 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
-        return PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivity(
+            context,
+            0,
+            notificationIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            else
+                PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     private fun buildNotification(pendingIntent: PendingIntent) {

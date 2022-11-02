@@ -84,7 +84,15 @@ class StickyNotificationService : Service() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
-        return PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivity(
+            this,
+            0,
+            notificationIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            else
+                PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     private fun buildNotification(pendingIntent: PendingIntent): Notification {

@@ -28,21 +28,14 @@ import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.NoSuchElementException
+import java.util.concurrent.TimeUnit
 
 // TODO: Must Refactor
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
@@ -329,7 +322,10 @@ fun getAcceptCallIntent(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 
@@ -356,7 +352,10 @@ fun openCallScreen(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 
@@ -372,7 +371,10 @@ fun intentOnNotificationTap(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 
@@ -388,7 +390,10 @@ fun openFavoriteCallScreen(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 fun openGroupCallScreen(): PendingIntent {
@@ -403,7 +408,10 @@ fun openGroupCallScreen(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 fun Context.getHangUpIntent(): PendingIntent {

@@ -150,8 +150,12 @@ class Mentor {
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val pendingIntent = PendingIntent.getActivities(
                 joshApplication,
-                uniqueInt, activityList,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                uniqueInt,
+                activityList,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                else
+                    PendingIntent.FLAG_UPDATE_CURRENT
             )
 
             val style = NotificationCompat.BigTextStyle()
@@ -185,7 +189,15 @@ class Mentor {
                     putExtra(HAS_NOTIFICATION, true)
                 }
             val dismissPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(joshApplication, uniqueInt, dismissIntent, 0)
+                PendingIntent.getBroadcast(
+                    joshApplication,
+                    uniqueInt,
+                    dismissIntent,
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        PendingIntent.FLAG_IMMUTABLE
+                    else
+                        0
+                )
 
             notificationBuilder.setDeleteIntent(dismissPendingIntent)
 

@@ -1,10 +1,15 @@
 package com.joshtalks.joshskills.core.service.video_download;
 
+import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
+import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.CHAT_ROOM_OBJECT;
+import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.FOCUS_ON_CHAT_ID;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.workmanager.WorkManagerScheduler;
@@ -38,10 +43,6 @@ import java.util.TimerTask;
 
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
-import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.CHAT_ROOM_OBJECT;
-import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.FOCUS_ON_CHAT_ID;
 
 public class VideoDownloadService extends DownloadService {
 
@@ -97,12 +98,21 @@ public class VideoDownloadService extends DownloadService {
         } catch (Exception ex) {
             //    ex.printStackTrace();
         }
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                101,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            pendingIntent = PendingIntent.getActivity(
+                    this,
+                    101,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+            );
+        else
+            pendingIntent = PendingIntent.getActivity(
+                    this,
+                    101,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
         return notificationHelper.buildProgressNotification(R.drawable.ic_download, pendingIntent, "", downloads);
     }
 
