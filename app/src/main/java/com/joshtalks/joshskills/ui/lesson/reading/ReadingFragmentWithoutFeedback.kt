@@ -208,7 +208,7 @@ class ReadingFragmentWithoutFeedback :
                 binding.progressAnimation.progress = it.animatedValue as Int
             }
             addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     binding.recordingView.scaleX = 0.95f
                     binding.recordingView.scaleY = 0.95f
                     binding.recordingView.backgroundTintList = ContextCompat.getColorStateList(
@@ -217,7 +217,7 @@ class ReadingFragmentWithoutFeedback :
                     )
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     binding.progressAnimation.progress = 0
                     binding.recordingView.scaleX = 1f
                     binding.recordingView.scaleY = 1f
@@ -227,9 +227,9 @@ class ReadingFragmentWithoutFeedback :
                     )
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {}
+                override fun onAnimationCancel(animation: Animator) {}
 
-                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator) {}
 
             })
         }
@@ -437,15 +437,15 @@ class ReadingFragmentWithoutFeedback :
                 }
             }
             binding.readingHoldHint.addAnimatorListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {}
+                override fun onAnimationStart(animation: Animator) {}
 
-                override fun onAnimationEnd(animation: Animator?) {}
+                override fun onAnimationEnd(animation: Animator) {}
 
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
                     progressAnimator.cancel()
                 }
 
-                override fun onAnimationRepeat(animation: Animator?) {
+                override fun onAnimationRepeat(animation: Animator) {
                     isChildAnimationStared = false
                 }
 

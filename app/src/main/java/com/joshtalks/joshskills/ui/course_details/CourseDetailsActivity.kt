@@ -982,6 +982,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
                         binding.btnStartCourse.textSize = 16f
                     }
                 }
+                else -> {}
             }
         }
 

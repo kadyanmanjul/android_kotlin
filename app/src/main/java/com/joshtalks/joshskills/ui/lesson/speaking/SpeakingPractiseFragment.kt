@@ -297,6 +297,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
                     binding.nestedScrollView.scrollTo(0, binding.nestedScrollView.bottom)
                 }
+                else -> {}
             }
         }
         viewModel.courseId.observe(viewLifecycleOwner) {

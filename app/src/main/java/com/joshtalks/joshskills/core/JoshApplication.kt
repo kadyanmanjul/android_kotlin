@@ -212,6 +212,7 @@ class JoshApplication :
             Lifecycle.Event.ON_DESTROY -> {
                 onAppDestroy()
             }
+            else -> {}
         }
     }
 

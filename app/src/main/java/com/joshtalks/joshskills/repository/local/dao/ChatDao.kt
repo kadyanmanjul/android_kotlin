@@ -449,6 +449,7 @@ interface ChatDao {
                     BASE_MESSAGE_TYPE.PD ->
                         question.pdfList =
                             getPdfOfQuestion(questionId = question.questionId)
+                    else -> {}
                 }
 
                 // Add Pr V2

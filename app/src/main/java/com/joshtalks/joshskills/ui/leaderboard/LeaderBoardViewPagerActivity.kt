@@ -9,9 +9,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import android.view.View.GONE
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.Window
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
@@ -44,15 +42,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_BATCH_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_ITEM_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_MONTHS_WINNER_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TODAYS_WINNER_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_WEEKS_WINNER_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.NEED_VIEW_BITMAP
-import com.joshtalks.joshskills.ui.leaderboard.constants.PROFILE_ITEM_CLICKED
-import com.joshtalks.joshskills.ui.leaderboard.constants.SCROLL_TO_TOP
+import com.joshtalks.joshskills.ui.leaderboard.constants.*
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
@@ -63,15 +53,9 @@ import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import java.util.*
 
 class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
     private val TAG = "LeaderBoardViewPagerAct"
@@ -186,7 +170,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                     currentMentor?.expiryDate?.time
                 )
             )
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }
@@ -259,6 +243,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                         ApiCallStatus.START -> {
                             showProgressBar()
                         }
+                        else -> {}
                     }
                 }
             }
@@ -308,7 +293,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                 balloon.showAlignBottom(iv_earn)
                 PrefManager.put(SEARCH_HINT_SHOW, true)
                 isTooltipShow = true
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 Log.d(TAG, "addSearchTooltip: ${ex.message}")
             }
         }
@@ -684,15 +669,15 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                 alphaOverlayView.alpha = it.animatedValue as Float
             }
             addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     showToolTip(tooltipView, tooltipText)
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {}
+                override fun onAnimationEnd(animation: Animator) {}
 
-                override fun onAnimationCancel(animation: Animator?) {}
+                override fun onAnimationCancel(animation: Animator) {}
 
-                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator) {}
             })
         }.start()
     }
@@ -881,7 +866,8 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
 
     fun setRecyclerViewItemAnimation(position: Int) {
         if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, true)
-            && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
+            && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+        )
             showOverlayLayoutForItem(position)
     }
 

@@ -305,7 +305,7 @@ class RipplePulseRelativeLayout : RelativeLayout {
                 ripplePaint.alpha = alpha
             }
             addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     ripplePaint.alpha = 255
                 }
             })
@@ -316,7 +316,7 @@ class RipplePulseRelativeLayout : RelativeLayout {
             startDelay = this@RipplePulseRelativeLayout.startDelay.toLong()
             interpolator = AnimationUtils.loadInterpolator(context, pulseInterpolator)!!
             addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     postDelayed({
                         if (!animatorSet.isRunning) {
                             invalidate(rippleBounds, rippleStartRadiusPercent)

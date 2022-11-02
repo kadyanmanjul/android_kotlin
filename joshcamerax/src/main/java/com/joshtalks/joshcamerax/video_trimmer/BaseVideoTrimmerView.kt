@@ -394,7 +394,7 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
     private class MessageHandler(view: BaseVideoTrimmerView) : Handler() {
         private val mView: WeakReference<BaseVideoTrimmerView> = WeakReference(view)
 
-        override fun handleMessage(msg: Message?) {
+        override fun handleMessage(msg: Message) {
             val view = mView.get()
             if (view?.videoView == null)
                 return

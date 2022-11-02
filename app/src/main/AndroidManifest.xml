@@ -38,7 +38,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -46,8 +45,6 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="BIND_GET_INSTALL_REFERRER_SERVICE" />
     <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
@@ -438,48 +435,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoAction" />
-        <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="@string/conversation_open_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/setting_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/referral_open_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/reminder_open_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/video_open_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/landing_page_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/course_explore_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/payment_summary_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/calling_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/url_dlink"
-                    android:scheme="joshskills" />
-                <data
-                    android:host="@string/assessment_dlink"
-                    android:scheme="joshskills" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".ui.certification_exam.CertificationBaseActivity"
             android:launchMode="singleTop"
@@ -628,7 +583,8 @@
         </receiver>
         <receiver
             android:name=".core.notification.StartUpBootReceiver"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.joshtalks.joshskills.start" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

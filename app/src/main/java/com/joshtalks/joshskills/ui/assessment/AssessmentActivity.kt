@@ -293,6 +293,7 @@ class AssessmentActivity : CoreJoshActivity() {
                     if (it.userSelectedOrder != it.correctAnswerOrder.minus(1))
                         status = QuestionStatus.WRONG
                 }
+                else -> {}
             }
         }
         if (isAttempted.not())
@@ -437,6 +438,7 @@ class AssessmentActivity : CoreJoshActivity() {
                     )
                 )
                     return false
+                else -> {}
             }
         }
         return true

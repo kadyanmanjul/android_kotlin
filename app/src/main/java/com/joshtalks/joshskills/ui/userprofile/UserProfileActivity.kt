@@ -1501,7 +1501,7 @@ class UserProfileActivity : CoreJoshActivity() {
                     Log.d(TAG, "onAnimationStart: ")
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     Log.d(TAG, "onAnimationEnd: ")
                 }
 

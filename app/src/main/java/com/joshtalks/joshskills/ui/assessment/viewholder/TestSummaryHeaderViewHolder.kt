@@ -79,6 +79,7 @@ class TestSummaryHeaderViewHolder(
                 }
             }
 
+            else -> {}
         }
         return false
     }
