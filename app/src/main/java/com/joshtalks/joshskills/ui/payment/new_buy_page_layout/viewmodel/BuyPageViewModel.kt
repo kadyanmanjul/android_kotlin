@@ -26,7 +26,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.util.Date
+import java.util.*
 
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }
@@ -117,16 +117,19 @@ class BuyPageViewModel : BaseViewModel() {
                             response.body()!!.listOfCoupon?.let { offersListAdapter.addOffersList(it) }
 
                             if ((response.body()!!.listOfCoupon?.size ?: 0) >= 1) {
-                                offerForYouText.set(AppObjectController.getFirebaseRemoteConfig().getString(OFFER_FOR_YOU_TEXT))
+                                offerForYouText.set(
+                                    AppObjectController.getFirebaseRemoteConfig().getString(OFFER_FOR_YOU_TEXT)
+                                )
                                 isOfferOrInsertCodeVisible.set(true)
-                            }
-                            else {
+                            } else {
                                 isOfferOrInsertCodeVisible.set(false)
                                 message.what = APPLY_COUPON_BUTTON_SHOW
                                 singleLiveEvent.value = message
                             }
                             couponList = response.body()!!.listOfCoupon
                         }
+                        message.what = APPLY_COUPON_FROM_INTENT
+                        singleLiveEvent.value = message
                     }
                 } else {
                     isCouponApiCall.set(true)

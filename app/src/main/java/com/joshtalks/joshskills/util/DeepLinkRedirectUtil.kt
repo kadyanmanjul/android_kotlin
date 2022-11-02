@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -18,8 +17,11 @@ import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.special_practice.utils.COUPON_CODE
+import com.joshtalks.joshskills.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
@@ -65,9 +67,9 @@ object DeepLinkRedirectUtil {
                         jsonParams
                     )
                 DeepLinkRedirect.P2P_FREE_TRIAL_ACTIVITY -> {
-                    Log.d(TAG, "getIntent: P2P_FREE_TRIAL_ACTIVITY")
                     getP2PActivityFreeTrialIntent(activity, jsonParams)
                 }
+                DeepLinkRedirect.BUY_PAGE_ACTIVITY -> getBuyPageActivityIntent(activity, jsonParams)
                 else -> return false
             }
             return true
@@ -263,6 +265,18 @@ object DeepLinkRedirectUtil {
                 }
             } ?: getInboxActivityIntent(activity)
 
+    @Throws(Exception::class)
+    private fun getBuyPageActivityIntent(activity: Activity, jsonParams: JSONObject): Intent =
+        Intent(activity, BuyPageActivity::class.java).apply {
+            putExtra(FLOW_FROM, "Deep Link")
+            putExtra(COUPON_CODE, jsonParams.getString(DeepLinkData.COUPON_CODE.key))
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            sendPendingIntentForActivityList(
+                activity,
+                arrayOf(getInboxActivityIntent(activity), this)
+            )
+        }
+
     private fun getInboxActivityIntent(activity: Activity): Intent =
         InboxActivity.getInboxIntent(activity).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -295,7 +309,8 @@ enum class DeepLinkRedirect(val key: String) {
     ONBOARDING("onboarding"),
     FT_COURSE("ft_course"),
     P2P_FREE_TRIAL_ACTIVITY("p2p_free_trial_activity"),
-    LOGIN("login");
+    LOGIN("login"),
+    BUY_PAGE_ACTIVITY("buy_page_activity"), ;
 
     companion object {
         fun getDeepLinkAction(key: String): DeepLinkRedirect? {
@@ -316,4 +331,5 @@ enum class DeepLinkData(val key: String) {
     COURSE_ID("course_id"),
     TOPIC_ID("topic_id"),
     PLAN_ID("plan_id"),
+    COUPON_CODE("coupon_code"),
 }
