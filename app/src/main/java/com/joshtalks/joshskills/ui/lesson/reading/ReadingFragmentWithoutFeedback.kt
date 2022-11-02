@@ -1299,8 +1299,6 @@ class ReadingFragmentWithoutFeedback :
                                     )
                                     return
                                 }
-                            } else {
-                                showToast(getString(R.string.something_went_wrong))
                             }
                         }
                     }

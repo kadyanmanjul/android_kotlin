@@ -248,7 +248,7 @@ class SignUpVerificationFragment : Fragment() {
     private fun startProgress() {
         binding.btnVerify.showProgress {
             buttonTextRes = R.string.plz_wait
-            progressColors = intArrayOf(ContextCompat.getColor(requireContext(), R.color.white))
+            progressColors = intArrayOf(ContextCompat.getColor(requireActivity(), R.color.white))
             gravity = DrawableButton.GRAVITY_CENTER
             progressRadiusRes = R.dimen.dp8
             progressStrokeRes = R.dimen.dp2
