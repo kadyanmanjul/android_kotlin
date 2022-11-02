@@ -11,8 +11,8 @@ import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.IOException
 import retrofit2.HttpException
+import java.io.IOException
 
 private const val TAG = "GroupChatPagingSource"
 

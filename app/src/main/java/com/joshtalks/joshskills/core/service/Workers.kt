@@ -24,18 +24,18 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.track.CourseUsageSync
-import com.joshtalks.joshskills.core.analytics.*
-import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
@@ -46,12 +46,12 @@ import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import kotlinx.coroutines.*
 import org.json.JSONObject
-import java.util.Date
+import retrofit2.HttpException
+import timber.log.Timber
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 import kotlin.system.exitProcess
-import retrofit2.HttpException
-import timber.log.Timber
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"

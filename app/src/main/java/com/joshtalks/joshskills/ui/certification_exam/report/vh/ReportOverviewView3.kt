@@ -35,7 +35,6 @@ import com.mindorks.placeholderview.annotations.Resolve
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 @SuppressLint("NonConstantResourceId")
 @Layout(R.layout.layout_report_overview_view3)

@@ -1,10 +1,6 @@
 package com.joshtalks.joshskills.core.service
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -17,7 +13,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
-import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -27,8 +22,6 @@ import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.lang.reflect.Type
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,8 +30,10 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
+import java.lang.reflect.Type
 import java.text.DateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L

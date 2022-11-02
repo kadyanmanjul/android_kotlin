@@ -19,12 +19,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.joshApplication
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID

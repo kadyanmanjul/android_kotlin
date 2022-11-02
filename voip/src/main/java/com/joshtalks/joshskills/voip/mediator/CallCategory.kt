@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.widget.RemoteViews
-import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.data.api.ConnectionRequest
 
 const val ACCEPT_REQUEST_CODE = 6943
 enum class CallDirection {

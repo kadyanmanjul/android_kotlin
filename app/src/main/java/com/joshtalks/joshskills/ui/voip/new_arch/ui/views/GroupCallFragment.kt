@@ -2,13 +2,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Bundle
-import android.os.PowerManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View

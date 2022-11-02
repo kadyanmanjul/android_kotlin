@@ -2,22 +2,26 @@ package com.joshtalks.joshskills.ui.chat.service
 
 
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Intent
-import android.os.*
+import android.os.Binder
+import android.os.Build
+import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DOWNLOAD_OBJECT
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBusForLessonQuestion
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
@@ -25,9 +29,9 @@ import com.joshtalks.joshskills.ui.voip.util.NotificationId
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.DownloadBlock
 import com.tonyodev.fetch2core.Extras
+import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.concurrent.ExecutorService
-import timber.log.Timber
 
 const val DOWNLOAD_CHAT_OBJECT = "chat_obj"
 const val DOWNLOAD_LESSON_QUESTION_OBJECT = "lesson_question_obj"

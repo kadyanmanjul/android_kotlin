@@ -94,8 +94,15 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
             val dismissIntent =
                 Intent(applicationContext, LocalNotificationDismissEventReceiver::class.java)
             val dismissPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(applicationContext, 1, dismissIntent, 0)
-
+                PendingIntent.getBroadcast(
+                    applicationContext,
+                    1,
+                    dismissIntent,
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        PendingIntent.FLAG_IMMUTABLE
+                    else
+                        0
+                )
             builder.setDeleteIntent(dismissPendingIntent)
 
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

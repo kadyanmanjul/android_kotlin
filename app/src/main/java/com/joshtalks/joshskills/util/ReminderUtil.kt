@@ -5,12 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.LAST_TIME_NOTIFICATION_API
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.service.BackgroundService
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.ui.reminder.set_reminder.AlarmReceiver
 import java.util.*
 

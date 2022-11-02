@@ -19,10 +19,10 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.util.ReminderUtil
-import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(

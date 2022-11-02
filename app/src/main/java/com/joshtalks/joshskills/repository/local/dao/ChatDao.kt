@@ -1,22 +1,14 @@
 package com.joshtalks.joshskills.repository.local.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.RewriteQueriesToDropUnusedColumns
-import androidx.room.RoomWarnings
-import androidx.room.Transaction
-import androidx.room.Update
+import androidx.room.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
-import java.util.Date
+import java.util.*
 
 @Dao
 interface ChatDao {

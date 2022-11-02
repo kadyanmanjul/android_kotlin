@@ -19,13 +19,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
@@ -38,15 +32,9 @@ import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleV
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
+import kotlinx.android.synthetic.main.base_toolbar.*
+import kotlinx.coroutines.*
 import java.text.DecimalFormat
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 const val MENTOR_ID = "mentor_id"
 private const val TAG = "PointsHistoryActivity"

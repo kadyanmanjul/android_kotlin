@@ -15,10 +15,7 @@ import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
-import com.pubnub.api.enums.PNStatusCategory.PNConnectedCategory
-import com.pubnub.api.enums.PNStatusCategory.PNReconnectedCategory
-import com.pubnub.api.enums.PNStatusCategory.PNTimeoutCategory
-import com.pubnub.api.enums.PNStatusCategory.PNUnexpectedDisconnectCategory
+import com.pubnub.api.enums.PNStatusCategory.*
 import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
@@ -132,7 +129,7 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                                 pubnub.retry()
                         }
                     }
-                }else{
+                } else {
                     pubnub.reconnect()
                 }
             }

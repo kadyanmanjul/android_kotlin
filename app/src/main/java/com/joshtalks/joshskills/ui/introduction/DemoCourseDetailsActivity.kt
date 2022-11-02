@@ -31,14 +31,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.INTRODUCTION_START_NOW_CLICKED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.STARTED_FROM
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.ActivityDemoCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS

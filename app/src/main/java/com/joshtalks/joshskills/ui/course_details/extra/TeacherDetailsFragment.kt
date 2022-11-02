@@ -19,10 +19,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
-import kotlinx.android.synthetic.main.fragment_teacher_details.iv_back
-import kotlinx.android.synthetic.main.fragment_teacher_details.iv_profile_pic
-import kotlinx.android.synthetic.main.fragment_teacher_details.teacher_details
-import kotlinx.android.synthetic.main.fragment_teacher_details.teacher_name
+import kotlinx.android.synthetic.main.fragment_teacher_details.*
 
 const val TEACHER_DETAIL_SOURCE = "teacher_detail_source"
 

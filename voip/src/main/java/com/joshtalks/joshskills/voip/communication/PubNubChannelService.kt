@@ -11,21 +11,18 @@ import com.joshtalks.joshskills.voip.data.local.DisconnectCallEntity
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.data.local.SYNCED
 import com.joshtalks.joshskills.voip.data.local.VoipDatabase
-import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
-import com.pubnub.api.PubNubException
 import com.pubnub.api.enums.PNReconnectionPolicy
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import timber.log.Timber
-import java.util.concurrent.ConcurrentHashMap
 
 private const val TAG = "PubNubChannelService"
 enum class PubnubState {

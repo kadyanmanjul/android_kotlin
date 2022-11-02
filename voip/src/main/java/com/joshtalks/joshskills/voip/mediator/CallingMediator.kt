@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.voip.mediator
 import android.content.Intent
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
-import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.context
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
@@ -13,12 +12,10 @@ import com.joshtalks.joshskills.voip.communication.PubnubState.CONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.DISCONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.RECONNECTED
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
 import com.joshtalks.joshskills.voip.communication.model.*
-import com.joshtalks.joshskills.voip.constant.Event
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
-import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.notification.IncomingCallNotificationHandler
