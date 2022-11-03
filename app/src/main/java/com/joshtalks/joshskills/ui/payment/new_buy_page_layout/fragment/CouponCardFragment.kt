@@ -51,7 +51,7 @@ class CouponCardFragment : BaseFragment() {
         }
 
         binding.proceedBtn.setOnClickListener {
-            vm.applyEnteredCoupon(binding.enteredAmountTv.text.toString())
+            vm.applyEnteredCoupon(binding.enteredAmountTv.text.toString(), 0)
         }
     }
 
@@ -60,7 +60,7 @@ class CouponCardFragment : BaseFragment() {
     }
 
     fun addObserver() {
-        vm.getValidCouponList(COUPON, Integer.parseInt(vm.testId))
+        vm.getValidCouponList(COUPON, Integer.parseInt(vm.testId), isCouponApplyOrRemove = REMOVE)
     }
 
     companion object {

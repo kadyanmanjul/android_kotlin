@@ -229,7 +229,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 CLICK_ON_COUPON_APPLY -> {
                     val coupon = it.obj as Coupon
                     updateListItem(coupon)
-                    couponApplied(coupon)
+                    couponApplied(coupon, it.arg1)
                 }
                 APPLY_COUPON_FROM_BUY_PAGE -> {
                     val coupon = it.obj as Coupon
@@ -237,14 +237,14 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 }
                 APPLY_COUPON_FROM_INTENT -> {
                     if (couponCodeFromIntent.isNullOrEmpty().not())
-                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!)
+                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!, 1)
                 }
                 CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
                 MAKE_PHONE_CALL -> makePhoneCall()
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
-                COUPON_APPLIED -> couponApplied(it.obj as Coupon)
+                COUPON_APPLIED -> couponApplied(it.obj as Coupon,it.arg1)
                 SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
                     binding.scrollView.smoothScrollTo(
                         binding.buyPageParentContainer.width,
@@ -291,11 +291,19 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         )
     }
 
-    fun couponApplied(coupon: Coupon) {
+    fun couponApplied(coupon: Coupon, isFromLink: Int) {
         showToast("Coupon applied")
-        if (couponCodeFromIntent == null)
+        if (isFromLink == 0) {
             onBackPressed()
-        onCouponApply(coupon)
+            onCouponApply(coupon)
+        }else{
+            binding.btnCallUs.post {
+                binding.scrollView.smoothScrollTo(
+                    binding.buyPageParentContainer.width,
+                    binding.buyPageParentContainer.height
+                )
+            }
+        }
     }
 
     private fun setFreeTrialTimer(buyCourseFeatureModel: BuyCourseFeatureModel) {
@@ -699,6 +707,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     fun onCouponApply(coupon: Coupon) {
+        Log.e("sagar", "onCouponApply:")
         val dialogView = showCustomDialog(R.layout.coupon_applied_alert_dialog)
         val btnGotIt = dialogView.findViewById<AppCompatTextView>(R.id.got_it_button)
         val couponAppleLottie = dialogView.findViewById<LottieAnimationView>(R.id.card_confetti)

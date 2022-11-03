@@ -102,7 +102,7 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     //This method is for set coupon and offer list on basis of type coupon or offer
-    fun getValidCouponList(methodCallType: String, testId:Int) {
+    fun getValidCouponList(methodCallType: String, testId:Int, isCouponApplyOrRemove: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 isCouponApiCall.set(true)
@@ -127,9 +127,11 @@ class BuyPageViewModel : BaseViewModel() {
                                 singleLiveEvent.value = message
                             }
                             couponList = response.body()!!.listOfCoupon
+                            if (isCouponApplyOrRemove.isEmpty()) {
+                                message.what = APPLY_COUPON_FROM_INTENT
+                                singleLiveEvent.value = message
+                            }
                         }
-                        message.what = APPLY_COUPON_FROM_INTENT
-                        singleLiveEvent.value = message
                     }
                 } else {
                     isCouponApiCall.set(true)
@@ -208,7 +210,7 @@ class BuyPageViewModel : BaseViewModel() {
                         }
                     } else {
                         if (it.isMentorSpecificCoupon == null){
-                            getValidCouponList(OFFERS, Integer.parseInt(testId))
+                            getValidCouponList(OFFERS, Integer.parseInt(testId), isCouponApplyOrRemove = REMOVE)
                         }
                         couponAppliedCode.set(EMPTY)
                         saveImpressionForBuyPageLayout(COUPON_CODE_REMOVED, it.couponCode)
@@ -304,7 +306,7 @@ class BuyPageViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun applyEnteredCoupon(code: String) {
+    fun applyEnteredCoupon(code: String, isFromLink: Int) {
         saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, code)
         if (code.isNotBlank()) {
             manualCoupon.set(code)
@@ -317,6 +319,7 @@ class BuyPageViewModel : BaseViewModel() {
                             offersListAdapter.applyCoupon(data)
                             message.what = COUPON_APPLIED
                             message.obj = data
+                            message.arg1 = isFromLink
                             singleLiveEvent.value = message
                         }
                     } else {
