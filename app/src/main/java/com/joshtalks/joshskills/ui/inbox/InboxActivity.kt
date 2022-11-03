@@ -302,8 +302,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     initPaymentStatusView(
                         R.drawable.green_rectangle_with_green_stroke,
                         R.drawable.ic_payment_small_tick,
-                        R.color.green_payment,
-                        R.color.green_payment_text,
+                        R.color.success,
+                        R.color.success,
                         R.string.success_payment_text,
                         R.string.success_payment_desc,
                         isTryAgainVisible = false,
@@ -316,8 +316,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     initPaymentStatusView(
                         R.drawable.pink_rectangle_with_red_stroke,
                         R.drawable.ic_payment_exclamation,
-                        R.color.payment_status_red,
-                        R.color.payment_status_red,
+                        R.color.critical,
+                        R.color.critical,
                         R.string.failed_payment_text,
                         R.string.failed_payment_desc,
                         isTryAgainVisible = true,
@@ -329,8 +329,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     initPaymentStatusView(
                         R.drawable.yellow_rectangle_with_orange_stroke,
                         R.drawable.ic_payment_exclamation,
-                        R.color.but_button_color,
-                        R.color.but_button_color,
+                        R.color.accent_600,
+                        R.color.accent_600,
                         R.string.processing_payment_text,
                         R.string.processing_payment_desc,
                         isTryAgainVisible = true,
@@ -550,7 +550,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     .setLayout(R.layout.layout_bb_tip)
                     .setHeight(BalloonSizeSpec.WRAP)
                     .setIsVisibleArrow(true)
-                    .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                    .setBackgroundColorResource(R.color.surface_tip)
                     .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
                     .setWidthRatio(0.85f)
                     .setDismissWhenTouchOutside(false)
@@ -575,7 +575,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     .setLayout(R.layout.layout_bb_tip)
                     .setHeight(BalloonSizeSpec.WRAP)
                     .setIsVisibleArrow(true)
-                    .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                    .setBackgroundColorResource(R.color.surface_tip)
                     .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
                     .setWidthRatio(0.85f)
                     .setDismissWhenTouchOutside(false)

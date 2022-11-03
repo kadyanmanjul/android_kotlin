@@ -14,7 +14,7 @@
         android:layout_width="@dimen/_36sdp"
         android:layout_height="@dimen/_36sdp"
         android:background="@drawable/timer_drawable"
-        android:backgroundTint="@color/button_color"
+        android:backgroundTint="@color/primary_500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -35,7 +35,7 @@
             android:gravity="start|center"
             android:lines="1"
             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintBottom_toBottomOf="@+id/fl_container"
             app:layout_constraintStart_toEndOf="@+id/fl_container"
             app:layout_constraintTop_toTopOf="@+id/fl_container"

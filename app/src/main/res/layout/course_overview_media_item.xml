@@ -30,7 +30,7 @@
         android:padding="@dimen/_12sdp"
         android:visibility="gone"
         app:srcCompat="@drawable/ic_play_24dp"
-        app:tint="@color/white"
+        app:tint="@color/pure_white"
         tools:visibility="visible" />
 
 </androidx.cardview.widget.CardView>

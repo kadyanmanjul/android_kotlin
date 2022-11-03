@@ -96,7 +96,7 @@ class FaqCategoryViewHolder(
             )
             cardView.strokeColor = ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
-                R.color.white,
+                R.color.pure_white,
                 null
             )
         } else {
@@ -106,14 +106,14 @@ class FaqCategoryViewHolder(
             )
             cardView.strokeColor = ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
-                R.color.button_color,
+                R.color.primary_500,
                 null
             )
         }
         cardView.setCardBackgroundColor(
             ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
-                R.color.white,
+                R.color.pure_white,
                 null
             )
         )

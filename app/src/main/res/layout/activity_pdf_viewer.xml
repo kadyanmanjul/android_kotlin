@@ -18,7 +18,7 @@
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="@color/primary_500"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
-                app:contentScrim="?attr/colorPrimary"
+                app:contentScrim="@color/primary_500"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <com.google.android.material.appbar.MaterialToolbar
@@ -86,7 +86,7 @@
                             android:padding="@dimen/_4sdp"
                             android:singleLine="true"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             tools:text="Spoken English Course" />
                     </RelativeLayout>
 
@@ -98,12 +98,12 @@
             android:id="@+id/pdfView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/emoji_bg_color"
+            android:background="@color/disabled"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
-            tools:background="@color/emoji_bg_color" />
+            tools:background="@color/disabled" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

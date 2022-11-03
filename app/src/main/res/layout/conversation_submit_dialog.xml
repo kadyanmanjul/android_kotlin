@@ -16,9 +16,9 @@
             android:id="@+id/parent_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             android:paddingBottom="@dimen/_8sdp"
-            tools:background="@color/white">
+            tools:background="@color/pure_white">
 
 
         <com.google.android.material.textview.MaterialTextView
@@ -28,7 +28,7 @@
                 android:layout_marginTop="@dimen/_24sdp"
                 android:gravity="center"
                 android:text="@string/submit_record_msz"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.9"
@@ -48,7 +48,7 @@
             android:text="@string/no"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            android:textColor="@color/button_color"
+            android:textColor="@color/primary_500"
             app:cornerRadius="@dimen/_16sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,8 +57,8 @@
             app:layout_constraintTop_toBottomOf="@+id/text_view_1"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.35"
-            app:rippleColor="@color/button_color"
-            app:strokeColor="@color/button_color" />
+            app:rippleColor="@color/primary_500"
+            app:strokeColor="@color/primary_500" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -67,7 +67,7 @@
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/text_color_10"
+                android:backgroundTint="@color/primary_500"
                 android:clickable="true"
                 android:focusable="true"
                 android:maxLines="1"
@@ -75,7 +75,7 @@
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@string/yes"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:cornerRadius="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/btn_no"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
                 app:layout_constraintTop_toTopOf="@+id/btn_no"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.35"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

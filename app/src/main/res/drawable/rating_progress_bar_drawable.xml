@@ -13,7 +13,7 @@
             <scale android:scaleWidth="100%">
                 <shape>
                     <corners android:radius="@dimen/_16sdp" />
-                    <solid android:color="@color/green" />
+                    <solid android:color="@color/success" />
                 </shape>
             </scale>
         </clip>

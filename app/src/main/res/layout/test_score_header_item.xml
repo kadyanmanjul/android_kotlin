@@ -47,7 +47,7 @@
             android:layout_gravity="center"
             android:layout_marginVertical="@dimen/_4sdp"
             android:layout_marginStart="@dimen/_12sdp"
-            android:background="@color/grey"
+            android:background="@color/dark_grey"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/score" />
 

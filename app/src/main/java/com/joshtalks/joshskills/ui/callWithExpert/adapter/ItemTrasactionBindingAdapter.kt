@@ -21,9 +21,9 @@ fun setTimeFromLong(view: TextView, item: Transaction){
 fun setDeductedFromInt(view:TextView,item: Transaction){
     if (item.amount > 0){
         view.text = item.amount.toString().toPlusRupees()
-        view.setTextColor(ContextCompat.getColor(view.context,R.color.txt_money_added))
+        view.setTextColor(ContextCompat.getColor(view.context,R.color.success))
     }else{
         view.text = item.amount.toString().removeNegative().toMinusRupees()
-        view.setTextColor(ContextCompat.getColor(view.context,R.color.txt_money_deducted))
+        view.setTextColor(ContextCompat.getColor(view.context,R.color.critical))
     }
 }

@@ -76,7 +76,7 @@
                             android:gravity="start|center"
                             android:text="@string/please_record_answer"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/text_default" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/practise_input_label"
@@ -86,7 +86,7 @@
                             android:gravity="start|center"
                             android:text="@string/attempt_reading_practice"
                             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                            android:textColor="@color/grey_68" />
+                            android:textColor="@color/disabled" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -127,7 +127,7 @@
                                 android:layout_height="@dimen/_24sdp"
                                 android:layout_centerInParent="true"
                                 android:background="@drawable/play_pause_button_background"
-                                android:backgroundTint="@color/button_color"
+                                android:backgroundTint="@color/primary_500"
                                 android:contentDescription="@string/play_button_description"
                                 android:elevation="4dp"
                                 android:onClick="@{()->handler.playPracticeAudio()}"
@@ -164,7 +164,7 @@
                             android:paddingEnd="@dimen/_6sdp"
                             android:progressDrawable="@drawable/seek_bar_draw"
                             android:thumb="@drawable/seek_thumb"
-                            android:thumbTint="@color/colorPrimary" />
+                            android:thumbTint="@color/primary_500" />
 
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -175,7 +175,7 @@
                             android:layout_alignEnd="@id/practise_seekbar"
                             android:layout_marginTop="@dimen/_20sdp"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/red_color"
+                            android:textColor="@color/critical"
                             app:layout_goneMarginTop="@dimen/spacing_large" />
 
                     </RelativeLayout>
@@ -213,7 +213,7 @@
                             android:paddingTop="@dimen/_8sdp"
                             android:paddingBottom="@dimen/_8sdp"
                             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                            android:textColor="@color/black"
+                            android:textColor="@color/text_default"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -269,7 +269,7 @@
                                 android:layout_height="@dimen/_24sdp"
                                 android:layout_gravity="center"
                                 android:indeterminate="true"
-                                android:indeterminateTint="@color/button_color"
+                                android:indeterminateTint="@color/primary_500"
                                 android:visibility="gone"
                                 tools:visibility="visible" />
 
@@ -295,7 +295,7 @@
                             android:padding="@dimen/_4sdp"
                             android:text="@string/hold_to_record_msz"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/black"
+                            android:textColor="@color/text_default"
                             android:textSize="@dimen/_10ssp"
                             android:visibility="gone"
                             app:contentPadding="@dimen/_10sdp"
@@ -315,7 +315,7 @@
                             android:background="@drawable/bg_timer"
                             android:drawableStart="@drawable/timer_drawable"
                             android:drawablePadding="@dimen/_4sdp"
-                            android:drawableTint="@color/checkbox_color"
+                            android:drawableTint="@color/critical"
                             android:gravity="top|center"
                             android:padding="@dimen/_5sdp"
                             android:textColor="#515151"
@@ -333,7 +333,7 @@
                             android:layout_width="@dimen/_62sdp"
                             android:layout_height="@dimen/_62sdp"
                             android:background="@drawable/circle2"
-                            android:backgroundTint="@color/white"
+                            android:backgroundTint="@color/pure_white"
                             android:clipChildren="false"
                             android:clipToPadding="false"
                             android:visibility="gone"
@@ -379,7 +379,7 @@
                                 android:background="@drawable/recv_bg_mic"
                                 android:elevation="@dimen/_3sdp"
                                 android:scaleType="centerInside"
-                                android:tint="@color/white"
+                                android:tint="@color/pure_white"
                                 app:srcCompat="@drawable/ic_rec_mic_big" />
 
                         </RelativeLayout>
@@ -468,7 +468,7 @@
                         android:minLines="1"
                         android:text="@string/info_text"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_default"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/image"
@@ -500,7 +500,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="start|center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_default"
                         tools:text="@tools:sample/lorem" />
 
                 </com.google.android.material.card.MaterialCardView>
@@ -540,7 +540,7 @@
                             android:gravity="start|center"
                             android:text="@string/your_answer"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                            android:textColor="@color/black"
+                            android:textColor="@color/text_default"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -553,7 +553,7 @@
                             android:focusable="true"
                             android:foregroundGravity="right"
                             android:onClick="@{()-> handler.closeRecordedView()}"
-                            android:tint="@color/reading_close_bg"
+                            android:tint="@color/icon_subdued"
                             android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -600,7 +600,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:matProg_barWidth="@dimen/_2sdp"
                             tools:visibility="invisible"
-                            wheel:matProg_barColor="@color/white"
+                            wheel:matProg_barColor="@color/pure_white"
                             wheel:matProg_fillRadius="true"
                             wheel:matProg_progressIndeterminate="true" />
 
@@ -649,7 +649,7 @@
                     app:iconSize="@dimen/_16sdp"
                     android:backgroundTint="#13990A"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:iconGravity="textStart"
                     android:textSize="@dimen/_12ssp"
                     app:cornerRadius="@dimen/_18sdp"
@@ -660,7 +660,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/practise_submit_layout"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/pure_white" />
 
 
                 <com.google.android.material.card.MaterialCardView
@@ -689,7 +689,7 @@
                         android:gravity="start"
                         android:text="@string/your_feedback"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_default"
                         android:visibility="visible" />
 
                     <LinearLayout
@@ -710,7 +710,7 @@
                             android:adjustViewBounds="true"
                             android:scaleType="centerInside"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                            android:textColor="@color/black"
+                            android:textColor="@color/text_default"
                             app:srcCompat="@drawable/ic_rec_mic_big"
                             tools:text="B+"
                             tools:visibility="visible" />
@@ -723,7 +723,7 @@
                             android:gravity="center"
                             android:padding="@dimen/_4sdp"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/black"
+                            android:textColor="@color/text_default"
                             tools:text="@string/hold_to_record_msz"
                             tools:visibility="visible" />
 
@@ -745,7 +745,7 @@
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:background="@drawable/circle2"
-                            android:backgroundTint="@color/white"
+                            android:backgroundTint="@color/pure_white"
                             android:padding="@dimen/_4sdp">
 
                             <com.pnikosis.materialishprogress.ProgressWheel
@@ -753,7 +753,7 @@
                                 android:layout_width="@dimen/_52sdp"
                                 android:layout_height="@dimen/_52sdp"
                                 android:layout_gravity="center"
-                                wheel:matProg_barColor="@color/button_color"
+                                wheel:matProg_barColor="@color/primary_500"
                                 wheel:matProg_fillRadius="true"
                                 wheel:matProg_linearProgress="false"
                                 wheel:matProg_progressIndeterminate="true"
@@ -795,11 +795,11 @@
                     android:textAllCaps="false"
                     android:elevation="2dp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/feedback_layout"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/pure_white" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/improve_answer_btn"
@@ -810,7 +810,7 @@
                     android:layout_marginVertical="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
                     android:background="@drawable/rounded_state_button_bg"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:backgroundTint="@color/primary_500"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
@@ -822,12 +822,12 @@
                     android:text="@string/improve_answer"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/submit_answer_btn"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/pure_white" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_whatsapp"
@@ -852,7 +852,7 @@
                     android:backgroundTint="#13990A"
                     android:elevation="2dp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:iconGravity="textStart"
                     app:iconPadding="@dimen/_10sdp"
                     app:cornerRadius="@dimen/_50sdp"
@@ -861,7 +861,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/submit_answer_btn"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/pure_white" />
 
 
                 <com.google.android.material.textview.MaterialTextView
@@ -881,13 +881,13 @@
                     android:textAllCaps="false"
                     android:elevation="2dp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/btn_whatsapp"
                     app:layout_goneMarginBottom="@dimen/_8sdp"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/pure_white" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -905,7 +905,7 @@
                     android:layout_height="@dimen/_60sdp"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
-                    wheel:matProg_barColor="@color/button_color"
+                    wheel:matProg_barColor="@color/primary_500"
                     wheel:matProg_fillRadius="true"
                     wheel:matProg_linearProgress="false"
                     wheel:matProg_progressIndeterminate="true"
@@ -922,7 +922,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:text="@string/plz_wait"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/pure_white" />
             </RelativeLayout>
 
             <FrameLayout
@@ -952,7 +952,7 @@
                         android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_default"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0"
                         app:layout_constraintStart_toStartOf="parent"
@@ -967,7 +967,7 @@
                         android:text="1 of 3"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_default"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -978,7 +978,7 @@
                         android:layout_gravity="center"
                         android:layout_margin="@dimen/_8sdp"
                         android:background="@drawable/rounded_primary_bg_2dp"
-                        android:backgroundTint="@color/button_color"
+                        android:backgroundTint="@color/primary_500"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -987,7 +987,7 @@
                         android:paddingVertical="@dimen/_3sdp"
                         android:text="आगे बढ़े"
                         android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                        android:textColor="@color/white"
+                        android:textColor="@color/pure_white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 

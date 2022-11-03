@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -11,7 +11,7 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:text="@string/conversation_practice"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_6sdp"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:gravity="center"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.85"
@@ -40,7 +40,7 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:gravity="center"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.85"
@@ -74,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:text="@string/practise_intro_sub"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -101,20 +101,20 @@
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/_10sdp"
         android:background="@drawable/round_rectangle"
-        android:backgroundTint="@color/button_color"
+        android:backgroundTint="@color/primary_500"
         android:gravity="center"
         android:paddingTop="@dimen/_8sdp"
         android:paddingBottom="@dimen/_8sdp"
         android:text="@string/continue_label"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="@color/pure_white"
         android:id="@+id/continue_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.8"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

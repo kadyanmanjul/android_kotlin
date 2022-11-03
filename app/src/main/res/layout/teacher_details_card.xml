@@ -58,7 +58,7 @@
             android:focusable="true"
             android:text="@string/teacher_youtube_link"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/primary_500"
             app:layout_constraintStart_toEndOf="@+id/teacher_image"
             app:layout_constraintTop_toBottomOf="@+id/teacher_name" />
 

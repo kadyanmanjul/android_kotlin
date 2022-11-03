@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Today"
-            android:textColor="@color/blue33"
+            android:textColor="@color/primary_500"
             style="@style/TabLayoutTooptipStyle"/>
         <View
             android:layout_gravity="bottom"
@@ -33,7 +33,7 @@
             android:layout_height="@dimen/_2sdp"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_4sdp"
-            android:background="@color/blue33"
+            android:background="@color/primary_500"
             />
     </FrameLayout>
 
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/_4sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.1"
@@ -81,7 +81,7 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:gravity="center_vertical|start"
-            android:src="@color/checkmark_blue"
+            android:src="@color/primary_400"
             app:layout_constraintBottom_toBottomOf="@+id/award"
             app:layout_constraintStart_toEndOf="@id/award"
             app:layout_constraintTop_toTopOf="@id/award"
@@ -92,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/circle2"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/pure_white"
             android:padding="@dimen/_2sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/user_pic"
@@ -106,7 +106,7 @@
                 android:layout_width="@dimen/_8sdp"
                 android:layout_height="@dimen/_8sdp"
                 android:background="@drawable/circle"
-                android:backgroundTint="@color/green" />
+                android:backgroundTint="@color/success" />
         </FrameLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -120,7 +120,7 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/user_pic"
             app:layout_constraintTop_toTopOf="@id/user_pic"
@@ -134,7 +134,7 @@
             android:layout_marginEnd="@dimen/_12sdp"
             android:text="@string/with"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintStart_toStartOf="@id/name"
             app:layout_constraintTop_toBottomOf="@id/name" />
 
@@ -146,7 +146,7 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:letterSpacing="0"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintStart_toEndOf="@id/points_text"
             app:layout_constraintTop_toBottomOf="@id/name"
             tools:text="with points" />
@@ -159,7 +159,7 @@
             android:letterSpacing="0"
             android:text="@string/view"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:textSize="@dimen/_14ssp"
             app:layout_constraintBottom_toBottomOf="@id/points"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -204,7 +204,7 @@
         android:shadowRadius="10"
         android:text="Tap anywhere to continue"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-        android:textColor="@color/white"
+        android:textColor="@color/pure_white"
         android:visibility="gone"
         tools:visibility="visible" />
 

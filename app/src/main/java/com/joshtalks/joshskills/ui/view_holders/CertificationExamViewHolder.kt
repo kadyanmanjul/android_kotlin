@@ -119,16 +119,16 @@ class CertificationExamViewHolder(
             tvTitle.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
             when (examStatus) {
                 CExamStatus.PASSED -> {
-                    tvTitle.setTextColor(ContextCompat.getColor(getAppContext(), R.color.white))
+                    tvTitle.setTextColor(ContextCompat.getColor(getAppContext(), R.color.pure_white))
 
                     tvMarks.text = getAppContext().getString(R.string.cexam_marks, marks.toInt())
-                    tvMarks.setTextColor(ContextCompat.getColor(getAppContext(), R.color.white))
+                    tvMarks.setTextColor(ContextCompat.getColor(getAppContext(), R.color.pure_white))
                     tvMarks.visibility = android.view.View.VISIBLE
 
                     tvAttemptedDate.setTextColor(
                         ContextCompat.getColor(
                             getAppContext(),
-                            R.color.white
+                            R.color.pure_white
                         )
                     )
                     tvAttemptedDate.visibility = android.view.View.VISIBLE

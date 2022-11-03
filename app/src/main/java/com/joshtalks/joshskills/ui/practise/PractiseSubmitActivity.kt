@@ -1144,7 +1144,7 @@ class PractiseSubmitActivity :
             backgroundTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     applicationContext,
-                    R.color.button_color
+                    R.color.primary_500
                 )
             )
         }

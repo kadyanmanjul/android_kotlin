@@ -19,7 +19,7 @@
             android:layout_gravity="start|center"
             android:text="@string/tap_to_return_to_call"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/white" />
+            android:textColor="@color/pure_white" />
 
         <Chronometer
             android:id="@+id/call_timer"
@@ -27,6 +27,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/white" />
+            android:textColor="@color/pure_white" />
     </FrameLayout>
 </layout>

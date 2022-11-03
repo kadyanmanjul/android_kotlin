@@ -349,14 +349,14 @@ class UserProfileActivity : CoreJoshActivity() {
                     btnSentRequest.setBackgroundColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.colorAccent
+                            R.color.primary_500
                         )
                     )
                     btnSentRequest.text = getString(R.string.send_request)
                     btnSentRequest.setTextColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.white
+                            R.color.pure_white
                         )
                     )
                     viewModel.deleteFppRequest(mentorId)
@@ -368,14 +368,14 @@ class UserProfileActivity : CoreJoshActivity() {
                     btnSentRequest.setBackgroundColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.not_now
+                            R.color.disabled
                         )
                     )
                     btnSentRequest.text = getString(R.string.requested)
                     btnSentRequest.setTextColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.black_quiz
+                            R.color.pure_black
                         )
                     )
                     viewModel.sendFppRequest(mentorId)
@@ -403,7 +403,7 @@ class UserProfileActivity : CoreJoshActivity() {
             binding.sentRequestCard.setCardBackgroundColor(
                 ContextCompat.getColor(
                     this,
-                    R.color.request_respond
+                    R.color.surface_warning
                 )
             )
         }
@@ -638,13 +638,13 @@ class UserProfileActivity : CoreJoshActivity() {
                                 profileText.text = it.text
                                 btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
                                     AppObjectController.joshApplication,
-                                    R.color.not_now
+                                    R.color.disabled
                                 )
                                 btnSentRequest.text = getString(R.string.requested)
                                 btnSentRequest.setTextColor(
                                     ContextCompat.getColor(
                                         AppObjectController.joshApplication,
-                                        R.color.black_quiz
+                                        R.color.pure_black
                                     )
                                 )
                             }
@@ -776,7 +776,7 @@ class UserProfileActivity : CoreJoshActivity() {
         } else {
             binding.userAge.text = userData.age.toString()
             binding.txtUserHometown.letterSpacing = 0.05F
-            binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
+            binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.text_subdued))
         }
         if (userData.hometown.isNullOrBlank()) {
             binding.txtUserHometown.visibility = GONE
@@ -784,7 +784,7 @@ class UserProfileActivity : CoreJoshActivity() {
         } else {
             binding.txtUserHometown.text = userData.hometown
             binding.txtUserHometown.letterSpacing = 0.05F
-            binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
+            binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.text_subdued))
         }
         binding.joinedOn.text = userData.joinedOn
         if (userData.isOnline == true) {

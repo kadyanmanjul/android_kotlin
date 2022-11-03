@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:gravity="start|center"
             android:maxLines="6"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

@@ -187,7 +187,7 @@ class AssessmentButtonView : FrameLayout {
 
     private fun setSubmitBtnActive(isActive: Boolean) {
         submitBtn.isClickable = isActive
-        val btnColor = if (isActive) R.color.button_color else R.color.light_grey
+        val btnColor = if (isActive) R.color.primary_500 else R.color.dark_grey
         submitBtn.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
                 AppObjectController.joshApplication,

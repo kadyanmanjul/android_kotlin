@@ -271,7 +271,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                         getString(R.string.tooltip_search_anyone)
                     )
                     .setTextSize(15F)
-                    .setTextColor(ContextCompat.getColor(this, R.color.black))
+                    .setTextColor(ContextCompat.getColor(this, R.color.text_default))
                     .setArrowOrientation(ArrowOrientation.TOP)
                     .setDismissWhenTouchOutside(true)
                     .setCornerRadius(10f)
@@ -284,7 +284,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                     .setOverlayPadding(4f) // sets a padding value of the overlay shape in
                     .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
                     .setDismissWhenOverlayClicked(false) // disable di
-                    .setBackgroundColorResource(R.color.white)
+                    .setBackgroundColorResource(R.color.pure_white)
                     .setBalloonAnimation(BalloonAnimation.CIRCULAR)
                     .setLifecycleOwner(this)
                     .setDismissWhenClicked(true)

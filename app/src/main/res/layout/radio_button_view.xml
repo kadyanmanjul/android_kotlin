@@ -11,7 +11,7 @@
     android:enabled="true"
     android:elevation="@dimen/_2sdp"
     android:paddingEnd="@dimen/_8sdp"
-    android:drawableTint="@color/black"
+    android:drawableTint="@color/icon_default"
     android:textAlignment="viewStart"
     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
     android:textColor="@color/rb_text_color_state"

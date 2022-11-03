@@ -42,7 +42,7 @@
                     android:layout_height="@dimen/_74sdp"
                     expertImage="@{item}"
                     android:src="@drawable/josh_skill"
-                    app:civ_border_color="@color/expert_border_color"
+                    app:civ_border_color="@color/warning"
                     app:civ_border_width="1.5dp"
                     tools:src="@drawable/josh_skill" />
 
@@ -132,7 +132,7 @@
                 android:background="@drawable/green_rectangle_with_white_bound_stroke_without_solid"
                 android:text="Call"
                 android:textAllCaps="false"
-                android:textColor="@color/green_border_color"
+                android:textColor="@color/success"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 android:textStyle="bold"
                 android:visibility="visible"

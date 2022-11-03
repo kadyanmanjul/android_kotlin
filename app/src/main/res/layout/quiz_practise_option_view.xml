@@ -6,7 +6,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_10sdp"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardBackgroundColor="@color/artboard_color"
+        app:cardBackgroundColor="@color/pure_grey"
         app:cardCornerRadius="@dimen/_22sdp"
         app:cardElevation="0dp"
         app:contentPaddingBottom="@dimen/_10sdp"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/_8sdp"
             android:gravity="start|center"
-            android:textColor="@color/light_grey"
+            android:textColor="@color/dark_grey"
             tools:ignore="MissingPrefix"
             tools:text="Lorem ipsum dolor sit amet"
             tools:visibility="visible" />

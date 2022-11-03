@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
         android:background="@drawable/grey_rounded_bg"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/pure_white"
         android:paddingHorizontal="@dimen/_4sdp"
         android:paddingVertical="@dimen/_8sdp">
 
@@ -45,7 +45,7 @@
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_6sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:textSize="@dimen/_10ssp"
                 tools:text="11" />
 
@@ -85,7 +85,7 @@
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_6sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:textSize="@dimen/_10ssp"
                 tools:text="11" />
 
@@ -120,12 +120,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/round_rectangle_for_course_expo"
-                android:backgroundTint="#687C90"
+                android:backgroundTint="@color/disabled"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_6sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:textSize="@dimen/_10ssp"
                 tools:text="11" />
 
@@ -137,7 +137,7 @@
                 android:gravity="center"
                 android:text="@string/unanswered"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                android:textColor="#687C90"
+                android:textColor="@color/disabled"
                 android:textSize="@dimen/_10ssp"
                 tools:text="Correct" />
         </LinearLayout>
@@ -150,14 +150,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/grey_rounded_bg"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/pure_white"
         android:paddingVertical="@dimen/_8sdp">
 
         <View
             android:layout_width="@dimen/_2sdp"
             android:layout_height="0dp"
             android:layout_marginVertical="@dimen/_2sdp"
-            android:background="@color/colorAccent"
+            android:background="@color/primary_500"
             app:layout_constraintBottom_toBottomOf="@id/text_view"
             app:layout_constraintEnd_toStartOf="@+id/text_view"
             app:layout_constraintTop_toTopOf="@id/text_view" />
@@ -173,7 +173,7 @@
             android:paddingStart="@dimen/_6sdp"
             android:text="@string/check_answer"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -198,7 +198,7 @@
             android:id="@+id/imgBtnLeft"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_30sdp"
-            android:backgroundTint="@color/blue"
+            android:backgroundTint="@color/text_link"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -210,7 +210,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_30sdp"
             android:rotation="180"
-            android:backgroundTint="@color/blue"
+            android:backgroundTint="@color/text_link"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

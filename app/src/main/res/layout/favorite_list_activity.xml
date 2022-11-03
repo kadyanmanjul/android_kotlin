@@ -17,7 +17,7 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         android:orientation="vertical">
 
         <LinearLayout
@@ -42,7 +42,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primary_500"
                     android:contentInsetStart="0dp"
                     android:contentInsetLeft="0dp"
                     android:contentInsetEnd="0dp"
@@ -57,7 +57,7 @@
                     app:layout_scrollFlags="scroll|enterAlways"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                     app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-                    app:titleTextColor="@color/white">
+                    app:titleTextColor="@color/pure_white">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                             android:singleLine="true"
                             android:text="@string/favorites_header"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                            android:textColor="@color/white" />
+                            android:textColor="@color/pure_white" />
                     </RelativeLayout>
                 </com.google.android.material.appbar.MaterialToolbar>
             </com.google.android.material.appbar.AppBarLayout>
@@ -125,7 +125,7 @@
             app:cpb_background_progressbar_width="0dp"
             app:cpb_indeterminate_mode="true"
             app:cpb_progress_direction="to_left"
-            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_color="@color/primary_500"
             app:cpb_progressbar_width="@dimen/_4sdp"
             app:cpb_round_border="true" />
 
@@ -139,7 +139,7 @@
             android:visibility="@{vm.isEmptyCardShow ? View.VISIBLE : View.GONE}"
             app:cardCornerRadius="@dimen/_5sdp"
             app:cardElevation="0dp"
-            tools:cardBackgroundColor="@color/white"
+            tools:cardBackgroundColor="@color/pure_white"
             tools:cardPreventCornerOverlap="false">
 
             <RelativeLayout
@@ -184,7 +184,7 @@
                     android:layout_below="@+id/text"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/_17sdp"
-                    android:backgroundTint="@color/colorAccent"
+                    android:backgroundTint="@color/primary_500"
                     android:elevation="0dp"
                     android:gravity="center"
                     android:insetTop="0dp"
@@ -194,10 +194,10 @@
                     android:text="@string/view_recent_calls"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:cornerRadius="@dimen/_50sdp"
                     app:elevation="0dp"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/pure_white" />
 
 
             </RelativeLayout>

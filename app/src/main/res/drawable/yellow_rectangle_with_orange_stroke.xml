@@ -4,7 +4,7 @@
     <solid android:color="#8AFFF0BB" />
     <stroke
         android:width="@dimen/_1sdp"
-        android:color="@color/but_button_color" />
+        android:color="@color/accent_600" />
     <corners
         android:bottomLeftRadius="@dimen/_5sdp"
         android:bottomRightRadius="@dimen/_5sdp"

@@ -141,12 +141,12 @@ class ReportOverviewView2(
             val dataSet = PieDataSet(percentData, "")
             val colorCorrect = Color.parseColor("#3DD2B5")
             val colorInCorrect = Color.parseColor("#F6595A")
-            val colorInUnAnswered = ContextCompat.getColor(context, R.color.grey_68)
+            val colorInUnAnswered = ContextCompat.getColor(context, R.color.disabled)
 
             dataSet.colors = mutableListOf(colorCorrect, colorInCorrect, colorInUnAnswered)
 
             if (certificateExamReport.correct == 0 && certificateExamReport.wrong == 0) {
-                dataSet.color = ContextCompat.getColor(context, R.color.grey_68)
+                dataSet.color = ContextCompat.getColor(context, R.color.disabled)
             }
 
             dataSet.setDrawValues(false)

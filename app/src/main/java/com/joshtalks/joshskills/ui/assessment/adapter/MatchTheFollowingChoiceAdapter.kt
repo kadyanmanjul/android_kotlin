@@ -210,7 +210,7 @@ class MatchTheFollowingChoiceAdapter(
                 questionText.setTextColor(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.green_right_answer
+                        R.color.success
                     )
                 )
             } else {
@@ -221,7 +221,7 @@ class MatchTheFollowingChoiceAdapter(
                 questionText.setTextColor(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.error_color
+                        R.color.critical
                     )
                 )
 
@@ -245,7 +245,7 @@ class MatchTheFollowingChoiceAdapter(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     drawable.setTint(
                         AppObjectController.joshApplication.resources.getColor(
-                            R.color.lighter_grey,
+                            R.color.disabled,
                             null
                         )
                     )

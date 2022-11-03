@@ -408,7 +408,7 @@ public class CountryCodePicker extends RelativeLayout {
             if (isInEditMode()) {
                 contentColor = a.getColor(R.styleable.CountryCodePicker_ccp_contentColor, DEFAULT_UNSET);
             } else {
-                contentColor = a.getColor(R.styleable.CountryCodePicker_ccp_contentColor, context.getResources().getColor(R.color.defaultContentColor));
+                contentColor = a.getColor(R.styleable.CountryCodePicker_ccp_contentColor, context.getResources().getColor(R.color.pure_black));
             }
             if (contentColor != DEFAULT_UNSET) {
                 setContentColor(contentColor);

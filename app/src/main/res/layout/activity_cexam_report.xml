@@ -22,7 +22,7 @@
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/primary_500"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -80,7 +80,7 @@
                         android:singleLine="true"
                         android:text="@string/examination_result"
                         android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/pure_white" />
                 </RelativeLayout>
 
             </com.google.android.material.appbar.MaterialToolbar>
@@ -89,7 +89,7 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@color/pure_white"
                 android:clickable="true"
                 android:focusable="true"
                 android:tabStripEnabled="false"
@@ -98,23 +98,23 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar"
                 app:tabGravity="fill"
-                app:tabIndicatorColor="@color/colorAccent"
+                app:tabIndicatorColor="@color/primary_500"
                 app:tabIndicatorFullWidth="true"
                 app:tabIndicatorHeight="@dimen/_2sdp"
                 app:tabMinWidth="@dimen/_78sdp"
                 app:tabMode="scrollable"
                 app:tabPaddingEnd="@dimen/_8sdp"
                 app:tabPaddingStart="@dimen/_8sdp"
-                app:tabSelectedTextColor="@color/black"
+                app:tabSelectedTextColor="@color/text_default"
                 app:tabTextAppearance="@style/TabLayoutStyleReport"
-                app:tabTextColor="@color/light_grey" />
+                app:tabTextColor="@color/dark_grey" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/exam_report_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@android:color/white"
+            android:background="@color/pure_white"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -132,7 +132,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-            wheel:matProg_barColor="@color/button_color"
+            wheel:matProg_barColor="@color/primary_500"
             wheel:matProg_fillRadius="true"
             wheel:matProg_linearProgress="false"
             wheel:matProg_progressIndeterminate="true" />

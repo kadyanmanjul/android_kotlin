@@ -10,7 +10,7 @@
         android:id="@+id/reason_item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         android:clipToPadding="true"
         android:padding="@dimen/_5sdp">
 

@@ -59,7 +59,6 @@ import com.joshtalks.joshskills.track.TrackActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment
@@ -107,7 +106,6 @@ abstract class BaseActivity :
 
     enum class ActivityEnum {
         Conversation,
-        CourseProgress,
         CourseExplore,
         Help,
         Inbox,
@@ -236,7 +234,6 @@ abstract class BaseActivity :
         return when (act) {
             is ConversationActivity -> ActivityEnum.Conversation
             is CourseExploreActivity -> ActivityEnum.CourseExplore
-            is CourseProgressActivity -> ActivityEnum.CourseProgress
             is HelpActivity -> ActivityEnum.Help
             is InboxActivity -> ActivityEnum.Inbox
             is LauncherActivity -> ActivityEnum.Launcher

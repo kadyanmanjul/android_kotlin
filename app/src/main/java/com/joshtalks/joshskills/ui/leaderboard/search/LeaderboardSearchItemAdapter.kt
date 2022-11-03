@@ -47,7 +47,7 @@ class LeaderboardSearchItemAdapter(val context: Context, val itemList: List<Lead
                     binding.container.setBackgroundColor(
                         ContextCompat.getColor(
                             context,
-                            R.color.lightest_blue
+                            R.color.surface_information
                         )
                     )
                 }
@@ -56,7 +56,7 @@ class LeaderboardSearchItemAdapter(val context: Context, val itemList: List<Lead
                     binding.container.setBackgroundColor(
                         ContextCompat.getColor(
                             context,
-                            R.color.white
+                            R.color.pure_white
                         )
                     )
                 }

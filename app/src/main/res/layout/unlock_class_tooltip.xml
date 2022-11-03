@@ -60,7 +60,7 @@
         android:shadowDy="0"
         android:shadowRadius="10"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-        android:textColor="@color/white"
+        android:textColor="@color/pure_white"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"

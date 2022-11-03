@@ -18,7 +18,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         tools:context=".ui.callWithExpert.fragment.WalletFragment">
 
 
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/available_balance"
-            android:textColor="@color/gray_8B"
+            android:textColor="@color/dark_grey"
             android:textSize="@dimen/_13ssp"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
             app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             android:text="@{viewModel.availableBalance}"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:textSize="@dimen/_21ssp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
@@ -87,7 +87,7 @@
             android:inputType="number"
             android:maxLength="8"
             android:text="@={viewModel.addedAmount}"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:textSize="@dimen/_14ssp"
             app:layout_constraintBottom_toBottomOf="@+id/view7"
             app:layout_constraintEnd_toStartOf="@+id/proceedBtn"

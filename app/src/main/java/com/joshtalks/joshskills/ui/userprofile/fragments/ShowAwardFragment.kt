@@ -152,7 +152,7 @@ class ShowAwardFragment : DialogFragment() {
                 binding.circleBgContainer.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.colorPrimary
+                        R.color.primary_500
                     )
                 )
             }

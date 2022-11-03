@@ -7,7 +7,7 @@
         android:id="@+id/share_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/pure_white">
 
         <ImageView
             android:layout_width="match_parent"
@@ -46,14 +46,14 @@
             app:layout_constraintTop_toBottomOf="@+id/tvEnglishMinutes"
             app:layout_constraintVertical_bias="0.1487325129"
             app:srcCompat="@drawable/ic_baseline_phone_pick"
-            app:tint="#107BE5" />
+            app:tint="@color/primary_500" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvCallerDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:shadowColor="@color/a3a3a3"
+            android:shadowColor="@color/dark_grey"
             android:shadowRadius="10"
             android:text="@string/caller_details"
             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:shadowColor="@color/a3a3a3"
+            android:shadowColor="@color/dark_grey"
             android:shadowRadius="10"
             android:text="@string/caller_details"
             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"

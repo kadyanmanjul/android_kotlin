@@ -16,7 +16,6 @@
         android:layout_height="match_parent"
         android:paddingTop="@dimen/_12sdp">
 
-
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="0dp"
@@ -52,14 +51,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="4" />
 
-
         <androidx.cardview.widget.CardView
             android:id="@+id/audio_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:divider="@android:color/transparent"
+            android:divider="@color/transparent"
             android:dividerHeight="0.0px"
             android:elevation="@dimen/_8sdp"
             app:contentPadding="@dimen/_10sdp"
@@ -76,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/_8sdp"
-                android:backgroundTint="@color/light_grey"
+                android:backgroundTint="@color/dark_grey"
                 android:elevation="@dimen/_4sdp"
                 android:gravity="center"
                 android:insetTop="0dp"
@@ -87,16 +85,14 @@
                 android:text="@string/next"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:translationZ="@dimen/_1sdp"
                 app:cornerRadius="@dimen/_36sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
         </androidx.cardview.widget.CardView>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

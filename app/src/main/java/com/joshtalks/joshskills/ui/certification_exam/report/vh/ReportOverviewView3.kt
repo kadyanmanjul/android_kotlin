@@ -165,7 +165,7 @@ class ReportOverviewView3(
                     percentText = EMPTY + getPercent(certificateExamReport.wrong).plus(" Incorrect")
                 }
                 QuestionReportType.UNANSWERED == reportType -> {
-                    colorInUnAnswered = ContextCompat.getColor(context, R.color.grey_68)
+                    colorInUnAnswered = ContextCompat.getColor(context, R.color.disabled)
                     textColor = colorInUnAnswered
                     percentText =
                         EMPTY + getPercent(certificateExamReport.unanswered).plus(" Unanswered")
@@ -180,7 +180,7 @@ class ReportOverviewView3(
             chart.setCenterTextColor(textColor)
             dataSet.colors = mutableListOf(colorCorrect, colorInCorrect, colorInUnAnswered)
             if (certificateExamReport.correct == 0 && certificateExamReport.wrong == 0) {
-                dataSet.color = ContextCompat.getColor(context, R.color.grey_68)
+                dataSet.color = ContextCompat.getColor(context, R.color.disabled)
             }
             chart.centerText = generateCenterSpannableText(percentText)
 

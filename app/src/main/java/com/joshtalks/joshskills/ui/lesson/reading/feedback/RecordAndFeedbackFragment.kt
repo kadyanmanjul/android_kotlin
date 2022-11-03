@@ -33,9 +33,6 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagem
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -135,11 +132,11 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                                         "</a>",
                                         selectedColor = ContextCompat.getColor(
                                             requireContext(),
-                                            R.color.e1_red
+                                            R.color.critical
                                         ),
                                         defaultSelectedColor = ContextCompat.getColor(
                                             requireContext(),
-                                            R.color.e1_red
+                                            R.color.critical
                                         ),
                                         clickListener = object : OnWordClick {
                                             override fun clickedWord(word: String) {
@@ -179,7 +176,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                                     ForegroundColorSpan(
                                         ContextCompat.getColor(
                                             requireContext(),
-                                            R.color.grey_68
+                                            R.color.disabled
                                         )
                                     ), temp.length, sBuilder.length,
                                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -378,9 +375,9 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                 //buttonTextRes = R.string.plz_wait
                 progressColors =
                     intArrayOf(
-                        ContextCompat.getColor(requireContext(), R.color.white),
-                        ContextCompat.getColor(requireContext(), R.color.practise_complete_tint),
-                        ContextCompat.getColor(requireContext(), R.color.green_3d)
+                        ContextCompat.getColor(requireContext(), R.color.pure_white),
+                        ContextCompat.getColor(requireContext(), R.color.warning),
+                        ContextCompat.getColor(requireContext(), R.color.success)
                     )
 
                 gravity = DrawableButton.GRAVITY_CENTER
@@ -409,7 +406,6 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     }
 
     /**   end **/
-
 
     companion object {
         const val ARG_FEEDBACK = "feedback"

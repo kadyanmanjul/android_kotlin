@@ -66,10 +66,10 @@
         </shape>
     </item>
 
-    <!-- Background Color (white) -->
+    <!-- Background Color (pure_white) -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="@android:color/white" />
+            <solid android:color="@color/pure_white" />
 
             <corners android:radius="3dp" />
         </shape>

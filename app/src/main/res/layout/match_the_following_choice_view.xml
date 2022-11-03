@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/pure_white">
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/table_a_choices"
@@ -45,7 +45,7 @@
         android:clickable="true"
         android:focusable="true"
         android:text="@string/see_answer"
-        android:textColor="@color/button_color"
+        android:textColor="@color/primary_500"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -61,7 +61,7 @@
             android:clickable="true"
             android:focusable="true"
             android:text="@string/reset"
-            android:textColor="@color/light_grey"
+            android:textColor="@color/dark_grey"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

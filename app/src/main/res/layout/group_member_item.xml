@@ -19,7 +19,7 @@
         android:id="@+id/member_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground">
 
@@ -55,7 +55,7 @@
             android:fontFamily="@font/open_sans"
             android:letterSpacing="-0.01"
             android:text="@{itemData.memberName}"
-            android:textColor="@color/defaultContentColor"
+            android:textColor="@color/pure_black"
             android:textSize="@dimen/_14ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/group_item_admin"
@@ -75,7 +75,7 @@
             android:paddingEnd="@dimen/_4sdp"
             android:paddingBottom="@dimen/_2sdp"
             android:text="Group Admin"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/primary_500"
             android:textSize="@dimen/_8ssp"
             android:textStyle="bold"
             android:visibility="@{itemData.admin ? View.VISIBLE : View.GONE}"

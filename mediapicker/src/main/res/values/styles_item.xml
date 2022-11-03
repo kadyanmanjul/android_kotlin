@@ -2,7 +2,7 @@
 <resources>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:color">@color/md_white_1000</item>
+        <item name="android:color">@color/pure_white</item>
     </style>
 
 </resources>

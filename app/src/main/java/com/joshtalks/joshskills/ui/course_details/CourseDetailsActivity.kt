@@ -148,7 +148,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
-        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.black)
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.icon_default)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_details)
         binding.lifecycleOwner = this
         binding.handler = this
@@ -406,7 +406,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
                     .setLayout(R.layout.layout_bb_tip)
                     .setHeight(BalloonSizeSpec.WRAP)
                     .setIsVisibleArrow(true)
-                    .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                    .setBackgroundColorResource(R.color.surface_tip)
                     .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
                     .setWidthRatio(0.85f)
                     .setDismissWhenTouchOutside(false)

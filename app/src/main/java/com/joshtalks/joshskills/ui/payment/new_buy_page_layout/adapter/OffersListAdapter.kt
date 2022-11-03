@@ -48,7 +48,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             holder.binding.btnApply.isEnabled = true
             holder.binding.imgLogo.alpha = 1.0f
             val colorAccent =
-                ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.colorAccent)
+                ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.primary_500)
             holder.binding.btnApply.setTextColor(colorAccent)
             val blackColor =
                 ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.pure_black)
@@ -197,7 +197,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 if (coupon.isCouponSelected == 1)
                     coupon.let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
                 val grayColor =
-                    ContextCompat.getColor(binding.couponExpireText.context, R.color.gray_8D)
+                    ContextCompat.getColor(binding.couponExpireText.context, R.color.dark_grey)
                 binding.rootCard.isEnabled = false
                 binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 binding.couponExpireText.text = "Coupon expired"

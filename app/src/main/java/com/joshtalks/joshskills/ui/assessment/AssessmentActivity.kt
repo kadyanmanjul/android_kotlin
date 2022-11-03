@@ -72,7 +72,7 @@ class AssessmentActivity : CoreJoshActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
-        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.black)
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.icon_default)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_assessment)
         binding.lifecycleOwner = this
         binding.handler = this

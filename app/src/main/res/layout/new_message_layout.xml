@@ -16,7 +16,7 @@
         android:clipToPadding="false"
         android:dividerHeight="0.0px"
         android:elevation="@dimen/_4sdp"
-        app:cardBackgroundColor="@color/light_blue"
+        app:cardBackgroundColor="@color/primary_400"
         app:cardCornerRadius="@dimen/_4sdp"
         app:cardElevation="0dp"
         app:contentPaddingBottom="@dimen/_4sdp"
@@ -31,7 +31,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             tools:text="Aapki Nayi Classes" />
 
     </androidx.cardview.widget.CardView>

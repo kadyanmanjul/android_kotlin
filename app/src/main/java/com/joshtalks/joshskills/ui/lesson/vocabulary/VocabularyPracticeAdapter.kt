@@ -217,7 +217,7 @@ class VocabularyPracticeAdapter(
                 radioGroup.findViewById<RadioButton>(checkedId)?.setBackgroundColor(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.received_bg_BC
+                        R.color.surface_information
                     )
                 )
             }
@@ -510,7 +510,7 @@ class VocabularyPracticeAdapter(
 
         private fun resetRadioBackground(radioButton: RadioButton) {
             radioButton.setBackgroundColor(
-                ContextCompat.getColor(AppObjectController.joshApplication, R.color.white)
+                ContextCompat.getColor(AppObjectController.joshApplication, R.color.pure_white)
             )
             radioButton.setCompoundDrawablesWithIntrinsicBounds(
                 0,
@@ -595,7 +595,7 @@ class VocabularyPracticeAdapter(
                         binding.uploadPractiseView.backgroundTintList =
                             ContextCompat.getColorStateList(
                                 AppObjectController.joshApplication,
-                                R.color.highlight_btn_color
+                                R.color.primary_700
                             )
                     }
 
@@ -606,7 +606,7 @@ class VocabularyPracticeAdapter(
                         binding.uploadPractiseView.backgroundTintList =
                             ContextCompat.getColorStateList(
                                 AppObjectController.joshApplication,
-                                R.color.button_color
+                                R.color.primary_500
                             )
                     }
 
@@ -870,7 +870,7 @@ class VocabularyPracticeAdapter(
                 binding.uploadPractiseView.scaleY = 1f
                 binding.uploadPractiseView.backgroundTintList = ContextCompat.getColorStateList(
                     AppObjectController.joshApplication,
-                    R.color.button_color
+                    R.color.primary_500
                 )
             }
         }
@@ -1456,7 +1456,7 @@ class VocabularyPracticeAdapter(
                 backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.button_color
+                        R.color.primary_500
                     )
                 )
             }

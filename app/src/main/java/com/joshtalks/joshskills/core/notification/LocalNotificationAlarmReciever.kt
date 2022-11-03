@@ -81,7 +81,7 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
                 .setStyle(style)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setColor(
-                    ContextCompat.getColor(context, R.color.colorAccent)
+                    ContextCompat.getColor(context, R.color.primary_500)
                 )
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
                 .setContentTitle(title)
@@ -92,7 +92,7 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
                 .setCategory(Notification.CATEGORY_REMINDER)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
-                    ContextCompat.getColor(context, R.color.colorAccent)
+                    ContextCompat.getColor(context, R.color.primary_500)
                 )
             val dismissIntent =
                 Intent(applicationContext, LocalNotificationDismissEventReceiver::class.java)

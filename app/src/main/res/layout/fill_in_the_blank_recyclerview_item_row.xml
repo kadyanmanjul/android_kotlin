@@ -21,7 +21,7 @@
             android:paddingTop="@dimen/_8sdp"
             android:paddingEnd="@dimen/_8sdp"
             android:paddingBottom="@dimen/_2sdp"
-            android:textColor="@color/button_color"
+            android:textColor="@color/primary_500"
             app:elevation="0dp" />
 
         <View
@@ -33,7 +33,7 @@
                 android:layout_alignRight="@+id/item_description"
                 android:layout_gravity="center"
                 android:layout_marginVertical="@dimen/_4sdp"
-                android:background="@color/green" />
+                android:background="@color/success" />
 
     </RelativeLayout>
 </layout>

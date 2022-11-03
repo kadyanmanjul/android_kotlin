@@ -23,13 +23,13 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/_4sdp"
             android:background="@drawable/rounded_grey_button_bg"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/pure_white"
             android:paddingHorizontal="@dimen/_15sdp"
             android:paddingVertical="@dimen/_4sdp"
             android:rotation="180"
             android:text="@{itemData.message}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             tools:text="20 Unread Messages" />
 
     </FrameLayout>

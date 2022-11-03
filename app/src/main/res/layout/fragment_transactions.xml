@@ -19,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/name_field_color">
+        android:background="@color/pure_grey">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineStart"
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/available_balance"
-            android:textColor="@color/gray_8B"
+            android:textColor="@color/dark_grey"
             android:textSize="@dimen/_13ssp"
             android:fontFamily="@font/open_sans_semibold"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             android:text="@{viewModel.availableBalance}"
-            android:textColor="@color/black"
+            android:textColor="@color/icon_default"
             android:textSize="@dimen/_21ssp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
@@ -92,11 +92,11 @@
             app:layout_constraintTop_toBottomOf="@+id/availableBalance"
             app:tabBackground="@drawable/tab_payment_history"
             app:tabIndicator="@null"
-            android:background="@color/name_field_color"
+            android:background="@color/pure_grey"
             app:tabRippleColor="@null"
             android:clipToPadding="true"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/tab_transaction_text_color">
+            app:tabSelectedTextColor="@color/pure_white"
+            app:tabTextColor="@color/text_subdued">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -113,7 +113,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray_e6"
+            android:background="@color/disabled"
             app:layout_constraintBottom_toTopOf="@+id/viewPager" />
 
         <androidx.viewpager2.widget.ViewPager2

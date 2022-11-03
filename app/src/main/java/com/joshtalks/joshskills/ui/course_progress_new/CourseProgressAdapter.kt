@@ -253,7 +253,7 @@ class CourseProgressAdapter(
                         binding.progressIndexTv.setTextColor(
                             ContextCompat.getColor(
                                 context,
-                                R.color.white
+                                R.color.pure_white
                             )
                         )
                     }

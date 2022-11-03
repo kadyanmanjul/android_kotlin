@@ -17,7 +17,7 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         android:orientation="vertical">
 
         <LinearLayout
@@ -39,7 +39,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primary_500"
                     android:contentInsetStart="0dp"
                     android:contentInsetLeft="0dp"
                     android:contentInsetEnd="0dp"
@@ -54,7 +54,7 @@
                     app:layout_scrollFlags="scroll|enterAlways"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                     app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-                    app:titleTextColor="@color/white">
+                    app:titleTextColor="@color/pure_white">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -92,7 +92,7 @@
                             android:singleLine="true"
                             android:text="@string/recent_calls"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             android:textStyle="bold" />
                     </RelativeLayout>
 
@@ -124,11 +124,11 @@
             android:layout_gravity="center"
             android:elevation="@dimen/_5sdp"
             android:visibility="@{vm.fetchingAllRecentCall ? View.VISIBLE : View.GONE}"
-            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_color="@color/transparent"
             app:cpb_background_progressbar_width="0dp"
             app:cpb_indeterminate_mode="true"
             app:cpb_progress_direction="to_left"
-            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_color="@color/primary_500"
             app:cpb_progressbar_width="@dimen/_4sdp"
             app:cpb_round_border="true" />
 
@@ -142,14 +142,13 @@
             android:visibility="@{vm.isListEmpty ? View.VISIBLE : View.GONE}"
             app:cardCornerRadius="@dimen/_5sdp"
             app:cardElevation="0dp"
-            tools:cardBackgroundColor="@color/white"
+            tools:cardBackgroundColor="@color/pure_white"
             tools:cardPreventCornerOverlap="false">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/empty_card_bg_color">
-
+                android:background="@color/surface_information">
 
                 <TextView
                     android:id="@+id/norcy"
@@ -160,7 +159,7 @@
                     android:text="@string/no_recent_calls_yet"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
-                    android:textColor="@color/pure_black"
+                    android:textColor="@color/text_default"
                     android:textStyle="bold" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -178,11 +177,8 @@
                     android:text="@string/start_a_practice_partner_call_from_recent"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                    android:textColor="@color/empty_text_color" />
-
+                    android:textColor="@color/text_subdued" />
             </RelativeLayout>
-
         </com.google.android.material.card.MaterialCardView>
-
     </RelativeLayout>
 </layout>

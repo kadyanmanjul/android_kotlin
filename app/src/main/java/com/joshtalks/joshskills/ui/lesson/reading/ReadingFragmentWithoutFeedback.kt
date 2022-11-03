@@ -213,7 +213,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.recordingView.scaleY = 0.95f
                     binding.recordingView.backgroundTintList = ContextCompat.getColorStateList(
                         AppObjectController.joshApplication,
-                        R.color.highlight_btn_color
+                        R.color.primary_700
                     )
                 }
 
@@ -223,7 +223,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.recordingView.scaleY = 1f
                     binding.recordingView.backgroundTintList = ContextCompat.getColorStateList(
                         AppObjectController.joshApplication,
-                        R.color.button_color
+                        R.color.primary_500
                     )
                 }
 
@@ -474,7 +474,7 @@ class ReadingFragmentWithoutFeedback :
             binding.recordingView.scaleY = 1f
             binding.recordingView.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
-                R.color.button_color
+                R.color.primary_500
             )
         }
     }
@@ -898,7 +898,7 @@ class ReadingFragmentWithoutFeedback :
             binding.feedbackLayout.setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.white
+                    R.color.pure_white
                 )
             )
             binding.feedbackResultProgressLl.visibility = GONE
@@ -1080,7 +1080,7 @@ class ReadingFragmentWithoutFeedback :
         binding.feedbackLayout.setCardBackgroundColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.white
+                R.color.pure_white
             )
         )
         binding.feedbackResultProgressLl.visibility = GONE
@@ -1899,7 +1899,7 @@ class ReadingFragmentWithoutFeedback :
             backgroundTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.button_color
+                    R.color.primary_500
                 )
             )
         }

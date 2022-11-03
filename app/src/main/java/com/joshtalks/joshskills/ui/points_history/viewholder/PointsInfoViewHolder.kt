@@ -34,13 +34,13 @@ class PointsInfoViewHolder(var points: PointsWorking,val position: Int) {
             rootView.setBackgroundColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.lightest_blue
+                    R.color.surface_information
                 ))
         }else{
             rootView.setBackgroundColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.white
+                    R.color.pure_white
                 ))
         }
     }

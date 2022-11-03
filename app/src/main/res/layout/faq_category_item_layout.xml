@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="@color/light_blue"
+    app:cardBackgroundColor="@color/primary_400"
     app:cardCornerRadius="@dimen/_8sdp"
     app:cardElevation="@dimen/_2sdp"
     app:cardUseCompatPadding="false"
@@ -16,7 +16,7 @@
     app:contentPaddingLeft="@dimen/_4sdp"
     app:contentPaddingRight="@dimen/_4sdp"
     app:contentPaddingTop="@dimen/_18sdp"
-    app:strokeColor="@color/light_blue"
+    app:strokeColor="@color/primary_400"
     app:strokeWidth="@dimen/_2sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +31,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:tint="@color/light_grey"
+                android:tint="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

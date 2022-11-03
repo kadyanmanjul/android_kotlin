@@ -22,7 +22,7 @@
                 android:paddingTop="@dimen/_8sdp"
                 android:paddingEnd="@dimen/_14sdp"
                 android:paddingBottom="@dimen/_8sdp"
-                android:textColor="@color/gray_82"
+                android:textColor="@color/dark_grey"
                 app:elevation="0dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:scaleType="center"
-            android:tint="@color/gray_82"
+            android:tint="@color/dark_grey"
             app:srcCompat="@drawable/ic_check_smallest"
             android:visibility="invisible" />
 

@@ -21,7 +21,7 @@
             android:paddingLeft="@dimen/_16sdp"
             android:text="@string/_90_day_english_learning"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:textSize="@dimen/_16ssp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/text_sub"
@@ -36,7 +36,7 @@
             android:paddingBottom="@dimen/_20sdp"
             android:text="@string/course_continue_steps"
             android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
-            android:textColor="@color/grey_7A"
+            android:textColor="@color/text_subdued"
             app:flow_horizontalAlign="start"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +51,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/_16sdp"
             android:layout_marginRight="@dimen/_16sdp"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/primary_500"
             android:gravity="center"
             android:insetTop="0dp"
             android:insetBottom="0dp"
@@ -59,14 +59,14 @@
             android:paddingVertical="@dimen/_14sdp"
             android:text="@string/continue_text"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:textSize="@dimen/_12ssp"
             android:visibility="visible"
             app:cornerRadius="@dimen/_36sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_sub"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -103,7 +103,7 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
             Log.e("sagar", "changeTextColors: ")
             if (coupon?.isCouponSelected == 1)
                 coupon.let { itemClick?.invoke(it, CLICK_ON_COUPON_APPLY, position, REMOVE) }
-            val grayColor = ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.gray_8D)
+            val grayColor = ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.dark_grey)
             binding.rootCard.isEnabled = false
             binding.txtCouponCode.setTextColor(grayColor)
             binding.txtCouponExpireTime.text = "Coupon expired"

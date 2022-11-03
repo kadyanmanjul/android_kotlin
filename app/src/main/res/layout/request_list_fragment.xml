@@ -19,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         tools:context=".ui.group.RequestListFragment">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -64,7 +64,7 @@
             android:layout_marginTop="@dimen/_110sdp"
             android:text="No Requests"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
-            android:textColor="@color/pitch_black"
+            android:textColor="@color/pure_black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout2" />
@@ -99,7 +99,7 @@
             android:gravity="center"
             android:text="What are you waiting for \ntell other students to become a\n part of your group "
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/gray_48"
+            android:textColor="@color/text_subdued"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView9" />

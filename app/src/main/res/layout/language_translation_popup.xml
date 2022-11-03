@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_rounded_bg"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/pure_white"
         android:paddingHorizontal="@dimen/_8sdp"
         android:paddingVertical="@dimen/_12sdp">
 
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Play" />
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/_12sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintStart_toEndOf="@id/txtEnglish"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="खेल" />
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:paddingVertical="@dimen/_4sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintStart_toStartOf="@id/txtEnglish"
             app:layout_constraintTop_toBottomOf="@id/txtEnglish"
             tools:text="plei" />
@@ -58,7 +58,7 @@
             android:paddingVertical="@dimen/_4sdp"
             android:text="Meaning"
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/gray_79"
+            android:textColor="@color/text_subdued"
             app:layout_constraintStart_toStartOf="@id/txtPhonetic"
             app:layout_constraintTop_toBottomOf="@id/txtPhonetic" />
 
@@ -69,7 +69,7 @@
             android:letterSpacing="0"
             android:paddingVertical="@dimen/_2sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-            android:textColor="@color/grey_68"
+            android:textColor="@color/disabled"
             app:layout_constraintStart_toStartOf="@id/txtMeaningTitle"
             app:layout_constraintTop_toBottomOf="@id/txtMeaningTitle"
             tools:text="engage in activity for enjoyment and recreation rather than a serious or practical purpose." />
@@ -82,7 +82,7 @@
             android:layout_marginTop="@dimen/_16sdp"
             android:text="@string/how_to_pronounce"
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/gray_79"
+            android:textColor="@color/text_subdued"
             app:layout_constraintStart_toStartOf="@id/txtMeaning"
             app:layout_constraintTop_toBottomOf="@id/txtMeaning" />
 
@@ -94,7 +94,7 @@
             android:layout_marginVertical="@dimen/_16sdp"
             android:layout_marginStart="@dimen/_28sdp"
             android:background="@drawable/circle2"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/primary_500"
             android:onClick="@{()->handler.speakNormally()}"
             android:padding="@dimen/_6sdp"
             app:layout_constraintBottom_toBottomOf="@id/txtPronounce"
@@ -103,7 +103,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/txtPronounce"
             app:lottie_autoPlay="false"
-            app:lottie_colorFilter="@color/white"
+            app:lottie_colorFilter="@color/pure_white"
             app:lottie_fileName="lottie/speaker.json"
             app:lottie_imageAssetsFolder="lottie"
             app:lottie_loop="true"
@@ -117,7 +117,7 @@
             android:layout_height="@dimen/_24sdp"
             android:layout_marginStart="@dimen/_12sdp"
             android:background="@drawable/circle2"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/primary_500"
             android:onClick="@{()->handler.speakSlow()}"
             android:padding="@dimen/_6sdp"
             app:layout_constraintBottom_toBottomOf="@id/imgSpeak"
@@ -144,7 +144,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:matProg_spinSpeed="0.25"
-            wheel:matProg_barColor="@color/button_color"
+            wheel:matProg_barColor="@color/primary_500"
             wheel:matProg_fillRadius="true"
             wheel:matProg_linearProgress="false"
             wheel:matProg_progressIndeterminate="true" />

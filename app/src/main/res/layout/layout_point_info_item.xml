@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_8sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-        android:textColor="@color/green_snackbar"
+        android:textColor="@color/success"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

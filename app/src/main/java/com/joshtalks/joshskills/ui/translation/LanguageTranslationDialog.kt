@@ -52,7 +52,6 @@ class LanguageTranslationDialog : BlurDialogFragment(), AudioPlayerEventListener
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,7 +70,7 @@ class LanguageTranslationDialog : BlurDialogFragment(), AudioPlayerEventListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         exoAudioManager?.playerListener = this
-        wordDetailLiveData.observe(this, {
+        wordDetailLiveData.observe(this) {
             binding.progressBar.visibility = View.GONE
             binding.txtEnglish.text = it.word
             binding.txtHindi.text = it.hinMeaning
@@ -84,7 +83,7 @@ class LanguageTranslationDialog : BlurDialogFragment(), AudioPlayerEventListener
                         ForegroundColorSpan(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.black
+                                R.color.text_default
                             )
                         ), 9, sBuilder.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -97,7 +96,7 @@ class LanguageTranslationDialog : BlurDialogFragment(), AudioPlayerEventListener
                         ForegroundColorSpan(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.black
+                                R.color.text_default
                             )
                         ), start, sBuilder.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -110,7 +109,7 @@ class LanguageTranslationDialog : BlurDialogFragment(), AudioPlayerEventListener
                         ForegroundColorSpan(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.black
+                                R.color.text_default
                             )
                         ), start, sBuilder.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -124,7 +123,7 @@ class LanguageTranslationDialog : BlurDialogFragment(), AudioPlayerEventListener
             )
             binding.group.visibility = View.VISIBLE
 
-        })
+        }
 
         word?.let {
             fetchWordMeaning(it)

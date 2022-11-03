@@ -63,7 +63,7 @@ class ParentItemExpandableList(val question: String, val testId: Int ,val catego
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             mainView.setCardBackgroundColor(
                 AppObjectController.joshApplication.resources.getColor(
-                    R.color.light_blue,
+                    R.color.primary_400,
                     null
                 )
             )

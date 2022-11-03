@@ -24,7 +24,7 @@
                 android:layout_gravity="center"
                 android:gravity="start"
                 android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                android:textColor="@color/light_grey"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -49,7 +49,7 @@
                     android:layout_gravity="start|top"
                     android:gravity="start|top"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     tools:ignore="MissingPrefix"
                     tools:text="@string/about_teacher_title" />
         </FrameLayout>

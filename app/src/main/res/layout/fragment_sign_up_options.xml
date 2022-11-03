@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/pure_white">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineTop"
@@ -43,7 +43,6 @@
             android:layout_marginStart="@dimen/_24sdp"
             android:text="@string/confirm_number"
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-            android:textColor="@color/black"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guidelineTop"
@@ -72,28 +71,29 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="@dimen/_2sdp"
+                android:switchTextAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                 android:visibility="visible"
                 app:ccpDialog_allowSearch="true"
-                app:ccpDialog_backgroundColor="@color/wh_f4"
-                app:ccpDialog_fastScroller_bubbleColor="@color/checkmark_blue"
+                app:ccpDialog_backgroundColor="@color/pure_white"
+                app:ccpDialog_fastScroller_bubbleColor="@color/primary_500"
                 app:ccpDialog_fastScroller_bubbleTextAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                app:ccpDialog_fastScroller_handleColor="@color/colorAccent"
+                app:ccpDialog_fastScroller_handleColor="@color/primary_500"
                 app:ccpDialog_initialScrollToSelection="true"
                 app:ccpDialog_keyboardAutoPopup="false"
-                app:ccpDialog_searchEditTextTint="@color/emoji_bg_color"
+                app:ccpDialog_searchEditTextTint="@color/disabled"
                 app:ccpDialog_showCloseIcon="true"
                 app:ccpDialog_showFastScroller="true"
                 app:ccpDialog_showPhoneCode="true"
                 app:ccpDialog_showTitle="false"
-                app:ccpDialog_textColor="@color/black"
+                app:ccpDialog_textColor="@color/text_default"
                 app:ccp_areaCodeDetectedCountry="true"
-                app:ccp_arrowColor="@color/button_activated"
+                app:ccp_arrowColor="@color/primary_500"
                 app:ccp_arrowSize="@dimen/_4sdp"
                 app:ccp_autoDetectCountry="false"
                 app:ccp_autoDetectLanguage="false"
                 app:ccp_autoFormatNumber="false"
                 app:ccp_clickable="true"
-                app:ccp_contentColor="@color/black"
+                app:ccp_contentColor="@color/text_default"
                 app:ccp_countryAutoDetectionPref="SIM_NETWORK"
                 app:ccp_defaultLanguage="ENGLISH"
                 app:ccp_hintExampleNumber="false"
@@ -103,7 +103,6 @@
                 app:ccp_showNameCode="false"
                 app:ccp_showPhoneCode="true"
                 app:ccp_textGravity="CENTER"
-                android:switchTextAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -116,17 +115,17 @@
                 android:background="@null"
                 android:digits="1234567890"
                 android:gravity="start|center"
-                android:includeFontPadding="false"
                 android:imeOptions="actionGo"
                 android:importantForAutofill="no"
+                android:includeFontPadding="false"
                 android:inputType="phone"
                 android:lines="1"
                 android:maxLength="13"
                 android:paddingStart="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                app:backgroundTint="@color/white"
+                android:textColor="@color/text_default"
+                android:textColorHint="@color/text_subdued"
+                app:backgroundTint="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="@+id/country_code_picker"
                 app:layout_constraintEnd_toStartOf="@+id/iv_clear_number"
                 app:layout_constraintStart_toEndOf="@+id/country_code_picker"
@@ -150,7 +149,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_cross"
-                app:tint="@color/grey" />
+                app:tint="@color/disabled" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textview.MaterialTextView
@@ -174,6 +173,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_24sdp"
             android:layout_marginTop="@dimen/_24sdp"
             android:clickable="true"
             android:focusable="true"
@@ -182,7 +182,6 @@
             android:text="@string/missed_call_label"
             android:textAllCaps="false"
             android:visibility="visible"
-            android:layout_marginHorizontal="@dimen/_24sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -196,7 +195,6 @@
             android:visibility="gone"
             app:constraint_referenced_ids="progress_bar,timer_tv"
             tools:visibility="visible" />
-
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -222,7 +220,7 @@
             android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/button_color"
+            android:textColor="@color/primary_500"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progress_bar"
@@ -249,25 +247,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@color/white"
+                android:background="@color/pure_white"
                 android:paddingStart="@dimen/_6sdp"
                 android:paddingEnd="@dimen/_6sdp"
                 android:text="@string/or"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/text_subdued" />
-
         </FrameLayout>
-
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_truecaller_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginEnd="20sp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginEnd="20sp"
             android:onClick="@{()->handler.loginViaTrueCaller()}"
             android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/btn_google"
@@ -276,7 +272,6 @@
             app:layout_constraintTop_toBottomOf="@+id/view_separator"
             app:srcCompat="@drawable/ic_truecaller"
             tools:visibility="visible" />
-
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_google"
@@ -288,7 +283,6 @@
             app:layout_constraintStart_toEndOf="@+id/btn_truecaller_login"
             app:layout_constraintTop_toBottomOf="@+id/view_separator"
             app:srcCompat="@drawable/ic_google" />
-
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_privacy"
@@ -307,6 +301,5 @@
             app:layout_constraintTop_toBottomOf="@+id/view_separator"
             app:layout_constraintVertical_bias="1"
             app:layout_constraintWidth_default="percent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

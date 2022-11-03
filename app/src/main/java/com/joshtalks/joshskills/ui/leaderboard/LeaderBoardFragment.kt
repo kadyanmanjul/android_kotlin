@@ -489,7 +489,7 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                                     getString(R.string.tooltip_online_status)
                                 )
                                 .setTextSize(15F)
-                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_default))
                                 .setDismissWhenTouchOutside(true)
                                 .setCornerRadius(12f)
                                 .setWidth(BalloonSizeSpec.WRAP)
@@ -502,7 +502,7 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                                 //  .setOverlayPadding(2f) // sets a padding value of the overlay shape in
                                 .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
                                 .setDismissWhenOverlayClicked(false) // disable di
-                                .setBackgroundColorResource(R.color.white)
+                                .setBackgroundColorResource(R.color.pure_white)
                                 .setBalloonAnimation(BalloonAnimation.FADE)
                                 .setLifecycleOwner(this@LeaderBoardFragment)
                                 .setDismissWhenClicked(true)

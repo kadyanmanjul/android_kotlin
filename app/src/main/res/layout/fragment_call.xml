@@ -28,9 +28,9 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/primary_700"
         android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        android:background="@color/p2p_call_background_color">
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_group_name"
@@ -42,7 +42,7 @@
             android:lineSpacingMultiplier="1.5"
             android:maxLines="1"
             android:text="Practice Partner Call"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:textSize="@dimen/_14sdp"
             android:textStyle="bold"
             android:visibility="gone"
@@ -56,17 +56,17 @@
             android:id="@+id/caller_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:gravity="center"
             android:text='@{vm.uiState.startTime &lt;= 0 ? "" :  vm.uiState.name}'
             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold24"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:textSize="@dimen/_20ssp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/c_image"
             app:layout_constraintVertical_bias="0.113"
-            android:layout_marginBottom="@dimen/_5sdp"
             tools:ignore="MissingPrefix"
             tools:text="User Name" />
 
@@ -79,17 +79,18 @@
             android:gravity="center"
             android:lines="2"
             android:text="@{vm.uiState.occupation}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14ssp"
             android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textColor="@color/pure_white"
+            android:textSize="@dimen/_14ssp"
             android:visibility='@{vm.uiState.occupation.equals("")  ? View.GONE : View.VISIBLE}'
-            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             tools:ignore="MissingPrefix"
-            tools:visibility="gone"
-            tools:text="Engineer, Dream - IAS Officer" />
+            tools:text="Engineer, Dream - IAS Officer"
+            tools:visibility="gone" />
+
         <TextView
             android:id="@+id/call_time"
             android:layout_width="wrap_content"
@@ -97,7 +98,7 @@
             android:gravity="center"
             android:text="@{vm.uiState.currentState}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:visibility='@{!vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
             app:layout_constraintBottom_toTopOf="@id/incoming_timer_container"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
@@ -114,7 +115,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
@@ -136,7 +137,7 @@
             android:layout_height="100dp"
             android:layout_marginTop="@dimen/_20sdp"
             android:background="@drawable/circle"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:backgroundTint="@color/primary_700"
             android:src="@drawable/ic_call_placeholder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -154,7 +155,7 @@
             android:gravity="center"
             android:text="Discussion Topic"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:textStyle="bold"
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
@@ -169,13 +170,13 @@
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_2sdp"
             android:gravity="center"
+            android:text="@{vm.uiState.topic}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topic_header"
             tools:ignore="MissingPrefix"
-            android:text="@{vm.uiState.topic}"
             tools:text="Talk about what is Future" />
 
         <com.google.android.material.card.MaterialCardView
@@ -183,10 +184,10 @@
             style="@style/CustomCardViewStyleNoBottomCorner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/primary_800"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:backgroundTint="@color/bottom_sheet_color">
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -198,7 +199,7 @@
                     android:layout_width="@dimen/_45sdp"
                     android:layout_height="@dimen/_45sdp"
                     android:background="@drawable/circle2"
-                    android:backgroundTint="@color/checkbox_color"
+                    android:backgroundTint="@color/critical"
                     android:onClick="@{vm::disconnectCall}"
                     android:padding="@dimen/_14sdp"
                     android:textAllCaps="false"
@@ -216,7 +217,7 @@
                     android:layout_width="@dimen/_45sdp"
                     android:layout_height="@dimen/_45sdp"
                     android:background="@drawable/circle2"
-                    android:backgroundTint="@color/dis_color_10f"
+                    android:backgroundTint="@color/pure_white_10"
                     android:clickable="true"
                     android:focusable="true"
                     android:onClick="@{vm::switchSpeaker}"
@@ -236,7 +237,7 @@
                     android:paddingTop="@dimen/_4sdp"
                     android:text="@string/speaker"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="@+id/btn_speaker"
                     app:layout_constraintStart_toStartOf="@+id/btn_speaker"
@@ -250,7 +251,7 @@
                     android:layout_width="@dimen/_45sdp"
                     android:layout_height="@dimen/_45sdp"
                     android:background="@drawable/circle2"
-                    android:backgroundTint="@color/dis_color_10f"
+                    android:backgroundTint="@color/pure_white_10"
                     android:clickable="true"
                     android:focusable="true"
                     android:onClick="@{vm::switchMic}"
@@ -259,7 +260,8 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/btn_speaker"
                     app:layout_constraintTop_toTopOf="@+id/btn_speaker"
-                    app:srcCompat="@drawable/ic_baseline_mic_off" />
+                    app:srcCompat="@drawable/ic_baseline_mic_off"
+                    tools:ignore="SpeakableTextPresentCheck" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_mute"
@@ -269,7 +271,7 @@
                     android:paddingTop="@dimen/_4sdp"
                     android:text="@string/mute"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="@+id/btn_mute"
                     app:layout_constraintStart_toStartOf="@+id/btn_mute"
@@ -288,7 +290,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
-
         <RelativeLayout
             android:id="@+id/incoming_timer_container"
             android:layout_width="wrap_content"
@@ -298,15 +299,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="gone"
-            app:layout_constraintVertical_bias="0.43">
+            app:layout_constraintVertical_bias="0.43"
+            tools:visibility="gone">
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/incoming_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:progress="75"
-                app:indicatorColor="#0D5CB8"
+                app:indicatorColor="@color/primary_700"
                 app:indicatorSize="@dimen/_108sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -324,8 +325,8 @@
                 android:gravity="center"
                 android:text="35"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-                android:textColor="#ffffff"
-                android:textSize="42dp" />
+                android:textColor="@color/pure_white"
+                android:textSize="42sp" />
         </RelativeLayout>
 
         <androidx.constraintlayout.widget.Group

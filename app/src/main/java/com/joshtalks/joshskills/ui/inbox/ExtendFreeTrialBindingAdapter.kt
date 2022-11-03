@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.R
 fun TextView.setColorize(subStringToColorize: String) {
     val spannable: Spannable = SpannableString(text)
     spannable.setSpan(
-        ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorPrimary)),
+        ForegroundColorSpan(ContextCompat.getColor(context, R.color.primary_500)),
         7,
         31,
         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -40,7 +40,7 @@ fun progressVisibility(textView: MaterialTextView, isProgressVisible: Boolean) {
             progressRadiusRes = R.dimen.dp8
             progressStrokeRes = R.dimen.dp2
             textMarginRes = R.dimen.dp8
-            progressColorRes = R.color.white
+            progressColorRes = R.color.pure_white
         }
         textView.isEnabled = false
     } else {

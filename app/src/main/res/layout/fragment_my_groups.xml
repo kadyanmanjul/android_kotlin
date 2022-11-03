@@ -16,7 +16,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/pure_white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+                android:background="@color/primary_500"
                 android:contentInsetStart="0dp"
                 android:contentInsetLeft="0dp"
                 android:contentInsetEnd="0dp"
@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primary_500"
                     android:onClick="@{vm::onBackPress}"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
@@ -60,14 +60,14 @@
                     android:id="@+id/text_message_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primary_500"
                     android:ellipsize="end"
                     android:gravity="center_vertical|start"
                     android:lines="1"
                     android:padding="@dimen/_5sdp"
                     android:text="My Groups"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/pure_white" />
 
             </com.google.android.material.appbar.MaterialToolbar>
 
@@ -94,7 +94,7 @@
             android:layout_height="@dimen/_72sdp"
             android:layout_gravity="center"
             android:visibility="@{vm.isProgressBarShow ? View.VISIBLE : View.GONE}"
-            app:matProg_barColor="@color/button_color"
+            app:matProg_barColor="@color/primary_500"
             app:matProg_barWidth="@dimen/_4sdp"
             app:matProg_fillRadius="true"
             app:matProg_linearProgress="false"

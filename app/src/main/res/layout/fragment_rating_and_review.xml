@@ -15,7 +15,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         tools:context=".ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -49,7 +49,7 @@
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
-                        android:background="@color/colorPrimary"
+                        android:background="@color/primary_500"
                         android:contentInsetStart="0dp"
                         android:contentInsetLeft="0dp"
                         android:contentInsetEnd="0dp"
@@ -64,7 +64,7 @@
                         app:layout_scrollFlags="scroll|enterAlways"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                         app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-                        app:titleTextColor="@color/white">
+                        app:titleTextColor="@color/pure_white">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                                 android:singleLine="true"
                                 android:text="@string/course_ratings_and_reviews"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                                android:textColor="@color/white"
+                                android:textColor="@color/pure_white"
                                 android:textStyle="bold" />
                         </RelativeLayout>
 

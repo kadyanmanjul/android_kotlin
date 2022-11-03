@@ -38,10 +38,10 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
         if (priceList?.get(position) != null && priceList?.get(position)!!.isRecommended == true && (prevHolder == holder || prevHolder == null)) {
             itemClick?.invoke(priceList?.get(position)!!, CLICK_ON_PRICE_CARD, position, REMOVE)
             prevHolder = holder
-            holder.binding.priceCardView.strokeColor  = AppObjectController.joshApplication.resources.getColor(R.color.colorAccent)
+            holder.binding.priceCardView.strokeColor  = AppObjectController.joshApplication.resources.getColor(R.color.primary_500)
             holder.binding.checkIcon.setBackgroundResource(R.drawable.ic_radio_button_checked)
-            holder.binding.checkIcon.backgroundTintList = ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.colorAccent)
-            holder.binding.priceRootView.background =  ColorDrawable(ContextCompat.getColor(AppObjectController.joshApplication, R.color.selected_color_trans))
+            holder.binding.checkIcon.backgroundTintList = ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.primary_500)
+            holder.binding.priceRootView.background =  ColorDrawable(ContextCompat.getColor(AppObjectController.joshApplication, R.color.surface_information))
         }else{
             if (prevHolder != null && prevHolder == holder) {
                 itemClick?.invoke(priceList?.get(position)!!, CLICK_ON_PRICE_CARD, position, REMOVE)
@@ -51,19 +51,19 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
             if (priceList?.get(position) != null) {
                 itemClick?.invoke(priceList?.get(position)!!, CLICK_ON_PRICE_CARD, position, REMOVE)
 
-                holder.binding.priceCardView.strokeColor = AppObjectController.joshApplication.resources.getColor(R.color.colorAccent)
+                holder.binding.priceCardView.strokeColor = AppObjectController.joshApplication.resources.getColor(R.color.primary_500)
                 holder.binding.checkIcon.setBackgroundResource(R.drawable.ic_radio_button_checked)
-                holder.binding.checkIcon.backgroundTintList = ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.colorAccent)
-                holder.binding.priceRootView.background =  ColorDrawable(ContextCompat.getColor(AppObjectController.joshApplication, R.color.selected_color_trans))
+                holder.binding.checkIcon.backgroundTintList = ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.primary_500)
+                holder.binding.priceRootView.background =  ColorDrawable(ContextCompat.getColor(AppObjectController.joshApplication, R.color.surface_information))
 
                 if (prevHolder != null && prevHolder != holder) {
-                    prevHolder?.binding?.priceCardView?.strokeColor = AppObjectController.joshApplication.resources.getColor(R.color.price_card_stroke)
+                    prevHolder?.binding?.priceCardView?.strokeColor = AppObjectController.joshApplication.resources.getColor(R.color.disabled)
 
                     prevHolder?.binding?.checkIcon?.setBackgroundResource(R.drawable.ic_radio_button_unchecked)
 
-                    prevHolder?.binding?.checkIcon?.backgroundTintList = ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.price_card_stroke)
+                    prevHolder?.binding?.checkIcon?.backgroundTintList = ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.disabled)
 
-                    prevHolder?.binding?.priceRootView?.background =  ColorDrawable(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
+                    prevHolder?.binding?.priceRootView?.background =  ColorDrawable(ContextCompat.getColor(AppObjectController.joshApplication, R.color.pure_white))
 
                 }
                 prevHolder = holder

@@ -11,7 +11,7 @@
         android:id="@+id/rv_history"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="@color/name_field_color"
+        android:backgroundTint="@color/pure_grey"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_wallet_transaction"/>
 </layout>

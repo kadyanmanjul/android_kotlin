@@ -36,7 +36,7 @@
             android:layout_marginEnd="@dimen/_14sdp"
             android:background="@drawable/ic_cross"
             android:scaleType="fitXY"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/icon_default"
             android:contentDescription="@string/cancel_button"
             android:onClick="@{()->handler.cancel()}"
             app:layout_constraintEnd_toEndOf="parent"
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_16sdp"
             android:layout_marginHorizontal="@dimen/_18sdp"
-            android:backgroundTint="@color/button_color"
+            android:backgroundTint="@color/primary_500"
             android:clickable="true"
             android:focusable="true"
             android:maxLines="1"
@@ -77,13 +77,13 @@
             android:paddingBottom="@dimen/_10sdp"
             android:text="@string/buy_course"
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:cornerRadius="@dimen/_16sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintWidth_default="percent"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

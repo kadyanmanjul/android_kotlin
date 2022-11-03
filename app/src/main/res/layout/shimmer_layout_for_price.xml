@@ -50,7 +50,7 @@
                         android:layout_width="@dimen/_27sdp"
                         android:layout_height="@dimen/_27sdp"
                         android:layout_marginStart="@dimen/_15sdp"
-                        android:src="@color/not_now" />
+                        android:src="@color/disabled" />
 
                     <LinearLayout
                         android:id="@+id/ll"
@@ -82,7 +82,7 @@
                             android:paddingVertical="@dimen/_4sdp"
                             android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             android:textStyle="bold"
                             app:textAllCaps="false" />
 

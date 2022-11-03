@@ -681,9 +681,9 @@
     <string name="course_restart_success" translatable="false">Course Restarted Successfully</string>
     <string name="course_restart_fail" translatable="false">Course Can Not Restart</string>
     <string name="language_text" translatable="false">
-        <font color="@android:color/black">I want to</font>
-        <font color="#107BE5">speak English confidently</font>
-        <font color="@android:color/black">from …</font>
+        <font color="@color/text_default">I want to</font>
+        <font color="@color/primary_500">speak English confidently</font>
+        <font color="@color/text_default">from …</font>
     </string>
     <string name="goal_text" translatable="false">मैं English इसलिए सीखना चाहता हूँ:</string>
     <string name="buy_now" translatable="false">Buy now</string>

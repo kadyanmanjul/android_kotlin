@@ -176,7 +176,7 @@ class Mentor {
                     .setWhen(System.currentTimeMillis())
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setColor(
-                        ContextCompat.getColor(joshApplication, R.color.colorAccent)
+                        ContextCompat.getColor(joshApplication, R.color.primary_500)
                     )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

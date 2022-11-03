@@ -51,11 +51,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/toolbar_container"
                 app:tabGravity="fill"
-                app:tabIndicatorColor="@color/button_color"
+                app:tabIndicatorColor="@color/primary_500"
                 app:tabIndicatorFullWidth="false"
                 app:tabIndicatorHeight="@dimen/_2sdp"
                 app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/button_color"
+                app:tabSelectedTextColor="@color/primary_500"
                 app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"
                 app:tabTextColor="#666666" />
 
@@ -96,7 +96,7 @@
                     android:gravity="center"
                     android:text="Your Free Trial has ended"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/pure_white" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/materialTextView"
@@ -111,7 +111,7 @@
                     android:padding="@dimen/_10sdp"
                     android:text="Buy Now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

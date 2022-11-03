@@ -258,54 +258,54 @@ class MCQChoiceViewHolder(
     }
 
     private fun setUnselectedChoiceView() {
-        setTextColor(R.color.light_grey)
-        setBackgroundColor(R.color.artboard_color)
-        setBorderColor(R.color.artboard_color)
+        setTextColor(R.color.dark_grey)
+        setBackgroundColor(R.color.pure_grey)
+        setBorderColor(R.color.pure_grey)
         if (type == ChoiceType.SINGLE_SELECTION_TEXT || type == ChoiceType.SINGLE_SELECTION_IMAGE) {
-            setDrawableStart(R.drawable.ic_radio_button_unchecked, R.color.light_grey)
+            setDrawableStart(R.drawable.ic_radio_button_unchecked, R.color.dark_grey)
         } else {
-            setDrawableStart(R.drawable.ic_check_box_outline_blank, R.color.light_grey)
+            setDrawableStart(R.drawable.ic_check_box_outline_blank, R.color.dark_grey)
         }
     }
 
     private fun setSelectedChoiceView() {
-        setTextColor(R.color.button_color)
-        setBackgroundColor(R.color.light_blue)
-        setBorderColor(R.color.button_color)
+        setTextColor(R.color.primary_500)
+        setBackgroundColor(R.color.primary_400)
+        setBorderColor(R.color.primary_500)
         if (type == ChoiceType.SINGLE_SELECTION_TEXT || type == ChoiceType.SINGLE_SELECTION_IMAGE) {
-            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.button_color)
+            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.primary_500)
         } else {
-            setDrawableStart(R.drawable.ic_check_box, R.color.button_color)
+            setDrawableStart(R.drawable.ic_check_box, R.color.primary_500)
         }
     }
 
     private fun setWrongChoiceView() {
-        setTextColor(R.color.error_color)
-        setBackgroundColor(R.color.light_red)
-        setBorderColor(R.color.error_color)
+        setTextColor(R.color.critical)
+        setBackgroundColor(R.color.surface_critical)
+        setBorderColor(R.color.critical)
         if (type == ChoiceType.SINGLE_SELECTION_TEXT || type == ChoiceType.SINGLE_SELECTION_IMAGE) {
-            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.error_color)
+            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.critical)
         } else {
-            setDrawableStart(R.drawable.ic_check_box, R.color.error_color)
+            setDrawableStart(R.drawable.ic_check_box, R.color.critical)
         }
     }
 
     private fun setCorrectlySelectedChoiceView() {
-        setTextColor(R.color.green_right_answer)
-        setBackgroundColor(R.color.lighter_green)
-        setBorderColor(R.color.green_right_answer)
+        setTextColor(R.color.success)
+        setBackgroundColor(R.color.surface_success)
+        setBorderColor(R.color.success)
         if (type == ChoiceType.SINGLE_SELECTION_TEXT || type == ChoiceType.SINGLE_SELECTION_IMAGE) {
-            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.green_right_answer)
+            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.success)
         } else {
-            setDrawableStart(R.drawable.ic_check_box, R.color.green_right_answer)
+            setDrawableStart(R.drawable.ic_check_box, R.color.success)
         }
     }
 
     private fun setCorrectButNotSelectedChoiceView() {
-        setTextColor(R.color.white)
-        setBackgroundColor(R.color.green_right_answer)
-        setBorderColor(R.color.green_right_answer)
-        setDrawableStart(R.drawable.ic_tick_small, R.color.white)
+        setTextColor(R.color.pure_white)
+        setBackgroundColor(R.color.success)
+        setBorderColor(R.color.success)
+        setDrawableStart(R.drawable.ic_tick_small, R.color.pure_white)
     }
 
     private fun setTextColor(colorId: Int) =

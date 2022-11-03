@@ -32,7 +32,7 @@ class ChildItemExpandableList(private val answer: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             mainView.setCardBackgroundColor(
                 AppObjectController.joshApplication.resources.getColor(
-                    R.color.white,
+                    R.color.pure_white,
                     null
                 )
             )

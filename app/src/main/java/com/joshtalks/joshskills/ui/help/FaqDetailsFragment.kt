@@ -59,15 +59,15 @@ class FaqDetailsFragment : Fragment() {
     fun setIsAnswerHelpful(isAnswerHelpful: Boolean) {
         if (isAnswerHelpful) {
             yes_btn.backgroundTintList =
-                ContextCompat.getColorStateList(requireActivity(), R.color.button_color)
-            yes_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
+                ContextCompat.getColorStateList(requireActivity(), R.color.primary_500)
+            yes_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.pure_white))
             MixPanelTracker.publishEvent(MixPanelEvent.FAQ_ANSWER_HELPFUL_YES)
                 .addParam(ParamKeys.QUESTION,faq.question)
                 .push()
         } else {
             no_btn.backgroundTintList =
-                ContextCompat.getColorStateList(requireActivity(), R.color.button_color)
-            no_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
+                ContextCompat.getColorStateList(requireActivity(), R.color.primary_500)
+            no_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.pure_white))
             MixPanelTracker.publishEvent(MixPanelEvent.FAQ_ANSWER_HELPFUL_NO)
                 .addParam(ParamKeys.QUESTION,faq.question)
                 .push()

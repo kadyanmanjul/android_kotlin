@@ -2,23 +2,26 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardCornerRadius="@dimen/_5sdp"
-        android:layout_marginLeft="@dimen/_10sdp"
-        android:id="@+id/container"
-        android:paddingBottom="@dimen/_5sdp"
         android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_10sdp"
-        app:cardBackgroundColor="@color/report_white">
+        android:paddingBottom="@dimen/_5sdp"
+        app:cardBackgroundColor="@color/pure_grey"
+        app:cardCornerRadius="@dimen/_5sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/root_view"
@@ -31,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/grey_rounded_bg"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/pure_white"
                 android:paddingHorizontal="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_12sdp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +50,7 @@
                     android:gravity="center"
                     android:text="@string/practice_with_partner"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     app:drawableStartCompat="@drawable/ic_pp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +65,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/txt_header"
                     app:srcCompat="@drawable/ic_cross"
-                    app:tint="@color/black" />
+                    app:tint="@color/icon_default" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/c_image"
@@ -70,7 +73,7 @@
                     android:layout_height="@dimen/_96sdp"
                     android:layout_marginTop="@dimen/_24sdp"
                     android:background="@drawable/circle"
-                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:backgroundTint="@color/primary_700"
                     android:src="@drawable/ic_call_placeholder"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +86,7 @@
                     android:layout_marginTop="@dimen/_14sdp"
                     android:text="@string/spoke_for_minute"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/grey_68"
+                    android:textColor="@color/disabled"
                     android:textSize="@dimen/_13ssp"
                     app:layout_constraintEnd_toEndOf="@id/c_image"
                     app:layout_constraintStart_toStartOf="@id/c_image"
@@ -96,7 +99,7 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     android:textSize="@dimen/_14ssp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -120,16 +123,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_8sdp"
+                        android:layout_weight="1"
                         android:onClick='@{()->vm.submitFeedback("YES")}'
                         android:text="@string/yes"
-                        android:layout_weight="1"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                        android:textColor="@color/button_color"
+                        android:textColor="@color/primary_500"
                         android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
-                        app:rippleColor="@color/button_color"
-                        app:strokeColor="@color/button_color"
+                        app:rippleColor="@color/primary_500"
+                        app:strokeColor="@color/primary_500"
                         app:strokeWidth="@dimen/_1sdp" />
 
                     <com.google.android.material.button.MaterialButton
@@ -142,11 +145,11 @@
                         android:text="@string/no"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                        android:textColor="@color/button_color"
+                        android:textColor="@color/primary_500"
                         android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
-                        app:rippleColor="@color/button_color"
-                        app:strokeColor="@color/button_color"
+                        app:rippleColor="@color/primary_500"
+                        app:strokeColor="@color/primary_500"
                         app:strokeWidth="@dimen/_1sdp" />
 
                     <com.google.android.material.button.MaterialButton
@@ -154,17 +157,17 @@
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginHorizontal="@dimen/_8sdp"
+                        android:layout_weight="1"
                         android:onClick='@{()->vm.submitFeedback("NO")}'
                         android:text="@string/block"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                        android:textColor="@color/button_color"
+                        android:textColor="@color/primary_500"
                         android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
-                        app:rippleColor="@color/button_color"
-                        app:strokeColor="@color/button_color"
+                        app:rippleColor="@color/primary_500"
+                        app:strokeColor="@color/primary_500"
                         app:strokeWidth="@dimen/_1sdp" />
                 </LinearLayout>
 
@@ -175,7 +178,7 @@
                     android:layout_marginTop="@dimen/_12sdp"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/grey_68"
+                    android:textColor="@color/disabled"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/toggle_button_group"

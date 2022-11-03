@@ -5,17 +5,17 @@
     android:id="@+id/root_view_child"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/pure_white"
     android:elevation="@dimen/_2sdp">
 
     <View
         android:id="@+id/divider_top"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:background="@color/grey_shade_new"
+        android:background="@color/dark_grey"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.93" />
 
@@ -27,7 +27,7 @@
         android:paddingTop="@dimen/_12sdp"
         android:paddingBottom="@dimen/_4sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-        android:textColor="@color/black"
+        android:textColor="@color/text_default"
         app:layout_constraintEnd_toStartOf="@id/score"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,11 +40,11 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/_10sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-        android:textColor="@color/green_snackbar"
+        android:textColor="@color/success"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.47"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="+245" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/_10sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-        android:textColor="@color/grey_68"
+        android:textColor="@color/disabled"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
@@ -64,7 +64,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
         android:layout_marginTop="@dimen/_8sdp"
-        android:background="@color/grey_shade_new"
+        android:background="@color/dark_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/in_lesson"

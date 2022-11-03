@@ -97,7 +97,7 @@ class FillInTheBlankQuestionAdapter(
             divider.setBackgroundColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.button_color
+                    R.color.primary_500
                 )
             )
             setColor()
@@ -140,13 +140,13 @@ class FillInTheBlankQuestionAdapter(
         }
 
         private fun setWrongChoiceView() {
-            setTextColor(R.color.error_color)
-            setBackgroundColor(R.color.error_color)
+            setTextColor(R.color.critical)
+            setBackgroundColor(R.color.critical)
         }
 
         private fun setCorrectlySelectedChoiceView() {
-            setTextColor(R.color.green_right_answer)
-            setBackgroundColor(R.color.green_right_answer)
+            setTextColor(R.color.success)
+            setBackgroundColor(R.color.success)
         }
 
         private fun setTextColor(colorId: Int) =
@@ -175,7 +175,7 @@ class FillInTheBlankQuestionAdapter(
             divider.setBackgroundColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.button_color
+                    R.color.primary_500
                 )
             )
         }

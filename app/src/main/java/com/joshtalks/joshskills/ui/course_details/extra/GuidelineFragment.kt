@@ -54,7 +54,7 @@ class GuidelineFragment : Fragment() {
 
     private fun getTextView(text: String): AppCompatTextView {
         val textView = AppCompatTextView(requireContext())
-        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_default))
         TextViewCompat.setTextAppearance(textView, R.style.TextAppearance_JoshTypography_BodyRegular)
         val spanString = SpannableString(text)
         spanString.setSpan(
@@ -62,7 +62,7 @@ class GuidelineFragment : Fragment() {
                 Utils.getBitmapFromVectorDrawable(
                     requireContext(),
                     R.drawable.ic_small_tick,
-                    R.color.green
+                    R.color.success
                 ),
                 22
             ), 0, text.length,

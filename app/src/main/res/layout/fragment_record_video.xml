@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
 
         <import type="com.joshtalks.joshskills.R" />
@@ -22,13 +23,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black">
+            android:background="@color/icon_default">
 
             <androidx.camera.view.PreviewView
                 android:id="@+id/previewView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/black"
+                android:background="@color/icon_default"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_24sdp"
-                android:background="@color/white"
+                android:background="@color/pure_white"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="@dimen/_16sdp"
@@ -64,12 +65,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.165"
+                    android:lines="1"
+                    android:singleLine="true"
                     android:text="@{vm.wordInEnglish}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/primary_500"
                     android:textSize="@dimen/_38sdp"
-                    android:singleLine="true"
-                    android:lines="1"
                     android:textStyle="bold"
                     tools:text="ATTACK" />
 
@@ -78,12 +79,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.165"
+                    android:lines="1"
+                    android:singleLine="true"
                     android:text="@{vm.wordInHindi}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     android:textSize="@dimen/_28sdp"
-                    android:singleLine="true"
-                    android:lines="1"
                     android:textStyle="bold"
                     tools:text="हमला" />
 
@@ -92,12 +93,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_2sdp"
+                    android:lines="1"
+                    android:singleLine="true"
                     android:text="@{vm.sentenceInHindi}"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
-                    android:singleLine="true"
-                    android:lines="1"
                     tools:text="रूस ने यूक्रेन पर हमला किया" />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -105,11 +106,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_2sdp"
-                    android:singleLine="true"
-                    android:lines="1"
                     android:layout_marginBottom="@dimen/_2sdp"
+                    android:lines="1"
+                    android:singleLine="true"
                     android:text="@{vm.sentenceInEnglish}"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     tools:text="Russia attacked Ukraine" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -125,7 +126,7 @@
                 android:padding="@dimen/_4sdp"
                 android:text=""
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

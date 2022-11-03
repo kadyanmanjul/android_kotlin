@@ -224,7 +224,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             textView?.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.text_90
+                    R.color.text_subdued
                 )
             )
             textView?.setBackgroundResource(R.drawable.mobile_no_bg)
@@ -236,12 +236,12 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         textView.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.text_color_10
+                R.color.primary_500
             )
         )
         textView.setTextColor(
             ContextCompat.getColor(
-                requireContext(), R.color.white
+                requireContext(), R.color.pure_white
             )
         )
     }
@@ -298,7 +298,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
     private fun startProgress() {
         binding.btnLogin.showProgress {
             buttonTextRes = R.string.plz_wait
-            progressColors = intArrayOf(ContextCompat.getColor(requireContext(), R.color.white))
+            progressColors = intArrayOf(ContextCompat.getColor(requireContext(), R.color.pure_white))
             gravity = DrawableButton.GRAVITY_CENTER
             progressRadiusRes = R.dimen.dp8
             progressStrokeRes = R.dimen.dp2

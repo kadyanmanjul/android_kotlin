@@ -92,7 +92,7 @@ class AtsOptionView : AppCompatTextView {
         this.setTextColor(
             ContextCompat.getColor(
                 context,
-                if (isSelected) R.color.grammar_black_text_color else R.color.light_shade_of_gray
+                if (isSelected) R.color.text_default else R.color.disabled
             )
         )
         this.isEnabled = isSelected
@@ -181,6 +181,6 @@ class AtsOptionView : AppCompatTextView {
         }
         background =
             ContextCompat.getDrawable(getContext(), R.drawable.rounded_rectangle_with_grey_border)
-        setTextColor(ContextCompat.getColor(context, R.color.grammar_black_text_color))
+        setTextColor(ContextCompat.getColor(context, R.color.text_default))
     }
 }

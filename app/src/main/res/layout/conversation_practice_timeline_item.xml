@@ -43,14 +43,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     tools:text="@string/retry_miss_call_verify" />
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_sub_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_90"
+                    android:textColor="@color/text_subdued"
                     android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                     tools:text="@string/retry_miss_call_verify" />
         </LinearLayout>

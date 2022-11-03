@@ -27,7 +27,7 @@
             app:cardElevation="@dimen/_5sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/img_skill_logo"
-            app:rippleColor="@color/colorAccent">
+            app:rippleColor="@color/primary_500">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/play_icon"
@@ -35,7 +35,7 @@
                 android:layout_height="@dimen/_16sdp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/_5sdp"
-                android:tint="@color/colorAccent"
+                android:tint="@color/primary_500"
                 app:srcCompat="@drawable/ic_play_icon_race" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -46,7 +46,7 @@
                 android:layout_toRightOf="@id/play_icon"
                 android:text="Watch video"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                android:textColor="@color/colorAccent">
+                android:textColor="@color/primary_500">
 
             </androidx.appcompat.widget.AppCompatTextView>
         </RelativeLayout>

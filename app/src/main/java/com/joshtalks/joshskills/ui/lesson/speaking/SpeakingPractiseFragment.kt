@@ -247,7 +247,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.red
+                                R.color.critical
                             )
                         )
                         /*binding.btnStartTrialText.isEnabled = false
@@ -269,7 +269,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.txtLabelCallsLeft.setTextColor(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.colorAccent
+                                R.color.primary_500
                             )
                         )
                     } else {

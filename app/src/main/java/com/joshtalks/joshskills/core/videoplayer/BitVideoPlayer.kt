@@ -1194,7 +1194,7 @@ class VideoOptionAdapter(
         holder.labelTextView.compoundDrawables[0]?.setTint(
             ContextCompat.getColor(
                 holder.itemView.context,
-                R.color.gray_9E
+                R.color.dark_grey
             )
         )
 
@@ -1241,7 +1241,7 @@ class PlaybackSpeedAdapter(
             holder.labelTextView.compoundDrawables[0]?.setTint(
                 ContextCompat.getColor(
                     holder.itemView.context,
-                    R.color.gray_79
+                    R.color.icon_subdued
                 )
             )
         }
@@ -1297,7 +1297,7 @@ class VideoTrackAdapter(
             holder.labelTextView.compoundDrawables[0]?.setTint(
                 ContextCompat.getColor(
                     holder.itemView.context,
-                    R.color.gray_79
+                    R.color.icon_subdued
                 )
             )
         }

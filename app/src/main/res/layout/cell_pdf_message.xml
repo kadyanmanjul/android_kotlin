@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:background="@color/pdf_bg_color"
+                android:background="@color/pure_grey"
                 android:orientation="horizontal"
                 android:paddingTop="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_8sdp">
@@ -59,7 +59,7 @@
                     android:gravity="start|center"
                     android:maxLength="16"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     app:drawableStartCompat="@drawable/ic_pdf"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -131,7 +131,7 @@
                     android:layout_marginStart="@dimen/_12sdp"
                     android:gravity="start|center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                    android:textColor="@color/gray_9E"
+                    android:textColor="@color/dark_grey"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:text="2 Pages PDF" />
@@ -145,7 +145,7 @@
                     android:drawablePadding="@dimen/_4sdp"
                     android:gravity="end"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                    android:textColor="@color/gray_9E"
+                    android:textColor="@color/dark_grey"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:text="6:15 AM" />

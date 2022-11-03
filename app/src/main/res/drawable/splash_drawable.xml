@@ -4,7 +4,7 @@
     android:opacity="opaque">
 
     <!-- The white background color as one in Amazon, YouTube, or Drive app -->
-    <item android:drawable="@android:color/white" />
+    <item android:drawable="@color/pure_white" />
 
     <!-- App logo -->
     <item

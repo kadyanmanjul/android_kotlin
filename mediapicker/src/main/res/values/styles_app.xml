@@ -2,14 +2,10 @@
 <resources>
     <style name="App.Button.Primary" parent="ThemeOverlay.AppCompat.Dark">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary_500</item>
+        <item name="colorPrimaryDark">@color/primary_700</item>
+        <item name="colorAccent">@color/primary_500</item>
 
-        <item name="colorButtonNormal">@color/md_grey_500</item>
-        <!--<item name="colorControlHighlight">@color/colorAccent</item>-->
+        <item name="colorButtonNormal">@color/dark_grey</item>
     </style>
-
-    <!--For progress indicator for progressBar-->
-
 </resources>

@@ -4,7 +4,7 @@
     android:id="@+id/table_layout"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:background="@color/red"
+    android:background="@color/critical"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toEndOf="@+id/word_tv"
     app:layout_constraintTop_toBottomOf="@+id/line"

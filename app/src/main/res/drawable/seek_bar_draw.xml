@@ -2,8 +2,8 @@
     <item android:id="@android:id/background">
         <shape android:shape="line">
             <stroke
-                    android:width="@dimen/seek_bar_thickness"
-                    android:color="@color/seek_bar_background" />
+                android:width="@dimen/seek_bar_thickness"
+                android:color="@color/seek_bar_background" />
         </shape>
     </item>
 
@@ -12,7 +12,7 @@
             <shape android:shape="line">
                 <stroke
                     android:width="@dimen/seek_bar_thickness"
-                    android:color="@color/button_color" />
+                    android:color="@color/primary_500" />
             </shape>
         </clip>
     </item>
@@ -21,8 +21,8 @@
         <clip>
             <shape android:shape="line">
                 <stroke
-                        android:width="@dimen/seek_bar_thickness"
-                        android:color="@color/seek_bar_secondary_progress" />
+                    android:width="@dimen/seek_bar_thickness"
+                    android:color="@color/primary_400" />
             </shape>
         </clip>
     </item>

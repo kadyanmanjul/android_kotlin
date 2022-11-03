@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <data>
+
         <variable
             name="issue"
             type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipOptionModel" />
@@ -18,5 +20,5 @@
         android:paddingBottom="@dimen/_10sdp"
         android:text="@{issue.option}"
         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-        android:textColor="@color/report_black" />
+        android:textColor="@color/icon_default" />
 </layout>

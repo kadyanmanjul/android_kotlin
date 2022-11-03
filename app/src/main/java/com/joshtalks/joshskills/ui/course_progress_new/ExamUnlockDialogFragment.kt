@@ -68,7 +68,7 @@ class ExamUnlockDialogFragment(
             BulletSpanWithRadius(
                 6,
                 20,
-                ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+                ContextCompat.getColor(requireContext(), R.color.primary_500)
             ), 0, text.length, 0
         )
         return spanString

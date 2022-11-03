@@ -10,7 +10,7 @@
             android:id="@+id/topContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
+            android:background="@color/icon_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -22,7 +22,7 @@
                 android:paddingStart="@dimen/_12sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:autoSizeMaxTextSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -37,7 +37,7 @@
                 android:paddingStart="@dimen/_12sdp"
                 android:paddingEnd="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCourseName"
                 app:layout_constraintWidth_percent="0.8"
@@ -79,7 +79,7 @@
             android:id="@+id/bottom_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             app:layout_constraintTop_toBottomOf="@+id/topContainer">
 
         <View
@@ -178,7 +178,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/captionIcon2"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -194,7 +194,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/captionIcon3"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -210,7 +210,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/captionIcon4"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -227,7 +227,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -245,7 +245,7 @@
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/light_grey"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/icons_bottom_barier"
@@ -279,7 +279,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@color/green"
+                android:background="@color/success"
                 android:foregroundGravity="center">
 
             <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
@@ -312,7 +312,7 @@
                     android:lineSpacingMultiplier="0"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/rating_arrow"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -332,7 +332,7 @@
                     app:layout_constraintStart_toEndOf="@+id/txtRating"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/recv_ic_arrow"
-                    app:tint="@color/white" />
+                    app:tint="@color/pure_white" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -346,7 +346,7 @@
             android:gravity="center"
             android:paddingHorizontal="@dimen/_12sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-            android:textColor="@color/light_grey"
+            android:textColor="@color/dark_grey"
             app:autoSizeMaxTextSize="@dimen/_10ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

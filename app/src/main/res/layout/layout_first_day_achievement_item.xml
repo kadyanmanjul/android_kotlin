@@ -42,7 +42,7 @@
                 android:id="@+id/play_icon"
                 android:layout_width="@dimen/_44sdp"
                 android:layout_height="@dimen/_44sdp"
-                android:tint="@color/white"
+                android:tint="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="@id/thumbnail_image"
                 app:layout_constraintEnd_toEndOf="@id/thumbnail_image"
                 app:layout_constraintStart_toStartOf="@id/thumbnail_image"
@@ -68,7 +68,7 @@
                 android:layout_marginStart="@dimen/_14sdp"
                 android:layout_marginBottom="@dimen/_3sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toTopOf="@id/date"
                 app:layout_constraintStart_toStartOf="parent"
                 android:text="मेरा पहला दिन" />
@@ -80,7 +80,7 @@
                 android:layout_marginStart="@dimen/_14sdp"
                 android:layout_marginBottom="@dimen/_30sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="27 Sept, 2021" />

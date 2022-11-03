@@ -17,15 +17,15 @@
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:backgroundTint="@color/white"
+        android:background="@color/pure_white"
+        android:backgroundTint="@color/pure_white"
         android:clipToPadding="true"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="@color/pure_white"
         app:cardElevation="0dp"
         android:elevation="0dp"
         app:cardCornerRadius="0dp"
-        tools:cardBackgroundColor="@color/white"
+        tools:cardBackgroundColor="@color/pure_white"
         tools:cardPreventCornerOverlap="false">
 
 
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_46sdp"
             android:layout_gravity="center_vertical"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             android:clipToPadding="true">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -94,7 +94,7 @@
                 android:id="@+id/btn_sent_request"
                 android:layout_width="@dimen/_88sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="@color/primary_500"
                 android:elevation="0dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
@@ -103,7 +103,7 @@
                 android:textAllCaps="false"
                 android:drawablePadding="@dimen/_5sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:visibility="invisible"
                 app:elevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -111,7 +111,7 @@
                 app:layout_constraintHorizontal_bias="0.96"
                 app:layout_constraintStart_toEndOf="@+id/title_container"
                 app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_block"

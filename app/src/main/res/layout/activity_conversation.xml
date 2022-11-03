@@ -27,19 +27,19 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-<!--        <RelativeLayout-->
-<!--            android:id="@+id/welcome_container"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@color/transparent_blue_alpha_75"-->
-<!--            android:elevation="@dimen/_10sdp"-->
-<!--            android:visibility="gone">-->
+        <!--        <RelativeLayout-->
+        <!--            android:id="@+id/welcome_container"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:background="@color/transparent_blue_alpha_75"-->
+        <!--            android:elevation="@dimen/_10sdp"-->
+        <!--            android:visibility="gone">-->
 
-<!--            <ImageView-->
-<!--                android:id="@+id/welcome_item"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content" />-->
-<!--        </RelativeLayout>-->
+        <!--            <ImageView-->
+        <!--                android:id="@+id/welcome_item"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content" />-->
+        <!--        </RelativeLayout>-->
 
         <include
             android:id="@+id/overlay_view"
@@ -55,12 +55,12 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/chat_background"
+            chatScreenBackground="@{R.drawable.chat_bg_final}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:tintMode="multiply"
-            chatScreenBackground="@{R.drawable.chat_bg_final}" />
+            android:tintMode="multiply" />
 
         <LinearLayout
             android:id="@+id/toolbar_container"
@@ -77,7 +77,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorPrimary"
+                android:background="@color/primary_500"
                 android:contentInsetStart="0dp"
                 android:contentInsetLeft="0dp"
                 android:contentInsetEnd="0dp"
@@ -136,21 +136,8 @@
                         android:gravity="start|center"
                         android:singleLine="true"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                        android:textColor="@color/white"
+                        android:textColor="@color/pure_white"
                         tools:text="Spoken English Course" />
-
-                    <!--                    <androidx.appcompat.widget.AppCompatImageView-->
-                    <!--                        android:id="@+id/ic_notification_dot"-->
-                    <!--                        android:layout_width="@dimen/_8sdp"-->
-                    <!--                        android:layout_height="@dimen/_8sdp"-->
-                    <!--                        android:layout_alignEnd="@id/text_message_title"-->
-                    <!--                        android:layout_marginTop="@dimen/_4sdp"-->
-                    <!--                        android:background="@drawable/timer_drawable"-->
-                    <!--                        android:backgroundTint="@color/wa_color"-->
-                    <!--                        android:gravity="start"-->
-                    <!--                        android:tint="@color/wh_fc"-->
-                    <!--                        android:visibility="gone"-->
-                    <!--                        tools:visibility="gone" />-->
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_icon_referral"
@@ -162,7 +149,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="start"
-                        android:tint="@color/white"
+                        android:tint="@color/pure_white"
                         android:visibility="visible"
                         app:srcCompat="@drawable/icon_referral"
                         tools:visibility="visible" />
@@ -191,7 +178,7 @@
                 android:ellipsize="end"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                android:textColor="#FF0000"
+                android:textColor="@color/critical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/buy_btn"
                 app:layout_constraintStart_toStartOf="parent"
@@ -206,7 +193,7 @@
                 android:layout_marginStart="@dimen/_25sdp"
                 android:layout_marginEnd="@dimen/_25sdp"
                 android:background="@drawable/rounded_rectangle_attach_2px"
-                android:backgroundTint="@color/but_button_color"
+                android:backgroundTint="@color/accent_600"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:onClick="@{handler::moveToPaymentActivity}"
@@ -214,7 +201,7 @@
                 android:paddingVertical="@dimen/_5sdp"
                 android:text="@string/upgrade_now"
                 android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -228,7 +215,7 @@
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:background="@drawable/rounded_rectangle_with_border"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/pure_white"
             android:elevation="@dimen/_3sdp"
             android:fillAfter="false"
             android:visibility="gone"
@@ -244,7 +231,7 @@
                 android:gravity="center"
                 android:text="0 Points"
                 android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
                 app:layout_constraintHorizontal_bias="0.1"
@@ -272,7 +259,7 @@
                 android:gravity="center"
                 android:text="@string/leaderboard"
                 android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
                 app:layout_constraintHorizontal_bias="0.98"
@@ -287,7 +274,7 @@
                 android:layout_height="@dimen/_24sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:padding="@dimen/_2sdp"
-                android:tint="@color/grey_68"
+                android:tint="@color/disabled"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -322,9 +309,9 @@
             android:layout_alignParentEnd="true"
             android:layout_marginHorizontal="@dimen/_11sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:visibility="gone"
             android:background="@drawable/well_btn_background"
             android:elevation="@dimen/_12sdp"
+            android:visibility="gone"
             app:cardElevation="@dimen/_12sdp">
 
             <com.airbnb.lottie.LottieAnimationView
@@ -369,7 +356,7 @@
             android:gravity="center"
             android:text="@string/zero"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:visibility="gone"
             tools:text="39"
             tools:visibility="visible" />
@@ -414,7 +401,7 @@
                     android:text="@string/we_will_get_new_lesson_here_everyday"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -445,7 +432,7 @@
                 android:layout_marginVertical="@dimen/_12sdp"
                 android:adjustViewBounds="true"
                 android:background="@drawable/white_button_round_enabled"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="@color/primary_500"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -469,7 +456,7 @@
                 android:singleLine="true"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:textSize="@dimen/_6ssp"
                 android:textStyle="bold"
                 android:visibility="gone"
@@ -497,7 +484,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="#00000000"
+            android:background="@color/transparent"
             android:visibility="visible">
 
             <com.google.android.material.button.MaterialButton
@@ -505,14 +492,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_20sdp"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:elevation="@dimen/_4sdp"
                 android:onClick="@{()->handler.restartCourse(true)}"
                 android:padding="@dimen/_8sdp"
                 android:text="@string/restart_course"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:visibility="gone"
                 app:cornerRadius="@dimen/_32sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -563,9 +550,9 @@
                         android:inputType="textCapSentences|textMultiLine"
                         android:maxLines="3"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/gray_9E"
-                        android:textCursorDrawable="@color/button_color"
+                        android:textColor="@color/text_default"
+                        android:textColorHint="@color/dark_grey"
+                        android:textCursorDrawable="@color/primary_500"
                         tools:targetApi="o" />
 
                     <FrameLayout
@@ -623,7 +610,7 @@
                 android:layout_margin="@dimen/_5sdp"
                 android:background="@drawable/rect_round"
                 android:visibility="gone"
-                app:counter_time_color="@color/red"
+                app:counter_time_color="@color/critical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/record_button"
                 app:layout_constraintStart_toStartOf="parent"
@@ -640,9 +627,9 @@
                 android:layout_gravity="end|bottom"
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:background="@drawable/recv_bg_mic"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:scaleType="centerInside"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:visibility="visible"
                 app:image_first="@drawable/recv_ic_mic_white"
                 app:image_second="@drawable/ic_send"
@@ -658,7 +645,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:background="@drawable/recv_bg_mic"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:padding="@dimen/_8sdp"
                 android:scaleType="centerInside"
                 android:visibility="invisible"
@@ -678,12 +665,13 @@
             android:background="@drawable/black_gradient"
             android:visibility="gone"
             tools:visibility="visible">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:layout_gravity="bottom"
-                android:gravity="bottom">
+                android:gravity="bottom"
+                android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
@@ -692,8 +680,7 @@
                     android:gravity="center"
                     android:text="@string/your_free_trial_has_ended"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                    android:textColor="@color/white"
-                    />
+                    android:textColor="@color/pure_white" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/materialTextView"
@@ -708,7 +695,7 @@
                     android:padding="@dimen/_10sdp"
                     android:text="Upgrade Now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/text_default" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btn_open_expert_list"
@@ -723,9 +710,9 @@
                     android:onClick="@{() -> handler.openExpertList()}"
                     android:padding="@dimen/_10sdp"
                     android:text="Talk To Expert (₹10/min)"
-                    android:visibility="gone"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/text_default"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -757,7 +744,7 @@
                 android:shadowRadius="10"
                 android:text="@string/tap_anywhere_to_continue"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/white" />
+                android:textColor="@color/pure_white" />
 
         </FrameLayout>
 
@@ -794,7 +781,7 @@
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:background="@drawable/rounded_rectangle_with_border"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/pure_white"
             android:elevation="@dimen/_5sdp"
             android:fillAfter="false"
             android:visibility="gone">
@@ -810,7 +797,7 @@
                 android:gravity="center"
                 android:text="@string/leaderboard"
                 android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1"
@@ -863,7 +850,7 @@
                     android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -878,7 +865,7 @@
                     android:text="1 of 3"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -889,7 +876,7 @@
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/_8sdp"
                     android:background="@drawable/rounded_primary_bg_2dp"
-                    android:backgroundTint="@color/button_color"
+                    android:backgroundTint="@color/primary_500"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
@@ -897,7 +884,7 @@
                     android:paddingVertical="@dimen/_3sdp"
                     android:text="आगे बढ़े"
                     android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
@@ -916,27 +903,27 @@
 
         </FrameLayout>
 
-<!--        <FrameLayout-->
-<!--            android:id="@+id/cbcTooltip"-->
-<!--            android:layout_width="@dimen/_180sdp"-->
-<!--            android:layout_height="@dimen/_50sdp"-->
-<!--            android:layout_below="@+id/user_point_container"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:layout_marginLeft="@dimen/_70sdp"-->
-<!--            android:layout_marginTop="@dimen/_12sdp"-->
-<!--            android:elevation="@dimen/_20sdp"-->
-<!--            android:visibility="gone">-->
+        <!--        <FrameLayout-->
+        <!--            android:id="@+id/cbcTooltip"-->
+        <!--            android:layout_width="@dimen/_180sdp"-->
+        <!--            android:layout_height="@dimen/_50sdp"-->
+        <!--            android:layout_below="@+id/user_point_container"-->
+        <!--            android:layout_alignParentEnd="true"-->
+        <!--            android:layout_marginLeft="@dimen/_70sdp"-->
+        <!--            android:layout_marginTop="@dimen/_12sdp"-->
+        <!--            android:elevation="@dimen/_20sdp"-->
+        <!--            android:visibility="gone">-->
 
-<!--            <com.airbnb.lottie.LottieAnimationView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:paddingTop="@dimen/_2sdp"-->
-<!--                app:lottie_autoPlay="true"-->
-<!--                app:lottie_fileName="lottie/leaderboard_arrow.json"-->
-<!--                app:lottie_imageAssetsFolder="lottie"-->
-<!--                app:lottie_loop="true"-->
-<!--                app:lottie_repeatMode="reverse" />-->
-<!--        </FrameLayout>-->
+        <!--            <com.airbnb.lottie.LottieAnimationView-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:paddingTop="@dimen/_2sdp"-->
+        <!--                app:lottie_autoPlay="true"-->
+        <!--                app:lottie_fileName="lottie/leaderboard_arrow.json"-->
+        <!--                app:lottie_imageAssetsFolder="lottie"-->
+        <!--                app:lottie_loop="true"-->
+        <!--                app:lottie_repeatMode="reverse" />-->
+        <!--        </FrameLayout>-->
     </RelativeLayout>
 
 </layout>

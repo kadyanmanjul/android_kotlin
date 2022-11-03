@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="260dip"
     android:background="@drawable/rect_round_16"
-    android:backgroundTint="#2F2F2F"
+    android:backgroundTint="@color/surface_notification"
     android:orientation="vertical"
     tools:ignore="RtlHardcoded">
 
@@ -14,12 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_90sdp"
         android:layout_marginBottom="@dimen/_45sdp"
-        android:background="#f39c12"
+        android:background="@color/accent_600"
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal"
         android:paddingTop="@dimen/_12sdp"
         android:singleLine="true"
-        android:textColor="@color/black"
+        android:textColor="@color/text_default"
         android:textSize="17dip"
         tools:text="Incoming Call from Group" />
 
@@ -29,9 +29,9 @@
         android:layout_height="@dimen/_90sdp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/_37sdp"
-        app:civ_border_color="@color/grammar_button_color_orange"
+        app:civ_border_color="@color/accent_600"
         app:civ_border_width="5dp"
-        app:civ_circle_background_color="@color/group_notif_black_bg" />
+        app:civ_circle_background_color="@color/surface_notification" />
 
     <TextView
         android:id="@+id/name"
@@ -42,7 +42,7 @@
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:singleLine="true"
-        android:textColor="@color/white"
+        android:textColor="@color/pure_white"
         android:textSize="17dip"
         tools:text="Wow Such Doge" />
 
@@ -50,16 +50,16 @@
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dip"
+        android:layout_below="@id/name"
         android:layout_marginHorizontal="36dip"
         android:layout_marginTop="@dimen/_8sdp"
-        android:layout_below="@id/name"
-        android:background="@color/white" />
+        android:background="@color/pure_white" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_45sdp"
-        android:orientation="horizontal"
-        android:layout_below="@id/line">
+        android:layout_below="@id/line"
+        android:orientation="horizontal">
 
         <FrameLayout
             android:id="@+id/decline_btn"
@@ -77,10 +77,11 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:textColor="@color/call_decline_color"
+                android:textColor="@color/critical"
                 android:textSize="14dip"
+                app:drawableLeftCompat="@drawable/ic_call_end"
                 app:drawableStartCompat="@drawable/ic_call_end"
-                app:drawableTint="@color/call_decline_color"
+                app:drawableTint="@color/critical"
                 tools:text="@string/hang_up" />
         </FrameLayout>
 
@@ -100,11 +101,11 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:textColor="@color/call_action_color"
+                android:textColor="@color/success"
                 android:textSize="14dip"
                 app:drawableLeftCompat="@drawable/ic_pick_call"
                 app:drawableStartCompat="@drawable/ic_pick_call"
-                app:drawableTint="@color/call_action_color"
+                app:drawableTint="@color/success"
                 tools:text="@string/answer" />
         </FrameLayout>
     </LinearLayout>

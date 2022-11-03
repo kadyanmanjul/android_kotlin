@@ -70,7 +70,7 @@ class ReviewsAdapter(private val reviews: List<Review>) :
             .endConfig()
             .buildRound(
                 getUserNameInShort(name),
-                ContextCompat.getColor(context, R.color.button_color)
+                ContextCompat.getColor(context, R.color.primary_500)
             )
 
     }

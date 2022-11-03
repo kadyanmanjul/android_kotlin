@@ -37,7 +37,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:padding="@dimen/_4sdp"
-                    android:tint="@color/white"
+                    android:tint="@color/pure_white"
                     app:srcCompat="@drawable/ic_group_call"
                     android:visibility="visible" />
             </RelativeLayout>

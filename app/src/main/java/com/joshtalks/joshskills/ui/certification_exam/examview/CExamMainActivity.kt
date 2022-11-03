@@ -216,9 +216,9 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
     private fun updateBookmarkIV(questions: List<CertificationQuestion>, position: Int) {
         if (questions[position].isBookmarked) {
-            iv_bookmark.setColorFilter(ContextCompat.getColor(applicationContext, R.color.yellow))
+            iv_bookmark.setColorFilter(ContextCompat.getColor(applicationContext, R.color.warning))
         } else {
-            iv_bookmark.setColorFilter(ContextCompat.getColor(applicationContext, R.color.white))
+            iv_bookmark.setColorFilter(ContextCompat.getColor(applicationContext, R.color.pure_white))
         }
     }
 

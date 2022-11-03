@@ -43,7 +43,7 @@
                     android:gravity="center"
                     android:text="@string/your_free_trial_has_ended"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/pure_white" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/materialTextView"
@@ -58,7 +58,7 @@
                     android:padding="@dimen/_10sdp"
                     android:text="@string/buy_now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +93,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primary_500"
                     android:contentInsetStart="0dp"
                     android:contentInsetLeft="0dp"
                     android:contentInsetEnd="0dp"
@@ -142,7 +142,7 @@
                             android:gravity="start|center"
                             android:singleLine="true"
                             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             tools:text="Spoken English Course for a" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -159,7 +159,7 @@
                             android:padding="@dimen/_4sdp"
                             android:text="@string/edit_profile_data"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             android:visibility="gone"
                             tools:visibility="visible" />
 
@@ -172,7 +172,7 @@
                             android:layout_toEndOf="@id/text_message_title"
                             android:gravity="start"
                             android:padding="@dimen/_4sdp"
-                            android:tint="@color/white"
+                            android:tint="@color/pure_white"
                             android:visibility="visible"
                             app:srcCompat="@drawable/ic_help_outline"
                             tools:visibility="gone" />
@@ -188,7 +188,7 @@
                             android:focusable="true"
                             android:foreground="?android:attr/selectableItemBackground"
                             android:padding="@dimen/_4sdp"
-                            android:tint="@color/white"
+                            android:tint="@color/pure_white"
                             app:srcCompat="@drawable/ic_more_option"
                             tools:visibility="visible" />
 
@@ -258,7 +258,7 @@
                             android:shadowRadius="10"
                             android:text="@string/tap_anywhere_to_continue"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             android:visibility="invisible"
                             tools:visibility="visible" />
 
@@ -276,7 +276,7 @@
                         android:layout_marginVertical="@dimen/_18sdp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@color/black"
+                        tools:background="@color/icon_default"
                         tools:src="@drawable/ic_josh_course" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -285,7 +285,7 @@
                         android:layout_height="wrap_content"
                         android:padding="@dimen/_6sdp"
                         android:text="@string/edit_profile_data"
-                        android:textColor="@color/white"
+                        android:textColor="@color/pure_white"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@id/user_pic"
                         app:layout_constraintEnd_toEndOf="@id/user_pic"
@@ -298,7 +298,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/_6sdp"
                         android:background="@drawable/circle2"
-                        android:backgroundTint="@color/white"
+                        android:backgroundTint="@color/pure_white"
                         android:padding="@dimen/_2sdp"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@id/user_pic"
@@ -313,7 +313,7 @@
                             android:layout_width="@dimen/_12sdp"
                             android:layout_height="@dimen/_12sdp"
                             android:background="@drawable/circle"
-                            android:backgroundTint="@color/green" />
+                            android:backgroundTint="@color/success" />
                     </FrameLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -441,7 +441,7 @@
                         android:onClick="@{()-> handler.openShareScreen()}"
                         android:paddingBottom="@dimen/_5sdp"
                         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/primary_500"
                         android:textSize="@dimen/_10sdp"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -514,14 +514,14 @@
                                 android:layout_marginTop="@dimen/_10sdp"
                                 android:layout_marginEnd="@dimen/_14sdp"
                                 android:layout_marginBottom="@dimen/_10sdp"
-                                android:backgroundTint="@color/colorAccent"
+                                android:backgroundTint="@color/primary_500"
                                 android:insetTop="0dp"
                                 android:insetBottom="0dp"
                                 android:text="@string/send_request"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                                android:textColor="@color/white"
+                                android:textColor="@color/pure_white"
                                 android:visibility="gone"
-                                app:rippleColor="@color/white" />
+                                app:rippleColor="@color/pure_white" />
 
                             <LinearLayout
                                 android:id="@+id/btn_confirm_or_not_now_card"
@@ -541,28 +541,28 @@
                                     android:id="@+id/btn_confirm_request"
                                     android:layout_width="@dimen/_91sdp"
                                     android:layout_height="@dimen/_22sdp"
-                                    android:backgroundTint="@color/colorAccent"
+                                    android:backgroundTint="@color/primary_500"
                                     android:insetTop="0dp"
                                     android:insetBottom="0dp"
                                     android:text="@string/confirm"
                                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/pure_white"
                                     android:visibility="gone"
-                                    app:rippleColor="@color/white" />
+                                    app:rippleColor="@color/pure_white" />
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/btn_not_now_request"
                                     android:layout_width="@dimen/_91sdp"
                                     android:layout_height="@dimen/_22sdp"
                                     android:layout_marginStart="@dimen/_8sdp"
-                                    android:backgroundTint="@color/not_now"
+                                    android:backgroundTint="@color/disabled"
                                     android:insetTop="0dp"
                                     android:insetBottom="0dp"
                                     android:text="@string/not_now_txt"
                                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                                     android:textColor="@color/pure_black"
                                     android:visibility="gone"
-                                    app:rippleColor="@color/white" />
+                                    app:rippleColor="@color/pure_white" />
                             </LinearLayout>
                         </RelativeLayout>
 
@@ -610,10 +610,10 @@
                             android:gravity="center"
                             android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/primary_500"
                             android:textSize="@dimen/_8ssp"
                             app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/colorPrimary" />
+                            app:drawableTint="@color/primary_500" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -749,7 +749,7 @@
                         android:layout_height="0.5dp"
                         android:layout_marginHorizontal="@dimen/_9sdp"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:background="#687C90"
+                        android:background="@color/disabled"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -792,7 +792,7 @@
                         android:layout_height="0.5dp"
                         android:layout_marginHorizontal="@dimen/_9sdp"
                         android:layout_marginTop="@dimen/_8sdp"
-                        android:background="@color/grey_68"
+                        android:background="@color/disabled"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -828,7 +828,7 @@
                         android:foreground="?android:attr/selectableItemBackground"
                         android:text="@string/youtube_link"
                         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                        android:textColor="@color/link_color"
+                        android:textColor="@color/text_link"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/labelFavouriteJoshTalk"
@@ -840,7 +840,7 @@
                         android:layout_height="0.5dp"
                         android:layout_marginHorizontal="@dimen/_9sdp"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:background="#687C90"
+                        android:background="@color/disabled"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -869,7 +869,7 @@
                         android:layout_height="0.5dp"
                         android:layout_marginHorizontal="@dimen/_9sdp"
                         android:layout_marginTop="@dimen/_7sdp"
-                        android:background="@color/grey_68"
+                        android:background="@color/disabled"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -898,7 +898,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/primary_500"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -913,7 +913,7 @@
                         android:layout_marginVertical="@dimen/_14sdp"
                         android:text="@string/label_senior_student"
                         android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
-                        android:textColor="#687C90"
+                        android:textColor="@color/disabled"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -931,7 +931,7 @@
                         android:onClick="@{()->handler.showSeniorStudentScreen()}"
                         android:text="@string/label_become_senior_student"
                         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/primary_500"
                         android:visibility="gone"
                         app:drawableStartCompat="@drawable/ic_info_micro"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -943,7 +943,7 @@
                         android:id="@+id/profile_shimmer"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/white"
+                        android:background="@color/pure_white"
                         android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -994,10 +994,10 @@
                             android:gravity="center"
                             android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/primary_500"
                             android:textSize="@dimen/_8ssp"
                             app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/colorPrimary" />
+                            app:drawableTint="@color/primary_500" />
 
                     </RelativeLayout>
 
@@ -1088,7 +1088,7 @@
                         android:layout_height="0.5dp"
                         android:layout_marginHorizontal="@dimen/_9sdp"
                         android:layout_marginTop="@dimen/_6sdp"
-                        android:background="@color/grey_68"
+                        android:background="@color/disabled"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1167,7 +1167,7 @@
                                 android:id="@+id/awards_shimmer_multi_line_ll"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@color/not_now"
+                                android:background="@color/disabled"
                                 android:minHeight="@dimen/_120sdp"
                                 android:orientation="vertical"
                                 android:paddingHorizontal="@dimen/_6sdp"
@@ -1222,10 +1222,10 @@
                             android:gravity="center"
                             android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/primary_500"
                             android:textSize="@dimen/_8ssp"
                             app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/colorPrimary" />
+                            app:drawableTint="@color/primary_500" />
 
                     </RelativeLayout>
 
@@ -1238,7 +1238,7 @@
                         android:gravity="center"
                         android:paddingHorizontal="@dimen/_36sdp"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/white"
+                        android:textColor="@color/pure_white"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@+id/multi_line_ll"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -1333,10 +1333,10 @@
                             android:gravity="center"
                             android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/primary_500"
                             android:textSize="@dimen/_8ssp"
                             app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/colorPrimary" />
+                            app:drawableTint="@color/primary_500" />
 
                     </RelativeLayout>
 
@@ -1425,10 +1425,10 @@
                             android:gravity="center"
                             android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/primary_500"
                             android:textSize="@dimen/_8ssp"
                             app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/colorPrimary" />
+                            app:drawableTint="@color/primary_500" />
 
                     </RelativeLayout>
 

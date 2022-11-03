@@ -1139,7 +1139,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 .setLayout(R.layout.layout_bb_tip)
                 .setHeight(BalloonSizeSpec.WRAP)
                 .setIsVisibleArrow(true)
-                .setBackgroundColorResource(R.color.bb_tooltip_stroke)
+                .setBackgroundColorResource(R.color.surface_tip)
                 .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
                 .setWidthRatio(0.85f)
                 .setDismissWhenTouchOutside(true)
@@ -1271,7 +1271,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             if (PrefManager.getBoolValue(IS_FREE_TRIAL))
                 showBuyCourseTooltip(tab.position)
             tab.view.findViewById<TextView>(R.id.title_tv)
-                ?.setTextColor(ContextCompat.getColor(this, R.color.white))
+                ?.setTextColor(ContextCompat.getColor(this, R.color.pure_white))
             when (tab.position) {
                 SPEAKING_POSITION -> {
                     tab.view.background =
@@ -1331,7 +1331,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         tab?.let {
             tab.view.background = ContextCompat.getDrawable(this, R.drawable.unselected_tab_bg)
             tab.view.findViewById<TextView>(R.id.title_tv)
-                ?.setTextColor(ContextCompat.getColor(this, R.color.black))
+                ?.setTextColor(ContextCompat.getColor(this, R.color.text_default))
         }
     }
 

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_58sdp"
         android:background="@drawable/rect_with_green_bound"
-        android:backgroundTint="@color/green_snackbar">
+        android:backgroundTint="@color/success">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_message"
@@ -23,7 +23,7 @@
             android:gravity="center_vertical|start"
             android:text="@string/congratulations"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

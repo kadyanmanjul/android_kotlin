@@ -3,7 +3,7 @@
     <!-- Larger blue circle in back -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/white" />
+            <solid android:color="@color/pure_white" />
             <size
                     android:width="@dimen/_16sdp"
                     android:height="@dimen/_16sdp" />
@@ -16,7 +16,7 @@
             <stroke
                     android:width="@dimen/_4sdp"
                     android:color="@android:color/transparent" />
-            <solid android:color="@color/green" />
+            <solid android:color="@color/success" />
         </shape>
     </item>
 </layer-list>

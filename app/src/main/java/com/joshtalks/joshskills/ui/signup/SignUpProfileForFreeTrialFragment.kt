@@ -167,7 +167,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     private fun startProgress() {
         binding.btnLogin.showProgress {
             buttonTextRes = R.string.plz_wait
-            progressColors = intArrayOf(ContextCompat.getColor(requireContext(), R.color.white))
+            progressColors = intArrayOf(ContextCompat.getColor(requireContext(), R.color.pure_white))
             gravity = DrawableButton.GRAVITY_CENTER
             progressRadiusRes = R.dimen.dp8
             progressStrokeRes = R.dimen.dp2

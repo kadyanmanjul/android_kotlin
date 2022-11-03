@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_110sdp"
-    android:background="@color/special_card_color"
+    android:background="@color/pure_grey"
     android:elevation="@dimen/_10sdp">
 
     <com.google.android.material.button.MaterialButton
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_20sdp"
         android:layout_marginTop="@dimen/_12sdp"
-        android:backgroundTint="@color/button_color"
+        android:backgroundTint="@color/primary_500"
         android:elevation="@dimen/_10sdp"
         android:insetTop="0dp"
         android:insetBottom="0dp"
@@ -22,7 +22,7 @@
         android:textAllCaps="false"
         android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-        android:textColor="@color/white"
+        android:textColor="@color/pure_white"
         android:visibility="visible"
         app:cornerRadius="@dimen/_32sdp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -40,7 +40,7 @@
         android:text="@string/privacy_label"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-        android:textColor="@color/grey"
+        android:textColor="@color/dark_grey"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

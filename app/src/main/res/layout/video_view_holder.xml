@@ -33,7 +33,7 @@
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingVertical="@dimen/_6sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 tools:text="Lesson 0 - Course Introduction"
                 tools:visibility="visible" />
@@ -107,7 +107,7 @@
                         android:visibility="invisible"
                         app:matProg_barWidth="@dimen/_2sdp"
                         tools:visibility="visible"
-                        wheel:matProg_barColor="@color/white"
+                        wheel:matProg_barColor="@color/pure_white"
                         wheel:matProg_fillRadius="true"
                         wheel:matProg_linearProgress="false"
                         wheel:matProg_progressIndeterminate="true"
@@ -159,7 +159,7 @@
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingBottom="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/image_view"
                 app:layout_constraintBottom_toTopOf="@+id/text_message_time"
@@ -176,7 +176,7 @@
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_5sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="@color/gray_9E"
+                android:textColor="@color/dark_grey"
                 tools:text="2:15 PM"
                 tools:visibility="visible" />
 

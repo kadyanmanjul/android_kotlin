@@ -65,20 +65,20 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
                 checkExamDetails.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.blue_btn_text_check_exam_details
+                        R.color.primary_500
                     )
                 )
                 checkExamDetails.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         context,
-                        R.color.white
+                        R.color.pure_white
                     )
                 )
 
                 checkExamDetails.strokeColor = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         context,
-                        R.color.blue_btn_text_check_exam_details
+                        R.color.primary_500
                     )
                 )
 

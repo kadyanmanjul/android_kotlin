@@ -57,7 +57,7 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()->handler.cancelPromotion()}"
-            android:tint="@color/grey_7A"
+            android:tint="@color/icon_subdued"
             app:srcCompat="@drawable/ic_cross" />
 
     </RelativeLayout>

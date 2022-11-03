@@ -121,8 +121,8 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                     separatorRegex,
                     "<a>",
                     "</a>",
-                    defaultSelectedColor = ContextCompat.getColor(requireContext(), R.color.black),
-                    selectedColor = ContextCompat.getColor(requireContext(), R.color.black),
+                    defaultSelectedColor = ContextCompat.getColor(requireContext(), R.color.text_default),
+                    selectedColor = ContextCompat.getColor(requireContext(), R.color.text_default),
                     clickListener = object : OnWordClick {
                         override fun clickedWord(word: String) {
                             if (viewModel.isRecordingStarted()) {

@@ -49,7 +49,7 @@
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
             android:background="@drawable/ic_help_outline"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/icon_default"
             android:contentDescription="@string/help"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/view"
@@ -64,7 +64,7 @@
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
             android:background="@drawable/ic_cross"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/icon_default"
             android:contentDescription="@string/cancel_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/view"
@@ -82,7 +82,7 @@
             android:gravity="center_horizontal"
             android:text="@string/title"
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingRegular"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -114,7 +114,7 @@
             android:gravity="center"
             android:text="@string/trx_id"
             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-            android:textColor="@color/light_grey"
+            android:textColor="@color/dark_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintStart_toStartOf="@+id/view"
@@ -133,21 +133,21 @@
             android:text="@string/try_again"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:cornerRadius="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/transation_id"
             app:layout_constraintVertical_bias="0.25"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/chat_pay"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_24sdp"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/pure_white"
             android:drawableEnd="@drawable/ic_whatsapp_payment"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_56sdp"
@@ -162,7 +162,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/retry"
             app:layout_constraintVertical_bias="0.339"
-            app:rippleColor="@color/colorPrimary" />
+            app:rippleColor="@color/primary_500" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

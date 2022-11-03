@@ -37,12 +37,12 @@ class VoipReportAdapter(
         holder.bind(voipOptionList[position])
         holder.itemView.setOnClickListener {
             optionId=voipOptionList[position].id
-            holder.binding.issueItem.textColorSet(R.color.white)
+            holder.binding.issueItem.textColorSet(R.color.pure_white)
             holder.binding.issueItem.background =
                 getDrawable(context, R.drawable.black_button_round_enabled)
 
             if (prevHolder != null && prevHolder != holder) {
-                prevHolder!!.binding.issueItem.textColorSet(R.color.report_black)
+                prevHolder!!.binding.issueItem.textColorSet(R.color.text_default)
                 prevHolder!!.binding.issueItem.background =
                     getDrawable(context, R.drawable.white_button_round_enabled)
             }

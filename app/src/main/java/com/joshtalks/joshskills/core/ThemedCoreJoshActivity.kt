@@ -16,7 +16,7 @@ abstract class ThemedCoreJoshActivity: CoreJoshActivity() {
     }
 
     private fun setWhiteStatusBar(){
-        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.white)
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pure_white)
 
     }
 

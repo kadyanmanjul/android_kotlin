@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
-            android:id="@+id/root_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rectangle_with_dotted_border"
-            android:maxWidth="@dimen/_176sdp"
-            android:minWidth="@dimen/_166sdp"
-            android:minHeight="@dimen/_90sdp"
-            android:paddingStart="@dimen/_2sdp"
-            android:paddingTop="@dimen/_4sdp"
-            android:paddingEnd="@dimen/_2sdp">
+        android:id="@+id/root_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_with_dotted_border"
+        android:maxWidth="@dimen/_176sdp"
+        android:minWidth="@dimen/_166sdp"
+        android:minHeight="@dimen/_90sdp"
+        android:paddingStart="@dimen/_2sdp"
+        android:paddingTop="@dimen/_4sdp"
+        android:paddingEnd="@dimen/_2sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/item_description"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:paddingStart="@dimen/_8sdp"
-                android:paddingTop="@dimen/_8sdp"
-                android:paddingEnd="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_2sdp"
-                android:textColor="@color/light_grey"
-                tools:text="@string/unlock_class_text" />
-
+            android:id="@+id/item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingStart="@dimen/_8sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingEnd="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textColor="@color/text_subdued"
+            tools:text="@string/unlock_class_text" />
     </FrameLayout>
 </layout>

@@ -28,7 +28,7 @@
                 android:id="@+id/search_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
+                android:background="@color/pure_white"
                 android:paddingBottom="@dimen/_8sdp"
                 app:layout_constraintBottom_toTopOf="@+id/tab_layout">
 
@@ -40,7 +40,7 @@
                     android:onClick="@{()->handler.onBackPressed()}"
                     android:paddingVertical="@dimen/_4sdp"
                     android:src="@drawable/ic_arrow_back"
-                    android:tint="@color/black"
+                    android:tint="@color/icon_default"
                     app:layout_constraintBottom_toBottomOf="@+id/search_view"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/search_view" />
@@ -69,7 +69,7 @@
                     android:minHeight="@dimen/_20sdp"
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:paddingVertical="@dimen/_4sdp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintEnd_toStartOf="@+id/clear_iv"
                     app:layout_constraintStart_toEndOf="@id/back_iv"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -83,7 +83,7 @@
                     android:paddingVertical="@dimen/_4sdp"
                     android:paddingEnd="@dimen/_8sdp"
                     android:src="@drawable/ic_cross"
-                    android:tint="@color/black"
+                    android:tint="@color/icon_default"
                     app:layout_constraintBottom_toBottomOf="@+id/search_view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/search_view" />
@@ -99,7 +99,7 @@
             android:padding="@dimen/_8sdp"
             android:text="@string/rank"
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.01"
             app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +116,7 @@
             android:singleLine="true"
             android:text="@string/name"
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintBottom_toBottomOf="@+id/points"
             app:layout_constraintEnd_toStartOf="@id/points"
             app:layout_constraintHorizontal_bias="0"
@@ -131,7 +131,7 @@
             android:layout_marginEnd="@dimen/_12sdp"
             android:text="@string/points"
             android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintBottom_toBottomOf="@+id/rank"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/rank" />
@@ -140,17 +140,17 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             android:elevation="0dp"
             android:tabStripEnabled="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_layout_card"
             app:tabGravity="fill"
-            app:tabIndicatorColor="@color/button_color"
+            app:tabIndicatorColor="@color/primary_500"
             app:tabIndicatorFullWidth="false"
             app:tabIndicatorHeight="@dimen/_2sdp"
             app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/button_color"
+            app:tabSelectedTextColor="@color/primary_500"
             app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"
             app:tabTextColor="#666666" />
 
@@ -160,7 +160,7 @@
             android:layout_height="@dimen/_1sdp"
             android:layout_marginHorizontal="@dimen/_4sdp"
             android:layout_marginTop="@dimen/_1sdp"
-            android:background="@color/gray_e6"
+            android:background="@color/disabled"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rank" />
@@ -198,7 +198,7 @@
                 android:gravity="center"
                 android:text="Your Free Trial has ended"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/white" />
+                android:textColor="@color/pure_white" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialTextView"
@@ -213,7 +213,7 @@
                 android:padding="@dimen/_10sdp"
                 android:text="Buy Now"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

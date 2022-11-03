@@ -235,15 +235,15 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         if (viewModel.practiseWho == null) {
             binding.tvFirstUser.text = conversationPractiseModel.characterNameA
             binding.tvSecondUser.text = conversationPractiseModel.characterNameB
-            binding.tvFirstUser.textColorSet(R.color.black)
-            binding.tvSecondUser.textColorSet(R.color.black)
+            binding.tvFirstUser.textColorSet(R.color.text_default)
+            binding.tvSecondUser.textColorSet(R.color.text_default)
         } else {
             if (viewModel.practiseWho == PractiseUser.FIRST) {
                 binding.tvFirstUser.text = getString(R.string.me)
-                binding.tvFirstUser.textColorSet(R.color.button_color)
+                binding.tvFirstUser.textColorSet(R.color.primary_500)
             } else {
                 binding.tvSecondUser.text = getString(R.string.me)
-                binding.tvSecondUser.textColorSet(R.color.button_color)
+                binding.tvSecondUser.textColorSet(R.color.primary_500)
             }
         }
     }

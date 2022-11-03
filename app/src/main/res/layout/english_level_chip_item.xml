@@ -20,5 +20,5 @@
     android:paddingVertical="@dimen/_12sdp"
     android:paddingHorizontal="@dimen/_24sdp"
     android:textAlignment="center"
-    app:rippleColor="@color/interest_chip_bg_selected"
+    app:rippleColor="@color/surface_information"
     tools:text="Advanced"/>

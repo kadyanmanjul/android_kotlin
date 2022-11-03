@@ -35,7 +35,7 @@
         android:layout_marginEnd="@dimen/_1sdp"
         android:minLines="1"
         android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-        android:textColor="@color/black"
+        android:textColor="@color/text_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image"

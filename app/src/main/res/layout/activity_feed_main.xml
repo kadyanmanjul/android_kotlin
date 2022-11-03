@@ -70,7 +70,7 @@
             app:cpb_background_progressbar_width="0dp"
             app:cpb_indeterminate_mode="true"
             app:cpb_progress_direction="to_left"
-            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_color="@color/primary_500"
             app:cpb_progressbar_width="@dimen/_4sdp"
             app:cpb_round_border="true" />
 

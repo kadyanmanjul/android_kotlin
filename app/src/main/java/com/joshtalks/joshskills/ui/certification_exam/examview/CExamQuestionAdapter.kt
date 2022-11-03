@@ -26,7 +26,7 @@ class CExamQuestionAdapter(
 
     private var context = AppObjectController.joshApplication
     private val accentColor =
-        ContextCompat.getColor(context, R.color.colorAccent)
+        ContextCompat.getColor(context, R.color.primary_500)
     private val colorStateList = ColorStateList(
         arrayOf(
             intArrayOf(android.R.attr.state_checked),

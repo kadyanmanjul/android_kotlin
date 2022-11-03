@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<layout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_card"
         android:layout_width="@dimen/_240sdp"
         android:layout_height="@dimen/_60sdp"
+        android:layout_marginStart="@dimen/_15sdp"
         android:layout_marginEnd="@dimen/_5sdp"
         android:layout_marginBottom="@dimen/_2sdp"
-        android:layout_marginStart="@dimen/_15sdp"
         android:background="@drawable/ic_coupon_card_gary">
-
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_logo"
@@ -40,9 +38,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Get 10% Off"
-                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
-                android:textColor="@color/pure_black" />
+                android:textColor="@color/pure_black"
+                android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/coupon_expire_text"
@@ -52,8 +50,7 @@
                 android:text="Coupon will expire in 30:00 minutes "
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                android:textColor="@color/black_0.7_alpha" />
-
+                android:textColor="@color/text_subdued" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -64,7 +61,7 @@
             android:layout_marginEnd="@dimen/_10sdp"
             android:text="Apply"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/primary_500"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

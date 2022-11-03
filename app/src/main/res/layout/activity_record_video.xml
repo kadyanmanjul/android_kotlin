@@ -46,7 +46,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primary_500"
                     android:contentInsetStart="0dp"
                     android:contentInsetLeft="0dp"
                     android:contentInsetEnd="0dp"
@@ -96,7 +96,7 @@
                             android:singleLine="true"
                             android:text="@{`Special Practice - ` + vm.textMessageTitle}"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             android:textStyle="bold"
                             tools:text="Special Practice - 1" />
                     </RelativeLayout>
@@ -232,7 +232,7 @@
                                         android:layout_height="@dimen/_16sdp"
                                         android:layout_centerVertical="true"
                                         android:layout_marginStart="@dimen/_5sdp"
-                                        android:tint="@color/colorAccent"
+                                        android:tint="@color/primary_500"
                                         app:srcCompat="@drawable/ic_play_icon_race" />
 
                                     <androidx.appcompat.widget.AppCompatTextView
@@ -243,7 +243,7 @@
                                         android:layout_toRightOf="@id/play_icon"
                                         android:text="@string/play_video"
                                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                                        android:textColor="@color/colorAccent">
+                                        android:textColor="@color/primary_500">
 
                                     </androidx.appcompat.widget.AppCompatTextView>
                                 </RelativeLayout>
@@ -318,7 +318,7 @@
                                 android:onClick="@{vm.getDeepLinkAndInviteFriends}"
                                 android:padding="@dimen/_5sdp"
                                 android:src="@drawable/ic_special_share"
-                                app:tint="@color/colorAccent" />
+                                app:tint="@color/primary_500" />
                         </RelativeLayout>
 
                     </com.google.android.material.card.MaterialCardView>
@@ -380,7 +380,7 @@
                                 android:stateListAnimator="@null"
                                 android:text="@string/record_video"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal11_Regular"
-                                android:textColor="@color/white"
+                                android:textColor="@color/pure_white"
                                 app:cornerRadius="@dimen/_80sdp" />
                         </LinearLayout>
 

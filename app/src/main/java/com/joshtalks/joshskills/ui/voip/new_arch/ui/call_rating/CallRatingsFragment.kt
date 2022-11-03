@@ -149,10 +149,10 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                 myAnim.interpolator = interpolator
                 group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
                 if (checked > 0) {
-                    group.findViewById<RadioButton>(checked).setTextColor(resources.getColor(R.color.black))
+                    group.findViewById<RadioButton>(checked).setTextColor(resources.getColor(R.color.text_default))
                 }
                 selectedRating = group.findViewById<RadioButton>(checkedId).text.toString().toInt()
-                group.findViewById<RadioButton>(checkedId).setTextColor(resources.getColor(R.color.white))
+                group.findViewById<RadioButton>(checkedId).setTextColor(resources.getColor(R.color.pure_white))
                 if (selectedRating <= 6) {
                     if (prevSelectedRating in 9..10)
                         unSelectChange("block")
@@ -234,7 +234,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
     private fun selectChange(s: String) {
         if (s == "fpp" && vm.ifDialogShow == 1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
             binding.block.background = AppCompatResources.getDrawable(requireContext(), R.drawable.block_button_round_stroke_blue)
-            binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
+            binding.block.setTextColor(resources.getColor(R.color.primary_500))
         } else {
             binding.block.background =
                 AppCompatResources.getDrawable(requireContext(), R.drawable.block_button_round_stroke_black)
@@ -245,7 +245,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
 
     private fun unSelectChange(s: String) {
         binding.block.background = AppCompatResources.getDrawable(requireContext(), R.drawable.block_button_round_stroke)
-        binding.block.setTextColor(resources.getColor(R.color.black_quiz))
+        binding.block.setTextColor(resources.getColor(R.color.pure_black))
         isBlockSelected = false
     }
 

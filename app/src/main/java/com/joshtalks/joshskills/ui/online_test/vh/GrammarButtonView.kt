@@ -207,13 +207,13 @@ class GrammarButtonView : FrameLayout {
                 DEFAULT_COURSE_ID
             )
         )
-        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
+        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.disabled))
         currentState = GrammarButtonState.DISABLED
         grammarBtn.setViewBackgroundWithoutResettingPadding(R.drawable.gray_btn_pressed_state)
         videoIv.visibility = GONE
         animatedVideoIv.visibility = GONE
         progressBar.visibility = View.GONE
-        rootView.setBackgroundColor(ContextCompat.getColor(context, R.color.white))
+        rootView.setBackgroundColor(ContextCompat.getColor(context, R.color.pure_white))
     }
 
     fun showAnswerFeedbackView(isCorrectAnswer: Boolean) {
@@ -231,14 +231,14 @@ class GrammarButtonView : FrameLayout {
         grammarBtn.text = AppObjectController.getFirebaseRemoteConfig().getString(
             FirebaseRemoteConfigKey.GRAMMAR_CONTINUE_BUTTON_TEXT +
                     PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
+        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.pure_white))
         rootView.setBackgroundColor(
             ContextCompat.getColor(
                 context,
                 if (isCorrectAnswer)
-                    R.color.grammar_right_answer_bg
+                    R.color.surface_success
                 else
-                    R.color.grammar_wrong_answer_bg
+                    R.color.surface_critical
             )
         )
         grammarBtn.setViewBackgroundWithoutResettingPadding(
@@ -258,8 +258,8 @@ class GrammarButtonView : FrameLayout {
         } else {
             videoIv.imageTintList = ContextCompat.getColorStateList(
                 context,
-                if (isCorrectAnswer) R.color.grammar_green_color
-                else R.color.grammar_red_color_dark
+                if (isCorrectAnswer) R.color.success
+                else R.color.critical
             )
             if (hasUserSeenVideo()) {
                 animatedVideoIv.visibility = GONE
@@ -342,8 +342,8 @@ class GrammarButtonView : FrameLayout {
         grammarBtn.setTextColor(
             ContextCompat.getColor(
                 context,
-                if (enabled) R.color.white
-                else R.color.grey_shade_new
+                if (enabled) R.color.pure_white
+                else R.color.dark_grey
             )
         )
     }

@@ -34,7 +34,7 @@
                 android:gravity="start"
                 android:text="@string/select_character"
                 android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -55,7 +55,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center_vertical|start"
                 android:onClick="@{()->handler.practiseWithFirstUser()}"
-                android:src="@color/checkmark_blue"
+                android:src="@color/primary_400"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/barrier_tv"
                 tools:visibility="visible" />
@@ -65,16 +65,15 @@
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="@dimen/_18sdp"
                 android:background="@drawable/circle"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:gravity="center_vertical|start"
                 android:padding="@dimen/_4sdp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                 app:layout_constraintEnd_toEndOf="@+id/iv_first_user"
                 app:srcCompat="@drawable/ic_check"
-                app:tint="@color/white"
+                app:tint="@color/pure_white"
                 tools:visibility="visible" />
-
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_first_user"
@@ -85,12 +84,11 @@
                 android:gravity="start"
                 android:maxLength="16"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/pure_black"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                 app:layout_constraintStart_toEndOf="@+id/iv_first_user"
                 app:layout_constraintTop_toTopOf="@+id/iv_first_user"
                 tools:text="Raju" />
-
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/iv_second_user"
@@ -100,7 +98,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center_vertical|start"
                 android:onClick="@{()->handler.practiseWithSecondUser()}"
-                android:src="@color/checkmark_blue"
+                android:src="@color/primary_400"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                 app:layout_constraintEnd_toStartOf="@+id/tv_second_user"
                 app:layout_constraintTop_toTopOf="@+id/iv_first_user"
@@ -111,16 +109,15 @@
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="@dimen/_18sdp"
                 android:background="@drawable/circle"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:gravity="center_vertical|start"
                 android:padding="@dimen/_4sdp"
-                android:tint="@color/white"
+                android:tint="@color/pure_white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_second_user"
                 app:layout_constraintEnd_toEndOf="@+id/iv_second_user"
                 app:srcCompat="@drawable/ic_check"
                 tools:visibility="visible" />
-
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_second_user"
@@ -130,7 +127,7 @@
                 android:gravity="end"
                 android:maxLength="16"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/pure_black"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv_first_user"
@@ -183,7 +180,7 @@
             android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:divider="@android:color/transparent"
+            android:divider="@color/transparent"
             android:dividerHeight="0.0px"
             android:elevation="@dimen/_8sdp"
             app:contentPadding="@dimen/_10sdp"
@@ -200,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/_8sdp"
-                android:backgroundTint="@color/light_grey"
+                android:backgroundTint="@color/dark_grey"
                 android:gravity="center"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
@@ -213,7 +210,7 @@
                 app:icon="@drawable/recv_ic_mic_white"
                 app:iconGravity="textEnd"
                 app:iconSize="@dimen/_24sdp"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
             <com.joshtalks.joshskills.core.custom_ui.exo_audio_player.ExoAudioPlayerView
                 android:id="@+id/audio_player"

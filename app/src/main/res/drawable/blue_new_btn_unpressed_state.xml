@@ -8,10 +8,10 @@
 </item>
 <item android:bottom="@dimen/_3sdp">
     <shape android:shape="rectangle">
-        <solid android:color="@color/colorPrimary" />
+        <solid android:color="@color/primary_500" />
         <stroke
             android:width="@dimen/_1sdp"
-            android:color="@color/colorPrimary"  />
+            android:color="@color/primary_500"  />
         <padding
             android:bottom="@dimen/_4sdp"
             android:left="@dimen/_4sdp"

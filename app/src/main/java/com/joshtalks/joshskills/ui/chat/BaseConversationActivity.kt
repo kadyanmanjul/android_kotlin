@@ -44,14 +44,14 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
 
     protected fun initSnackBar() {
         internetAvailableStatus = JoshSnackBar.builder().setActivity(this)
-            .setBackgroundColor(ContextCompat.getColor(application, R.color.white))
+            .setBackgroundColor(ContextCompat.getColor(application, R.color.pure_white))
             .setActionText("Please enable")
             .setDuration(JoshSnackBar.LENGTH_INDEFINITE)
             .setTextSize(14f)
-            .setTextColor(ContextCompat.getColor(application, R.color.gray_79))
+            .setTextColor(ContextCompat.getColor(application, R.color.text_subdued))
             .setText(getString(R.string.internet_not_available_msz))
             .setMaxLines(1)
-            .setActionTextColor(ContextCompat.getColor(application, R.color.action_color))
+            .setActionTextColor(ContextCompat.getColor(application, R.color.success))
             .setActionTextSize(12f)
             .setActionClickListener {
                 val intent = Intent(Settings.ACTION_SETTINGS).apply {

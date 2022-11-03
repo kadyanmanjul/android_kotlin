@@ -66,26 +66,26 @@ class SubmittedPractiseItemHolder(
 
     private fun playing() {
         val greyFilter = PorterDuffColorFilter(
-            ContextCompat.getColor(context, R.color.light_blue),
+            ContextCompat.getColor(context, R.color.primary_400),
             PorterDuff.Mode.MULTIPLY
         )
         cardView.background.colorFilter = greyFilter
         ImageViewCompat.setImageTintList(
             imageView,
-            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.button_color))
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.primary_500))
         )
 
     }
 
     private fun notPlaying() {
         val greyFilter = PorterDuffColorFilter(
-            ContextCompat.getColor(context, R.color.artboard_color),
+            ContextCompat.getColor(context, R.color.pure_grey),
             PorterDuff.Mode.MULTIPLY
         )
         cardView.background.colorFilter = greyFilter
         ImageViewCompat.setImageTintList(
             imageView,
-            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.light_grey))
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.dark_grey))
         )
     }
 

@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/round_rect_default"
-        android:backgroundTint="@color/light_shade_of_gray">
+        android:backgroundTint="@color/disabled">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lesson_name_tv__completed"
@@ -100,14 +100,14 @@
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_8sdp"
             android:background="@drawable/round_rectangle_for_course_expo"
-            android:backgroundTint="@color/right_answer_color"
+            android:backgroundTint="@color/success"
             android:gravity="start"
             android:letterSpacing="0"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_3sdp"
             android:text="@string/completed"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv__completed" />

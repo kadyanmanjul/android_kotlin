@@ -78,15 +78,15 @@ object RecentBindingAdapter {
     fun chatScreenBackground(imageView: ImageView, image: Int) {
         try {
             if (image==0) {
-                imageView.setBackgroundResource(R.color.chat_bg_color)
+                imageView.setBackgroundResource(R.color.disabled)
             } else {
                 imageView.setImageResource(image)
             }
         } catch (e: Exception) {
-            imageView.setBackgroundResource(R.color.chat_bg_color)
+            imageView.setBackgroundResource(R.color.disabled)
             e.printStackTrace()
         } catch (e: OutOfMemoryError) {
-            imageView.setBackgroundResource(R.color.chat_bg_color)
+            imageView.setBackgroundResource(R.color.disabled)
             e.printStackTrace()
         }
     }

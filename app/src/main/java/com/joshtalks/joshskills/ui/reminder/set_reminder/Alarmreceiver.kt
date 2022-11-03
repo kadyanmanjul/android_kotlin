@@ -103,7 +103,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
                 ContextCompat.getColor(
-                    context, R.color.colorAccent
+                    context, R.color.primary_500
                 )
             )
             .setSound(
