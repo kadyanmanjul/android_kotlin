@@ -1402,6 +1402,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 closeReadingFullScreen()
                 viewModel.showVideoView()
             }
+
+            isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) -> {
+                // if lesson is not completed and FT user presses back, we want to show a prompt
+                CompleteLessonBottomSheetFragment.newInstance().show(supportFragmentManager,"LessonCompleteDialog")
+            }
             else -> {
                 val resultIntent = Intent()
                 viewModel.lessonLiveData.value?.let {
