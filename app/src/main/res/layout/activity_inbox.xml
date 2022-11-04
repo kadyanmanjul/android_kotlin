@@ -80,7 +80,7 @@
             android:paddingHorizontal="@dimen/_20ssp"
             android:paddingBottom="@dimen/_4sdp"
             android:text="@string/explorer_courses"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
             android:visibility="gone"
             app:rippleColor="@color/pure_white"
             tools:visibility="visible" />

@@ -49,7 +49,7 @@
                 android:gravity="start"
                 android:maxLines="2"
                 android:text="@{itemData.name+' '+itemData.text}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 android:visibility="visible"
                 tools:text="Mohit updated a profile picture" />
 

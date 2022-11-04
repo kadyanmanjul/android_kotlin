@@ -11,7 +11,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_12sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="@color/dark_grey"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:text="@string/test_summary"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="@color/dark_grey"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/welcome_msg" />

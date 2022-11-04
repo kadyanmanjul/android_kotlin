@@ -144,7 +144,7 @@
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingVertical="@dimen/_4sdp"
                 android:paddingBottom="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 android:textColor="@color/text_default"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/image_view"

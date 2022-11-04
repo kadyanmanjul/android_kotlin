@@ -342,7 +342,7 @@
                         android:layout_height="@dimen/_18sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:onClick="@{()->handler.showSeniorStudentScreen()}"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@+id/user_name"
                         app:layout_constraintEnd_toEndOf="parent"

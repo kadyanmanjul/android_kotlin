@@ -89,7 +89,7 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                         android:id="@+id/country_code_picker"
-                        style="@style/TextAppearance.JoshTypography.SubHeadingRegular"
+                        style="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -149,7 +149,7 @@
                         android:maxLength="13"
                         android:paddingStart="@dimen/_8sdp"
                         android:paddingEnd="@dimen/_4sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
                         android:textColor="@color/text_default"
                         android:textColorHint="@color/text_light"
                         app:backgroundTint="@color/pure_white"
@@ -293,7 +293,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:text="@string/sign_up_profile_occupation_aspiration_text"
                     android:textColor="@color/text_subdued" />
 

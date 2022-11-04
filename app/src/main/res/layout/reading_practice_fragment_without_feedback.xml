@@ -85,7 +85,7 @@
                             android:layout_marginTop="@dimen/_4sdp"
                             android:gravity="start|center"
                             android:text="@string/attempt_reading_practice"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                             android:textColor="@color/disabled" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -212,7 +212,7 @@
                             android:padding="@dimen/_8sdp"
                             android:paddingTop="@dimen/_8sdp"
                             android:paddingBottom="@dimen/_8sdp"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                             android:textColor="@color/text_default"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -467,7 +467,7 @@
                         android:layout_marginEnd="@dimen/_1sdp"
                         android:minLines="1"
                         android:text="@string/info_text"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textColor="@color/text_default"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -499,7 +499,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textColor="@color/text_default"
                         tools:text="@tools:sample/lorem" />
 
@@ -951,7 +951,7 @@
                         android:paddingBottom="@dimen/_8sdp"
                         android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textColor="@color/text_default"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0"
@@ -966,7 +966,7 @@
                         android:paddingVertical="@dimen/_8sdp"
                         android:text="1 of 3"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textColor="@color/text_default"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -986,7 +986,7 @@
                         android:paddingHorizontal="@dimen/_14sdp"
                         android:paddingVertical="@dimen/_3sdp"
                         android:text="आगे बढ़े"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
                         android:textColor="@color/pure_white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />

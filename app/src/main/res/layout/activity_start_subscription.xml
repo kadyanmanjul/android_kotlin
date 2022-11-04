@@ -48,7 +48,7 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="center"
                 android:text="@string/subscription_heading"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 android:textColor="@color/text_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

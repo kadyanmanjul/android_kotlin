@@ -98,7 +98,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:gravity="center"
             android:text="What are you waiting for \ntell other students to become a\n part of your group "
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="@color/text_subdued"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -68,7 +68,7 @@
                     android:background="@color/pure_white"
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_8sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/question_navigate_rl"
                     tools:text="Ques. 1/5 - What is the correct translation of “Hum sab apni english sudharna chahte hai”?" />
@@ -236,7 +236,7 @@
                     android:background="@color/pure_white"
                     android:paddingHorizontal="@dimen/_16sdp"
                     android:paddingBottom="@dimen/_8sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintEnd_toStartOf="parent"

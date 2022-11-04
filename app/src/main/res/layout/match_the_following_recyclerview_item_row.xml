@@ -24,7 +24,7 @@
             android:paddingTop="@dimen/_8sdp"
             android:paddingEnd="@dimen/_8sdp"
             android:paddingBottom="@dimen/_2sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="@color/text_subdued"
             tools:text="@string/unlock_class_text" />
     </FrameLayout>

@@ -88,7 +88,7 @@
                         android:paddingVertical="@dimen/_6sdp"
                         android:screenReaderFocusable="true"
                         android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textCursorDrawable="@null" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -116,7 +116,7 @@
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_6sdp"
                         android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textCursorDrawable="@null" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -144,7 +144,7 @@
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_6sdp"
                         android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textCursorDrawable="@null" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -172,7 +172,7 @@
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_6sdp"
                         android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textCursorDrawable="@null" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -199,7 +199,7 @@
                         android:inputType="phone"
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_6sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textCursorDrawable="@null"
                         app:prefix="+91" />
 
@@ -223,7 +223,7 @@
                         android:inputType="textEmailAddress"
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_6sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textCursorDrawable="@null" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -248,7 +248,7 @@
                         android:inputType="number"
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_6sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         android:textCursorDrawable="@null" />
 
                     <LinearLayout
@@ -281,7 +281,7 @@
                             android:paddingHorizontal="@dimen/_4sdp"
                             android:paddingVertical="@dimen/_6sdp"
                             android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                             android:textCursorDrawable="@null" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -307,7 +307,7 @@
                             android:paddingHorizontal="@dimen/_4sdp"
                             android:paddingVertical="@dimen/_6sdp"
                             android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                             android:textCursorDrawable="@null" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -334,7 +334,7 @@
                             android:paddingHorizontal="@dimen/_4sdp"
                             android:paddingVertical="@dimen/_6sdp"
                             android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                             android:textCursorDrawable="@null" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -360,7 +360,7 @@
                             android:paddingHorizontal="@dimen/_4sdp"
                             android:paddingVertical="@dimen/_6sdp"
                             android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                             android:textCursorDrawable="@null" />
 
                         <androidx.appcompat.widget.AppCompatTextView

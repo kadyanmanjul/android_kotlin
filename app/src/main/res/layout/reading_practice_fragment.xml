@@ -47,7 +47,7 @@
                 android:gravity="start|center"
                 android:padding="@dimen/_8sdp"
                 android:text="@string/reading_sub_title"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 android:textColor="@color/primary_500"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

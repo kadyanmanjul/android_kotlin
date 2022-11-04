@@ -45,7 +45,7 @@
             android:layout_marginHorizontal="@dimen/_24sdp"
             android:layout_marginVertical="@dimen/_10sdp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
             android:textColor="#596273"
             app:layout_constraintBottom_toBottomOf="@+id/viewPager"
             app:layout_constraintEnd_toEndOf="parent"

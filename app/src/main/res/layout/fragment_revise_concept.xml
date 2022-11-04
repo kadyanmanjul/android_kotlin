@@ -141,7 +141,7 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/description"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"

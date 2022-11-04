@@ -103,7 +103,7 @@
             android:paddingVertical="@dimen/_4sdp"
             android:text="Currently active groups:"
             android:visibility="@{vm.isSearching ? View.GONE : View.VISIBLE}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="@color/text_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_layout_card" />
@@ -127,7 +127,7 @@
             android:paddingVertical="@dimen/_4sdp"
             android:layout_marginTop="@dimen/_24sdp"
             android:text="No Group Found:"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

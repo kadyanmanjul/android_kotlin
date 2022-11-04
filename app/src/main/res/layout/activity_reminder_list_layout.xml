@@ -49,7 +49,7 @@
                         android:paddingBottom="@dimen/_8sdp"
                         android:paddingStart="@dimen/_16sdp"
                         android:paddingEnd="@dimen/_16sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 

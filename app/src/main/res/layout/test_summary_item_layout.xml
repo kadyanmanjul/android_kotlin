@@ -30,7 +30,7 @@
             android:layout_marginTop="@dimen/_6sdp"
             android:gravity="center|start"
             android:textColor="@color/text_default"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/attempt_status"

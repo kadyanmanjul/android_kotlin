@@ -127,7 +127,7 @@
                     android:gravity="start|center"
                     android:text="@string/share_details"
                     android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:textColor="@color/text_default"
                     android:textSize="@dimen/_10sdp"
                     app:layout_constraintEnd_toEndOf="parent"

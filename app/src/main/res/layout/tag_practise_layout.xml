@@ -68,7 +68,7 @@
             android:inputType=""
             android:maxLines="2"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="@color/dark_grey"
             tools:text="Practice #1" />
 

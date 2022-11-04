@@ -47,7 +47,7 @@
         android:ellipsize="end"
         android:gravity="start"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

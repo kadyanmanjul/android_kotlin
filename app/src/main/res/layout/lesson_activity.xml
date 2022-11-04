@@ -443,7 +443,7 @@
                     android:padding="@dimen/_4sdp"
                     android:text="आपका जवाब गलत क्यूँ था और सही कैसे करें, ये जानने के लिए video देखें"
                     android:textAlignment="textStart"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:textColor="@color/text_default"
                     app:autoSizeMaxTextSize="@dimen/_13ssp"
                     app:autoSizeMinTextSize="@dimen/_10ssp"

@@ -20,7 +20,7 @@
             android:maxLines="2"
             android:minWidth="@dimen/_20ssp"
             android:padding="@dimen/_2sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

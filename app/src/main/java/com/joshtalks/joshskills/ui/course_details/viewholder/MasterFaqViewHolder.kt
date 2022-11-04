@@ -154,7 +154,7 @@ class MasterFaqViewHolder(
                     )
                     TextViewCompat.setTextAppearance(
                         it.categoryNameTV,
-                        R.style.TextAppearance_JoshTypography_BodyRegular
+                        R.style.TextAppearance_JoshTypography_BodyRegular20
                     )
                 }
             }

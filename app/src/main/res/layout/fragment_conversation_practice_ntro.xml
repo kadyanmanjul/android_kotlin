@@ -37,7 +37,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_sub_header"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/text_default"

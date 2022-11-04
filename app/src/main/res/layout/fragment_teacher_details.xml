@@ -117,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|top"
                 android:gravity="top|start"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 android:textColor="@color/text_subdued"
                 android:textIsSelectable="true"
                 tools:text="@string/loremIpsum" />

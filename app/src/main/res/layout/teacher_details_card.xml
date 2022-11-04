@@ -70,7 +70,7 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:text="Suman ma’am have been teaching Spoken English for various competitive exams with exclusive focus to UPSC, Banking and SSC for the last 10 years.  "
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/teacher_image" />

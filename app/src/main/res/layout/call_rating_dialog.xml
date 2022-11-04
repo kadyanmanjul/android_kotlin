@@ -166,7 +166,7 @@
             android:paddingHorizontal="@dimen/_8sdp"
             android:text="@string/you_spoke_for_minutes"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="#333333"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

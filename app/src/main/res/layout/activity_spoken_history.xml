@@ -58,7 +58,7 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
                 android:text="@string/user_minutes_text"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
                 android:textColor="@color/disabled"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
