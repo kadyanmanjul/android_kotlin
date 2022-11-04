@@ -90,7 +90,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             isListening  = true
                             listenUIState()
                             listenVoipEvents()
-                            if (checkBlockStatusInSP().not())
+                            if (isNotRestrictedFromCall())
                                 connectCall()
                             else {
                                 val msg = Message.obtain().apply {
@@ -370,5 +370,9 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             }
         }
         return false
+    }
+
+    private fun isNotRestrictedFromCall() : Boolean {
+        return checkBlockStatusInSP().not() || callType == Category.EXPERT || callType == Category.FPP
     }
 }
