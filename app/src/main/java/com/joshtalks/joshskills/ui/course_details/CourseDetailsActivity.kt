@@ -2,7 +2,10 @@ package com.joshtalks.joshskills.ui.course_details
 
 import android.app.Activity
 import android.app.DownloadManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Paint
@@ -11,12 +14,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.View.GONE
 import android.view.Window
 import android.view.WindowManager
-import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -27,9 +30,6 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.Slide
-import androidx.transition.Transition
-import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -1071,9 +1071,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
     private fun showBackPressDialog() {
         if (::dialog.isInitialized)
             dialog.dismiss()
+        Log.d("sagar", "showBackPressDialog: ${PrefManager.getStringValue(CURRENT_COURSE_ID)}")
         val builder = AlertDialog.Builder(this).apply {
             setTitle("${Mentor.getInstance().getUser()?.firstName ?: "User"}, are you sure that you don't want this course?")
-            setMessage("ये Gift हर student को नहीं मिलता!")
+            setMessage(AppObjectController.getFirebaseRemoteConfig().getString(FirebaseRemoteConfigKey.GIFT_COURSE_TEXT.plus(
+                (testId.toString()).ifEmpty { ENGLISH_FREE_TRIAL_1D_TEST_ID })
+            ))
             setCancelable(false)
             setPositiveButton("Buy Now") { p0, p1 ->
                 buyCourse()

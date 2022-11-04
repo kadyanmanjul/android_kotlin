@@ -106,6 +106,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
             showToast(getString(R.string.internet_not_available_msz))
             return
         }
+        viewModel.saveTrueCallerImpression(NAME_SUBMITTED)
         handleOnBackPressed(true)
         MarketingAnalytics.completeRegistrationAnalytics(
             false,

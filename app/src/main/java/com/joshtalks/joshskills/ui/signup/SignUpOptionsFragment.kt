@@ -194,6 +194,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         startProgress()
         hideKeyboard(requireActivity(), binding.mobileEt)
         evaluateVerificationService()
+        viewModel.saveTrueCallerImpression(PHONE_NUMBER_SUBMITTED)
     }
 
     fun clearPhoneNumber() {

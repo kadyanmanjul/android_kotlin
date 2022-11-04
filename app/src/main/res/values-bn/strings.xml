@@ -403,4 +403,5 @@
     <string name="practice_call_experience">আপনার Practice Call Experience আরও ভাল করুন</string>
     <string name="interests_select_same_interest_users_connect">আপনার Interests নির্বাচন করুন যাতে আমরা আপনাকে same interest ব্যবহারকারীদের সাথে সংযুক্ত করতে পারি</string>
     <string name="english_level">আপনার ইংরেজি স্তর কি?</string>
+    <string name="label_speaking_spotlight_2" translatable="false"> Click here পাঠের প্রথম অংশ হল কথা speaking practice</string>
 </resources>

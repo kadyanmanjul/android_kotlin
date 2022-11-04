@@ -13,11 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.REASON_GOVT_EXAM_CLICKED
-import com.joshtalks.joshskills.core.REASON_OTHERS_CLICKED
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
 import com.joshtalks.joshskills.ui.assessment.view.Stub
@@ -137,9 +137,11 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
             viewModel.saveImpression(REASON_OTHERS_CLICKED)
         }
         try {
-            (requireActivity() as SignUpActivity).onGoalSelected(
-                goalSelectionResponse.testId ?: HINDI_TO_ENGLISH_TEST_ID
-            )
+            if (viewModel.abTestRepository.isVariantActive((VariantKeys.ENGLISH_FOR_GOVT_EXAM_ENABLED))) {
+                (requireActivity() as SignUpActivity).onGoalSelected(
+                    goalSelectionResponse.testId ?: HINDI_TO_ENGLISH_TEST_ID
+                )
+            }
         } catch (e: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }

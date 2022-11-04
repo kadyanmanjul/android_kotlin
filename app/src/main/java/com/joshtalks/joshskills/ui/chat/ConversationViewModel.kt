@@ -139,6 +139,23 @@ class ConversationViewModel(
         }
     }
 
+    fun getPendingRequestsList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = p2pNetworkService.getPendingRequestsList()
+                if (response.isSuccessful) {
+                    pendingRequestsList.postValue(response.body())
+                    return@launch
+                }
+                apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+            } catch (ex: Throwable) {
+                apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                ex.printStackTrace()
+            }
+        }
+    }
+
+
     fun sendTextMessage(messageObject: BaseChatMessage, chatModel: ChatModel?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

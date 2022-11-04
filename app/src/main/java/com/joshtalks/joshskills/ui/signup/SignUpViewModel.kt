@@ -205,6 +205,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 )
                 val response = service.verifyOTP(reqObj)
                 if (response.isSuccessful) {
+                    saveTrueCallerImpression(OTP_SUBMITTED)
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
@@ -303,11 +304,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun analyzeUserProfile(isNewUser: Boolean) {
         val user = User.getInstance()
-        if (shouldStartFreeTrial) {
-            if (isNewUser && abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_BEFORE_NAME)) {
+        if (shouldStartFreeTrial && isNewUser) {
+            if (abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_BEFORE_NAME)) {
                 return updateFTSignUpStatus(SignUpStepStatus.LanguageSelection)
             }
-            if (isNewUser && abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME)) {
+            if (abTestRepository.isVariantActive(VariantKeys.NEW_LOGIN_AFTER_NAME) ||
+                        abTestRepository.isVariantActive(VariantKeys.ORIGINAL_LOGIN_FLOW)
+            ) {
                 return updateFTSignUpStatus(SignUpStepStatus.StartTrial)
             }
         }

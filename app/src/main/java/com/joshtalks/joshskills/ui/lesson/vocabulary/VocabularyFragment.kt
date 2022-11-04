@@ -317,9 +317,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 MixPanelTracker.publishEvent(MixPanelEvent.VOCABULARY_COMPLETED)
                     .addParam(ParamKeys.LESSON_ID,lessonID)
                     .push()
+                if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+                    viewModel.getCoursePopupData(PurchasePopupType.VOCAB_COMPLETED)
             }
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL))
-                viewModel.getCoursePopupData(PurchasePopupType.VOCAB_COMPLETED)
             lessonActivityListener?.onSectionStatusUpdate(VOCAB_POSITION, true)
         }
     }

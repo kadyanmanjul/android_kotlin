@@ -871,6 +871,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                 lesson.translationStatus == LESSON_STATUS.CO
                     }
                     if (lessonCompleted) {
+                        if (lesson.lessonNo == 2){
+                            lessonNo2Complete()
+                        }
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
                             if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
@@ -1221,9 +1224,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private fun setTabCompletionStatus() {
         try {
             viewModel.lessonLiveData.value?.let { lesson ->
-                if (lesson.lessonNo == 2){
-                    lessonNo2Complete()
-                }
                 if (lesson.lessonNo >= 2) {
                     PrefManager.put(LESSON_TWO_OPENED, true)
                 }

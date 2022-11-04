@@ -361,6 +361,10 @@ class ConversationActivity :
         conversationViewModel.getCampaignData(CampaignKeys.A2_C1.name)
     }
 
+    private fun getAllPendingRequest() {
+        conversationViewModel.getPendingRequestsList()
+    }
+
     private fun addIssuesToSharedPref() {
         CoroutineScope(Dispatchers.IO).launch() {
 
@@ -1192,6 +1196,7 @@ class ConversationActivity :
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
                 }
+                getAllPendingRequest()
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)
@@ -1363,6 +1368,11 @@ class ConversationActivity :
                 {
                 }
             )
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        getAllPendingRequest()
     }
 
     private fun profileFeatureActiveView(showLeaderboardMenu: Boolean) {

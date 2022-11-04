@@ -403,5 +403,6 @@
     <string name="practice_call_experience">Practice call experience അനുഭവം മെച്ചപ്പെടുത്തൂ</string>
     <string name="interests_select_same_interest_users_connect">നിങ്ങളുടെ interests  select ചെയ്യുക, അതുവഴി ഞങ്ങൾക്ക് നിങ്ങളുടെ same interests ഉള്ള users ആയി connect ചെയ്യാൻ കഴിയും</string>
     <string name="english_level">നിങ്ങളുടെ ഇംഗ്ലീഷ് ലെവൽ എന്താണ്?</string>
+    <string name="label_speaking_spotlight_2">Click here. Lesson-ന്റെ ആദ്യത്തെ ഭാഗമാണ് Speaking Practice</string>
 
 </resources>

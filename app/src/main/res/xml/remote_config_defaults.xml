@@ -1866,11 +1866,41 @@
     </entry>
     <entry>
         <key>USER_ENGLISH_LEVEL_1211</key>
-        <value>আপনার ইংরেজি স্তর কি?</value>
+        <value>మీ English యొక్క level ఏంటి ?</value>
     </entry>
     <entry>
         <key>USER_ENGLISH_LEVEL_151</key>
         <value>आपकी English का level क्या है ?</value>
+    </entry>
+
+
+    <entry>
+        <key>GIFT_COURSE_TEXT_1880</key>
+        <value>সব ছাত্ররা কিন্তু এই পুরস্খারটি পায় না!</value>
+    </entry>
+    <entry>
+        <key>GIFT_COURSE_TEXT_1882</key>
+        <value>ਇਹ gift ਹਰ student ਨੂੰ ਨਹੀਂ ਮਿਲਦਾ!</value>
+    </entry>
+    <entry>
+        <key>GIFT_COURSE_TEXT_1881</key>
+        <value>प्रत्येक विद्यार्थ्याला ही भेट मिळत नाही!</value>
+    </entry>
+    <entry>
+        <key>GIFT_COURSE_TEXT_1889</key>
+        <value>ഈ Gift എല്ലാ students - നും ലഭിക്കില്ല</value>
+    </entry>
+    <entry>
+        <key>GIFT_COURSE_TEXT_1891</key>
+        <value>எல்லா Studentக்கும் இந்த Gift கிடைப்பதில்லை!</value>
+    </entry>
+    <entry>
+        <key>GIFT_COURSE_TEXT_1897</key>
+        <value>ఈ Gift ప్రతి student పొందలేరు!</value>
+    </entry>
+    <entry>
+        <key>GIFT_COURSE_TEXT_784</key>
+        <value>ये Gift हर student को नहीं मिलता!</value>
     </entry>
 
 </defaults>
