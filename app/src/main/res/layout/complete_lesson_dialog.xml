@@ -8,8 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@drawable/dialog_bg"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/_25sdp">
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/cross"
@@ -24,29 +23,255 @@
             android:contentDescription="cross icon" />
 
         <TextView
-            android:id="@+id/textView20"
+            android:id="@+id/txtV_lesson_complete_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:textStyle="bold"
             android:textColor="@color/text_default"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
-            android:text="Wait, Dont go just yet !"
+            android:text="Wait, Don't go just yet !"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cross" />
 
         <TextView
-            android:id="@+id/textView21"
+            android:id="@+id/txtV_lesson_complete_subText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="There’s so much more to help you learn Englsih"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="There’s so much more to help you learn English"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Regular"
             android:textColor="@color/text_subdued"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView20"
-            app:layout_constraintTop_toBottomOf="@+id/textView20" />
+            app:layout_constraintStart_toStartOf="@+id/txtV_lesson_complete_heading"
+            app:layout_constraintTop_toBottomOf="@+id/txtV_lesson_complete_heading" />
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtV_lesson_complete_subText">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/crdView_Grammar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/surface_information"
+                    app:cardCornerRadius="@dimen/_12sdp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/imgV_Grammar"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_marginVertical="@dimen/_12sdp"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtV_Heading_Grammar"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:text="Grammar Lessons"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                            android:textColor="@color/colorPrimary"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imgV_Grammar"
+                            app:layout_constraintTop_toTopOf="@+id/imgV_Grammar" />
+
+                        <TextView
+                            android:id="@+id/txtV_body_Grammar"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:text="Expert recorded gammar lessons that will teach sentence construction"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            android:textColor="@color/text_subdued"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imgV_Grammar"
+                            app:layout_constraintTop_toBottomOf="@id/txtV_Heading_Grammar" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/crdView_Vocab"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:cardBackgroundColor="@color/lesson_complete_popup_vocab_red"
+                    app:cardCornerRadius="@dimen/_12sdp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/crdView_Grammar">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/imgV_Vocab"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_marginVertical="@dimen/_12sdp"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtV_Heading_Vocab"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:text="Daily Vocabulary"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                            android:textColor="@color/lesson_complete_popup_vocab_red_text"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imgV_Vocab"
+                            app:layout_constraintTop_toTopOf="@+id/imgV_Vocab" />
+
+                        <TextView
+                            android:id="@+id/txtV_body_Vocab"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:text="Learn new English words everyday and practice English using them."
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            android:textColor="@color/text_subdued"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imgV_Vocab"
+                            app:layout_constraintTop_toBottomOf="@id/txtV_Heading_Vocab" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/crdView_Reading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:cardBackgroundColor="@color/lesson_complete_popup_reading_green"
+                    app:cardCornerRadius="@dimen/_12sdp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/crdView_Vocab">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/imgV_Reading"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_marginVertical="@dimen/_12sdp"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtV_Heading_Reading"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:text="Reading Practice"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                            android:textColor="@color/lesson_complete_popup_reading_green_text"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imgV_Reading"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtV_body_Reading"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:text="Practice speaking English with practice partners using  the knowledge gathered from other sections"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            android:textColor="@color/text_subdued"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imgV_Reading"
+                            app:layout_constraintTop_toBottomOf="@id/txtV_Heading_Reading" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/crdView_Speaking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    app:cardBackgroundColor="@color/lesson_complete_popup_speaking_purple"
+                    app:cardCornerRadius="@dimen/_12sdp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/crdView_Reading">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/imgV_Speaking"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_marginVertical="@dimen/_12sdp"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtV_Heading_Speaking"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:text="Speaking Practice"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                            android:textColor="@color/lesson_complete_popup_speaking_purple_text"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imgV_Speaking"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtV_body_Speaking"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:text="Practice speaking English with practice partners using  the knowledge gathered from other sections"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            android:textColor="@color/text_subdued"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imgV_Speaking"
+                            app:layout_constraintTop_toBottomOf="@id/txtV_Heading_Speaking" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

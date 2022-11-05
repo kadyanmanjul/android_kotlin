@@ -775,6 +775,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
             }
         }
+        viewModel.lessonCompletePopUpClick.observe(this){
+            binding.lessonTabLayout.selectTab(binding.lessonTabLayout.getTabAt(it))
+        }
     }
 
     private fun hideSpotlight() {
@@ -1405,7 +1408,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
             isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
-                CompleteLessonBottomSheetFragment.newInstance().show(supportFragmentManager,"LessonCompleteDialog")
+                CompleteLessonBottomSheetFragment.newInstance(viewModel).show(supportFragmentManager,"LessonCompleteDialog")
             }
             else -> {
                 val resultIntent = Intent()

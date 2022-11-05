@@ -223,4 +223,11 @@
     <color name="critical">#de350b</color>
     <color name="surface_information">#ECF5FE</color>
     <color name="mtrl_textinput_default_box_stroke_color">#E8E8E8</color>
+    
+    <color name="lesson_complete_popup_vocab_red">#1FFB2E7C</color>
+    <color name="lesson_complete_popup_vocab_red_text">#FB2E7C</color>
+    <color name="lesson_complete_popup_reading_green">#0F3ADD03</color>
+    <color name="lesson_complete_popup_reading_green_text">#00875A</color>
+    <color name="lesson_complete_popup_speaking_purple">#0F560FBC</color>
+    <color name="lesson_complete_popup_speaking_purple_text">#560FBC</color>
 </resources>

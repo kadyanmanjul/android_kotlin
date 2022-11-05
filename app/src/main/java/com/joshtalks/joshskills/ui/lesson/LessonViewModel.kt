@@ -126,6 +126,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     val isExpertBtnEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
+    var lessonCompletePopUpClick : MutableLiveData<Int> = MutableLiveData()
+
     init {
         getRating()
         getExpertBtnVisibility()

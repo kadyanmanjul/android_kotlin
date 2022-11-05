@@ -207,6 +207,14 @@ const val OTP_SUBMITTED  = "OTP_SUBMITTED"
 const val PHONE_NUMBER_SUBMITTED = "PHONE_NUMBER_SUBMITTED"
 const val NAME_SUBMITTED = "NAME_SUBMITTED"
 
+const val Lesson_pop_up_shown = "Lesson_pop_up_shown"
+const val Lesson_pop_up_speaking_clicked = "Lesson_pop_up_speaking_clicked"
+const val Lesson_pop_up_grammar_clicked = "Lesson_pop_up_grammar_clicked"
+const val Lesson_pop_up_reading_clicked = "Lesson_pop_up_reading_clicked"
+const val Lesson_pop_up_vocab_clicked = "Lesson_pop_up_vocab_clicked"
+const val Lesson_pop_up_cancelled = "Lesson_pop_up_cancelled"
+
+
 
 object Utils {
 
