@@ -41,12 +41,10 @@
                         android:id="@+id/name_edit_text"
                         style="@style/JoshNameEditText"
                         android:layout_width="match_parent"
-                        android:singleLine="true"
+                        android:layout_height="wrap_content"
                         android:imeOptions="actionNext"
-                        android:layout_height="wrap_content" />
-
+                        android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
-
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/emailInputLayout"
@@ -71,7 +69,6 @@
                         android:lines="1"
                         android:maxLength="60"
                         android:minLines="1" />
-
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -97,7 +94,7 @@
                         app:ccpDialog_allowSearch="true"
                         app:ccpDialog_backgroundColor="@color/pure_grey"
                         app:ccpDialog_fastScroller_bubbleColor="@color/primary_400"
-                        app:ccpDialog_fastScroller_bubbleTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        app:ccpDialog_fastScroller_bubbleTextAppearance="@style/TextAppearance.JoshTypography.BodyBold20"
                         app:ccpDialog_fastScroller_handleColor="@color/primary_500"
                         app:ccpDialog_initialScrollToSelection="true"
                         app:ccpDialog_keyboardAutoPopup="false"
@@ -172,7 +169,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_check"
                         tools:visibility="visible" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -197,40 +193,39 @@
                         android:inputType="none"
                         android:onClick="@{()->handler.selectDateOfBirth()}"
                         tools:ignore="KeyboardInaccessibleWidget" />
-
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <RadioGroup
                     android:id="@+id/gender_toggle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingVertical="@dimen/_8sdp">
 
                     <RadioButton
                         android:id="@+id/tv_male_gender"
-                        android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/male" />
+                        android:text="@string/male"
+                        android:theme="@style/JoshRadioButton" />
 
                     <RadioButton
                         android:id="@+id/tv_female_gender"
-                        android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/female" />
+                        android:text="@string/female"
+                        android:theme="@style/JoshRadioButton" />
 
                     <RadioButton
                         android:id="@+id/tv_other_gender"
-                        android:theme="@style/JoshRadioButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/other" />
+                        android:text="@string/other"
+                        android:theme="@style/JoshRadioButton" />
 
                 </RadioGroup>
 
@@ -239,9 +234,9 @@
                     style="@style/JoshInputFieldWithHelper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:helperText="@string/occupation_filed_hint_text"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:hint="@string/occupation">
+                    android:hint="@string/occupation"
+                    app:helperText="@string/occupation_filed_hint_text">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/occupation_edit_text"
@@ -252,13 +247,12 @@
                         android:gravity="start"
                         android:imeOptions="actionNext"
                         android:inputType="textCapWords"
-                        android:singleLine="true"
                         android:lines="1"
                         android:maxLength="24"
                         android:maxLines="1"
                         android:minLines="1"
+                        android:singleLine="true"
                         android:textCursorDrawable="@drawable/cursor_drawable" />
-
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -266,34 +260,32 @@
                     style="@style/JoshInputFieldWithHelper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:helperText="@string/ex_ias_officer"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:hint="@string/aspiration_filed">
+                    android:hint="@string/aspiration_filed"
+                    app:helperText="@string/ex_ias_officer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/aspiration_edit_text"
+                        style="@style/JoshEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/JoshEditText"
                         android:digits="@string/allowed_name_characters"
                         android:gravity="start"
                         android:imeOptions="actionDone"
                         android:inputType="textCapWords"
                         android:lines="1"
-                        android:singleLine="true"
                         android:maxLength="24"
                         android:maxLines="1"
                         android:minLines="1"
+                        android:singleLine="true"
                         android:textCursorDrawable="@drawable/cursor_drawable" />
-
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:text="@string/sign_up_profile_occupation_aspiration_text"
                     android:textColor="@color/text_subdued" />
 

@@ -11,9 +11,9 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/pure_white"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/pure_white">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/image"
@@ -25,19 +25,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.33"
             app:lottie_autoPlay="false"
-            app:lottie_rawRes="@raw/tick_animation"
+            app:lottie_fileName="lottie/tick_animation.json"
             app:lottie_imageAssetsFolder="lottie"
-            app:lottie_loop="false"/>
+            app:lottie_loop="false" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/pic_uploaded_text"
+            style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_62sdp"
             android:layout_marginTop="@dimen/_24sdp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-            android:textColor="@color/disabled"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/image"

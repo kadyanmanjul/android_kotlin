@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,10 +19,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 
 class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
@@ -82,7 +78,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 else -> false
             }
         }
-        viewModel.apiStatus.observe(viewLifecycleOwner, {
+        viewModel.apiStatus.observe(viewLifecycleOwner) {
             when (it) {
                 ApiCallStatus.START -> {
                     startProgress()
@@ -98,7 +94,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                     handleOnBackPressed(false)
                 }
             }
-        })
+        }
     }
 
     fun submitProfile() {

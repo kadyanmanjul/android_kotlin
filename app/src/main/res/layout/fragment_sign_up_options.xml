@@ -36,14 +36,13 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/_16sdp" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_2"
+            style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_24sdp"
             android:text="@string/confirm_number"
-            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-            android:textColor="@color/text_default"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guidelineTop"
@@ -153,14 +152,14 @@
                 app:tint="@color/disabled" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/info"
+            style="@style/TextAppearance.JoshTypography.CaptionRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
             android:gravity="center"
             android:text="@string/missed_call_verify_message"
-            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
             android:textColor="@color/text_subdued"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -213,14 +212,14 @@
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.65" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/timer_tv"
+            style="@style/TextAppearance.JoshTypography.CaptionRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/primary_500"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -245,6 +244,7 @@
                 android:background="@color/disabled" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                style="@style/TextAppearance.JoshTypography.SubHeadingRegular24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -252,7 +252,6 @@
                 android:paddingStart="@dimen/_6sdp"
                 android:paddingEnd="@dimen/_6sdp"
                 android:text="@string/or"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/text_subdued" />
         </FrameLayout>
 
@@ -285,8 +284,9 @@
             app:layout_constraintTop_toBottomOf="@+id/view_separator"
             app:srcCompat="@drawable/ic_google" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_privacy"
+            style="@style/TextAppearance.JoshTypography.TinyRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_40sdp"
@@ -294,7 +294,6 @@
             android:gravity="center"
             android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
             android:text="@string/privacy_label"
-            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
             android:textColor="@color/text_subdued"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

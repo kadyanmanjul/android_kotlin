@@ -599,8 +599,7 @@
     </style>
 
     <style name="CustomCardViewStyleNoBottomCorner" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_top_corners
-        </item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_top_corners</item>
     </style>
 
     <style name="ShapeAppearanceOverlay_card_custom_top_corners" parent="">
@@ -697,8 +696,7 @@
         <item name="android:paddingStart">@dimen/_14sdp</item>
         <item name="android:paddingTop">@dimen/_10sdp</item>
         <item name="android:paddingBottom">@dimen/_10sdp</item>
-        <item name="android:textAppearance">@style/TextAppearance.JoshTypography.HeadingRegular
-        </item>
+        <item name="android:textAppearance">@style/TextAppearance.JoshTypography.HeadingRegular</item>
         <item name="android:textColor">@color/text_subdued</item>
         <item name="android:textColorHint">@color/text_subdued</item>
         <item name="android:textCursorDrawable">@drawable/cursor_drawable</item>

@@ -45,30 +45,29 @@
                 app:srcCompat="@drawable/ic_arrow_back"
                 app:tint="@color/icon_default" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/toolbarTitleTv"
+                style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:text="@{viewmodel.toolbarTitle}"
-                app:layout_goneMarginStart="@dimen/_24sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_back"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginStart="@dimen/_24sdp"
                 tools:text="Complete registration" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/skip"
+                style="@style/TextAppearance.JoshTypography.BodyRegular20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:gravity="start"
                 android:onClick="@{()->handler.onSkipPressed()}"
                 android:text="@string/skip"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                android:textColor="@color/disabled"
+                android:textColor="@color/text_subdued"
                 android:textSize="@dimen/_12ssp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -96,5 +95,4 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/top_view" />
     </RelativeLayout>
-
 </layout>

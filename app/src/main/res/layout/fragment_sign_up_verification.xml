@@ -13,14 +13,13 @@
             name="viewModel"
             type="com.joshtalks.joshskills.ui.signup.SignUpViewModel" />
 
-        <import type="android.text.Html"/>
+        <import type="android.text.Html" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineTop"
@@ -59,21 +58,19 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_1"
+            style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/otp_verify_label"
-            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-            android:textColor="@color/text_default"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guidelineSubStart"
             app:layout_constraintTop_toTopOf="@+id/guidelineTop"
             app:layout_constraintWidth_default="percent" />
 
-
         <com.joshtalks.codeinputview.OtpTextView
             android:id="@+id/otp_view_2"
-            style="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+            style="@style/TextAppearance.JoshTypography.SubHeadingBold20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_24sdp"
@@ -95,8 +92,9 @@
             app:underline_width="0dp"
             app:width="@dimen/_48sdp" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/waitingToDetect"
+            style="@style/TextAppearance.JoshTypography.CaptionRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_34sdp"
@@ -104,7 +102,6 @@
             android:gravity="center"
             android:onClick="@{()->handler.editNumber()}"
             android:text="@{Html.fromHtml(@string/waiting_to_detect(viewModel.countryCode, viewModel.phoneNumber))}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/otp_view_2"
@@ -112,12 +109,12 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_wrong_otp"
+            style="@style/TextAppearance.JoshTypography.CaptionRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
             android:gravity="center"
             android:text="@string/wrong_otp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
             android:textColor="@color/critical"
             android:visibility="invisible"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -127,37 +124,34 @@
             app:layout_constraintWidth_percent="0.8"
             tools:visibility="visible" />
 
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/resendCodeTv"
+            style="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_32sdp"
-            android:text="@string/resend_code"
             android:layout_marginStart="@dimen/_34sdp"
+            android:layout_marginTop="@dimen/_32sdp"
             android:enabled="false"
             android:onClick="@{()->handler.regeneratedOTP()}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+            android:text="@string/resend_code"
             android:textColor="@drawable/enable_disable_selector"
             app:layout_constraintEnd_toStartOf="@+id/tv_otp_timer"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_wrong_otp" />
 
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_otp_timer"
+            style="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+            android:layout_marginEnd="@dimen/_34sdp"
             android:textColor="@color/disabled"
             app:layout_constraintBottom_toBottomOf="@+id/resendCodeTv"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="@dimen/_34sdp"
             app:layout_constraintStart_toEndOf="@+id/resendCodeTv"
             app:layout_constraintTop_toTopOf="@+id/resendCodeTv"
             tools:text="01:00" />
-
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_verify"
@@ -174,9 +168,9 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart" />
 
-
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_privacy"
+            style="@style/TextAppearance.JoshTypography.TinyRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_40sdp"
@@ -184,7 +178,6 @@
             android:gravity="center"
             android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
             android:text="@string/privacy_label"
-            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
             android:textColor="@color/text_subdued"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
