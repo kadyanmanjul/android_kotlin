@@ -1903,4 +1903,9 @@
         <value>ये Gift हर student को नहीं मिलता!</value>
     </entry>
 
+    <entry>
+        <key>IS_LESSON_COMPLETE_POPUP_ENABLE</key>
+        <value>true</value>
+    </entry>
+
 </defaults>

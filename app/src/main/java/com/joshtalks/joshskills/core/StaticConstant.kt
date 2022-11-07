@@ -297,6 +297,8 @@ class FirebaseRemoteConfigKey {
         const val USER_INTEREST_TEXT_SUB_HEADING = "USER_INTEREST_TEXT_SUB_HEADING_"
         const val USER_ENGLISH_LEVEL = "USER_ENGLISH_LEVEL_"
         const val GIFT_COURSE_TEXT = "GIFT_COURSE_TEXT_"
+
+        const val IS_LESSON_COMPLETE_POPUP_ENABLE = "IS_LESSON_COMPLETE_POPUP_ENABLE"
     }
 }
 

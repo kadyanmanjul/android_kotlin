@@ -1408,7 +1408,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
             isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
-                CompleteLessonBottomSheetFragment.newInstance(viewModel).show(supportFragmentManager,"LessonCompleteDialog")
+                val isFeatureOn = AppObjectController.getFirebaseRemoteConfig().getBoolean(
+                    FirebaseRemoteConfigKey.IS_LESSON_COMPLETE_POPUP_ENABLE)
+                if (isFeatureOn){
+                    CompleteLessonBottomSheetFragment.newInstance(viewModel).show(supportFragmentManager,"LessonCompleteDialog")
+                }
             }
             else -> {
                 val resultIntent = Intent()

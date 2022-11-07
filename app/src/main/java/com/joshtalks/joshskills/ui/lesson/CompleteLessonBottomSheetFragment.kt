@@ -28,7 +28,7 @@ class CompleteLessonBottomSheetFragment(val viewModel: LessonViewModel) : Bottom
             viewModel.saveImpression(Lesson_pop_up_cancelled)
             activity?.finish()
         }
-
+        //TODO: add text from remote config; refer callinterestfrag; also see how to add defaults
         binding.crdViewReading.setOnClickListener {
             viewModel.saveImpression(Lesson_pop_up_reading_clicked)
             viewModel.lessonCompletePopUpClick.postValue(3)
