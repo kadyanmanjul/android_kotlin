@@ -63,28 +63,8 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
 //        paymentManager.initializePaymentGateway()
         initToolbar()
         attachObservers()
-        attachNavigationChangedListener()
+
         paymentManager.initializePaymentGateway()
-
-        event.observe(this) {
-            when (it.what) {
-                PAYMENT_SUCCESS -> onPaymentSuccess()
-                PAYMENT_FAILED -> showPaymentFailedDialog()
-                PAYMENT_PENDING -> {
-                    navController.navigateUp()
-                    navController.navigate(R.id.paymentPendingFragment)
-                }
-            }
-        }
-    }
-
-    private fun showPaymentFailedDialog() {
-        navController.navigateUp()
-        PaymentFailedDialogNew.newInstance(paymentManager, onCancelClick = {
-//            navController.navigateUp()
-        }).apply {
-            show(supportFragmentManager, "PAYMENT_FAILED")
-        }
     }
 
 
@@ -97,7 +77,18 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
     }
 
     override fun initViewState() {
-//        TODO("Not yet implemented")
+        attachNavigationChangedListener()
+
+        event.observe(this) {
+            when (it.what) {
+                PAYMENT_SUCCESS -> onPaymentSuccess()
+                PAYMENT_FAILED -> showPaymentFailedDialog()
+                PAYMENT_PENDING -> {
+                    navController.navigateUp()
+                    navController.navigate(R.id.paymentPendingFragment)
+                }
+            }
+        }
     }
 
     private fun attachObservers() {
@@ -167,7 +158,7 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
 
 
     private fun initToolbar() {
-        balanceTv = findViewById<TextView>(R.id.iv_earn)
+        balanceTv = findViewById(R.id.iv_earn)
         with(findViewById<View>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
@@ -226,14 +217,18 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
         }
     }
 
-//    override fun onPaymentError(errorMsg: String) {
-//        Log.d("paymenterror", "onPaymentError:  $errorMsg")
-//        walletPaymentManager.onPaymentFailed(0, errorMsg)
-//    }
-
     private fun onPaymentSuccess() {
         viewModel.paymentSuccess(true)
         walletPaymentManager.onPaymentSuccess("onPaymentSuccess")
+    }
+
+    private fun showPaymentFailedDialog() {
+        navController.navigateUp()
+        PaymentFailedDialogNew.newInstance(paymentManager, onCancelClick = {
+//            navController.navigateUp()
+        }).apply {
+            show(supportFragmentManager, "PAYMENT_FAILED")
+        }
     }
 
     override fun onProcessStart() {

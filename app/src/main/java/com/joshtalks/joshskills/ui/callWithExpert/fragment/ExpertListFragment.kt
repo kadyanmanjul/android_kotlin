@@ -22,7 +22,6 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.removeRupees
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.ExpertListViewModel
 import com.joshtalks.joshskills.ui.fpp.constants.CAN_BE_CALL
-import com.joshtalks.joshskills.ui.fpp.constants.START_FPP_CALL_FROM_WALLET
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import kotlinx.coroutines.flow.collectLatest
@@ -99,8 +98,8 @@ class ExpertListFragment:BaseFragment() {
     }
 
     private fun startExpertCall(){
-        if (viewModel.creditsCount.value?.removeRupees()
-                ?.toInt() ?: 0 >= expertListViewModel.selectedUser?.expertPricePerMinute ?: 0
+        if ((viewModel.creditsCount.value?.removeRupees()
+                ?.toInt() ?: 0) >= (expertListViewModel.selectedUser?.expertPricePerMinute ?: 0)
         ) {
             viewModel.saveMicroPaymentImpression(eventName = CLICKED_CALL_BUTTON)
             val callIntent = Intent(AppObjectController.joshApplication, VoiceCallActivity::class.java)
@@ -115,7 +114,6 @@ class ExpertListFragment:BaseFragment() {
                 putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)
 
             }
-            Log.d("calltype", "start fpp call from expert list fragment: ")
             startActivity(callIntent)
         } else {
             showToast("You don't have amount")

@@ -12,137 +12,104 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_140sdp"
-        android:layout_marginHorizontal="@dimen/_7sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_6sdp"
         app:cardCornerRadius="@dimen/_8sdp"
-        app:cardElevation="@dimen/_6sdp">
+        app:cardElevation="0dp"
+        app:strokeColor="@color/disabled"
+        app:strokeWidth="@dimen/_2sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/layout_pic"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:layout_marginRight="@dimen/_15sdp"
-                android:orientation="vertical"
-                android:weightSum="2"
-                android:gravity="center_vertical"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/expert_image"
+                expertImage="@{item}"
+                android:layout_width="@dimen/_64sdp"
+                android:layout_height="@dimen/_64sdp"
+                android:layout_margin="@dimen/_10sdp"
+                android:src="@drawable/josh_skill"
+                app:civ_border_color="@color/disabled"
+                app:civ_border_width="@dimen/_1sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/josh_skill" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_12sdp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/expert_image"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/expert_image"
-                    android:layout_width="@dimen/_74sdp"
-                    android:layout_height="@dimen/_74sdp"
-                    expertImage="@{item}"
-                    android:src="@drawable/josh_skill"
-                    app:civ_border_color="@color/warning"
-                    app:civ_border_width="1.5dp"
-                    tools:src="@drawable/josh_skill" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/expert_experience"
+                    style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                    setExperienceYears="@{item}"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_16sdp"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:textColor="@color/text_subdued"
+                    tools:text="141 Expert calls taken" />
 
-                <RatingBar
-                    android:id="@+id/ratingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:numStars="5"
-                    android:stepSize="0.5"
-                    android:rating="@{item.expertRating}"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    style="@style/Widget.AppCompat.RatingBar.Small"
-                    android:theme="@style/RatingBar"
-                    android:layout_gravity="center_horizontal"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/expert_name"
+                    style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_24sdp"
+                    android:maxLines="1"
+                    android:text="@{item.expertName}"
+                    tools:text="Sagar Jain" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/expert_bio"
+                    style="@style/TextAppearance.JoshTypography.CaptionRegular"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_16ssp"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:text="@{item.expertBio}"
+                    android:textColor="@color/text_subdued"
+                    tools:text="English For SSC · Spoken English" />
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/expert_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@{item.expertName}"
-                android:textColor="@color/pd_transparent_bg_v2"
-                app:layout_constraintStart_toEndOf="@+id/layout_pic"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_17sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
-                tools:text="Sagar Jain" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/expert_bio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@{item.expertBio}"
-                android:textColor="@color/pd_transparent_bg_v2"
-                app:layout_constraintStart_toEndOf="@+id/layout_pic"
-                app:layout_constraintTop_toBottomOf="@+id/expert_name"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
-                tools:text="English For SSC" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/language_speaks"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@{item.expertLanguageSpeak}"
-                android:textColor="@color/pd_transparent_bg_v2"
-                app:layout_constraintStart_toEndOf="@+id/layout_pic"
-                app:layout_constraintTop_toBottomOf="@+id/expert_bio"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
-                tools:text="English, Hindi" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/expert_experience"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                setExperienceYears="@{item}"
-                android:textColor="@color/pd_transparent_bg_v2"
-                app:layout_constraintStart_toEndOf="@+id/layout_pic"
-                app:layout_constraintTop_toBottomOf="@+id/language_speaks"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
-                tools:text="Exp: 25 Years" />
-
-            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/expert_price_per_minute"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
                 setPricePerMinute="@{item}"
-                android:textColor="@color/pd_transparent_bg_v2"
-                app:layout_constraintStart_toEndOf="@+id/layout_pic"
-                app:layout_constraintTop_toBottomOf="@+id/expert_experience"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/linearLayout3"
+                app:layout_constraintTop_toBottomOf="@id/linearLayout3"
                 tools:text="\u20B9 78/min" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/expert_call_button"
-                android:layout_width="@dimen/_80sdp"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/_35sdp"
-                android:background="@drawable/green_rectangle_with_white_bound_stroke_without_solid"
-                android:text="Call"
-                android:textAllCaps="false"
-                android:textColor="@color/success"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-                android:textStyle="bold"
-                android:visibility="visible"
+                android:layout_margin="@dimen/_12sdp"
+                android:backgroundTint="@color/surface_information"
+                android:elevation="@dimen/_minus2sdp"
+                android:text="Call now"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                android:textColor="@color/primary_500"
+                app:cornerRadius="@dimen/_20sdp"
+                app:icon="@drawable/ic_pick_call"
+                app:iconSize="@dimen/_12sdp"
+                app:iconTint="@color/primary_500"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/expert_bio"
-                app:layout_constraintStart_toEndOf="@+id/expert_experience" />
+                app:layout_constraintTop_toBottomOf="@id/linearLayout3" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -1,9 +1,7 @@
 package com.joshtalks.joshskills.ui.callWithExpert.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
@@ -12,7 +10,6 @@ import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.FirstTimeAmount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
-import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupees
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -46,7 +43,6 @@ class CallWithExpertViewModel : BaseViewModel() {
     val paymentSuccessful: LiveData<Boolean>
         get() = _paymentSuccessful
 
-
     init {
         getWalletCredits()
         getWalletCreditsFromNetwork()
@@ -65,8 +61,6 @@ class CallWithExpertViewModel : BaseViewModel() {
         _proceedPayment.value = true
     }
 
-
-
     fun updateAmount(amount: Amount) {
         addedAmount = amount
     }
@@ -74,7 +68,7 @@ class CallWithExpertViewModel : BaseViewModel() {
     private fun getWalletCredits() {
         viewModelScope.launch {
             SkillsDatastore.walletCredits.collectLatest {
-                _creditsCount.postValue(it.toRupees())
+                _creditsCount.postValue(it.toString())
             }
         }
     }
@@ -103,7 +97,6 @@ class CallWithExpertViewModel : BaseViewModel() {
     }
 
     fun syncCallDuration(){
-        Log.d("durationsync", "syncCallDuration: ")
         expertListRepo.deductAmountAfterCall()
     }
 
