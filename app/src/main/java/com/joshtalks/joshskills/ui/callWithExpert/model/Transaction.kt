@@ -1,5 +1,9 @@
 package com.joshtalks.joshskills.ui.callWithExpert.model
 
+data class TransactionResponse(
+    val transactions: List<Transaction>
+)
+
 data class Transaction(
     val amount: Int,
     val created: Long,

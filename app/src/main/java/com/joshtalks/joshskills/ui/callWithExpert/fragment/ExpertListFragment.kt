@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.callWithExpert.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,7 @@ import com.joshtalks.joshskills.voip.constant.Category
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class ExpertListFragment:BaseFragment() {
+class ExpertListFragment : BaseFragment() {
     private lateinit var binding: FragmentExpertListBinding
     val expertListViewModel by lazy {
         ViewModelProvider(requireActivity())[ExpertListViewModel::class.java]
@@ -64,16 +63,16 @@ class ExpertListFragment:BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 expertListViewModel.startExpertCall.collectLatest { start ->
-                    if (start){
+                    if (start) {
                         startExpertCall()
                     }
                 }
             }
         }
-            liveData.observe(this) {
+        liveData.observe(this) {
             when (it.what) {
-                CAN_BE_CALL ->{
-                    if (it.obj == false){
+                CAN_BE_CALL -> {
+                    if (it.obj == false) {
                         WalletBottomSheet(
                             expertListViewModel.neededAmount,
                             expertListViewModel.clickedSpeakerName
@@ -97,7 +96,7 @@ class ExpertListFragment:BaseFragment() {
 
     }
 
-    private fun startExpertCall(){
+    private fun startExpertCall() {
         if ((viewModel.creditsCount.value?.removeRupees()
                 ?.toInt() ?: 0) >= (expertListViewModel.selectedUser?.expertPricePerMinute ?: 0)
         ) {
@@ -107,7 +106,7 @@ class ExpertListFragment:BaseFragment() {
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(IS_EXPERT_CALLING, "true")
                 putExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN, expertListViewModel.selectedUser?.expertPricePerMinute.toString())
-                putExtra(INTENT_DATA_TOTAL_AMOUNT,viewModel.creditsCount.value?.removeRupees())
+                putExtra(INTENT_DATA_TOTAL_AMOUNT, viewModel.creditsCount.value?.removeRupees())
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.EXPERT.ordinal)
                 putExtra(INTENT_DATA_FPP_MENTOR_ID, expertListViewModel.selectedUser?.mentorId)
                 putExtra(INTENT_DATA_FPP_NAME, expertListViewModel.selectedUser?.expertName)

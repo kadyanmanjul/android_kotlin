@@ -1,5 +1,9 @@
 package com.joshtalks.joshskills.ui.callWithExpert.model
 
+data class WalletLogResponse(
+    val payments: List<WalletLogs>
+)
+
 data class WalletLogs (
     val amount: Int,
     val created: Long,

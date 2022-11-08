@@ -58,15 +58,12 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = this.viewModel
-//        PrefManager.initServicePref(applicationContext)
-//        paymentManager = PaymentManager(this, viewModel.viewModelScope, this)
-//        paymentManager.initializePaymentGateway()
+
         initToolbar()
         attachObservers()
         attachNavigationChangedListener()
         paymentManager.initializePaymentGateway()
     }
-
 
     override fun initViewBinding() {
 //        TODO("Not yet implemented")

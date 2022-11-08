@@ -27,15 +27,12 @@ class ExpertListAdapter(var items: List<ExpertListModel> = listOf()) :
                 }
             }
         }
-
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpertListAdapter.ExpertViewHolder {
         val binding = ItemExpertListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ExpertViewHolder(binding)
     }
-
 
     fun setItemClickFunction(function: ((ExpertListModel, Int, Int) -> Unit)?) {
         itemClickFunction = function
