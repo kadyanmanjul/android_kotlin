@@ -63,7 +63,7 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
 //        paymentManager.initializePaymentGateway()
         initToolbar()
         attachObservers()
-
+        attachNavigationChangedListener()
         paymentManager.initializePaymentGateway()
     }
 
@@ -77,8 +77,6 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
     }
 
     override fun initViewState() {
-        attachNavigationChangedListener()
-
         event.observe(this) {
             when (it.what) {
                 PAYMENT_SUCCESS -> onPaymentSuccess()

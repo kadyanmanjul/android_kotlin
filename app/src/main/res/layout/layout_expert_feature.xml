@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        style="@style/TextAppearance.JoshTypography.BodyRegular16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_8sdp"
+        android:layout_marginStart="@dimen/_13sdp"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:drawableStart="@drawable/ic_check_star"
+        android:drawablePadding="@dimen/_13ssp"
+        android:text="Learn various topics like Resume Building, Preparing an Intro etc." />
+</FrameLayout>

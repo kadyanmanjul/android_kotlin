@@ -33,6 +33,15 @@
         android:label="Transactions"
         tools:layout="@layout/fragment_transactions" />
     <fragment
+        android:id="@+id/expertCallUpgrade"
+        android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertCallUpgradeFragment"
+        android:label="Expert Call Upgrade"
+        tools:layout="@layout/fragment_expert_call_upgrade">
+        <action
+            android:id="@+id/action_expertCallUpgrade_to_walletFragment"
+            app:destination="@id/walletFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/paymentInProcessFragment"
         tools:layout="@layout/fragment_payment_in_process"
         android:name="com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment"

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.callWithExpert.fragment.ExpertCallUpgradeFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/_16sdp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="@dimen/_24sdp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/_16sdp" />
+
+            <TextView
+                android:id="@+id/textView18"
+                style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Now talk with Experts and learn more"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+
+            <LinearLayout
+                android:id="@+id/upgrade_ll_lyt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:background="@drawable/rect_round_16"
+                android:backgroundTint="@color/surface_warning"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@+id/textView18">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_22sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="center"
+                    tools:text="Unlock unlimited access to all courses with 2 Expert calls/week" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/expert_call_upgrade"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_22sdp"
+                    android:layout_marginVertical="@dimen/_14sdp"
+                    android:backgroundTint="@color/warning"
+                    android:paddingVertical="@dimen/_8sdp"
+                    android:text="Upgrade for $1999"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                    android:textColor="@color/text_default"
+                    app:cornerRadius="@dimen/_30sdp"
+                    app:rippleColor="@color/pure_white" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view8"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:background="@color/disabled"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/upgrade_ll_lyt" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/appCompatTextView8"
+                style="@style/TextAppearance.JoshTypography.SubHeadingRegular24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/pure_white"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:text="@string/or"
+                android:textColor="@color/text_subdued"
+                app:layout_constraintBottom_toBottomOf="@+id/view8"
+                app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                app:layout_constraintTop_toTopOf="@+id/view8" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/recharge_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                app:cardCornerRadius="@dimen/_16sdp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@+id/view8"
+                app:strokeColor="@color/warning"
+                app:strokeWidth="@dimen/_1sdp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_22sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:gravity="center"
+                        tools:text="Recharge your wallet to talk to \n experts" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_call_with_expert"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/_22sdp"
+                        android:layout_marginVertical="@dimen/_14sdp"
+                        android:backgroundTint="@color/surface_warning"
+                        android:paddingVertical="@dimen/_8sdp"
+                        android:text="Recharge to talk"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                        android:textColor="@color/text_default"
+                        app:cornerRadius="@dimen/_30sdp"
+                        app:icon="@drawable/ic_coin"
+                        app:iconGravity="textEnd"
+                        app:iconPadding="@dimen/_8sdp"
+                        app:iconSize="@dimen/_18sdp"
+                        app:iconTintMode="multiply"
+                        app:rippleColor="@color/pure_white" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_14sdp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextAppearance.JoshTypography.CaptionRegular"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="You have 0 " />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextAppearance.JoshTypography.CaptionRegular"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_coin"
+                            android:text=" in your wallet" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/appCompatTextView9"
+                style="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:text="What you will get in Premium subscription"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/recharge_card" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatTextView9">
+
+                <include
+                    layout="@layout/layout_expert_feature"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <include
+                    layout="@layout/layout_expert_feature"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

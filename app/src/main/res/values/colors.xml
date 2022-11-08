@@ -49,7 +49,7 @@
     <!--    surface colours    -->
     <color name="surface_critical">#FFF5F5</color>
     <color name="surface_success">#F3FFF2</color>
-    <color name="surface_warning">#FEF7D1</color>
+    <color name="surface_warning">#FFFBEA</color>
     <color name="surface_information">#ECF5FE</color>
     <color name="surface_tip">#F9ECBD</color>
     <color name="surface_notification">#292D30</color>
