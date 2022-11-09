@@ -145,6 +145,9 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
                     R.id.transaction_history -> {
                         navController.navigate(R.id.action_wallet_to_transactions)
                     }
+                    R.id.upgrade_expert -> {
+                        navController.navigate(R.id.action_wallet_to_upgrade)
+                    }
                 }
                 return@setOnMenuItemClickListener false
             }

@@ -381,6 +381,9 @@ interface CommonNetworkService {
     @GET("$DIR/micro_payment/get_payment_logs/{mentor}/")
     suspend fun getPaymentTransactions(@Path("mentor") mentorId: String, @Query("page") page: Int): Response<WalletLogResponse>
 
+    @GET("$DIR/micro_payment/get_upgrade_details/")
+    suspend fun getUpgradeDetails(@Query("gaid") gaid: String): Response<ExpertUpgradeDetails>
+
     @GET("$DIR/course/show_popup/")
     suspend fun getCoursePopUpData(
         @Query("course_id") courseId: String,

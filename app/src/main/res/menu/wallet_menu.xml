@@ -6,4 +6,9 @@
         android:actionLayout="@layout/base_toolbar"
         android:title="@string/transaction_history"
         app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/upgrade_expert"
+        android:actionLayout="@layout/base_toolbar"
+        android:title="Upgrade Expert"
+        app:showAsAction="collapseActionView" />
 </menu>

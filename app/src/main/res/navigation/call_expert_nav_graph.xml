@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_wallet_to_transactions"
             app:destination="@+id/transactions"/>
+        <action
+            android:id="@+id/action_wallet_to_upgrade"
+            app:destination="@id/expertCallUpgrade" />
     </fragment>
     <fragment
         android:id="@+id/expertListFragment"
@@ -35,10 +38,12 @@
     <fragment
         android:id="@+id/expertCallUpgrade"
         android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertCallUpgradeFragment"
-        android:label="Expert Call Upgrade"
         tools:layout="@layout/fragment_expert_call_upgrade">
         <action
             android:id="@+id/action_expertCallUpgrade_to_walletFragment"
+            app:destination="@id/walletFragment" />
+        <action
+            android:id="@+id/action_expertCallUpgrade_to_walletFragment2"
             app:destination="@id/walletFragment" />
     </fragment>
     <fragment

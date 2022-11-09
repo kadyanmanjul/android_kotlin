@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
+import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
@@ -27,6 +28,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragm
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.AutoCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
+import com.joshtalks.joshskills.voip.BeepTimer
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.local.AGORA_CALL_ID
 import com.joshtalks.joshskills.voip.data.local.LOCAL_USER_AGORA_ID
@@ -130,7 +132,6 @@ object VoipPref {
             )
         }
 
-
         if (duration.inSeconds() >= 300) {
             MarketingAnalytics.callComplete5Min()
         }
@@ -148,11 +149,8 @@ object VoipPref {
             }
         }
 
-        ExpertListRepo().deductAmountAfterCall(
-            getLastCallDurationInSec().toString(),
-            remoteUserMentorId,
-            callType
-        )
+        // TODO: These logic shouldn't be here
+//        ExpertListRepo().deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
         deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
     }
 
@@ -217,13 +215,19 @@ object VoipPref {
 
 
     private fun startLevelAndInterestForm() {
-        val intent =
-            Intent(ActivityLifecycleCallback.currentActivity, UserInterestActivity::class.java)
+        val intent = Intent(ActivityLifecycleCallback.currentActivity, UserInterestActivity::class.java)
         intent.putExtra("isEditCall", false)
         ActivityLifecycleCallback.currentActivity.startActivity(intent)
     }
 
+    private fun openExpertUpgradeScreen() {
+        val intent = Intent(ActivityLifecycleCallback.currentActivity, CallWithExpertActivity::class.java)
+        intent.putExtra("open_upgrade_page", true)
+        ActivityLifecycleCallback.currentActivity.startActivity(intent)
+    }
+
     private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {
+        BeepTimer.stopBeepSound()
         if (callType == Category.EXPERT.ordinal) {
             setExpertCallDuration(duration)
 
@@ -234,16 +238,17 @@ object VoipPref {
                         map["time_spoken_in_seconds"] = duration
                         map["connected_user_id"] = remoteUserMentorId
                         map["agora_call_id"] = getLastCallId().toString()
-                        val response =
-                            AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                        val response = AppObjectController.commonNetworkService.deductAmountAfterCall(map)
                         when (response.code()) {
                             200 -> {
                                 setExpertCallDuration("")
-                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
+                                SkillsDatastore.updateWalletAmount(response.body()?.amount ?: 0)
+                                SkillsDatastore.updateExpertCredits(response.body()?.credits ?: -1)
+//                                if (response.body()?.credits != -1) {
+                                    openExpertUpgradeScreen()
+//                                }
                             }
-                            406 -> {
-
-                            }
+                            406 -> { }
                         }
                     } catch (ex: Exception) {
                     }

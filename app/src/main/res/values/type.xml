@@ -144,6 +144,7 @@
         <item name="lineHeight">@dimen/_16ssp</item>
         <item name="android:textSize">@dimen/_10ssp</item>
         <item name="android:textColor">@color/text_default</item>
+        <item name="android:letterSpacing">0.018</item>
     </style>
 
     <style name="TextAppearance.JoshTypography.CaptionSemiBold" parent="Base.TextAppearance.AppCompat.Title">
@@ -151,6 +152,7 @@
         <item name="lineHeight">@dimen/_16ssp</item>
         <item name="android:textSize">@dimen/_10ssp</item>
         <item name="android:textColor">@color/text_default</item>
+        <item name="android:letterSpacing">0.018</item>
     </style>
 
     <style name="TextAppearance.JoshTypography.TinyRegular" parent="TextAppearance.MaterialComponents.Caption">

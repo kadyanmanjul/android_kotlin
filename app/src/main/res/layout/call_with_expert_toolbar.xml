@@ -10,16 +10,16 @@
 
         <include layout="@layout/call_ongoing_layout" />
 
-                <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
-                    android:id="@+id/call_bar_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+        <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+            android:id="@+id/call_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/primary_500"
+            android:background="@color/pure_white"
             android:contentInsetStart="0dp"
             android:contentInsetLeft="0dp"
             android:contentInsetEnd="0dp"
@@ -30,12 +30,11 @@
             app:contentInsetLeft="0dp"
             app:contentInsetRight="0dp"
             app:contentInsetStart="0dp"
-            app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+            app:theme="@style/ThemeOverlay.AppCompat.Light">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/primary_500"
                 android:paddingStart="@dimen/_4sdp"
                 android:paddingEnd="@dimen/_4sdp">
 
@@ -57,6 +56,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_arrow_back"
+                    app:tint="@color/icon_default"
                     tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -72,7 +72,7 @@
                     android:gravity="start|center"
                     android:singleLine="true"
                     android:text="@string/call_with_expert"
-                    android:textColor="@color/pure_white"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/iv_earn"
                     app:layout_constraintStart_toEndOf="@+id/iv_back"
@@ -87,7 +87,7 @@
                     android:layout_marginEnd="@dimen/_12sdp"
                     android:drawableStart="@drawable/ic_coin"
                     android:drawablePadding="@dimen/_4sdp"
-                    android:textColor="@color/pure_white"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/text_message_title"

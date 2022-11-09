@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_begin="@dimen/_24sdp" />
+                app:layout_constraintGuide_begin="@dimen/_16sdp" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineEnd"
@@ -56,6 +56,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView18">
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/upgrade_card_text"
                     style="@style/TextAppearance.JoshTypography.BodySemiBold20"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -134,10 +135,10 @@
                         android:layout_marginHorizontal="@dimen/_22sdp"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:gravity="center"
-                        tools:text="Recharge your wallet to talk to \n experts" />
+                        android:text="Recharge your wallet to talk to experts" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_call_with_expert"
+                        android:id="@+id/recharge_to_talk_btn"
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -165,6 +166,7 @@
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/wallet_balance_txt"
                             style="@style/TextAppearance.JoshTypography.CaptionRegular"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -193,6 +195,7 @@
                 app:layout_constraintTop_toBottomOf="@id/recharge_card" />
 
             <LinearLayout
+                android:id="@+id/feature_ll_lyt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_6sdp"

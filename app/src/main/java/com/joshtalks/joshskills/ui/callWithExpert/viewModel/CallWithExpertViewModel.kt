@@ -4,15 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.constants.GET_UPGRADE_DETAILS
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.FirstTimeAmount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class CallWithExpertViewModel : BaseViewModel() {
@@ -92,11 +95,28 @@ class CallWithExpertViewModel : BaseViewModel() {
         }
     }
 
+    fun getExpertUpgradeDetails() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val res = expertListRepo.getUpgradeDetails()
+                if (res.isSuccessful && res.body() != null) {
+                    withContext(Dispatchers.Main) {
+                        message.what = GET_UPGRADE_DETAILS
+                        message.obj = res.body()
+                        singleLiveEvent.value = message
+                    }
+                }
+            } catch (e: Exception) {
+                e.showAppropriateMsg()
+            }
+        }
+    }
+
     fun paymentSuccess(isSuccess: Boolean) {
         _paymentSuccessful.postValue(isSuccess)
     }
 
-    fun syncCallDuration(){
+    fun syncCallDuration() {
         expertListRepo.deductAmountAfterCall()
     }
 
