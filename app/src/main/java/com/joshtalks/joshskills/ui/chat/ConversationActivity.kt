@@ -83,7 +83,6 @@ import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
-import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
@@ -532,18 +531,6 @@ class ConversationActivity :
             ),
             "CONVERSATION_FT_ENDED_BTN"
         )
-    }
-
-    fun openExpertList() {
-        conversationViewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = FT_EXPIRED_PAGE)
-        if (User.getInstance().isVerified) {
-            Intent(this, CallWithExpertActivity::class.java).also {
-                startActivity(it)
-            }
-        } else {
-            navigateToLoginActivity()
-        }
-
     }
 
     private fun navigateToLoginActivity() {
@@ -1331,13 +1318,6 @@ class ConversationActivity :
                         PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
                     }
                 }
-            }
-        }
-        conversationViewModel.isExpertBtnEnabled.observe(this) {
-            if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
-                        PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
-            ) {
-                conversationBinding.btnOpenExpertList.isVisible = true
             }
         }
     }

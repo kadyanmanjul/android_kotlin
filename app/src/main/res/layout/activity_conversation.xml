@@ -696,24 +696,6 @@
                     android:text="Upgrade Now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/text_default" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/btn_open_expert_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center"
-                    android:layout_marginHorizontal="@dimen/_10sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_10sdp"
-                    android:background="@drawable/bg_cta_button"
-                    android:gravity="center"
-                    android:onClick="@{() -> handler.openExpertList()}"
-                    android:padding="@dimen/_10sdp"
-                    android:text="Talk To Expert (₹10/min)"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                    android:textColor="@color/text_default"
-                    android:visibility="gone" />
-
             </LinearLayout>
 
         </FrameLayout>
