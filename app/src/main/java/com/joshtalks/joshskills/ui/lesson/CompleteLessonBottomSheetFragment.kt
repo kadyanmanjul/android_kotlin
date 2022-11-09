@@ -28,7 +28,26 @@ class CompleteLessonBottomSheetFragment(val viewModel: LessonViewModel) : Bottom
             viewModel.saveImpression(Lesson_pop_up_cancelled)
             activity?.finish()
         }
-        //TODO: add text from remote config; refer callinterestfrag; also see how to add defaults
+        binding.txtVBodyGrammar.text = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.LESSON_COMPLETE_GRAMMAR_.plus(
+                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+        )
+        binding.txtVBodyVocab.text = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.LESSON_COMPLETE_VOCAB_.plus(
+                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+        )
+        binding.txtVBodySpeaking.text = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.LESSON_COMPLETE_SPEAKING_.plus(
+                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+        )
+        binding.txtVBodyReading.text = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.LESSON_COMPLETE_READING_.plus(
+                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+        )
+        binding.txtVLessonCompleteHeading.text = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.LESSON_COMPLETE_HEADING_.plus(
+                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+        )
         binding.crdViewReading.setOnClickListener {
             viewModel.saveImpression(Lesson_pop_up_reading_clicked)
             viewModel.lessonCompletePopUpClick.postValue(3)

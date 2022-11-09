@@ -1908,4 +1908,152 @@
         <value>true</value>
     </entry>
 
+    <entry>
+        <key>LESSON_COMPLETE_HEADING_1203</key>
+        <value>কথায় যাচেন, আর ওনেক কিছু আছে শেখর জনো...</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_HEADING_1206</key>
+        <value>ਕਿੱਥੇ ਚੱਲੇ, ਹੋਰ ਵੀ ਬਹੁਤ ਕੁੱਝ ਹੈ ਸਿੱਖਣ ਦੇ ਲਈ...</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_HEADING_1207</key>
+        <value>कुठे चाल्ला आहात, अजून खूप काही आहे शिकण्यासाठी...</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_HEADING_1209</key>
+        <value>എങ്ങോട്ടാ പോകുന്നേ? ഇനിയും കുറേ ഉണ്ട് പഠിക്കാനായി, വരൂ പഠിക്കാം...</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_HEADING_1210</key>
+        <value>எங்க போறீங்க? கற்றுக்கொள்ள இன்னும் நிறைய இருக்கு...</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_HEADING_1211</key>
+        <value>ఎక్కడికి వెళ్తారు, ఇంక చాలా ఉంది నేర్చుకోవడానికి...</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_HEADING_151</key>
+        <value>कहाँ चले, और भी बहुत कुछ है सीखने के लिए</value>
+    </entry>
+
+
+    <entry>
+        <key>LESSON_COMPLETE_SPEAKING_1203</key>
+        <value>english শেখার সবচেয়ে বড় রহস্য হলো নিজের মতো students সঙ্গে ইংরেজিতে কথা বলার practice</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_SPEAKING_1206</key>
+        <value>English ਸਿੱਖਣ ਦਾ ਸਬ ਤੋਂ ਵੱਡਾ ਰਾਜ਼, ਆਪਣੇ ਵਰਗੇ students ਦੇ ਨਾਲ English ਵਿੱਚ ਗੱਲ ਕਰਨ ਦੀ practice ਹੈ।</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_SPEAKING_1207</key>
+        <value>English शिकण्याचं मोठं रहस्य, आपल्या सारख्या लोकांसोबत English बोलण्याची प्रॅक्टिस करा </value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_SPEAKING_1209</key>
+        <value>English പഠിക്കാൻ ഉള്ള ഏറ്റവും വലിയ വഴി, നിങ്ങളുടെ പോലുള്ള students ന്റെ ഒപ്പം English സംസാരിച്ചു practice ചെയ്യൂ .</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_SPEAKING_1210</key>
+        <value>English கற்க சிறந்த வழி உங்களைப் போன்ற studentsகளுடன் Englishல பேசி practice பண்றது தான்.</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_SPEAKING_1211</key>
+        <value>English నేర్చుకోడంలో అతి పెద్ద రహస్యం, మీ లాంటి students తో కలిసి English లో మాట్లాడి ప్రాక్టీస్ చేయడం</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_SPEAKING_151</key>
+        <value>English  सीखने का सबसे बड़ा राज़ , अपने जैसे students के साथ english में बात करने की practice है।</value>
+    </entry>
+
+
+    <entry>
+        <key>LESSON_COMPLETE_READING_1203</key>
+        <value>শুনে, বুঝে, বলে পড়ুন english এর প্রত্যেক sentence</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_READING_1206</key>
+        <value>ਕਸੁਨ ਕੇ, ਸੱਮਝ ਕੇ, ਬੋਲ ਕੇ ਪੜ੍ਹੋ English ਦਾ ਹਰ sentence.</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_READING_1207</key>
+        <value>ऐकून, समजून व बोलून शिका English च प्रत्येक sentence</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_READING_1209</key>
+        <value>കേട്ടു പഠിക്കാം, മനസിലാക്കി പഠികGRAMMARറഞ്ഞു പഠിക്കാം, English-ന്റെ ഓരോ sentences-കളും</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_READING_1210</key>
+        <value>English ன் ஒவ்வொரு sentenceம் கேட்டு, புரிந்து, பேசுவதன் மூலம் படிக்கவும்.</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_READING_1211</key>
+        <value>విని, అర్ధం చేసుకుని, మాట్లాడి చదవండి English యొక్క ప్రతి sentence</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_READING_151</key>
+        <value>सुन कर , समझ कर , बोल कर पढ़े English का हर एक सेंटेंस। </value>
+    </entry>
+
+
+    <entry>
+        <key>LESSON_COMPLETE_GRAMMAR_1203</key>
+        <value>ব্যাকরণের নিয়ম বুঝুন, প্রশ্ন উত্তরের সাহায্যে!</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_GRAMMAR_1206</key>
+        <value>Grammar ਦੇ rules ਸਮਝਦੇ ਹਾਂ, question answers ਦੀ help ਨਾਲ!</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_GRAMMAR_1207</key>
+        <value>Grammar चे नियम समजूया question answers च्या मदतीने </value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_GRAMMAR_1209</key>
+        <value>വരൂ Grammar rules മനസിലാക്കാം, question answers ന്റെ Help ലൂടെ</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_GRAMMAR_1210</key>
+        <value>வாங்க Grammar Rulesயை படிக்கலாம் Question &amp; Answers Help ஓட.</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_GRAMMAR_1211</key>
+        <value>Grammar యొక్క rules అర్ధం చేసుకోండి question answers సహాయం తో</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_GRAMMAR_151</key>
+        <value>Grammar के rules सीखते हैं , question answers की मदत से ।</value>
+    </entry>
+
+
+    <entry>
+        <key>LESSON_COMPLETE_VOCAB_1203</key>
+        <value>Sentence এ কথা বলে নতুন words, তাদের pronunciation শিখুন</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_VOCAB_1206</key>
+        <value>New words, ਉਹਨਾਂ ਦੀ pronunciation, ਉਹਨਾਂ ਨੂੰ sentence ਵਿੱਚ ਬੋਲਕੇ ਸਿੱਖੋ।</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_VOCAB_1207</key>
+        <value>नवीन शब्द त्यांचे pronunciations, त्यांना वाक्यात वापरून शिका</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_VOCAB_1209</key>
+        <value>New Words , അതിന്റെ pronunciation, എല്ലാം sentence ൽ പറഞ്ഞു പഠിക്കൂ</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_VOCAB_1210</key>
+        <value>New Words, அதன் pronunciation, அனைத்தையும் ஒரு sentenceல் கற்றுக்கொள்ளுங்கள்</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_VOCAB_1211</key>
+        <value>కొత్త పదాలు వాటి pronunciation ని sentence లో మాట్లాడి నేర్చుకోండి </value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_VOCAB_151</key>
+        <value>नए words , उनकी pronunciation , उनको sentence में बोलकर सीखें।</value>
+    </entry>
 </defaults>
