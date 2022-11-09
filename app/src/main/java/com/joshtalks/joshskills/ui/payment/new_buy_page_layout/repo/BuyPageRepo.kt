@@ -28,4 +28,8 @@ class BuyPageRepo {
     suspend fun saveBuyPageImpression(map: Map<String, String>) =
         AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(map)
 
+    suspend fun postSupportReason(map: HashMap<String, String>) =
+        AppObjectController.commonNetworkService.saveSalesSupportReason(map)
+
+    suspend fun getReasonList() = AppObjectController.commonNetworkService.getSalesSupportReason()
 }

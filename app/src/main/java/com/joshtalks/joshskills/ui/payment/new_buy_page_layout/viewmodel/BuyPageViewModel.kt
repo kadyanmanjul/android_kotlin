@@ -378,4 +378,41 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
+    fun setSupportReason(map : HashMap<String,String>){
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                val resp = buyPageRepo.postSupportReason(map)
+                if (resp.code() == 500)
+                    showToast("Already Submitted")
+                else {
+                    if (resp.isSuccessful) {
+                        showToast("Details submitted")
+                        viewModelScope.launch(Dispatchers.Main) {
+                            message.what = REASON_SUBMITTED_BACK
+                            singleLiveEvent.value = message
+                        }
+                    }
+                }
+            }catch (ex:Exception){
+
+                Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
+    fun getSupportReason(){
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                val resp =  buyPageRepo.getReasonList()
+                viewModelScope.launch(Dispatchers.Main) {
+                    message.what = SUPPORT_REASON_LIST
+                    message.obj = resp.body()?.reasonsList
+                    singleLiveEvent.value = message
+                }
+            }catch (ex:Exception){
+                Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
 }

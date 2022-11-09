@@ -412,4 +412,11 @@ interface CommonNetworkService {
 
     @GET("$DIR/micro_payment/expert_call_status/")
     suspend fun getButtonExpertVisibility(): Response<ButtonVisibilityResponse>
+
+    @POST("$DIR/support/sales_support/")
+    suspend fun saveSalesSupportReason(@Body params: Map<String, String>) : Response<Any>
+
+    @GET("$DIR/support/sales_support/")
+    suspend fun getSalesSupportReason() : Response<SalesReasonList>
+
 }

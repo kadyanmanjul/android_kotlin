@@ -686,6 +686,22 @@
         <item name="android:stateListAnimator">@null</item>
     </style>
 
+    <style name="Primary_Button_Filled_Disabled">
+        <item name="android:backgroundTint">@color/disabled</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingTop">@dimen/_10sdp</item>
+        <item name="android:paddingBottom">@dimen/_10sdp</item>
+        <item name="android:textAppearance">@style/TextAppearance.JoshTypography.HeadingSemiBold
+        </item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">@dimen/_32sdp</item>
+        <item name="rippleColor">@color/white</item>
+        <item name="elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
     <style name="Option">
         <item name="android:gravity">start</item>
         <item name="android:imeOptions">actionNext</item>

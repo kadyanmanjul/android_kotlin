@@ -60,6 +60,7 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment
 import com.joshtalks.joshskills.ui.payment.PaymentPendingFragment
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.BookACallFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
@@ -115,6 +116,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         ViewModelProvider(this)[BuyPageViewModel::class.java]
     }
     private val backPressMutex = Mutex(false)
+    var isCallUsButtonActive = 0
 
     private val paymentManager: PaymentManager by lazy {
         PaymentManager(
@@ -241,7 +243,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 }
                 CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
-                MAKE_PHONE_CALL -> makePhoneCall()
+                MAKE_PHONE_CALL -> openSalesReasonScreenOrMakeCall()
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
                 COUPON_APPLIED -> couponApplied(it.obj as Coupon,it.arg1)
@@ -339,12 +341,26 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         }
     }
 
-    private fun makePhoneCall() {
+    private fun openSalesReasonScreenOrMakeCall() {
+        binding.videoPlayer.onPause()
         viewModel.saveImpressionForBuyPageLayout(BUY_PAGE_CALL_CLICKED)
-        Utils.call(
-            this@BuyPageActivity,
-            AppObjectController.getFirebaseRemoteConfig().getString(BUY_PAGE_SUPPORT_PHONE_NUMBER)
-        )
+        if (isCallUsButtonActive == 1) {
+            Utils.call(
+                this@BuyPageActivity,
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(BUY_PAGE_SUPPORT_PHONE_NUMBER)
+            )
+        } else if (isCallUsButtonActive == 2) {
+            openReasonScreen()
+        }
+    }
+
+    fun openReasonScreen(){
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.buy_page_parent_container, BookACallFragment(), "BookACallFragment")
+            addToBackStack("BookACallFragment")
+        }
     }
 
     private fun updateListItem(coupon: Coupon) {
@@ -383,6 +399,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun dynamicCardCreation(buyCourseFeatureModel: BuyCourseFeatureModel) {
+        isCallUsButtonActive = buyCourseFeatureModel.isCallUsActive ?: 0
         binding.shimmer1.visibility = View.GONE
         binding.shimmer1.stopShimmer()
         binding.shimmer1Layout.visibility = View.VISIBLE
