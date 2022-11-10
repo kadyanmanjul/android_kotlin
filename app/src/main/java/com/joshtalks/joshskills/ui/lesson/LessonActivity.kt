@@ -199,12 +199,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        try {
-            if (getVoipState() == State.IDLE)
-                viewModel.getButtonVisibility()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity

@@ -37,7 +37,7 @@
                 android:drawablePadding="@dimen/_6sdp"
                 android:gravity="start|center"
                 android:text="@string/today_practise"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
                 android:textColor="@color/text_default"
                 app:drawableStartCompat="@drawable/ic_check_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -186,7 +186,7 @@
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:gravity="center"
                     android:text="@string/how_to_pronounce"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular" />
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -232,8 +232,8 @@
                 android:layout_marginTop="@dimen/_16sdp"
                 android:gravity="start|center"
                 android:text="This is the description of the question"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                android:textColor="@color/text_default"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
+                android:textColor="@color/text_subdued"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -241,10 +241,10 @@
                 android:id="@+id/practise_input_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_20sdp"
                 android:gravity="start|center"
                 android:text="@string/your_answer"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                 android:textColor="@color/text_default"
                 android:visibility="visible" />
 
@@ -404,7 +404,7 @@
                         android:paddingTop="@dimen/_8sdp"
                         android:paddingEnd="@dimen/_16sdp"
                         android:paddingBottom="@dimen/_8sdp"
-                        android:textColor="@color/pure_white"
+                        android:textColor="@color/text_default"
                         android:textSize="@dimen/font_11_5" />
 
                 </FrameLayout>
@@ -417,7 +417,7 @@
                     android:gravity="center"
                     android:paddingBottom="@dimen/_4sdp"
                     android:text="@string/hold_to_record_msz"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                     android:textColor="@color/text_default"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -521,25 +521,19 @@
 
             </LinearLayout>
 
-            <com.google.android.material.textview.MaterialTextView
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/submit_answer_btn"
-                android:layout_width="wrap_content"
+                style="@style/Secondary_Button_Filled_Disabled"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_8sdp"
-                android:background="@drawable/round_rectangle"
-                android:backgroundTint="@color/seek_bar_background"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:paddingStart="@dimen/_24sdp"
-                android:paddingTop="@dimen/_12sdp"
-                android:paddingEnd="@dimen/_24sdp"
-                android:paddingBottom="@dimen/_12sdp"
                 android:text="@string/submit"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/pure_white"
-                app:rippleColor="@color/pure_white" />
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:visibility="visible"/>
 
         </LinearLayout>
 

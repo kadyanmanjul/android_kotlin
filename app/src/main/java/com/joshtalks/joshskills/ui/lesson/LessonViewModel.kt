@@ -101,7 +101,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
-    var isInternetSpeedGood = ObservableInt(2)
     var isUserBlock: ObservableField<BlockStatusModel> = ObservableField<BlockStatusModel>()
     var userRating = ObservableField<UserRating>()
     val blockLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -113,6 +112,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val outputFile: MutableLiveData<String> = MutableLiveData()
     val coursePopupData: MutableLiveData<PurchaseDataResponse?> = MutableLiveData()
     val callCountLiveData: MutableLiveData<Int?> = MutableLiveData(null)
+    val isNewStudentActive = ObservableField(false)
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)
@@ -953,28 +953,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 }
             })
             .build()
-    }
-
-    fun getButtonVisibility() {
-        if (PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS) == -1) {
-            isInternetSpeedGood.set(2)
-            return
-        }
-        if (isInternetSpeedGood.get() != 0)
-            isInternetSpeedGood.set(0)
-
-        viewModelScope.launch(Dispatchers.IO) {
-            if (ConnectionDetails.getInternetSpeed() != Speed.LOW) {
-                isInternetSpeedGood.set(2)
-            } else {
-                isInternetSpeedGood.set(1)
-
-            }
-        }
-    }
-
-    fun recheckSpeed(v: View) {
-        getButtonVisibility()
     }
 
     fun getRating() {

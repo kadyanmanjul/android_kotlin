@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.lesson.vocabulary
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +32,6 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
-import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken

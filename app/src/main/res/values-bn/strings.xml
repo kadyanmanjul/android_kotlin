@@ -71,7 +71,7 @@
     <string name="improve_answer">উত্তর টি কে উন্নত করুন </string>
     <string name="today_practise">Today\'s Practice</string>
 
-    <string name="hold_to_record_msz">Press and hold to record</string>
+    <string name="hold_to_record_msz">Press করে hold করুন উত্তর record করার জন্য।</string>
     <string name="upload_file_msz">একটি ফাইল আপলোড করুন </string>
     <string name="your_answer">আপনার রেকর্ডিং</string>
     <string name="record_your_answer">আপনার উত্তর রেকর্ড করুন</string>

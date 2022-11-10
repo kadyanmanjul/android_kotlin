@@ -30,9 +30,11 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.get
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -558,14 +560,18 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun hidePracticeInputLayout() {
-        binding.practiseInputHeader.visibility = GONE
-        binding.practiseInputLabel.visibility = GONE
+//        binding.practiseInputHeader.visibility = GONE
+//        binding.practiseInputLabel.visibility = GONE
+//        binding.videoInfo.isVisible = false
         binding.practiseInputLayout.visibility = GONE
     }
 
     fun showPracticeInputLayout() {
-        binding.practiseInputHeader.visibility = VISIBLE
-        binding.practiseInputLabel.visibility = VISIBLE
+//        binding.practiseInputHeader.visibility = VISIBLE
+//        binding.practiseInputLabel.visibility = VISIBLE
+
+//        binding.videoInfo.isVisible = true
+//        binding.videoInfo.findViewById<AppCompatTextView>(R.id.info_text_subheading).text = requireActivity().getString(R.string.info_text)
         binding.practiseInputLayout.visibility = VISIBLE
     }
 
@@ -785,9 +791,14 @@ class ReadingFragmentWithoutFeedback :
             binding.recordingViewFrame.visibility = VISIBLE
             binding.recordTransparentContainer.visibility = VISIBLE
             binding.audioPractiseHint.visibility = VISIBLE
-            binding.practiseInputHeader.text =
-                AppObjectController.getFirebaseRemoteConfig()
+            val heading = binding.practiseInputLayout.findViewById<AppCompatTextView>(R.id.info_text_heading)
+            val subHeading = binding.practiseInputLayout.findViewById<AppCompatTextView>(R.id.info_text_subheading)
+
+            heading.isVisible = true
+            heading.text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
+            subHeading.text = requireActivity().getString(R.string.attempt_reading_practice)
+
             binding.recordingView.setImageResource(R.drawable.recv_ic_mic_white)
             audioRecordTouchListener()
             binding.audioPractiseHint.visibility = VISIBLE
@@ -935,7 +946,9 @@ class ReadingFragmentWithoutFeedback :
 
     private fun fetchVideo() {
         if (video.isNullOrEmpty().not()) {
-            binding.info.visibility = VISIBLE
+//            binding.videoInfo.visibility = VISIBLE
+            binding.videoInfo.isVisible = true
+            binding.videoInfo.findViewById<AppCompatTextView>(R.id.info_text_subheading).text = requireActivity().getString(R.string.info_text)
             scope.launch {
                 AppObjectController.appDatabase.chatDao().insertReadingVideoDownloadedPath(
                     ReadingVideo(currentLessonQuestion!!.questionId, isDownloaded = false)

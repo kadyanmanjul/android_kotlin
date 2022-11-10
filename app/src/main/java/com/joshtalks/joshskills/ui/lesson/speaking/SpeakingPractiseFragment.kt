@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -250,8 +251,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 R.color.critical
                             )
                         )
-                        /*binding.btnStartTrialText.isEnabled = false
-                        binding.btnStartTrialText.alpha = 0.2F*/
                         binding.blockContainer.visibility = GONE
                     } else if (it <= 3) {
                         binding.blockContainer.visibility = GONE
@@ -303,7 +302,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.courseId.observe(viewLifecycleOwner) {
             courseId = it
         }
-        binding.btnStartTrialText.setOnSingleClickListener {
+        binding.btnPeerToPeerCall.setOnSingleClickListener {
             if (!PrefManager.getBoolValue(IS_FIRST_TIME_CALL_INITIATED) && PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                 MarketingAnalytics.callInitiatedForFirstTime()
                 PrefManager.put(IS_FIRST_TIME_CALL_INITIATED, true)
@@ -400,6 +399,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
         viewModel.speakingTopicLiveData.observe(viewLifecycleOwner) { response ->
             binding.progressView.visibility = GONE
+            viewModel.isNewStudentActive.set(response?.isNewStudentCallsActivated)
             if (response == null) {
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             } else {
@@ -446,8 +446,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                                 PrefManager.put(IS_FREE_TRIAL_CALL_BLOCKED, value = true)
                                 binding.containerReachedFtLimit.visibility = VISIBLE
-                                binding.btnStartTrialText.isEnabled = false
-                                binding.btnStartTrialText.alpha = 0.2F
+                                binding.btnPeerToPeerCall.isEnabled = false
+                                binding.btnPeerToPeerCall.alpha = 0.2F
                                 binding.infoContainer.visibility = GONE
                                 isBlockedFT = true
                             }
@@ -486,13 +486,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true
                         )
                         binding.tvPractiseTime.text =
-                            response.alreadyTalked.toString().plus(" / ")
+                            response.alreadyTalked.toString().plus("/")
                                 .plus(response.duration.toString())
                                 .plus("\n Minutes")
                         binding.progressBar.progress = response.alreadyTalked.toFloat()
                         binding.progressBar.progressMax = response.duration.toFloat()
 
-                        binding.textView.text = if (response.duration >= 10) {
+                        binding.infoContainer.findViewById<AppCompatTextView>(R.id.info_text_subheading).text = if (response.duration >= 10) {
                             getString(R.string.pp_messages, response.duration.toString())
                         } else {
                             getString(R.string.pp_message, response.duration.toString())
@@ -513,24 +513,24 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         }
 
                         binding.ftuTwentyMinStatus.visibility = VISIBLE
-                        binding.twentyMinFtuText.visibility = VISIBLE
-                        binding.textView.visibility = GONE
+//                        binding.twentyMinFtuText.visibility = VISIBLE
+//                        binding.textView.visibility = GONE
                         binding.tvPractiseTime.visibility = View.INVISIBLE
-                        binding.imageView.visibility = GONE
+                        //binding.imageView.visibility = GONE
                         binding.infoContainer.backgroundTintList = null
                         postSpeakingScreenSeenGoal()
                         when (response.callDurationStatus) {
                             NOT_ATTEMPTED -> {
                                 binding.ftuTwentyMinStatus.pauseAnimation()
-                                binding.twentyMinFtuText.text =
+                                //binding.twentyMinFtuText.text =
                                     getString(R.string.twenty_min_call_target)
                                 showTwentyMinAnimation("lottie/not_attempted.json")
                                 binding.ftuTwentyMinStatus.setMinAndMaxProgress(0.0f, 0.7f)
                             }
                             COMPLETED -> {
                                 binding.ftuTwentyMinStatus.pauseAnimation()
-                                binding.twentyMinFtuText.text =
-                                    getString(R.string.twenty_min_call_completed)
+                             //   binding.twentyMinFtuText.text =
+                                  //  getString(R.string.twenty_min_call_completed)
                                 showTwentyMinAnimation("lottie/twenty_min_call_completed.json")
                                 if (PrefManager.getBoolValue(TWENTY_MIN_CALL_GOAL_POSTED)
                                         .not() && PrefManager.getBoolValue(CALL_BTN_CLICKED)
@@ -544,8 +544,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             }
                             ATTEMPTED -> {
                                 binding.ftuTwentyMinStatus.pauseAnimation()
-                                binding.twentyMinFtuText.text =
-                                    getString(R.string.twenty_min_call_incomplete)
+//                                binding.twentyMinFtuText.text =
+//                                    getString(R.string.twenty_min_call_incomplete)
                                 showTwentyMinAnimation("lottie/twenty_call_min_missed.json")
                                 if (PrefManager.getBoolValue(
                                         TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED
@@ -685,12 +685,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
 
-        viewModel.isExpertBtnEnabled.observe(viewLifecycleOwner) {
-            if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
-                        PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
-            ) {
-                binding.btnCallWithExpert.isVisible = true
+        if (viewModel.blockLiveData.value == false){
+            viewModel.isExpertBtnEnabled.observe(viewLifecycleOwner) {
+                if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
+                            PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
+                ) {
+                        binding.btnCallWithExpert.isVisible = true
+                }
             }
+        }else{
+            binding.btnCallWithExpert.isVisible = false
         }
         initDemoViews(lessonNo)
     }
@@ -784,8 +788,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         } else {
             binding.btnCallDemo.visibility = View.GONE
         }
-        binding.btnGroupCall.isVisible =
-            PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+
+        if (viewModel.blockLiveData.value == false) {
+            binding.btnGroupCall.isVisible =
+                PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(
+                    CURRENT_COURSE_ID
+                ) == DEFAULT_COURSE_ID
+        }else{
+            binding.btnGroupCall.isVisible = false
+        }
 
         binding.btnFavorite.isVisible =
             PrefManager.getBoolValue(IS_COURSE_BOUGHT)

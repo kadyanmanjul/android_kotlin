@@ -38,7 +38,7 @@
                 android:drawablePadding="@dimen/_6sdp"
                 android:gravity="start|center"
                 android:text="@string/today_practise"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                 android:textColor="@color/text_default"
                 app:drawableStartCompat="@drawable/ic_check_grey"
                 app:layout_constraintEnd_toStartOf="@+id/expand_iv"
@@ -58,6 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone"
+                android:layout_marginTop="@dimen/_8sdp"
                 app:layout_constraintTop_toBottomOf="@+id/practice_title_tv"
                 tools:visibility="visible">
 
@@ -68,7 +69,7 @@
                     android:background="@color/pure_white"
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_8sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/question_navigate_rl"
                     tools:text="Ques. 1/5 - What is the correct translation of “Hum sab apni english sudharna chahte hai”?" />
@@ -85,11 +86,10 @@
 
                     <androidx.appcompat.widget.AppCompatRadioButton
                         android:id="@+id/option_1"
+                        style="@style/JoshRadioButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="@dimen/_4sdp"
-                        android:button="@drawable/radio_button_inset"
-                        android:buttonTint="@color/primary_500"
                         android:gravity="center_vertical"
                         android:minHeight="0dp"
                         android:paddingVertical="@dimen/_6sdp"
@@ -102,12 +102,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="@dimen/_4sdp"
-                        android:button="@drawable/radio_button_inset"
-                        android:buttonTint="@color/primary_500"
+                        style="@style/JoshRadioButton"
                         android:minHeight="0dp"
                         android:paddingVertical="@dimen/_6sdp"
                         android:paddingEnd="@dimen/_8sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
                         tools:text="We all will want to improve our english" />
 
                     <androidx.appcompat.widget.AppCompatRadioButton
@@ -115,73 +114,63 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="@dimen/_4sdp"
-                        android:button="@drawable/radio_button_inset"
-                        android:buttonTint="@color/primary_500"
+                        style="@style/JoshRadioButton"
                         android:minHeight="0dp"
                         android:paddingVertical="@dimen/_6sdp"
                         android:paddingEnd="@dimen/_8sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
                         tools:text="Option third" />
 
                     <androidx.appcompat.widget.AppCompatRadioButton
                         android:id="@+id/option_4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        style="@style/JoshRadioButton"
                         android:layout_marginVertical="@dimen/_4sdp"
-                        android:button="@drawable/radio_button_inset"
-                        android:buttonTint="@color/primary_500"
                         android:minHeight="0dp"
                         android:paddingVertical="@dimen/_6sdp"
                         android:paddingEnd="@dimen/_8sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
                         tools:text="Option fourth" />
                 </RadioGroup>
 
-                <com.google.android.material.textview.MaterialTextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/submit_answer_btn"
+                    style="@style/Secondary_Button_Filled"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:layout_marginVertical="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:background="@drawable/rounded_state_button_bg"
-                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:padding="@dimen/_8sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="@string/submit_answer"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/pure_white"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/quiz_radio_group"
-                    app:rippleColor="@color/pure_white"
                     tools:visibility="visible" />
 
 
-                <com.google.android.material.textview.MaterialTextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/continue_btn"
+                    style="@style/Secondary_Button_Filled"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:layout_marginVertical="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:background="@drawable/rounded_state_button_bg"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center"
-                    android:padding="@dimen/_8sdp"
                     android:text="@string/continue_label"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/pure_white"
                     android:visibility="gone"
+                    android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/quiz_radio_group"
-                    app:rippleColor="@color/pure_white"
                     tools:visibility="visible" />
 
                 <androidx.constraintlayout.widget.Barrier
@@ -191,28 +180,24 @@
                     app:barrierDirection="bottom"
                     app:constraint_referenced_ids="continue_btn,submit_answer_btn" />
 
-                <com.google.android.material.textview.MaterialTextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/show_explanation_btn"
+                    style="@style/Secondary_Button_Filled_Disabled"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:layout_marginVertical="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:background="@drawable/rounded_state_new_button_bg"
                     android:enabled="true"
-                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:padding="@dimen/_8sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="@string/show_explanation"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                    android:textColor="@color/text_default"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/barrier2"
-                    app:rippleColor="@color/pure_white"
                     tools:visibility="visible" />
 
                 <com.google.android.material.textview.MaterialTextView

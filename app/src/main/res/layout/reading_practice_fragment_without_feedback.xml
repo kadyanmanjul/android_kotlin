@@ -16,7 +16,7 @@
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f4f4f4"
+        android:background="@color/white"
         tools:context=".ui.practise.PractiseSubmitActivity">
 
         <FrameLayout
@@ -43,52 +43,20 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.card.MaterialCardView
+                <include
                     android:id="@+id/practise_input_layout"
-                    style="@style/Widget.MaterialComponents.CardView"
-                    android:layout_width="match_parent"
+                    layout="@layout/information_layout"
+                    android:layout_width="0dp"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginEnd="@dimen/_16sdp"
-                    android:visibility="gone"
-                    app:contentPaddingBottom="@dimen/_4sdp"
-                    app:contentPaddingLeft="@dimen/_8sdp"
-                    app:contentPaddingRight="@dimen/_10sdp"
-                    app:contentPaddingTop="@dimen/_8sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    card_view:cardCornerRadius="@dimen/_8sdp"
-                    card_view:cardElevation="2dp"
-                    card_view:cardUseCompatPadding="false"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:visibility="gone"
                     tools:visibility="visible">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/practise_input_header"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="start|center"
-                            android:text="@string/please_record_answer"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                            android:textColor="@color/text_default" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/practise_input_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_4sdp"
-                            android:gravity="start|center"
-                            android:text="@string/attempt_reading_practice"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                            android:textColor="@color/disabled" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </include>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/audio_view_container"
@@ -193,7 +161,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/audio_view_container"
-                    app:layout_constraintBottom_toTopOf="@+id/info"
+                    app:layout_constraintBottom_toTopOf="@+id/video_info"
                     card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="2dp"
                     card_view:cardUseCompatPadding="false">
@@ -294,9 +262,7 @@
                             android:gravity="center"
                             android:padding="@dimen/_4sdp"
                             android:text="@string/hold_to_record_msz"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/text_default"
-                            android:textSize="@dimen/_10ssp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                             android:visibility="gone"
                             app:contentPadding="@dimen/_10sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -318,7 +284,7 @@
                             android:drawableTint="@color/critical"
                             android:gravity="top|center"
                             android:padding="@dimen/_5sdp"
-                            android:textColor="#515151"
+                            android:textColor="@color/text_default"
                             android:textSize="@dimen/font_11_5"
                             android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -432,49 +398,18 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/info"
+                <include
+                    android:id="@+id/video_info"
+                    layout="@layout/information_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:background="@drawable/rect_with_bound"
-                    android:backgroundTint="#ECF4FD"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:elevation="2dp"
-                    android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/practise_info_layout"
-                    app:layout_constraintBottom_toTopOf="@+id/practise_submit_layout">
-
-                    <ImageView
-                        android:id="@+id/image"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:layout_marginHorizontal="@dimen/_12sdp"
-                        android:src="@drawable/ic_info_i"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.5" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/info_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_8sdp"
-                        android:layout_marginStart="@dimen/_8sdp"
-                        android:layout_marginEnd="@dimen/_1sdp"
-                        android:minLines="1"
-                        android:text="@string/info_text"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                        android:textColor="@color/text_default"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/image"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    app:layout_constraintBottom_toTopOf="@+id/practise_submit_layout"
+                    android:visibility="visible"
+                    tools:visibility="visible" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/practise_text_info_layout"
@@ -488,7 +423,7 @@
                     app:contentPadding="@dimen/_10sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/info"
+                    app:layout_constraintTop_toBottomOf="@id/video_info"
                     card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
@@ -522,7 +457,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/info"
+                    app:layout_constraintTop_toBottomOf="@id/video_info"
                     card_view:cardCornerRadius="@dimen/_8sdp"
                     android:elevation="2dp"
                     card_view:cardUseCompatPadding="false"
@@ -539,7 +474,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="start|center"
                             android:text="@string/your_answer"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                             android:textColor="@color/text_default"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -775,64 +710,55 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.textview.MaterialTextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/submit_answer_btn"
-                    android:layout_width="wrap_content"
+                    style="@style/Secondary_Button_Filled_Disabled"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:layout_marginVertical="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:background="@drawable/rounded_state_button_bg"
-                    android:backgroundTint="@color/seek_bar_background"
-                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:onClick="@{()->handler.submitPractise()}"
                     android:paddingVertical="@dimen/_8sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_24sdp"
                     android:text="@string/submit"
-                    android:textAllCaps="false"
-                    android:elevation="2dp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/pure_white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/feedback_layout"
-                    app:rippleColor="@color/pure_white" />
+                    app:layout_constraintTop_toBottomOf="@id/feedback_layout" />
 
-                <com.google.android.material.textview.MaterialTextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/improve_answer_btn"
-                    android:layout_width="wrap_content"
+                    style="@style/Secondary_Button_Filled"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:layout_marginVertical="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:background="@drawable/rounded_state_button_bg"
-                    android:backgroundTint="@color/primary_500"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:onClick="@{()->handler.improvePractice()}"
                     android:paddingVertical="@dimen/_8sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_24sdp"
                     android:text="@string/improve_answer"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/pure_white"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/submit_answer_btn"
-                    app:rippleColor="@color/pure_white" />
+                    app:layout_constraintTop_toBottomOf="@id/submit_answer_btn" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_whatsapp"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_40sdp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_23sdp"
                     android:layout_marginVertical="@dimen/_8sdp"
@@ -851,7 +777,7 @@
                     app:iconSize="@dimen/_16sdp"
                     android:backgroundTint="#13990A"
                     android:elevation="2dp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                     android:textColor="@color/pure_white"
                     app:iconGravity="textStart"
                     app:iconPadding="@dimen/_10sdp"
@@ -864,30 +790,27 @@
                     app:rippleColor="@color/pure_white" />
 
 
-                <com.google.android.material.textview.MaterialTextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/continue_btn"
+                    style="@style/Secondary_Button_Filled"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_40sdp"
-                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_23sdp"
                     android:layout_marginVertical="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:background="@drawable/rounded_state_button_bg"
-                    android:foreground="?android:attr/selectableItemBackground"
+                    android:layout_gravity="center"
                     android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:onClick="@{()->handler.onReadingContinueClick()}"
                     android:padding="@dimen/_8sdp"
                     android:text="@string/continue_label"
-                    android:textAllCaps="false"
                     android:elevation="2dp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/pure_white"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/btn_whatsapp"
-                    app:layout_goneMarginBottom="@dimen/_8sdp"
-                    app:rippleColor="@color/pure_white" />
+                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -1009,45 +932,5 @@
         </FrameLayout>
 
     </ScrollView>
-
-    <!--<androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <androidx.cardview.widget.CardView
-            android:id="@+id/tv_record"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="@dimen/_4sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <TextView
-                android:padding="@dimen/_4sdp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#88000000"
-                android:layout_alignParentEnd="true"
-                android:gravity="center"
-                android:text="Press to record, release to save"
-                android:textColor="#ffffff"
-                tools:visibility="visible" />
-
-        </androidx.cardview.widget.CardView>
-
-        <ImageView
-            android:id="@+id/iv_triangle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/tv_record"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/traingal_down"
-            app:layout_constraintEnd_toEndOf="@+id/tv_record"
-            app:layout_constraintHorizontal_bias="0.9"
-            app:layout_constraintStart_toStartOf="@+id/tv_record"
-            app:layout_constraintTop_toBottomOf="@+id/tv_record" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>-->
-
 </layout>
 

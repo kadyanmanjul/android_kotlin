@@ -114,7 +114,7 @@
     <!-- Help Screen  -->
     <string name="today_practise">Today\'s Practice</string>
 
-    <string name="hold_to_record_msz">Press and hold to record</string>
+    <string name="hold_to_record_msz">Press and hold to record an answer</string>
     <string name="upload_file_msz">Upload a file</string>
     <string name="your_answer">Your Recording</string>
     <string name="your_feedback">Your Feedback</string>
@@ -443,7 +443,7 @@
     <string name="call_back" translatable="false">CALL BACK</string>
     <string name="finding_practise_partner" translatable="false">Finding a Practice Partner</string>
     <string name="searching_info_text" translatable="false">1. Make sure you do longer calls, English bolne se aati hai. \n2. Strict action will be taken against Inappropriate behavior. \n3. Frequent short calls may lead to calling suspension.</string>
-    <string name="speak_practise_title" translatable="false">Welcome to \n Practice with Partner</string>
+    <string name="speak_practise_title" translatable="false">Welcome to practice with \n partner</string>
     <string name="today_topic" translatable="false">Today\'s Topic</string>
     <string name="call_practice_partner" translatable="false">Call Practice Partner</string>
     <string name="pp_message" translatable="false">In this practice you have to speak to a practice partner for %s minute</string>
@@ -555,6 +555,7 @@
     <string name="mute" translatable="false">Mute</string>
     <string name="speaker" translatable="false">Speaker</string>
     <string name="call_favorite_practice_partner" translatable="false">Call Favorite Practice Partner</string>
+    <string name="call_from_group" translatable="false">Call Practice Partner from group</string>
     <string name="student" translatable="false">Student</string>
     <string name="call_engage_record_message">Can\'t record practice while on a call</string>
     <string name="call_engage_initiate_call_message">Can\'t initiate a new call while already on a call</string>
