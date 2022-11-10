@@ -13,6 +13,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
+import com.joshtalks.joshskills.constants.EXPERT_UPGRADE_CLICK
 import com.joshtalks.joshskills.constants.PAYMENT_FAILED
 import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
@@ -82,6 +83,10 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
                     navController.navigateUp()
                     navController.navigate(R.id.paymentPendingFragment)
                 }
+                EXPERT_UPGRADE_CLICK -> startPaymentForUpgrade(
+                    amount = it.arg1,
+                    testId = it.arg2
+                )
             }
         }
     }
@@ -154,7 +159,6 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
         }
     }
 
-
     private fun initToolbar() {
         balanceTv = findViewById(R.id.iv_earn)
         with(findViewById<View>(R.id.iv_back)) {
@@ -168,6 +172,16 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
                 viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = SPEAKING_PAGE)
             }
         }
+    }
+
+    private fun startPaymentForUpgrade(amount: Int, testId: Int) {
+        paymentManager.createOrderForExpert(testId = testId.toString(), amount = amount)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.extras?.getBoolean("open_upgrade_page") == true)
+            navController.navigate(R.id.expertCallUpgrade)
     }
 
     override fun onBackPressed() {

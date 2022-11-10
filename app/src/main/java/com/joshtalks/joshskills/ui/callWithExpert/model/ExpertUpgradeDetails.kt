@@ -14,5 +14,5 @@ data class ExpertUpgradeDetails(
     val features: List<String>,
 
     @SerializedName("premium_test_id")
-    val testId: String,
+    val testId: Int,
 )

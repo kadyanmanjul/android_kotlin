@@ -51,7 +51,9 @@ class ExpertListRepo {
     }
 
     val walletAmounts = flow<AvailableAmount> {
-        val response = AppObjectController.commonNetworkService.getAvailableAmounts()
+        val response = AppObjectController.commonNetworkService.getAvailableAmounts(
+            PrefManager.getStringValue(USER_UNIQUE_ID)
+        )
         if (response.isSuccessful && response.body() != null) {
             emit(response.body()!!)
         } else {

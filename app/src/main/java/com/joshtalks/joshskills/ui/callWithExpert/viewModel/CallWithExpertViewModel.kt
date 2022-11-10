@@ -1,12 +1,15 @@
 package com.joshtalks.joshskills.ui.callWithExpert.viewModel
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.constants.EXPERT_UPGRADE_CLICK
 import com.joshtalks.joshskills.constants.GET_UPGRADE_DETAILS
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.FirstTimeAmount
@@ -45,6 +48,9 @@ class CallWithExpertViewModel : BaseViewModel() {
 
     val paymentSuccessful: LiveData<Boolean>
         get() = _paymentSuccessful
+
+    private var orderAmount: Int = 0
+    private var orderTestId: Int = 0
 
     init {
         getWalletCredits()
@@ -95,11 +101,25 @@ class CallWithExpertViewModel : BaseViewModel() {
         }
     }
 
+    fun upgradeExpertCall(view: View) {
+        if (orderAmount != -1 && orderTestId != -1) {
+            message.what = EXPERT_UPGRADE_CLICK
+            message.arg1 = orderAmount
+            message.arg2 = orderTestId
+            singleLiveEvent.value = message
+        } else {
+            showToast("Oops! Something went wrong")
+        }
+    }
+
     fun getExpertUpgradeDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val res = expertListRepo.getUpgradeDetails()
                 if (res.isSuccessful && res.body() != null) {
+                    orderAmount = res.body()?.amount ?: -1
+                    orderTestId =  res.body()?.testId ?: -1
+
                     withContext(Dispatchers.Main) {
                         message.what = GET_UPGRADE_DETAILS
                         message.obj = res.body()

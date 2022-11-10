@@ -4,6 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.callWithExpert.fragment.ExpertCallUpgradeFragment">
 
+    <data>
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -74,6 +81,7 @@
                     android:layout_marginHorizontal="@dimen/_22sdp"
                     android:layout_marginVertical="@dimen/_14sdp"
                     android:backgroundTint="@color/warning"
+                    android:onClick="@{vm::upgradeExpertCall}"
                     android:paddingVertical="@dimen/_8sdp"
                     android:text="Upgrade for $1999"
                     android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"

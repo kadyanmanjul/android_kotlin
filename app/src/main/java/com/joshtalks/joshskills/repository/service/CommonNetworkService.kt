@@ -363,17 +363,17 @@ interface CommonNetworkService {
     @GET("$DIR/micro_payment/user_wallet/{pk}/")
     suspend fun getWalletBalance(@Path("pk") mentorId: String): Response<WalletBalance>
 
-    @GET("$DIR/micro_payment/get_amount_list/")
-    suspend fun getAvailableAmounts(): Response<AvailableAmount>
+    @POST("$DIR/micro_payment/user_wallet/")
+    suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
 
     @GET("$DIR/micro_payment/check_wallet_balance/")
     suspend fun getCallNowStatus(@Query("expert_id") expertId: String): Response<WalletBalance>
 
+    @GET("$DIR/micro_payment/get_amount_list/")
+    suspend fun getAvailableAmounts(@Query("gaid") gaid: String): Response<AvailableAmount>
+
     @POST("$DIR/impression/track_micro_payment_impression/")
     suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)
-
-    @POST("$DIR/micro_payment/user_wallet/")
-    suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
 
     @GET("$DIR/micro_payment/get_wallet_transactions/{mentor}/")
     suspend fun getWalletTransactions(@Path("mentor") mentorId: String, @Query("page") page: Int): Response<TransactionResponse>

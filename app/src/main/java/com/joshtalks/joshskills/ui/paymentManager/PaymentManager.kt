@@ -79,29 +79,24 @@ class PaymentManager(
         }
     }
 
-    fun createForWallet(courseData: CourseData,selectedAmount: Amount) {
+    fun createOrderForExpert(testId: String, amount: Int) {
         coroutineScope.launch {
+            paymentGatewayListener?.onProcessStart()
             try {
-//                paymentGatewayListener?.onProcessStart()
                 val data = mutableMapOf(
-                    "encrypted_text" to (courseData.encryptedText ?: ""),
                     "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
                     "mobile" to getPhoneNumberOrDefault(),
-                    "test_id" to courseData.testId,
-                    "mentor_id" to Mentor.getInstance().getId(),
-                    "is_micro_payment" to true.toString(),
-                    "wallet_amount" to selectedAmount.amount.toString()
+                    "test_id" to testId,
+                    "wallet_amount" to amount.toString()
                 )
 
                 val orderDetailsResponse: Response<JuspayPayLoad> =
-                    AppObjectController.signUpNetworkService.createPaymentOrderV3(data).await()
-                Log.e("sagar", "getOrderDetails: ${orderDetailsResponse.code()}")
+                    AppObjectController.signUpNetworkService.createWalletOrder(data).await()
                 if (orderDetailsResponse.code() == 201) {
                     val response: JuspayPayLoad = orderDetailsResponse.body()!!
                     withContext(Dispatchers.Main) {
                         paymentGatewayManager.openPaymentGateway(response)
                     }
-                    //                    MarketingAnalytics.initPurchaseEvent(data, response)
                 } else {
                     paymentGatewayListener?.onWarmUpEnded(context.getString(R.string.something_went_wrong))
                 }

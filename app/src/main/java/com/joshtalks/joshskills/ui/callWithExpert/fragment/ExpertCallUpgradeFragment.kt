@@ -25,7 +25,9 @@ class ExpertCallUpgradeFragment : BaseFragment() {
     }
 
     override fun initViewBinding() {
-//        TODO("Not yet implemented")
+        binding.rechargeToTalkBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_upgrade_to_wallet)
+        }
     }
 
     override fun initViewState() {
@@ -47,7 +49,7 @@ class ExpertCallUpgradeFragment : BaseFragment() {
     ): View {
         binding = FragmentExpertCallUpgradeBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
-
+        binding.vm = viewModel
         viewModel.getExpertUpgradeDetails()
 
         return binding.root
@@ -56,7 +58,7 @@ class ExpertCallUpgradeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<TextView>(R.id.iv_earn).setOnClickListener {
-            findNavController().navigate(R.id.action_expertCallUpgrade_to_walletFragment)
+            findNavController().navigate(R.id.action_upgrade_to_wallet)
         }
     }
 

@@ -40,10 +40,7 @@
         android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertCallUpgradeFragment"
         tools:layout="@layout/fragment_expert_call_upgrade">
         <action
-            android:id="@+id/action_expertCallUpgrade_to_walletFragment"
-            app:destination="@id/walletFragment" />
-        <action
-            android:id="@+id/action_expertCallUpgrade_to_walletFragment2"
+            android:id="@+id/action_upgrade_to_wallet"
             app:destination="@id/walletFragment" />
     </fragment>
     <fragment
