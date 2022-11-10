@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentBookACallBinding
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.SalesReasonModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.ui.special_practice.utils.REASON_SUBMITTED_BACK
 import com.joshtalks.joshskills.ui.special_practice.utils.SUPPORT_REASON_LIST
@@ -36,8 +35,8 @@ class BookACallFragment : BaseFragment() {
             when (it.what) {
                 REASON_SUBMITTED_BACK -> requireActivity().onBackPressed()
                 SUPPORT_REASON_LIST -> {
-                    (it.obj as List<SalesReasonModel>).forEach { obj ->
-                        listOfReason.add(obj.reason)
+                    (it.obj as List<String>).forEach { obj ->
+                        listOfReason.add(obj)
                     }
 
                     val arrayAdapter = ArrayAdapter(

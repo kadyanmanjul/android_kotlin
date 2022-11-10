@@ -65,6 +65,7 @@
                 android:id="@+id/name_edit_text"
                 style="@style/JoshNameEditText"
                 android:layout_width="match_parent"
+                android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
