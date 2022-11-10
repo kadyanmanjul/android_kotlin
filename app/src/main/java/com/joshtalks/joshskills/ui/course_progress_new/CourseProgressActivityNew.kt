@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -38,7 +40,7 @@ import kotlinx.coroutines.withContext
 
 const val COURSE_ID = "course_id"
 
-class CourseProgressActivityNew : CoreJoshActivity(), CourseProgressAdapter.ProgressItemClickListener {
+class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListener,ThemedBaseActivity() {
     private var pdfViewStub: Stub<PdfCourseProgressView>? = null
     private var courseOverviewResponse: List<CourseOverviewResponse>? = null
 
@@ -96,10 +98,20 @@ class CourseProgressActivityNew : CoreJoshActivity(), CourseProgressAdapter.Prog
 
         courseId = intent.getIntExtra(COURSE_ID, 0)
         setupToolbar()
+        setWhiteStatusBar()
         initRV()
         addObservers()
         setupUi()
         getData()
+
+    }
+
+    private fun setWhiteStatusBar(){
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.white)
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        AppObjectController.screenHeight = displayMetrics.heightPixels
+        AppObjectController.screenWidth = displayMetrics.widthPixels
     }
 
     fun addObservers() {

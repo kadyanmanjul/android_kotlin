@@ -35,23 +35,23 @@ class CourseProgressAdapter(
     private val diffCallback: CourseOverviewAdapterDiffCallback by lazy { CourseOverviewAdapterDiffCallback() }
 
     val vocabColor = ArrayList<Int>().apply {
-        this.add(Color.parseColor("#3ADD03"))
-        this.add(Color.parseColor("#B6FD04"))
+        this.add(Color.parseColor("#30BD00"))
+        this.add(Color.parseColor("#30BD00"))
     }
 
     val speakingColor = ArrayList<Int>().apply {
         this.add(Color.parseColor("#560FBC"))
-        this.add(Color.parseColor("#7B2ECB"))
+        this.add(Color.parseColor("#560FBC"))
     }
 
     val readingColor = ArrayList<Int>().apply {
-        this.add(Color.parseColor("#09C9DB"))
-        this.add(Color.parseColor("#0DF9D0"))
+        this.add(Color.parseColor("#09c9db"))
+        this.add(Color.parseColor("#09c9db"))
     }
 
     val outerColor = ArrayList<Int>().apply {
-        this.add(Color.parseColor("#E10717"))
-        this.add(Color.parseColor("#FD3085"))
+        this.add(Color.parseColor("#FB2E7C"))
+        this.add(Color.parseColor("#FB2E7C"))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseProgressViewHolder {

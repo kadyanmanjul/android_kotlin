@@ -14,9 +14,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
+        android:background="@color/white"
         android:theme="@style/AppThemeDark"
-        tools:background="#000">
+        tools:background="@color/white">
 
         <include
             android:id="@+id/include"
@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
             android:text="@string/lessons"
+            android:visibility="gone"
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:textColor="@color/text_default"
             android:textStyle="bold"
@@ -74,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingBottom="@dimen/_4sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

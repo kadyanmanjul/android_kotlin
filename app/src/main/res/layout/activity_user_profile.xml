@@ -261,11 +261,6 @@
                             android:textColor="@color/pure_white"
                             android:visibility="invisible"
                             tools:visibility="visible" />
-
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/user_root_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
                     </RelativeLayout>
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -1451,7 +1446,10 @@
             </ScrollView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/user_root_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </FrameLayout>
 </layout>
 

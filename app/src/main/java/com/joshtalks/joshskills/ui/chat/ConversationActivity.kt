@@ -640,10 +640,12 @@ class ConversationActivity :
                         )
                     }
                     R.id.menu_interest ->{
-                        val intent = Intent(this,UserInterestActivity::class.java)
-                        intent.putExtra("isEditCall",true)
-                        startActivity(intent)
-                        interestViewModel.saveImpression(INTEREST_FORM_OPEN_MENU_EDIT)
+                        if (inboxEntity.isCapsuleCourse) {
+                            val intent = Intent(this, UserInterestActivity::class.java)
+                            intent.putExtra("isEditCall", true)
+                            startActivity(intent)
+                            interestViewModel.saveImpression(INTEREST_FORM_OPEN_MENU_EDIT)
+                        }
                     }
                     R.id.menu_restart_course -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)

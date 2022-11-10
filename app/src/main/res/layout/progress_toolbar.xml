@@ -17,31 +17,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
-        android:paddingVertical="@dimen/_6sdp"
+        android:paddingStart="@dimen/_8sdp"
+        android:paddingTop="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_8sdp"
+        android:paddingBottom="@dimen/_12sdp"
         tools:background="@color/icon_default">
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:gravity="center"
             android:text="@string/course_overview"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-            app:layout_constraintBottom_toBottomOf="@+id/back_iv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/back_iv" />
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+            android:textColor="@color/text_default"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/back_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginStart="@dimen/_24sdp" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/back_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back"
-            app:tint="@color/pure_white" />
+            app:tint="@color/text_default" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

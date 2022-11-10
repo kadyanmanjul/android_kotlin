@@ -199,6 +199,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     fun clearPhoneNumber() {
         binding.mobileEt.setText(EMPTY)
+        enableMobileEditText()
     }
 
     fun showPrivacyPolicyDialog() {

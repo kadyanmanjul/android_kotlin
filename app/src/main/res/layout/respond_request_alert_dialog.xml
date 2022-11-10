@@ -56,7 +56,7 @@
             app:rippleColor="@color/pure_white" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/disabled"
+            android:id="@+id/not_now"
             android:layout_width="@dimen/_91sdp"
             android:layout_height="@dimen/_22sdp"
             android:layout_below="@+id/text"
