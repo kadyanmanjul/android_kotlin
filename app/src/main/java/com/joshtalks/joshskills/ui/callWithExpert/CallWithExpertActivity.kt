@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.core.OPEN_WALLET
 import com.joshtalks.joshskills.core.SPEAKING_PAGE
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
-import com.joshtalks.joshskills.ui.callWithExpert.utils.PaymentStatusListener
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
@@ -32,8 +31,7 @@ import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 
-class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
-    PaymentGatewayListener {
+class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
 
     private lateinit var binding: ActivityCallWithExpertBinding
     private lateinit var balanceTv: TextView
@@ -104,12 +102,11 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
                         .setSelectedAmount(it)
                         .setCoroutineScope(viewModel.viewModelScope)
                         .setPaymentGatewayListener(this)
-                        .setPaymentListener(this)
                         .setNavController(navController)
                         .setPaymentManager(paymentManager)
                         .build()
 
-                    walletPaymentManager.startPayment()
+                    walletPaymentManager.startPayment(it.id.toString(), it.amount)
                 }
             }
         }
@@ -231,7 +228,7 @@ class CallWithExpertActivity : BaseActivity(), PaymentStatusListener,
 
     private fun onPaymentSuccess() {
         viewModel.paymentSuccess(true)
-        walletPaymentManager.onPaymentSuccess("onPaymentSuccess")
+        walletPaymentManager.onPaymentSuccess()
     }
 
     private fun showPaymentFailedDialog() {

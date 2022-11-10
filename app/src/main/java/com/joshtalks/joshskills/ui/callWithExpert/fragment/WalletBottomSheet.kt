@@ -54,6 +54,7 @@ class WalletBottomSheet(
         this.viewModel.availableAmount.observe(this) { amountList ->
             binding.amountListBottomSheet.adapter =
                 AmountAdapter(amountList) { amount ->
+                    amount.id = viewModel.commonTestId
                     callWithExpertViewModel.updateAmount(amount)
                     openCheckout()
                     dismiss()

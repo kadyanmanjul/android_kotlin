@@ -59,6 +59,7 @@ class WalletFragment : Fragment() {
             binding.amountList.adapter =
                 AmountAdapter(it) { amount ->
                     this@WalletFragment.viewModel.updateAddedAmount(amount.amount.toString())
+                    amount.id = viewModel.commonTestId
                     callWithExpertViewModel.updateAmount(amount)
                 }
         }
