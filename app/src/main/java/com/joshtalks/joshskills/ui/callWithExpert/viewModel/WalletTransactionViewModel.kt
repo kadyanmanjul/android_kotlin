@@ -37,7 +37,7 @@ class WalletTransactionViewModel(private val app: Application) : AndroidViewMode
 
     private fun getWalletAmount() {
         viewModelScope.launch {
-            SkillsDatastore.walletCredits.collectLatest {
+            SkillsDatastore.walletAmount.collectLatest {
                 _availableBalance.postValue(it.toRupees())
             }
         }

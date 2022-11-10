@@ -112,7 +112,8 @@ class ExpertListViewModel : BaseViewModel() {
                             singleLiveEvent.value = message
                         }
                        // _canBeCalled.postValue(true)
-                        SkillsDatastore.updateWalletCredits(response.body()!!.amount)
+                        SkillsDatastore.updateWalletAmount(response.body()!!.amount)
+                        SkillsDatastore.updateExpertCredits(response.body()!!.credits)
                     }
                     202 -> {
                         neededAmount = response.body()!!.amount

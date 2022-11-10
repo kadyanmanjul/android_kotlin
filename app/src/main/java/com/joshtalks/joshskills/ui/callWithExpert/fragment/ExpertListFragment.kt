@@ -1,10 +1,16 @@
 package com.joshtalks.joshskills.ui.callWithExpert.fragment
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
@@ -73,6 +79,22 @@ class ExpertListFragment : BaseFragment() {
                     }
                 }
             }
+        }
+
+        viewModel.creditCount.observe(viewLifecycleOwner) {
+            if (it != -1) {
+                binding.callProgressLyt.visibility = VISIBLE
+                val text = "You have $it expert calls for this week"
+                val spannable: Spannable = SpannableString(text)
+                spannable.setSpan(
+                    StyleSpan(Typeface.BOLD),
+                    9,
+                    text.indexOf("expert") + 12,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                binding.expertCallsText.setText(spannable, TextView.BufferType.SPANNABLE)
+            } else
+                binding.callProgressLyt.visibility = GONE
         }
 
         lifecycleScope.launchWhenStarted {

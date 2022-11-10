@@ -34,6 +34,11 @@ class CallWithExpertViewModel : BaseViewModel() {
     val walletAmount: LiveData<Int>
         get() = _walletAmount
 
+    private val _creditCount = MutableLiveData<Int>(0)
+
+    val creditCount: LiveData<Int>
+        get() = _creditCount
+
     private val _proceedPayment = MutableLiveData<Boolean>()
 
     val proceedPayment: LiveData<Boolean>
@@ -76,8 +81,16 @@ class CallWithExpertViewModel : BaseViewModel() {
 
     private fun getWalletCredits() {
         viewModelScope.launch {
-            SkillsDatastore.walletAmount.collectLatest {
-                _walletAmount.postValue(it)
+            launch {
+                SkillsDatastore.walletAmount.collectLatest {
+                    _walletAmount.postValue(it)
+                }
+            }
+
+            launch {
+                SkillsDatastore.expertCredits.collectLatest {
+                    _creditCount.postValue(it)
+                }
             }
         }
     }

@@ -14,20 +14,27 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "sk
 
 object SkillsDatastore {
 
-    private val WALLET_CREDITS = intPreferencesKey("wallet_credits")
+    private val WALLET_AMOUNT = intPreferencesKey("wallet_credits")
+    private val EXPERT_CREDITS = intPreferencesKey("expert_credits")
 
-    val walletCredits: Flow<Int> = AppObjectController.joshApplication.dataStore.data
-        .map { preferences ->
+    val walletAmount: Flow<Int> = AppObjectController.joshApplication.dataStore.data.map { preferences ->
             // No type safety.
-            preferences[WALLET_CREDITS] ?: 0
+            preferences[WALLET_AMOUNT] ?: 0
         }
 
-    suspend fun updateWalletCredits(credits: Int) {
-        AppObjectController.joshApplication.dataStore.edit { pref ->
-            pref[WALLET_CREDITS] = credits
-        }
-
+    val expertCredits: Flow<Int> = AppObjectController.joshApplication.dataStore.data.map {
+        it[EXPERT_CREDITS] ?: -1
     }
 
+    suspend fun updateWalletAmount(amount: Int) {
+        AppObjectController.joshApplication.dataStore.edit { pref ->
+            pref[WALLET_AMOUNT] = amount
+        }
+    }
 
+    suspend fun updateExpertCredits(credits: Int) {
+        AppObjectController.joshApplication.dataStore.edit { pref ->
+            pref[EXPERT_CREDITS] = credits
+        }
+    }
 }

@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.callWithExpert.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
@@ -20,7 +19,6 @@ import com.joshtalks.joshskills.voip.BeepTimer
 import com.joshtalks.joshskills.voip.constant.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -36,10 +34,12 @@ class ExpertListRepo {
                 Mentor.getInstance().getId()
             )
             if (response.code() == 200 && response.body() != null) {
-                SkillsDatastore.updateWalletCredits(response.body()!!.amount)
+                SkillsDatastore.updateWalletAmount(response.body()!!.amount)
+                SkillsDatastore.updateExpertCredits(response.body()!!.credits)
                 FirstTimeAmount(false, response.body()!!.amount)
             } else if (response.code() == 201) {
-                SkillsDatastore.updateWalletCredits(response.body()!!.amount)
+                SkillsDatastore.updateWalletAmount(response.body()!!.amount)
+                SkillsDatastore.updateExpertCredits(response.body()!!.credits)
                 FirstTimeAmount(true, response.body()!!.amount)
             } else {
                 FirstTimeAmount(false, response.body()!!.amount)
@@ -103,13 +103,10 @@ class ExpertListRepo {
                         when (response.code()) {
                             200 -> {
                                 VoipPref.setExpertCallDuration("")
-                                SkillsDatastore.updateWalletCredits(
-                                    response.body()?.amount ?: 0
-                                )
+                                SkillsDatastore.updateWalletAmount(response.body()?.amount ?: 0)
+                                SkillsDatastore.updateExpertCredits(response.body()?.credits ?: -1)
                             }
-                            406 -> {
-
-                            }
+                            406 -> {} //response if user is an expert
                         }
                     } catch (ex: Exception) {
                     }
@@ -119,6 +116,7 @@ class ExpertListRepo {
         }
     }
 
+    //TODO: Remove if not being used
     fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {
         BeepTimer.stopBeepSound()
         if (callType == Category.EXPERT.ordinal) {
@@ -131,16 +129,14 @@ class ExpertListRepo {
                         map["time_spoken_in_seconds"] = duration
                         map["connected_user_id"] = remoteUserMentorId
                         map["agora_call_id"] = VoipPref.getLastCallId().toString()
-                        val response =
-                            AppObjectController.commonNetworkService.deductAmountAfterCall(map)
+                        val response = AppObjectController.commonNetworkService.deductAmountAfterCall(map)
                         when (response.code()) {
                             200 -> {
                                 VoipPref.setExpertCallDuration("")
-                                SkillsDatastore.updateWalletCredits(response.body()?.amount ?: 0)
+                                SkillsDatastore.updateWalletAmount(response.body()?.amount ?: 0)
+                                SkillsDatastore.updateExpertCredits(response.body()?.credits ?: -1)
                             }
-                            406 -> {
-
-                            }
+                            406 -> {} //response if user is an expert
                         }
                     } catch (ex: Exception) {
                     }
