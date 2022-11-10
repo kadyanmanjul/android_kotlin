@@ -90,8 +90,8 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun attachObservers() {
-        viewModel.creditsCount.observe(this) {
-            balanceTv.text = it
+        viewModel.walletAmount.observe(this) {
+            balanceTv.text = it.toString()
         }
 
         viewModel.proceedPayment.observe(this) { isProceed ->

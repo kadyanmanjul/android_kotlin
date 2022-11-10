@@ -65,7 +65,7 @@ class ExpertCallUpgradeFragment : BaseFragment() {
     private fun setUIData(data: ExpertUpgradeDetails) {
         binding.upgradeCardText.text = data.upgradeText
         binding.expertCallUpgrade.text = "Upgrade for ₹${data.amount}"
-        binding.walletBalanceTxt.text = "You have ${viewModel.creditsCount.value ?: 0} "
+        binding.walletBalanceTxt.text = "You have ${viewModel.walletAmount.value ?: 0} "
 
         data.features.forEach {
             val view = getCourseDescriptionList(it)

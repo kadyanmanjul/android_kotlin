@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.callWithExpert.viewModel
 
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,27 +17,29 @@ import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.fpp.constants.CAN_BE_CALL
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
-import com.joshtalks.joshskills.ui.fpp.constants.START_FPP_CALL_FROM_WALLET
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class ExpertListViewModel : BaseViewModel() {
+
     private val expertListRepo by lazy { ExpertListRepo() }
     val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val adapter = ExpertListAdapter()
     var selectedUser: ExpertListModel? = null
-    private val _canBeCalled = MutableLiveData<Boolean>()
     val startExpertCall = MutableSharedFlow<Boolean>()
-     lateinit var clickedSpeakerName: String
-      var neededAmount: Int = 0
+    val bbTipText = MutableSharedFlow<String>()
+    lateinit var clickedSpeakerName: String
+    var neededAmount: Int = 0
+
+    private val _canBeCalled = MutableLiveData<Boolean>()
+
     val canBeCalled: LiveData<Boolean>
         get() = _canBeCalled
 
@@ -53,10 +54,11 @@ class ExpertListViewModel : BaseViewModel() {
                 if (response.isSuccessful && response.body()?.arrayList != null) {
                     withContext(mainDispatcher) {
                         adapter.addExpertToList(response.body()?.arrayList!!)
+                        bbTipText.emit(response.body()?.bbTipText ?: EMPTY)
                     }
                 }
 
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
 

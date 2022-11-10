@@ -32,10 +32,10 @@ class WalletTransactionViewModel(private val app: Application) : AndroidViewMode
         emitAll(repository.getWalletTransactions().cachedIn(viewModelScope))
     }
     init {
-        getWalletCredits()
+        getWalletAmount()
     }
 
-    private fun getWalletCredits() {
+    private fun getWalletAmount() {
         viewModelScope.launch {
             SkillsDatastore.walletCredits.collectLatest {
                 _availableBalance.postValue(it.toRupees())

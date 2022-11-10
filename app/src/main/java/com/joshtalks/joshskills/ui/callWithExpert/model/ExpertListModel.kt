@@ -3,6 +3,9 @@ package com.joshtalks.joshskills.ui.callWithExpert.model
 import com.google.gson.annotations.SerializedName
 
 data class ExpertListResponse(
+    @SerializedName("bb_tip_expert")
+    val bbTipText: String,
+
     @SerializedName("expert_list")
     var arrayList: ArrayList<ExpertListModel>
 )
