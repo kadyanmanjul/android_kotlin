@@ -305,13 +305,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                             buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
                             binding.buyCourseBannerAvailBtn.setOnClickListener {
                                 viewModel.postGoal(
-                                    when (binding.lessonViewpager.currentItem) {
-                                        SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
-                                        GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
-                                        VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
-                                        READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
-                                    }.name,
-                                    CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
+                                    GoalKeys.L2_CLAIM_NOW_CLICKED.name,
+                                    CampaignKeys.L2_LESSON_COMPLETE_COUPON.name
                                 )
                                 BuyPageActivity.startBuyPageActivity(
                                     this@LessonActivity,
@@ -344,6 +339,18 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
                     binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
                     binding.buyCourseBannerAvailBtn.setOnClickListener {
+                        when (binding.lessonViewpager.currentItem) {
+                            SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
+                            GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
+                            VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
+                            READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
+                            else -> null
+                        }?.name?.let {
+                            viewModel.postGoal(
+                                it,
+                                CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
+                            )
+                        }
                         BuyPageActivity.startBuyPageActivity(
                             this@LessonActivity,
                             testId.toString(),

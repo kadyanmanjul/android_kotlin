@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
@@ -614,6 +615,12 @@ class ConversationViewModel(
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
+        }
+    }
+
+    fun postGoal(goalKey: GoalKeys) {
+        viewModelScope.launch {
+            repository.postGoal(goalKey.NAME)
         }
     }
 }
