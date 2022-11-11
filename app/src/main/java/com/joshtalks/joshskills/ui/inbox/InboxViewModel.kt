@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import timber.log.Timber
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -301,5 +302,19 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun syncPaymentStatus(razorpayOrderId: String, status: PaymentStatus) {
         appDatabase.paymentDao().updatePaymentStatus(razorpayOrderId, status)
+    }
+
+    fun saveImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
     }
 }

@@ -763,6 +763,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
 
     fun buyCourse() {
         if (shouldStartPayment) {
+            viewModel.savePaymentImpression("pressed_buy_now", testId.toString())
             isPaymentInitiated = true
             dismissBbTip()
             paymentManager.createOrder(

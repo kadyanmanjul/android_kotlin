@@ -277,6 +277,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
                         ExploreCardType.NORMAL -> {
                             courseExploreModel.id?.let { testId ->
+                                saveImpressionForBuyPageLayout("view_upsell_course", testId.toString())
                                 CourseDetailsActivity.startCourseDetailsActivity(
                                     activity = this,
                                     testId = testId,
@@ -344,5 +345,20 @@ class CourseExploreActivity : CoreJoshActivity() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()
+    }
+
+    fun saveImpressionForBuyPageLayout(eventName: String, eventData: String = EMPTY) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(
+                    mapOf(
+                        "event_name" to eventName,
+                        "event_data" to eventData
+                    )
+                )
+            } catch (ex: java.lang.Exception) {
+                ex.printStackTrace()
+            }
+        }
     }
 }
