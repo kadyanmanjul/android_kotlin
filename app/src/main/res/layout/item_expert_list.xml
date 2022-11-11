@@ -15,10 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_6sdp"
-        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
         app:cardElevation="0dp"
         app:strokeColor="@color/disabled"
-        app:strokeWidth="@dimen/_2sdp">
+        app:strokeWidth="@dimen/_1sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -75,14 +75,14 @@
                     android:layout_height="@dimen/_16ssp"
                     android:gravity="center_vertical"
                     android:maxLines="1"
-                    android:text="@{item.expertBio}"
+                    android:text="@{item.expertBio.replace(`,`, ` · `)}"
                     android:textColor="@color/text_subdued"
                     tools:text="English For SSC · Spoken English" />
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/expert_price_per_minute"
-                style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                style="@style/TextAppearance.JoshTypography.BodySemiBold20"
                 setPricePerMinute="@{item}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,9 +96,9 @@
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_35sdp"
-                android:layout_margin="@dimen/_12sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
                 android:backgroundTint="@color/surface_information"
-                android:elevation="@dimen/_minus2sdp"
                 android:text="Call now"
                 android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
                 android:textColor="@color/primary_500"
