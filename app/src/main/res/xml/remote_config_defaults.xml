@@ -1902,6 +1902,45 @@
         <key>GIFT_COURSE_TEXT_784</key>
         <value>ये Gift हर student को नहीं मिलता!</value>
     </entry>
+    <entry>
+        <key>AUTO_CONNECT_SCREEN_DATA_DEFAULT</key>
+        <value>[
+            {
+            "header": "Don’t be afraid",
+            "sub_header": "Do longer calls, kyunki English bolne se aati hai. We will start searching for a new partner for you in 10 seconds.",
+            "wait_time": 15,
+            "condition": "LTET120"
+            },
+            {
+            "header": "Try doing Longer Calls",
+            "sub_header": "Do longer calls and become Fluent. We will start searching for a new partner for you in 10 seconds.",
+            "wait_time": 20,
+            "condition": "GT120,LT300"
+            },
+            {
+            "header": "Great, you just had your first call!!",
+            "sub_header": "Continue practicing with other students and become fluent .We will start searching for a new partner in 10 seconds.",
+            "wait_time": 10,
+            "condition": "LT300"
+            }
+            ]</value>
+    </entry>
+    <entry>
+        <key>AUTO_CONNECT_TIPS_DEFAULT</key>
+        <value>["91% students learn English faster by speaking for 5 minutes or longer", "Practising for longer duration will increase your confidence", "95% students speak English fluently by practising for 5 minutes or longer", "Practice makes Perfection"]</value>
+    </entry>
+    <entry>
+        <key>VOIP_AUTO_CONNECT_MAX_RETRY_PER_CALL</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>VOIP_AUTO_CONNECT_PRIMARY_CONDITION</key>
+        <value>300</value>
+    </entry>
+    <entry>
+        <key>VOIP_AUTO_CONNECT_STATUS</key>
+        <value>2</value>
+    </entry>
 
     <entry>
         <key>IS_LESSON_COMPLETE_POPUP_ENABLE</key>

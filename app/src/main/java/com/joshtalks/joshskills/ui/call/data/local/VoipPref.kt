@@ -8,6 +8,10 @@ import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AUTO_CALL
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AUTO_CONNECT_MAX_RETRY_PER_CALL
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AUTO_CONNECT_PRIMARY_CONDITION
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AUTO_CONNECT_STATUS
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_RATING
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PURCHASE_POPUP
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -21,6 +25,7 @@ import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.AutoCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.local.AGORA_CALL_ID
@@ -29,9 +34,11 @@ import com.joshtalks.joshskills.voip.inSeconds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import timber.log.Timber
 
 private const val TAG = "VoipPref"
+private const val AUTO_CONNECT_DISABLED = 0L
+private const val AUTO_CONNECT_ONCE = 1L
+private const val AUTO_CONNECT_PER_CALL = 2L
 
 object VoipPref {
     lateinit var preferenceManager: SharedPreferences
@@ -42,7 +49,7 @@ object VoipPref {
     val mutex = Mutex(false)
     var isListenerActivated = false
 
-     val expertDurationMutex = Mutex(false)
+    val expertDurationMutex = Mutex(false)
 
     @Synchronized
     fun initVoipPref(context: Context) {
@@ -77,7 +84,7 @@ object VoipPref {
         channelName: String,
         topicName: String,
         showFpp: String,
-        remoteUserMentorId: String
+        remoteUserMentorId: String,
     ) {
         val editor = preferenceManager.edit()
         editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L)
@@ -93,18 +100,34 @@ object VoipPref {
         editor.putString(PREF_KEY_FPP_FLAG, showFpp)
         editor.putString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, remoteUserMentorId)
         editor.commit()
-        getInterestFormStatus(duration,callType)
-        if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) && duration.inSeconds() >= 300 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+        if (duration.inSeconds() >= AppObjectController.getFirebaseRemoteConfig().getLong(AUTO_CONNECT_PRIMARY_CONDITION))
+            resetAutoCallCount()
+        showPopUp(duration, callType)
+        if (preferenceManager.getBoolean(
+                IS_FIRST_5MIN_CALL,
+                true
+            ) && duration.inSeconds() >= 300 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+        ) {
             editor.putBoolean(IS_FIRST_CALL, false)
             editor.putBoolean(IS_FIRST_5MIN_CALL, false)
-            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
-            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_FIRST_CALL)
-            NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIVE_MIN_CALL)
+            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
+                NotificationCategory.AFTER_LOGIN
+            )
+            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
+                NotificationCategory.AFTER_FIRST_CALL
+            )
+            NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(
+                NotificationCategory.AFTER_FIVE_MIN_CALL
+            )
             MarketingAnalytics.callComplete5MinForFirstTime()
         } else if (duration != 0L && preferenceManager.getBoolean(IS_FIRST_CALL, true)) {
             editor.putBoolean(IS_FIRST_CALL, false)
-            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.AFTER_LOGIN)
-            NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
+            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
+                NotificationCategory.AFTER_LOGIN
+            )
+            NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(
+                NotificationCategory.AFTER_FIRST_CALL
+            )
         }
 
 
@@ -114,7 +137,7 @@ object VoipPref {
 
         if (duration.inSeconds() >= 1200) {
             MarketingAnalytics.callComplete20Min()
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                 MarketingAnalytics.callComplete20MinForFreeTrial()
             }
         }
@@ -125,61 +148,78 @@ object VoipPref {
             }
         }
 
-        // TODO: These logic shouldn't be here
-
-        ExpertListRepo().deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
+        ExpertListRepo().deductAmountAfterCall(
+            getLastCallDurationInSec().toString(),
+            remoteUserMentorId,
+            callType
+        )
         deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
     }
 
-    fun getInterestFormStatus(duration:Long, callType:Int){
-        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch  {
-            try {
-                val resp = AppObjectController.p2pNetworkService.getFormSubmitStatus()
-                if(resp.isSuccessful){
-                    val toShowLevelAndInterestForm =  resp.body()?.get("show_screen") ?: 0
-
-                    if (duration != 0L && (PrefManager.getBoolValue(IS_FREE_TRIAL).not())) {
-                        if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
-                            if (toShowLevelAndInterestForm == 1){
-                                startLevelAndInterestForm()
-                            }
-                            else{
-                                showDialogBox(duration, CALL_RATING)
-                            }
-                        }
-                        else{
-                            showDialogBox(duration, CALL_RATING)
-                        }
-
-                    } else if (duration != 0L && PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal) {
-                        if(PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(IS_INTEREST_FORM_ENABLED) == 1){
-                            if (toShowLevelAndInterestForm == 1){
-                                startLevelAndInterestForm()
-                            }
-                            else{
-                                showDialogBox(duration, PURCHASE_POPUP)
-                            }
-                        }
-                        else{
-                            showDialogBox(duration, PURCHASE_POPUP)
-                        }
-                    }
-                }else{
-                    if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal){
-                        showDialogBox(duration, CALL_RATING)
-                    }else{
-                        showDialogBox(duration, PURCHASE_POPUP)
-                    }
-                }
-            }catch (ex: Exception){
-                Timber.e(ex)
+    fun showPopUp(duration: Long, callType: Int) {
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            when (getPopUpType(duration)) {
+                POPUP.DEFAULT -> showDefaultDialog(callType, duration)
+                POPUP.INTEREST -> startLevelAndInterestForm()
+                POPUP.AUTO_CONNECT -> showDialogBox(duration.inSeconds(), AUTO_CALL)
             }
         }
     }
 
-    private fun startLevelAndInterestForm(){
-        val intent = Intent(ActivityLifecycleCallback.currentActivity,UserInterestActivity::class.java)
-        intent.putExtra("isEditCall",false)
+    private fun showDefaultDialog(callType: Int, duration: Long) {
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal) {
+            showDialogBox(duration, PURCHASE_POPUP)
+        } else {
+            showDialogBox(duration, CALL_RATING)
+        }
+    }
+
+    private suspend fun getPopUpType(duration: Long): POPUP {
+        return try {
+            if(shouldAutoConnect(duration))
+                return POPUP.AUTO_CONNECT
+
+            val resp = AppObjectController.p2pNetworkService.getFormSubmitStatus()
+            if (duration == 0L || resp.isSuccessful.not() || isLevelAndInterestEnabled().not())
+                POPUP.DEFAULT
+            else {
+                val isInterestFormEnabled = resp.body()?.get("show_screen") ?: 0
+                if (isInterestFormEnabled == 1)
+                    POPUP.INTEREST
+                else
+                    POPUP.DEFAULT
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            POPUP.DEFAULT
+        }
+    }
+
+    private fun isLevelAndInterestEnabled(): Boolean {
+        return PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(
+            IS_INTEREST_FORM_ENABLED
+        ) == 1
+    }
+
+    private fun shouldAutoConnect(duration: Long): Boolean {
+        return when(AppObjectController.getFirebaseRemoteConfig().getLong(AUTO_CONNECT_STATUS)) {
+            AUTO_CONNECT_DISABLED -> false
+            AUTO_CONNECT_ONCE, AUTO_CONNECT_PER_CALL -> {
+                PrefManager.getBoolValue(IS_FREE_TRIAL) && duration > 0L &&
+                        duration.inSeconds() < AppObjectController.getFirebaseRemoteConfig().getLong(
+                    AUTO_CONNECT_PRIMARY_CONDITION) &&
+                        preferenceManager.getInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0) < AppObjectController.getFirebaseRemoteConfig().getLong(AUTO_CONNECT_MAX_RETRY_PER_CALL) &&
+                        com.joshtalks.joshskills.voip.data.local.PrefManager.getLastDisconnectScreenName() == "VoiceCallActivity"
+            }
+            else -> false
+        }
+    }
+
+
+    private fun startLevelAndInterestForm() {
+        val intent =
+            Intent(ActivityLifecycleCallback.currentActivity, UserInterestActivity::class.java)
+        intent.putExtra("isEditCall", false)
         ActivityLifecycleCallback.currentActivity.startActivity(intent)
     }
 
@@ -212,29 +252,59 @@ object VoipPref {
         }
     }
 
+    fun resetAutoCallCount() {
+        if (AppObjectController.getFirebaseRemoteConfig().getLong(AUTO_CONNECT_STATUS) == AUTO_CONNECT_PER_CALL) {
+            val editor = preferenceManager.edit()
+            editor.putInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0)
+            editor.commit()
+        }
+    }
+
     // TODO: These function shouldn't be here
     private fun showDialogBox(totalSecond: Long, type: String) {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             delay(500)
             val currentActivity = ActivityLifecycleCallback.currentActivity
-            if (currentActivity == null ||currentActivity.isDestroyed || currentActivity.isFinishing) {
+            if (currentActivity == null || currentActivity.isDestroyed || currentActivity.isFinishing) {
                 delay(500)
                 val newCurrentActivity = ActivityLifecycleCallback.currentActivity
                 val newFragmentActivity = newCurrentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
-                    if (type == CALL_RATING) {
-                        newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
-                    } else {
-                        newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
+                    when (type) {
+                        CALL_RATING -> newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                        AUTO_CALL -> {
+                            val count = preferenceManager.getInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0) + 1
+                            val editor = preferenceManager.edit()
+                            editor.putInt(AUTO_CONNECT_CURRENT_TRY_COUNT, count)
+                            editor.commit()
+                            newFragmentActivity?.startActivity(
+                                Intent(
+                                    newFragmentActivity,
+                                    AutoCallActivity::class.java
+                                )
+                            )
+                        }
+                        else -> newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
                 }
             } else {
                 val newFragmentActivity = currentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
-                    if (type == CALL_RATING) {
-                        newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
-                    } else {
-                        newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
+                    when (type) {
+                        CALL_RATING -> newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                        AUTO_CALL -> {
+                            val count = preferenceManager.getInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0) + 1
+                            val editor = preferenceManager.edit()
+                            editor.putInt(AUTO_CONNECT_CURRENT_TRY_COUNT, count)
+                            editor.commit()
+                            newFragmentActivity?.startActivity(
+                                Intent(
+                                    newFragmentActivity,
+                                    AutoCallActivity::class.java
+                                )
+                            )
+                        }
+                        else -> newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
                     }
                 }
             }
@@ -266,7 +336,8 @@ object VoipPref {
             try {
                 val resp =
                     AppObjectController.commonNetworkService.getCoursePopUpData(
-                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID },
+                        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID)
+                            .ifEmpty { DEFAULT_COURSE_ID },
                         popupName = PurchasePopupType.SPEAKING_COMPLETED.name,
                         callCount = PrefManager.getIntValue(FT_CALLS_LEFT),
                         callDuration = duration
@@ -300,10 +371,10 @@ object VoipPref {
             .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
     }
 
-        fun getStartTimeStamp(): Long {
-            val startTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
-            return startTime
-        }
+    fun getStartTimeStamp(): Long {
+        val startTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
+        return startTime
+    }
 
     fun getLastCallTopicName(): String {
         return preferenceManager.getString(PREF_KEY_LAST_TOPIC_NAME, "").toString()
@@ -389,5 +460,10 @@ object VoipPref {
     fun getExpertCallDuration(): String? {
         return com.joshtalks.joshskills.voip.data.local.PrefManager.getExpertCallDuration()
     }
+}
 
+enum class POPUP {
+    DEFAULT,
+    INTEREST,
+    AUTO_CONNECT,
 }

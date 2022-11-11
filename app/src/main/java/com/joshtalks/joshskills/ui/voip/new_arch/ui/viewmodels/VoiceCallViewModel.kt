@@ -112,7 +112,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             repository.observerVoipEvents()?.collect {
                 Log.d(TAG, "listenVoipEvents: $it")
                 // TODO: Manage Local State
-                when (it) {
+                when (it.type) {
                     ServiceEvents.CALL_INITIATED_EVENT -> {
                         uiState.currentState = "Connecting..."
                         val msg = Message.obtain().apply {
@@ -139,6 +139,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     ServiceEvents.CLOSE_CALL_SCREEN -> {
                         val msg = Message.obtain().apply {
                             what = CLOSE_CALL_SCREEN
+                            obj = it.data
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg

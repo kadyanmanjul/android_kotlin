@@ -107,6 +107,9 @@
             android:name=".ui.voip.new_arch.ui.views.UserInterestActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.voip.new_arch.ui.views.AutoCallActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.payment.new_buy_page_layout.BuyPageActivity"
             android:exported="true"
             android:screenOrientation="portrait" />

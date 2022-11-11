@@ -158,8 +158,7 @@ class SearchingUserFragment : BaseFragment() {
                                     AppObjectController.getFirebaseRemoteConfig()
                                         .getString(SEARCHING_SCREEN_RULES_DEFAULT)
                                 }
-                            val listType: Type =
-                                object : TypeToken<List<SearchingRule?>?>() {}.type
+                            val listType: Type = object : TypeToken<List<SearchingRule?>?>() {}.type
                             val rules: List<SearchingRule> = gson.fromJson(json, listType)
                             val randomIndex = Random.Default.nextInt(0, rules.size)
                             withContext(Dispatchers.Main) {

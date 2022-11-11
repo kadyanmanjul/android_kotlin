@@ -15,6 +15,8 @@ const val RECONNECTED = 114
 const val CLOSE_CALL_SCREEN = 130
 const val CANCEL_INCOMING_TIMER = 131
 const val SHOW_DISCONNECT_DIALOG = 132
+const val CALL_NOW = 133
+const val STOP_WAITING = 134
 
 
 const val CALL_CONNECT_REQUEST = 115

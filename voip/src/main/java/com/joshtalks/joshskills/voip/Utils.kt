@@ -189,6 +189,27 @@ fun Context.getCourseId(): String {
     return courseId
 }
 
+fun Context.getCurrentActivity(): String {
+    var result = "NA"
+    val courserIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + CURRENT_ACTIVITY),
+        null,
+        null,
+        null,
+        null
+    )
+
+    courserIdCursor?.moveToFirst()
+    try {
+        result = courserIdCursor.getStringData(CURRENT_ACTIVITY_COLUMN)
+        courserIdCursor?.close()
+    }catch (ex:Exception){
+        courserIdCursor?.close()
+        ex.printStackTrace()
+    }
+    return result
+}
+
 fun Context.isFreeTrialOrCourseBought(): Boolean {
     var isFreeTrialOrCourseBought = "false"
     val trialIdCursor = contentResolver.query(

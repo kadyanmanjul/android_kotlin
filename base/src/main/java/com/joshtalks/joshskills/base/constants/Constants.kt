@@ -44,6 +44,7 @@ const val CALL_DISCONNECTED_URI = "/call_disconnect"
 const val API_HEADER = "/api_header"
 const val MENTOR_ID = "/mentor_id"
 const val COURSE_ID = "/course_id"
+const val CURRENT_ACTIVITY = "/current_activity"
 const val IS_COURSE_BOUGHT_OR_FREE_TRIAL = "/is_course_bought_or_free_trial"
 const val NOTIFICATION_DATA = "/notification_data"
 const val MENTOR_NAME = "/mentor_name"
@@ -88,6 +89,7 @@ const val PREF_KEY_LAST_CHANNEL_NAME = "josh_last_channel_name"
 const val PREF_KEY_LAST_TOPIC_NAME = "josh_last_topic_name"
 const val PREF_KEY_LAST_CALL_DURATION = "josh_last_call_duration"
 const val PREF_KEY_LAST_REMOTE_USER_MENTOR_ID = "josh_last_remote_user_mentor_id"
+const val PREF_KEY_LAST_DISCONNECT_SCREEN = "josh_last_disconnect_screen"
 
 // FPP Flag Key
 const val PREF_KEY_FPP_FLAG = "fpp_flag_state"
@@ -119,6 +121,7 @@ const val COURSE_ID_COLUMN = "COURSE_ID"
 const val FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN = "FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN"
 const val DEVICE_ID_COLUMN = "DEVICE_ID"
 const val FT_ENDED_OR_BLOCKED_COLUMN = "FT_ENDED_OR_BLOCKED_COLUMN"
+const val CURRENT_ACTIVITY_COLUMN = "CURRENT_ACTIVITY_COLUMN"
 
 // Broadcast Receiver
 const val SERVICE_BROADCAST_KEY = "service_broadcast_key"
@@ -139,3 +142,6 @@ const val USER_PROFILE = "USER_PROFILE"
 const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"
 const val IS_FIRST_CALL = "IS_FIRST_CALL"
 const val IS_FIRST_5MIN_CALL = "IS_FIRST_5MIN_CALL"
+const val AUTO_CONNECT_CURRENT_TRY_COUNT = "AUTO_CONNECT_CURRENT_TRY_COUNT"
+
+const val CALLING_ACTIVITY_REQUEST_CODE = 102

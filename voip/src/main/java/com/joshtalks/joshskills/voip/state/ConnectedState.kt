@@ -1,10 +1,10 @@
 package com.joshtalks.joshskills.voip.state
 
+import android.app.Application.ActivityLifecycleCallbacks
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_EXPERT_PRICE_PER_MIN
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOTAL_AMOUNT
-import com.joshtalks.joshskills.voip.ProximityHelper
-import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
@@ -12,9 +12,7 @@ import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.mediator.ActionDirection
-import com.joshtalks.joshskills.voip.updateLastCallDetails
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
@@ -296,7 +294,8 @@ class ConnectedState(val context: CallContext) : VoipState {
         scope.launch {
             try {
                 listenerJob?.cancel()
-                context.closeCallScreen()
+                Utils.context?.getCurrentActivity()?.let { PrefManager.saveDisconnectScreen(it) }
+                context.closeCallScreen(context.durationInMillis)
                // stopPaymentTimer()
                 Log.d(TAG, "moveToLeavingState: after close screen")
                 val networkAction = NetworkAction(

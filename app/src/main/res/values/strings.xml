@@ -982,7 +982,11 @@
     <string name="advanced" translatable="false">Advanced</string>
     <string name="skip_smallcase" translatable="false">skip</string>
     <string name="resend_code">Resend Code</string>
-
+    <string name="call_now">Call Now</string>
+    <string name="no_i_ll_skip_learning">No, I\'ll skip learning</string>
+    <string name="call_waiting_info_tip">93% students learn English by speaking for 5 minutes or longer</string>
+    <string name="call_waiting_description" formatted="false">We will start searching a new partner for you in %s seconds.</string>
+    <string name="call_waiting_title">Try doing longer calls</string>
     <string name="mrp_strike_thru" translatable="false"><strike>MRP: ₹2999.0</strike></string>
 
 

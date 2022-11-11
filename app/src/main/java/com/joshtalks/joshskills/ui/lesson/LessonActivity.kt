@@ -43,6 +43,8 @@ import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.constants.CALLING_ACTIVITY_REQUEST_CODE
+import com.joshtalks.joshskills.base.constants.CALL_DURATION
 import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
@@ -91,6 +93,7 @@ import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.AutoCallActivity
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -1217,6 +1220,25 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             }
         }
     }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        when(requestCode) {
+//            CALLING_ACTIVITY_REQUEST_CODE -> {
+//                if(resultCode == RESULT_OK) {
+//                    val duration = data?.getLongExtra(CALL_DURATION, 0L)
+//                    if (duration != null && duration < 5 * 60L) {
+//                        startActivity(Intent(this, AutoCallActivity::class.java))
+//                    }
+//                } else {
+//                    Log.d(TAG, "onActivityResult: $requestCode")
+//                }
+//            }
+//            else -> {
+//                Log.d(TAG, "onActivityResult: $requestCode")
+//            }
+//        }
+//        super.onActivityResult(requestCode, resultCode, data)
+//    }
 
     private fun setTabCompletionStatus() {
         try {

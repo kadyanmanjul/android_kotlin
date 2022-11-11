@@ -137,9 +137,9 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
         reconnectingJob.cancel()
     }
 
-    suspend fun closeCallScreen() {
+    suspend fun closeCallScreen(duration : Long = -1) {
         Log.d(TAG, "closeCallScreen - - ${state}")
-        val envelope = Envelope(Event.CLOSE_CALL_SCREEN)
+        val envelope = Envelope(Event.CLOSE_CALL_SCREEN, data = duration)
         sendEventToUI(envelope)
     }
 

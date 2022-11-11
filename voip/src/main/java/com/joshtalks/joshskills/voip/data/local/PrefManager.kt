@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_DISCONNECT_SCREEN
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.Category
@@ -17,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import java.io.ByteArrayOutputStream
 import timber.log.Timber
+import kotlin.math.log
 
 const val LATEST_PUBNUB_MESSAGE_TIME = "josh_pref_key_latest_pubnub_message_time"
 const val VOIP_STATE = "josh_pref_key_voip_state"
@@ -28,7 +30,6 @@ const val LAST_RECORDING = "josh_pref_key_agora_call_recording"
 const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"
 const val PROXIMITY_ON = "is_josh_proximity_on"
 const val IS_BEEP_TIMER_ENABLED = "IS_BEEP_TIMER_ENABLED"
-
 
 private const val TAG = "PrefManager"
 
@@ -162,6 +163,17 @@ class PrefManager {
         fun getLastRecordingPath(): String {
             Log.d(TAG, "Getting getLastRecordingPath")
             return preferenceManager.getString(LAST_RECORDING, "").toString()
+        }
+
+        fun saveDisconnectScreen(screenName : String)  {
+            Log.d(TAG, "saveDisconnectScreen: ")
+            val editor = preferenceManager.edit()
+            editor.putString(PREF_KEY_LAST_DISCONNECT_SCREEN, screenName)
+            editor.commit()
+        }
+
+        fun getLastDisconnectScreenName() : String {
+            return preferenceManager.getString(PREF_KEY_LAST_DISCONNECT_SCREEN, "NA") ?: "NA"
         }
 
         fun putBitmap(bitmap: Bitmap){

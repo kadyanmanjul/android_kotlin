@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.isBlocked
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import kotlinx.coroutines.sync.Mutex
-import java.lang.Exception
+import kotlin.Exception
 
 private const val TAG = "JoshContentProvider"
 
@@ -73,6 +73,19 @@ class JoshContentProvider : ContentProvider() {
             MENTOR_ID -> {
                 val cursor = MatrixCursor(arrayOf(MENTOR_ID_COLUMN))
                 cursor.addRow(arrayOf(Mentor.getInstance().getId()))
+                return cursor
+            }
+            CURRENT_ACTIVITY -> {
+                val cursor = MatrixCursor(arrayOf(CURRENT_ACTIVITY_COLUMN))
+                try {
+                    if(AppObjectController.joshApplication.isAppVisible())
+                        cursor.addRow(arrayOf(ActivityLifecycleCallback.currentActivity::class.java.simpleName))
+                    else
+                        cursor.addRow(arrayOf("NA"))
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                    cursor.addRow(arrayOf("NA"))
+                }
                 return cursor
             }
             COURSE_ID -> {

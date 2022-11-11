@@ -47,6 +47,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
@@ -966,7 +967,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             }
-            startActivity(callIntent)
+            VoipPref.resetAutoCallCount()
+            requireActivity().startActivityForResult(callIntent, CALLING_ACTIVITY_REQUEST_CODE)
         }
     }
 

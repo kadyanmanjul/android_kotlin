@@ -49,6 +49,7 @@ class VoiceCallActivity : BaseActivity() {
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
+
     val vm by lazy {
         ViewModelProvider(this)[VoiceCallViewModel::class.java]
     }
@@ -270,6 +271,10 @@ class VoiceCallActivity : BaseActivity() {
                     }
                 }
                 CLOSE_CALL_SCREEN -> {
+                    val intent = Intent().apply {
+                        putExtra(CALL_DURATION, it.obj as? Long)
+                    }
+                    setResult(RESULT_OK, intent)
                     finishAndRemoveTask()
                 }
                 SHOW_DISCONNECT_DIALOG -> {
@@ -418,5 +423,6 @@ class VoiceCallActivity : BaseActivity() {
                     "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TEXT}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
                 ).ifBlank { getString(R.string.default_disconnect_dialog_text) }
     }
-
 }
+
+data class AutoCallData(val heading: String = "", val subHeading: String = "", )

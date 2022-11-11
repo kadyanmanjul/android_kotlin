@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getCurrentActivity
 import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.mediator.ActionDirection
 import com.joshtalks.joshskills.voip.updateLastCallDetails
@@ -38,7 +39,6 @@ class ReconnectingState(val context: CallContext) : VoipState {
     override fun disconnect() {
         scope.launch {
             try{
-                context.closeCallScreen()
                 moveToLeavingState()
             }
             catch (e : Exception){
@@ -283,7 +283,6 @@ class ReconnectingState(val context: CallContext) : VoipState {
                     throw e
                 else {
                     e.printStackTrace()
-                    context.closeCallScreen()
                     moveToLeavingState()
                 }
             }
@@ -295,7 +294,8 @@ class ReconnectingState(val context: CallContext) : VoipState {
         scope.launch {
             try{
                 listenerJob?.cancel()
-                context.closeCallScreen()
+                Utils.context?.getCurrentActivity()?.let { PrefManager.saveDisconnectScreen(it) }
+                context.closeCallScreen(context.durationInMillis)
                 val networkAction = NetworkAction(
                     channelName = context.channelData.getChannel(),
                     uid = context.channelData.getAgoraUid(),

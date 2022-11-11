@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.state.CallConnectData
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.voip.webrtc.Envelope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -47,7 +48,7 @@ class CallingRemoteService : Service() {
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private var isMediatorInitialise = false
     private val pstnController by lazy { PSTNController(ioScope) }
-    private val serviceEvents = MutableSharedFlow<ServiceEvents>(replay = 0)
+    private val serviceEvents = MutableSharedFlow<Envelope<ServiceEvents>>(replay = 0)
 
     // For Testing Purpose
     private val notificationData by lazy { TestNotification(getNotificationData()) }
@@ -157,7 +158,7 @@ class CallingRemoteService : Service() {
 
     fun getUserDetails(): StateFlow<UIState> = mediator.observerUIState()
 
-    fun getEvents(): SharedFlow<ServiceEvents> = serviceEvents
+    fun getEvents(): SharedFlow<Envelope<ServiceEvents>> = serviceEvents
 
     private fun Intent?.initService(): Int {
         isServiceInitialize = true
@@ -182,18 +183,18 @@ class CallingRemoteService : Service() {
                                         intentOnNotificationTap(),
                                         getHangUpIntent()
                                     )
-                                    serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
+                                    serviceEvents.emit(Envelope(ServiceEvents.CALL_CONNECTED_EVENT))
                                     if (expertCallData[IS_EXPERT_CALLING] == "true") {
                                         startCallTimer()
                                     }
                                 }
                                 CLOSE_CALL_SCREEN -> {
                                     stopCallTimer()
-                                    serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
+                                    serviceEvents.emit(Envelope(ServiceEvents.CLOSE_CALL_SCREEN))
                                     notification.idle(getNotificationData())
                                 }
                                 RECONNECTING_FAILED -> {
-                                    serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
+                                    serviceEvents.emit(Envelope(ServiceEvents.RECONNECTING_FAILED))
                                     notification.idle(getNotificationData())
                                 }
 //                                // TODO: Might have to refactor
@@ -203,7 +204,7 @@ class CallingRemoteService : Service() {
 //                                    mediator.showIncomingCall(data)
 //                                }
                                 CALL_INITIATED_EVENT -> {
-                                    serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
+                                    serviceEvents.emit(Envelope(ServiceEvents.CALL_INITIATED_EVENT))
                                 }
                                 else -> {}
                             }
