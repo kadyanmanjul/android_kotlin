@@ -63,6 +63,7 @@ class BuyPageViewModel : BaseViewModel() {
     var priceText = ObservableField(EMPTY)
     var isVideoAbTestEnable:Boolean? = null
     var isNewFreeTrialEnable:String?=null
+    var alreadyReasonSelected:String?=null
 
     fun isSeeAllButtonShow(): Boolean {
         return PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
@@ -386,6 +387,7 @@ class BuyPageViewModel : BaseViewModel() {
                     showToast("Already Submitted")
                 else {
                     if (resp.isSuccessful) {
+                        saveImpression("COUNSELOR_SUBMIT_BUTTON")
                         showToast("Details submitted")
                         viewModelScope.launch(Dispatchers.Main) {
                             message.what = REASON_SUBMITTED_BACK
@@ -405,6 +407,7 @@ class BuyPageViewModel : BaseViewModel() {
             try {
                 val resp =  buyPageRepo.getReasonList()
                 viewModelScope.launch(Dispatchers.Main) {
+                    alreadyReasonSelected = resp.body()?.reasonSelected
                     message.what = SUPPORT_REASON_LIST
                     message.obj = resp.body()?.reasonsList
                     singleLiveEvent.value = message

@@ -126,6 +126,7 @@
                     style="@style/JoshNameEditText"
                     android:layout_width="match_parent"
                     android:singleLine="true"
+                    android:textColor="@color/text_default"
                     android:imeOptions="actionNext"
                     android:layout_height="wrap_content" />
 
@@ -149,6 +150,7 @@
                     android:inputType="phone"
                     android:layout_width="match_parent"
                     android:singleLine="true"
+                    android:textColor="@color/text_default"
                     android:imeOptions="actionNext"
                     android:layout_height="wrap_content" />
 
@@ -184,6 +186,7 @@
                     android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                     android:inputType="none"
                     android:text="Reason for Call"
+                    android:textColor="@color/text_default"
                     android:textEditSuggestionItemLayout="@layout/dropdown_item" />
 
             </com.google.android.material.textfield.TextInputLayout>

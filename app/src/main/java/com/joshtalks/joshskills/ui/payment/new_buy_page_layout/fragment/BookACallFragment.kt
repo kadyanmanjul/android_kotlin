@@ -10,8 +10,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.databinding.FragmentBookACallBinding
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.SalesReasonList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.ui.special_practice.utils.REASON_SUBMITTED_BACK
 import com.joshtalks.joshskills.ui.special_practice.utils.SUPPORT_REASON_LIST
@@ -20,6 +22,7 @@ class BookACallFragment : BaseFragment() {
 
     lateinit var binding: FragmentBookACallBinding
     var listOfReason: MutableList<String> = mutableListOf()
+    var salesReasonList:SalesReasonList?=null
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[BuyPageViewModel::class.java]
@@ -45,6 +48,17 @@ class BookACallFragment : BaseFragment() {
                         listOfReason
                     )
                     binding.autoCompleteTextViewFirst.setAdapter(arrayAdapter)
+
+                    if (vm.alreadyReasonSelected!=null){
+                        binding.nameEditText.isEnabled = false
+                        binding.phoneNumberEt.isEnabled = false
+                        binding.autoCompleteTextViewFirst.isEnabled = false
+                        binding.autoCompleteTextViewFirst.isClickable = false
+                        binding.autoCompleteTextViewFirst.setText(vm.alreadyReasonSelected.toString())
+                        binding.btnSubmitData.isEnabled = false
+                        binding.btnSubmitData.backgroundTintList =
+                            AppCompatResources.getColorStateList(requireActivity(), R.color.light_shade_of_gray)
+                    }
                 }
             }
         }
@@ -96,12 +110,14 @@ class BookACallFragment : BaseFragment() {
     }
 
     fun submitReason() {
-        val param = HashMap<String, String>()
-        if (binding.nameEditText.text.toString()
-                .isNotEmpty() && binding.phoneNumberEt.text.toString()
-                .isNotEmpty() && binding.autoCompleteTextViewFirst.text.toString().isNotEmpty()
+        if (binding.phoneNumberEt.text.isNullOrEmpty() || isValidFullNumber("+91", binding.phoneNumberEt.text.toString()).not()
         ) {
-            param["name"] = binding.nameEditText.text.toString()
+            showToast(getString(R.string.please_enter_valid_number))
+            return
+        }
+        val param = HashMap<String, String>()
+        if (binding.nameEditText.text.toString().isNotEmpty() && binding.phoneNumberEt.text.toString().isNotEmpty() && binding.autoCompleteTextViewFirst.text.toString().isNotEmpty() && (binding.autoCompleteTextViewFirst.text.toString() !="Reason for Call")) {
+            param["user_name"] = binding.nameEditText.text.toString()
             param["phone"] = binding.phoneNumberEt.text.toString()
             param["reason_to_call"] = binding.autoCompleteTextViewFirst.text.toString()
             vm.setSupportReason(param)

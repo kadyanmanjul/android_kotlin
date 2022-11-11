@@ -356,6 +356,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     fun openReasonScreen(){
+        viewModel.saveImpression("TALK_TO_COUNSELOR")
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace(R.id.buy_page_parent_container, BookACallFragment(), "BookACallFragment")

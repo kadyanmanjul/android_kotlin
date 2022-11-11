@@ -4,5 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class SalesReasonList(
     @SerializedName("reasons")
-     var reasonsList : List<String>? = null
+     var reasonsList : List<String>? = null,
+    @SerializedName("reason_selected")
+    var reasonSelected:String?=null
 )
