@@ -57,7 +57,7 @@ class BookACallFragment : BaseFragment() {
                         binding.autoCompleteTextViewFirst.setText(vm.alreadyReasonSelected.toString())
                         binding.btnSubmitData.isEnabled = false
                         binding.btnSubmitData.backgroundTintList =
-                            AppCompatResources.getColorStateList(requireActivity(), R.color.light_shade_of_gray)
+                            AppCompatResources.getColorStateList(requireActivity(), R.color.disabled)
                     }
                 }
             }
@@ -105,7 +105,7 @@ class BookACallFragment : BaseFragment() {
         } else {
             binding.btnSubmitData.isEnabled = false
             binding.btnSubmitData.backgroundTintList =
-                AppCompatResources.getColorStateList(requireActivity(), R.color.light_shade_of_gray)
+                AppCompatResources.getColorStateList(requireActivity(), R.color.disabled)
         }
     }
 
