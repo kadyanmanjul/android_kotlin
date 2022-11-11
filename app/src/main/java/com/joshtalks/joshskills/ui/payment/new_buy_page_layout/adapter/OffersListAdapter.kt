@@ -59,6 +59,8 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             if (offersList[position].couponDesc != null) {
                 holder.binding.couponExpireText.text = offersList[position].couponDesc
                 holder.binding.couponExpireText.visibility = View.VISIBLE
+                if (offersList[position].validDuration.time < System.currentTimeMillis())
+                    holder.disableCoupon(holder.binding, offersList[position], position)
             } else if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && offersList[position].isMentorSpecificCoupon != null) {
                 holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 holder.binding.btnApply.text = APPLY
@@ -153,6 +155,10 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             if (offersList[position].couponDesc != null) {
                 binding.couponExpireText.visibility = View.VISIBLE
                 binding.couponExpireText.text = offersList[position].couponDesc
+                if (offersList[position].validDuration.time < System.currentTimeMillis())
+                    disableCoupon(binding, offersList[position], position)
+                else
+                    enableCoupon(binding, offersList[position], position)
             } else if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && coupon?.isMentorSpecificCoupon != null) {
                 startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), coupon, position)
             } else {
@@ -200,25 +206,48 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         fun changeTextColor(binding: ItemOfffersCardBinding, coupon: Coupon?, position: Int) {
             if (coupon?.isMentorSpecificCoupon != null) {
                 Log.e("sagar", "changeTextColor: ")
-                if (coupon.isCouponSelected == 1)
-                    coupon.let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
-                val grayColor =
-                    ContextCompat.getColor(binding.couponExpireText.context, R.color.dark_grey)
-                binding.rootCard.isEnabled = false
-                binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 binding.couponExpireText.text = "Coupon expired"
-                freeTrialTimerJob?.cancel()
-                binding.couponExpireText.setTextColor(grayColor)
-                binding.couponDiscountPercent.setTextColor(grayColor)
-                binding.btnApply.isEnabled = false
-                binding.btnApply.text = APPLY
-                binding.imgLogo.alpha = 0.5f
-                binding.couponDiscountPercent.setTextColor(grayColor)
-                binding.btnApply.setTextColor(grayColor)
-                binding.couponExpireText.visibility = View.VISIBLE
+                disableCoupon(binding, coupon, position)
             } else {
                 binding.couponExpireText.visibility = View.GONE
             }
+        }
+
+        fun disableCoupon(binding: ItemOfffersCardBinding, coupon: Coupon, position: Int) {
+            if (coupon.isCouponSelected == 1)
+                coupon.let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
+            val grayColor =
+                ContextCompat.getColor(binding.couponExpireText.context, R.color.dark_grey)
+            binding.rootCard.isEnabled = false
+            freeTrialTimerJob?.cancel()
+            binding.couponExpireText.setTextColor(grayColor)
+            binding.couponDiscountPercent.setTextColor(grayColor)
+            binding.btnApply.isEnabled = false
+            binding.btnApply.text = APPLY
+            binding.imgLogo.alpha = 0.5f
+            binding.btnApply.setTextColor(grayColor)
+            binding.couponExpireText.visibility = View.VISIBLE
+        }
+
+        fun enableCoupon(binding: ItemOfffersCardBinding, coupon: Coupon, position: Int) {
+            binding.rootCard.isEnabled = true
+            binding.couponExpireText.setTextColor(
+                ContextCompat.getColor(
+                    binding.couponExpireText.context,
+                    R.color.text_subdued
+                )
+            )
+            binding.couponDiscountPercent.setTextColor(
+                ContextCompat.getColor(
+                    binding.couponExpireText.context,
+                    R.color.pure_black
+                )
+            )
+            binding.btnApply.isEnabled = true
+            binding.btnApply.text = APPLY
+            binding.imgLogo.alpha = 1f
+            binding.btnApply.setTextColor(ContextCompat.getColor(binding.couponExpireText.context, R.color.primary_500))
+            binding.couponExpireText.visibility = View.VISIBLE
         }
     }
 

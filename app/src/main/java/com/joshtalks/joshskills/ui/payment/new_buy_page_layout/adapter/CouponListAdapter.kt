@@ -108,7 +108,7 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
             val grayColor = ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.dark_grey)
             binding.rootCard.isEnabled = false
             binding.txtCouponCode.setTextColor(grayColor)
-            binding.txtCouponExpireTime.text = "Coupon expired"
+            binding.txtCouponExpireTime.text = coupon?.couponDesc ?: "Coupon expired"
             binding.txtCouponExpireTime.setTextColor(grayColor)
             binding.couponDesc.setTextColor(grayColor)
             binding.saveMoney.setTextColor(grayColor)
