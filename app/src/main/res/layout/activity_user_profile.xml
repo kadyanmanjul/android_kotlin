@@ -585,28 +585,28 @@
                             android:id="@+id/label_previous_dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginVertical="@dimen/_6sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/previous_dp"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
                             android:textColor="@color/text_default" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <ImageView
                             android:id="@+id/label_view_more_dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/label_previous_dp"
                             android:layout_alignBottom="@+id/label_previous_dp"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_16sdp"
                             android:src="@drawable/ic_chevronright"/>
                     </RelativeLayout>
 
                     <RelativeLayout
                         android:id="@+id/highlights_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_28sdp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_12sdp"
                         android:background="@drawable/bg_profile_header"
                         android:gravity="center|start"
@@ -618,7 +618,7 @@
                             android:id="@+id/label_highlights"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginVertical="@dimen/_6sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/highlights"
@@ -821,25 +821,11 @@
                         app:layout_constraintTop_toBottomOf="@+id/labelFavouriteJoshTalk"
                         tools:visibility="visible" />
 
-                    <View
-                        android:id="@+id/seperatorWithoutFutureGoals"
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:layout_marginHorizontal="@dimen/_9sdp"
-                        android:layout_marginTop="@dimen/_12sdp"
-                        android:background="@color/disabled"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/txtFavouriteJoshTalk"
-                        tools:layout_editor_absoluteX="0dp"
-                        tools:visibility="visible" />
-
                     <ImageView
                         android:id="@+id/without_future_goals"
                         android:layout_width="@dimen/_265sdp"
                         android:layout_height="@dimen/_37sdp"
-                        android:layout_marginTop="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -847,28 +833,14 @@
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/seperatorWithoutFutureGoals"
-                        tools:visibility="visible" />
-
-                    <View
-                        android:id="@+id/seperatorWithoutEducation"
-                        android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:layout_marginHorizontal="@dimen/_9sdp"
-                        android:layout_marginTop="@dimen/_7sdp"
-                        android:background="@color/disabled"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/without_future_goals"
-                        tools:layout_editor_absoluteX="0dp"
+                        app:layout_constraintTop_toBottomOf="@id/txtFavouriteJoshTalk"
                         tools:visibility="visible" />
 
                     <ImageView
                         android:id="@+id/without_education"
                         android:layout_width="@dimen/_265sdp"
                         android:layout_height="@dimen/_37sdp"
-                        android:layout_marginTop="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -876,7 +848,7 @@
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/seperatorWithoutEducation"
+                        app:layout_constraintTop_toBottomOf="@id/without_future_goals"
                         tools:visibility="visible" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -943,7 +915,7 @@
                     <RelativeLayout
                         android:id="@+id/fpp_list_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_28sdp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_12sdp"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
@@ -960,7 +932,7 @@
                             android:id="@+id/fpp_dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginVertical="@dimen/_6sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/fpp_text"
@@ -992,7 +964,7 @@
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/education_occupation_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_28sdp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_12sdp"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
@@ -1009,7 +981,7 @@
                             android:id="@+id/EducationOccupationLayout_dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginVertical="@dimen/_6sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/education_and_occupation"
@@ -1162,7 +1134,7 @@
                     <RelativeLayout
                         android:id="@+id/awards_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_28sdp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_12sdp"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
@@ -1179,7 +1151,7 @@
                             android:id="@+id/label_awards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginVertical="@dimen/_6sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/awards_cabinet"
@@ -1193,7 +1165,7 @@
                             android:layout_alignTop="@+id/label_awards"
                             android:layout_alignBottom="@+id/label_awards"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_16sdp"
                             android:src="@drawable/ic_chevronright"
                             />
 
@@ -1266,7 +1238,7 @@
                     <RelativeLayout
                         android:id="@+id/my_groups_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_28sdp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
                         android:focusable="true"
@@ -1282,21 +1254,21 @@
                             android:id="@+id/label_my_groups"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginVertical="@dimen/_6sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/groups"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
                             android:textColor="@color/text_default" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <ImageView
                             android:id="@+id/label_view_more_groups"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/label_my_groups"
                             android:layout_alignBottom="@+id/label_my_groups"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_16sdp"
                             android:src="@drawable/ic_chevronright"/>
 
                     </RelativeLayout>
@@ -1349,7 +1321,7 @@
                     <RelativeLayout
                         android:id="@+id/enrolled_courses_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_28sdp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
                         android:focusable="true"
@@ -1365,21 +1337,21 @@
                             android:id="@+id/label_enrolled_courses"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginVertical="@dimen/_6sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
                             android:text="@string/courses"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
                             android:textColor="@color/text_default" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <ImageView
                             android:id="@+id/label_view_more_courses"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/label_enrolled_courses"
                             android:layout_alignBottom="@+id/label_enrolled_courses"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:layout_marginEnd="@dimen/_16sdp"
                             android:src="@drawable/ic_chevronright"/>
 
                     </RelativeLayout>
