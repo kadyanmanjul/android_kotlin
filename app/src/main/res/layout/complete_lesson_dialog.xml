@@ -74,7 +74,8 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_vector_grammar" />
+                            app:srcCompat="@drawable/ic_vector_grammar"
+                            android:contentDescription="icon grammar" />
 
                         <TextView
                             android:id="@+id/txtV_Heading_Grammar"
@@ -83,9 +84,9 @@
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginTop="@dimen/_12sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
-                            android:text="Grammar Lessons"
+                            android:text="@string/lesson_popup_heading_grammar"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/primary_500"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/imgV_Grammar"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -97,7 +98,7 @@
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_12sdp"
-                            android:text="Expert recorded grammar lessons that will teach sentence construction"
+                            tools:text="Expert recorded grammar lessons that will teach sentence construction"
                             android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                             android:textColor="@color/text_subdued"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -132,7 +133,8 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_vectorvocab" />
+                            app:srcCompat="@drawable/ic_vectorvocab"
+                            android:contentDescription="icon vocab" />
 
                         <TextView
                             android:id="@+id/txtV_Heading_Vocab"
@@ -141,7 +143,7 @@
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginTop="@dimen/_12sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
-                            android:text="Daily Vocabulary"
+                            android:text="@string/lesson_popup_heading_vocab"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
                             android:textColor="@color/decorative_one"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -155,7 +157,7 @@
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_12sdp"
-                            android:text="Learn new English words everyday and practice English using them."
+                            tools:text="Learn new English words everyday and practice English using them."
                             android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                             android:textColor="@color/text_subdued"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -190,6 +192,7 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
+                            android:contentDescription="icon reading"
                             app:srcCompat="@drawable/ic_vector_practicereading" />
 
                         <TextView
@@ -199,7 +202,7 @@
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginTop="@dimen/_12sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
-                            android:text="Reading Practice"
+                            android:text="@string/lesson_popup_heading_reading"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
                             android:textColor="@color/success"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -213,7 +216,7 @@
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_12sdp"
-                            android:text="Practice speaking English with practice partners using  the knowledge gathered from other sections"
+                            tools:text="Practice speaking English with practice partners using  the knowledge gathered from other sections"
                             android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                             android:textColor="@color/text_subdued"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -250,6 +253,7 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
+                            android:contentDescription="icon speaking"
                             app:srcCompat="@drawable/ic_vectorspeaking" />
 
                         <TextView
@@ -259,7 +263,7 @@
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginTop="@dimen/_12sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
-                            android:text="Speaking Practice"
+                            android:text="@string/lesson_popup_heading_speaking"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
                             android:textColor="@color/decorative_four"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -273,7 +277,7 @@
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginEnd="@dimen/_12sdp"
                             android:layout_marginBottom="@dimen/_12sdp"
-                            android:text="Practice speaking English with practice partners using  the knowledge gathered from other sections"
+                            tools:text="Practice speaking English with practice partners using  the knowledge gathered from other sections"
                             android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                             android:textColor="@color/text_subdued"
                             app:layout_constraintBottom_toBottomOf="parent"
