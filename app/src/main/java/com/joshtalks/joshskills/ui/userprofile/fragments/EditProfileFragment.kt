@@ -293,8 +293,8 @@ class EditProfileFragment : DialogFragment(){
     private fun saveData() {
         val newName = binding.editTxtName.text?.trim()?.toString()
         if (newName.isNullOrBlank() || !isFieldValid(newName)) {
-            binding.seperator1.setBackgroundColor(resources.getColor(R.color.red))
-            binding.editTxtName.setHintTextColor(resources.getColor(R.color.red))
+            binding.seperator1.setBackgroundColor(resources.getColor(R.color.critical))
+            binding.editTxtName.setHintTextColor(resources.getColor(R.color.critical))
             binding.basicDetailsContainer.visibility = View.VISIBLE
             isBasicDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -305,8 +305,8 @@ class EditProfileFragment : DialogFragment(){
         val collegeName=binding.editTxtCollegeName
 
         if(educationText.text.isNullOrBlank() || !isFieldValid(educationText.text.toString())){
-            binding.txtEducationNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
-            educationText.setHintTextColor(resources.getColor(R.color.red))
+            binding.txtEducationNameSeperator.setBackgroundColor(resources.getColor(R.color.critical))
+            educationText.setHintTextColor(resources.getColor(R.color.critical))
             binding.educationDetailsContainer.visibility = View.VISIBLE
             isEducationDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -315,19 +315,19 @@ class EditProfileFragment : DialogFragment(){
             return
         }
         if(collegeName.text.isNullOrBlank() || !isFieldValid(collegeName.text.toString())){
-            binding.editTxtCollegeNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
+            binding.editTxtCollegeNameSeperator.setBackgroundColor(resources.getColor(R.color.critical))
             isEducationDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
             binding.educationDownImg.setImageDrawable(drawableUp)
             binding.educationDetailsContainer.visibility = View.VISIBLE
-            collegeName.setHintTextColor(resources.getColor(R.color.red))
+            collegeName.setHintTextColor(resources.getColor(R.color.critical))
             collegeName.error = getString(R.string.college_error_message)
             return
         }
 
         if(binding.txtOccupationName.text.isNullOrBlank() || !isFieldValid(txtOccupationName.text.toString())){
-            binding.txtoccupationNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
-            binding.txtOccupationName.setHintTextColor(resources.getColor(R.color.red))
+            binding.txtoccupationNameSeperator.setBackgroundColor(resources.getColor(R.color.critical))
+            binding.txtOccupationName.setHintTextColor(resources.getColor(R.color.critical))
             binding.occupationDetailsContainer.visibility = View.VISIBLE
             isOccupationDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -336,19 +336,19 @@ class EditProfileFragment : DialogFragment(){
             return
         }
         if(binding.editTxtOccupationPlace.text.isNullOrBlank() || !isFieldValid(editTxtOccupationPlace.text.toString())){
-            binding.editTxtOccupationPlaceSeperator.setBackgroundColor(resources.getColor(R.color.red))
+            binding.editTxtOccupationPlaceSeperator.setBackgroundColor(resources.getColor(R.color.critical))
             isOccupationDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
             binding.occupationDownImg.setImageDrawable(drawableUp)
             binding.occupationDetailsContainer.visibility = View.VISIBLE
-            binding.editTxtOccupationPlace.setHintTextColor(resources.getColor(R.color.red))
+            binding.editTxtOccupationPlace.setHintTextColor(resources.getColor(R.color.critical))
             binding.editTxtOccupationPlace.error = getString(R.string.college_error_message)
             return
         }
 
         if (userDateOfBirth.isNullOrBlank()) {
-            binding.seperator2.setBackgroundColor(resources.getColor(R.color.red))
-            binding.editTxtDob.setHintTextColor(resources.getColor(R.color.red))
+            binding.seperator2.setBackgroundColor(resources.getColor(R.color.critical))
+            binding.editTxtDob.setHintTextColor(resources.getColor(R.color.critical))
             binding.basicDetailsContainer.visibility = View.VISIBLE
             isBasicDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -358,8 +358,8 @@ class EditProfileFragment : DialogFragment(){
 
         val homeTownTxt = binding.editTxtHometown
         if (homeTownTxt.text.isNullOrBlank() || !isFieldValid(homeTownTxt.text.toString())) {
-            binding.seperator3.setBackgroundColor(resources.getColor(R.color.red))
-            homeTownTxt.setHintTextColor(resources.getColor(R.color.red))
+            binding.seperator3.setBackgroundColor(resources.getColor(R.color.critical))
+            homeTownTxt.setHintTextColor(resources.getColor(R.color.critical))
             binding.basicDetailsContainer.visibility = View.VISIBLE
             isBasicDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -368,8 +368,8 @@ class EditProfileFragment : DialogFragment(){
         }
         if (editTxtJoshTalk.text.toString() != EMPTY){
             if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https") || !(editTxtJoshTalk.text.toString()).startsWith("https")){
-                binding.seperator5.setBackgroundColor(resources.getColor(R.color.red))
-                editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.red))
+                binding.seperator5.setBackgroundColor(resources.getColor(R.color.critical))
+                editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.critical))
                 binding.basicDetailsContainer.visibility = View.VISIBLE
                 isBasicDetailsExpanded = true
                 binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -449,8 +449,7 @@ class EditProfileFragment : DialogFragment(){
             editTxtHometown.setText(userData.hometown)
             if (userData.hometown.isNullOrBlank()) {
                 if (binding.editTxtHometown.requestFocus()) {
-                    activity?.window
-                        ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                    activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
                 }
             }
             editTxtFutureGoals.setText(userData.futureGoals)

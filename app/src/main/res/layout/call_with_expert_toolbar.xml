@@ -17,7 +17,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
+        android:background="@color/primary_500"
         android:contentInsetStart="0dp"
         android:contentInsetLeft="0dp"
         android:contentInsetEnd="0dp"
@@ -33,7 +33,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/button_color"
+            android:background="@color/primary_500"
             android:paddingStart="@dimen/_4sdp"
             android:paddingEnd="@dimen/_4sdp">
 
@@ -70,7 +70,7 @@
                 android:gravity="start|center"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/iv_earn"
                 app:layout_constraintStart_toEndOf="@+id/iv_back"
@@ -86,7 +86,7 @@
                 tools:text="\u20B9 0"
                 android:textAllCaps="false"
                 android:textSize="@dimen/_11ssp"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:visibility="visible"
                 android:background="@drawable/blue_rectangle_with_white_bound_stroke_witout_solid"
                 app:layout_constraintEnd_toEndOf="parent"

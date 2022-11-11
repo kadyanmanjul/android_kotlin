@@ -7,7 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/circle_for_q_item"
-        android:backgroundTint="@color/white">
+        android:backgroundTint="@color/pure_white">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view"
@@ -16,7 +16,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             tools:text="12" />
     </FrameLayout>
 </layout>

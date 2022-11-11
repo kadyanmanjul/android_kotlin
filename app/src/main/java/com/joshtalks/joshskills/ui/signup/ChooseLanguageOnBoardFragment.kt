@@ -28,7 +28,6 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
     private var languageAdapter = ChooseLanguageAdapter()
     private var is100PointsActive = false
-    private var isGovernmentCourseActive = false
     private var eftActive = false
 
     val viewModel by lazy {

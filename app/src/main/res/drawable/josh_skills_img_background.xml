@@ -4,8 +4,8 @@
     android:shape="oval">
 
     <solid
-        android:color="@color/white"/>
+        android:color="@color/pure_white"/>
     <stroke
         android:width="2dp"
-        android:color="@color/leaderboard_tooltip_bg_color" />
+        android:color="@color/surface_tip" />
 </shape>

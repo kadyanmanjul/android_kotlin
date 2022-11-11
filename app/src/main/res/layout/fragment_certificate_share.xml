@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white">
+    android:background="@color/pure_white">
 
     <data>
         <import type="android.view.View" />
@@ -61,7 +61,7 @@
                     android:layout_marginTop="@dimen/_16sdp"
                     android:background="@drawable/rect_with_black_stroke"
                     android:elevation="@dimen/_6sdp"
-                    android:shadowColor="@color/black"
+                    android:shadowColor="@color/icon_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_you_have_earned"
@@ -72,7 +72,7 @@
                     android:id="@+id/shimmer_certi"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:background="@color/white"
+                    android:background="@color/pure_white"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="@+id/img_certificate"
                     app:layout_constraintEnd_toEndOf="@+id/img_certificate"
@@ -107,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_38sdp"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:backgroundTint="@color/btn_share_whatsapp"
+                    android:backgroundTint="@color/external_whatsapp"
                     android:elevation="0dp"
                     android:paddingVertical="@dimen/_4sdp"
                     android:text="@string/btn_share_on_whatsapp"
@@ -132,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_38sdp"
                     android:layout_marginTop="@dimen/_4sdp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/pure_white"
                     android:elevation="0dp"
                     android:visibility="@{vm.btnFacebookVisibility? View.VISIBLE: View.GONE}"
                     android:paddingVertical="@dimen/_4sdp"
@@ -140,7 +140,7 @@
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                    android:textColor="@color/btn_share_facebook"
+                    android:textColor="@color/external_facebook"
                     android:textSize="@dimen/_12ssp"
                     app:cornerRadius="@dimen/_18sdp"
                     app:icon="@drawable/ic_facebook"
@@ -150,7 +150,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/btn_share_whatsapp"
-                    app:strokeColor="@color/btn_share_facebook"
+                    app:strokeColor="@color/external_facebook"
                     app:strokeWidth="@dimen/_1sdp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -160,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_38sdp"
                     android:layout_marginTop="@dimen/_4sdp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/pure_white"
                     android:elevation="0dp"
                     android:visibility="@{vm.btnInstaVisibility? View.VISIBLE: View.GONE}"
                     android:paddingVertical="@dimen/_4sdp"
@@ -168,7 +168,7 @@
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                    android:textColor="@color/btn_share_insta"
+                    android:textColor="@color/external_instagram"
                     android:textSize="@dimen/_12ssp"
                     app:cornerRadius="@dimen/_18sdp"
                     app:icon="@drawable/ic_instagram"
@@ -178,7 +178,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/btn_share_facebook"
-                    app:strokeColor="@color/btn_share_insta"
+                    app:strokeColor="@color/external_instagram"
                     app:strokeWidth="@dimen/_1sdp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -188,7 +188,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_38sdp"
                     android:layout_marginTop="@dimen/_4sdp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/pure_white"
                     android:elevation="0dp"
                     android:gravity="center"
                     android:visibility="@{vm.btnLinkedInVisibility? View.VISIBLE: View.GONE}"
@@ -196,7 +196,7 @@
                     android:text="@string/btn_share_on_linkedin"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                    android:textColor="@color/btn_share_linkedin"
+                    android:textColor="@color/external_linkedin"
                     android:textSize="@dimen/_12ssp"
                     app:cornerRadius="@dimen/_18sdp"
                     app:icon="@drawable/ic_linkedin"
@@ -206,7 +206,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/btn_share_insta"
-                    app:strokeColor="@color/btn_share_linkedin"
+                    app:strokeColor="@color/external_linkedin"
                     app:strokeWidth="@dimen/_1sdp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -217,21 +217,21 @@
                     android:layout_marginHorizontal="@dimen/_38sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginBottom="@dimen/_12ssp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/pure_white"
                     android:elevation="0dp"
                     android:visibility="@{vm.btnDownloadVisibility? View.VISIBLE: View.GONE}"
                     android:paddingVertical="@dimen/_4sdp"
                     android:text="@string/btn_download_certificate"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                    android:textColor="@color/btn_download_certificate"
+                    android:textColor="@color/text_subdued"
                     android:textSize="@dimen/_12ssp"
                     app:cornerRadius="@dimen/_18sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/btn_share_linkedIn"
-                    app:strokeColor="@color/btn_download_certificate"
+                    app:strokeColor="@color/disabled"
                     app:strokeWidth="@dimen/_1sdp" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

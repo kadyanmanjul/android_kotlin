@@ -5,5 +5,5 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:foreground="?android:attr/selectableItemBackground"
-    android:tint="@color/disable_color"
+    android:tint="@color/disabled"
     app:srcCompat="@drawable/ic_check_small" />

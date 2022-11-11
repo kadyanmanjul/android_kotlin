@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_16sdp"
-            app:cardBackgroundColor="@color/light_blue_EC"
+            app:cardBackgroundColor="@color/surface_information"
             app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +116,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/white_shade"
+            android:background="@color/surface_information"
             android:elevation="@dimen/_5sdp"
             android:gravity="center"
             android:orientation="vertical"
@@ -143,7 +143,7 @@
                 android:text="@string/allow_permission"
                 android:onClick="@{handler::requestContactsPermission}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:cornerRadius="@dimen/_24sdp"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -162,7 +162,7 @@
                 android:layout_width="@dimen/_82sdp"
                 android:layout_height="@dimen/_82sdp"
                 android:layout_gravity="center"
-                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_barColor="@color/primary_500"
                 wheel:matProg_fillRadius="true"
                 wheel:matProg_linearProgress="false"
                 wheel:matProg_progressIndeterminate="true" />

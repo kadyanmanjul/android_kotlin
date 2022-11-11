@@ -16,7 +16,7 @@
         android:layout_marginLeft="20dip"
         android:layout_marginTop="20dip"
         android:layerType="hardware"
-        tools:src="#0f0" />
+        tools:src="@color/success" />
 
     <ImageView
         android:layout_width="16dip"
@@ -48,7 +48,7 @@
             android:fontFamily="sans-serif-medium"
             android:gravity="left"
             android:singleLine="true"
-            android:textColor="#FFF"
+            android:textColor="@color/pure_white"
             android:textSize="17dip"
             android:text="Practice Partner Call" />
 
@@ -60,7 +60,7 @@
             android:gravity="left"
             android:singleLine="true"
             android:text="Speaking Practice"
-            android:textColor="#FFF"
+            android:textColor="@color/pure_white"
             android:textSize="14dip" />
 
         <TextView
@@ -69,7 +69,7 @@
             android:ellipsize="end"
             android:gravity="left"
             android:singleLine="true"
-            android:textColor="#6BFFFFFF"
+            android:textColor="@color/text_subdued"
             android:textSize="14dip"
             tools:text="to Account Name" />
 
@@ -101,10 +101,10 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:textColor="@color/call_decline_color"
+                android:textColor="@color/critical"
                 android:textSize="14dip"
                 app:drawableStartCompat="@drawable/ic_call_end"
-                app:drawableTint="@color/call_decline_color"
+                app:drawableTint="@color/critical"
                 android:text="@string/hang_up" />
 
         </FrameLayout>
@@ -127,11 +127,11 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:textColor="@color/call_action_color"
+                android:textColor="@color/success"
                 android:textSize="14dip"
                 app:drawableLeftCompat="@drawable/ic_pick_call"
                 app:drawableStartCompat="@drawable/ic_pick_call"
-                app:drawableTint="@color/call_action_color"
+                app:drawableTint="@color/success"
                 android:text="@string/answer" />
 
         </FrameLayout>

@@ -4,7 +4,7 @@
     android:id="@+id/root_view"
     android:layout_width="@dimen/_84sdp"
     android:layout_height="@dimen/_72sdp"
-    app:cardBackgroundColor="@color/red"
+    app:cardBackgroundColor="@color/critical"
     app:cardCornerRadius="@dimen/_8sdp"
     app:cardElevation="0dp"
     app:contentPaddingRight="@dimen/_4sdp"
@@ -35,7 +35,7 @@
             android:layout_gravity="end|center"
             android:gravity="top|center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:textSize="@dimen/_21ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/image_view" />

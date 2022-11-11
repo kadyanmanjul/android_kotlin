@@ -85,7 +85,6 @@ import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
-import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
@@ -115,10 +114,8 @@ import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
@@ -475,7 +472,7 @@ class ConversationActivity :
         lifecycleScope.launch(Dispatchers.Main) {
             window.statusBarColor = ContextCompat.getColor(
                 this@ConversationActivity,
-                R.color.leaderboard_overlay_status_bar
+                R.color.primary_800
             )
             conversationBinding.freeTrialContainer.visibility = GONE
             conversationBinding.overlayLayout.visibility = VISIBLE
@@ -2248,26 +2245,15 @@ class ConversationActivity :
     }
 
     private fun openCourseProgressListingScreen() {
-        val isLessonTypeChat = inboxEntity.isCapsuleCourse
-        if (isLessonTypeChat) {
-            startActivityForResult(
-                CourseProgressActivityNew.getCourseProgressActivityNew(
-                    this,
-                    inboxEntity.conversation_id,
-                    inboxEntity.courseId.toInt()
-                ),
-                COURSE_PROGRESS_NEW_REQUEST_CODE
-            )
-            PrefManager.put(COURSE_PROGRESS_OPENED, true)
-            courseProgressUIVisible = true
-        } else {
-            AppAnalytics.create(AnalyticsEvent.COURSE_PROGRESS_OVERVIEW.NAME).push()
-            CourseProgressActivity.startCourseProgressActivity(
+        startActivityForResult(
+            CourseProgressActivityNew.getCourseProgressActivityNew(
                 this,
-                COURSE_PROGRESS_REQUEST_CODE,
-                inboxEntity
-            )
-        }
+                inboxEntity.conversation_id,
+                inboxEntity.courseId.toInt()
+            ),
+            COURSE_PROGRESS_NEW_REQUEST_CODE
+        )
+        courseProgressUIVisible = true
     }
 
     fun visibleItem() {

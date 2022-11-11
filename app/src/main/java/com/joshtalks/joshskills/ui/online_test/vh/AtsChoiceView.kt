@@ -114,7 +114,7 @@ class AtsChoiceView : ConstraintLayout, AssessmentQuestionViewCallback {
                 0
             )
             line.layoutParams = layoutParams
-            line.background = ContextCompat.getDrawable(context, R.color.light_shade_of_gray)
+            line.background = ContextCompat.getDrawable(context, R.color.disabled)
             dummyAnswerFlowLayout.addView(line)
 
         }

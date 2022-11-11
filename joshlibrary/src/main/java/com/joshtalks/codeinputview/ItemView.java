@@ -62,7 +62,7 @@ public class ItemView extends FrameLayout {
         float defaultHeight = Utils.getPixels(context, DEFAULT_BAR_HEIGHT);
         float defaultOtpTextSize = Utils.getPixels(context, DEFAULT_OTP_TEXT_SIZE);
         int textColor = styles.getColor(R.styleable.OtpTextView_android_textColor
-                , ResourcesCompat.getColor(context.getResources(), R.color.black, null));
+                , ResourcesCompat.getColor(context.getResources(), R.color.pure_black, null));
         float barHeight = styles.getDimension(R.styleable.OtpTextView_bar_height, defaultHeight);
         float barMargin = styles.getDimension(R.styleable.OtpTextView_bar_margin, Utils.getPixels(context, 0));
         float barMarginBottom = styles.getDimension(R.styleable.OtpTextView_bar_margin_bottom, DEFAULT_BAR_MARGIN);
@@ -91,13 +91,13 @@ public class ItemView extends FrameLayout {
         boxBackgroundColorError = styles.getResourceId(R.styleable.OtpTextView_otp_box_background_error
                 , boxBackgroundColor);
         barActiveColor = styles.getColor(R.styleable.OtpTextView_bar_active_color
-                , ResourcesCompat.getColor(context.getResources(), R.color.black, null));
+                , ResourcesCompat.getColor(context.getResources(), R.color.pure_black, null));
         barInactiveColor = styles.getColor(R.styleable.OtpTextView_bar_inactive_color
-                , ResourcesCompat.getColor(context.getResources(), R.color.grey, null));
+                , ResourcesCompat.getColor(context.getResources(), R.color.pure_grey, null));
         barErrorColor = styles.getColor(R.styleable.OtpTextView_bar_error_color
-                , ResourcesCompat.getColor(context.getResources(), R.color.red, null));
+                , ResourcesCompat.getColor(context.getResources(), R.color.critical, null));
         barSuccessColor = styles.getColor(R.styleable.OtpTextView_bar_success_color
-                , ResourcesCompat.getColor(context.getResources(), R.color.black, null));
+                , ResourcesCompat.getColor(context.getResources(), R.color.pure_black, null));
 
         this.setBackgroundResource(boxBackgroundColor);
 

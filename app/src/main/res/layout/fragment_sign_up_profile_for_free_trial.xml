@@ -14,7 +14,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         android:clickable="true"
         android:focusable="true">
 
@@ -39,14 +39,13 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/_24sdp" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_name"
+            style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
             android:text="@string/enter_name_label"
-            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-            android:textColor="@color/text_default"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
             app:layout_constraintTop_toTopOf="parent" />
@@ -64,10 +63,10 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/name_edit_text"
+                style="@style/JoshNameEditText"
                 android:layout_width="match_parent"
-                android:focusableInTouchMode="true"
                 android:layout_height="wrap_content"
-                style="@style/JoshNameEditText" />
+                android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -75,27 +74,27 @@
             style="@style/Primary_Button_Filled"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_24sdp"
             android:layout_marginBottom="@dimen/_24sdp"
             android:onClick="@{()->handler.submitProfile()}"
             android:text="@string/continue_label"
-            android:layout_marginTop="@dimen/_24sdp"
             android:textAllCaps="false"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintBottom_toTopOf="@+id/text_view_privacy"
-            app:layout_constraintVertical_bias="1.0"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-            app:layout_constraintTop_toBottomOf="@+id/nameRoot" />
+            app:layout_constraintTop_toBottomOf="@+id/nameRoot"
+            app:layout_constraintVertical_bias="1.0" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_privacy"
+            style="@style/TextAppearance.JoshTypography.TinyRegular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_28sdp"
             android:gravity="center"
             android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
             android:text="@string/privacy_label"
-            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
             android:textColor="@color/text_subdued"
             app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
             app:layout_constraintEnd_toEndOf="parent"
@@ -115,13 +114,11 @@
                 android:layout_width="@dimen/_82sdp"
                 android:layout_height="@dimen/_82sdp"
                 android:layout_gravity="center"
-                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_barColor="@color/primary_500"
                 wheel:matProg_fillRadius="true"
                 wheel:matProg_linearProgress="false"
                 wheel:matProg_progressIndeterminate="true" />
 
         </FrameLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

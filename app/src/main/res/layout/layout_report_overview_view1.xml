@@ -21,7 +21,7 @@
             android:gravity="center"
             android:text="@string/instructions"
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,7 +35,7 @@
             android:layout_marginTop="@dimen/_16sdp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group_smaller"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_tv"
@@ -54,7 +54,7 @@
             android:paddingTop="@dimen/_15sdp"
             android:paddingBottom="@dimen/_18sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -80,19 +80,19 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_24sdp"
             android:layout_marginTop="@dimen/_30sdp"
-            android:backgroundTint="@color/button_color"
+            android:backgroundTint="@color/primary_500"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:text="@string/download_certificate_2"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:cornerRadius="@dimen/_24sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_award"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_certificate_download"
@@ -107,7 +107,7 @@
             android:layout_width="wrap_content"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/primary_500"
             android:clickable="true"
             android:focusable="true"
             android:paddingVertical="@dimen/_4sdp"
@@ -115,13 +115,13 @@
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:cornerRadius="@dimen/_24sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_download_certificate"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
 

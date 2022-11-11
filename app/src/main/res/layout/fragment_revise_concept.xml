@@ -15,7 +15,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
+            android:background="@color/pure_white">
 
         <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/toolbar"
@@ -27,7 +27,7 @@
             <com.google.android.material.appbar.MaterialToolbar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
+                    android:background="@color/pure_white"
                     android:gravity="start|center"
                     android:minHeight="?attr/actionBarSize"
                     android:paddingHorizontal="@dimen/_4sdp"
@@ -44,7 +44,7 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                         android:gravity="center_vertical|start"
                         android:singleLine="true"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_default"
                         tool:text="Revise Concept Fragment" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -58,7 +58,7 @@
                         android:paddingVertical="@dimen/_4sdp"
                         android:visibility="visible"
                         app:srcCompat="@drawable/ic_cross"
-                        app:tint="@color/black" />
+                        app:tint="@color/icon_default" />
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -71,7 +71,7 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_11sdp"
             android:gravity="start|center"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -119,7 +119,7 @@
             app:layout_constraintEnd_toEndOf="@+id/thumbnail_image"
             app:layout_constraintStart_toStartOf="@+id/thumbnail_image"
             app:layout_constraintTop_toTopOf="@+id/thumbnail_image"
-            app:tint="@color/white" />
+            app:tint="@color/pure_white" />
 
         <androidx.constraintlayout.widget.Group
                 android:id="@+id/video_group"
@@ -141,12 +141,12 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/description"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:gravity="start|center"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -164,19 +164,19 @@
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:background="@drawable/round_rectangle_for_course_expo"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
                 android:onClick="@{()->fragment.dismiss()}"
                 android:paddingVertical="@dimen/_10sdp"
                 android:text="@string/back_to_question"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:cornerRadius="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

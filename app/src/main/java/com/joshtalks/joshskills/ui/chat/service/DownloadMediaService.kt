@@ -239,7 +239,7 @@ class DownloadMediaService : Service(), FetchListener {
             .setColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.colorPrimary
+                    R.color.primary_500
                 )
             )
             .setOngoing(true)

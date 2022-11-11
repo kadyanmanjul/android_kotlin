@@ -36,12 +36,12 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtHeading"
+            style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_24sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:text="@{onboardingData.title}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/logo"
@@ -112,15 +112,15 @@
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnStartTrialText"
+            style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:elevation="@dimen/_2sdp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:cornerRadius="@dimen/_32sdp"
             app:layout_constraintBottom_toBottomOf="@id/btnStartTrial"
             app:layout_constraintEnd_toEndOf="@id/btnStartTrial"
@@ -130,36 +130,35 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtLogin"
+            style="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_24sdp"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
             android:text="@{handler.loginText()}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/black"
-            android:layout_marginBottom="@dimen/_24sdp"
             app:layout_constraintBottom_toTopOf="@+id/text_view_privacy"
             tools:text="@string/already_a_user_login" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_privacy"
+            style="@style/TextAppearance.JoshTypography.TinyRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_40sdp"
             android:layout_marginBottom="@dimen/_40sdp"
             android:gravity="center"
             android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
             android:text="@string/privacy_label"
-            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-            android:textColor="@color/grey"
+            android:textColor="@color/text_subdued"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginHorizontal="@dimen/_40sdp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_default="percent"/>
+            app:layout_constraintWidth_default="percent" />
 
         <FrameLayout
             android:id="@+id/container"
@@ -184,8 +183,5 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/_16sdp" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </layout>

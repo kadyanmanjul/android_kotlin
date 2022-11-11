@@ -14,7 +14,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintBottom_toTopOf="@+id/multi_linelayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:background="@drawable/round_rectangle_for_course_expo"
-            android:backgroundTint="@color/button_color"
+            android:backgroundTint="@color/primary_500"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
@@ -50,13 +50,13 @@
             android:paddingVertical="@dimen/_8sdp"
             android:text="@string/download_syllabus"
             android:textAppearance="@style/TextAppearance.JoshTypography.Link_Normal"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:cornerRadius="@dimen/_8sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/multi_linelayout"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

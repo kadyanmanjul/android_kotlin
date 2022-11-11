@@ -138,7 +138,7 @@ class MasterFaqViewHolder(
                 if (it.position == position) {
                     it.cardView.strokeColor = ResourcesCompat.getColor(
                         getAppContext().resources,
-                        R.color.button_color,
+                        R.color.primary_500,
                         null
                     )
                     TextViewCompat.setTextAppearance(
@@ -149,12 +149,12 @@ class MasterFaqViewHolder(
                 } else {
                     it.cardView.strokeColor = ResourcesCompat.getColor(
                         getAppContext().resources,
-                        R.color.white,
+                        R.color.pure_white,
                         null
                     )
                     TextViewCompat.setTextAppearance(
                         it.categoryNameTV,
-                        R.style.TextAppearance_JoshTypography_BodyRegular
+                        R.style.TextAppearance_JoshTypography_BodyRegular20
                     )
                 }
             }

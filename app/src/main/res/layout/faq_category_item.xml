@@ -17,5 +17,5 @@
     app:chipStartPadding="@dimen/_10sdp"
     app:chipStrokeColor="#E7F2FD"
     app:chipStrokeWidth="@dimen/_1sdp"
-    app:rippleColor="@color/button_color"
+    app:rippleColor="@color/primary_500"
     tools:text="Course Information" />

@@ -203,8 +203,8 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.name.visibility = View.GONE
         binding.searchLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
         binding.searchLayout.elevation = 8f
-        binding.backIv.setColorFilter(ContextCompat.getColor(this, R.color.black))
-        binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.black))
+        binding.backIv.setColorFilter(ContextCompat.getColor(this, R.color.icon_default))
+        binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.icon_default))
         binding.searchBg.background = ContextCompat.getDrawable(this, R.drawable.grey_rounded_bg)
         binding.recentRv.visibility = View.VISIBLE
         binding.divider.visibility = View.GONE
@@ -216,10 +216,10 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.rank.visibility = View.VISIBLE
         binding.points.visibility = View.VISIBLE
         binding.name.visibility = View.VISIBLE
-        binding.searchLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
+        binding.searchLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_500))
         binding.searchLayout.elevation = 8f
-        binding.backIv.setColorFilter(ContextCompat.getColor(this, R.color.white))
-        binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.white))
+        binding.backIv.setColorFilter(ContextCompat.getColor(this, R.color.pure_white))
+        binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.pure_white))
         binding.searchBg.background =
             ContextCompat.getDrawable(this, R.drawable.primary_dark_rounded_bg)
         binding.recentRv.visibility = View.GONE

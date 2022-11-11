@@ -29,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.flow.MutableStateFlow
 
 private const val TAG = "GroupBindingAdapter"
+
 @BindingAdapter("onBackPressed")
 fun GroupsAppBar.onBackPress(function: () -> Unit) = this.onBackPressed(function)
 
@@ -52,7 +53,7 @@ fun GroupsAppBar.setFirstIcon(drawableRes: Int) {
 
 @BindingAdapter("groupHeader", "groupSubHeader", "groupType", requireAll = false)
 fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, groupType: String?) {
-    this.setGroupSubTitle(subHeader, header, groupType?: OPENED_GROUP)
+    this.setGroupSubTitle(subHeader, header, groupType ?: OPENED_GROUP)
 }
 
 @BindingAdapter("secondIcon")
@@ -136,13 +137,10 @@ fun setGroupChatAdapter(
     scrollView: AppCompatImageView,
     function: ((GroupMember, View) -> Unit)?
 ) {
-    view.layoutManager = LinearLayoutManager(
-        view.context,
-        RecyclerView.VERTICAL,
-        false)
-        .apply {
-        isSmoothScrollbarEnabled = true
-    }
+    view.layoutManager =
+        LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply {
+            isSmoothScrollbarEnabled = true
+        }
 
     view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -179,16 +177,16 @@ fun JoshTextView.setTextColor(value: String) {
 @BindingAdapter(value = ["groupChatScreenBackground"], requireAll = false)
 fun groupChatScreenBackground(chatBg: View, image: Int) {
     try {
-        if (image==0) {
-            chatBg.setBackgroundResource(R.color.chat_bg_color)
+        if (image == 0) {
+            chatBg.setBackgroundResource(R.color.disabled)
         } else {
             chatBg.setBackgroundResource(image)
         }
-    }catch (e:Exception){
-        chatBg.setBackgroundResource(R.color.chat_bg_color)
+    } catch (e: Exception) {
+        chatBg.setBackgroundResource(R.color.disabled)
         e.printStackTrace()
     } catch (e: OutOfMemoryError) {
-        chatBg.setBackgroundResource(R.color.chat_bg_color)
+        chatBg.setBackgroundResource(R.color.disabled)
         e.printStackTrace()
     }
 }

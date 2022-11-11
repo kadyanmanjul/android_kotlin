@@ -56,6 +56,7 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:text="@string/lessons"
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+            android:textColor="@color/text_default"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -98,7 +99,7 @@
                 android:gravity="center"
                 android:text="Your Free Trial has ended"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/white" />
+                android:textColor="@color/pure_white" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialTextView"
@@ -113,7 +114,7 @@
                 android:padding="@dimen/_10sdp"
                 android:text="Buy Now"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -136,7 +137,7 @@
                 android:layout_height="@dimen/_60sdp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_barColor="@color/primary_500"
                 wheel:matProg_fillRadius="true"
                 wheel:matProg_linearProgress="false"
                 wheel:matProg_progressIndeterminate="true"

@@ -165,7 +165,7 @@ class NotificationUtils(val context: Context) {
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setWhen(System.currentTimeMillis())
                         .setDefaults(Notification.DEFAULT_ALL)
-                        .setColor(ContextCompat.getColor(context, R.color.colorAccent))
+                        .setColor(ContextCompat.getColor(context, R.color.primary_500))
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH

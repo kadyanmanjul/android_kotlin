@@ -349,8 +349,8 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
                         showToast("Coupon Applied Successfully")
 
-                        val blackColor = ContextCompat.getColor(this, R.color.black)
-                        val greenColor = ContextCompat.getColor(this, R.color.green_right_answer)
+                        val blackColor = ContextCompat.getColor(this, R.color.text_default)
+                        val greenColor = ContextCompat.getColor(this, R.color.success)
                         val text = SpannableStringBuilder()
                             .color(blackColor) { append("Coupon Applied") }
                             .append("\n")
@@ -701,7 +701,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 Utils.getBitmapFromVectorDrawable(
                     applicationContext,
                     R.drawable.ic_small_tick,
-                    R.color.green
+                    R.color.success
                 ),
                 18
             ), 0, text.length,

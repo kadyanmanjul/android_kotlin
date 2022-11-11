@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start|center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="visible"
                 tools:text="What is the correct translation of “Hum sab apni english sudharna chahte hai”?" />
 
@@ -37,17 +37,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_42sdp"
                 android:layout_marginTop="@dimen/_12sdp"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/next_question"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:visibility="gone"
                 app:cornerRadius="@dimen/_4sdp"
-                app:rippleColor="@color/white"
+                app:rippleColor="@color/pure_white"
                 tools:visibility="visible" />
 
 
@@ -58,8 +58,8 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="start"
                 android:text="@string/explanation"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
-                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -72,8 +72,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_6sdp"
                 android:gravity="center_vertical"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 tools:text="wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d  wd  wd  wd  wd w dw d w d wd w d  dwdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d "
                 tools:visibility="visible" />

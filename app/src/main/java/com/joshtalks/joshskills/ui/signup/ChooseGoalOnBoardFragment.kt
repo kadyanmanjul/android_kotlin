@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
 import com.joshtalks.joshskills.ui.assessment.view.Stub

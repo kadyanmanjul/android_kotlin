@@ -4,6 +4,6 @@
         android:insetRight="@dimen/_16sdp">
     <shape android:shape="rectangle">
         <size android:height="@dimen/_1sdp" />
-        <solid android:color="@color/lighter_grey" />
+        <solid android:color="@color/disabled" />
     </shape>
 </inset>

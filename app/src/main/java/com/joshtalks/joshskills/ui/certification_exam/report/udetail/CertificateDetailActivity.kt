@@ -404,7 +404,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             binding.rootView.setBackgroundColor(
                 ContextCompat.getColor(
                     this@CertificateDetailActivity,
-                    R.color.black
+                    R.color.icon_default
                 )
             )
             binding.rootView.removeAllViews()

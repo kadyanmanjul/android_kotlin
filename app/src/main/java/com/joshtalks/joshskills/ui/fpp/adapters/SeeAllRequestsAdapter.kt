@@ -74,7 +74,7 @@ class SeeAllRequestsAdapter(var items: List<PendingRequestDetail> = listOf()) :
         private fun changeVisibility(isVisible: Boolean) {
             if (!isVisible)
                 binding.afterAccepted.visibility = View.GONE
-            binding.groupItemContainer.setBackgroundResource(R.color.request_respond)
+            binding.groupItemContainer.setBackgroundResource(R.color.surface_warning)
         }
     }
 }

@@ -226,7 +226,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                     binding.startBtn.backgroundTintList = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.light_shade_of_gray
+                            R.color.disabled
                         )
                     )
                     binding.lockTestMessage.text = getString(

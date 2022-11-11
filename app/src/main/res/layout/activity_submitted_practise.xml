@@ -4,7 +4,7 @@
         xmlns:card_view="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/pure_white">
 
     <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/toolbar"
@@ -16,7 +16,7 @@
         <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@color/pure_white"
                 android:gravity="start|center"
                 android:minHeight="?attr/actionBarSize"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -40,7 +40,7 @@
                         android:paddingVertical="@dimen/_4sdp"
                         android:singleLine="true"
                         android:text="@string/submitted_recording"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/text_default" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_back"
@@ -51,7 +51,7 @@
                         android:paddingVertical="@dimen/_4sdp"
                         android:visibility="visible"
                         app:srcCompat="@drawable/ic_cross"
-                        app:tint="@color/black" />
+                        app:tint="@color/icon_default" />
             </FrameLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>

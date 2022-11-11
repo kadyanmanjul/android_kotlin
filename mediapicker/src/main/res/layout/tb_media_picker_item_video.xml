@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:text="0"
-            android:textColor="@color/md_white_1000"
+            android:textColor="@color/pure_white"
             android:layout_marginEnd="@dimen/offset_16"
             android:layout_marginRight="16dp"/>
 

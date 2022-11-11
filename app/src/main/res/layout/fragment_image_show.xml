@@ -6,7 +6,7 @@
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
+        android:background="@color/icon_default"
         android:clickable="true"
         android:fitsSystemWindows="true"
         android:focusable="true"
@@ -38,7 +38,7 @@
                 android:singleLine="true"
                 android:text=""
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 tools:text="Spoken English Course" />
     </com.google.android.material.appbar.MaterialToolbar>
 

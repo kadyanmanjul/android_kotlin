@@ -16,7 +16,7 @@
         android:layout_height="1dp"
         android:layout_gravity="top"
         android:visibility="gone"
-        android:background="@color/gray_e6"
+        android:background="@color/disabled"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,12 +33,12 @@
         android:paddingBottom="@dimen/_10sdp"
         android:text="@string/find_more_courses"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/primary_500"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_line"
-        app:rippleColor="@color/white"
+        app:rippleColor="@color/pure_white"
         tools:visibility="visible" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -48,7 +48,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/round_rectangle"
-        android:backgroundTint="@color/button_color"
+        android:backgroundTint="@color/primary_500"
         android:gravity="center"
         android:paddingStart="@dimen/_30sdp"
         android:paddingTop="@dimen/_10sdp"
@@ -56,12 +56,12 @@
         android:paddingBottom="@dimen/_10sdp"
         android:text="@string/buy_english_course"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-        android:textColor="@color/white"
+        android:textColor="@color/pure_white"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_line"
-        app:rippleColor="@color/white"
+        app:rippleColor="@color/pure_white"
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -78,7 +78,7 @@
         android:layout_gravity="bottom"
         android:visibility="gone"
         android:layout_marginTop="@dimen/_16sdp"
-        android:background="@color/lighter_grey"
+        android:background="@color/disabled"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/barrier_button" />
 

@@ -17,15 +17,15 @@
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:backgroundTint="@color/white"
+        android:background="@color/pure_white"
+        android:backgroundTint="@color/pure_white"
         android:clipToPadding="true"
         android:elevation="0dp"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="@color/pure_white"
         app:cardCornerRadius="0dp"
         app:cardElevation="0dp"
-        tools:cardBackgroundColor="@color/white"
+        tools:cardBackgroundColor="@color/pure_white"
         tools:cardPreventCornerOverlap="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -91,7 +91,7 @@
                 android:layout_width="@dimen/_65sdp"
                 android:layout_height="@dimen/_17sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="@color/primary_500"
                 android:elevation="0dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
@@ -99,7 +99,7 @@
                 android:text="@string/confirm"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:textStyle="bold"
                 app:cornerRadius="@dimen/_2sdp"
                 app:elevation="0dp"
@@ -109,14 +109,14 @@
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toEndOf="@+id/title_container"
                 app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_not_now"
                 android:layout_width="@dimen/_65sdp"
                 android:layout_height="@dimen/_17sdp"
                 android:layout_marginEnd="@dimen/_14sdp"
-                android:backgroundTint="@color/not_now"
+                android:backgroundTint="@color/disabled"
                 android:elevation="0dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
@@ -131,7 +131,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/after_accepted"

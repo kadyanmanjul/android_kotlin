@@ -128,7 +128,7 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
                         rootView.setCardBackgroundColor(
                             ContextCompat.getColor(
                                 context,
-                                R.color.white
+                                R.color.pure_white
                             )
                         )
                         ivTick.visibility = View.GONE

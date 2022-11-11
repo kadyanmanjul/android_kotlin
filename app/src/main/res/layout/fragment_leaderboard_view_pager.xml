@@ -26,7 +26,7 @@
             android:id="@+id/user_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/primary_500"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground"
@@ -43,8 +43,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="@dimen/_8sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.01"
@@ -60,7 +60,7 @@
                 android:layout_marginVertical="@dimen/_8sdp"
                 android:layout_marginStart="@dimen/_64sdp"
                 android:background="@drawable/circle2"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/pure_white"
                 android:gravity="center_vertical|start"
                 android:padding="@dimen/_1sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -72,7 +72,7 @@
                     android:layout_width="@dimen/_40sdp"
                     android:layout_height="@dimen/_40sdp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    tools:src="@color/checkmark_blue"
+                    tools:src="@color/primary_400"
                     tools:visibility="visible" />
             </FrameLayout>
 
@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/circle2"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="@color/primary_500"
                 android:padding="@dimen/_2sdp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/user_pic_frame"
@@ -95,7 +95,7 @@
                     android:layout_width="@dimen/_8sdp"
                     android:layout_height="@dimen/_8sdp"
                     android:background="@drawable/circle"
-                    android:backgroundTint="@color/green" />
+                    android:backgroundTint="@color/success" />
             </FrameLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -108,8 +108,8 @@
                 android:maxLines="1"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="@+id/points"
                 app:layout_constraintEnd_toStartOf="@id/points"
                 app:layout_constraintHorizontal_bias="0"
@@ -123,7 +123,7 @@
                 android:layout_width="@dimen/_34sdp"
                 android:layout_height="@dimen/_18sdp"
                 android:layout_marginEnd="@dimen/_12sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/rank"
                 app:layout_constraintStart_toEndOf="@+id/name"
@@ -136,8 +136,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_12sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="@+id/rank"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/rank"

@@ -35,7 +35,7 @@
                 android:paddingHorizontal="@dimen/_7sdp"
                 android:paddingVertical="@dimen/_4sdp"
                 android:text="@{itemData.message}"
-                android:textColor="@color/group_coming_soon"
+                android:textColor="@color/text_default"
                 tools:text="Rahul changed the group name from \“MI fans\” to \“IPL MI\”" />
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>

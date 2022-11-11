@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:paddingVertical="@dimen/_6sdp"
-        tools:background="@color/black">
+        tools:background="@color/icon_default">
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back"
-            app:tint="@color/white" />
+            app:tint="@color/pure_white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

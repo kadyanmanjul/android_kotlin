@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_176sdp"
         android:background="@drawable/round_rectangle_for_course_expo"
-        android:backgroundTint="@color/colorPrimary">
+        android:backgroundTint="@color/primary_500">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/background_image_view"
@@ -28,8 +28,8 @@
                 android:id="@+id/students_enrolled_nearby"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toTopOf="@+id/state_country"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.12"
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.12"
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_6sdp"
                 android:background="@drawable/round_rectangle_for_course_expo"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/pure_white"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
@@ -66,7 +66,7 @@
                 android:paddingVertical="@dimen/_6sdp"
                 android:text="@string/chech_location"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:cornerRadius="@dimen/_32sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +74,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.85"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
         <FrameLayout
                 android:id="@+id/progress_bar"
@@ -88,7 +88,7 @@
                     android:layout_width="@dimen/_82sdp"
                     android:layout_height="@dimen/_82sdp"
                     android:layout_gravity="center"
-                    wheel:matProg_barColor="@color/white"
+                    wheel:matProg_barColor="@color/pure_white"
                     wheel:matProg_fillRadius="true"
                     wheel:matProg_linearProgress="false"
                     wheel:matProg_progressIndeterminate="true"

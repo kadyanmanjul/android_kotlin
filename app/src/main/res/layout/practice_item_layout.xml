@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_8sdp"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         android:paddingHorizontal="@dimen/_12sdp"
         android:paddingVertical="@dimen/_12sdp"
         app:contentPadding="@dimen/_8sdp"
@@ -38,7 +38,7 @@
                 android:gravity="start|center"
                 android:text="@string/today_practise"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:drawableStartCompat="@drawable/ic_check_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/expand_iv"
@@ -74,8 +74,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:gravity="start|center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/text_default"
                 android:visibility="gone" />
 
             <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
@@ -106,7 +106,7 @@
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:background="@drawable/play_pause_button_background"
-                    android:backgroundTint="@color/button_color"
+                    android:backgroundTint="@color/primary_500"
                     android:contentDescription="@string/play_button_description"
                     android:elevation="@dimen/_2sdp"
                     android:padding="@dimen/_4sdp"
@@ -134,7 +134,7 @@
                     android:layout_alignEnd="@id/practise_seekbar"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    android:textColor="@color/red_color"
+                    android:textColor="@color/critical"
                     app:layout_goneMarginTop="@dimen/spacing_large" />
 
             </RelativeLayout>
@@ -161,7 +161,7 @@
                     android:layout_height="@dimen/_24sdp"
                     android:layout_gravity="center"
                     android:indeterminate="true"
-                    android:indeterminateTint="@color/button_color"
+                    android:indeterminateTint="@color/primary_500"
                     android:visibility="gone" />
 
             </FrameLayout>
@@ -201,7 +201,7 @@
                         android:elevation="@dimen/_2sdp"
                         android:padding="@dimen/_7sdp"
                         android:scaleType="fitCenter"
-                        android:tint="@color/white" />
+                        android:tint="@color/pure_white" />
 
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/vocab_speaking_hint"
@@ -232,8 +232,8 @@
                 android:layout_marginTop="@dimen/_16sdp"
                 android:gravity="start|center"
                 android:text="This is the description of the question"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/text_default"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -245,7 +245,7 @@
                 android:gravity="start|center"
                 android:text="@string/your_answer"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="visible" />
 
             <LinearLayout
@@ -271,9 +271,9 @@
                     android:maxLines="8"
                     android:padding="@dimen/_4sdp"
                     android:singleLine="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/emoji_bg_color"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
+                    android:textColorHint="@color/disabled"
                     android:textCursorDrawable="@drawable/cursor_drawable"
                     android:visibility="gone" />
 
@@ -302,9 +302,9 @@
                             android:layout_centerInParent="true"
                             android:layout_gravity="center"
                             android:background="@drawable/recv_bg_mic"
-                            android:backgroundTint="@color/button_color"
+                            android:backgroundTint="@color/primary_500"
                             android:scaleType="centerInside"
-                            android:tint="@color/white"
+                            android:tint="@color/pure_white"
                             android:visibility="gone"
                             app:srcCompat="@drawable/ic_rec_mic_big"
                             tools:visibility="visible" />
@@ -398,13 +398,13 @@
                         android:background="@drawable/bg_timer"
                         android:drawableStart="@drawable/timer_drawable"
                         android:drawablePadding="@dimen/_4sdp"
-                        android:drawableTint="@color/error_color"
+                        android:drawableTint="@color/critical"
                         android:gravity="top|center"
                         android:paddingStart="@dimen/_16sdp"
                         android:paddingTop="@dimen/_8sdp"
                         android:paddingEnd="@dimen/_16sdp"
                         android:paddingBottom="@dimen/_8sdp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/pure_white"
                         android:textSize="@dimen/font_11_5" />
 
                 </FrameLayout>
@@ -418,7 +418,7 @@
                     android:paddingBottom="@dimen/_4sdp"
                     android:text="@string/hold_to_record_msz"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
@@ -431,7 +431,7 @@
                 android:gravity="start|center"
                 android:text="@string/your_answer"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:visibility="gone" />
 
             <LinearLayout
@@ -468,7 +468,7 @@
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
                         android:background="@drawable/play_pause_button_background"
-                        android:backgroundTint="@color/button_color"
+                        android:backgroundTint="@color/primary_500"
                         android:contentDescription="@string/play_button_description"
                         android:elevation="@dimen/_2sdp"
                         android:padding="@dimen/_4sdp"
@@ -515,7 +515,7 @@
                         android:layout_marginTop="@dimen/_20sdp"
                         android:paddingEnd="@dimen/_12sdp"
                         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                        android:textColor="@color/gray_9E"
+                        android:textColor="@color/dark_grey"
                         app:layout_goneMarginTop="@dimen/spacing_large" />
                 </RelativeLayout>
 
@@ -538,8 +538,8 @@
                 android:text="@string/submit"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/white"
-                app:rippleColor="@color/white" />
+                android:textColor="@color/pure_white"
+                app:rippleColor="@color/pure_white" />
 
         </LinearLayout>
 

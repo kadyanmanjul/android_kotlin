@@ -16,14 +16,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_search"
-            app:tint="@color/black" />
+            app:tint="@color/icon_default" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/search_keyword_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_16sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/insert_iv"
             app:layout_constraintStart_toEndOf="@+id/search_iv"
@@ -39,7 +39,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back"
-            app:tint="@color/black" />
+            app:tint="@color/icon_default" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

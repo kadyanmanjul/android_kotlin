@@ -9,7 +9,7 @@
         android:layout_gravity="center"
         android:keepScreenOn="true"
         app:contentPadding="@dimen/_12sdp"
-        app:cardBackgroundColor="@color/artboard_color"
+        app:cardBackgroundColor="@color/pure_grey"
         app:cardCornerRadius="@dimen/_6sdp"
         card_view:cardUseCompatPadding="true">
 
@@ -24,7 +24,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
             app:srcCompat="@drawable/ic_play_24dp"
-            app:tint="@color/light_grey"
+            app:tint="@color/dark_grey"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,7 +35,7 @@
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:gravity="start"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 app:layout_constraintBottom_toBottomOf="@+id/image_view"
                 app:layout_constraintStart_toEndOf="@+id/image_view"
@@ -50,7 +50,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="start"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                 app:layout_constraintStart_toStartOf="@+id/title"
                 app:layout_constraintTop_toBottomOf="@+id/title"
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="start"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 android:layout_marginStart="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/duration"

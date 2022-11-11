@@ -66,11 +66,11 @@ class LeaderBoardItemViewHolder(
             container.isEnabled = true
             if (currentUser) {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    container.setBackgroundColor(context.getColor(R.color.lightest_blue))
+                    container.setBackgroundColor(context.getColor(R.color.surface_information))
                 }
             } else {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    container.setBackgroundColor(context.getColor(R.color.white))
+                    container.setBackgroundColor(context.getColor(R.color.pure_white))
                 }
             }
             rank.text = response.ranking.toString()

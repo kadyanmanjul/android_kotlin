@@ -23,7 +23,7 @@
             android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
             android:padding="@dimen/_4sdp"
-            android:tint="@color/button_color"
+            android:tint="@color/primary_500"
             app:srcCompat="@drawable/ic_play_24dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -32,7 +32,7 @@
             android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
             android:padding="@dimen/_4sdp"
-            android:tint="@color/button_color"
+            android:tint="@color/primary_500"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_pause_24dp"
             tools:visibility="visible" />
@@ -47,16 +47,15 @@
         android:progress="50"
         android:progressDrawable="@drawable/seek_bar_draw"
         app:bar_height="@dimen/_1sdp"
-        app:buffered_color="@android:color/white"
+        app:buffered_color="@color/pure_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/barrier"
         app:layout_constraintStart_toEndOf="@+id/play_pause_control"
         app:layout_constraintTop_toTopOf="parent"
-        app:played_color="@color/button_color"
-        app:scrubber_color="@color/colorPrimary"
+        app:played_color="@color/primary_500"
+        app:scrubber_color="@color/primary_500"
         app:scrubber_drawable="@drawable/seek_thumb"
-
-        app:unplayed_color="@color/text_90" />
+        app:unplayed_color="@color/icon_subdued" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
@@ -72,7 +71,7 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-        android:textColor="@color/text_90"
+        android:textColor="@color/text_subdued"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -85,7 +84,7 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-        android:textColor="@color/text_90"
+        android:textColor="@color/text_subdued"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

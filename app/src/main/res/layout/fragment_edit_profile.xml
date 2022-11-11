@@ -23,7 +23,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+                android:background="@color/primary_500"
                 android:contentInsetStart="0dp"
                 android:contentInsetLeft="0dp"
                 android:contentInsetEnd="0dp"
@@ -42,7 +42,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primary_500"
                     >
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -53,7 +53,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="@dimen/_8sdp"
                         android:layout_marginEnd="@dimen/_5sdp"
-                        android:background="@color/colorPrimary"
+                        android:background="@color/primary_500"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -70,14 +70,14 @@
                         android:layout_marginHorizontal="@dimen/_6sdp"
                         android:layout_marginVertical="@dimen/_4sdp"
                         android:layout_toEndOf="@id/iv_back"
-                        android:background="@color/colorPrimary"
+                        android:background="@color/primary_500"
                         android:ellipsize="end"
                         android:gravity="center_vertical|start"
                         android:lines="1"
                         android:padding="@dimen/_5sdp"
                         android:text="@string/edit_profile"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/pure_white" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/iv_save"
@@ -86,13 +86,13 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/_12sdp"
-                        android:background="@color/colorPrimary"
+                        android:background="@color/primary_500"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:text="@string/save"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/pure_white" />
                 </RelativeLayout>
             </com.google.android.material.appbar.MaterialToolbar>
 
@@ -100,7 +100,7 @@
                 android:id="@+id/edit_profile_bg"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_84sdp"
-                android:background="@color/edit_profile_bg"
+                android:background="@color/pure_grey"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -130,7 +130,7 @@
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/primary_500"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/user_pic" />
@@ -156,7 +156,7 @@
                         android:layout_height="@dimen/_34sdp"
                         android:layout_marginLeft="@dimen/_11sdp"
                         android:layout_marginRight="@dimen/_9sdp"
-                        android:background="#F2F2F2"
+                        android:background="@color/pure_grey"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -170,11 +170,11 @@
                             android:layout_height="@dimen/_16sdp"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="@dimen/_8sdp"
-                            android:background="@color/basic_details"
+                            android:background="@color/pure_grey"
                             android:gravity="center|start"
                             android:text="@string/basic_details"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/pure_black" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/arrow_down_img"
@@ -183,7 +183,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="@dimen/_12sdp"
-                            android:background="@color/basic_details"
+                            android:background="@color/pure_grey"
                             android:src="@drawable/ic_down_img" />
                     </RelativeLayout>
 
@@ -211,7 +211,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="@string/name"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -230,8 +230,8 @@
                                 android:background="@color/transparent"
                                 android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelName"
@@ -243,7 +243,7 @@
                                 android:layout_height="0.5dp"
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
-                                android:background="#687C90"
+                                android:background="@color/disabled"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtName"
                                 tools:layout_editor_absoluteX="0dp" />
 
@@ -255,7 +255,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="@string/date_of_birth"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/seperator1" />
 
@@ -273,8 +273,8 @@
                                 android:maxLength="15"
                                 android:maxLines="1"
                                 android:onClick="@{()->handler.selectDateOfBirth()}"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/pure_black"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelDob"
@@ -286,7 +286,7 @@
                                 android:layout_height="0.5dp"
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
-                                android:background="@color/grey_68"
+                                android:background="@color/disabled"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtDob"
                                 tools:layout_editor_absoluteX="0dp" />
 
@@ -298,7 +298,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="Hometown"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/seperator2" />
 
@@ -317,8 +317,8 @@
                                 android:background="@color/transparent"
                                 android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelHometown"
@@ -330,7 +330,7 @@
                                 android:layout_height="0.5dp"
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
-                                android:background="#687C90"
+                                android:background="@color/disabled"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtHometown"
                                 tools:layout_editor_absoluteX="0dp" />
 
@@ -342,7 +342,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="Future Goals"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/seperator3" />
 
@@ -361,8 +361,8 @@
                                 style="@style/myEditText"
                                 android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelFutureGoals" />
@@ -373,7 +373,7 @@
                                 android:layout_height="0.5dp"
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
-                                android:background="#687C90"
+                                android:background="@color/disabled"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtFutureGoals"
                                 tools:layout_editor_absoluteX="0dp" />
 
@@ -385,7 +385,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="Favourite Josh Talk"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/seperator4" />
 
@@ -402,8 +402,8 @@
                                 android:background="@color/transparent"
                                 android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelJoshTalk" />
@@ -415,7 +415,7 @@
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
                                 android:layout_marginBottom="@dimen/_14sdp"
-                                android:background="@color/grey_68"
+                                android:background="@color/disabled"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtJoshTalk"
                                 tools:layout_editor_absoluteX="12dp" />
@@ -429,7 +429,7 @@
                         android:layout_marginLeft="@dimen/_11sdp"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:layout_marginRight="@dimen/_9sdp"
-                        android:background="@color/basic_details"
+                        android:background="@color/pure_grey"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -444,11 +444,11 @@
                             android:layout_height="@dimen/_16sdp"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="@dimen/_8sdp"
-                            android:background="#F2F2F2"
+                            android:background="@color/pure_grey"
                             android:gravity="center|start"
                             android:text="@string/add_education_details"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/text_default" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/education_down_img"
@@ -457,7 +457,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="@dimen/_12sdp"
-                            android:background="@color/basic_details"
+                            android:background="@color/pure_grey"
                             android:src="@drawable/ic_down_img" />
                     </RelativeLayout>
 
@@ -485,7 +485,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="@string/subject_degree"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -504,8 +504,8 @@
                                 style="@style/myEditText"
                                 android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/educationName" />
@@ -516,7 +516,7 @@
                                 android:layout_height="0.5dp"
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
-                                android:background="@color/grey_68"
+                                android:background="@color/disabled"
                                 app:layout_constraintTop_toBottomOf="@+id/txtEducationName"
                                 tools:layout_editor_absoluteX="0dp" />
 
@@ -528,7 +528,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="@string/name_of_school_college"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtEducationNameSeperator" />
 
@@ -547,8 +547,8 @@
                                 android:background="@color/transparent"
                                 android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtCollegeName" />
@@ -559,7 +559,7 @@
                                 android:layout_height="0.5dp"
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
-                                android:background="#687C90"
+                                android:background="@color/disabled"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtCollegeName"
                                 tools:layout_editor_absoluteX="0dp" />
 
@@ -571,7 +571,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="@string/completed_expected_to_complete_by"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtCollegeNameSeperator" />
 
@@ -589,8 +589,8 @@
                                 android:maxLength="15"
                                 android:maxLines="1"
                                 android:onClick="@{()->handler.createDialogWithoutDateField()}"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtCompletionDate" />
@@ -601,7 +601,7 @@
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
                                 android:layout_marginBottom="@dimen/_14sdp"
-                                android:background="#687C90"
+                                android:background="@color/disabled"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtCompletionDate"
                                 tools:layout_editor_absoluteX="0dp" />
@@ -617,7 +617,7 @@
                         android:layout_marginLeft="@dimen/_11sdp"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:layout_marginRight="@dimen/_9sdp"
-                        android:background="#F2F2F2"
+                        android:background="@color/pure_grey"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
@@ -632,11 +632,11 @@
                             android:layout_height="@dimen/_16sdp"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="@dimen/_8sdp"
-                            android:background="#F2F2F2"
+                            android:background="@color/pure_grey"
                             android:gravity="center|start"
                             android:text="@string/add_occupation_details"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/text_default" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/occupation_down_img"
@@ -645,7 +645,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="@dimen/_12sdp"
-                            android:background="@color/basic_details"
+                            android:background="@color/pure_grey"
                             android:src="@drawable/ic_down_img" />
                     </RelativeLayout>
 
@@ -673,7 +673,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="Occupation"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -692,8 +692,8 @@
                                 android:background="@color/transparent"
                                 android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/occupationName" />
@@ -704,7 +704,7 @@
                                 android:layout_height="0.5dp"
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
-                                android:background="#687C90"
+                                android:background="@color/disabled"
                                 app:layout_constraintTop_toBottomOf="@+id/txtOccupationName"
                                 tools:layout_editor_absoluteX="0dp" />
 
@@ -716,7 +716,7 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:text="@string/company_business_name"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/primary_500"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtoccupationNameSeperator" />
 
@@ -735,8 +735,8 @@
                                 android:background="@color/transparent"
                                 android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                                android:textColor="@color/black"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtOccupationPlace" />
@@ -748,7 +748,7 @@
                                 android:layout_marginHorizontal="@dimen/_9sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
                                 android:layout_marginBottom="@dimen/_14sdp"
-                                android:background="@color/grey_68"
+                                android:background="@color/disabled"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/editTxtOccupationPlace"
                                 tools:layout_editor_absoluteX="0dp" />

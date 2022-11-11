@@ -71,7 +71,7 @@
 <!--        android:paddingVertical="@dimen/_10sdp"-->
 <!--        android:textAppearance="@style/TextAppearance.JoshTypography.Button"-->
 <!--        android:visibility="visible"-->
-<!--        android:background="@color/blue2"-->
+<!--        android:background="@color/text_link"-->
 <!--        app:cornerRadius="@dimen/_10sdp"-->
 <!--        app:layout_constraintBottom_toBottomOf="parent"-->
 <!--        app:layout_constraintEnd_toEndOf="parent"-->

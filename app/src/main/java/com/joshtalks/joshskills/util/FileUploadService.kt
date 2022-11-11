@@ -411,7 +411,7 @@ class FileUploadService : Service() {
             .setColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.colorPrimary
+                    R.color.primary_500
                 )
             )
             .setAutoCancel(true)

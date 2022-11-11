@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -20,15 +19,15 @@
             android:layout_width="85dp"
             android:layout_height="23dp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginBottom="@dimen/_minus10sdp"
             android:layout_marginEnd="@dimen/_29sdp"
-            app:srcCompat="@drawable/recommended"
+            android:layout_marginBottom="@dimen/_minus10sdp"
             android:elevation="@dimen/_10sdp"
             android:scaleType="fitXY"
             android:visibility="@{itemData.isRecommended ? View.VISIBLE : View.GONE, default = gone}"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/price_card_view"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/recommended"
             tools:visibility="visible" />
 
         <com.google.android.material.card.MaterialCardView
@@ -36,8 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_13sdp"
-            android:layout_marginEnd="@dimen/_18sdp"
             android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_18sdp"
             app:cardCornerRadius="@dimen/_6sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -75,9 +74,9 @@
                         android:id="@+id/ll"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginVertical="@dimen/_14sdp"
                         android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="@dimen/_14sdp"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -96,20 +95,19 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:background="@drawable/green_rectangle_without_solid"
-                            android:backgroundTint="#107BE5"
+                            android:backgroundTint="@color/primary_500"
                             android:gravity="center"
-                            android:paddingHorizontal="@dimen/_8sdp"
-                            android:paddingVertical="@dimen/_4sdp"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
+                            android:paddingHorizontal="@dimen/_8sdp"
+                            android:paddingVertical="@dimen/_4sdp"
                             android:text="@{itemData.savingInCourse}"
                             android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             android:textStyle="bold"
                             app:textAllCaps="false"
                             tools:text="Save 100%" />
-
                     </LinearLayout>
 
                     <LinearLayout
@@ -152,12 +150,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_20sdp"
                     android:background="@drawable/green_rectangle_without_solid_one_side_corner"
-                    android:backgroundTint="@color/golden_color"
-                    android:text="Offer ends in 59:30. Hurry up!"
-                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:backgroundTint="@color/warning"
                     android:gravity="center_vertical"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:text="Offer ends in 59:30. Hurry up!"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
                     android:textColor="#253858"
@@ -168,15 +166,8 @@
                     app:textAllCaps="false"
                     tools:text="Offer ends in 59:30. Hurry up!" />
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </com.google.android.material.card.MaterialCardView>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </layout>
 

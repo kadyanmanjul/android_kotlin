@@ -801,7 +801,7 @@ object Utils {
     fun getBitmapFromVectorDrawable(
         context: Context,
         resource: Int,
-        tintColor: Int = R.color.colorPrimary
+        tintColor: Int = R.color.primary_500
     ): Bitmap {
         val drawable = ContextCompat.getDrawable(context, resource)
         if (drawable != null) {
@@ -1105,7 +1105,7 @@ fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Dra
 fun ImageView.setUserInitial(
     userName: String,
     dpToPx: Int = 16,
-    @ColorRes background: Int = R.color.button_color,
+    @ColorRes background: Int = R.color.primary_500,
 ) {
     try {
         val font = Typeface.createFromAsset(
@@ -1114,7 +1114,7 @@ fun ImageView.setUserInitial(
         )
         val drawable: TextDrawable = TextDrawable.builder()
             .beginConfig()
-            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
+            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.pure_white))
             .useFont(font)
             .fontSize(Utils.dpToPx(dpToPx))
             .toUpperCase()
@@ -1133,8 +1133,8 @@ fun ImageView.setUserInitial(
 fun ImageView.setUserInitial(
     userName: String,
     dpToPx: Int = 16,
-    background: Int = R.color.white,
-    txtColor: Int = R.color.button_color
+    background: Int = R.color.pure_white,
+    txtColor: Int = R.color.primary_500
 ) {
     try {
         val font = Typeface.createFromAsset(
@@ -1163,8 +1163,8 @@ fun ImageView.setUserInitialInRect(
     userName: String,
     dpToPx: Int = 16,
     radius: Int = 16,
-    textColor: Int = R.color.white,
-    bgColor: Int = R.color.button_color
+    textColor: Int = R.color.pure_white,
+    bgColor: Int = R.color.primary_500
 ) {
     try {
         val font = Typeface.createFromAsset(
@@ -1227,8 +1227,8 @@ fun ImageView.setUserImageOrInitialsWithWhiteBackground(
     userName: String,
     dpToPx: Int = 16,
     isRound: Boolean = false,
-    bgColor: Int = R.color.white,
-    txtColor: Int = R.color.button_color
+    bgColor: Int = R.color.pure_white,
+    txtColor: Int = R.color.primary_500
 ) {
     if (url.isNullOrEmpty()) {
         setUserInitial(userName, dpToPx,background = bgColor, txtColor = txtColor)
@@ -1262,8 +1262,8 @@ fun ImageView.setUserImageRectOrInitials(
     dpToPx: Int = 16,
     isRound: Boolean = false,
     radius: Int = 16,
-    textColor: Int = R.color.white,
-    bgColor: Int = R.color.button_color
+    textColor: Int = R.color.pure_white,
+    bgColor: Int = R.color.primary_500
 ) {
     if (url.isNullOrEmpty()) {
         setUserInitialInRect(userName, dpToPx, radius, textColor, bgColor)
@@ -1311,7 +1311,7 @@ fun Long.bytesToKB(): Double {
 
 fun ImageView.setVectorImage(
     url: String,
-    tintColor: Int = R.color.white,
+    tintColor: Int = R.color.pure_white,
     context: Context = AppObjectController.joshApplication
 ) {
     GlideToVectorYou

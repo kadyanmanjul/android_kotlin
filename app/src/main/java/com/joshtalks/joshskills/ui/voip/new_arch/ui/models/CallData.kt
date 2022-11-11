@@ -143,7 +143,7 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
-    var p2pCallBackgroundColor : Int = R.color.p2p_call_background_color
+    var p2pCallBackgroundColor : Int = R.color.primary_700
         set(value) {
             field = value
             notifyPropertyChanged(BR.p2pCallBackgroundColor)

@@ -20,7 +20,7 @@
             android:id="@+id/practice_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,7 @@
                 android:layout_height="@dimen/_60sdp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_barColor="@color/primary_500"
                 wheel:matProg_fillRadius="true"
                 wheel:matProg_linearProgress="false"
                 wheel:matProg_progressIndeterminate="true"
@@ -59,14 +59,14 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:text="@string/plz_wait"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                android:textColor="@color/white" />
+                android:textColor="@color/pure_white" />
         </RelativeLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/vocabulary_complete_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             android:paddingHorizontal="@dimen/_8sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -114,13 +114,13 @@
                 android:text="@string/continue_label"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/redo_tv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_goneMarginBottom="@dimen/_8sdp"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/redo_tv"
@@ -129,7 +129,7 @@
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:onClick="@{()->handler.onCloseDialog()}"
                 android:text="@string/close"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -163,8 +163,8 @@
                     android:paddingBottom="@dimen/_8sdp"
                     android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -178,8 +178,8 @@
                     android:paddingVertical="@dimen/_8sdp"
                     android:text="1 of 3"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -190,7 +190,7 @@
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/_8sdp"
                     android:background="@drawable/rounded_primary_bg_2dp"
-                    android:backgroundTint="@color/button_color"
+                    android:backgroundTint="@color/primary_500"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
@@ -198,8 +198,8 @@
                     android:paddingHorizontal="@dimen/_14sdp"
                     android:paddingVertical="@dimen/_3sdp"
                     android:text="आगे बढ़े"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                    android:textColor="@color/white"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 

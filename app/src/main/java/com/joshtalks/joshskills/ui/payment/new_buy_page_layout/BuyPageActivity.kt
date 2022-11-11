@@ -98,8 +98,8 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     var courseDescListCard: View? = null
     var priceForPaymentProceed: CourseDetailsList? = null
     var isPaymentInitiated = false
-    var certificateCard : View? = null
-
+    var certificateCard: View? = null
+    var couponCodeFromIntent: String? = null
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
     private var flowFrom: String = EMPTY
@@ -160,12 +160,12 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 finish()
         }
         testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-                Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
-            } else {
-                PrefManager.getStringValue(PAID_COURSE_TEST_ID, defaultValue = FREE_TRIAL_PAYMENT_TEST_ID)
-            }
+            Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+        } else {
+            PrefManager.getStringValue(PAID_COURSE_TEST_ID, defaultValue = FREE_TRIAL_PAYMENT_TEST_ID)
+        }
         flowFrom = intent.getStringExtra(FLOW_FROM) ?: EMPTY
-
+        couponCodeFromIntent = intent.getStringExtra(COUPON_CODE)
         if (intent.hasExtra(IS_FAKE_CALL)) {
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
@@ -186,7 +186,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         addObserver()
         if (Utils.isInternetAvailable()) {
             viewModel.getCourseContent()
-            viewModel.getCoursePriceList(null,null, null)
+            viewModel.getCoursePriceList(null, null, null)
             viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
@@ -229,18 +229,22 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 CLICK_ON_COUPON_APPLY -> {
                     val coupon = it.obj as Coupon
                     updateListItem(coupon)
-                    couponApplied(coupon)
+                    couponApplied(coupon, it.arg1)
                 }
-                APPLY_COUPON_FROM_BUY_PAGE ->{
+                APPLY_COUPON_FROM_BUY_PAGE -> {
                     val coupon = it.obj as Coupon
                     onCouponApply(coupon)
+                }
+                APPLY_COUPON_FROM_INTENT -> {
+                    if (couponCodeFromIntent.isNullOrEmpty().not())
+                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!, 1)
                 }
                 CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
                 MAKE_PHONE_CALL -> makePhoneCall()
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
-                COUPON_APPLIED -> couponApplied(it.obj as Coupon)
+                COUPON_APPLIED -> couponApplied(it.obj as Coupon,it.arg1)
                 SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
                     binding.scrollView.smoothScrollTo(
                         binding.buyPageParentContainer.width,
@@ -287,10 +291,19 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         )
     }
 
-    fun couponApplied(coupon: Coupon) {
+    fun couponApplied(coupon: Coupon, isFromLink: Int) {
         showToast("Coupon applied")
-        onBackPressed()
-        onCouponApply(coupon)
+        if (isFromLink == 0) {
+            onBackPressed()
+            onCouponApply(coupon)
+        }else{
+            binding.btnCallUs.post {
+                binding.scrollView.smoothScrollTo(
+                    binding.buyPageParentContainer.width,
+                    binding.buyPageParentContainer.height
+                )
+            }
+        }
     }
 
     private fun setFreeTrialTimer(buyCourseFeatureModel: BuyCourseFeatureModel) {
@@ -299,20 +312,23 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 if (buyCourseFeatureModel.expiryTime?.time ?: 0 > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
                     binding.freeTrialTimer.visibility = View.GONE
                 } else {
-                    startTimer((buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis(),buyCourseFeatureModel)
+                    startTimer(
+                        (buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis(),
+                        buyCourseFeatureModel
+                    )
                 }
             } else {
-                if (buyCourseFeatureModel.timerBannerText!=null){
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                if (buyCourseFeatureModel.timerBannerText != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
-                    }else{
+                    } else {
                         binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
                     }
                     binding.freeTrialTimerNewUi.visibility = View.VISIBLE
                     binding.timeText.visibility = View.GONE
                     binding.timerText.text = getString(R.string.free_trial_ended)
                     binding.timerText.gravity = Gravity.CENTER_HORIZONTAL
-                }else{
+                } else {
                     binding.freeTrialTimer.visibility = View.VISIBLE
                     binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                 }
@@ -337,9 +353,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun setCoursePrices(list: CourseDetailsList, position: Int) {
-        Log.e("sagar", "setCoursePrices: ${list.discountedPrice}" )
+        Log.e("sagar", "setCoursePrices: ${list.discountedPrice}")
         priceForPaymentProceed = list
-        proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text = "Pay ${priceForPaymentProceed?.discountedPrice?: "Pay ₹499"}"
+        proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text =
+            "Pay ${priceForPaymentProceed?.discountedPrice ?: "Pay ₹499"}"
     }
 
     private fun openCouponList() {
@@ -378,11 +395,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             englishCourseCard =
                 courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
             binding.courseTypeContainer.removeAllViews()
-            if (buyCourseFeatureModel.isVideo!=null){
+            if (buyCourseFeatureModel.isVideo != null) {
                 binding.videoPlayer.visibility = View.VISIBLE
                 binding.videoCard.visibility = View.VISIBLE
-                viewModel.showRecordedVideoUi(binding.videoPlayer,buyCourseFeatureModel.abTestVideoUrl?:EMPTY)
-            }else{
+                viewModel.showRecordedVideoUi(binding.videoPlayer, buyCourseFeatureModel.abTestVideoUrl ?: EMPTY)
+            } else {
                 binding.videoPlayer.visibility = View.GONE
                 binding.videoCard.visibility = View.GONE
                 val image = englishCourseCard?.findViewById<ImageView>(R.id.img_skill_logo)
@@ -447,21 +464,21 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
 
         setRating(buyCourseFeatureModel)
         val certificateDescInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        certificateCard =  certificateDescInflate.inflate(R.layout.certificate_card, null, true)
+        certificateCard = certificateDescInflate.inflate(R.layout.certificate_card, null, true)
         val certificateTitle = certificateCard?.findViewById<AppCompatTextView>(R.id.digital_course_certificate)
         val certificateTextView = certificateCard?.findViewById<AppCompatTextView>(R.id.desc_about_certificate)
         val certificateImage = certificateCard?.findViewById<AppCompatImageView>(R.id.certificate_img)
 
-        if (buyCourseFeatureModel.certificateText !=null && buyCourseFeatureModel.certificateUrl != null){
+        if (buyCourseFeatureModel.certificateText != null && buyCourseFeatureModel.certificateUrl != null) {
             certificateTextView?.text = buyCourseFeatureModel.certificateText
             uiHandler.postDelayed({
-                certificateImage?.setImage(buyCourseFeatureModel.certificateUrl?: EMPTY)
+                certificateImage?.setImage(buyCourseFeatureModel.certificateUrl ?: EMPTY)
                 certificateImage?.visibility = View.VISIBLE
-            },1000)
+            }, 1000)
             certificateTitle?.text = AppObjectController.getFirebaseRemoteConfig().getString(DIGITAL_CARD_TEXT)
             binding.courseDescList.removeAllViews()
             binding.courseDescList.addView(certificateCard)
-        }else{
+        } else {
             buyCourseFeatureModel.information?.forEach { it ->
                 val view = getCourseDescriptionList(it)
                 if (view != null) {
@@ -470,11 +487,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             }
         }
 
-        if (buyCourseFeatureModel.knowMore!=null) {
+        if (buyCourseFeatureModel.knowMore != null) {
             binding.btnKnowMoreAboutCourse.text = buyCourseFeatureModel.knowMore + " >>"
             binding.btnKnowMoreAboutCourse.visibility = View.VISIBLE
             binding.view9.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.view9.visibility = View.GONE
         }
         binding.btnKnowMoreAboutCourse.setOnClickListener {
@@ -555,9 +572,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         NotificationUtils(applicationContext).removeScheduledNotification(NotificationCategory.AFTER_BUY_PAGE)
         NotificationUtils(applicationContext).updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
         try {
-            paymentManager.createOrder(priceForPaymentProceed?.testId ?: EMPTY,
+            paymentManager.createOrder(
+                priceForPaymentProceed?.testId ?: EMPTY,
                 phoneNumber,
-                priceForPaymentProceed?.encryptedText ?: EMPTY)
+                priceForPaymentProceed?.encryptedText ?: EMPTY
+            )
         } catch (ex: Exception) {
             ex.showAppropriateMsg()
         }
@@ -574,7 +593,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             replace(
                 R.id.buy_page_parent_container,
                 PaymentFailedDialogNew.newInstance(paymentManager) {
-                      onBackPressed()
+                    onBackPressed()
                 },
                 "Payment Failed"
             )
@@ -688,6 +707,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     fun onCouponApply(coupon: Coupon) {
+        Log.e("sagar", "onCouponApply:")
         val dialogView = showCustomDialog(R.layout.coupon_applied_alert_dialog)
         val btnGotIt = dialogView.findViewById<AppCompatTextView>(R.id.got_it_button)
         val couponAppleLottie = dialogView.findViewById<LottieAnimationView>(R.id.card_confetti)
@@ -720,10 +740,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             override fun onTimerTick(millis: Long) {
                 AppObjectController.uiHandler.post {
                     val freeTrailTime = UtilTime.timeFormatted(millis).split(":")
-                    if (buyCourseFeatureModel.timerBannerText!=null){
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    if (buyCourseFeatureModel.timerBannerText != null) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
-                        }else{
+                        } else {
                             binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
                         }
                         binding.freeTrialTimerNewUi.visibility = View.VISIBLE
@@ -738,13 +758,12 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                         }
                         if (freeTrailTime.getOrNull(2) != null) {
                             binding.txtSecond.text = freeTrailTime[2]
-                        }
-                        else {
+                        } else {
                             binding.txtHours.text = "00"
                             binding.txtMinute.text = freeTrailTime[0]
                             binding.txtSecond.text = freeTrailTime[1]
                         }
-                    }else{
+                    } else {
                         binding.freeTrialTimer.visibility = View.VISIBLE
                         binding.freeTrialTimer.text = getString(
                             R.string.free_trial_end_in,
@@ -755,10 +774,10 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             }
 
             override fun onTimerFinish() {
-                if (buyCourseFeatureModel.timerBannerText!=null){
+                if (buyCourseFeatureModel.timerBannerText != null) {
                     binding.timeText.visibility = View.GONE
                     binding.timerText.text = getString(R.string.free_trial_ended)
-                }else{
+                } else {
                     binding.freeTrialTimer.visibility = View.VISIBLE
                     binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                 }
@@ -795,7 +814,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 override fun onRetryButtonClicked() {
                     if (Utils.isInternetAvailable()) {
                         viewModel.getCourseContent()
-                        viewModel.getCoursePriceList(null,null,null)
+                        viewModel.getCoursePriceList(null, null, null)
                         viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
                     } else {
                         errorView?.get()?.enableRetryBtn()

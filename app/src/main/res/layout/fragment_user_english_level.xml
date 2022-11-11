@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:fontFamily="@font/opensans_semibold"
             android:text="@string/english_level"
             android:textAppearance="@style/TextAppearance.JoshTypography.Interest_Heading_SemiBold"
-            android:textColor="@color/pitch_black"
+            android:textColor="@color/pure_black"
             android:textSize="@dimen/_24sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,9 +26,9 @@
             android:id="@+id/radioBtnGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
             android:layout_marginTop="@dimen/_24sdp"
+            android:gravity="center"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtVHeading">
@@ -55,7 +55,7 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                 android:textColor="@color/interest_chip_text_color_selector"
                 android:textSize="@dimen/_18ssp"
-                app:rippleColor="@color/interest_chip_bg_selected" />
+                app:rippleColor="@color/surface_information" />
 
             <RadioButton
                 android:id="@+id/btn_level_inter"
@@ -79,7 +79,7 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                 android:textColor="@color/interest_chip_text_color_selector"
                 android:textSize="@dimen/_18ssp"
-                app:rippleColor="@color/interest_chip_bg_selected" />
+                app:rippleColor="@color/surface_information" />
 
             <RadioButton
                 android:id="@+id/btn_level_advanced"
@@ -103,10 +103,8 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                 android:textColor="@color/interest_chip_text_color_selector"
                 android:textSize="@dimen/_18ssp"
-                app:rippleColor="@color/interest_chip_bg_selected" />
-
+                app:rippleColor="@color/surface_information" />
         </RadioGroup>
-
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/btn_continue"
@@ -114,15 +112,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_16sdp"
             android:background="@drawable/rounded_state_button_bg"
+            android:enabled="false"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_16sdp"
             android:paddingVertical="@dimen/_10sdp"
             android:text="@string/continue_label"
-            android:enabled="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

@@ -36,7 +36,7 @@
                 android:layout_height="@dimen/length_56"
                 android:focusable="true"
                 android:clickable="true"
-                android:background="@color/tb_media_picker_primary"
+                android:background="@color/primary_500"
                 android:padding="@dimen/offset_6">
 
                 <ImageView
@@ -63,7 +63,7 @@
                     android:theme="@style/App.Button.Primary"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:textAppearance="@style/App.TextAppearance.h4.Title"
-                    android:textColor="@color/md_white_1000"/>
+                    android:textColor="@color/pure_white"/>
             </RelativeLayout>
         </LinearLayout>
 

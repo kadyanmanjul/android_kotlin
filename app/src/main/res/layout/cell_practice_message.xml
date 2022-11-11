@@ -25,7 +25,7 @@
             android:background="@drawable/round_rect_default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/pure_white"
             android:padding="@dimen/_4sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -38,7 +38,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_wave_special_new"
-                app:tint="@color/white_ef" />
+                app:tint="@color/disabled" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_title"
@@ -49,8 +49,8 @@
                 android:paddingStart="@dimen/_4sdp"
                 android:paddingEnd="@dimen/_4sdp"
                 android:text="@string/practice"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
-                android:textColor="@color/text_green_100"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
+                android:textColor="@color/success"
                 app:layout_constraintBottom_toBottomOf="@+id/image_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -62,14 +62,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:background="@drawable/round_both_bottom_bg"
-                android:backgroundTint="@color/pdf_bg_color"
+                android:backgroundTint="@color/pure_grey"
                 android:gravity="center_vertical|start"
                 android:paddingStart="@dimen/_8sdp"
                 android:paddingTop="@dimen/_4sdp"
                 android:paddingBottom="@dimen/_2sdp"
                 android:text="@string/status_with_colon"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/gray_82"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/image_view"
@@ -81,12 +81,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:background="@drawable/round_both_bottom_bg"
-                android:backgroundTint="@color/pdf_bg_color"
+                android:backgroundTint="@color/pure_grey"
                 android:gravity="center_vertical|start"
                 android:paddingStart="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="@color/gray_82"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/status_tv"
@@ -97,20 +97,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center"
-                android:background="@color/white"
+                android:background="@color/pure_white"
                 android:gravity="bottom|center"
                 android:paddingTop="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_8sdp"
                 android:text="@string/open"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                android:textColor="@color/green"
-                app:drawableTint="@color/white"
+                android:textColor="@color/success"
+                app:drawableTint="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/sub_title_tv"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_message_time"
@@ -121,7 +121,7 @@
                 android:paddingHorizontal="@dimen/_2sdp"
                 android:paddingVertical="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="@color/gray_9E"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="6:15 AM" />

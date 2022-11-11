@@ -6,7 +6,7 @@
     android:layout_height="@dimen/_69sdp"
     android:layout_gravity="center_horizontal"
     android:background="@drawable/rounded_rectangle_attach"
-    android:backgroundTint="@color/white"
+    android:backgroundTint="@color/pure_white"
     android:elevation="@dimen/_5sdp"
     app:cardCornerRadius="@dimen/_4sdp">
 
@@ -49,11 +49,11 @@
             android:text="@string/yes"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/red"
+            android:textColor="@color/critical"
             app:cornerRadius="@dimen/_4sdp"
             app:elevation="0dp"
             android:textStyle="bold"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/not_now"
@@ -75,11 +75,11 @@
             android:text="@string/no"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/primary_500"
             android:textStyle="bold"
             android:visibility="visible"
             app:cornerRadius="@dimen/_4sdp"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
     </RelativeLayout>
 

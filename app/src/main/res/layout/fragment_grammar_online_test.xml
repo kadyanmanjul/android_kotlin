@@ -40,8 +40,8 @@
                     android:paddingBottom="@dimen/_8sdp"
                     android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -55,8 +55,8 @@
                     android:paddingVertical="@dimen/_8sdp"
                     android:text="1 of 3"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -67,15 +67,15 @@
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/_8sdp"
                     android:background="@drawable/rounded_primary_bg_2dp"
-                    android:backgroundTint="@color/button_color"
+                    android:backgroundTint="@color/primary_500"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
                     android:paddingHorizontal="@dimen/_14sdp"
                     android:paddingVertical="@dimen/_3sdp"
                     android:text="आगे बढ़े"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                    android:textColor="@color/white"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
@@ -123,7 +123,7 @@
                         android:text="Grammar Lesson"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                        android:textColor="@color/grammar_black_text_color" />
+                        android:textColor="@color/text_default" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/title"
@@ -133,7 +133,7 @@
                         android:gravity="center"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                        android:textColor="@color/grammar_black_text_color"
+                        android:textColor="@color/text_default"
                         android:textStyle="bold"
                         tools:text="Simple Past Tense" />
 
@@ -146,7 +146,7 @@
                         android:paddingHorizontal="@dimen/_12sdp"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/grammar_black_text_color"
+                        android:textColor="@color/text_default"
                         tools:text="@string/loremIpsum" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -158,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_16sdp"
                 android:visibility="gone"
-                app:cardBackgroundColor="@color/grammar_wrong_answer_bg"
+                app:cardBackgroundColor="@color/surface_critical"
                 app:cardElevation="0dp"
                 app:contentPadding="@dimen/_16sdp"
                 app:layout_constraintBottom_toTopOf="@id/start_btn"
@@ -172,8 +172,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
                     android:text="@string/grammar_lock_text"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/grammar_red_color_dark" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/critical" />
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.textview.MaterialTextView
@@ -190,7 +190,7 @@
                 android:paddingVertical="@dimen/_12sdp"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:cornerRadius="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -214,7 +214,7 @@
                 android:text="@string/test_completed"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                android:textColor="@color/grammar_black_text_color"
+                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toTopOf="@+id/your_score_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -231,8 +231,8 @@
                 android:textAlignment="center"
                 android:gravity="center"
                 android:text="@{handler.getTestCompletedDescription()}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                android:textColor="@color/grammar_black_text_color"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                android:textColor="@color/text_default"
                 app:layout_constraintBottom_toTopOf="@+id/score"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -246,7 +246,7 @@
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:textAlignment="center"
                 android:visibility="invisible"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+                android:textAppearance="@style/TextAppearance.JoshTypography.XLargeSemiBold"
                 android:textColor="#000000"
                 app:layout_constraintBottom_toTopOf="@+id/score_start_btn"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -271,7 +271,7 @@
                 android:text="@{handler.getContinueButtonText()}"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:cornerRadius="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -307,7 +307,7 @@
                 android:layout_gravity="center_horizontal"
                 android:text="@string/grammar_completed"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.LargeBold"
                 android:textColor="@color/transparent_black_alpha_70"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat3"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -346,7 +346,7 @@
                     android:layout_marginTop="@dimen/_24sdp"
                     android:text="बहुत खूब!"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.LargeBold"
                     android:textColor="@color/transparent_black_alpha_70"
                     android:textStyle="bold" />
 
@@ -380,7 +380,7 @@
                 android:text="@{handler.getContinueButtonText()}"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 tools:text="@string/continue_label"
                 app:cornerRadius="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -392,7 +392,7 @@
             android:id="@+id/progress_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white_ef"
+            android:background="@color/disabled"
             android:visibility="gone"
             tools:visibility="gone">
 
@@ -401,7 +401,7 @@
                 android:layout_width="@dimen/_82sdp"
                 android:layout_height="@dimen/_82sdp"
                 android:layout_gravity="center"
-                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_barColor="@color/primary_500"
                 wheel:matProg_fillRadius="true"
                 wheel:matProg_linearProgress="false"
                 wheel:matProg_progressIndeterminate="true" />
@@ -412,7 +412,7 @@
             android:id="@+id/parent_Container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

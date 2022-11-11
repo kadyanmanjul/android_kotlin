@@ -21,7 +21,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             tools:context=".ui.group.RequestListFragment">
 
             <com.google.android.material.appbar.AppBarLayout
@@ -66,7 +66,7 @@
                 android:singleLine="true"
                 android:text="@{vm.groupHeader}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintStart_toEndOf="@id/img_logo"
                 app:layout_constraintTop_toTopOf="@id/img_logo"
                 tools:text="Hello" />
@@ -79,7 +79,7 @@
                 app:layout_constraintStart_toEndOf="@id/group_title"
                 app:layout_constraintTop_toTopOf="@+id/group_title"
                 app:srcCompat="@drawable/ic_lock"
-                app:tint="@color/black" />
+                app:tint="@color/icon_default" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/sub_title"
@@ -88,8 +88,8 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:layout_marginEnd="@dimen/_11sdp"
                 android:text="@{vm.groupText}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/grey_7A"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/text_subdued"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/group_title"
                 app:layout_constraintTop_toBottomOf="@id/group_title"
@@ -114,7 +114,7 @@
                 android:layout_marginTop="@dimen/_14sdp"
                 android:text="@{vm.requestQuestion}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/appCompatTextView3"
@@ -146,7 +146,7 @@
                 android:layout_marginTop="@dimen/_14sdp"
                 android:text="Group Rules"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/answer_text" />
 
@@ -168,7 +168,7 @@
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:text="@string/group_rules_list"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rules_check" />
@@ -180,10 +180,10 @@
                 android:layout_marginHorizontal="@dimen/_18sdp"
                 android:layout_marginVertical="@dimen/_24sdp"
                 android:background="@drawable/rounded_rectangle_grey"
-                android:backgroundTint="@color/blue33"
+                android:backgroundTint="@color/primary_500"
                 onSingleClick="@{vm::validateJoinRequest}"
                 android:text="@string/submit"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

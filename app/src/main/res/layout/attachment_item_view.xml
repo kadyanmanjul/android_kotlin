@@ -28,7 +28,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-            android:textColor="@color/black" />
+            android:textColor="@color/text_default" />
 
     </LinearLayout>
 </merge>

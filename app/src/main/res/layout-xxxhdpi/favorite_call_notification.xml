@@ -56,7 +56,7 @@
         android:layout_marginHorizontal="36dip"
         android:layout_below="@+id/title"
         android:layout_marginTop="8dip"
-        android:background="@color/white" />
+        android:background="@color/pure_white" />
 
     <LinearLayout
         android:layout_alignParentBottom="true"
@@ -82,10 +82,10 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:textColor="@color/call_decline_color"
+                android:textColor="@color/critical"
                 android:textSize="13dip"
                 app:drawableStartCompat="@drawable/ic_call_end"
-                app:drawableTint="@color/call_decline_color"
+                app:drawableTint="@color/critical"
                 tools:text="@string/decline" />
 
         </FrameLayout>
@@ -106,11 +106,11 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:textColor="@color/call_action_color"
+                android:textColor="@color/success"
                 android:textSize="13dip"
                 app:drawableLeftCompat="@drawable/ic_pick_call"
                 app:drawableStartCompat="@drawable/ic_pick_call"
-                app:drawableTint="@color/call_action_color"
+                app:drawableTint="@color/success"
                 tools:text="@string/answer" />
 
         </FrameLayout>

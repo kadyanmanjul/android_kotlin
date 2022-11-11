@@ -4,7 +4,7 @@
     <solid android:color="#17179549" />
     <stroke
         android:width="@dimen/_1sdp"
-        android:color="@color/green_payment_text" />
+        android:color="@color/success" />
     <corners
         android:bottomLeftRadius="@dimen/_5sdp"
         android:bottomRightRadius="@dimen/_5sdp"

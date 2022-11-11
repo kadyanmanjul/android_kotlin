@@ -82,8 +82,8 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                         SENT_REQUEST -> {
                             setBtnVisibilityAndText(
                                 btnSentRequest,
-                                R.color.colorAccent,
-                                R.color.white,
+                                R.color.primary_500,
+                                R.color.pure_white,
                                 R.string.send_request
                             )
                         }
@@ -93,8 +93,8 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                         REQUESTED -> {
                             setBtnVisibilityAndText(
                                 btnSentRequest,
-                                R.color.not_now,
-                                R.color.black_quiz,
+                                R.color.disabled,
+                                R.color.pure_black,
                                 R.string.requested
                             )
                         }
@@ -104,8 +104,8 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                                 .push()
                             setBtnVisibilityAndText(
                                 btnSentRequest,
-                                R.color.not_now,
-                                R.color.black_quiz,
+                                R.color.disabled,
+                                R.color.pure_black,
                                 R.string.responsd
                             )
                             btnSentRequest.setCompoundDrawablesWithIntrinsicBounds(
@@ -149,8 +149,8 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                                 .push()
                             setBtnVisibilityAndText(
                                 btnSentRequest,
-                                R.color.not_now,
-                                R.color.black_quiz,
+                                R.color.disabled,
+                                R.color.pure_black,
                                 R.string.requested
                             )
                             itemClick?.invoke(recentCall, RECENT_CALL_SENT_REQUEST,pos)
@@ -162,8 +162,8 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                                 .push()
                             setBtnVisibilityAndText(
                                 btnSentRequest,
-                                R.color.colorAccent,
-                                R.color.white,
+                                R.color.primary_500,
+                                R.color.pure_white,
                                 R.string.send_request
                             )
                             itemClick?.invoke(recentCall, RECENT_CALL_REQUESTED,pos)

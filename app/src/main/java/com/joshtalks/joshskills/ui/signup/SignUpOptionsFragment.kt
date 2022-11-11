@@ -123,7 +123,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     private fun startProgress() {
         binding.btnLogin.showProgress {
             progressColors =
-                intArrayOf(ContextCompat.getColor(requireContext(), R.color.text_color_10))
+                intArrayOf(ContextCompat.getColor(requireContext(), R.color.primary_500))
             gravity = DrawableButton.GRAVITY_CENTER
             progressRadiusRes = R.dimen.dp8
             progressStrokeRes = R.dimen.dp2

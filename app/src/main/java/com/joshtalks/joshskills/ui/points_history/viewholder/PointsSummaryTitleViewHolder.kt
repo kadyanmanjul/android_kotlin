@@ -78,14 +78,14 @@ class PointsSummaryTitleViewHolder(
     @Resolve
     fun onResolved() {
         name.text = date
-        name.textColorSet(R.color.black)
+        name.textColorSet(R.color.text_default)
         rootView.background = drawable
         toggleView.setImageDrawable(drawableDown)
         score.text =getFormattedNumber(point.toLong())
         if (isExpanded) {
             rootView.background = drawableSqaure
             toggleView.setImageDrawable(drawableUp)
-            name.textColorSet(R.color.colorPrimary)
+            name.textColorSet(R.color.primary_500)
         }
         if (awardIconList.isNullOrEmpty()) {
             iconLayout.visibility = android.view.View.GONE
@@ -129,14 +129,14 @@ class PointsSummaryTitleViewHolder(
         isExpanded = true
         rootView.background = drawableSqaure
         toggleView.setImageDrawable(drawableUp)
-        name.textColorSet(R.color.colorPrimary)
+        name.textColorSet(R.color.primary_500)
     }
 
     @Collapse
     fun onCollapse() {
         isExpanded = false
         rootView.background = drawable
-        name.textColorSet(R.color.black)
+        name.textColorSet(R.color.text_default)
         toggleView.setImageDrawable(drawableDown)
     }
 }

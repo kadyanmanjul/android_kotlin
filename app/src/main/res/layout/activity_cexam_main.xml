@@ -17,7 +17,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
+            android:background="@color/primary_500"
             android:gravity="start"
             android:minHeight="?attr/actionBarSize"
             android:popupTheme="@style/AppTheme.PopupOverlay"
@@ -41,7 +41,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_arrow_back"
-                    app:tint="@color/white" />
+                    app:tint="@color/pure_white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_question"
@@ -53,7 +53,7 @@
                     android:paddingVertical="@dimen/_5sdp"
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/iv_back"
                     app:layout_constraintTop_toTopOf="parent"
@@ -71,7 +71,7 @@
                     android:singleLine="true"
                     android:text="00:00"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,7 @@
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_42sdp"
-        android:background="@color/colorAccent"
+        android:background="@color/primary_500"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:visibility="visible">
@@ -115,7 +115,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_bookmark"
-            app:tint="@color/white" />
+            app:tint="@color/pure_white" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_all_question"

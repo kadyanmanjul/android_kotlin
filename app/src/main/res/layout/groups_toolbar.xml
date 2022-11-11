@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/primary_500"
         android:contentInsetStart="0dp"
         android:contentInsetLeft="0dp"
         android:contentInsetEnd="0dp"
@@ -25,7 +25,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/button_color"
+            android:background="@color/primary_500"
             android:paddingStart="@dimen/_7sdp"
             android:paddingEnd="@dimen/_7sdp">
 
@@ -77,7 +77,7 @@
                 android:padding="@dimen/_4sdp"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/first_right_icon"
                 app:layout_constraintStart_toEndOf="@+id/image_view_logo"
@@ -106,7 +106,7 @@
                     android:gravity="start"
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Hello" />
@@ -121,7 +121,7 @@
                     app:layout_constraintStart_toEndOf="@id/title"
                     app:layout_constraintTop_toTopOf="@+id/title"
                     app:srcCompat="@drawable/ic_lock"
-                    app:tint="@color/white" />
+                    app:tint="@color/pure_white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/sub_title"
@@ -132,7 +132,7 @@
                     android:gravity="start"
                     android:singleLine="true"
                     android:text="tap here for group info"
-                    android:textColor="@color/white"
+                    android:textColor="@color/pure_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/title"
@@ -147,7 +147,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:padding="@dimen/_4sdp"
-                android:tint="@color/white"
+                android:tint="@color/pure_white"
                 android:transitionName="group_list_appbar"
                 android:foreground="?attr/actionBarItemBackground"
                 android:visibility="gone"
@@ -166,7 +166,7 @@
                 android:foreground="?attr/actionBarItemBackground"
                 android:padding="@dimen/_4sdp"
                 android:scaleType="fitCenter"
-                android:tint="@color/white"
+                android:tint="@color/pure_white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

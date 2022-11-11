@@ -15,7 +15,7 @@
         android:layout_gravity="center_vertical|center_horizontal|center"
         android:elevation="@dimen/_4sdp"
         android:foregroundGravity="center_horizontal"
-        app:cardBackgroundColor="@color/light_blue"
+        app:cardBackgroundColor="@color/primary_400"
         app:cardCornerRadius="@dimen/_4sdp"
         app:cardElevation="0dp"
         app:contentPaddingBottom="@dimen/_4sdp"
@@ -30,7 +30,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             tools:text="Yesterday" />
 
     </androidx.cardview.widget.CardView>

@@ -215,8 +215,7 @@ class SignUpActivity : ThemedBaseActivity() {
                 moveToConversationScreen(it)
             }
         }
-        viewModelForDpUpload.apiCallStatus.observe(this, Observer
-        {
+        viewModelForDpUpload.apiCallStatus.observe(this) {
             when (it) {
                 ApiCallStatus.SUCCESS -> {
                     hideProgressBar()
@@ -232,7 +231,7 @@ class SignUpActivity : ThemedBaseActivity() {
 
                 }
             }
-        })
+        }
     }
 
     private fun openChooseLanguageFragment() {

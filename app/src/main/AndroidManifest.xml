@@ -155,7 +155,6 @@
             android:name=".ui.voip.new_arch.ui.views.CallRecordingShare"
             android:exported="false" />
         <activity android:name=".ui.points_history.PointsInfoActivity" />
-        <activity android:name=".ui.introduction.DemoSpeakingPractiseActivity" />
         <activity android:name=".ui.points_history.PointsHistoryActivity" />
         <activity android:name=".ui.points_history.SpokenHistoryActivity" />
         <activity android:name=".ui.userprofile.UserProfileActivity" />
@@ -302,13 +301,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.courseprogress.CourseProgressActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
             android:name=".ui.subscription.StartSubscriptionActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
@@ -345,17 +337,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.explore.CourseExploreActivity" />
-        </activity>
-        <activity
-            android:name=".ui.introduction.DemoCourseDetailsActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.introduction.DemoCourseDetailsActivity"
-            android:theme="@style/AppNoBarTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.introduction.DemoCourseDetailsActivity" />
         </activity>
         <activity
             android:name=".ui.conversation_practice.ConversationPracticeActivity"
@@ -478,7 +459,7 @@
             android:value="id-1" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" />
+            android:resource="@color/primary_500" />
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />

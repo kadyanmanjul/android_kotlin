@@ -46,8 +46,6 @@ import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.CourseDao
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModel
-import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModelDao
 import com.joshtalks.joshskills.repository.local.entity.ImageType
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
@@ -126,7 +124,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     entities = [
         Course::class, ChatModel::class, Question::class, VideoType::class,
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
-        FeedbackEngageModel::class, Assessment::class, AssessmentQuestion::class,
+        Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
@@ -136,7 +134,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class,
     ],
-    version = 56,
+    version = 57,
     exportSchema = true
 )
 @TypeConverters(
@@ -240,7 +238,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_52_53,
                                 MIGRATION_53_54,
                                 MIGRATION_54_55,
-                                MIGRATION_55_56
+                                MIGRATION_55_56,
+                                MIGRATION_56_57
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -707,6 +706,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_56_57: Migration = object : Migration(56, 57) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP TABLE `feedback_engage`")
+            }
+        }
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
@@ -728,7 +733,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun courseDao(): CourseDao
     abstract fun chatDao(): ChatDao
     abstract fun videoEngageDao(): VideoEngageDao
-    abstract fun feedbackEngageModelDao(): FeedbackEngageModelDao
     abstract fun assessmentDao(): AssessmentDao
     abstract fun reminderDao(): ReminderDao
     abstract fun appUsageDao(): AppUsageDao

@@ -15,7 +15,7 @@
              android:background="@color/transparent_2"
              android:scaleType="centerInside"
              app:srcCompat="@drawable/ic_play_notification"
-             app:tint="@color/white"
+             app:tint="@color/pure_white"
              tools:tint="red" />-->
 
     <com.mikhaellopez.circularprogressbar.CircularProgressBar

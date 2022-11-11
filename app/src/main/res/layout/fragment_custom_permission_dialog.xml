@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
-        tools:background="@color/black">
+        tools:background="@color/icon_default">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/view"
@@ -49,8 +49,8 @@
                 android:text="@string/permission_dialog_description"
                 android:textSize="@dimen/_14ssp"
                 android:fontFamily="@font/open_sans"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-                android:textColor="@color/black" />
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/appCompatImageView"
@@ -67,14 +67,14 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginHorizontal="@dimen/_28sdp"
                 android:layout_marginTop="@dimen/_20sdp"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:gravity="center"
                 android:onClick="@{() -> fragment.allow()}"
                 android:paddingTop="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@string/go_to_settings"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:cornerRadius="@dimen/_20sdp"
                 app:layout_constraintEnd_toEndOf="@+id/view"
                 app:layout_constraintStart_toStartOf="@+id/view"
@@ -88,7 +88,7 @@
                 android:layout_marginBottom="@dimen/_20sdp"
                 android:onClick="@{() -> fragment.cancel()}"
                 android:text="@string/not_now_underline"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                 app:layout_constraintEnd_toEndOf="@id/view"
                 app:layout_constraintStart_toStartOf="@id/view"
                 app:layout_constraintTop_toBottomOf="@+id/tv_select_address" />

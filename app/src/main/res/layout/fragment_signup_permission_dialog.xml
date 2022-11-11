@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
-        tools:background="@color/black">
+        tools:background="@color/icon_default">
 
         <View
             android:id="@+id/view"
@@ -34,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_40sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular"
-            android:textColor="@color/black"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintStart_toStartOf="@+id/view"
             app:layout_constraintTop_toTopOf="@+id/view"
@@ -47,14 +47,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginHorizontal="@dimen/_54sdp"
-            android:backgroundTint="@color/button_color"
+            android:backgroundTint="@color/primary_500"
             android:gravity="center"
             android:onClick="@{()->fragment.allow()}"
             android:paddingTop="@dimen/_10sdp"
             android:paddingBottom="@dimen/_10sdp"
             android:text="@string/allow"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:cornerRadius="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintEnd_toEndOf="@+id/view"

@@ -18,13 +18,12 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:background="@drawable/play_pause_button_background"
-            android:backgroundTint="@color/button_color"
+            android:backgroundTint="@color/primary_500"
             android:contentDescription="@string/play_button_description"
             android:elevation="4dp"
             android:padding="@dimen/_4sdp"
             android:theme="?actionBarTheme"
             android:tint="?colorControlNormal" />
-
 
         <SeekBar
             android:id="@+id/practise_seekbar"
@@ -39,7 +38,7 @@
             android:paddingEnd="@dimen/_6sdp"
             android:progressDrawable="@drawable/seek_bar_draw"
             android:thumb="@drawable/seek_thumb"
-            android:thumbTint="@color/colorPrimary" />
+            android:thumbTint="@color/primary_500" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_cancel"
@@ -54,7 +53,6 @@
             android:visibility="visible"
             app:srcCompat="@drawable/ic_cross" />
 
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_info_duration"
             android:layout_width="wrap_content"
@@ -63,7 +61,7 @@
             android:layout_toLeftOf="@id/submit_txt_info_date"
             android:text="@string/your_feedback"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/red_color"
+            android:textColor="@color/critical"
             android:visibility="gone"
             app:layout_goneMarginTop="@dimen/spacing_large" />
 
@@ -75,7 +73,7 @@
             android:layout_alignRight="@+id/practise_seekbar"
             android:layout_marginTop="@dimen/_20sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-            android:textColor="@color/gray_9E"
+            android:textColor="@color/dark_grey"
             app:layout_goneMarginTop="@dimen/spacing_large"
             tools:text="just now" />
     </RelativeLayout>

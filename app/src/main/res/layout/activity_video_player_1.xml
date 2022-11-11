@@ -80,7 +80,7 @@
                     android:padding="@dimen/_4sdp"
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/pure_white" />
 
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -93,7 +93,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="@dimen/_4sdp"
-                    android:tint="@color/white"
+                    android:tint="@color/pure_white"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_more_option" />
             </RelativeLayout>
@@ -160,7 +160,7 @@
                 android:singleLine="true"
                 android:text="@string/next_class"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_default"
                 app:drawableStartCompat="@drawable/ic_play_12px"
                 app:layout_constraintBottom_toBottomOf="@id/progress_horizontal"
                 app:layout_constraintLeft_toLeftOf="@id/progress_horizontal"
@@ -185,7 +185,7 @@
                 android:layout_width="@dimen/_48sdp"
                 android:layout_height="@dimen/_48sdp"
                 app:srcCompat="@drawable/ic_play_icon_race"
-                android:tint="@color/white"
+                android:tint="@color/pure_white"
                 app:layout_constraintBottom_toTopOf="@id/save_gallery"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -199,7 +199,7 @@
                 android:layout_marginBottom="@dimen/_12sdp"
                 android:background="@drawable/round_rectangle"
                 android:foreground="?attr/selectableItemBackground"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="@color/primary_500"
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toTopOf="@id/share"
@@ -219,7 +219,7 @@
                     android:text="Save to Gallery"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/pure_white" />
             </LinearLayout>
 
             <LinearLayout
@@ -230,7 +230,7 @@
                 android:layout_marginBottom="@dimen/_24sdp"
                 android:background="@drawable/round_rectangle"
                 android:foreground="?attr/selectableItemBackground"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="@color/primary_500"
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -241,7 +241,7 @@
                     android:layout_width="@dimen/_12sdp"
                     android:layout_height="@dimen/_14sdp"
                     android:src="@drawable/ic_share"
-                    app:tint="@color/white" />
+                    app:tint="@color/pure_white" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -251,7 +251,7 @@
                     android:text="Share with friends"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/pure_white" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

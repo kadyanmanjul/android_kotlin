@@ -21,7 +21,7 @@ fun FlowLayout.removeView(view: View, choice: Choice) {
     invalidate()
     atsOptionView.background =
         ContextCompat.getDrawable(context, R.drawable.rounded_rectangle_grey)
-    atsOptionView.setTextColor(ContextCompat.getColor(context, R.color.light_shade_of_gray))
+    atsOptionView.setTextColor(ContextCompat.getColor(context, R.color.disabled))
     atsOptionView.setOnTouchListener(null)
     atsOptionView.setOnClickListener(null)
     removeView(view)

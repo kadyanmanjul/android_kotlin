@@ -89,7 +89,7 @@
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toTopOf="@id/barrier"
-                    tools:src="@color/checkmark_blue"
+                    tools:src="@color/primary_400"
                     tools:visibility="visible" />
 
                 <androidx.constraintlayout.widget.Barrier

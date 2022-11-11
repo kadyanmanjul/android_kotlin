@@ -16,7 +16,7 @@
         android:id="@+id/group_item_container"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_46sdp"
-        android:background="@color/white">
+        android:background="@color/pure_white">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -57,7 +57,7 @@
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:text="@{itemData.courseName}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                android:textColor="@color/black_quiz"
+                android:textColor="@color/pure_black"
                 tools:text="@string/course_name" />
 
             <androidx.appcompat.widget.AppCompatTextView

@@ -33,7 +33,7 @@
             android:gravity="start"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintBottom_toTopOf="@id/tv_student_of"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,7 @@
             android:gravity="start"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintBottom_toBottomOf="@id/decorator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_congrats"
@@ -67,7 +67,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_student_of"
-            tools:src="@color/checkmark_blue"
+            tools:src="@color/primary_400"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -81,7 +81,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/user_pic"
             app:layout_constraintTop_toTopOf="@id/user_pic"
-            tools:src="@color/checkmark_blue"
+            tools:src="@color/primary_400"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -92,7 +92,7 @@
             android:layout_marginTop="@dimen/_6sdp"
             android:paddingHorizontal="@dimen/_1sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Salsa_SemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_award"
             tools:text="Vedant Maheshwari" />
@@ -102,7 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:layout_marginStart="@dimen/_7sdp"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/student_name" />
@@ -115,7 +115,7 @@
             android:layout_marginTop="@dimen/_2sdp"
             android:paddingHorizontal="@dimen/_1sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider"
             tools:text="Total points - 9530" />
@@ -126,7 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_7sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintVertical_bias="0"
             android:layout_marginBottom="@dimen/_2sdp"
             android:paddingBottom="@dimen/_4sdp"

@@ -2,10 +2,10 @@
 <resources>
 
     <style name="MyTimePickerWidgetStyle" parent="@android:style/Widget.Material.TimePicker">
-        <item name="android:headerBackground">#FFFFFF</item>
-        <item name="colorControlActivated">#FFFFFF</item>
-        <item name="android:numbersSelectorColor">@color/colorPrimary</item>
-        <item name="android:numbersBackgroundColor">@color/artboard_color</item>
+        <item name="android:headerBackground">@color/pure_white</item>
+        <item name="colorControlActivated">@color/pure_white</item>
+        <item name="android:numbersSelectorColor">@color/primary_500</item>
+        <item name="android:numbersBackgroundColor">@color/pure_grey</item>
         <item name="android:amPmTextColor">@color/primary_text_secondary_when_activated_material
         </item>
         <item name="android:headerTimeTextAppearance">

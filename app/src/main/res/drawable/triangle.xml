@@ -11,7 +11,7 @@
                 android:shape="rectangle" >
 
                 <solid
-                    android:color="@color/leaderboard_tooltip_bg_color"/>
+                    android:color="@color/surface_tip"/>
             </shape>
         </rotate>
     </item>

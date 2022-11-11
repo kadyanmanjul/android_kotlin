@@ -369,7 +369,7 @@ class AudioPlayerViewHolder(
     private fun mediaDownloaded() {
         seekBar.thumb = ContextCompat.getDrawable(getAppContext(), R.drawable.seek_thumb)
         seekBar.thumbTintList =
-            ColorStateList.valueOf(ContextCompat.getColor(getAppContext(), R.color.colorPrimary))
+            ColorStateList.valueOf(ContextCompat.getColor(getAppContext(), R.color.primary_500))
         btnPlayImageView.visibility = android.view.View.VISIBLE
         seekBar.visibility = android.view.View.VISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE

@@ -242,7 +242,7 @@ class AudioViewHolder(
         downloadContainer.visibility = View.GONE
         seekBar.thumb = ContextCompat.getDrawable(getAppContext(), R.drawable.seek_thumb)
         seekBar.thumbTintList =
-            ColorStateList.valueOf(ContextCompat.getColor(getAppContext(), R.color.colorPrimary))
+            ColorStateList.valueOf(ContextCompat.getColor(getAppContext(), R.color.primary_500))
         seekBar.visibility = VISIBLE
         btnPlayImageView.visibility = VISIBLE
     }

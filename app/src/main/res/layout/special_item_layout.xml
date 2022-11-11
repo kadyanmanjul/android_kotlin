@@ -22,7 +22,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/pure_white"
             android:background="@drawable/round_rect_default"
             android:orientation="vertical">
 
@@ -40,7 +40,7 @@
                 android:background="@drawable/round_both_bottom_bg"
                 android:paddingHorizontal="@dimen/_6sdp"
                 android:paddingVertical="@dimen/_4sdp"
-                android:backgroundTint="@color/special_card_color"
+                android:backgroundTint="@color/pure_grey"
                 android:text="@string/special_practice_text"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 android:textColor="@color/pure_black" />
@@ -53,7 +53,7 @@
             android:layout_marginBottom="@dimen/_3sdp"
             android:text="Start Special Practice"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/primary_500"
             android:textStyle="bold" />
     </LinearLayout>
 </FrameLayout>

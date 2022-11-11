@@ -635,7 +635,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     private fun resetRadioBackground(radioButton: RadioButton) {
         radioButton.setBackgroundColor(
-            ContextCompat.getColor(requireContext(), R.color.white)
+            ContextCompat.getColor(requireContext(), R.color.pure_white)
         )
         radioButton.setCompoundDrawablesWithIntrinsicBounds(
             0,
@@ -652,7 +652,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             resetRadioButtonsBg()
             binding.submitAnswerBtn.isEnabled = true
             radioGroup.findViewById<RadioButton>(checkedId)?.setBackgroundColor(
-                ContextCompat.getColor(requireContext(), R.color.received_bg_BC)
+                ContextCompat.getColor(requireContext(), R.color.surface_information)
             )
         }
 

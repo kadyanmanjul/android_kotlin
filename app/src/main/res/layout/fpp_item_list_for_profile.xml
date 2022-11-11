@@ -6,7 +6,7 @@
     android:id="@+id/group_item_container"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_46sdp"
-    android:background="@color/white">
+    android:background="@color/pure_white">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"

@@ -7,7 +7,7 @@
         android:id="@+id/user_pic"
         android:layout_width="@dimen/_86sdp"
         android:layout_height="@dimen/_86sdp"
-        android:src="@color/not_now"
+        android:src="@color/disabled"
         android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_marginVertical="@dimen/_18sdp"
         app:layout_constraintStart_toStartOf="parent"

@@ -73,7 +73,7 @@ class GroupsAppBar @JvmOverloads constructor(
     fun setImage(url: String, groupHeader: String?, groupType: String?) {
         toolbarImageView.visibility = View.VISIBLE
         if (groupType == DM_CHAT && url.isEmpty())
-            toolbarImageView.setUserImageOrInitialsWithWhiteBackground(url, groupHeader!!, isRound = true,bgColor = R.color.white,txtColor = R.color.colorAccent)
+            toolbarImageView.setUserImageOrInitialsWithWhiteBackground(url, groupHeader!!, isRound = true,bgColor = R.color.pure_white,txtColor = R.color.primary_500)
         else if (url.isEmpty())
             toolbarImageView.setImageResource(DefaultImage.DEFAULT_GROUP_IMAGE.drwRes)
         else

@@ -47,7 +47,7 @@ class TestItemViewHolder(
                 attempt_status.supportBackgroundTintList =
                     ResourcesCompat.getColorStateList(
                         AppObjectController.joshApplication.resources,
-                        R.color.button_color,
+                        R.color.primary_500,
                         null
                     )
             } else {
@@ -70,7 +70,7 @@ class TestItemViewHolder(
                     attempt_status.supportBackgroundTintList =
                         ResourcesCompat.getColorStateList(
                             AppObjectController.joshApplication.resources,
-                            R.color.green,
+                            R.color.success,
                             null
                         )
                 }
@@ -80,7 +80,7 @@ class TestItemViewHolder(
                     attempt_status.supportBackgroundTintList =
                         ResourcesCompat.getColorStateList(
                             AppObjectController.joshApplication.resources,
-                            R.color.wrong_answer,
+                            R.color.critical,
                             null
                         )
                 }

@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="@{amount.amountInRupees()}"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/text_default"
         android:textSize="@dimen/_14ssp"
         android:layout_gravity="center"
         tools:text="₹ 50000"/>

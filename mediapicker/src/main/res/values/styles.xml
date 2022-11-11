@@ -1,32 +1,12 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="TbMediaPickerTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-
-
-        <!-- Customize your theme here. -->
-        <!--<item name="colorPrimary">@color/tb_media_picker_primary</item>
-        <item name="colorPrimaryDark">@color/tb_media_picker_primaryDark</item>
-        <item name="colorAccent">@color/tb_media_picker_accent</item>
--->
+        <item name="colorPrimary">@color/primary_500</item>
+        <item name="colorPrimaryDark">@color/primary_700</item>
+        <item name="colorAccent">@color/primary_500</item>
     </style>
-
-    <!--<item name="drawerArrowStyle">@style/DrawerIconStyle</item>
-        <item name="actionOverflowButtonStyle">@style/customOptionOverflow</item>-->
-
-    <!--<style name="AppTheme.Transparent" parent="TbMediaPickerTheme">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowNoTitle">true</item>
-        &lt;!&ndash;<item name="android:windowIsFloating">true</item>&ndash;&gt;
-        <item name="android:backgroundDimEnabled">false</item>
-    </style>-->
 
     <!--Text -->
     <style name="TextTitle" parent="App.TextAppearance.h4.Title">
@@ -40,12 +20,4 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">start</item>
     </style>
-
-    <!--Edit Text-->
-
-
-    <!--Button-->
-
-
-    <!--ImageModel-->
 </resources>

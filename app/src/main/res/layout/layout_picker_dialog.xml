@@ -94,7 +94,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="@string/no_result_found"
-        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
         android:textColor="@android:color/primary_text_light"
         android:visibility="gone" />
 

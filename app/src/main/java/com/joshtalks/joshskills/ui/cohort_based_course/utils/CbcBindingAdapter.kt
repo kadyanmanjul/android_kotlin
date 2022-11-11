@@ -26,15 +26,15 @@ fun MaterialButton.setBackgroundState(boolean: Boolean,string: String? = "") {
     when (boolean) {
         true -> {
             this.isEnabled = true
-            this.backgroundTintList = getColorStateList(context, R.color.colorPrimary)
-            this.setTextColor(ContextCompat.getColor(context,R.color.white))
+            this.backgroundTintList = getColorStateList(context, R.color.primary_500)
+            this.setTextColor(ContextCompat.getColor(context,R.color.pure_white))
             if (string?.isEmpty()?.not() == true)
                 this.text = "Continue to course >"
         }
         false -> {
             this.isEnabled = false
-            this.backgroundTintList = getColorStateList(context, R.color.light_shade_of_gray)
-            this.setTextColor(ContextCompat.getColor(context,R.color.white))
+            this.backgroundTintList = getColorStateList(context, R.color.disabled)
+            this.setTextColor(ContextCompat.getColor(context,R.color.pure_white))
         }
     }
 }

@@ -36,14 +36,14 @@ class ScheduleAdapter( private val cohortItemModelList:ArrayList<CohortItemModel
         holder.itemView.setOnClickListener {
             itemClick?.invoke(cohortItemModelList[position])
 
-            holder.binding.txtViewTimeSlot.textColorSet(R.color.blue_cbc_text_timeslot)
+            holder.binding.txtViewTimeSlot.textColorSet(R.color.primary_700)
             holder.binding.crdViewTimeSlot.background =
                 ContextCompat.getDrawable(context, R.drawable.round_rect_with_blue_border)
 
             if (prevHolder != null && prevHolder != holder) {
                 prevHolder?.binding?.crdViewTimeSlot?.background =
                     ContextCompat.getDrawable(context, R.drawable.round_rect_with_blueish_border)
-                prevHolder?.binding?.txtViewTimeSlot?.textColorSet(R.color.gray_cbc_text_timeslot)
+                prevHolder?.binding?.txtViewTimeSlot?.textColorSet(R.color.text_subdued)
             }
             prevHolder = holder
         }

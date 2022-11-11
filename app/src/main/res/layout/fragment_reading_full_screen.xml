@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/pitch_black">
+        android:background="@color/pure_black">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/videoCard"
@@ -32,7 +32,7 @@
                 android:layout_marginEnd="@dimen/_20sdp"
                 android:padding="@dimen/_3sdp"
                 android:elevation="@dimen/_10sdp"
-                android:tint="@color/white"
+                android:tint="@color/pure_white"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -46,7 +46,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:clickable="true"
                 android:elevation="@dimen/_10sdp"
-                android:tint="@color/white"
+                android:tint="@color/pure_white"
                 android:padding="@dimen/_4sdp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +60,7 @@
                 android:background="#000"
                 android:focusable="true"
                 android:visibility="gone"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/pure_white"
                 app:controller_layout_id="@layout/layout_live_player_controller"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -74,8 +74,8 @@
                 android:id="@+id/progress_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:indeterminateTint="@color/grey"
-                android:progressTint="@color/grey"
+                android:indeterminateTint="@color/dark_grey"
+                android:progressTint="@color/dark_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +88,7 @@
                 android:layout_marginTop="@dimen/_6sdp"
                 android:text="Creating Your Video..."
                 android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                android:textColor="@color/grey"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -108,7 +108,7 @@
             android:layout_gravity="center"
             android:layout_marginEnd="@dimen/_16sdp"
             android:background="@drawable/rounded_state_button_bg"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/pure_white"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:paddingVertical="@dimen/_8sdp"
@@ -118,11 +118,11 @@
             android:visibility="gone"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            android:textColor="@color/pitch_black"
+            android:textColor="@color/pure_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/videoCard"
-            app:rippleColor="@color/white" />
+            app:rippleColor="@color/pure_white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

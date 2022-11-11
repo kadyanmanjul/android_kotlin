@@ -10,13 +10,13 @@
             android:layout_height="wrap_content">
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold24"
             android:id="@+id/tv_question"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="start|center"
             android:maxLines="6"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

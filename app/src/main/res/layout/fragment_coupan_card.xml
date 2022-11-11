@@ -16,7 +16,7 @@
         android:id="@+id/progress_container_view_share"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/pure_white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primary_500"
                     android:contentInsetStart="0dp"
                     android:contentInsetLeft="0dp"
                     android:contentInsetEnd="0dp"
@@ -86,7 +86,7 @@
                             android:singleLine="true"
                             android:text="Apply Coupon"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                            android:textColor="@color/white"
+                            android:textColor="@color/pure_white"
                             android:textStyle="bold" />
                     </RelativeLayout>
 
@@ -143,8 +143,8 @@
                 android:paddingBottom="@dimen/_10sdp"
                 android:textAllCaps="true"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="@color/pitch_black"
-                android:textColorHint="@color/light_grey"
+                android:textColor="@color/pure_black"
+                android:textColorHint="@color/dark_grey"
                 android:textCursorDrawable="@drawable/cursor_drawable"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/view7"
@@ -163,7 +163,7 @@
                 android:paddingHorizontal="@dimen/_17sdp"
                 android:paddingVertical="@dimen/_7sdp"
                 android:text="Apply"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/primary_500"
                 android:textSize="@dimen/_12ssp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/view7"

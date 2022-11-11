@@ -54,7 +54,7 @@ class ShareWithFriendsActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         super.onCreate(savedInstanceState)
-        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.white)
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pure_white)
 
         populateViewsAndFragment()
         binding.lifecycleOwner = this

@@ -33,5 +33,5 @@ fun setOnContactItemClick(
 
 @BindingAdapter("setUsername")
 fun setUsernameInitials(view: AppCompatImageView, username: String) {
-    view.setUserInitial(username, background = R.color.grammar_black_text_color)
+    view.setUserInitial(username, background = R.color.text_default)
 }

@@ -29,7 +29,7 @@
                 android:id="@+id/search_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
+                android:background="@color/pure_white"
                 android:paddingBottom="@dimen/_8sdp"
                 app:layout_constraintBottom_toTopOf="@+id/tab_layout">
 
@@ -41,7 +41,7 @@
                     android:onClick="@{vm::onBackPress}"
                     android:paddingVertical="@dimen/_4sdp"
                     android:src="@drawable/ic_arrow_back"
-                    android:tint="@color/black"
+                    android:tint="@color/icon_default"
                     app:layout_constraintBottom_toBottomOf="@+id/search_view"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/search_view" />
@@ -71,7 +71,7 @@
                     android:minHeight="@dimen/_20sdp"
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:paddingVertical="@dimen/_4sdp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/text_default"
                     android:transitionName="group_search_appbar"
                     app:layout_constraintEnd_toStartOf="@+id/img_clear"
                     app:layout_constraintStart_toEndOf="@id/back_iv"
@@ -87,7 +87,7 @@
                     android:paddingVertical="@dimen/_4sdp"
                     android:paddingEnd="@dimen/_8sdp"
                     android:src="@drawable/ic_cross"
-                    android:tint="@color/black"
+                    android:tint="@color/icon_default"
                     app:layout_constraintBottom_toBottomOf="@+id/search_view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/search_view" />
@@ -103,8 +103,8 @@
             android:paddingVertical="@dimen/_4sdp"
             android:text="Currently active groups:"
             android:visibility="@{vm.isSearching ? View.GONE : View.VISIBLE}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/black"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+            android:textColor="@color/text_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_layout_card" />
 
@@ -127,8 +127,8 @@
             android:paddingVertical="@dimen/_4sdp"
             android:layout_marginTop="@dimen/_24sdp"
             android:text="No Group Found:"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/black"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_layout_card" />
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_8sdp"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/primary_500"
             android:gravity="center"
             android:insetTop="0dp"
             android:onClick="@{vm::createGroup}"
@@ -150,7 +150,7 @@
             android:insetBottom="0dp"
             android:text="Create Group"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:textSize="@dimen/_12ssp"
             app:cornerRadius="@dimen/_36sdp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -158,7 +158,7 @@
             app:layout_constraintTop_toBottomOf="@+id/no_group_lable"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.8"
-            app:rippleColor="@color/white"
+            app:rippleColor="@color/pure_white"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Group

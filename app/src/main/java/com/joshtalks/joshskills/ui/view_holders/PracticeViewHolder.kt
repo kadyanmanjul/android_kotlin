@@ -87,13 +87,13 @@ class PracticeViewHolder(
         practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
                 AppObjectController.joshApplication,
-                R.color.pdf_bg_color
+                R.color.pure_grey
             )
         )
         subTitleTV.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
                 AppObjectController.joshApplication,
-                R.color.pdf_bg_color
+                R.color.pure_grey
             )
         )
         val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
@@ -119,7 +119,7 @@ class PracticeViewHolder(
                 messageView.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         getAppContext(),
-                        R.color.white
+                        R.color.pure_white
                     )
                 )
             } else {
@@ -133,14 +133,14 @@ class PracticeViewHolder(
                 messageView.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         getAppContext(),
-                        R.color.sent_msg_background
+                        R.color.surface_success
                     )
                 )
                 sBuilder.setSpan(
                     ForegroundColorSpan(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.green
+                            R.color.success
                         )
                     ),
                     8,
@@ -151,13 +151,13 @@ class PracticeViewHolder(
                 practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.bg_green_80
+                        R.color.surface_success
                     )
                 )
                 subTitleTV.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.bg_green_80
+                        R.color.surface_success
                     )
                 )
 

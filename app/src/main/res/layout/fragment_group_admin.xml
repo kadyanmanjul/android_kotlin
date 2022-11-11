@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/pure_white"
         tools:context=".ui.group.GroupAdminFragment">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:layout_marginHorizontal="@dimen/_10sdp"
-            android:background="@color/gray_e6"
+            android:background="@color/disabled"
             app:layout_constraintTop_toBottomOf="@id/admin_check" />
 
         <TextView
@@ -77,7 +77,7 @@
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_12sdp"
             android:text="@string/admin_responsibilities"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/admin_check" />
@@ -87,7 +87,7 @@
             android:layout_height="@dimen/_1sdp"
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_8sdp"
-            android:background="@color/gray_e6"
+            android:background="@color/disabled"
             app:layout_constraintTop_toBottomOf="@id/textView12" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -97,10 +97,10 @@
             android:layout_marginHorizontal="@dimen/_18sdp"
             android:layout_marginBottom="@dimen/_16sdp"
             android:background="@drawable/rounded_rectangle_grey"
-            android:backgroundTint="@color/blue33"
+            android:backgroundTint="@color/primary_500"
             android:onClick="@{vm::createGroup}"
             android:text="Accept"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

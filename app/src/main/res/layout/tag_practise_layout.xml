@@ -7,7 +7,7 @@
     android:layout_gravity="top|center"
     android:layout_marginTop="@dimen/_1sdp"
     android:layout_marginBottom="@dimen/_4sdp"
-    android:background="@color/pdf_bg_color"
+    android:background="@color/pure_grey"
     android:clickable="true"
     android:duplicateParentState="true"
     android:focusable="true"
@@ -20,7 +20,7 @@
         android:layout_width="@dimen/_4sdp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/button_color"
+        android:background="@color/primary_500"
         android:duplicateParentState="true" />
 
     <RelativeLayout
@@ -48,7 +48,7 @@
             android:paddingBottom="@dimen/_3sdp"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-            android:textColor="@color/button_color"
+            android:textColor="@color/primary_500"
             android:visibility="visible"
             tools:text="Vedant Maheshwari" />
 
@@ -62,14 +62,14 @@
             android:layout_marginEnd="@dimen/_8sdp"
             android:clickable="false"
             android:drawablePadding="@dimen/_4sdp"
-            android:drawableTint="@color/emoji_icon_color"
+            android:drawableTint="@color/dark_grey"
             android:focusable="false"
             android:gravity="center|start"
             android:inputType=""
             android:maxLines="2"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/gray_82"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+            android:textColor="@color/dark_grey"
             tools:text="Practice #1" />
 
         <androidx.appcompat.widget.AppCompatImageView

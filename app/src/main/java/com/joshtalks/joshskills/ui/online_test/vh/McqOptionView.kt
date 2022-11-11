@@ -43,7 +43,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
 
         if (state == McqOptionState.UNSELECTED) {
             choice.isSelectedByUser = false
-            setTextColor(ContextCompat.getColor(context, R.color.grammar_black_text_color))
+            setTextColor(ContextCompat.getColor(context, R.color.text_default))
             background =
                 ContextCompat.getDrawable(
                     getContext(),
@@ -51,7 +51,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                 )
         } else {
             choice.isSelectedByUser = true
-            setTextColor(ContextCompat.getColor(context, R.color.grammar_button_color_blue))
+            setTextColor(ContextCompat.getColor(context, R.color.primary_400))
             background =
                 ContextCompat.getDrawable(
                     getContext(),
@@ -79,7 +79,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                         setTextColor(
                             ContextCompat.getColor(
                                 context,
-                                R.color.grammar_black_text_color
+                                R.color.text_default
                             )
                         )
                         v.background = ContextCompat.getDrawable(
@@ -90,7 +90,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                         setTextColor(
                             ContextCompat.getColor(
                                 context,
-                                R.color.grammar_button_color_blue
+                                R.color.primary_400
                             )
                         )
                         v.background =
@@ -114,7 +114,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                         setTextColor(
                             ContextCompat.getColor(
                                 context,
-                                R.color.grammar_black_text_color
+                                R.color.text_default
                             )
                         )
                         v.background = ContextCompat.getDrawable(
@@ -125,7 +125,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                         setTextColor(
                             ContextCompat.getColor(
                                 context,
-                                R.color.grammar_button_color_blue
+                                R.color.primary_400
                             )
                         )
                         v.background =

@@ -5,19 +5,19 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/pure_white"
     android:clickable="true"
     android:elevation="0dp"
     android:enabled="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/white"
+    app:cardBackgroundColor="@color/pure_white"
     app:cardCornerRadius="0dp"
     app:cardElevation="0dp"
     app:contentPaddingLeft="0dp"
     app:contentPaddingRight="0dp"
     app:contentPaddingTop="0dp"
-    tools:cardBackgroundColor="@color/white"
+    tools:cardBackgroundColor="@color/pure_white"
     tools:cardPreventCornerOverlap="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,7 +36,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@color/button_color" />
+            tools:src="@color/primary_500" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_tick"
@@ -61,7 +61,7 @@
             android:inputType="none"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintStart_toEndOf="@+id/profile_image"
             app:layout_constraintTop_toTopOf="@+id/profile_image"
             app:layout_constraintWidth_default="percent"
@@ -94,7 +94,7 @@
             android:gravity="start"
             android:maxLines="1"
             android:text="@string/click_to_start_the_course"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="@color/dark_grey"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/profile_image"
@@ -123,7 +123,7 @@
             android:id="@+id/horizontal_line"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="@color/gray_e6"
+            android:background="@color/disabled"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

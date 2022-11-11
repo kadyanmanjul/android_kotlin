@@ -16,7 +16,9 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_OFFER_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 
 class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>() {
@@ -46,7 +48,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             holder.binding.btnApply.isEnabled = true
             holder.binding.imgLogo.alpha = 1.0f
             val colorAccent =
-                ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.colorAccent)
+                ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.primary_500)
             holder.binding.btnApply.setTextColor(colorAccent)
             val blackColor =
                 ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.pure_black)
@@ -54,7 +56,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             offersList[position]
                 .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
         } else {
-            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && offersList[position].isMentorSpecificCoupon!=null) {
+            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && offersList[position].isMentorSpecificCoupon != null) {
                 holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 holder.binding.btnApply.text = APPLY
                 holder.binding.couponExpireText.visibility = View.VISIBLE
@@ -94,8 +96,12 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 couponIndex = i
             }
         }
-        offersList[0].isCouponSelected = 0
-        notifyItemChanged(0)
+        try {
+            offersList.firstOrNull()?.isCouponSelected = 0
+            notifyItemChanged(0)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         if (hasCoupon) {
             val item = offersList[couponIndex]
             item.isCouponSelected = 1
@@ -116,9 +122,9 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
 
     fun addOffersList(members: MutableList<Coupon>) {
         val listToAdd = mutableListOf<Coupon>()
-        if (offersList.isNullOrEmpty()){
+        if (offersList.isNullOrEmpty()) {
             offersList.addAll(members)
-        }else {
+        } else {
             members.forEach { coupon ->
                 val itemInOffer = offersList.filter { it.couponCode == coupon.couponCode }
                 if (itemInOffer.isNullOrEmpty().not()) {
@@ -141,10 +147,10 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         var countdownTimerBack: CountDownTimer? = null
         fun setData(coupon: Coupon?, position: Int) {
             binding.executePendingBindings()
-            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && coupon?.isMentorSpecificCoupon!=null) {
+            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && coupon?.isMentorSpecificCoupon != null) {
                 startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), coupon, position)
-            }else{
-                changeTextColor(binding, coupon,position)
+            } else {
+                changeTextColor(binding, coupon, position)
                 if (coupon?.isMentorSpecificCoupon != null)
                     binding.couponExpireText.visibility = View.VISIBLE
                 else
@@ -152,19 +158,19 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             }
         }
 
-        fun startFreeTrialTimer(endTimeInMilliSeconds: Long, coupon: Coupon? ,position: Int) {
+        fun startFreeTrialTimer(endTimeInMilliSeconds: Long, coupon: Coupon?, position: Int) {
             try {
-                if (countdownTimerBack!=null)
+                if (countdownTimerBack != null)
                     countdownTimerBack?.cancel()
 
                 countdownTimerBack = object : CountDownTimer(endTimeInMilliSeconds, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
                         if (countdownTimerBack != null) {
                             AppObjectController.uiHandler.post {
-                                if (coupon?.isMentorSpecificCoupon!=null) {
+                                if (coupon?.isMentorSpecificCoupon != null) {
                                     binding.couponExpireText.text =
                                         "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
-                                }else{
+                                } else {
                                     binding.couponExpireText.visibility = View.GONE
                                 }
                             }
@@ -172,11 +178,11 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                     }
 
                     override fun onFinish() {
-                            AppObjectController.uiHandler.post {
-                                changeTextColor(binding, coupon,position)
-                                binding.couponExpireText.visibility = View.VISIBLE
-                                countdownTimerBack?.cancel()
-                            }
+                        AppObjectController.uiHandler.post {
+                            changeTextColor(binding, coupon, position)
+                            binding.couponExpireText.visibility = View.VISIBLE
+                            countdownTimerBack?.cancel()
+                        }
                     }
                 }
                 countdownTimerBack?.start()
@@ -185,13 +191,13 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             }
         }
 
-        fun changeTextColor(binding: ItemOfffersCardBinding, coupon: Coupon?, position: Int){
-            if (coupon?.isMentorSpecificCoupon!=null) {
-                Log.e("sagar", "changeTextColor: " )
+        fun changeTextColor(binding: ItemOfffersCardBinding, coupon: Coupon?, position: Int) {
+            if (coupon?.isMentorSpecificCoupon != null) {
+                Log.e("sagar", "changeTextColor: ")
                 if (coupon.isCouponSelected == 1)
                     coupon.let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
                 val grayColor =
-                    ContextCompat.getColor(binding.couponExpireText.context, R.color.gray_8D)
+                    ContextCompat.getColor(binding.couponExpireText.context, R.color.dark_grey)
                 binding.rootCard.isEnabled = false
                 binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 binding.couponExpireText.text = "Coupon expired"
@@ -204,13 +210,13 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 binding.couponDiscountPercent.setTextColor(grayColor)
                 binding.btnApply.setTextColor(grayColor)
                 binding.couponExpireText.visibility = View.VISIBLE
-            }else{
+            } else {
                 binding.couponExpireText.visibility = View.GONE
             }
         }
     }
 
-    fun scroll(func :() -> Unit?) {
+    fun scroll(func: () -> Unit?) {
         scrollToFirst = func
     }
 }

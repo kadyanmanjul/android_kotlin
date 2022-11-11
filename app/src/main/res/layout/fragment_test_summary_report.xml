@@ -15,7 +15,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
+            android:background="@color/pure_white">
 
         <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/toolbar"
@@ -27,7 +27,7 @@
             <com.google.android.material.appbar.MaterialToolbar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
+                    android:background="@color/pure_white"
                     android:gravity="start|center"
                     android:minHeight="?attr/actionBarSize"
                     android:paddingHorizontal="@dimen/_4sdp"
@@ -47,7 +47,7 @@
                         android:paddingVertical="@dimen/_4sdp"
                         android:visibility="visible"
                         app:srcCompat="@drawable/ic_arrow_back"
-                        app:tint="@color/black" />
+                        app:tint="@color/icon_default" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/title"
@@ -58,7 +58,7 @@
                         android:singleLine="true"
                         android:text="@string/test_summary_title"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/text_default" />
 
             </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -69,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginBottom="@dimen/_10sdp"
-                android:background="@android:color/white"
+                android:background="@color/pure_white"
                 app:layout_constraintBottom_toTopOf="@+id/materialButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +86,7 @@
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:background="@drawable/rectangle_with_blue_bound_stroke"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
@@ -94,11 +94,11 @@
                 android:padding="@dimen/_10sdp"
                 android:text="@string/done"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/pure_white" />
 
         <FrameLayout
                 android:id="@+id/progress_bar"
@@ -112,11 +112,11 @@
                     android:layout_width="@dimen/_82sdp"
                     android:layout_height="@dimen/_82sdp"
                     android:layout_gravity="center"
-                    wheel:matProg_barColor="@color/button_color"
+                    wheel:matProg_barColor="@color/primary_500"
                     wheel:matProg_fillRadius="true"
                     wheel:matProg_linearProgress="false"
                     wheel:matProg_progressIndeterminate="true"
-                    wheel:matProg_rimColor="@color/light_blue"
+                    wheel:matProg_rimColor="@color/primary_400"
                     wheel:matProg_rimWidth="@dimen/_2sdp" />
 
         </FrameLayout>

@@ -111,11 +111,11 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
         qualityTv.text = quality
 
         if ("good".equals(quality, true)) {
-            charTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-            qualityTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+            charTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.success))
+            qualityTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.success))
         } else {
-            charTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.red_f6))
-            qualityTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.red_f6))
+            charTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.critical))
+            qualityTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.critical))
         }
 
         binding.tableLayout.addView(tableRow)

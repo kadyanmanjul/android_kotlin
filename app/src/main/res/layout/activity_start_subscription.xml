@@ -15,7 +15,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
+            android:background="@color/pure_white">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/headerImage"
@@ -35,7 +35,7 @@
                 android:layout_marginTop="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:background="@drawable/ic_cross"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/pure_white"
                 android:contentDescription="@string/cancel_button"
                 android:onClick="@{()->handler.cancel()}"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -48,8 +48,8 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="center"
                 android:text="@string/subscription_heading"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/text_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/headerImage"
@@ -61,8 +61,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/unlimited_learning"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
-                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.JoshTypography.XLargeSemiBold"
+                android:textColor="@color/text_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtHeading"
@@ -95,7 +95,7 @@
                     android:gravity="center|start"
                     android:text="@string/subscription_feature_1"
                     android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/text_default" />
 
         </LinearLayout>
 
@@ -126,7 +126,7 @@
                     android:gravity="center|start"
                     android:text="@string/subscription_feature_2"
                     android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/text_default" />
 
         </LinearLayout>
 
@@ -157,7 +157,7 @@
                     android:gravity="center|start"
                     android:text="@string/subscription_feature_3"
                     android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/text_default" />
 
         </LinearLayout>
 
@@ -167,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_12sdp"
                 android:background="@drawable/round_rectangle_for_course_expo"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/primary_500"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
@@ -175,7 +175,7 @@
                 android:text="@string/start_7_day_trial"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
+                android:textColor="@color/pure_white"
                 app:cornerRadius="@dimen/_32sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -197,7 +197,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible"
-            wheel:matProg_barColor="@color/button_color"
+            wheel:matProg_barColor="@color/primary_500"
             wheel:matProg_fillRadius="true"
             wheel:matProg_linearProgress="false"
             wheel:matProg_progressIndeterminate="true" />

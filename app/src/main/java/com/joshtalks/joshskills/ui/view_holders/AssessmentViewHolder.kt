@@ -106,13 +106,13 @@ class AssessmentViewHolder(
                 messageView.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         getAppContext(),
-                        R.color.white
+                        R.color.pure_white
                     )
                 )
                 practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.pdf_bg_color
+                        R.color.pure_grey
                     )
                 )
             } else {
@@ -124,20 +124,20 @@ class AssessmentViewHolder(
                 messageView.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         getAppContext(),
-                        R.color.sent_msg_background
+                        R.color.surface_success
                     )
                 )
                 practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.bg_green_80
+                        R.color.surface_success
                     )
                 )
                 sBuilder.setSpan(
                     ForegroundColorSpan(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.green
+                            R.color.success
                         )
                     ),
                     8,

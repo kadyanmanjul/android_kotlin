@@ -18,5 +18,5 @@
     app:chipEndPadding="@dimen/_6sdp"
     app:chipMinHeight="@dimen/_34sdp"
     app:chipStartPadding="@dimen/_6sdp"
-    app:rippleColor="@color/interest_chip_bg_selected"
+    app:rippleColor="@color/surface_information"
     tools:text="Course Information" />

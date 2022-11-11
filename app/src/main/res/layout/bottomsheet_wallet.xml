@@ -49,7 +49,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/_12ssp"
-        android:textColor="@color/txt_red"
+        android:textColor="@color/critical"
         tools:text="@string/minimum_balance_of_5_minutes"
         app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@+id/guidelineStart"
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:text="@string/recharge_now"
         android:layout_marginTop="@dimen/_11sdp"
-        android:textColor="@color/black"
+        android:textColor="@color/text_default"
         android:textSize="@dimen/_14ssp"
         app:layout_constraintStart_toStartOf="@+id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/minimumBalance" />

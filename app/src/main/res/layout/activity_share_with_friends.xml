@@ -112,7 +112,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tvMinutes"
             app:layout_constraintVertical_bias="0.1975591152"
             app:srcCompat="@drawable/ic_baseline_phone_pick"
-            app:tint="#107BE5" />
+            app:tint="@color/primary_500" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/callerImage"
@@ -144,7 +144,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/caller_details"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
             android:textColor="#000"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -160,7 +160,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/caller_details"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold_2"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
             android:textColor="#000"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -204,11 +204,11 @@
             android:layout_width="300sp"
             android:layout_height="wrap_content"
             android:background="@drawable/round_rectangle"
-            android:backgroundTint="#107BE5"
+            android:backgroundTint="@color/primary_500"
             android:onClick="@{() -> handler.sharePreviewToOtherApps(true)}"
             android:text="@string/share_with_friends"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+            android:textColor="@color/pure_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -139,7 +139,7 @@ class InboxAdapter(
                             if (diff >= this) {
                                 ivTick.setBackgroundResource(R.drawable.ic_course_in_complete_bg)
                                 courseProgressBar.progressTintList = ColorStateList.valueOf(
-                                    ContextCompat.getColor(getAppContext(), R.color.text_light_ac)
+                                    ContextCompat.getColor(getAppContext(), R.color.text_light)
                                 )
                             } else {
                                 ivTick.setBackgroundResource(R.drawable.ic_course_complete_bg)

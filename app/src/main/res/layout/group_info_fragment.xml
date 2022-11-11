@@ -19,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_shade_of_gray"
+        android:background="@color/disabled"
         tools:context=".ui.group.GroupInfoFragment">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -51,14 +51,14 @@
             android:layout_height="0dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             android:gravity="center_vertical"
             android:paddingStart="@dimen/_14sdp"
             android:paddingTop="@dimen/_10sdp"
             android:paddingBottom="@dimen/_8sdp"
             android:text="Members"
             android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:textSize="@dimen/_10sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
@@ -93,7 +93,7 @@
                     android:id="@+id/expand_members_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
+                    android:background="@color/pure_white"
                     android:elevation="@dimen/_2sdp"
                     android:gravity="center_vertical"
                     android:onClick="@{vm::expandGroupList}"
@@ -128,7 +128,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_44sdp"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:background="@color/white"
+                    android:background="@color/pure_white"
                     android:elevation="@dimen/_2sdp"
                     android:gravity="center_vertical"
                     android:onClick="@{vm::showExitDialog}"
@@ -153,7 +153,7 @@
                         android:fontFamily="@font/open_sans"
                         android:gravity="center"
                         android:text="Exit Group"
-                        android:textColor="@color/exit_group"
+                        android:textColor="@color/critical"
                         android:textSize="@dimen/_14ssp"
                         android:textStyle="bold" />
                 </androidx.appcompat.widget.LinearLayoutCompat>

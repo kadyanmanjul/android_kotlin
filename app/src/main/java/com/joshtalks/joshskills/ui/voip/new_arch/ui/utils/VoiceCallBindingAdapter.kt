@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.SystemClock
 import android.util.Log
 import android.widget.Chronometer
-import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -14,8 +13,6 @@ import androidx.databinding.BindingAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions.bitmapTransform
-import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
@@ -23,8 +20,6 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView
-import jp.wasabeef.glide.transformations.BlurTransformation
-
 
 @BindingAdapter("setProfileImage")
 fun CircleImageView.setProfileImage(imageUrl: String?) {
@@ -40,32 +35,14 @@ fun CircleImageView.setProfileImage(imageUrl: String?) {
             .into(this)
 }
 
-@BindingAdapter("setColorLocalUser")
-fun AppCompatTextView.setColorLocalUser(isSpeaking : Boolean = false) {
-    if (isSpeaking){
-        this.setTextColor(resources.getColor(R.color.green))
-    }
-    else
-        this.setTextColor(resources.getColor(R.color.white))
-}
-
-@BindingAdapter("setColorRemoteUser")
-fun AppCompatTextView.setColorRemoteUser(isSpeaking : Boolean = false) {
-    if (isSpeaking){
-        this.setTextColor(resources.getColor(R.color.p2p_circle_yellow))
-    }
-    else
-        this.setTextColor(resources.getColor(R.color.white))
-}
-
 @BindingAdapter("setCallBackground")
 fun ConstraintLayout.setCallBackground(isGameOn: Boolean) {
     when (isGameOn) {
         true -> {
-            this.setBackgroundColor(resources.getColor(R.color.black_quiz))
+            this.setBackgroundColor(resources.getColor(R.color.pure_black))
         }
         false -> {
-            this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+            this.setBackgroundColor(resources.getColor(R.color.primary_500))
         }
     }
 }
@@ -74,13 +51,13 @@ fun ConstraintLayout.setCallBackground(isGameOn: Boolean) {
 fun AppCompatImageButton.setSpeakerImage(isSpeakerOn: Boolean) {
     if (!isSpeakerOn) {
         this.backgroundTintList =
-            ContextCompat.getColorStateList(context, R.color.dis_color_10f)
-        this.imageTintList = ContextCompat.getColorStateList(context, R.color.white)
+            ContextCompat.getColorStateList(context, R.color.pure_white_10)
+        this.imageTintList = ContextCompat.getColorStateList(context, R.color.pure_white)
     } else {
         this.backgroundTintList =
-            ContextCompat.getColorStateList(context, R.color.white)
+            ContextCompat.getColorStateList(context, R.color.pure_white)
         this.imageTintList =
-            ContextCompat.getColorStateList(context, R.color.grey_61)
+            ContextCompat.getColorStateList(context, R.color.icon_subdued)
     }
 }
 
@@ -88,13 +65,13 @@ fun AppCompatImageButton.setSpeakerImage(isSpeakerOn: Boolean) {
 fun AppCompatImageButton.setMicImage(isMute: Boolean) {
     if (!isMute) {
         this.backgroundTintList =
-            ContextCompat.getColorStateList(context, R.color.dis_color_10f)
-        this.imageTintList = ContextCompat.getColorStateList(context, R.color.white)
+            ContextCompat.getColorStateList(context, R.color.pure_white_10)
+        this.imageTintList = ContextCompat.getColorStateList(context, R.color.pure_white)
     } else {
         this.backgroundTintList =
-            ContextCompat.getColorStateList(context, R.color.white)
+            ContextCompat.getColorStateList(context, R.color.pure_white)
         this.imageTintList =
-            ContextCompat.getColorStateList(context, R.color.grey_61)
+            ContextCompat.getColorStateList(context, R.color.icon_subdued)
     }
 }
 
@@ -114,15 +91,6 @@ fun Chronometer.startTimer(baseTime: Long) {
         start()
     }
 }
-
-@BindingAdapter("recordTimeStarts")
-fun Chronometer.recordTimeStarts(b: Boolean) {
-    if (b) {
-        this.base = SystemClock.elapsedRealtime()
-        this.start()
-    }
-}
-
 
 @BindingAdapter("acceptCall")
 fun AppCompatImageButton.acceptCall(isAccept: Boolean?) {
@@ -152,10 +120,10 @@ fun ViewPager2.setViewPagerAdapter(image: String?) {
 fun MaterialCardView.setBottomCardBackground(callType: Boolean) {
     backgroundTintList = when (callType) {
         true -> {
-            ContextCompat.getColorStateList(context, R.color.black_quiz)
+            ContextCompat.getColorStateList(context, R.color.pure_black)
         }
         false -> {
-            ContextCompat.getColorStateList(context, R.color.bottom_sheet_color)
+            ContextCompat.getColorStateList(context, R.color.primary_800)
         }
     }
 }
@@ -168,39 +136,5 @@ fun AppCompatTextView.setWord(word: String?,color:String?) {
     if (!color.isNullOrEmpty() && color != ""){
         Log.d("naman", "setWord: $color ")
         this.setTextColor(Color.parseColor(color))
-    }
-}
-
-@BindingAdapter("nextWordBtn")
-fun MaterialButton.nextWordBtn(isEnabled : Boolean?) {
-    if (isEnabled != null) {
-        when (isEnabled) {
-            true -> {
-                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grey)
-                this.setTextColor(ContextCompat.getColor(context, R.color.white))
-                this.isEnabled = false
-            }
-            false -> {
-                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.white)
-                this.setTextColor(ContextCompat.getColor(context, R.color.p2p_game_dark_purple))
-                this.isEnabled = true
-            }
-        }
-    }
-}
-
-@BindingAdapter("setPlayBtnBackground")
-fun AppCompatTextView.setPlayBtnBackground(isEnabled: Boolean?) {
-    if (isEnabled != null) {
-        when (isEnabled) {
-            false -> {
-                this.backgroundTintList = null
-                this.isEnabled = true
-            }
-            true -> {
-                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grey)
-                this.isEnabled = false
-            }
-        }
     }
 }

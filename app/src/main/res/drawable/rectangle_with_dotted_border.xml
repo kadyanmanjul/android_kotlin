@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/artboard_color" />
+    <solid android:color="@color/pure_grey" />
     <stroke
             android:width="@dimen/_1sdp"
-            android:color="@color/light_grey"
+            android:color="@color/dark_grey"
             android:dashWidth="10dp"
             android:dashGap="6dp" />
     <padding

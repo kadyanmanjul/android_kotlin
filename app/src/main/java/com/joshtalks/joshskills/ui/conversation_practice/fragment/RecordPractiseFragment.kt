@@ -268,7 +268,7 @@ class RecordPractiseFragment private constructor() :
         binding.ivTickFirstUser.visibility = View.GONE
         binding.ivTickSecondUser.visibility = View.GONE
         binding.btnRecord.backgroundTintList =
-            ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.light_grey)
+            ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.dark_grey)
         enableView(binding.ivFirstUser)
         enableView(binding.ivSecondUser)
         viewModel.practiseWho = null
@@ -283,15 +283,15 @@ class RecordPractiseFragment private constructor() :
         if (viewModel.practiseWho == null) {
             binding.tvFirstUser.text = conversationPractiseModel.characterNameA
             binding.tvSecondUser.text = conversationPractiseModel.characterNameB
-            binding.tvFirstUser.textColorSet(R.color.black)
-            binding.tvSecondUser.textColorSet(R.color.black)
+            binding.tvFirstUser.textColorSet(R.color.text_default)
+            binding.tvSecondUser.textColorSet(R.color.text_default)
         } else {
             if (viewModel.practiseWho == PractiseUser.FIRST) {
                 binding.tvFirstUser.text = getString(R.string.me)
-                binding.tvFirstUser.textColorSet(R.color.button_color)
+                binding.tvFirstUser.textColorSet(R.color.primary_500)
             } else {
                 binding.tvSecondUser.text = getString(R.string.me)
-                binding.tvSecondUser.textColorSet(R.color.button_color)
+                binding.tvSecondUser.textColorSet(R.color.primary_500)
             }
         }
     }
@@ -324,13 +324,13 @@ class RecordPractiseFragment private constructor() :
             binding.btnRecord.backgroundTintList =
                 ContextCompat.getColorStateList(
                     AppObjectController.joshApplication,
-                    R.color.button_color
+                    R.color.primary_500
                 )
         } else {
             binding.btnRecord.backgroundTintList =
                 ContextCompat.getColorStateList(
                     AppObjectController.joshApplication,
-                    R.color.light_grey
+                    R.color.dark_grey
                 )
         }
     }
@@ -363,14 +363,14 @@ class RecordPractiseFragment private constructor() :
             binding.audioPlayer.onPause()
             binding.btnRecord.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
-                R.color.button_color
+                R.color.primary_500
             )
             viewModel.isRecordingRunning = false
             viewModel.stopRecording(false)
         } else {
             binding.btnRecord.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
-                R.color.wrong_answer
+                R.color.critical
             )
             viewModel.startRecord(object :
                     OnAudioRecordListener {

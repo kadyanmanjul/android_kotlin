@@ -20,7 +20,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/pure_white"
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground">
 
@@ -44,7 +44,7 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 android:text="@{itemData.memberName}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
-                android:textColor="@color/defaultContentColor"
+                android:textColor="@color/pure_black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/member_icon_img"
                 app:layout_constraintTop_toTopOf="parent"
@@ -58,8 +58,8 @@
                 android:layout_marginEnd="@dimen/_12sdp"
                 android:layout_marginBottom="@dimen/_6sdp"
                 android:text="@{itemData.answer}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                android:textColor="@color/gray_6F"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                android:textColor="@color/text_subdued"
                 app:layout_constraintBottom_toTopOf="@id/allow_to_join"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/member_name"
@@ -86,15 +86,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_14sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="@color/pure_white"
                 android:letterSpacing="0"
                 android:text="Decline"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/primary_500"
                 app:cornerRadius="@dimen/_6sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/allow_to_join"
-                app:strokeColor="@color/colorPrimary"
+                app:strokeColor="@color/primary_500"
                 app:strokeWidth="1dp" />
 
             <androidx.constraintlayout.widget.Group

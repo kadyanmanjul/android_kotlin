@@ -45,8 +45,8 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:layout_marginEnd="@dimen/_16sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -65,7 +65,7 @@
                     android:id="@+id/sperator1"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_2sdp"
-                    android:background="@color/artboard_color"
+                    android:background="@color/pure_grey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/time_picker" />
@@ -77,8 +77,8 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:text="@string/repeat"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
-                    android:textColor="@color/black"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/sperator1" />
 
@@ -161,7 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_2sdp"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:background="@color/artboard_color"
+                    android:background="@color/pure_grey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/chips_layout" />
@@ -190,7 +190,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_default="percent"
-            app:rippleColor="@color/white"
-            app:strokeColor="@color/text_color_10" />
+            app:rippleColor="@color/pure_white"
+            app:strokeColor="@color/primary_500" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

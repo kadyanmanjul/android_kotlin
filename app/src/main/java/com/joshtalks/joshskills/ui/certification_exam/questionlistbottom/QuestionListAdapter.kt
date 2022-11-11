@@ -50,17 +50,17 @@ class QuestionListAdapter(
                     position == cPosition -> {
                         frameLayout.backgroundTintList = ContextCompat.getColorStateList(
                             AppObjectController.joshApplication,
-                            R.color.colorAccent
+                            R.color.primary_500
                         )
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.white))
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.pure_white))
                     }
                     obj.isAttempted -> {
-                        textView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.primary_500))
                     }
                     /*
 
                     obj.isViewed -> {
-                          textView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+                          textView.setTextColor(ContextCompat.getColor(context, R.color.primary_500))
                       }*/
                     else -> {
                         textView.setTextColor(ContextCompat.getColor(context, R.color.dark_grey))

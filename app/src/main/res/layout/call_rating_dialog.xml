@@ -34,7 +34,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="0"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/one"
@@ -46,7 +46,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="1"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/two"
@@ -58,7 +58,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="2"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/three"
@@ -70,7 +70,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="3"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/four"
@@ -82,7 +82,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="4"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/five"
@@ -94,7 +94,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="5"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/six"
@@ -106,7 +106,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="6"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/seven"
@@ -118,7 +118,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="7"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/eight"
@@ -130,7 +130,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="8"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/nine"
@@ -142,7 +142,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="9"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/ten"
@@ -154,7 +154,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:text="10"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_default" />
         </RadioGroup>
 
         <TextView
@@ -166,7 +166,7 @@
             android:paddingHorizontal="@dimen/_8sdp"
             android:text="@string/you_spoke_for_minutes"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             android:textColor="#333333"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -195,7 +195,7 @@
             android:layout_marginTop="@dimen/_2sdp"
             android:text="@string/very_bad"
             android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
-            android:textColor="@color/red"
+            android:textColor="@color/critical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rating_list" />
 
@@ -207,7 +207,7 @@
             android:layout_marginEnd="@dimen/_7sdp"
             android:text="@string/excellent"
             android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
-            android:textColor="@color/parrot_green_color"
+            android:textColor="@color/decorative_two"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rating_list" />
 
@@ -220,7 +220,7 @@
             android:text="@string/block_caller"
             android:textAllCaps="false"
             android:textSize="@dimen/_11ssp"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             android:visibility="gone"
             android:background="@drawable/block_button_round_stroke"
             app:cornerRadius="@dimen/_18sdp"
@@ -236,18 +236,18 @@
             android:layout_marginHorizontal="@dimen/_17sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:background="@drawable/round_rectangle"
-            android:backgroundTint="@color/button_color"
+            android:backgroundTint="@color/primary_500"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_40sdp"
             android:paddingVertical="@dimen/_12sdp"
             android:text="@string/submit_call_rating"
             android:textSize="@dimen/_14ssp"
-            android:textColor="@color/white"
+            android:textColor="@color/pure_white"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/block"
-            app:rippleColor="@color/white"
+            app:rippleColor="@color/pure_white"
             tools:visibility="visible" />
 
         <ImageView

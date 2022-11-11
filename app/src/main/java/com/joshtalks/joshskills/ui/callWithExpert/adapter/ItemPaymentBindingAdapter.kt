@@ -18,7 +18,7 @@ fun setTextFromInt(view:TextView,item:WalletLogs){
 fun setTextFromBool(view:TextView,item:WalletLogs){
     if (item.is_failed){
         view.text = "FAILED"
-        view.setTextColor(ContextCompat.getColor(view.context,R.color.txt_transaction_failed_color))
+        view.setTextColor(ContextCompat.getColor(view.context,R.color.critical))
     }else{
         view.text = "SUCCESS"
     }

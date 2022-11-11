@@ -15,7 +15,7 @@
             android:layout_marginHorizontal="@dimen/course_padding_dimen"
             android:text="@string/meet_the_students"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-            android:textColor="@color/black"
+            android:textColor="@color/text_default"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -18,15 +18,15 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.ListenMo
 class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private var disableBG =
-        ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.artboard_color)
+        ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.pure_grey)
     private var sentBG =
-        ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.sent_bg_7a)
+        ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.decorative_three)
     private var receiveBG =
-        ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.received_bg_BC)
+        ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.surface_information)
     private var standardBG =
         ContextCompat.getColorStateList(
             AppObjectController.joshApplication,
-            R.color.button_color
+            R.color.primary_500
         )
 
     fun addItem(list: ListenModel) {
@@ -86,7 +86,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                     setTextColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.light_grey
+                            R.color.dark_grey
                         )
                     )
                 }
@@ -95,7 +95,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                     setTextColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.black
+                            R.color.text_default
                         )
                     )
                 }
@@ -108,7 +108,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                         statementTv.setTextColor(
                             ContextCompat.getColor(
                                 AppObjectController.joshApplication,
-                                R.color.white
+                                R.color.pure_white
                             )
                         )
                         name.apply {
@@ -116,7 +116,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                             setTextColor(
                                 ContextCompat.getColor(
                                     AppObjectController.joshApplication,
-                                    R.color.button_color
+                                    R.color.primary_500
                                 )
                             )
                         }
@@ -140,7 +140,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                     setTextColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.light_grey
+                            R.color.dark_grey
                         )
                     )
                 }
@@ -149,7 +149,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                     setTextColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
-                            R.color.black
+                            R.color.text_default
                         )
                     )
                 }
@@ -165,14 +165,14 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                             setTextColor(
                                 ContextCompat.getColor(
                                     AppObjectController.joshApplication,
-                                    R.color.button_color
+                                    R.color.primary_500
                                 )
                             )
                         }
                         statementTv.setTextColor(
                             ContextCompat.getColor(
                                 AppObjectController.joshApplication,
-                                R.color.white
+                                R.color.pure_white
                             )
                         )
 

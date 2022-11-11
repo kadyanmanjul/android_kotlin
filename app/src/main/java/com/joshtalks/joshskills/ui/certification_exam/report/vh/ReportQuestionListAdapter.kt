@@ -41,15 +41,15 @@ class ReportQuestionListAdapter(
             with(binding) {
                 frameLayout.setBackgroundResource(R.drawable.circle_for_q_item_2)
                 textView.text = (position + 1).toString()
-                textView.setTextColor(ContextCompat.getColor(context, R.color.white))
+                textView.setTextColor(ContextCompat.getColor(context, R.color.pure_white))
 
                 if (obj.isNotAttempt == null) {
-                    updateBgTint(frameLayout, R.color.grey_68)
+                    updateBgTint(frameLayout, R.color.disabled)
                 } else {
                     if (obj.isAnswerCorrect) {
-                        updateBgTint(frameLayout, R.color.green_3d)
+                        updateBgTint(frameLayout, R.color.success)
                     } else {
-                        updateBgTint(frameLayout, R.color.red_f6)
+                        updateBgTint(frameLayout, R.color.critical)
                     }
                 }
 
