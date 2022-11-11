@@ -602,6 +602,7 @@ class ConversationActivity :
             profileFeatureActiveView(inboxEntity.isCapsuleCourse)
             showFavtMenuOption(inboxEntity.isCapsuleCourse)
             showRestartMenuOption()
+            showInterestMenuOption(inboxEntity.isCapsuleCourse)
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
@@ -639,13 +640,11 @@ class ConversationActivity :
                             inboxEntity.conversation_id
                         )
                     }
-                    R.id.menu_interest ->{
-                        if (inboxEntity.isCapsuleCourse) {
-                            val intent = Intent(this, UserInterestActivity::class.java)
-                            intent.putExtra("isEditCall", true)
-                            startActivity(intent)
-                            interestViewModel.saveImpression(INTEREST_FORM_OPEN_MENU_EDIT)
-                        }
+                    R.id.menu_interest -> {
+                        val intent = Intent(this, UserInterestActivity::class.java)
+                        intent.putExtra("isEditCall", true)
+                        startActivity(intent)
+                        interestViewModel.saveImpression(INTEREST_FORM_OPEN_MENU_EDIT)
                     }
                     R.id.menu_restart_course -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)
@@ -1405,6 +1404,16 @@ class ConversationActivity :
         } else {
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = false
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = false
+        }
+    }
+
+    private fun showInterestMenuOption(showMenu: Boolean) {
+        if (showMenu) {
+            conversationBinding.toolbar.menu.findItem(R.id.menu_interest).isVisible = true
+            conversationBinding.toolbar.menu.findItem(R.id.menu_interest).isEnabled = true
+        } else {
+            conversationBinding.toolbar.menu.findItem(R.id.menu_interest).isVisible = false
+            conversationBinding.toolbar.menu.findItem(R.id.menu_interest).isEnabled = false
         }
     }
 
