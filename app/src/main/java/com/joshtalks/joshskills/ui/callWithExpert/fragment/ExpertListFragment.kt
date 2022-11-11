@@ -169,6 +169,10 @@ class ExpertListFragment : BaseFragment() {
                 putExtra(INTENT_DATA_FPP_MENTOR_ID, expertListViewModel.selectedUser?.mentorId)
                 putExtra(INTENT_DATA_FPP_NAME, expertListViewModel.selectedUser?.expertName)
                 putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)
+                viewModel.creditCount.value?.let {
+                    if (it > 0)
+                        putExtra(INTENT_DATA_EXPERT_PREMIUM, true)
+                }
             }
             startActivity(callIntent)
         } else {

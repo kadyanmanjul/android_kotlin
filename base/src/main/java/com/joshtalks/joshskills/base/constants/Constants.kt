@@ -25,6 +25,7 @@ const val INTENT_DATA_GROUP_ID = "josh_intent_group_id"
 const val INTENT_DATA_GROUP_NAME =  "josh_intent_group_name"
 const val INTENT_DATA_TOTAL_AMOUNT =  "josh_intent_total_amount"
 const val INTENT_DATA_EXPERT_PRICE_PER_MIN =  "josh_intent_name_expert_price_per_min"
+const val INTENT_DATA_EXPERT_PREMIUM =  "josh_intent_is_expert_premium_call"
 
 
 // Service Action

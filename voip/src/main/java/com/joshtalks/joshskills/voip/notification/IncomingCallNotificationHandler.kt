@@ -3,10 +3,7 @@ package com.joshtalks.joshskills.voip.notification
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
-import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.*
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -46,6 +43,8 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
             Category.EXPERT.category -> {
                 callCategory = Category.EXPERT
                 calling = ExpertCall()
+                if (map[IS_PREMIUM_USER].equals("true"))
+                    PrefManager.setExpertPremiumUser(true)
             }
         }
         if(!isShowingIncomingCall && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState() == PSTN_STATE_IDLE) {

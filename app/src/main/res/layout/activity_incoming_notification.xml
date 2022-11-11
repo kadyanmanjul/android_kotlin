@@ -111,6 +111,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.43" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/premium_banner"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_margin="@dimen/_24sdp"
+            android:src="@drawable/premium_user_banner"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/c_image"
+            tools:visibility="visible" />
+
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_incoming"
             android:layout_width="wrap_content"

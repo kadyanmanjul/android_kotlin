@@ -8,6 +8,8 @@
     <string name="channel_others_description">some other updates</string>
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
+    <string name="expert_p2p_title">Expert Call</string>
+    <string name="premium_p2p_title">Premium User Calling</string>
 
     <string name="CHANNEL_ID_OTHERS">com.joshtalks.skills.low</string>
 

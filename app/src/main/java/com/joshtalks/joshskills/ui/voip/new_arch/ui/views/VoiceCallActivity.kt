@@ -197,6 +197,8 @@ class VoiceCallActivity : BaseActivity() {
                     intent?.getStringExtra(IS_EXPERT_CALLING).toString()
                 vm.callData[INTENT_DATA_FPP_NAME] =
                     intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
+                vm.callData[INTENT_DATA_EXPERT_PREMIUM] =
+                    intent?.getBooleanExtra(INTENT_DATA_EXPERT_PREMIUM, false) ?: false
             }
         }
     }

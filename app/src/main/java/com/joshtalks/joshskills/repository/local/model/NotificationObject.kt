@@ -168,6 +168,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("open_fpp_call")
     ACTION_FPP_INCOMING_CALL("open_fpp_call"),
 
+    @SerializedName("open_expert_call")
+    ACTION_EXPERT_INCOMING_CALL("open_expert_call"),
+
     @SerializedName("open_group_call")
     ACTION_GROUP_INCOMING_CALL("open_group_call"),
 

@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.RemoteViews
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.voip.constant.IS_PREMIUM_USER
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.constant.TOAST_MESSAGE
 import com.joshtalks.joshskills.voip.data.api.ExpertConnectionRequest
@@ -17,12 +18,16 @@ class ExpertCall : CallCategory {
     val voipNetwork = VoipNetwork.getVoipApi()
 
     override fun notificationLayout(map: HashMap<String, String>): RemoteViews? {
-        val remoteView =
-            RemoteViews(Utils.context?.packageName, R.layout.favorite_call_notification)
-        remoteView.setTextViewText(R.id.name, Utils.context?.getString(R.string.favorite_p2p_title))
+        val remoteView = RemoteViews(Utils.context?.packageName, R.layout.favorite_call_notification)
         remoteView.setTextViewText(R.id.title, map[REMOTE_USER_NAME])
-        val avatar: Bitmap? = getRandomName().textDrawableBitmap()
-        remoteView.setImageViewBitmap(R.id.photo, avatar)
+        if (map[IS_PREMIUM_USER].equals("true")) {
+            remoteView.setTextViewText(R.id.name, Utils.context?.getString(R.string.premium_p2p_title))
+            remoteView.setImageViewResource(R.id.photo, R.drawable.premium_user_banner)
+        } else {
+            remoteView.setTextViewText(R.id.name, Utils.context?.getString(R.string.expert_p2p_title))
+            val avatar: Bitmap? = getRandomName().textDrawableBitmap()
+            remoteView.setImageViewBitmap(R.id.photo, avatar)
+        }
         val acceptPendingIntent = openFavoriteCallScreen()
         val declinePendingIntent = getDeclineCallIntent()
         remoteView.setOnClickPendingIntent(R.id.answer_text, acceptPendingIntent)
@@ -51,7 +56,8 @@ class ExpertCall : CallCategory {
             val request = ExpertConnectionRequest(
                 mentorId = callData[INTENT_DATA_FPP_MENTOR_ID] as String,
                 courseId = Utils.courseId?.toInt(),
-                mentorName = callData[INTENT_DATA_FPP_NAME] as String
+                mentorName = callData[INTENT_DATA_FPP_NAME] as String,
+                isPremiumUser = callData[INTENT_DATA_EXPERT_PREMIUM] as Boolean
             )
             response = voipNetwork.startExpertCall(request)
             Log.d(TAG, "onPreCallConnect:  Expert$response")

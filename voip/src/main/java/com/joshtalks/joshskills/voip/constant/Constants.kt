@@ -39,7 +39,6 @@ const val CURRENT_VOIP_STATE = "josh_current_voip_state"
 const val CURRENT_PSTN_STATE = "josh_current_pstn_state"
 
 
-
 //PSTN states
 const val PSTN_STATE_IDLE = "pstn_state_Idle"
 const val PSTN_STATE_ONCALL = "pstn_state_oncall"
@@ -51,10 +50,10 @@ const val INCOMING_CALL_CATEGORY = "call_category"
 const val REMOTE_USER_NAME = "remote_user_name"
 const val INCOMING_GROUP_NAME = "group_name"
 const val INCOMING_GROUP_IMAGE = "group_icon"
+const val IS_PREMIUM_USER = "is_premium_user"
 
 //API response Constants
 const val TOAST_MESSAGE = "msg"
-
 
 
 enum class Event {

@@ -500,6 +500,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 }
                 PrefManager.setCallCategory(callCategory)
                 PrefManager.setIncomingCallId(map[INTENT_DATA_INCOMING_CALL_ID]!!.toInt())
+                PrefManager.setExpertPremiumUser(false)
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_RECEIVED,
                     agoraCallId = map[INTENT_DATA_INCOMING_CALL_ID],

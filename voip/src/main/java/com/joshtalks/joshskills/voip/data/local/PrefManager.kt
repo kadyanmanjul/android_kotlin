@@ -30,6 +30,7 @@ const val LAST_RECORDING = "josh_pref_key_agora_call_recording"
 const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"
 const val PROXIMITY_ON = "is_josh_proximity_on"
 const val IS_BEEP_TIMER_ENABLED = "IS_BEEP_TIMER_ENABLED"
+const val IS_EXPERT_PREMIUM_USER = "is_expert_premium_user"
 
 private const val TAG = "PrefManager"
 
@@ -205,6 +206,16 @@ class PrefManager {
 
         fun getBeepTimerStatus(): Boolean {
             return preferenceManager.getBoolean(IS_BEEP_TIMER_ENABLED, false)
+        }
+
+        fun setExpertPremiumUser(premium: Boolean) {
+            val editor = preferenceManager.edit()
+            editor.putBoolean(IS_EXPERT_PREMIUM_USER, premium)
+            editor.commit()
+        }
+
+        fun getExpertPremiumUser(): Boolean {
+            return preferenceManager.getBoolean(IS_EXPERT_PREMIUM_USER, false)
         }
     }
 }

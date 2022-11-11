@@ -83,12 +83,13 @@ class CallingRemoteService : Service() {
         when(intent?.action) {
             // TODO: have to change
             SERVICE_ACTION_INCOMING_CALL -> {
-                val map = HashMap<String,String>()
+                val map = HashMap<String, String>()
                 map[INCOMING_CALL_CATEGORY] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY,"")?:""
                 map[INTENT_DATA_INCOMING_CALL_ID] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID,"")?:""
                 map[com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME,"")?:""
                 map[com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME,"")?:""
                 map[com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE,"")?:""
+                map[com.joshtalks.joshskills.voip.constant.IS_PREMIUM_USER] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.IS_PREMIUM_USER,"false") ?: "false"
                 ioScope.launch { mediator.handleIncomingCall(map) }
             }
             SERVICE_ACTION_STOP_SERVICE -> {

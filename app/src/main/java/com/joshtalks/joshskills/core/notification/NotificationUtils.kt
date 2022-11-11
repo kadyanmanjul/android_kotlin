@@ -57,11 +57,8 @@ import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
-import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE
-import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import kotlinx.coroutines.CoroutineScope
@@ -456,6 +453,22 @@ class NotificationUtils(val context: Context) {
                     remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
                     remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
                     remoteServiceIntent.putExtra(REMOTE_USER_NAME, jsonObj.getString(REMOTE_USER_NAME))
+                    remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                    callContext.startService(remoteServiceIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null
+            }
+            NotificationAction.ACTION_EXPERT_INCOMING_CALL -> {
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val callContext = context
+                    val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
+                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
+                    remoteServiceIntent.putExtra(REMOTE_USER_NAME, jsonObj.getString(REMOTE_USER_NAME))
+                    remoteServiceIntent.putExtra(IS_PREMIUM_USER, jsonObj.optString(IS_PREMIUM_USER, "false"))
                     remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
                     callContext.startService(remoteServiceIntent)
                 } catch (e: Exception) {

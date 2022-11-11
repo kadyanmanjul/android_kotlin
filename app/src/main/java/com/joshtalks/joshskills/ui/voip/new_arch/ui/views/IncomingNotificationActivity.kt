@@ -1,13 +1,12 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
-
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.util.Log
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.Window
 import android.view.WindowManager.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +16,7 @@ import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECL
 import com.joshtalks.joshskills.databinding.ActivityIncomingNotificationBinding
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -59,6 +59,7 @@ class IncomingNotificationActivity : AppCompatActivity() {
             closeActivity()
         }
         startTimer()
+        checkForPremiumUser()
     }
 
     private fun startTimer() {
@@ -68,9 +69,17 @@ class IncomingNotificationActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkForPremiumUser() {
+        if (VoipPrefManager.getExpertPremiumUser()) {
+            notificationBinding.cImage.setImageResource(R.drawable.josh_skill)
+            notificationBinding.premiumBanner.visibility = VISIBLE
+        }
+    }
+
     private fun closeActivity() {
         finishAndRemoveTask()
     }
+
      fun declineCall(v:View) {
         val intent = Intent(Utils.context, CallingRemoteService::class.java).apply {
             action = SERVICE_ACTION_INCOMING_CALL_DECLINE
@@ -88,10 +97,12 @@ class IncomingNotificationActivity : AppCompatActivity() {
         }
         Utils.context?.startActivity(intent)
     }
+
     override fun onStart() {
         super.onStart()
         notificationBinding.handler = this
     }
+
     override fun onPause() {
         super.onPause()
         if(wl?.isHeld == true) wl.release()

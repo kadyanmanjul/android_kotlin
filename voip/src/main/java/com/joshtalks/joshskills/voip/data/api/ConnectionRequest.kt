@@ -39,8 +39,8 @@ data class CallDisconnectRequest(
     @field:SerializedName("channel_name")
     val channelName: String? = null,
 
-	@field:SerializedName("duration")
-	val duration: Long? = null
+    @field:SerializedName("duration")
+    val duration: Long? = null
 )
 
 data class CallRecordingRequest(
@@ -62,15 +62,20 @@ data class FavoriteConnectionRequest(
     val mentorId: String? = null,
     @field:SerializedName("course_id")
     val courseId: Int? = null,
-    )
+)
 
 data class ExpertConnectionRequest(
     @field:SerializedName("mentor_id")
     val mentorId: String? = null,
+
     @field:SerializedName("course_id")
     val courseId: Int? = null,
+
     @field:SerializedName("expert_name")
-    val mentorName: String?=null,
+    val mentorName: String? = null,
+
+    @field:SerializedName("is_premium_user")
+    val isPremiumUser: Boolean = false
 )
 
 data class FavoriteCallActionRequest(
