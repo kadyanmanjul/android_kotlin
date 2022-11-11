@@ -15,7 +15,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/group_item_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_46sdp"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/_6sdp"
         android:background="@color/pure_white">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -38,7 +39,7 @@
             android:id="@+id/title_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_9sdp"
+            android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_3sdp"
             android:gravity="center_vertical"
             android:orientation="vertical"
@@ -56,8 +57,8 @@
                 android:maxLength="90"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:text="@{itemData.courseName}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                android:textColor="@color/pure_black"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                android:textColor="@color/text_default"
                 tools:text="@string/course_name" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -67,8 +68,8 @@
                 android:layout_centerVertical="true"
                 android:singleLine="true"
                 android:text="@{itemData.noOfStudents + ` students enrolled`}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="@color/dark_text_color"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                android:textColor="@color/text_subdued"
                 tools:text="@string/number_od_student_enrolled" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

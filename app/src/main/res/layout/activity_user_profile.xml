@@ -267,8 +267,9 @@
                         android:id="@+id/user_pic"
                         android:layout_width="@dimen/_86sdp"
                         android:layout_height="@dimen/_86sdp"
-                        android:layout_marginHorizontal="@dimen/_16sdp"
-                        android:layout_marginVertical="@dimen/_18sdp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:layout_marginStart="@dimen/_24sdp"
+                        android:layout_marginVertical="@dimen/_16sdp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:background="@color/icon_default"
@@ -567,7 +568,7 @@
                         android:id="@+id/previous_profile_pic_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
@@ -599,23 +600,14 @@
                             android:layout_alignBottom="@+id/label_previous_dp"
                             android:layout_alignParentEnd="true"
                             android:layout_marginEnd="@dimen/_8sdp"
-                            android:clickable="true"
-                            android:drawablePadding="@dimen/_4sdp"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:text="@string/see_all"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/primary_500"
-                            android:textSize="@dimen/_8ssp"
-                            app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/primary_500" />
+                            android:src="@drawable/ic_chevronright"/>
                     </RelativeLayout>
 
                     <RelativeLayout
                         android:id="@+id/highlights_layout"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_28sdp"
-                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
                         android:background="@drawable/bg_profile_header"
                         android:gravity="center|start"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -771,7 +763,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginRight="@dimen/_10sdp"
                         android:text="@string/aspiring_ias_officer"
                         android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
@@ -814,7 +806,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginRight="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:autoLink="web"
@@ -952,7 +944,7 @@
                         android:id="@+id/fpp_list_layout"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_28sdp"
-                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
                         android:focusable="true"
@@ -983,16 +975,7 @@
                             android:layout_alignBottom="@+id/fpp_dp"
                             android:layout_alignParentEnd="true"
                             android:layout_marginEnd="@dimen/_8sdp"
-                            android:clickable="true"
-                            android:drawablePadding="@dimen/_4sdp"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:text="@string/see_all"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/primary_500"
-                            android:textSize="@dimen/_8ssp"
-                            app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/primary_500" />
+                            android:src="@drawable/ic_chevronright"/>
 
                     </RelativeLayout>
 
@@ -1010,7 +993,7 @@
                         android:id="@+id/education_occupation_layout"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_28sdp"
-                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
                         android:focusable="true"
@@ -1040,7 +1023,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_12sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
                         android:text="@string/occupation_heading"
                         android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
                         android:textColor="@color/primary_500"
@@ -1054,7 +1037,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:text="@string/aspiring_ias_officer"
                         android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                         android:textColor="@color/text_default"
@@ -1068,7 +1051,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:text="@string/at_josh_talks"
                         android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                         android:textColor="@color/text_subdued"
@@ -1110,7 +1093,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:text="@string/b_tech"
                         android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                         android:textColor="@color/text_default"
@@ -1180,7 +1163,7 @@
                         android:id="@+id/awards_layout"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_28sdp"
-                        android:layout_marginTop="@dimen/_14sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
                         android:background="@drawable/bg_profile_header"
                         android:clickable="true"
                         android:focusable="true"
@@ -1203,7 +1186,7 @@
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
                             android:textColor="@color/text_default" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <ImageView
                             android:id="@+id/label_view_more_awards"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -1211,16 +1194,8 @@
                             android:layout_alignBottom="@+id/label_awards"
                             android:layout_alignParentEnd="true"
                             android:layout_marginEnd="@dimen/_8sdp"
-                            android:clickable="true"
-                            android:drawablePadding="@dimen/_4sdp"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:text="@string/see_all"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/primary_500"
-                            android:textSize="@dimen/_8ssp"
-                            app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/primary_500" />
+                            android:src="@drawable/ic_chevronright"
+                            />
 
                     </RelativeLayout>
 
@@ -1322,16 +1297,7 @@
                             android:layout_alignBottom="@+id/label_my_groups"
                             android:layout_alignParentEnd="true"
                             android:layout_marginEnd="@dimen/_8sdp"
-                            android:clickable="true"
-                            android:drawablePadding="@dimen/_4sdp"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:text="@string/see_all"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/primary_500"
-                            android:textSize="@dimen/_8ssp"
-                            app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/primary_500" />
+                            android:src="@drawable/ic_chevronright"/>
 
                     </RelativeLayout>
 
@@ -1414,16 +1380,7 @@
                             android:layout_alignBottom="@+id/label_enrolled_courses"
                             android:layout_alignParentEnd="true"
                             android:layout_marginEnd="@dimen/_8sdp"
-                            android:clickable="true"
-                            android:drawablePadding="@dimen/_4sdp"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:text="@string/see_all"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/primary_500"
-                            android:textSize="@dimen/_8ssp"
-                            app:drawableEndCompat="@drawable/ic_arrow"
-                            app:drawableTint="@color/primary_500" />
+                            android:src="@drawable/ic_chevronright"/>
 
                     </RelativeLayout>
 
