@@ -987,4 +987,8 @@
 
 
     <string name="test_chars" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ \nabcdefghijklmnopqrstuvwxyz \n1234567890</string>
+    <string name="lesson_popup_heading_grammar" translatable="false">Grammar Lessons</string>
+    <string name="lesson_popup_heading_reading" translatable="false">Reading Practice</string>
+    <string name="lesson_popup_heading_vocab" translatable="false">Daily Vocabulary</string>
+    <string name="lesson_popup_heading_speaking" translatable="false">Speaking Practice</string>
 </resources>
