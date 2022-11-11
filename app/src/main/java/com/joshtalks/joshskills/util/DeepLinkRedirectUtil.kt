@@ -267,15 +267,17 @@ object DeepLinkRedirectUtil {
 
     @Throws(Exception::class)
     private fun getBuyPageActivityIntent(activity: Activity, jsonParams: JSONObject): Intent =
-        Intent(activity, BuyPageActivity::class.java).apply {
-            putExtra(FLOW_FROM, "Deep Link")
-            putExtra(COUPON_CODE, jsonParams.getString(DeepLinkData.COUPON_CODE.key))
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            sendPendingIntentForActivityList(
-                activity,
-                arrayOf(getInboxActivityIntent(activity), this)
-            )
-        }
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+            Intent(activity, BuyPageActivity::class.java).apply {
+                putExtra(FLOW_FROM, "Deep Link")
+                putExtra(COUPON_CODE, jsonParams.getString(DeepLinkData.COUPON_CODE.key))
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                sendPendingIntentForActivityList(
+                    activity,
+                    arrayOf(getInboxActivityIntent(activity), this)
+                )
+            }
+        } else getInboxActivityIntent(activity)
 
     private fun getInboxActivityIntent(activity: Activity): Intent =
         InboxActivity.getInboxIntent(activity).apply {

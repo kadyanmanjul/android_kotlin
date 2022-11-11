@@ -47,6 +47,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -156,6 +157,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
+        initBottomMargin()
         // showTooltip()
     }
 
@@ -1205,6 +1207,19 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
+    private fun initBottomMargin() {
+        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+            binding.linearLayout.addView(
+                View(requireContext()).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+                    )
+                }
+            )
+        }
+    }
+
     companion object {
         private const val DOWNLOAD_PDF_REQUEST_CODE = 0
         private const val OPEN_PDF_REQUEST_CODE = 1
@@ -1214,4 +1229,5 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         @JvmStatic
         fun getInstance() = GrammarFragment()
     }
+
 }

@@ -64,4 +64,6 @@ interface LessonDao {
     @Query("SELECT DISTINCT lesson_id FROM lessonmodel WHERE course =:courseId")
     fun getLessonIdsForCourse(courseId: Int): List<Int>
 
+    @Query("SELECT COUNT(lesson_id) FROM lessonmodel WHERE course =:courseId AND status =:status")
+    suspend fun getCompletedLessonCount(courseId: Int, status: LESSON_STATUS = LESSON_STATUS.CO): Int
 }

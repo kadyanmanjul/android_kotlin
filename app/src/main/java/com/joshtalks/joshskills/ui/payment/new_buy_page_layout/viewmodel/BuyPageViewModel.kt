@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.OFFER_FOR_YOU_TEXT
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
@@ -63,7 +64,8 @@ class BuyPageViewModel : BaseViewModel() {
     var priceText = ObservableField(EMPTY)
     var isVideoAbTestEnable:Boolean? = null
     var isNewFreeTrialEnable:String?=null
-    var alreadyReasonSelected:String?=null
+    var alreadyReasonSelected: String? = null
+    val abTestRepository by lazy { ABTestRepository() }
 
     fun isSeeAllButtonShow(): Boolean {
         return PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID

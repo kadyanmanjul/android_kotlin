@@ -991,6 +991,9 @@
 
 
     <string name="test_chars" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ \nabcdefghijklmnopqrstuvwxyz \n1234567890</string>
+    <string name="slash_2" formatted="false" translatable="false">%d/%d</string>
+    <string name="avail_now" formatted="false" translatable="false">Avail Now</string>
+    <string name="claim_now" formatted="false" translatable="false">Claim Now</string>
     <string name="lesson_popup_heading_grammar" translatable="false">Grammar Lessons</string>
     <string name="lesson_popup_heading_reading" translatable="false">Reading Practice</string>
     <string name="lesson_popup_heading_vocab" translatable="false">Daily Vocabulary</string>

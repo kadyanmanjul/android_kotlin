@@ -84,6 +84,7 @@ class ConversationViewModel(
     val repository: ABTestRepository by lazy { ABTestRepository() }
     val isFreeTrialCallBlocked = MutableLiveData<String>(null)
     val coursePopupData = MutableLiveData<PurchaseDataResponse?>()
+    val completedLessonCount: MutableLiveData<Int?> = MutableLiveData(null)
 
     val isExpertBtnEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -586,6 +587,32 @@ class ConversationViewModel(
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)
+            }
+        }
+    }
+
+    fun getCompletedLessonCount(courseId: String) {
+        viewModelScope.launch {
+            completedLessonCount.value =
+                AppObjectController.appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+        }
+    }
+
+    fun scheduleMessage(screenVisitCount: Int) {
+        viewModelScope.launch {
+            try {
+                val response = AppObjectController.chatNetworkService.scheduleMessage(
+                    mapOf(
+                        "course_id" to inboxEntity.courseId,
+                        "conversation_id" to inboxEntity.chat_id,
+                        "number_of_times_screen_visited" to screenVisitCount
+                    )
+                )
+                if (response.isSuccessful) {
+                    refreshChatOnManual()
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

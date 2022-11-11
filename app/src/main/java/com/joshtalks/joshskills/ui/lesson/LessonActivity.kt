@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -50,6 +51,11 @@ import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AVAIL_COUPON_BANNER_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_LESSON_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.COUPON_UNLOCK_LESSON_COUNT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.LESSON_COMPLETE_COUPON_DISCOUNT
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -250,9 +256,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
-        if (isDemo) {
+        if (isDemo)
             binding.buyCourseLl.visibility = View.VISIBLE
-        }
+        else if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+            showBottomCouponBanner()
         if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_TOOLTIP).not()) {
             binding.tooltipFrame.setOnClickListener { showVideoToolTip(false) }
             binding.overlayTooltipLayout.setOnClickListener { showVideoToolTip(false) }
@@ -263,6 +270,90 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             closeVideoPopUpUi()
         }
         viewModel.lessonId.postValue(getLessonId)
+    }
+
+    fun getBottomBannerHeight(): Int {
+        return if (binding.buyCourseBanner.isVisible) binding.buyCourseBanner.height else 0
+    }
+
+    private fun showBottomCouponBanner() {
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.L2_LESSON_COMPLETE_ENABLED)) {
+            binding.buyCourseBanner.visibility = View.VISIBLE
+            viewModel.getCompletedLessonCount(courseId)
+            viewModel.completedLessonCount.observe(this) { count ->
+                count?.let {
+                    val lessonCompletionCount =
+                        AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT).toInt()
+                    (count == lessonCompletionCount).let {
+                        with(binding) {
+                            buyCourseBannerTv.text = (if (it)
+                                AppObjectController.getFirebaseRemoteConfig().getString(
+                                    BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT +
+                                            PrefManager.getStringValue(CURRENT_COURSE_ID)
+                                )
+                            else AppObjectController.getFirebaseRemoteConfig().getString(
+                                BUY_COURSE_BANNER_LESSON_TEXT +
+                                        PrefManager.getStringValue(CURRENT_COURSE_ID)
+                            )).replace(
+                                "\$DISCOUNT\$",
+                                AppObjectController.getFirebaseRemoteConfig().getLong(LESSON_COMPLETE_COUPON_DISCOUNT)
+                                    .toString()
+                            )
+                            buyCourseBannerLessonProgressBar.isVisible = it.not()
+                            buyCourseBannerLessonProgressTv.isVisible = it.not()
+                            buyCourseBannerAvailBtn.isVisible = it
+                            buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
+                            binding.buyCourseBannerAvailBtn.setOnClickListener {
+                                viewModel.postGoal(
+                                    when (binding.lessonViewpager.currentItem) {
+                                        SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
+                                        GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
+                                        VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
+                                        READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
+                                    }.name,
+                                    CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
+                                )
+                                BuyPageActivity.startBuyPageActivity(
+                                    this@LessonActivity,
+                                    testId.toString(),
+                                    "offer coupon banner"
+                                )
+                            }
+                            if (it.not()) {
+                                buyCourseBannerLessonProgressBar.max = lessonCompletionCount
+                                buyCourseBannerLessonProgressBar.progress = count
+                                buyCourseBannerLessonProgressTv.text =
+                                    getString(R.string.slash_2, count, lessonCompletionCount)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.OTHER_SCREENS_BANNER_ENABLED)) {
+            lifecycleScope.launch {
+                viewModel.getMentorCoupon(testId)?.let { coupon ->
+                    binding.buyCourseBanner.visibility = View.VISIBLE
+                    binding.buyCourseBannerTv.text =
+                        AppObjectController.getFirebaseRemoteConfig().getString(
+                            AVAIL_COUPON_BANNER_TEXT +
+                                    PrefManager.getStringValue(CURRENT_COURSE_ID)
+                        ).replace("\$DISCOUNT\$", coupon.amountPercent.toString())
+                            .replace("\$CODE\$", coupon.couponCode)
+                    binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
+                    binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
+                    binding.buyCourseBannerAvailBtn.setOnClickListener {
+                        BuyPageActivity.startBuyPageActivity(
+                            this@LessonActivity,
+                            testId.toString(),
+                            "l2 complete banner",
+                            coupon.couponCode
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun initToolbar() {
@@ -772,7 +863,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
             }
         }
-        viewModel.lessonCompletePopUpClick.observe(this){
+        viewModel.lessonCompletePopUpClick.observe(this) {
             binding.lessonTabLayout.selectTab(binding.lessonTabLayout.getTabAt(it))
         }
     }
@@ -838,7 +929,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
-                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                                 MarketingAnalytics.logLessonCompletedEventForFreeTrial(lesson.lessonNo)
                             }
                         }
@@ -871,12 +962,12 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                 lesson.translationStatus == LESSON_STATUS.CO
                     }
                     if (lessonCompleted) {
-                        if (lesson.lessonNo == 2){
+                        if (lesson.lessonNo == 2) {
                             lessonNo2Complete()
                         }
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
-                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                                 MarketingAnalytics.logLessonCompletedEventForFreeTrial(lesson.lessonNo)
                             }
                         }
@@ -976,7 +1067,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     SPEAKING_POSITION -> {
                         if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
-                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                                 MarketingAnalytics.logSpeakingSectionCompletedForFreeTrial()
                             }
                         }
@@ -1031,7 +1122,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.lessonViewpager.offscreenPageLimit = arrayFragment.size
         binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
-
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
         for (i in 0 until tabs.childCount) {
             val tab = tabs.getChildAt(i)
@@ -1114,6 +1204,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     }
 
     fun showBuyCourseTooltip(tabPosition: Int) {
+        if (binding.buyCourseBanner.isVisible) return
         when (tabPosition) {
             SPEAKING_POSITION -> return
             GRAMMAR_POSITION -> if (lessonIsNewGrammar && PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION)
@@ -1154,7 +1245,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
             textView.text = text
             balloon.showAlignBottom(binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade))
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             Log.d(TAG, "showBuyCourseTooltip: ${ex.message}")
         }
     }
@@ -1243,6 +1334,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private fun setTabCompletionStatus() {
         try {
             viewModel.lessonLiveData.value?.let { lesson ->
+                if (lesson.lessonNo == 2) {
+                    lessonNo2Complete()
+                }
                 if (lesson.lessonNo >= 2) {
                     PrefManager.put(LESSON_TWO_OPENED, true)
                 }
@@ -1425,9 +1519,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
                 val isFeatureOn = AppObjectController.getFirebaseRemoteConfig().getBoolean(
-                    FirebaseRemoteConfigKey.IS_LESSON_COMPLETE_POPUP_ENABLE)
-                if (isFeatureOn){
-                    CompleteLessonBottomSheetFragment.newInstance(viewModel).show(supportFragmentManager,"LessonCompleteDialog")
+                    FirebaseRemoteConfigKey.IS_LESSON_COMPLETE_POPUP_ENABLE
+                )
+                if (isFeatureOn) {
+                    CompleteLessonBottomSheetFragment.newInstance(viewModel)
+                        .show(supportFragmentManager, "LessonCompleteDialog")
                 }
             }
             else -> {

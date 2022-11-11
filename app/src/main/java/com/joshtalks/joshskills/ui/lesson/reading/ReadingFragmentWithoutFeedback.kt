@@ -72,6 +72,7 @@ import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
@@ -296,6 +297,7 @@ class ReadingFragmentWithoutFeedback :
         super.onViewCreated(view, savedInstanceState)
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
+        initBottomMargin()
         if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
                 HAS_SEEN_READING_PLAY_ANIMATION
             ).not()
@@ -2089,6 +2091,20 @@ class ReadingFragmentWithoutFeedback :
     override fun onDurationUpdate(duration: Long?) {
         duration?.toInt()?.let { binding.practiseSeekbar.max = it }
     }
+
+    private fun initBottomMargin() {
+        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+            binding.linearLayout.addView(
+                View(requireContext()).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+                    )
+                }
+            )
+        }
+    }
+
 
     companion object {
         var isAudioRecording = false

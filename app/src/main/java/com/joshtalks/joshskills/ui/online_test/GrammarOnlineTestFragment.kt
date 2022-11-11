@@ -151,6 +151,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         binding.startBtn.setOnTouchListener(onTouchListener3)
         binding.scoreStartBtn.setOnTouchListener(onTouchListener3)
         // showTooltip()
+        initBottomMargin()
         if (hasCompletedTest && PrefManager.getBoolValue(IS_FREE_TRIAL)) {
             viewModel.getCoursePopupData(PurchasePopupType.GRAMMAR_COMPLETED)
         }
@@ -451,6 +452,19 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             else
                 GRAMMAR_POSITION
         )
+    }
+
+    private fun initBottomMargin() {
+        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+            binding.linearLayout.addView(
+                View(requireContext()).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+                    )
+                }
+            )
+        }
     }
 
     companion object {

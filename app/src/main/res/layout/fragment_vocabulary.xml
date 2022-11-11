@@ -19,9 +19,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/practice_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@color/pure_white"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/banner_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -69,9 +69,9 @@
             android:background="@color/pure_white"
             android:paddingHorizontal="@dimen/_8sdp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/banner_margin"
             app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/tick_iv"
@@ -215,5 +215,12 @@
 
         </FrameLayout>
 
+        <View
+            android:id="@+id/banner_margin"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

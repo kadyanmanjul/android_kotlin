@@ -53,10 +53,7 @@ import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
-import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
-import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
-import com.joshtalks.joshskills.ui.lesson.LessonViewModel
-import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.lesson.*
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
@@ -141,7 +138,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.speaking_practise_fragment, container, false)
-        binding.lifecycleOwner =requireActivity()
+        binding.lifecycleOwner = requireActivity()
         binding.handler = this
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
@@ -152,6 +149,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
+        initBottomMargin()
         binding.markAsCorrect.setOnClickListener { speakingSectionComplete() }
     }
 
@@ -216,7 +214,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     val currentTimestamp = System.currentTimeMillis()
                     startTimer(currentTimestamp - (unblockTimestamp!!))
                 }
-                false->{
+                false -> {
                     Log.d(TAG, "checkBlockStatus:blockStatusFromApi 4")
                     binding.blockContainer.visibility = View.GONE
                 }
@@ -493,11 +491,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.progressBar.progress = response.alreadyTalked.toFloat()
                         binding.progressBar.progressMax = response.duration.toFloat()
 
-                        binding.infoContainer.findViewById<AppCompatTextView>(R.id.info_text_subheading).text = if (response.duration >= 10) {
-                            getString(R.string.pp_messages, response.duration.toString())
-                        } else {
-                            getString(R.string.pp_message, response.duration.toString())
-                        }
+                        binding.infoContainer.findViewById<AppCompatTextView>(R.id.info_text_subheading).text =
+                            if (response.duration >= 10) {
+                                getString(R.string.pp_messages, response.duration.toString())
+                            } else {
+                                getString(R.string.pp_message, response.duration.toString())
+                            }
                     } else {
                         if (binding.txtHowToSpeak.visibility == VISIBLE) {
                             val layoutParams: ConstraintLayout.LayoutParams =
@@ -524,14 +523,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             NOT_ATTEMPTED -> {
                                 binding.ftuTwentyMinStatus.pauseAnimation()
                                 //binding.twentyMinFtuText.text =
-                                    getString(R.string.twenty_min_call_target)
+                                getString(R.string.twenty_min_call_target)
                                 showTwentyMinAnimation("lottie/not_attempted.json")
                                 binding.ftuTwentyMinStatus.setMinAndMaxProgress(0.0f, 0.7f)
                             }
                             COMPLETED -> {
                                 binding.ftuTwentyMinStatus.pauseAnimation()
-                             //   binding.twentyMinFtuText.text =
-                                  //  getString(R.string.twenty_min_call_completed)
+                                //   binding.twentyMinFtuText.text =
+                                //  getString(R.string.twenty_min_call_completed)
                                 showTwentyMinAnimation("lottie/twenty_min_call_completed.json")
                                 if (PrefManager.getBoolValue(TWENTY_MIN_CALL_GOAL_POSTED)
                                         .not() && PrefManager.getBoolValue(CALL_BTN_CLICKED)
@@ -686,15 +685,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
 
-        if (viewModel.blockLiveData.value == false){
+        if (viewModel.blockLiveData.value == false) {
             viewModel.isExpertBtnEnabled.observe(viewLifecycleOwner) {
                 if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
                             PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
                 ) {
-                        binding.btnCallWithExpert.isVisible = true
+                    binding.btnCallWithExpert.isVisible = true
                 }
             }
-        }else{
+        } else {
             binding.btnCallWithExpert.isVisible = false
         }
         initDemoViews(lessonNo)
@@ -795,7 +794,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(
                     CURRENT_COURSE_ID
                 ) == DEFAULT_COURSE_ID
-        }else{
+        } else {
             binding.btnGroupCall.isVisible = false
         }
 
@@ -884,7 +883,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 return
                             } else {
                                 viewModel.saveImpression(CALL_PERMISSION_DENIED)
-                                if (isAdded && activity!=null) {
+                                if (isAdded && activity != null) {
                                     MaterialDialog(requireActivity()).show {
                                         message(R.string.call_start_permission_message)
                                         positiveButton(R.string.ok)
@@ -992,6 +991,19 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
         countdownTimerBack?.startTimer()
+    }
+
+    private fun initBottomMargin() {
+        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+            binding.linearLayout.addView(
+                View(requireContext()).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+                    )
+                }
+            )
+        }
     }
 
     companion object {

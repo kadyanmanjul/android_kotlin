@@ -47,6 +47,9 @@ import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.COUPON_UNLOCK_LESSON_COUNT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.LESSON_COMPLETE_COUPON_DISCOUNT
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -1289,7 +1292,7 @@ class ConversationActivity :
                         conversationViewModel.refreshChatOnManual()
                     }
                     BATCH_CHANGE_FAILURE -> {
-                            conversationAdapter.removeUnlockMessage()
+                        conversationAdapter.removeUnlockMessage()
                         conversationBinding.refreshLayout.isRefreshing = false
                     }
                     BATCH_CHANGE_BUY_FIRST -> {
@@ -1329,7 +1332,7 @@ class ConversationActivity :
                 }
             }
         }
-        conversationViewModel.isExpertBtnEnabled.observe(this){
+        conversationViewModel.isExpertBtnEnabled.observe(this) {
             if (it && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID ||
                         PrefManager.getStringValue(CURRENT_COURSE_ID) == ENG_GOVT_EXAM_COURSE_ID)
             ) {
@@ -1955,6 +1958,9 @@ class ConversationActivity :
                                     it.lessonId,
                                     conversationId = inboxEntity.conversation_id,
                                     isLessonCompleted = it.isLessonCompleted,
+                                    testId = AppObjectController.getFirebaseRemoteConfig().getString(
+                                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                                    ).toInt(),
                                 ),
                                 LESSON_REQUEST_CODE
                             )
@@ -2203,6 +2209,15 @@ class ConversationActivity :
         } else if (PrefManager.hasKey(IS_FIRST_TIME_CONVERSATION).not()) {
             PrefManager.put(IS_FIRST_TIME_CONVERSATION, true)
         }
+        PrefManager.getIntValue(CONVERSATION_SCREEN_VISIT_COUNT, defValue = 0).let {
+            val count = it.plus(1)
+            if (count == 2) {
+                conversationViewModel.scheduleMessage(count)
+            }
+            PrefManager.put(CONVERSATION_SCREEN_VISIT_COUNT, count)
+        }
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL) && inboxEntity.isCapsuleCourse)
+            showBottomCouponBanner()
         if (inboxEntity.isCapsuleCourse) {
             utilConversationViewModel.getProfileData(Mentor.getInstance().getId())
         }
@@ -2653,4 +2668,37 @@ class ConversationActivity :
         return getString(R.string.tooltip_conversation)
     }
 
+    private fun showBottomCouponBanner() {
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)) return
+        if (conversationViewModel.repository.isVariantActive(VariantKeys.L2_LESSON_COMPLETE_ENABLED)) {
+            conversationViewModel.getCompletedLessonCount(PrefManager.getStringValue(CURRENT_COURSE_ID))
+            conversationViewModel.completedLessonCount.observe(this) { count ->
+                count?.let {
+                    if (count == AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT)
+                            .toInt()
+                    ) {
+                        conversationViewModel.postGoal(GoalKeys.L2_COUPON_UNLOCKED)
+                        conversationBinding.buyCourseBanner.visibility = View.VISIBLE
+                        with(conversationBinding) {
+                            buyCourseBannerTv.text =
+                                AppObjectController.getFirebaseRemoteConfig().getString(
+                                    BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT +
+                                            PrefManager.getStringValue(CURRENT_COURSE_ID)
+                                ).replace(
+                                    "\$DISCOUNT\$",
+                                    AppObjectController.getFirebaseRemoteConfig()
+                                        .getLong(LESSON_COMPLETE_COUPON_DISCOUNT)
+                                        .toString()
+                                )
+                            buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
+                            buyCourseBannerAvailBtn.setOnClickListener {
+                                conversationViewModel.postGoal(GoalKeys.L2_CLAIM_NOW_CLICKED)
+                                moveToPaymentActivity(this.root)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

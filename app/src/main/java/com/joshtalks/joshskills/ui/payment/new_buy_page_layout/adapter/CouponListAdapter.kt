@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_COUPON_APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
-import kotlinx.coroutines.*
 
 class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
     RecyclerView.Adapter<CouponListAdapter.CouponViewHolder>() {
@@ -27,7 +26,7 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
     }
 
     override fun onBindViewHolder(holder: CouponViewHolder, position: Int) {
-        holder.setData(offersList?.get(position),position)
+        holder.setData(offersList?.get(position), position)
         if ((offersList?.get(position)?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0) < 0L) {
             holder.changeTextColors(holder.binding, offersList?.get(position), position)
         }
@@ -49,7 +48,9 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
         var countdownTimerBack: CountDownTimer? = null
 
         fun setData(members: Coupon?, position: Int) {
-            if (members?.validDuration?.time?.minus(System.currentTimeMillis())!! > 0L)
+            if (members?.couponDesc != null)
+                binding.txtCouponExpireTime.text = members.couponDesc
+            else if (members?.validDuration?.time?.minus(System.currentTimeMillis())!! > 0L)
                 startFreeTrialTimer(
                     members?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0,
                     members,
@@ -74,14 +75,15 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
 
         fun startFreeTrialTimer(endTimeInMilliSeconds: Long, coupon: Coupon?, position: Int) {
             try {
-                if (countdownTimerBack!=null)
+                if (countdownTimerBack != null)
                     countdownTimerBack?.cancel()
 
                 countdownTimerBack = object : CountDownTimer(endTimeInMilliSeconds, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
                         if (countdownTimerBack != null) {
                             AppObjectController.uiHandler.post {
-                                binding.txtCouponExpireTime.text = "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
+                                binding.txtCouponExpireTime.text =
+                                    "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
                             }
                         }
                     }
@@ -99,7 +101,7 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
             }
         }
 
-        fun changeTextColors(binding: ItemCouponCardBinding, coupon: Coupon?, position: Int){
+        fun changeTextColors(binding: ItemCouponCardBinding, coupon: Coupon?, position: Int) {
             Log.e("sagar", "changeTextColors: ")
             if (coupon?.isCouponSelected == 1)
                 coupon.let { itemClick?.invoke(it, CLICK_ON_COUPON_APPLY, position, REMOVE) }
@@ -110,7 +112,8 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
             binding.txtCouponExpireTime.setTextColor(grayColor)
             binding.couponDesc.setTextColor(grayColor)
             binding.saveMoney.setTextColor(grayColor)
-            binding.rootContainer.background = ContextCompat.getDrawable(binding.rootContainer.context,R.drawable.gray_rectangle_without_solid)
+            binding.rootContainer.background =
+                ContextCompat.getDrawable(binding.rootContainer.context, R.drawable.gray_rectangle_without_solid)
             binding.btnApply.isEnabled = false
             binding.btnApply.setTextColor(grayColor)
         }

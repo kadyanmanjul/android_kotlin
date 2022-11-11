@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
@@ -108,6 +109,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initBottomMargin()
         // showTooltip()
     }
 
@@ -472,6 +474,12 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             binding.practiceRv.smoothScrollToPosition(position)
         } catch (ex: java.lang.Exception) {
             Timber.d(ex)
+        }
+    }
+
+    private fun initBottomMargin() {
+        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+            binding.bannerMargin.layoutParams.height = (requireActivity() as LessonActivity).getBottomBannerHeight()
         }
     }
 

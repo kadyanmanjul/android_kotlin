@@ -46,6 +46,7 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.referral.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.util.AudioRecording
@@ -113,6 +114,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val coursePopupData: MutableLiveData<PurchaseDataResponse?> = MutableLiveData()
     val callCountLiveData: MutableLiveData<Int?> = MutableLiveData(null)
     val isNewStudentActive = ObservableField(false)
+    val completedLessonCount: MutableLiveData<Int?> = MutableLiveData(null)
+    val mentorCoupon: MutableLiveData<Coupon> = MutableLiveData(null)
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)
@@ -451,7 +454,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 SPEAKING_POSITION -> {
                     if (lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                         MarketingAnalytics.logSpeakingSectionCompleted()
-                        if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+                        if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                             MarketingAnalytics.logSpeakingSectionCompletedForFreeTrial()
                         }
                     }
@@ -1159,5 +1162,27 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 Timber.e(ex)
             }
         }
+    }
+
+    fun getCompletedLessonCount(courseId: String) {
+        viewModelScope.launch {
+            completedLessonCount.value = appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+        }
+    }
+
+    suspend fun getMentorCoupon(testId: Int): Coupon? {
+        try {
+            val response = AppObjectController.commonNetworkService.getValidCoupon(testId)
+            if (response.isSuccessful) {
+                response.body()?.let { body ->
+                    body.listOfCoupon?.firstOrNull { it.isMentorSpecificCoupon == true }?.let { coupon ->
+                        return coupon
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
+        }
+        return null
     }
 }

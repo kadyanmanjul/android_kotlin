@@ -1941,6 +1941,27 @@
         <key>VOIP_AUTO_CONNECT_STATUS</key>
         <value>2</value>
     </entry>
+    <entry>
+        <key>BUY_COURSE_BANNER_LESSON_TEXT_151</key>
+        <value>Complete any 2 lessons and claim your $DISCOUNT$% off now</value>
+    </entry>
+    <entry>
+        <key>BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT_151</key>
+        <value>Congratulations! Claim your $DISCOUNT$% off now</value>
+    </entry>
+    <entry>
+        <key>COUPON_UNLOCK_LESSON_COUNT</key>
+        <value>2</value>
+    </entry>
+    <entry>
+        <key>LESSON_COMPLETE_COUPON_DISCOUNT</key>
+        <value>20</value>
+    </entry>
+
+    <entry>
+        <key>AVAIL_COUPON_BANNER_TEXT_151</key>
+        <value>Use code $CODE$ and get extra $DISCOUNT$% off on this course</value>
+    </entry>
 
     <entry>
         <key>IS_LESSON_COMPLETE_POPUP_ENABLE</key>

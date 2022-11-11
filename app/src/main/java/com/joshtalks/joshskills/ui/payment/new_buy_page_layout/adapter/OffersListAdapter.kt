@@ -56,7 +56,10 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             offersList[position]
                 .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
         } else {
-            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && offersList[position].isMentorSpecificCoupon != null) {
+            if (offersList[position].couponDesc != null) {
+                holder.binding.couponExpireText.text = offersList[position].couponDesc
+                holder.binding.couponExpireText.visibility = View.VISIBLE
+            } else if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && offersList[position].isMentorSpecificCoupon != null) {
                 holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 holder.binding.btnApply.text = APPLY
                 holder.binding.couponExpireText.visibility = View.VISIBLE
@@ -147,7 +150,10 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         var countdownTimerBack: CountDownTimer? = null
         fun setData(coupon: Coupon?, position: Int) {
             binding.executePendingBindings()
-            if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && coupon?.isMentorSpecificCoupon != null) {
+            if (offersList[position].couponDesc != null) {
+                binding.couponExpireText.visibility = View.VISIBLE
+                binding.couponExpireText.text = offersList[position].couponDesc
+            } else if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && coupon?.isMentorSpecificCoupon != null) {
                 startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), coupon, position)
             } else {
                 changeTextColor(binding, coupon, position)
