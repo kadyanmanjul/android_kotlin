@@ -90,9 +90,8 @@
                         android:gravity="start|center"
                         android:singleLine="true"
                         android:text="@string/favorite_requests"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                        android:textColor="@color/pure_white"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                        android:textColor="@color/pure_white" />
                 </RelativeLayout>
 
             </com.google.android.material.appbar.MaterialToolbar>

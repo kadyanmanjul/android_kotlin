@@ -31,17 +31,17 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/group_item_container"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_46sdp"
+            android:layout_height="@dimen/_48sdp"
             android:layout_gravity="center_vertical"
             android:clipToPadding="true">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
                 userImage="@{itemData}"
-                android:layout_width="@dimen/_32sdp"
-                android:layout_height="@dimen/_32sdp"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_13sdp"
+                android:layout_marginStart="@dimen/_16sdp"
                 android:gravity="center_vertical|start"
                 android:src="@drawable/josh_skill"
                 android:visibility="visible"
@@ -54,7 +54,7 @@
                 android:id="@+id/title_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_9sdp"
+                android:layout_marginStart="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_3sdp"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
@@ -69,8 +69,8 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@{itemData.fullName}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                    android:textColor="@color/pure_black"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                    android:textColor="@color/text_default"
                     tools:text="@string/harsh_gupta" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -80,16 +80,16 @@
                     android:layout_centerVertical="true"
                     android:singleLine="true"
                     android:text="@{itemData.textToShow}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                    android:textColor="@color/dark_text_color"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                    android:textColor="@color/text_subdued"
                     tools:text="@string/spoke_for_20_min" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_confirm_request"
-                android:layout_width="@dimen/_65sdp"
-                android:layout_height="@dimen/_17sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_22sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:backgroundTint="@color/primary_500"
                 android:elevation="0dp"
@@ -98,10 +98,10 @@
                 android:stateListAnimator="@null"
                 android:text="@string/confirm"
                 android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
                 android:textColor="@color/pure_white"
-                android:textStyle="bold"
-                app:cornerRadius="@dimen/_2sdp"
+                app:cornerRadius="@dimen/_4sdp"
                 app:elevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -114,7 +114,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_not_now"
                 android:layout_width="@dimen/_65sdp"
-                android:layout_height="@dimen/_17sdp"
+                android:layout_height="@dimen/_22sdp"
                 android:layout_marginEnd="@dimen/_14sdp"
                 android:backgroundTint="@color/disabled"
                 android:elevation="0dp"
@@ -123,10 +123,9 @@
                 android:stateListAnimator="@null"
                 android:text="@string/not_now"
                 android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-                android:textColor="@color/pure_black"
-                android:textStyle="bold"
-                app:cornerRadius="@dimen/_2sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                android:textColor="@color/text_default"
+                app:cornerRadius="@dimen/_4sdp"
                 app:elevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
