@@ -86,51 +86,56 @@
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <com.google.android.material.button.MaterialButton
+            <TextView
                 android:id="@+id/btn_confirm_request"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_22sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
+                android:background="@drawable/bg_rounded_corner"
                 android:backgroundTint="@color/primary_500"
                 android:elevation="0dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:stateListAnimator="@null"
                 android:text="@string/confirm"
+                android:paddingStart="@dimen/_7sdp"
+                android:paddingEnd="@dimen/_7sdp"
+                android:gravity="center"
                 android:textAllCaps="false"
                 android:layout_marginStart="@dimen/_12sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
                 android:textColor="@color/pure_white"
-                app:cornerRadius="@dimen/_4sdp"
                 app:elevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_not_now"
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toEndOf="@+id/title_container"
-                app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@color/pure_white" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
-            <com.google.android.material.button.MaterialButton
+            <TextView
                 android:id="@+id/btn_not_now"
-                android:layout_width="@dimen/_65sdp"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/_22sdp"
-                android:layout_marginEnd="@dimen/_14sdp"
+                android:layout_marginEnd="@dimen/_13sdp"
+                android:background="@drawable/bg_rounded_corner"
                 android:backgroundTint="@color/disabled"
                 android:elevation="0dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
+                android:paddingStart="@dimen/_7sdp"
+                android:paddingEnd="@dimen/_7sdp"
                 android:stateListAnimator="@null"
                 android:text="@string/not_now"
                 android:textAllCaps="false"
+                android:gravity="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
                 android:textColor="@color/text_default"
                 app:cornerRadius="@dimen/_4sdp"
                 app:elevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@color/pure_white" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/after_accepted"
