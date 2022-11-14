@@ -243,11 +243,17 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun onPaymentSuccess() {
+        viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         viewModel.paymentSuccess(true)
         walletPaymentManager.onPaymentSuccess()
     }
 
     private fun showPaymentFailedDialog() {
+        try {
+            viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         navController.navigateUp()
         PaymentFailedDialogNew.newInstance(paymentManager, onCancelClick = {
 //            navController.navigateUp()

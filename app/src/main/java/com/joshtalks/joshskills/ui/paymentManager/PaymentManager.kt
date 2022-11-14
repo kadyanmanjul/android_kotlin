@@ -94,6 +94,7 @@ class PaymentManager(
                     AppObjectController.signUpNetworkService.createWalletOrder(data).await()
                 if (orderDetailsResponse.code() == 201) {
                     val response: JuspayPayLoad = orderDetailsResponse.body()!!
+                    addPaymentEntry(response)
                     withContext(Dispatchers.Main) {
                         paymentGatewayManager.openPaymentGateway(response)
                     }

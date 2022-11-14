@@ -1,12 +1,16 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CompleteLessonDialogBinding
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
 class CompleteLessonBottomSheetFragment(val viewModel: LessonViewModel) : BottomSheetDialogFragment() {
 
@@ -26,6 +30,14 @@ class CompleteLessonBottomSheetFragment(val viewModel: LessonViewModel) : Bottom
         binding.cross.setOnClickListener {
             dismissAllowingStateLoss()
             viewModel.saveImpression(Lesson_pop_up_cancelled)
+            val resultIntent = Intent()
+            viewModel.lessonLiveData.value?.let {
+                resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
+                resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
+                resultIntent.putExtra(LessonActivity.LAST_LESSON_STATUS, it.status?.name)
+                resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+            }
+            activity?.setResult(AppCompatActivity.RESULT_OK, resultIntent)
             activity?.finish()
         }
         binding.txtVBodyGrammar.text = AppObjectController.getFirebaseRemoteConfig().getString(

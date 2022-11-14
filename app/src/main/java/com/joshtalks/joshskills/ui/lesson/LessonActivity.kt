@@ -165,6 +165,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private lateinit var videoDownPath: String
     private lateinit var outputFile: String
     private var openLessonCompletedScreen: Boolean = false
+    private var isLessonPopUpFeatureOn: Boolean = false
 
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
@@ -1506,6 +1507,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     override fun onBackPressed() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+            isLessonPopUpFeatureOn = AppObjectController.getFirebaseRemoteConfig().getBoolean(
+                FirebaseRemoteConfigKey.IS_LESSON_COMPLETE_POPUP_ENABLE)
+        }
         when {
             binding.itemOverlay.isVisible -> binding.itemOverlay.isVisible = false
             binding.overlayTooltipLayout.isVisible -> showVideoToolTip(false)
@@ -1523,15 +1528,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 viewModel.showVideoView()
             }
 
-            isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) -> {
+            isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) && isLessonPopUpFeatureOn -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
-                val isFeatureOn = AppObjectController.getFirebaseRemoteConfig().getBoolean(
-                    FirebaseRemoteConfigKey.IS_LESSON_COMPLETE_POPUP_ENABLE
-                )
-                if (isFeatureOn) {
-                    CompleteLessonBottomSheetFragment.newInstance(viewModel)
-                        .show(supportFragmentManager, "LessonCompleteDialog")
-                }
+                CompleteLessonBottomSheetFragment.newInstance(viewModel).show(supportFragmentManager,"LessonCompleteDialog")
             }
             else -> {
                 val resultIntent = Intent()

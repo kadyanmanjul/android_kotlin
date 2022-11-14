@@ -167,4 +167,9 @@ class CallWithExpertViewModel : BaseViewModel() {
             }
         }
     }
+    fun removeEntryFromPaymentTable(razorpayOrderId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
+        }
+    }
 }
