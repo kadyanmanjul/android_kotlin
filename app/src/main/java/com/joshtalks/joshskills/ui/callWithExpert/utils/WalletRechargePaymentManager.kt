@@ -62,7 +62,7 @@ class WalletRechargePaymentManager private constructor(
     fun onPaymentFinished(isPaymentSuccessful: Boolean) {
         navController?.let {
             if (isPaymentSuccessful) {
-                activity.onBackPressed()
+                navController?.navigate(R.id.expertListFragment)
                 RechargeSuccessFragment.open(
                     activity.supportFragmentManager,
                     amount = selectedAmount.amount,
@@ -117,6 +117,7 @@ class WalletRechargePaymentManager private constructor(
     companion object {
         const val TAG = "WalletPaymentManager"
         var selectedExpertForCall: ExpertListModel? = null
+        var isWalletOrUpgradePaymentType : String = EMPTY
     }
 
 }

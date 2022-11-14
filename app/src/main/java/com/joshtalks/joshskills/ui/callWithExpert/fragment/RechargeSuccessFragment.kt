@@ -60,7 +60,7 @@ class RechargeSuccessFragment : BaseDialogFragment(isBackGroundTransparent = tru
             if (binding.btnThanksAndOk.text == getString(R.string.ok) && selectedUser!=null) {
                 CallContinueDialog.open(requireActivity().supportFragmentManager)
             }else{
-                if (binding.btnThanksAndOk.text != getString(R.string.thankyou_sir)) {
+                if (binding.btnThanksAndOk.text != getString(R.string.thankyou_sir) && WalletRechargePaymentManager.isWalletOrUpgradePaymentType != "Upgrade") {
                     activity?.onBackPressed()
                 }
                 dismiss()

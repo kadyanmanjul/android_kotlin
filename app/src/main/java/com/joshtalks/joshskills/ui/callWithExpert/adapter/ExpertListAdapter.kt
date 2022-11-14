@@ -17,6 +17,7 @@ class ExpertListAdapter(var items: List<ExpertListModel> = listOf()) :
         RecyclerView.ViewHolder(itemExpertListBinding.root) {
         fun bind(item: ExpertListModel) {
             with(itemExpertListBinding) {
+                expertBio.text = item.expertBio.replace("," ," • ")
                 itemExpertListBinding.item = item
                 expertCallButton.setOnClickListener {
                     if (item.mentorId != Mentor.getInstance().getId()) {

@@ -1,10 +1,15 @@
 package com.joshtalks.joshskills.ui.callWithExpert
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.WindowInsetsController
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -21,6 +26,7 @@ import com.joshtalks.joshskills.core.OPEN_WALLET
 import com.joshtalks.joshskills.core.SPEAKING_PAGE
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
+import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentManager
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
@@ -30,8 +36,11 @@ import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
+import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import kotlinx.coroutines.sync.Mutex
 
 class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
+    private val backPressMutex = Mutex(false)
 
     private lateinit var binding: ActivityCallWithExpertBinding
     private lateinit var balanceTv: TextView
@@ -57,6 +66,7 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = this.viewModel
+        setWhiteStatusBar()
 
         initToolbar()
         attachObservers()
@@ -172,6 +182,10 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun startPaymentForUpgrade(amount: Int, testId: Int) {
+        WalletRechargePaymentManager.isWalletOrUpgradePaymentType = "Upgrade"
+        WalletRechargePaymentManager.selectedExpertForCall = null
+        viewModel.updateAmount(Amount(amount, testId))
+        viewModel.proceedPayment()
         paymentManager.createOrderForExpert(testId = testId.toString(), amount = amount)
     }
 
@@ -182,9 +196,11 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onBackPressed() {
-        val backPressHandled = paymentManager.getJuspayBackPress()
-        if (!backPressHandled) {
-            super.onBackPressed()
+        backPressMutex.onMultipleBackPress {
+            val backPressHandled = paymentManager.getJuspayBackPress()
+            if (!backPressHandled) {
+                super.onBackPressed()
+            }
         }
     }
 
@@ -251,6 +267,25 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         viewModel.saveImpressionForPayment(GATEWAY_INITIALISED, "CALL_WITH_EXPERT")
         runOnUiThread {
             binding.progressBar.gone()
+        }
+    }
+
+    private fun setWhiteStatusBar(){
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pure_white)
+
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = window.insetsController
+            controller?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            val windowInsetController =  WindowCompat.getInsetsController(window, window.decorView)
+            windowInsetController.isAppearanceLightStatusBars = true
         }
     }
 }

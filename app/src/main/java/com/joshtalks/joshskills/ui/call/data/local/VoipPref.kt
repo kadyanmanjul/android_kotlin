@@ -223,6 +223,7 @@ object VoipPref {
     private fun openExpertUpgradeScreen() {
         val intent = Intent(ActivityLifecycleCallback.currentActivity, CallWithExpertActivity::class.java)
         intent.putExtra("open_upgrade_page", true)
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         ActivityLifecycleCallback.currentActivity.startActivity(intent)
     }
 

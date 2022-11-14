@@ -75,7 +75,6 @@
                     android:layout_height="@dimen/_16ssp"
                     android:gravity="center_vertical"
                     android:maxLines="1"
-                    android:text="@{item.expertBio.replace(`,`, ` · `)}"
                     android:textColor="@color/text_subdued"
                     tools:text="English For SSC · Spoken English" />
             </LinearLayout>

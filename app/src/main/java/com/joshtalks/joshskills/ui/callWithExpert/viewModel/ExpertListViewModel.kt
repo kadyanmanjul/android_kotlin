@@ -99,6 +99,7 @@ class ExpertListViewModel : BaseViewModel() {
 
     fun getCallStatus(expert: ExpertListModel){
         clickedSpeakerName = expert.expertName
+        WalletRechargePaymentManager.isWalletOrUpgradePaymentType = "Wallet"
         WalletRechargePaymentManager.selectedExpertForCall = expert
         viewModelScope.launch(Dispatchers.IO) {
             try {

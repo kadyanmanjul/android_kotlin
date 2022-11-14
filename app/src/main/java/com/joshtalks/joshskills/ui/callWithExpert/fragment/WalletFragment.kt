@@ -81,6 +81,7 @@ class WalletFragment : Fragment() {
                 addedAmount.removeRupees().toInt() > 20000 -> showToast(getString(R.string.maximum_amount_is_inr_20000))
                 addedAmount.removeRupees().toInt() < 50 -> { showToast(getString(R.string.minimum_amount_required)) }
                 else -> {
+                    WalletRechargePaymentManager.isWalletOrUpgradePaymentType = "Wallet"
                     WalletRechargePaymentManager.selectedExpertForCall = null
                     callWithExpertViewModel.updateAmount(Amount(viewModel.addedAmount.value!!.removeRupees().toInt(), viewModel.getAmountId()))
                     callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
