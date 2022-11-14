@@ -101,7 +101,7 @@ class BookACallFragment : BaseFragment() {
         if (user.firstName.isNullOrEmpty().not() || user.phoneNumber.isNullOrEmpty().not()) {
             binding.btnSubmitData.isEnabled = true
             binding.btnSubmitData.backgroundTintList =
-                AppCompatResources.getColorStateList(requireActivity(), R.color.colorPrimary)
+                AppCompatResources.getColorStateList(requireActivity(), R.color.primary_500)
         } else {
             binding.btnSubmitData.isEnabled = false
             binding.btnSubmitData.backgroundTintList =

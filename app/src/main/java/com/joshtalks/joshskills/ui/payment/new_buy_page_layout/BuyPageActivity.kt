@@ -351,16 +351,24 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                     .getString(BUY_PAGE_SUPPORT_PHONE_NUMBER)
             )
         } else if (isCallUsButtonActive == 2) {
-            openReasonScreen()
+            try {
+                openReasonScreen()
+            }catch (ex:Exception){
+                Log.e("sagar", "openSalesReasonScreenOrMakeCall:${ex.message} ")
+            }
         }
     }
 
     fun openReasonScreen(){
-        viewModel.saveImpression("TALK_TO_COUNSELOR")
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace(R.id.buy_page_parent_container, BookACallFragment(), "BookACallFragment")
-            addToBackStack("BookACallFragment")
+        try {
+            viewModel.saveImpression("TALK_TO_COUNSELOR")
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                replace(R.id.buy_page_parent_container, BookACallFragment(), "BookACallFragment")
+                addToBackStack("BookACallFragment")
+            }
+        }catch (ex:Exception){
+            Log.e("sagar", "openReasonScreen: ${ex.message}", )
         }
     }
 
