@@ -419,4 +419,7 @@ interface CommonNetworkService {
     @GET("$DIR/support/sales_support/")
     suspend fun getSalesSupportReason() : Response<SalesReasonList>
 
+    @POST("$DIR/impression/track_explore_course_impression/")
+    suspend fun saveImpressionForExplore(@Body params: Map<String, String>): Response<Void>
+
 }

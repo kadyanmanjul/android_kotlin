@@ -317,4 +317,18 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    fun saveImpressionForExplorePage(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpressionForExplore(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
 }

@@ -277,7 +277,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
                         ExploreCardType.NORMAL -> {
                             courseExploreModel.id?.let { testId ->
-                                saveImpressionForBuyPageLayout("view_upsell_course", testId.toString())
+                                saveImpressionForExplorePageLayout("VIEW_UPSELL_COURSE", testId.toString())
                                 CourseDetailsActivity.startCourseDetailsActivity(
                                     activity = this,
                                     testId = testId,
@@ -347,10 +347,10 @@ class CourseExploreActivity : CoreJoshActivity() {
         this.finish()
     }
 
-    fun saveImpressionForBuyPageLayout(eventName: String, eventData: String = EMPTY) {
+    fun saveImpressionForExplorePageLayout(eventName: String, eventData: String = EMPTY) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(
+                AppObjectController.commonNetworkService.saveImpressionForExplore(
                     mapOf(
                         "event_name" to eventName,
                         "event_data" to eventData

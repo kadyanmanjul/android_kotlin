@@ -598,7 +598,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         explore_courses.setOnClickListener {
-            viewModel.saveImpression("clicked_explore_course")
+            viewModel.saveImpressionForExplorePage("CLICKED_EXPLORE_COURSE")
             courseExploreClick()
         }
     }

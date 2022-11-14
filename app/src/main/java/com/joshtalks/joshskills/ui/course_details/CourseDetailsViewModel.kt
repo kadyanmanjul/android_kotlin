@@ -114,6 +114,21 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
+    fun savePaymentImpressionForCourseExplorePage(event: String, eventData: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.commonNetworkService.saveImpressionForExplore(
+                    mapOf(
+                        "event_name" to event,
+                        "event_data" to eventData
+                    )
+                )
+            } catch (ex: java.lang.Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
     fun getEncryptedText(): String {
         return courseDetailsLiveData.value?.paymentData?.encryptedText ?: EMPTY
     }
