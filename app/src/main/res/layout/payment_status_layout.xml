@@ -91,7 +91,7 @@
         android:text="@string/failed_payment_call_text"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-        android:textColor="@color/disabled"
+        android:textColor="@color/text_subdued"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/number"

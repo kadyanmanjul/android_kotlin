@@ -1,12 +1,9 @@
 package com.joshtalks.joshskills.ui.callWithExpert.utils
 
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.CourseData
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
@@ -48,7 +45,7 @@ class WalletRechargePaymentManager private constructor(
     fun onPaymentSuccess() {
         viewModelScope.launch {
             delay(5000)
-            onPaymentFinished(true)
+            onPaymentFinished()
         }
         updateWalletBalance()
     }
@@ -59,18 +56,15 @@ class WalletRechargePaymentManager private constructor(
         }
     }
 
-    fun onPaymentFinished(isPaymentSuccessful: Boolean) {
+    fun onPaymentFinished() {
         navController?.let {
-            if (isPaymentSuccessful) {
-                navController?.navigate(R.id.expertListFragment)
-                RechargeSuccessFragment.open(
-                    activity.supportFragmentManager,
-                    amount = selectedAmount.amount,
-                    type = "Wallet"
-                )
-            }
+            navController?.navigate(R.id.expertListFragment)
+            RechargeSuccessFragment.open(
+                activity.supportFragmentManager,
+                amount = selectedAmount.amount,
+                type = "Wallet"
+            )
         }
-        paymentGatewayListener?.onPaymentFinished(isPaymentSuccessful)
     }
 
     /**

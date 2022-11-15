@@ -63,15 +63,6 @@ class WalletFragment : Fragment() {
                     callWithExpertViewModel.updateAmount(amount)
                 }
         }
-
-
-        callWithExpertViewModel.paymentSuccessful.observe(viewLifecycleOwner) {
-            if (it) {
-//                findNavController().navigate(R.id.paymentProcessingFragment)
-                callWithExpertViewModel.paymentSuccess(false)
-            }
-        }
-
     }
 
     fun openCheckoutScreen() {
@@ -83,6 +74,7 @@ class WalletFragment : Fragment() {
                 else -> {
                     WalletRechargePaymentManager.isWalletOrUpgradePaymentType = "Wallet"
                     WalletRechargePaymentManager.selectedExpertForCall = null
+                    callWithExpertViewModel.isPaymentInitiated = true
                     callWithExpertViewModel.updateAmount(Amount(viewModel.addedAmount.value!!.removeRupees().toInt(), viewModel.getAmountId()))
                     callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
                     callWithExpertViewModel.proceedPayment()

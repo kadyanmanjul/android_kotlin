@@ -50,13 +50,10 @@ class CallWithExpertViewModel : BaseViewModel() {
     val isFirstAmount: LiveData<FirstTimeAmount>
         get() = _isFirstAmount
 
-    private val _paymentSuccessful = MutableLiveData<Boolean>()
-
-    val paymentSuccessful: LiveData<Boolean>
-        get() = _paymentSuccessful
-
     private var orderAmount: Int = 0
     private var orderTestId: Int = 0
+
+    var isPaymentInitiated = false
 
     init {
         getWalletCredits()
@@ -144,10 +141,6 @@ class CallWithExpertViewModel : BaseViewModel() {
                 e.showAppropriateMsg()
             }
         }
-    }
-
-    fun paymentSuccess(isSuccess: Boolean) {
-        _paymentSuccessful.postValue(isSuccess)
     }
 
     fun syncCallDuration() {

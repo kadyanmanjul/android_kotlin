@@ -75,6 +75,12 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         attachObservers()
         attachNavigationChangedListener()
         paymentManager.initializePaymentGateway()
+
+        RechargeSuccessFragment.open(
+            supportFragmentManager,
+            amount = 200,
+            type = "Wallet"
+        )
     }
 
     override fun initViewBinding() {
@@ -142,6 +148,10 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             binding.toolbarContainer.textMessageTitle.text = destination.label
             manageBalanceIndicator(destination)
+            if (destination.id == R.id.paymentInProcessFragment)
+                findViewById<View>(R.id.iv_back).gone()
+            else
+                findViewById<View>(R.id.iv_back).visible()
         }
     }
 
@@ -189,6 +199,7 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         WalletRechargePaymentManager.selectedExpertForCall = null
         viewModel.updateAmount(Amount(amount, testId))
         viewModel.proceedPayment()
+        viewModel.isPaymentInitiated = true
         paymentManager.createOrderForExpert(testId = testId.toString(), amount = amount)
     }
 
@@ -199,12 +210,19 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     override fun onBackPressed() {
-        backPressMutex.onMultipleBackPress {
-            val backPressHandled = paymentManager.getJuspayBackPress()
-            if (!backPressHandled) {
-                super.onBackPressed()
-            }
+        if (navController.currentDestination?.id == R.id.expertListFragment) {
+            finish()
+            return
         }
+        if (viewModel.isPaymentInitiated) {
+            backPressMutex.onMultipleBackPress {
+                val backPressHandled = paymentManager.getJuspayBackPress()
+                if (!backPressHandled) {
+                    super.onBackPressed()
+                }
+            }
+        } else
+            super.onBackPressed()
     }
 
     override fun onResume() {
@@ -218,12 +236,6 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         }
         error?.let {
             showToast(it)
-        }
-    }
-
-    override fun onPaymentFinished(isPaymentSuccessful: Boolean) {
-        if (isPaymentSuccessful) {
-
         }
     }
 
@@ -255,20 +267,19 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
             juspayPaymentId = paymentManager.getJustPayOrderId()
         )
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
-        viewModel.paymentSuccess(true)
+        viewModel.isPaymentInitiated = false
         walletPaymentManager.onPaymentSuccess()
     }
 
     private fun showPaymentFailedDialog() {
         try {
+            viewModel.isPaymentInitiated = false
             viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         } catch (e: Exception) {
             e.printStackTrace()
         }
         navController.navigateUp()
-        PaymentFailedDialogNew.newInstance(paymentManager, onCancelClick = {
-//            navController.navigateUp()
-        }).apply {
+        PaymentFailedDialogNew.newInstance(paymentManager, onCancelClick = {}).apply {
             show(supportFragmentManager, "PAYMENT_FAILED")
         }
     }

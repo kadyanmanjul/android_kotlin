@@ -118,13 +118,6 @@ class ExpertListFragment : BaseFragment() {
 
             }
         }
-
-        viewModel.paymentSuccessful.observe(viewLifecycleOwner) {
-            if (it) {
-//                findNavController().navigate(R.id.paymentProcessingFragment)
-                viewModel.paymentSuccess(false)
-            }
-        }
     }
 
     private fun showBbTip(tipText: String) {

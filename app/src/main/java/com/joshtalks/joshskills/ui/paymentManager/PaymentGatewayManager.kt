@@ -159,6 +159,5 @@ interface PaymentGatewayListener {
     fun onWarmUpEnded(error: String? = null)
     fun onProcessStart()
     fun onProcessStop()
-    fun onPaymentFinished(isPaymentSuccessful: Boolean)
     fun onPaymentProcessing(orderId: String, status:String)
 }

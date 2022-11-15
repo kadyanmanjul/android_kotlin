@@ -874,10 +874,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         hideProgressBar()
     }
 
-    override fun onPaymentFinished(isPaymentSuccessful: Boolean) {
-
-    }
-
     override fun onPaymentProcessing(orderId: String, status: String) {
         if (status == "pending_vbv") {
             showPendingDialog()
