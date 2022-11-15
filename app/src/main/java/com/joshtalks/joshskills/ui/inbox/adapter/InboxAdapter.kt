@@ -178,6 +178,7 @@ class InboxAdapter(
                     freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
                     freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                    openCourseListener.onStopTrialTimer()
                     countdownTimerBack?.stop()
                     PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     MarketingAnalytics.freeTrialEndEvent()
@@ -186,6 +187,7 @@ class InboxAdapter(
                     tvLastMessage.visibility = View.INVISIBLE
                     if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
                         freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                        openCourseListener.onStopTrialTimer()
                         countdownTimerBack?.stop()
                     } else {
                         if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
@@ -203,10 +205,12 @@ class InboxAdapter(
         }
 
         private fun startTimer(startTimeInMilliSeconds: Long, freeTrialTimer: AppCompatTextView) {
+            openCourseListener.onStopTrialTimer()
             countdownTimerBack?.stop()
             countdownTimerBack = null
             countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
                 override fun onTimerTick(millis: Long) {
+                    openCourseListener.onStartTrialTimer(millis)
                     AppObjectController.uiHandler.post {
                         freeTrialTimer.text = getAppContext().getString(
                             R.string.free_trial_end_in,
@@ -217,6 +221,7 @@ class InboxAdapter(
 
                 override fun onTimerFinish() {
                     freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                    openCourseListener.onStopTrialTimer()
                     countdownTimerBack?.stop()
                 }
             }

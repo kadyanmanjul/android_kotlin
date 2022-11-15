@@ -600,6 +600,7 @@
     <string name="label_senior_student" translatable="false">%sis a Senior Student</string>
     <string name="call_new_student" translatable="false">Call New Student</string>
     <string name="free_trial_end_in" translatable="false">Free Trial ends in %s</string>
+    <string name="free_trial_ends_in" translatable="false">Free Trial ends in</string>
     <string name="feature_locked" translatable="false">%s आपका free trial खतम हो गया है. Please course में admission लें.</string>
     <string name="my_day_review_title" translatable="false">"My day in review"</string>
 
@@ -974,6 +975,7 @@
     <string name="mrp_strike_thru" translatable="false"><strike>MRP: ₹2999.0</strike></string>
 
     <string name="test_chars" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ \nabcdefghijklmnopqrstuvwxyz \n1234567890</string>
+    <string name="semicolon" translatable="false">:</string>
     <string name="slash_2" formatted="false" translatable="false">%d/%d</string>
     <string name="avail_now" formatted="false" translatable="false">Avail Now</string>
     <string name="claim_now" formatted="false" translatable="false">Claim Now</string>

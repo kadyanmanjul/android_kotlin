@@ -26,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
@@ -43,6 +44,8 @@ import com.joshtalks.joshskills.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -690,6 +693,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         } else {
             ConversationActivity.startConversionActivity(this, inboxEntity)
         }
+    }
+
+    override fun onStartTrialTimer(startTimeInMilliSeconds: Long) {
+        trialEndingLayout.visible()
+        endingHour.text = UtilTime.getRemainingHours(startTimeInMilliSeconds)
+        endingMinutes.text = UtilTime.getRemainingMinutes(startTimeInMilliSeconds)
+        endingSeconds.text = UtilTime.getRemainingSeconds(startTimeInMilliSeconds)
+    }
+
+    override fun onStopTrialTimer() {
+        trialEndingLayout.gone()
     }
 
     companion object {
