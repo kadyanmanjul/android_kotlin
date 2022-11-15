@@ -23,7 +23,7 @@
                 android:id="@+id/list_item_overlay"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="@color/transparent_blue_alpha_75"
+                android:background="@color/surface_overlay"
                 android:clickable="true"
                 android:elevation="@dimen/_1sdp"
                 android:focusable="true"

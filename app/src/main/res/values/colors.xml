@@ -53,6 +53,7 @@
     <color name="surface_information">#ECF5FE</color>
     <color name="surface_tip">#F9ECBD</color>
     <color name="surface_notification">#292D30</color>
+    <color name="surface_overlay">#BF173A50</color>
 
     <!--    external colors    -->
     <color name="external_linkedin">#0077B5</color>
@@ -62,7 +63,6 @@
 
     <!--    temporary colours    -->
     <color name="brown">#511615</color>
-    <color name="overlay">#AA1C1C1C</color>
     <color name="seek_bar_background">#CCababab</color>
     <color name="pressed_bg">#64b7b7b7</color>
     <color name="forground_bg">#AA34B7F1</color>
@@ -74,7 +74,6 @@
     <color name="pd_transparent_bg">#DD000000</color>
     <color name="pd_transparent_bg_v2">#CA000000</color>
     <color name="grammar_button_default_shadow_color">#ff3493c8</color>
-    <color name="transparent_blue_alpha_75">#BF173A50</color>
     <color name="gray_color_special">#33D8D8D8</color>
     <color name="dark_text_color">#99000000</color>
     <color name="profile_request_card">#99EEEEEE</color>

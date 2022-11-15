@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/transparent_blue_alpha_75"
+    android:background="@color/surface_overlay"
     android:layout_height="match_parent"
     android:elevation="@dimen/_3sdp"
     xmlns:app="http://schemas.android.com/apk/res-auto"

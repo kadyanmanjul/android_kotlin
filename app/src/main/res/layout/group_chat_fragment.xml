@@ -312,7 +312,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="1"
-            android:background="@color/transparent_blue_alpha_75"
+            android:background="@color/surface_overlay"
             android:clickable="true"
             android:elevation="@dimen/_4sdp"
             android:focusable="true"

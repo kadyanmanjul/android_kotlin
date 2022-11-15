@@ -130,7 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:background="@color/overlay"
+            android:background="@color/surface_overlay"
             android:visibility="visible">
 
             <com.pnikosis.materialishprogress.ProgressWheel
