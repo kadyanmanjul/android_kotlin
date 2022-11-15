@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel" />
@@ -38,16 +39,19 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
             app:navGraph="@navigation/call_expert_nav_graph" />
 
-        <ProgressBar
+        <FrameLayout
             android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/surface_overlay"
+            android:onClick="@{null}"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

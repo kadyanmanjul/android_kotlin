@@ -51,11 +51,11 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/expert_experience"
                     style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
-                    setExperienceYears="@{item}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_16sdp"
                     android:gravity="center_vertical"
                     android:maxLines="1"
+                    android:text="@{item.expertExperience + ` Expert calls taken`}"
                     android:textColor="@color/text_subdued"
                     tools:text="141 Expert calls taken" />
 

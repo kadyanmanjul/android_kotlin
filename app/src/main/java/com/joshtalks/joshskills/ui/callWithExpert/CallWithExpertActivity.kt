@@ -289,7 +289,6 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
 
     private fun setWhiteStatusBar(){
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pure_white)
-
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
