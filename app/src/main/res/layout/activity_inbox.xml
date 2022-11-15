@@ -57,7 +57,9 @@
                 android:id="@+id/trialEndingLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="freeTrialBg, freeTrialEndsIn, endingHour, hourSemicolon, endingMinutes, minutesSemicolon, endingSeconds"/>
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:constraint_referenced_ids="freeTrialBg, freeTrialEndsIn, endingHour, hourSemicolon, endingMinutes, minutesSemicolon, endingSeconds, trialTimerDivider"/>
 
             <View
                 android:id="@+id/freeTrialBg"
@@ -156,15 +158,23 @@
                 app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn"
                 tools:text="58" />
 
+            <View
+                android:id="@+id/trialTimerDivider"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/text_default_0_2"
+                android:alpha="0.4"
+                app:layout_constraintTop_toBottomOf="@+id/freeTrialBg" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_inbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
                 android:paddingTop="@dimen/_5sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/freeTrialBg"
+                app:layout_constraintTop_toBottomOf="@+id/trialTimerDivider"
                 tools:itemCount="3"
                 tools:listitem="@layout/inbox_row_layout" />
 

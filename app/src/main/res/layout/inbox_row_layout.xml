@@ -121,10 +121,11 @@
 
         <LinearLayout
             android:id="@+id/horizontal_line"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/disabled"
+            android:background="@color/text_default_0_2"
             android:orientation="horizontal"
+            android:alpha="0.4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profile_image" />
