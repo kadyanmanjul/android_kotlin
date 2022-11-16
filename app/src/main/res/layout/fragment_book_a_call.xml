@@ -150,6 +150,7 @@
                     android:inputType="phone"
                     android:layout_width="match_parent"
                     android:singleLine="true"
+                    android:maxLength="13"
                     android:textColor="@color/text_default"
                     android:imeOptions="actionNext"
                     android:layout_height="wrap_content" />

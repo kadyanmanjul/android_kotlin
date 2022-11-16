@@ -45,8 +45,8 @@ class CourseProgressAdapter(
     }
 
     val readingColor = ArrayList<Int>().apply {
-        this.add(Color.parseColor("#09c9db"))
-        this.add(Color.parseColor("#09c9db"))
+        this.add(Color.parseColor("#42a1ff"))
+        this.add(Color.parseColor("#42a1ff"))
     }
 
     val outerColor = ArrayList<Int>().apply {

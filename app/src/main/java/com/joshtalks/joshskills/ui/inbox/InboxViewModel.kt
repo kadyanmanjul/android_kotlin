@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -331,4 +332,15 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    fun saveBranchPaymentLog(orderInfoId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+            } catch (ex: Exception) {
+                Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
 }

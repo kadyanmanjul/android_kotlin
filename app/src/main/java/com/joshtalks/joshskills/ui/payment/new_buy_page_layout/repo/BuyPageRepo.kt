@@ -32,4 +32,7 @@ class BuyPageRepo {
         AppObjectController.commonNetworkService.saveSalesSupportReason(map)
 
     suspend fun getReasonList() = AppObjectController.commonNetworkService.getSalesSupportReason()
+
+    suspend fun saveBranchLog(orderInfoId:String) = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+
 }

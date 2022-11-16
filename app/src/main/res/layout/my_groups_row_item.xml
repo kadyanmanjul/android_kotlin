@@ -55,7 +55,7 @@
                 android:maxLength="90"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:text="@{itemData.groupName}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                 android:textColor="@color/pure_black"
                 tools:text="Group Namedjcbniefdrjebcijbreeicjtgnb crib" />
 
@@ -66,7 +66,7 @@
                 android:layout_centerVertical="true"
                 android:singleLine="true"
                 android:text="@{itemData.textToShow}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                 android:textColor="@color/dark_text_color"
                 tools:text="@string/number_of_min_talked_by" />
 

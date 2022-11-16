@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.NumberPicker
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -126,7 +127,7 @@ class EditProfileFragment : DialogFragment(){
         compositeDisposable.clear()
     }
      fun createDialogWithoutDateField() {
-         val alertDialog: AlertDialog?
+        val alertDialog: AlertDialog?
         val builder = AlertDialog.Builder(activity, R.style.YearPickerAlertDialogStyle)
         val inflater = requireActivity().layoutInflater
 
@@ -135,6 +136,12 @@ class EditProfileFragment : DialogFragment(){
         val dialog = inflater.inflate(R.layout.year_picker_dialog, null)
         val monthPicker = dialog.findViewById(R.id.picker_month) as NumberPicker
         val yearPicker = dialog.findViewById(R.id.picker_year) as NumberPicker
+        val btnOk = dialog.findViewById(R.id.btn_ok_dialog) as AppCompatTextView
+        val btnCancel = dialog.findViewById(R.id.btn_cancel) as AppCompatTextView
+
+
+         builder.setView(dialog)
+        alertDialog = builder.create()
 
         monthPicker.minValue = 1
         monthPicker.maxValue = 12
@@ -145,15 +152,16 @@ class EditProfileFragment : DialogFragment(){
         yearPicker.maxValue = 3500
         yearPicker.value = year
          var value= EMPTY
-        builder.setView(dialog).setPositiveButton(Html.fromHtml("<font color='#107BE5'>Ok</font>")){ dialogInterface, which ->
-            binding.editTxtCompletionDate.setText(yearPicker.value.toString())
-            dialogInterface.cancel()
-        }
 
-        builder.setNegativeButton(Html.fromHtml("<font color='#107BE5'>Cancel</font>")){dialogInterface, which ->
-            dialogInterface.cancel()
-        }
-         alertDialog = builder.create()
+         btnOk.setOnClickListener {
+             binding.editTxtCompletionDate.setText(yearPicker.value.toString())
+             alertDialog?.dismiss()
+         }
+
+         btnCancel.setOnClickListener {
+             alertDialog?.dismiss()
+         }
+
         alertDialog.setCancelable(true)
         alertDialog.show()
     }

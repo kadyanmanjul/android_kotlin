@@ -1025,7 +1025,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 //                return
 //            }
 //        }
-
+        viewModel.saveBranchPaymentLog(paymentManager.getJustPayOrderId())
         MarketingAnalytics.coursePurchased(
             BigDecimal(paymentManager.getAmount()),
             true,

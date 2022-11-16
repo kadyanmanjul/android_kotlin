@@ -528,12 +528,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_8sdp"
-                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/submit"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:visibility="visible"/>
+                android:visibility="visible"
+                android:paddingVertical="@dimen/_8sdp"
+                android:paddingStart="@dimen/_24sdp"
+                android:paddingEnd="@dimen/_24sdp"/>
 
         </LinearLayout>
 

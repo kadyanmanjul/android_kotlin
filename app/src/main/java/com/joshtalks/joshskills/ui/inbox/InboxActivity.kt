@@ -63,6 +63,7 @@ import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
@@ -297,6 +298,19 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         viewModel.paymentStatus.observe(this, Observer {
             when (it.status) {
                 PaymentStatus.SUCCESS -> {
+                    val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
+                        Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+                    } else {
+                        PrefManager.getStringValue(PAID_COURSE_TEST_ID)
+                    }
+                    viewModel.saveBranchPaymentLog(it.razorpayOrderId)
+                    MarketingAnalytics.coursePurchased(
+                        BigDecimal(it?.amount?:0.0),
+                        true,
+                        testId = freeTrialTestId,
+                        courseName = "Spoken English Course",
+                        juspayPaymentId = it.razorpayOrderId
+                    )
                     dismissBbTip()
                     PrefManager.put(IS_APP_RESTARTED, false)
                     initPaymentStatusView(

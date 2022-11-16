@@ -927,6 +927,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
         }
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
+        viewModel.saveBranchPaymentLog(paymentManager.getJustPayOrderId())
         MarketingAnalytics.coursePurchased(
             BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
             true,

@@ -798,8 +798,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             binding.btnGroupCall.isVisible = false
         }
 
-        binding.btnFavorite.isVisible =
-            PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+        viewModel.isFreeTrialUser.value = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
     }
 
     private fun speakingSectionComplete() {

@@ -564,7 +564,7 @@ class ReadingFragmentWithoutFeedback :
     fun hidePracticeInputLayout() {
 //        binding.practiseInputHeader.visibility = GONE
 //        binding.practiseInputLabel.visibility = GONE
-//        binding.videoInfo.isVisible = false
+        binding.videoInfo.isVisible = false
         binding.practiseInputLayout.visibility = GONE
     }
 

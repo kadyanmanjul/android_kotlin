@@ -22,8 +22,10 @@ import com.joshtalks.joshskills.constants.EXPERT_UPGRADE_CLICK
 import com.joshtalks.joshskills.constants.PAYMENT_FAILED
 import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.OPEN_WALLET
 import com.joshtalks.joshskills.core.SPEAKING_PAGE
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
@@ -38,6 +40,7 @@ import com.joshtalks.joshskills.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import kotlinx.coroutines.sync.Mutex
+import java.math.BigDecimal
 
 class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     private val backPressMutex = Mutex(false)
@@ -243,6 +246,14 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun onPaymentSuccess() {
+        viewModel.saveBranchPaymentLog(paymentManager.getJustPayOrderId())
+        MarketingAnalytics.coursePurchased(
+            BigDecimal(paymentManager.getAmount()),
+            true,
+            testId = EMPTY,
+            courseName = "Spoken English Course",
+            juspayPaymentId = paymentManager.getJustPayOrderId()
+        )
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         viewModel.paymentSuccess(true)
         walletPaymentManager.onPaymentSuccess()

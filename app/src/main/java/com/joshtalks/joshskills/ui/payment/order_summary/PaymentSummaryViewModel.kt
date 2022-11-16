@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.payment.order_summary
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
@@ -455,6 +456,16 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 )
             } catch (ex: java.lang.Exception) {
                 ex.printStackTrace()
+            }
+        }
+    }
+
+    fun saveBranchPaymentLog(orderInfoId:String){
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                val resp =  AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+            }catch (ex:Exception){
+                Log.e("sagar", "setSupportReason: ${ex.message}")
             }
         }
     }

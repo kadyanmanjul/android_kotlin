@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:text="16,462 Reviews"
-            android:textColor="@color/disabled"
+            android:textColor="@color/text_subdued"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/teacher_rating" />
 

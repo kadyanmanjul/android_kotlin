@@ -50,11 +50,13 @@ class BookACallFragment : BaseFragment() {
                     binding.autoCompleteTextViewFirst.setAdapter(arrayAdapter)
 
                     if (vm.alreadyReasonSelected!=null){
+                        showToast("Session booked we will Call you soon")
                         binding.nameEditText.isEnabled = false
                         binding.phoneNumberEt.isEnabled = false
                         binding.autoCompleteTextViewFirst.isEnabled = false
                         binding.autoCompleteTextViewFirst.isClickable = false
                         binding.autoCompleteTextViewFirst.setText(vm.alreadyReasonSelected.toString())
+                        binding.phoneNumberEt.setText(vm.userPhoneNumber.toString())
                         binding.btnSubmitData.isEnabled = false
                         binding.btnSubmitData.backgroundTintList =
                             AppCompatResources.getColorStateList(requireActivity(), R.color.disabled)

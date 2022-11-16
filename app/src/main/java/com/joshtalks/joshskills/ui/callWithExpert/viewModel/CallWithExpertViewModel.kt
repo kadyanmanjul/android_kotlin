@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.callWithExpert.viewModel
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -170,6 +171,15 @@ class CallWithExpertViewModel : BaseViewModel() {
     fun removeEntryFromPaymentTable(razorpayOrderId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
+        }
+    }
+    fun saveBranchPaymentLog(orderInfoId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+            } catch (ex: Exception) {
+                Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
         }
     }
 }

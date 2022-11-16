@@ -207,7 +207,7 @@ class GrammarButtonView : FrameLayout {
                 DEFAULT_COURSE_ID
             )
         )
-        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.disabled))
+        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.pure_white))
         currentState = GrammarButtonState.DISABLED
         grammarBtn.setViewBackgroundWithoutResettingPadding(R.drawable.gray_btn_pressed_state)
         videoIv.visibility = GONE

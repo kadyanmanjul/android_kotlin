@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
@@ -218,7 +219,7 @@ class ConversationActivity :
         )
     }
     private var isFirstTime: Boolean = true
-    private var countdownTimerBack: CountdownTimerBack? = null
+    var countdownTimerBack: CountDownTimer? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
     private lateinit var unlockClassViewModel: UnlockClassViewModel
@@ -428,8 +429,10 @@ class ConversationActivity :
     }
 
     private fun startTimer(startTimeInMilliSeconds: Long) {
-        countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
-            override fun onTimerTick(millis: Long) {
+        if (countdownTimerBack != null)
+            countdownTimerBack?.cancel()
+        countdownTimerBack = object : CountDownTimer(startTimeInMilliSeconds,1000) {
+            override fun onTick(millis: Long) {
                 AppObjectController.uiHandler.post {
                     conversationBinding.freeTrialText.text = getString(
                         R.string.free_trial_end_in,
@@ -438,11 +441,14 @@ class ConversationActivity :
                 }
             }
 
-            override fun onTimerFinish() {
-                conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+            override fun onFinish() {
+                AppObjectController.uiHandler.post {
+                    countdownTimerBack?.cancel()
+                    conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+                }
             }
         }
-        countdownTimerBack?.startTimer()
+        countdownTimerBack?.start()
     }
 
     private fun showLessonTooltip() {
@@ -2197,7 +2203,7 @@ class ConversationActivity :
             }
             PrefManager.put(CONVERSATION_SCREEN_VISIT_COUNT, count)
         }
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL) && inboxEntity.isCapsuleCourse)
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT) && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought)
             showBottomCouponBanner()
         if (inboxEntity.isCapsuleCourse) {
             utilConversationViewModel.getProfileData(Mentor.getInstance().getId())
@@ -2221,7 +2227,7 @@ class ConversationActivity :
 
     override fun onDestroy() {
         super.onDestroy()
-        countdownTimerBack?.stop()
+        countdownTimerBack?.cancel()
         AppObjectController.currentPlayingAudioObject = null
         audioPlayerManager?.release()
     }

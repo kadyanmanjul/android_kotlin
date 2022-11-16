@@ -65,6 +65,7 @@ class BuyPageViewModel : BaseViewModel() {
     var isVideoAbTestEnable:Boolean? = null
     var isNewFreeTrialEnable:String?=null
     var alreadyReasonSelected: String? = null
+    var userPhoneNumber: String? = null
     val abTestRepository by lazy { ABTestRepository() }
 
     fun isSeeAllButtonShow(): Boolean {
@@ -386,11 +387,11 @@ class BuyPageViewModel : BaseViewModel() {
             try {
                 val resp = buyPageRepo.postSupportReason(map)
                 if (resp.code() == 500)
-                    showToast("Already Submitted")
+                    showToast("Session booked we will Call you soon")
                 else {
                     if (resp.isSuccessful) {
                         saveImpression("COUNSELOR_SUBMIT_BUTTON")
-                        showToast("Details submitted")
+                        showToast("Call booked! We will Call you soon")
                         viewModelScope.launch(Dispatchers.Main) {
                             message.what = REASON_SUBMITTED_BACK
                             singleLiveEvent.value = message
@@ -410,10 +411,21 @@ class BuyPageViewModel : BaseViewModel() {
                 val resp =  buyPageRepo.getReasonList()
                 viewModelScope.launch(Dispatchers.Main) {
                     alreadyReasonSelected = resp.body()?.reasonSelected
+                    userPhoneNumber = resp.body()?.phoneNumber
                     message.what = SUPPORT_REASON_LIST
                     message.obj = resp.body()?.reasonsList
                     singleLiveEvent.value = message
                 }
+            }catch (ex:Exception){
+                Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
+    fun saveBranchPaymentLog(orderInfoId:String){
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                val resp =  buyPageRepo.saveBranchLog(orderInfoId)
             }catch (ex:Exception){
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }

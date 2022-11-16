@@ -69,7 +69,7 @@
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="start|center"
                     android:singleLine="true"
-                    android:text="@string/complete_payment"
+                    android:text="Complete Payment"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:textColor="@color/pure_white"
                     app:layout_constraintBottom_toBottomOf="parent"

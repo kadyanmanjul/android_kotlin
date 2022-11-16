@@ -15,7 +15,6 @@
         <item name="rippleColor">@color/pure_white</item>
         <item name="elevation">0dp</item>
         <item name="android:stateListAnimator">@null</item>
-        <item name="android:layout_marginHorizontal">@dimen/_24sdp</item>
     </style>
 
     <style name="Secondary_Button_Filled_Disabled">
@@ -31,6 +30,5 @@
         <item name="rippleColor">@color/white</item>
         <item name="elevation">0dp</item>
         <item name="android:stateListAnimator">@null</item>
-        <item name="android:layout_marginHorizontal">@dimen/_24sdp</item>
     </style>
 </resources>
