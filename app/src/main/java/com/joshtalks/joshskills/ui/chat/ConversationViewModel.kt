@@ -583,7 +583,7 @@ class ConversationViewModel(
                 val response = AppObjectController.chatNetworkService.scheduleMessage(
                     mapOf(
                         "course_id" to inboxEntity.courseId,
-                        "conversation_id" to inboxEntity.chat_id,
+                        "conversation_id" to inboxEntity.conversation_id,
                         "number_of_times_screen_visited" to screenVisitCount
                     )
                 )

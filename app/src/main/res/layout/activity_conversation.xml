@@ -891,7 +891,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@android:color/transparent"
-            android:elevation="@dimen/_6sdp"
             android:padding="@dimen/_16sdp"
             android:visibility="gone"
             tools:visibility="visible">

@@ -2661,22 +2661,20 @@ class ConversationActivity :
             conversationViewModel.getCompletedLessonCount(PrefManager.getStringValue(CURRENT_COURSE_ID))
             conversationViewModel.completedLessonCount.observe(this) { count ->
                 count?.let {
-                    if (count == AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT)
-                            .toInt()
+                    if (count ==
+                        AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT).toInt()
                     ) {
                         conversationViewModel.postGoal(GoalKeys.L2_COUPON_UNLOCKED)
                         conversationBinding.buyCourseBanner.visibility = View.VISIBLE
                         with(conversationBinding) {
                             buyCourseBannerTv.text =
-                                AppObjectController.getFirebaseRemoteConfig().getString(
-                                    BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT +
-                                            PrefManager.getStringValue(CURRENT_COURSE_ID)
-                                ).replace(
-                                    "\$DISCOUNT\$",
-                                    AppObjectController.getFirebaseRemoteConfig()
-                                        .getLong(LESSON_COMPLETE_COUPON_DISCOUNT)
-                                        .toString()
-                                )
+                                AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT).replace(
+                                        "\$DISCOUNT\$",
+                                        AppObjectController.getFirebaseRemoteConfig()
+                                            .getLong(LESSON_COMPLETE_COUPON_DISCOUNT)
+                                            .toString()
+                                    )
                             buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
                             buyCourseBannerAvailBtn.setOnClickListener {
                                 conversationViewModel.postGoal(GoalKeys.L2_CLAIM_NOW_CLICKED)

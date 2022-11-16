@@ -1,12 +1,10 @@
 package com.joshtalks.joshskills.core.abTest.repository
 
-import android.util.Log
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import org.json.JSONObject
 
@@ -90,7 +88,7 @@ class ABTestRepository {
     fun putABTestData(campaigns: List<ABTestCampaignData>) {
         val data = mutableMapOf<String, Boolean>()
         for (campaign in campaigns) {
-            if (campaign.isCampaignActive && campaign.variantKey != null) {
+            if (campaign.variantKey != null) {
                 data[campaign.variantKey] = campaign.variableMap?.isEnabled == true
             }
         }

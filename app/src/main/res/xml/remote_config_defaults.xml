@@ -1930,11 +1930,11 @@
         <value>1</value>
     </entry>
     <entry>
-        <key>BUY_COURSE_BANNER_LESSON_TEXT_151</key>
+        <key>BUY_COURSE_BANNER_LESSON_TEXT</key>
         <value>Complete any 2 lessons and claim your $DISCOUNT$% off now</value>
     </entry>
     <entry>
-        <key>BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT_151</key>
+        <key>BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT</key>
         <value>Congratulations! Claim your $DISCOUNT$% off now</value>
     </entry>
     <entry>
@@ -1947,7 +1947,7 @@
     </entry>
 
     <entry>
-        <key>AVAIL_COUPON_BANNER_TEXT_151</key>
+        <key>AVAIL_COUPON_BANNER_TEXT</key>
         <value>Use code $CODE$ and get extra $DISCOUNT$% off on this course</value>
     </entry>
 
