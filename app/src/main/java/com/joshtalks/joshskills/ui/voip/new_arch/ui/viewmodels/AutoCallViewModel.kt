@@ -23,6 +23,8 @@ import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.AutoConnectData
 import com.joshtalks.joshskills.voip.constant.CALL_NOW
 import com.joshtalks.joshskills.voip.constant.STOP_WAITING
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -66,6 +68,11 @@ class AutoCallViewModel(val applicationContext: Application) :
     }
 
     suspend fun setUIState(): AutoConnectData? {
+        CallAnalytics.addAnalytics(
+            event = EventName.AUTO_CONNECT_SCREEN_SHOWN,
+            agoraCallId = "",
+            agoraMentorId = com.joshtalks.joshskills.voip.data.local.PrefManager.getLocalUserAgoraId().toString()
+        )
         setTipsUI()
         val json = fetchScreenJson(AUTO_CONNECT_SCREEN_DATA, AUTO_CONNECT_SCREEN_DATA_DEFAULT)
         Log.d(TAG, "setUIState: $json")

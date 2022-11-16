@@ -287,10 +287,10 @@ class FirebaseRemoteConfigKey {
         const val AUTO_CONNECT_MAX_RETRY_PER_CALL = "VOIP_AUTO_CONNECT_MAX_RETRY_PER_CALL" // Per Call Auto Connect Try
         const val AUTO_CONNECT_PRIMARY_CONDITION = "VOIP_AUTO_CONNECT_PRIMARY_CONDITION" // Main Condition which will trigger auto connect
         const val AUTO_CONNECT_STATUS = "VOIP_AUTO_CONNECT_STATUS" // 0 - Disable, 1 - Only First Call, 2 - Per Call
-        const val AUTO_CONNECT_SCREEN_DATA = "AUTO_CONNECT_SCREEN_DATA_" // 0 - Disable, 1 - Only First Call, 2 - Per Call
-        const val AUTO_CONNECT_SCREEN_DATA_DEFAULT = "AUTO_CONNECT_SCREEN_DATA_DEFAULT" // 0 - Disable, 1 - Only First Call, 2 - Per Call
-        const val AUTO_CONNECT_SCREEN_TIPS = "AUTO_CONNECT_SCREEN_TIPS_" // 0 - Disable, 1 - Only First Call, 2 - Per Call
-        const val AUTO_CONNECT_TIPS_DEFAULT = "AUTO_CONNECT_TIPS_DEFAULT" // 0 - Disable, 1 - Only First Call, 2 - Per Call
+        const val AUTO_CONNECT_SCREEN_DATA = "AUTO_CONNECT_SCREEN_DATA_"
+        const val AUTO_CONNECT_SCREEN_DATA_DEFAULT = "AUTO_CONNECT_SCREEN_DATA_DEFAULT"
+        const val AUTO_CONNECT_SCREEN_TIPS = "AUTO_CONNECT_SCREEN_TIPS_"
+        const val AUTO_CONNECT_TIPS_DEFAULT = "AUTO_CONNECT_TIPS_DEFAULT"
 
         const val BUY_COURSE_INBOX_TOOLTIP = "BUY_COURSE_INBOX_TOOLTIP_"
         const val BUY_COURSE_SPEAKING_TOOLTIP = "BUY_COURSE_SPEAKING_TOOLTIP_"

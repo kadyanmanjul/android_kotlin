@@ -26,6 +26,8 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewMode
 import com.joshtalks.joshskills.voip.constant.CALL_NOW
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.STOP_WAITING
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -68,12 +70,24 @@ class AutoCallActivity : BaseActivity () {
         event.observe(this) {
             when(it.what) {
                 CALL_NOW -> callNow()
-                STOP_WAITING -> finish()
+                STOP_WAITING -> {
+                    CallAnalytics.addAnalytics(
+                        event = EventName.AUTO_CONNECT_SKIP_PRESSED,
+                        agoraCallId = "",
+                        agoraMentorId = com.joshtalks.joshskills.voip.data.local.PrefManager.getLocalUserAgoraId().toString()
+                    )
+                    finish()
+                }
             }
         }
     }
 
     private fun callNow() {
+        CallAnalytics.addAnalytics(
+            event = EventName.AUTO_CONNECT_CALL_NOW_PRESSED,
+            agoraCallId = "",
+            agoraMentorId = com.joshtalks.joshskills.voip.data.local.PrefManager.getLocalUserAgoraId().toString()
+        )
         if(::animationJob.isInitialized)
             animationJob.cancel()
         val callIntent = Intent(this, VoiceCallActivity::class.java)
