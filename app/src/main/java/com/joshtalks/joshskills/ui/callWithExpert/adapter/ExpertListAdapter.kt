@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ItemExpertListBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 
 class ExpertListAdapter(var items: List<ExpertListModel> = listOf()) :
@@ -19,7 +20,7 @@ class ExpertListAdapter(var items: List<ExpertListModel> = listOf()) :
             with(itemExpertListBinding) {
                 expertBio.text = item.expertBio.replace("," ," • ")
                 itemExpertListBinding.item = item
-                expertCallButton.setOnClickListener {
+                expertCallButton.setOnSingleClickListener {
                     if (item.mentorId != Mentor.getInstance().getId()) {
                         itemClickFunction?.invoke(item, FAV_CLICK_ON_CALL, bindingAdapterPosition)
                     } else {

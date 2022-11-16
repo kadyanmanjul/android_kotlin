@@ -355,7 +355,7 @@
     <string name="start_quiz_camel">"ക്വിസ് ആരംഭിക്കുക"</string>
     <string name="word_tag">Word %1$d/%2$d - %3$s</string>
     <string name="ques_short_form">ചോദ്യം- %1$d/%2$d %3$s</string>
-    <string name="completed">completed</string>
+    <string name="completed">Completed</string>
     <string name="profile_photo">പ്രൊഫൈൽ ചിത്രം</string>
     <string name="age">Age:</string>
     <string name="batch">Batch:</string>

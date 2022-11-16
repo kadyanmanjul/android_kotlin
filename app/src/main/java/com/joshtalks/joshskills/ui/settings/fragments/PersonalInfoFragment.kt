@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.GENDER
 import com.joshtalks.joshskills.core.RegistrationMethods
@@ -65,7 +66,7 @@ class PersonalInfoFragment : Fragment() {
         }
         if (Mentor.getInstance().getUser()?.phoneNumber.isNullOrBlank().not()) {
             binding.registerTv.text = Mentor.getInstance().getUser()?.phoneNumber
-            binding.textView6.text = getString(R.string.register_email)
+            binding.textView6.text = getString(R.string.register_number)
         } else if (Mentor.getInstance().getUser()?.email.isNullOrBlank().not()) {
             binding.registerTv.text = Mentor.getInstance().getUser()?.email
             binding.textView6.text = getString(R.string.register_email)
@@ -73,6 +74,8 @@ class PersonalInfoFragment : Fragment() {
             binding.registerTv.visibility = View.GONE
             binding.textView6.visibility = View.GONE
         }
+
+        binding.appVersionTv.text = BuildConfig.VERSION_NAME
     }
 
     override fun onResume() {

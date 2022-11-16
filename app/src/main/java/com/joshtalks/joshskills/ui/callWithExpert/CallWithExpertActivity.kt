@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.callWithExpert
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowInsetsController
 import android.widget.TextView
@@ -75,12 +74,6 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         attachObservers()
         attachNavigationChangedListener()
         paymentManager.initializePaymentGateway()
-
-        RechargeSuccessFragment.open(
-            supportFragmentManager,
-            amount = 200,
-            type = "Wallet"
-        )
     }
 
     override fun initViewBinding() {
@@ -164,6 +157,9 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         binding.toolbarContainer.toolbar.menu.clear()
         if (destination.id == R.id.walletFragment) {
             binding.toolbarContainer.toolbar.inflateMenu(R.menu.wallet_menu)
+
+            if (viewModel.creditCount.value != -1)
+                binding.toolbarContainer.toolbar.menu.findItem(R.id.upgrade_expert).isVisible = false
 
             binding.toolbarContainer.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
