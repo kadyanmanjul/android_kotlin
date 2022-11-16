@@ -362,17 +362,18 @@ class CallingRemoteService : Service() {
         return countdownTimerBack
     }
 
-    fun startCallTimer(){
-        if (countdownTimerBack == null || countdownTimerBack?.isActive == false) {
+    fun startCallTimer() {
+        val isPremiumCall = expertCallData[INTENT_DATA_EXPERT_PREMIUM] as Boolean
+        if (!isPremiumCall && (countdownTimerBack == null || countdownTimerBack?.isActive == false)) {
             countdownTimerBack = startTimer(
                 Integer.parseInt(expertCallData[INTENT_DATA_TOTAL_AMOUNT].toString()),
-                Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString())
+                Integer.parseInt(expertCallData[INTENT_DATA_EXPERT_PRICE_PER_MIN].toString()),
             )
             countdownTimerBack?.start()
         }
     }
 
-    fun stopCallTimer() {
+    private fun stopCallTimer() {
         countdownTimerBack?.cancel()
         countdownTimerBack = null
     }

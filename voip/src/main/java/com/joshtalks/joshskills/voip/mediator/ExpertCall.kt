@@ -51,7 +51,7 @@ class ExpertCall : CallCategory {
                 Log.d(TAG, "onPreCallConnect: Successful")
         } else {
             var response: HashMap<String, Any?>? = null
-            Log.d("sagar", "onPreCallConnect: OUTGOING ${callData[IS_EXPERT_CALLING]}")
+            Log.d(TAG, "onPreCallConnect: OUTGOING ${callData[IS_EXPERT_CALLING]}")
 
             val request = ExpertConnectionRequest(
                 mentorId = callData[INTENT_DATA_FPP_MENTOR_ID] as String,

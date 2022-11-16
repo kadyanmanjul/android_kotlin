@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
-import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
@@ -105,10 +104,8 @@ object VoipPref {
         if (duration.inSeconds() >= AppObjectController.getFirebaseRemoteConfig().getLong(AUTO_CONNECT_PRIMARY_CONDITION))
             resetAutoCallCount()
         showPopUp(duration, callType)
-        if (preferenceManager.getBoolean(
-                IS_FIRST_5MIN_CALL,
-                true
-            ) && duration.inSeconds() >= 300 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+        if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) &&
+            duration.inSeconds() >= 300 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT)
         ) {
             editor.putBoolean(IS_FIRST_CALL, false)
             editor.putBoolean(IS_FIRST_5MIN_CALL, false)
@@ -167,7 +164,7 @@ object VoipPref {
     private fun showDefaultDialog(callType: Int, duration: Long) {
         if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal) {
             showDialogBox(duration, PURCHASE_POPUP)
-        } else {
+        } else if (callType != Category.EXPERT.ordinal) {
             showDialogBox(duration, CALL_RATING)
         }
     }
