@@ -25,7 +25,8 @@
         android:layout_alignBottom="@+id/photo"
         android:layout_marginRight="-2dip"
         android:layout_marginBottom="-2dip"
-        android:src="@drawable/ic_status_bar_notification" />
+        android:src="@drawable/ic_status_bar_notification"
+        app:tint="@color/pure_white" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,9 +49,9 @@
             android:fontFamily="sans-serif-medium"
             android:gravity="left"
             android:singleLine="true"
+            android:text="Practice Partner Call"
             android:textColor="@color/pure_white"
-            android:textSize="17dip"
-            android:text="Practice Partner Call" />
+            android:textSize="17dip" />
 
         <TextView
             android:id="@+id/title"
@@ -100,12 +101,12 @@
                 android:drawablePadding="@dimen/_12sdp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
+                android:text="@string/hang_up"
                 android:textAllCaps="true"
                 android:textColor="@color/critical"
                 android:textSize="14dip"
                 app:drawableStartCompat="@drawable/ic_call_end"
-                app:drawableTint="@color/critical"
-                android:text="@string/hang_up" />
+                app:drawableTint="@color/critical" />
 
         </FrameLayout>
 
@@ -126,13 +127,13 @@
                 android:drawablePadding="@dimen/_12sdp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
+                android:text="@string/answer"
                 android:textAllCaps="true"
                 android:textColor="@color/success"
                 android:textSize="14dip"
                 app:drawableLeftCompat="@drawable/ic_pick_call"
                 app:drawableStartCompat="@drawable/ic_pick_call"
-                app:drawableTint="@color/success"
-                android:text="@string/answer" />
+                app:drawableTint="@color/success" />
 
         </FrameLayout>
     </LinearLayout>
