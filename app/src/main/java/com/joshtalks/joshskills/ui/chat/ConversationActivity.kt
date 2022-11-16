@@ -2669,7 +2669,8 @@ class ConversationActivity :
                         with(conversationBinding) {
                             buyCourseBannerTv.text =
                                 AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT).replace(
+                                    .getString(BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT)
+                                    .replace(
                                         "\$DISCOUNT\$",
                                         AppObjectController.getFirebaseRemoteConfig()
                                             .getLong(LESSON_COMPLETE_COUPON_DISCOUNT)

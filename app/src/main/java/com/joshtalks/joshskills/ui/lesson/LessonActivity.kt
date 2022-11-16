@@ -44,8 +44,6 @@ import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.base.constants.CALLING_ACTIVITY_REQUEST_CODE
-import com.joshtalks.joshskills.base.constants.CALL_DURATION
 import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
@@ -98,9 +96,6 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.AutoCallActivity
-import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -250,17 +245,16 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         testId = intent.getIntExtra(TEST_ID, -1)
 
         titleView = findViewById(R.id.text_message_title)
-
+        if (isDemo)
+            binding.buyCourseLl.visibility = View.VISIBLE
+        else if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+            showBottomCouponBanner()
         setObservers()
         viewModel.getLesson(lessonId)
         viewModel.getQuestions(lessonId, isDemo)
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
-        if (isDemo)
-            binding.buyCourseLl.visibility = View.VISIBLE
-        else if (PrefManager.getBoolValue(IS_FREE_TRIAL))
-            showBottomCouponBanner()
         if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_TOOLTIP).not()) {
             binding.tooltipFrame.setOnClickListener { showVideoToolTip(false) }
             binding.overlayTooltipLayout.setOnClickListener { showVideoToolTip(false) }
@@ -288,18 +282,15 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     (count == lessonCompletionCount).let {
                         with(binding) {
                             buyCourseBannerTv.text = (if (it)
-                                AppObjectController.getFirebaseRemoteConfig().getString(
-                                    BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT +
-                                            PrefManager.getStringValue(CURRENT_COURSE_ID)
+                                AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT)
+                            else AppObjectController.getFirebaseRemoteConfig().getString(BUY_COURSE_BANNER_LESSON_TEXT))
+                                .replace(
+                                    "\$DISCOUNT\$",
+                                    AppObjectController.getFirebaseRemoteConfig()
+                                        .getLong(LESSON_COMPLETE_COUPON_DISCOUNT)
+                                        .toString()
                                 )
-                            else AppObjectController.getFirebaseRemoteConfig().getString(
-                                BUY_COURSE_BANNER_LESSON_TEXT +
-                                        PrefManager.getStringValue(CURRENT_COURSE_ID)
-                            )).replace(
-                                "\$DISCOUNT\$",
-                                AppObjectController.getFirebaseRemoteConfig().getLong(LESSON_COMPLETE_COUPON_DISCOUNT)
-                                    .toString()
-                            )
                             buyCourseBannerLessonProgressBar.isVisible = it.not()
                             buyCourseBannerLessonProgressTv.isVisible = it.not()
                             buyCourseBannerAvailBtn.isVisible = it
@@ -332,10 +323,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 viewModel.getMentorCoupon(testId)?.let { coupon ->
                     binding.buyCourseBanner.visibility = View.VISIBLE
                     binding.buyCourseBannerTv.text =
-                        AppObjectController.getFirebaseRemoteConfig().getString(
-                            AVAIL_COUPON_BANNER_TEXT +
-                                    PrefManager.getStringValue(CURRENT_COURSE_ID)
-                        ).replace("\$DISCOUNT\$", coupon.amountPercent.toString())
+                        AppObjectController.getFirebaseRemoteConfig().getString(AVAIL_COUPON_BANNER_TEXT)
+                            .replace("\$DISCOUNT\$", coupon.amountPercent.toString())
                             .replace("\$CODE\$", coupon.couponCode)
                     binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
                     binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
@@ -1101,7 +1090,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         lessonIsNewGrammar: Boolean,
         isTestCompleted: Boolean = false
     ) {
-
+        binding.lessonTabLayout.removeAllTabs()
         isTranslationDisabled = 1
         arrayFragment.add(
             SPEAKING_POSITION,
@@ -1507,9 +1496,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     override fun onBackPressed() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL)){
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
             isLessonPopUpFeatureOn = AppObjectController.getFirebaseRemoteConfig().getBoolean(
-                FirebaseRemoteConfigKey.IS_LESSON_COMPLETE_POPUP_ENABLE)
+                FirebaseRemoteConfigKey.IS_LESSON_COMPLETE_POPUP_ENABLE
+            )
         }
         when {
             binding.itemOverlay.isVisible -> binding.itemOverlay.isVisible = false
@@ -1530,7 +1520,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
             isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) && isLessonPopUpFeatureOn -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
-                CompleteLessonBottomSheetFragment.newInstance(viewModel).show(supportFragmentManager,"LessonCompleteDialog")
+                CompleteLessonBottomSheetFragment.newInstance(viewModel)
+                    .show(supportFragmentManager, "LessonCompleteDialog")
             }
             else -> {
                 val resultIntent = Intent()
