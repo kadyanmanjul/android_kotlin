@@ -69,7 +69,14 @@ class AutoCallActivity : BaseActivity () {
     override fun initViewState() {
         event.observe(this) {
             when(it.what) {
-                CALL_NOW -> callNow()
+                CALL_NOW -> {
+                    CallAnalytics.addAnalytics(
+                        event = EventName.AUTO_CONNECT_CALL_NOW_PRESSED,
+                        agoraCallId = "",
+                        agoraMentorId = com.joshtalks.joshskills.voip.data.local.PrefManager.getLocalUserAgoraId().toString()
+                    )
+                    callNow()
+                }
                 STOP_WAITING -> {
                     CallAnalytics.addAnalytics(
                         event = EventName.AUTO_CONNECT_SKIP_PRESSED,
@@ -83,11 +90,6 @@ class AutoCallActivity : BaseActivity () {
     }
 
     private fun callNow() {
-        CallAnalytics.addAnalytics(
-            event = EventName.AUTO_CONNECT_CALL_NOW_PRESSED,
-            agoraCallId = "",
-            agoraMentorId = com.joshtalks.joshskills.voip.data.local.PrefManager.getLocalUserAgoraId().toString()
-        )
         if(::animationJob.isInitialized)
             animationJob.cancel()
         val callIntent = Intent(this, VoiceCallActivity::class.java)

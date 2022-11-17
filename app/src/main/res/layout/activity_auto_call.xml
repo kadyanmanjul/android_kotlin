@@ -105,7 +105,7 @@
             android:backgroundTint="#33FFA41C"
             android:paddingHorizontal="@dimen/_8sdp"
             android:paddingVertical="@dimen/_12sdp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/ll_buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
