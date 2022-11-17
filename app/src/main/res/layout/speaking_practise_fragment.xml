@@ -484,7 +484,7 @@
                         android:layout_marginHorizontal="@dimen/_24sdp"
                         android:insetBottom="0dp"
                         android:text="@string/call_favorite_practice_partner"
-                        android:visibility="@{(!vm.blockLiveData &amp;&amp; vm.isFreeTrialUser()) ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{(vm.isFreeTrialUser()) ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/btn_call_with_expert"
