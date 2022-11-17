@@ -59,13 +59,21 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 tools:visibility="visible"
-                app:constraint_referenced_ids="freeTrialBg, freeTrialEndsIn, endingHour, hourSemicolon, endingMinutes, minutesSemicolon, endingSeconds, trialTimerDivider"/>
+                app:constraint_referenced_ids="freeTrialBg, freeTrialEndsIn, trialTimerDivider"/>
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/timerGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:constraint_referenced_ids="endingHour, hourSemicolon, endingMinutes, minutesSemicolon, endingSeconds, "/>
 
             <View
                 android:id="@+id/freeTrialBg"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_40sdp"
-                android:background="@drawable/rounded_rectangle_attach"
+                android:background="@drawable/free_trial_bg"
                 android:backgroundTint="@color/warning"
                 app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@+id/guidelineStart"
@@ -160,18 +168,16 @@
 
             <View
                 android:id="@+id/trialTimerDivider"
-                android:layout_width="match_parent"
+                style="@style/line"
                 android:layout_marginTop="@dimen/_12sdp"
-                android:layout_height="@dimen/_1sdp"
-                android:background="@color/text_default_0_2"
-                android:alpha="0.4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/freeTrialBg" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_inbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/_5sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/trialTimerDivider"

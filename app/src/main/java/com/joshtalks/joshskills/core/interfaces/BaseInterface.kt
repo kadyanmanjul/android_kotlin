@@ -47,6 +47,7 @@ interface OnOpenCourseListener {
     fun onClick(inboxEntity: InboxEntity)
     fun onStartTrialTimer(startTimeInMilliSeconds: Long)
     fun onStopTrialTimer()
+    fun onFreeTrialEnded()
 }
 
 interface RecyclerViewItemClickListener {

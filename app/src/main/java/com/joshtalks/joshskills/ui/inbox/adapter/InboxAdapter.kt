@@ -102,7 +102,7 @@ class InboxAdapter(
                 tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                 tvName.text = inboxEntity.course_name
                 courseProgressBar.progress = 0
-                horizontalLine.visibility = android.view.View.VISIBLE
+//                horizontalLine.visibility = android.view.View.VISIBLE
                 imageUrl(binding.profileImage, inboxEntity.course_icon)
                 if (PrefManager.getBoolValue(IS_FREE_TRIAL) && inboxEntity.created == null && inboxEntity.isCapsuleCourse) {
                     unseenMsgCount.visibility = ViewGroup.VISIBLE
@@ -167,61 +167,51 @@ class InboxAdapter(
                 rootView.setOnClickListener {
                     onClickView(inboxEntity)
                 }
-                if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
-                    horizontalLine.visibility = android.view.View.GONE
-                }
-                freeTrialTimer.visibility = View.INVISIBLE
+//                if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
+//                    horizontalLine.visibility = android.view.View.GONE
+//                }
                 if (inboxEntity.isCourseBought) {
-                    freeTrialTimer.visibility = View.INVISIBLE
                     tvLastMessage.visibility = View.VISIBLE
                 } else if (inboxEntity.isCourseLocked) {
-                    freeTrialTimer.visibility = View.VISIBLE
-                    tvLastMessage.visibility = View.INVISIBLE
-                    freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
-                    openCourseListener.onStopTrialTimer()
+//                    tvLastMessage.visibility = View.INVISIBLE
+                    tvLastMessage.visibility = View.VISIBLE
+                    openCourseListener.onFreeTrialEnded()
                     countdownTimerBack?.stop()
                     PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     MarketingAnalytics.freeTrialEndEvent()
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
-                    freeTrialTimer.visibility = View.VISIBLE
-                    tvLastMessage.visibility = View.INVISIBLE
+//                    tvLastMessage.visibility = View.INVISIBLE
+                    tvLastMessage.visibility = View.VISIBLE
+
                     if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
-                        freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
-                        openCourseListener.onStopTrialTimer()
+                        openCourseListener.onFreeTrialEnded()
                         countdownTimerBack?.stop()
                     } else {
                         if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                            freeTrialTimer.visibility = View.INVISIBLE
+                            openCourseListener.onStopTrialTimer()
                             tvLastMessage.visibility = View.VISIBLE
                         }else{
-                            startTimer(inboxEntity.expiryDate.time - System.currentTimeMillis(), freeTrialTimer)
+                            startTimer(inboxEntity.expiryDate.time - System.currentTimeMillis())
                         }
                     }
                 } else {
-                    freeTrialTimer.visibility = View.INVISIBLE
+                    openCourseListener.onStopTrialTimer()
                     tvLastMessage.visibility = View.VISIBLE
                 }
             }
         }
 
-        private fun startTimer(startTimeInMilliSeconds: Long, freeTrialTimer: AppCompatTextView) {
+        private fun startTimer(startTimeInMilliSeconds: Long) {
             openCourseListener.onStopTrialTimer()
             countdownTimerBack?.stop()
             countdownTimerBack = null
             countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
                 override fun onTimerTick(millis: Long) {
                     openCourseListener.onStartTrialTimer(millis)
-                    AppObjectController.uiHandler.post {
-                        freeTrialTimer.text = getAppContext().getString(
-                            R.string.free_trial_end_in,
-                            UtilTime.timeFormatted(millis)
-                        )
-                    }
                 }
 
                 override fun onTimerFinish() {
-                    freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
-                    openCourseListener.onStopTrialTimer()
+                    openCourseListener.onFreeTrialEnded()
                     countdownTimerBack?.stop()
                 }
             }
