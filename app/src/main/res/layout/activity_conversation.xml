@@ -927,28 +927,6 @@
                     app:textAllCaps="true" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <!--        <FrameLayout-->
-        <!--            android:id="@+id/cbcTooltip"-->
-        <!--            android:layout_width="@dimen/_180sdp"-->
-        <!--            android:layout_height="@dimen/_50sdp"-->
-        <!--            android:layout_below="@+id/user_point_container"-->
-        <!--            android:layout_alignParentEnd="true"-->
-        <!--            android:layout_marginLeft="@dimen/_70sdp"-->
-        <!--            android:layout_marginTop="@dimen/_12sdp"-->
-        <!--            android:elevation="@dimen/_20sdp"-->
-        <!--            android:visibility="gone">-->
-
-        <!--            <com.airbnb.lottie.LottieAnimationView-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                android:paddingTop="@dimen/_2sdp"-->
-        <!--                app:lottie_autoPlay="true"-->
-        <!--                app:lottie_fileName="lottie/leaderboard_arrow.json"-->
-        <!--                app:lottie_imageAssetsFolder="lottie"-->
-        <!--                app:lottie_loop="true"-->
-        <!--                app:lottie_repeatMode="reverse" />-->
-        <!--        </FrameLayout>-->
     </RelativeLayout>
 
 </layout>

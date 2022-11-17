@@ -318,39 +318,39 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             }
         }
 
-        if (viewModel.abTestRepository.isVariantActive(VariantKeys.OTHER_SCREENS_BANNER_ENABLED)) {
-            lifecycleScope.launch {
-                viewModel.getMentorCoupon(testId)?.let { coupon ->
-                    binding.buyCourseBanner.visibility = View.VISIBLE
-                    binding.buyCourseBannerTv.text =
-                        AppObjectController.getFirebaseRemoteConfig().getString(AVAIL_COUPON_BANNER_TEXT)
-                            .replace("\$DISCOUNT\$", coupon.amountPercent.toString())
-                            .replace("\$CODE\$", coupon.couponCode)
-                    binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
-                    binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
-                    binding.buyCourseBannerAvailBtn.setOnClickListener {
-                        when (binding.lessonViewpager.currentItem) {
-                            SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
-                            GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
-                            VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
-                            READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
-                            else -> null
-                        }?.name?.let {
-                            viewModel.postGoal(
-                                it,
-                                CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
-                            )
-                        }
-                        BuyPageActivity.startBuyPageActivity(
-                            this@LessonActivity,
-                            testId.toString(),
-                            "l2 complete banner",
-                            coupon.couponCode
-                        )
-                    }
-                }
-            }
-        }
+//        if (viewModel.abTestRepository.isVariantActive(VariantKeys.OTHER_SCREENS_BANNER_ENABLED)) {
+//            lifecycleScope.launch {
+//                viewModel.getMentorCoupon(testId)?.let { coupon ->
+//                    binding.buyCourseBanner.visibility = View.VISIBLE
+//                    binding.buyCourseBannerTv.text =
+//                        AppObjectController.getFirebaseRemoteConfig().getString(AVAIL_COUPON_BANNER_TEXT)
+//                            .replace("\$DISCOUNT\$", coupon.amountPercent.toString())
+//                            .replace("\$CODE\$", coupon.couponCode)
+//                    binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
+//                    binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
+//                    binding.buyCourseBannerAvailBtn.setOnClickListener {
+//                        when (binding.lessonViewpager.currentItem) {
+//                            SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
+//                            GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
+//                            VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
+//                            READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
+//                            else -> null
+//                        }?.name?.let {
+//                            viewModel.postGoal(
+//                                it,
+//                                CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
+//                            )
+//                        }
+//                        BuyPageActivity.startBuyPageActivity(
+//                            this@LessonActivity,
+//                            testId.toString(),
+//                            "l2 complete banner",
+//                            coupon.couponCode
+//                        )
+//                    }
+//                }
+//            }
+//        }
     }
 
     private fun initToolbar() {
