@@ -423,7 +423,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun getProfileData(mentorId: String, intervalType: String?, previousPage: String?) {
-        this.mentorId = mentorId
+        this.mentorId = mentorId.ifEmpty { Mentor.getInstance().getUserId() }
         this.intervalType = intervalType
         this.previousPage = previousPage
         apiCallStatusLiveData.postValue(ApiCallStatus.START)

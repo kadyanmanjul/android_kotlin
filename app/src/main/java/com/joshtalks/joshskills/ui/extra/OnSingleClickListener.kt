@@ -11,6 +11,13 @@ fun View.setOnSingleClickListener(clickListener: View.OnClickListener?) {
     } ?: setOnClickListener(null)
 }
 
+@BindingAdapter("onShortSingleClick")
+fun View.setOnShortSingleClickListener(clickListener: View.OnClickListener?) {
+    clickListener?.also {
+        setOnClickListener(OnSingleClickListener(it, 1500))
+    } ?: setOnClickListener(null)
+}
+
 class OnSingleClickListener(
     private val clickListener: View.OnClickListener,
     private val intervalMs: Long = 500

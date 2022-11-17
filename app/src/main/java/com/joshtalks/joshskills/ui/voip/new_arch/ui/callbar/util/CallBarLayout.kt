@@ -10,9 +10,8 @@ import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
 import com.joshtalks.joshskills.base.constants.STARTING_POINT
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.call.data.local.VoipPrefListener
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
+import com.joshtalks.joshskills.ui.extra.setOnShortSingleClickListener
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import java.lang.Exception
 
@@ -47,7 +46,7 @@ constructor(context: Context, attributes: AttributeSet? = null) : FrameLayout(co
     }
 
     fun onCallBarClick() {
-        callBarContainer.setOnClickListener {
+        callBarContainer.setOnShortSingleClickListener {
             val intent = Intent(context,VoiceCallActivity::class.java).apply {
                 putExtra(STARTING_POINT, FROM_CALL_BAR)
             }
