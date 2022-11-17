@@ -1,1 +1,3 @@
 include ':app', ':joshlibrary', ':recordview', ':mediapicker', ':joshcamerax', ':voip', ':base'
+include ':feature:splash'
+include ':data:splash'
