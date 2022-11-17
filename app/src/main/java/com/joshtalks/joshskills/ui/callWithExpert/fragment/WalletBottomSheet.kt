@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.BOTTOM_SHEET
 import com.joshtalks.joshskills.core.CLICKED_PROCEED
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.databinding.BottomsheetWalletBinding
@@ -63,7 +64,7 @@ class WalletBottomSheet(
     }
 
     fun openCheckout() {
-        callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
+        callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED, previousPage = BOTTOM_SHEET)
         callWithExpertViewModel.proceedPayment()
     }
 

@@ -5,11 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.checkPstnState
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.callWithExpert.adapter.ExpertListAdapter
 import com.joshtalks.joshskills.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
@@ -38,11 +35,6 @@ class ExpertListViewModel : BaseViewModel() {
     lateinit var clickedSpeakerName: String
     var neededAmount: Int = 0
 
-    private val _canBeCalled = MutableLiveData<Boolean>()
-
-    val canBeCalled: LiveData<Boolean>
-        get() = _canBeCalled
-
     init {
         getListOfExpert()
     }
@@ -68,10 +60,8 @@ class ExpertListViewModel : BaseViewModel() {
     val onItemClick: (ExpertListModel, Int, Int) -> Unit = { it, type, position ->
         when (type) {
             FAV_CLICK_ON_CALL -> {
-                saveMicroPaymentImpression("CLICKED_CALL_EXPERT", eventId = it.mentorId)
-
+                saveMicroPaymentImpression(CLICKED_CALL_EXPERT, expertId = it.mentorId)
                 getCallStatus(it)
-//                clickOnPhoneCall(it)
             }
         }
     }
@@ -112,7 +102,6 @@ class ExpertListViewModel : BaseViewModel() {
                             message.obj = true
                             singleLiveEvent.value = message
                         }
-                       // _canBeCalled.postValue(true)
                         SkillsDatastore.updateWalletAmount(response.body()!!.amount)
                         SkillsDatastore.updateExpertCredits(response.body()!!.credits)
                     }
@@ -123,7 +112,6 @@ class ExpertListViewModel : BaseViewModel() {
                             message.obj = false
                             singleLiveEvent.value = message
                         }
-                       // _canBeCalled.postValue(false)
                     }
                     else -> {
                         showToast("Something Went Wrong")
@@ -136,7 +124,6 @@ class ExpertListViewModel : BaseViewModel() {
     }
 
     fun updateCanBeCalled(canBe: Boolean) {
-        //_canBeCalled.postValue(canBe)
         message.what = CAN_BE_CALL
         message.obj = canBe
         singleLiveEvent.value = message
@@ -144,14 +131,14 @@ class ExpertListViewModel : BaseViewModel() {
 
     fun saveMicroPaymentImpression(
         eventName: String,
-        eventId: String = EMPTY,
+        expertId: String = EMPTY,
         previousPage: String = EMPTY
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
                     Pair("event_name", eventName),
-                    Pair("expert_id", eventId),
+                    Pair("expert_id", expertId),
                     Pair("previous_page", previousPage)
                 )
                 AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)

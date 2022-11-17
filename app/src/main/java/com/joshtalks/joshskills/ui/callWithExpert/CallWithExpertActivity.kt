@@ -21,9 +21,7 @@ import com.joshtalks.joshskills.constants.EXPERT_UPGRADE_CLICK
 import com.joshtalks.joshskills.constants.PAYMENT_FAILED
 import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.OPEN_WALLET
-import com.joshtalks.joshskills.core.SPEAKING_PAGE
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.ActivityCallWithExpertBinding
 import com.joshtalks.joshskills.ui.callWithExpert.fragment.RechargeSuccessFragment
@@ -165,9 +163,11 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
                 when (it.itemId) {
                     R.id.transaction_history -> {
                         navController.navigate(R.id.action_wallet_to_transactions)
+                        viewModel.saveMicroPaymentImpression(OPEN_TRANSACTIONS, previousPage = MENU_TOOLBAR)
                     }
                     R.id.upgrade_expert -> {
                         navController.navigate(R.id.action_wallet_to_upgrade)
+                        viewModel.saveMicroPaymentImpression(UPGRADE_PAGE_OPENED, previousPage = MENU_TOOLBAR)
                     }
                 }
                 return@setOnMenuItemClickListener false
@@ -183,11 +183,6 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
                 onBackPressed()
             }
         }
-        with(findViewById<View>(R.id.iv_earn)) {
-            setOnClickListener {
-                viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = SPEAKING_PAGE)
-            }
-        }
     }
 
     private fun startPaymentForUpgrade(amount: Int, testId: Int) {
@@ -201,8 +196,10 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (intent?.extras?.getBoolean("open_upgrade_page") == true)
+        if (intent?.extras?.getBoolean("open_upgrade_page") == true) {
             navController.navigate(R.id.expertCallUpgrade)
+            viewModel.saveMicroPaymentImpression(UPGRADE_PAGE_OPENED, previousPage = CALL_DISCONNECTED)
+        }
     }
 
     override fun onBackPressed() {

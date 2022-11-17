@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CLICKED_PROCEED
+import com.joshtalks.joshskills.core.WALLET_SCREEN
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWalletBinding
@@ -76,7 +77,7 @@ class WalletFragment : Fragment() {
                     WalletRechargePaymentManager.selectedExpertForCall = null
                     callWithExpertViewModel.isPaymentInitiated = true
                     callWithExpertViewModel.updateAmount(Amount(viewModel.addedAmount.value!!.removeRupees().toInt(), viewModel.getAmountId()))
-                    callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
+                    callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED, previousPage = WALLET_SCREEN)
                     callWithExpertViewModel.proceedPayment()
                 }
             }

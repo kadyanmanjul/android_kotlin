@@ -23,8 +23,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CLICKED_CALL_BUTTON
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentExpertListBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
@@ -65,6 +64,7 @@ class ExpertListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<TextView>(R.id.iv_earn).setOnClickListener {
             findNavController().navigate(R.id.action_expertListFragment_to_walletFragment)
+            viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = MENU_TOOLBAR)
         }
     }
 
@@ -151,8 +151,10 @@ class ExpertListFragment : BaseFragment() {
     override fun setArguments() {}
 
     private fun startExpertCall() {
-        if ((viewModel.walletAmount.value?: 0) >= (expertListViewModel.selectedUser?.expertPricePerMinute ?: 0)) {
-            viewModel.saveMicroPaymentImpression(eventName = CLICKED_CALL_BUTTON)
+        if (((viewModel.walletAmount.value ?: 0) >= (expertListViewModel.selectedUser?.expertPricePerMinute ?: 0)) ||
+            (viewModel.creditCount.value ?: -1) > 0
+        ) {
+            viewModel.saveMicroPaymentImpression(eventName = EXPERT_CALL_CONNECTING)
             val callIntent = Intent(AppObjectController.joshApplication, VoiceCallActivity::class.java)
             callIntent.apply {
                 putExtra(STARTING_POINT, FROM_ACTIVITY)

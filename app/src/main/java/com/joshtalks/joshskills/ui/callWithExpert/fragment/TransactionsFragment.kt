@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletTransactionVie
 
 class TransactionsFragment : Fragment() {
 
-    private lateinit var binding:FragmentTransactionsBinding
+    private lateinit var binding: FragmentTransactionsBinding
 
     private val viewModel by lazy {
         ViewModelProvider(this)[WalletTransactionViewModel::class.java]
@@ -24,30 +24,30 @@ class TransactionsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentTransactionsBinding.inflate(inflater,container,false)
+        binding = FragmentTransactionsBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = viewModel
-        return  binding.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = ViewPagerAdapter(childFragmentManager,lifecycle)
+        val adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
         binding.viewPager.adapter = adapter
-        TabLayoutMediator(binding.tabLayoutTransaction,binding.viewPager){tab,position->
-            when(position){
-                0->{
+        TabLayoutMediator(binding.tabLayoutTransaction, binding.viewPager) { tab, position ->
+            when (position) {
+                0 -> {
                     tab.text = activity?.getString(R.string.wallet_transactions)
                 }
-                1->{
+                1 -> {
                     tab.text = activity?.getString(R.string.payment_logs)
                 }
             }
         }.attach()
     }
 
-    fun onRechargeClicked(v:View){
+    fun onRechargeClicked(v: View) {
         requireActivity().onBackPressed()
     }
 }

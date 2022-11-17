@@ -8,9 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.EXPERT_UPGRADE_CLICK
 import com.joshtalks.joshskills.constants.GET_UPGRADE_DETAILS
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.FirstTimeAmount
@@ -95,14 +93,14 @@ class CallWithExpertViewModel : BaseViewModel() {
 
     fun saveMicroPaymentImpression(
         eventName: String,
-        eventId: String = EMPTY,
+        expert_id: String = EMPTY,
         previousPage: String = EMPTY
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
                     Pair("event_name", eventName),
-                    Pair("expert_id", eventId),
+                    Pair("expert_id", expert_id),
                     Pair("previous_page", previousPage)
                 )
                 AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
@@ -113,6 +111,7 @@ class CallWithExpertViewModel : BaseViewModel() {
     }
 
     fun upgradeExpertCall(view: View) {
+        saveMicroPaymentImpression(eventName = CLICK_UPGRADE_BUTTON, previousPage = UPGRADE_PAGE)
         if (orderAmount != -1 && orderTestId != -1) {
             message.what = EXPERT_UPGRADE_CLICK
             message.arg1 = orderAmount
