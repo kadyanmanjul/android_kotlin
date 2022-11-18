@@ -13,8 +13,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_logo"
-            android:layout_width="@dimen/_50sdp"
-            android:layout_height="@dimen/_50sdp"
+            android:layout_width="@dimen/_37sdp"
+            android:layout_height="@dimen/_37sdp"
             android:layout_marginStart="@dimen/_10sdp"
             android:src="@drawable/josh_skill_logo"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -25,7 +25,8 @@
             android:id="@+id/ll"
             android:layout_width="0dp"
             android:layout_height="53dp"
-            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_21sdp"
             android:gravity="center_vertical"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -39,13 +40,13 @@
                 android:layout_height="wrap_content"
                 android:text="Get 10% Off"
                 android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
-                android:textColor="@color/pure_black"
-                android:textStyle="bold" />
+                android:textColor="@color/text_default" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/coupon_expire_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_1sdp"
                 android:lines="2"
                 android:text="Coupon will expire in 30:00 minutes "
                 android:textAlignment="center"
@@ -58,11 +59,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_11sdp"
             android:text="Apply"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
             android:textColor="@color/primary_500"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

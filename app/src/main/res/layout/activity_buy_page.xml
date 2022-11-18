@@ -35,11 +35,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <include
-                    android:id="@+id/toolbar_container"
-                    layout="@layout/buy_page_layout_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+<!--                <include-->
+<!--                    android:id="@+id/toolbar_container"-->
+<!--                    layout="@layout/buy_page_layout_toolbar"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content" />-->
             </LinearLayout>
 
             <androidx.core.widget.NestedScrollView
@@ -199,16 +199,16 @@
                             android:visibility="visible"
                             app:cardCornerRadius="@dimen/_8sdp">
 
-                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-                                android:id="@+id/video_player"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_154sdp"
-                                android:layout_gravity="center"
-                                android:background="#000"
-                                android:focusable="true"
-                                app:controller_layout_id="@layout/layout_live_player_controller"
-                                app:layout_constraintDimensionRatio="1.78"
-                                tools:visibility="visible" />
+<!--                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer-->
+<!--                                android:id="@+id/video_player"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="@dimen/_154sdp"-->
+<!--                                android:layout_gravity="center"-->
+<!--                                android:background="#000"-->
+<!--                                android:focusable="true"-->
+<!--                                app:controller_layout_id="@layout/layout_live_player_controller"-->
+<!--                                app:layout_constraintDimensionRatio="1.78"-->
+<!--                                tools:visibility="visible" />-->
                         </com.google.android.material.card.MaterialCardView>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -312,7 +312,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:visibility="visible" />
 
@@ -321,7 +321,7 @@
                             android:layout_width="@dimen/_195sdp"
                             android:layout_height="@dimen/_28sdp"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/_24sdp"
+                            android:layout_marginTop="@dimen/_28sdp"
                             android:gravity="center_horizontal"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
@@ -329,9 +329,8 @@
                             android:stateListAnimator="@null"
                             android:textAlignment="center"
                             android:textAllCaps="false"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                             android:textColor="@color/primary_500"
-                            android:textStyle="bold"
                             android:visibility="gone"
                             app:rippleColor="@color/pure_white" />
 
@@ -340,7 +339,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_19sdp"
                             android:background="@drawable/dotted_line"
                             android:backgroundTint="@color/disabled" />
 
@@ -378,7 +377,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginTop="@dimen/_12sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:visibility="visible" />
 
@@ -387,9 +386,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled" />
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:background="@drawable/dotted_line" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <com.facebook.shimmer.ShimmerFrameLayout
@@ -432,9 +430,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
                                 android:text="@{vm.offerForYouText}"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                                android:textColor="@color/pure_black"
-                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                                android:textColor="@color/text_default"
                                 android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -445,7 +442,7 @@
                                 android:layout_marginTop="@dimen/_2sdp"
                                 android:onClick="@{()->vm.openCouponListScreen()}"
                                 android:text="@string/insert_code"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                                 android:textColor="@color/primary_500"
                                 android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
 
@@ -459,7 +456,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_18sdp"
-                            android:layout_marginBottom="@dimen/_13sdp"
+                            android:layout_marginBottom="@dimen/_16sdp"
                             android:orientation="horizontal"
                             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                             tools:listitem="@layout/item_offfers_card" />
@@ -514,8 +511,7 @@
                             android:layout_marginTop="@dimen/_16sdp"
                             android:text="@{vm.priceText}"
                             android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/course_price_list"
@@ -523,7 +519,7 @@
                             priceListAdapter="@{vm.priceListAdapter}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_13sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:visibility="@{vm.isPriceApiCall ? View.GONE : View.VISIBLE}"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -533,11 +529,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_13sdp"
-                            android:layout_marginTop="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                             android:onClick="@{()-> vm.openCourseExplore()}"
                             android:text="See course list >>"
                             android:textColor="@color/primary_500"
-                            android:textStyle="bold"
                             android:visibility="@{vm.isSeeAllButtonShow ? View.VISIBLE : View.GONE}" />
 
                         <View
@@ -545,7 +541,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_29sdp"
                             android:background="@drawable/dotted_line"
                             android:backgroundTint="@color/disabled"
                             android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}" />
@@ -561,9 +557,7 @@
                         android:lines="2"
                         android:text="@{vm.callUsText}"
                         android:textAlignment="center"
-                        android:textColor="@color/pure_black"
-                        android:textSize="@dimen/_14ssp"
-                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                         android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                         app:layout_constraintEnd_toStartOf="@+id/btn_call_us"
                         app:layout_constraintStart_toStartOf="parent"
@@ -673,23 +667,23 @@
                     app:layout_constraintTop_toTopOf="@id/video_view"
                     app:srcCompat="@drawable/ic_cancel_black" />
 
-                <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-                    android:id="@+id/video_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="@dimen/_24sdp"
-                    android:layout_marginVertical="@dimen/_50sdp"
-                    android:layout_marginTop="@dimen/_62ssp"
-                    android:layout_marginBottom="@dimen/_42ssp"
-                    android:background="@color/pure_black"
-                    android:focusable="true"
-                    app:controller_layout_id="@layout/layout_live_player_controller"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0"
-                    tools:visibility="visible" />
+<!--                <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer-->
+<!--                    android:id="@+id/video_view"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginHorizontal="@dimen/_24sdp"-->
+<!--                    android:layout_marginVertical="@dimen/_50sdp"-->
+<!--                    android:layout_marginTop="@dimen/_62ssp"-->
+<!--                    android:layout_marginBottom="@dimen/_42ssp"-->
+<!--                    android:background="@color/pure_black"-->
+<!--                    android:focusable="true"-->
+<!--                    app:controller_layout_id="@layout/layout_live_player_controller"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    app:layout_constraintVertical_bias="1.0"-->
+<!--                    tools:visibility="visible" />-->
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
