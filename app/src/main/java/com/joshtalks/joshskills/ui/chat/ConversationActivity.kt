@@ -56,7 +56,6 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
-import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -431,7 +430,7 @@ class ConversationActivity :
     private fun startTimer(startTimeInMilliSeconds: Long) {
         if (countdownTimerBack != null)
             countdownTimerBack?.cancel()
-        countdownTimerBack = object : CountDownTimer(startTimeInMilliSeconds,1000) {
+        countdownTimerBack = object : CountDownTimer(startTimeInMilliSeconds, 1000) {
             override fun onTick(millis: Long) {
                 AppObjectController.uiHandler.post {
                     conversationBinding.freeTrialText.text = getString(
@@ -2657,12 +2656,15 @@ class ConversationActivity :
     }
 
     private fun showBottomCouponBanner() {
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)) return
+        if (inboxEntity.expiryDate !=null && inboxEntity.expiryDate!!.time < System.currentTimeMillis()) {
+            conversationBinding.buyCourseBanner.visibility = GONE
+            return
+        }
         if (conversationViewModel.repository.isVariantActive(VariantKeys.L2_LESSON_COMPLETE_ENABLED)) {
             conversationViewModel.getCompletedLessonCount(PrefManager.getStringValue(CURRENT_COURSE_ID))
             conversationViewModel.completedLessonCount.observe(this) { count ->
                 count?.let {
-                    if (count ==
+                    if (count >=
                         AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT).toInt()
                     ) {
                         conversationViewModel.postGoal(GoalKeys.L2_COUPON_UNLOCKED)
@@ -2680,7 +2682,13 @@ class ConversationActivity :
                             buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
                             buyCourseBannerAvailBtn.setOnClickListener {
                                 conversationViewModel.postGoal(GoalKeys.L2_CLAIM_NOW_CLICKED)
-                                moveToPaymentActivity(this.root)
+                                BuyPageActivity.startBuyPageActivity(
+                                    this@ConversationActivity,
+                                    AppObjectController.getFirebaseRemoteConfig()
+                                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID),
+                                    "CONVERSATION_FT_TIMER",
+                                    shouldAutoApplyCoupon = true
+                                )
                             }
                         }
                     }

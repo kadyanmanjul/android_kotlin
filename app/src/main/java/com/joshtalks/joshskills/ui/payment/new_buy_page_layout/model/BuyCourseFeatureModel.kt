@@ -43,5 +43,6 @@ data class Coupon(
     @SerializedName("max_discount_amount") val maxDiscountAmount: Int,
     @SerializedName("is_mentor_coupon") val isMentorSpecificCoupon: Boolean? = null,
     @SerializedName("coupon_description") val couponDesc: String? = null,
+    @SerializedName("is_auto_apply") val isAutoApply: Boolean = false,
     var isCouponSelected: Int = 0
 ) : Parcelable

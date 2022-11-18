@@ -303,7 +303,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                 BuyPageActivity.startBuyPageActivity(
                                     this@LessonActivity,
                                     testId.toString(),
-                                    "offer coupon banner"
+                                    "offer coupon banner",
+                                    shouldAutoApplyCoupon = true
                                 )
                             }
                             if (it.not()) {
@@ -340,6 +341,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                 it,
                                 CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
                             )
+                            viewModel.saveImpression(it)
                         }
                         BuyPageActivity.startBuyPageActivity(
                             this@LessonActivity,

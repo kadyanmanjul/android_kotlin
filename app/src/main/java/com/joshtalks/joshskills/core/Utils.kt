@@ -189,6 +189,7 @@ const val REASON_GOVT_EXAM_CLICKED = "REASON_GOVT_EXAM_CLICKED"
 const val REASON_OTHERS_CLICKED = "REASON_OTHERS_CLICKED"
 
 const val SPEAKING_PAGE = "SPEAKING_PAGE"
+const val FT_EXPIRED_PAGE = "FT_EXPIRED_PAGE"
 const val UPGRADE_PAGE = "UPGRADE_PAGE"
 const val MENU_TOOLBAR = "MENU_TOOLBAR"
 const val CALL_DISCONNECTED = "CALL_DISCONNECTED"
@@ -212,7 +213,7 @@ const val INTEREST_FORM_LEVEL_SAVED = "INTEREST_FORM_LEVEL_SAVED"
 const val INTEREST_FORM_OPEN_MENU_EDIT = "INTEREST_FORM_OPEN_MENU_EDIT"
 const val INTEREST_FORM_LEVEL_SCREEN_OPEN = "INTEREST_FORM_LEVEL_SCREEN_SHOWN"
 const val INTEREST_FORM_INTEREST_SCREEN_OPEN = "INTEREST_FORM_INTEREST_SCREEN_SHOWN"
-const val OTP_SUBMITTED  = "OTP_SUBMITTED"
+const val OTP_SUBMITTED = "OTP_SUBMITTED"
 const val PHONE_NUMBER_SUBMITTED = "PHONE_NUMBER_SUBMITTED"
 const val NAME_SUBMITTED = "NAME_SUBMITTED"
 
@@ -253,28 +254,28 @@ object Utils {
         return "0"
     }
 
-    fun getLangCodeFromlangTestId(testId : String) : String {
-        return when(testId) {
-            "1880"-> "bn"
-            "1882"-> "pa"
-            "1881"-> "mr"
-            "1889"-> "ml"
-            "1891"-> "ta"
-            "1897"-> "te"
-            "784"-> "hi"
+    fun getLangCodeFromlangTestId(testId: String): String {
+        return when (testId) {
+            "1880" -> "bn"
+            "1882" -> "pa"
+            "1881" -> "mr"
+            "1889" -> "ml"
+            "1891" -> "ta"
+            "1897" -> "te"
+            "784" -> "hi"
             else -> "en"
         }
     }
 
-    fun getLangCodeFromCourseId(courseId : String) : String {
-        return when(courseId) {
-            "1203"-> "bn"
-            "1206"-> "pa"
-            "1207"-> "mr"
-            "1209"-> "ml"
-            "1210"-> "ta"
-            "1211"-> "te"
-            "151"-> "hi"
+    fun getLangCodeFromCourseId(courseId: String): String {
+        return when (courseId) {
+            "1203" -> "bn"
+            "1206" -> "pa"
+            "1207" -> "mr"
+            "1209" -> "ml"
+            "1210" -> "ta"
+            "1211" -> "te"
+            "151" -> "hi"
             else -> "en"
         }
     }
@@ -322,7 +323,7 @@ object Utils {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 
-    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
+    fun getMessageTime(epoch: Long, timeNeeded: Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
@@ -475,7 +476,7 @@ object Utils {
             }
             intent.data = Uri.parse("tel:$phoneNumber")
             context.startActivity(intent)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             showToast("No application found that can handle this link")
         }
     }
@@ -863,7 +864,7 @@ object Utils {
         return outputFormat.format(date)
     }
 
-    fun getDrawableFromUrl(context: Context,url: String?): Drawable? {
+    fun getDrawableFromUrl(context: Context, url: String?): Drawable? {
         try {
             if (isInternetAvailable()) {
                 val bitmap: Bitmap
@@ -875,7 +876,7 @@ object Utils {
             }
         } catch (e: Exception) {
             Timber.e(e)
-            return AppCompatResources.getDrawable(context,R.drawable.ic_file_error)
+            return AppCompatResources.getDrawable(context, R.drawable.ic_file_error)
         }
         return null
     }
@@ -1073,7 +1074,11 @@ fun CircleImageView.setImage(url: String, context: Context = AppObjectController
     }
 }
 
-fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication,loader: LottieAnimationView) {
+fun ImageView.setPreviousProfileImage(
+    url: String,
+    context: Context = AppObjectController.joshApplication,
+    loader: LottieAnimationView
+) {
     val requestOptions = RequestOptions()
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
@@ -1093,7 +1098,12 @@ fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectC
 
 fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Drawable?>? {
     return object : RequestListener<Drawable?> {
-        override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable?>?, isFirstResource: Boolean): Boolean {
+        override fun onLoadFailed(
+            e: GlideException?,
+            model: Any?,
+            target: com.bumptech.glide.request.target.Target<Drawable?>?,
+            isFirstResource: Boolean
+        ): Boolean {
             return false
         }
 
@@ -1134,7 +1144,7 @@ fun ImageView.setUserInitial(
             )
         this.background = drawable
         this.setImageDrawable(drawable)
-    }catch (ex:Exception){
+    } catch (ex: Exception) {
         ex.printStackTrace()
     }
 }
@@ -1163,7 +1173,7 @@ fun ImageView.setUserInitial(
             )
         this.background = drawable
         this.setImageDrawable(drawable)
-    }catch (ex:Exception){
+    } catch (ex: Exception) {
         ex.printStackTrace()
     }
 }
@@ -1194,7 +1204,7 @@ fun ImageView.setUserInitialInRect(
             )
         this.background = drawable
         this.setImageDrawable(drawable)
-    }catch (ex:Exception){
+    } catch (ex: Exception) {
         ex.printStackTrace()
     }
 }
@@ -1240,7 +1250,7 @@ fun ImageView.setUserImageOrInitialsWithWhiteBackground(
     txtColor: Int = R.color.primary_500
 ) {
     if (url.isNullOrEmpty()) {
-        setUserInitial(userName, dpToPx,background = bgColor, txtColor = txtColor)
+        setUserInitial(userName, dpToPx, background = bgColor, txtColor = txtColor)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
@@ -1555,7 +1565,7 @@ fun String.urlToBitmap(
     height: Int = 80,
     context: Context = AppObjectController.joshApplication
 ): Bitmap? {
-    var bitmap : Bitmap? = null
+    var bitmap: Bitmap? = null
     try {
         val requestOptions =
             RequestOptions()
@@ -1577,7 +1587,7 @@ fun String.urlToBitmap(
                 WebpDrawableTransformation(CircleCrop())
             ).submit().get(1500, TimeUnit.MILLISECONDS)
         return bitmap
-    } catch (e : Exception) {
+    } catch (e: Exception) {
         return bitmap
     }
 }
@@ -1634,12 +1644,13 @@ fun getDefaultCountryIso(context: Context): String {
     return if (simState == 5) telephoneManager.simCountryIso.uppercase(Locale.ROOT) else Locale.getDefault().country
 }
 
- fun checkPstnState(): PSTNState {
-     Log.d(TAG, "checkPstnState: ${PstnObserver.getCurrentPstnState()}")
-   return PstnObserver.getCurrentPstnState()
-  }
+fun checkPstnState(): PSTNState {
+    Log.d(TAG, "checkPstnState: ${PstnObserver.getCurrentPstnState()}")
+    return PstnObserver.getCurrentPstnState()
+}
 
-fun getFeatureLockedText(courseId: String, name: String = EMPTY) = "$name ${AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"
+fun getFeatureLockedText(courseId: String, name: String = EMPTY) =
+    "$name ${AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"
 
 fun isValidContextForGlide(context: Context?): Boolean {
     if (context == null) {

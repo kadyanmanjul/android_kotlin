@@ -101,6 +101,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     var isPaymentInitiated = false
     var certificateCard: View? = null
     var couponCodeFromIntent: String? = null
+    var shouldAutoApplyCoupon: Boolean = false
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
     private var flowFrom: String = EMPTY
@@ -168,6 +169,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         }
         flowFrom = intent.getStringExtra(FLOW_FROM) ?: EMPTY
         couponCodeFromIntent = intent.getStringExtra(COUPON_CODE)
+        shouldAutoApplyCoupon = intent.getBooleanExtra(SHOULD_AUTO_APPLY_COUPON_ARG, false)
         if (intent.hasExtra(IS_FAKE_CALL)) {
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
@@ -238,6 +240,11 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                     onCouponApply(coupon)
                 }
                 APPLY_COUPON_FROM_INTENT -> {
+                    if (shouldAutoApplyCoupon) {
+                        viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply }?.let { coupon ->
+                            viewModel.applyEnteredCoupon(coupon.couponCode, 1)
+                        }
+                    }
                     if (couponCodeFromIntent.isNullOrEmpty().not())
                         viewModel.applyEnteredCoupon(couponCodeFromIntent!!, 1)
                 }
@@ -246,7 +253,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 MAKE_PHONE_CALL -> openSalesReasonScreenOrMakeCall()
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
-                COUPON_APPLIED -> couponApplied(it.obj as Coupon,it.arg1)
+                COUPON_APPLIED -> couponApplied(it.obj as Coupon, it.arg1)
                 SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
                     binding.scrollView.smoothScrollTo(
                         binding.buyPageParentContainer.width,
@@ -298,7 +305,7 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         if (isFromLink == 0) {
             onBackPressed()
             onCouponApply(coupon)
-        }else{
+        } else {
             binding.btnCallUs.post {
                 binding.scrollView.smoothScrollTo(
                     binding.buyPageParentContainer.width,
@@ -353,13 +360,13 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         } else if (isCallUsButtonActive == 2) {
             try {
                 openReasonScreen()
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 Log.e("sagar", "openSalesReasonScreenOrMakeCall:${ex.message} ")
             }
         }
     }
 
-    fun openReasonScreen(){
+    fun openReasonScreen() {
         try {
             viewModel.saveImpression("TALK_TO_COUNSELOR")
             supportFragmentManager.commit {
@@ -367,8 +374,8 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 replace(R.id.buy_page_parent_container, BookACallFragment(), "BookACallFragment")
                 addToBackStack("BookACallFragment")
             }
-        }catch (ex:Exception){
-            Log.e("sagar", "openReasonScreen: ${ex.message}", )
+        } catch (ex: Exception) {
+            Log.e("sagar", "openReasonScreen: ${ex.message}")
         }
     }
 
@@ -650,12 +657,14 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             activity: Activity,
             testId: String,
             flowFrom: String,
-            coupon: String = EMPTY
+            coupon: String = EMPTY,
+            shouldAutoApplyCoupon: Boolean = false
         ) {
             Intent(activity, BuyPageActivity::class.java).apply {
                 putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
                 putExtra(FLOW_FROM, flowFrom)
                 putExtra(COUPON_CODE, coupon)
+                putExtra(SHOULD_AUTO_APPLY_COUPON_ARG, shouldAutoApplyCoupon)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)

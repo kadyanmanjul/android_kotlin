@@ -87,7 +87,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 scrollToFirst?.invoke()
             } else {
                 offersList[holder.bindingAdapterPosition].isCouponSelected = 0
-               // notifyItemChanged(holder.bindingAdapterPosition)
+                // notifyItemChanged(holder.bindingAdapterPosition)
                 offersList[position]
                     .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
             }
@@ -106,7 +106,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         }
         try {
             offersList.firstOrNull()?.isCouponSelected = 0
-         //   notifyItemChanged(0)
+            //   notifyItemChanged(0)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -121,7 +121,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         } else {
             coupon.isCouponSelected = 1
             offersList.add(0, coupon)
-           // notifyItemInserted(0)
+            // notifyItemInserted(0)
             scrollToFirst?.invoke()
         }
         notifyDataSetChanged()
@@ -183,7 +183,9 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                     override fun onTick(millisUntilFinished: Long) {
                         if (countdownTimerBack != null) {
                             AppObjectController.uiHandler.post {
-                                if (coupon?.isMentorSpecificCoupon != null) {
+                                if (coupon?.couponDesc != null)
+                                    binding.couponExpireText.text = coupon.couponDesc
+                                else if (coupon?.isMentorSpecificCoupon != null) {
                                     binding.couponExpireText.text =
                                         "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
                                 } else {
@@ -208,7 +210,9 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         }
 
         fun changeTextColor(binding: ItemOfffersCardBinding, coupon: Coupon?, position: Int) {
-            if (coupon?.isMentorSpecificCoupon != null) {
+            if (coupon?.couponDesc != null)
+                binding.couponExpireText.text = coupon.couponDesc
+            else if (coupon?.isMentorSpecificCoupon != null) {
                 Log.e("sagar", "changeTextColor: ")
                 binding.couponExpireText.text = "Coupon expired"
                 disableCoupon(binding, coupon, position)
