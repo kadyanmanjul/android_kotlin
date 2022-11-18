@@ -930,23 +930,7 @@
     <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
     <string name="aborted_msg" translatable="false">Oops, Looks like you have canceled the payment!</string>
 
-    <string-array name="amount_list">
-        <item>₹ 50</item>
-        <item>₹ 100</item>
-        <item>₹ 200</item>
-        <item>₹ 300</item>
-        <item>₹ 500</item>
-        <item>₹ 1000</item>
-        <item>₹ 2000</item>
-        <item>₹ 3000</item>
-        <item>₹ 4000</item>
-        <item>₹ 8000</item>
-        <item>₹ 15000</item>
-        <item>₹ 12000</item>
-        <item>₹ 50000</item>
-        <item>₹ 100000</item>
-    </string-array>
-    <string name="rup">\u20B9</string>
+    <string name="rupee" translatable="false">\u20B9</string>
     <string name="offer_for_you" translatable="false">Offer for you</string>
     <string name="default_disconnect_dialog_title" translatable="false">Are you sure you want to disconnect the call?</string>
     <string name="default_disconnect_dialog_text" translatable="false">Disconnecting calls frequently may lead to account suspension</string>
@@ -988,7 +972,6 @@
     <string name="call_waiting_description" formatted="false">We will start searching a new partner for you in %s seconds.</string>
     <string name="call_waiting_title">Try doing longer calls</string>
     <string name="mrp_strike_thru" translatable="false"><strike>MRP: ₹2999.0</strike></string>
-
 
     <string name="test_chars" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ \nabcdefghijklmnopqrstuvwxyz \n1234567890</string>
     <string name="slash_2" formatted="false" translatable="false">%d/%d</string>

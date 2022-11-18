@@ -14,6 +14,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.constants.IS_USER_EXIST
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
 import com.joshtalks.joshskills.core.abTest.GoalKeys
@@ -27,7 +28,6 @@ import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.onboarding.OnboardingCourseData
 import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.repository.server.signup.LastLoginType
-import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.truecaller.android.sdk.*
 import kotlinx.coroutines.Dispatchers

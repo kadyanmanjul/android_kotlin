@@ -498,7 +498,7 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                                 .setPadding(8)
                                 .setMarginTop(8)
                                 .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
-                                .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
+                                .setOverlayColorResource(R.color.pure_black_80) // background color of the overlay using a color resource.
                                 //  .setOverlayPadding(2f) // sets a padding value of the overlay shape in
                                 .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
                                 .setDismissWhenOverlayClicked(false) // disable di

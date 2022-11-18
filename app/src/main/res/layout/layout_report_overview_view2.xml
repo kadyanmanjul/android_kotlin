@@ -202,7 +202,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_back_fpp"
+            app:srcCompat="@drawable/ic_arrow_back"
             android:contentDescription="@string/image_button_to_move_left" />
 
         <ImageButton
@@ -214,7 +214,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_back_fpp"
+            app:srcCompat="@drawable/ic_arrow_back"
             android:contentDescription="@string/image_button_to_move_right" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

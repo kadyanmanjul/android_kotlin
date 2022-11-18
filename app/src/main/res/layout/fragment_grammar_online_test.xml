@@ -315,7 +315,6 @@
                     android:text="@string/grammar_completed"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.LargeBold"
-                    android:textColor="@color/transparent_black_alpha_70"
                     app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat3"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -354,7 +353,6 @@
                         android:text="बहुत खूब!"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.LargeBold"
-                        android:textColor="@color/transparent_black_alpha_70"
                         android:textStyle="bold" />
 
                     <com.google.android.material.textview.MaterialTextView
@@ -367,7 +365,7 @@
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:gravity="center"
                         android:text="आपने एक नया Level पार करा! ऐसे ही मेहनत करते रहें।"
-                        android:textColor="@color/transparent_black_alpha_70"
+                        android:textColor="@color/text_subdued"
                         android:textSize="@dimen/_16ssp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>

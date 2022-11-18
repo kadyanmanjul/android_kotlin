@@ -24,7 +24,6 @@ import com.joshtalks.joshskills.repository.server.translation.WordDetailsRespons
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
-import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import com.joshtalks.joshskills.ui.callWithExpert.model.*
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
@@ -194,12 +193,6 @@ interface CommonNetworkService {
 
     @GET("$DIR/user/profile_pictures/{mentor_id}/")
     suspend fun getPreviousProfilePics(@Path("mentor_id") id: String): Response<PictureHeader>
-
-    @GET("$DIR/activity_feed/fetch_all/")
-    suspend fun getActivityFeedData(): Response<ActivityFeedList>
-
-    @GET("$DIR/activity_feed/fetch_all/{time_stamp}")
-    suspend fun getActivityFeedData(@Path("time_stamp") id: String): Response<ActivityFeedList>
 
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(

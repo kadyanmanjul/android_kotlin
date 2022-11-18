@@ -20,7 +20,6 @@
     <dimen name="seek_bar_thumb_size">12dp</dimen>
 
     <dimen name="tag_height">@dimen/_44sdp</dimen>
-    <dimen name="rating_size">@dimen/_48sdp</dimen>
 
     <dimen name="roundedBottomSheetCornerRadius">16dp</dimen>
     <dimen name="roundedBottomSheetCornerRadiusTopPadding">6dp</dimen>
@@ -31,9 +30,6 @@
     <dimen name="cell_left_start_padding">@dimen/_8sdp</dimen>
     <dimen name="cell_left_end_padding">@dimen/_32sdp</dimen>
 
-    <dimen name="grammar_button_default_conner_radius">8dp</dimen>
-    <dimen name="grammar_button_default_shadow_height">4dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-
     <dimen name="image_icon_size">90dp</dimen>
 </resources>

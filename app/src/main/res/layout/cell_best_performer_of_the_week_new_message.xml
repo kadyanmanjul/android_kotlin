@@ -124,7 +124,7 @@
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_6sdp"
                 android:paddingHorizontal="@dimen/_1sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Salsa_SemiBold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                 android:textColor="@color/pure_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/bottom_barier"
