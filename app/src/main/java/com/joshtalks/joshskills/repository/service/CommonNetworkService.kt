@@ -350,6 +350,9 @@ interface CommonNetworkService {
     @POST("$DIR/impression/track_reading_practice_impression/")
     suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
 
+    @POST("$DIR/impression/track_audio_impression/")
+    suspend fun trackAudioImpression(@Body params: Map<String, String>): Response<Void>
+
     @GET("$DIR/micro_payment/get_experts/")
     suspend fun getExpertList(): Response<ExpertListResponse>
 

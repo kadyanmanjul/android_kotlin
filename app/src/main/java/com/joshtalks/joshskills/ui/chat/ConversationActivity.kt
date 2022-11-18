@@ -1746,6 +1746,7 @@ class ConversationActivity :
                                 it.audioType!!.audio_url,
                                 it.chatModel.chatId
                             )
+                            conversationViewModel.saveAudioImpression(VOICE_NOTE_PLAYED, it.chatModel.chatId)
                         }
                         DatabaseUtils.updateLastUsedModification(it.chatModel.chatId)
                     },
