@@ -88,7 +88,7 @@ const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val SUBSCRIPTION_TEST_ID = "10"
 const val IS_FAKE_CALL = "is_fake_call"
 
-class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
+class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
 
     var englishCourseCard: View? = null
     var otherCourseCard: View? = null

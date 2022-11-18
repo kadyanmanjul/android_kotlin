@@ -80,6 +80,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/shimmer1">
@@ -99,37 +100,42 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <RelativeLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/free_trial_timer_new_ui"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_16sdp"
-                            android:layout_marginTop="@dimen/_13sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            android:paddingBottom="@dimen/_13sdp"
+                            android:paddingHorizontal="@dimen/_12sdp"
                             android:background="@drawable/ic_transparent_color_img"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:visibility="visible">
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/timer_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_12sdp"
-                                android:layout_marginTop="@dimen/_10sdp"
-                                android:layout_marginBottom="@dimen/_8sdp"
                                 android:text="Unlimited access for 1 year @ just ₹450"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                                android:textColor="#253858"
-                                android:textStyle="bold" />
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
+                                android:textColor="@color/text_default"
+                                app:layout_constraintBottom_toTopOf="@+id/time_text"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:id="@+id/time_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/timer_text"
-                                android:layout_marginStart="@dimen/_12sdp"
-                                android:layout_marginBottom="@dimen/_12sdp"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="@+id/timer_text"
+                                app:layout_constraintTop_toBottomOf="@+id/timer_text">
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txt_hours"
@@ -139,9 +145,8 @@
                                     android:background="@drawable/golden_color_with_solid_transparent"
                                     android:padding="@dimen/_5sdp"
                                     android:text="23"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                                    android:textColor="#253858"
-                                    android:textStyle="bold" />
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                                    android:textColor="@color/text_default" />
 
                                 <ImageView
                                     android:layout_width="@dimen/_4sdp"
@@ -149,7 +154,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginEnd="@dimen/_4sdp"
                                     android:src="@drawable/ic_colon"
-                                    android:textColor="@color/pure_black" />
+                                    android:textColor="@color/text_default" />
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txt_minute"
@@ -159,9 +164,8 @@
                                     android:background="@drawable/golden_color_with_solid_transparent"
                                     android:padding="@dimen/_5sdp"
                                     android:text="23"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                                    android:textColor="#253858"
-                                    android:textStyle="bold" />
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                                    android:textColor="@color/text_default" />
 
                                 <ImageView
                                     android:layout_width="@dimen/_4sdp"
@@ -169,7 +173,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginEnd="@dimen/_4sdp"
                                     android:src="@drawable/ic_colon"
-                                    android:textColor="@color/pure_black" />
+                                    android:textColor="@color/text_default" />
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txt_second"
@@ -178,12 +182,11 @@
                                     android:background="@drawable/golden_color_with_solid_transparent"
                                     android:padding="@dimen/_5sdp"
                                     android:text="23"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                                    android:textColor="#253858"
-                                    android:textStyle="bold" />
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                                    android:textColor="@color/text_default" />
 
                             </androidx.appcompat.widget.LinearLayoutCompat>
-                        </RelativeLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/video_card"
@@ -191,7 +194,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_marginHorizontal="@dimen/_16sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:background="@drawable/round_rect_default"
                             android:visibility="visible"
                             app:cardCornerRadius="@dimen/_8sdp">
@@ -292,7 +295,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginVertical="@dimen/_15sdp"
                             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                             app:spanCount="2" />
 
@@ -303,7 +305,6 @@
                             android:layout_marginHorizontal="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled"
                             android:visibility="gone" />
 
                         <androidx.appcompat.widget.LinearLayoutCompat
