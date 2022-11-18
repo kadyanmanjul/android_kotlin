@@ -1176,7 +1176,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             val response = AppObjectController.commonNetworkService.getValidCoupon(testId)
             if (response.isSuccessful) {
                 response.body()?.let { body ->
-                    body.listOfCoupon?.firstOrNull { it.isMentorSpecificCoupon == true }?.let { coupon ->
+                    body.listOfCoupon?.firstOrNull {
+                        it.isMentorSpecificCoupon == true && it.validDuration.time.minus(
+                            System.currentTimeMillis()
+                        ) > 0L
+                    }?.let { coupon ->
                         return coupon
                     }
                 }

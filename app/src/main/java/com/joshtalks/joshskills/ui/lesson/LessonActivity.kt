@@ -247,8 +247,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         titleView = findViewById(R.id.text_message_title)
         if (isDemo)
             binding.buyCourseLl.visibility = View.VISIBLE
-//        else if (PrefManager.getBoolValue(IS_FREE_TRIAL))
-//            showBottomCouponBanner()
+        else if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+            showBottomCouponBanner()
         setObservers()
         viewModel.getLesson(lessonId)
         viewModel.getQuestions(lessonId, isDemo)
@@ -272,85 +272,85 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     }
 
     private fun showBottomCouponBanner() {
-//        if (viewModel.abTestRepository.isVariantActive(VariantKeys.L2_LESSON_COMPLETE_ENABLED)) {
-//            binding.buyCourseBanner.visibility = View.VISIBLE
-//            viewModel.getCompletedLessonCount(courseId)
-//            viewModel.completedLessonCount.observe(this) { count ->
-//                count?.let {
-//                    val lessonCompletionCount =
-//                        AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT).toInt()
-//                    (count == lessonCompletionCount).let {
-//                        with(binding) {
-//                            buyCourseBannerTv.text = (if (it)
-//                                AppObjectController.getFirebaseRemoteConfig()
-//                                    .getString(BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT)
-//                            else AppObjectController.getFirebaseRemoteConfig().getString(BUY_COURSE_BANNER_LESSON_TEXT))
-//                                .replace(
-//                                    "\$DISCOUNT\$",
-//                                    AppObjectController.getFirebaseRemoteConfig()
-//                                        .getLong(LESSON_COMPLETE_COUPON_DISCOUNT)
-//                                        .toString()
-//                                )
-//                            buyCourseBannerLessonProgressBar.isVisible = it.not()
-//                            buyCourseBannerLessonProgressTv.isVisible = it.not()
-//                            buyCourseBannerAvailBtn.isVisible = it
-//                            buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
-//                            binding.buyCourseBannerAvailBtn.setOnClickListener {
-//                                viewModel.postGoal(
-//                                    GoalKeys.L2_CLAIM_NOW_CLICKED.name,
-//                                    CampaignKeys.L2_LESSON_COMPLETE_COUPON.name
-//                                )
-//                                BuyPageActivity.startBuyPageActivity(
-//                                    this@LessonActivity,
-//                                    testId.toString(),
-//                                    "offer coupon banner"
-//                                )
-//                            }
-//                            if (it.not()) {
-//                                buyCourseBannerLessonProgressBar.max = lessonCompletionCount
-//                                buyCourseBannerLessonProgressBar.progress = count
-//                                buyCourseBannerLessonProgressTv.text =
-//                                    getString(R.string.slash_2, count, lessonCompletionCount)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.L2_LESSON_COMPLETE_ENABLED)) {
+            binding.buyCourseBanner.visibility = View.VISIBLE
+            viewModel.getCompletedLessonCount(courseId)
+            viewModel.completedLessonCount.observe(this) { count ->
+                count?.let {
+                    val lessonCompletionCount =
+                        AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT).toInt()
+                    (count == lessonCompletionCount).let {
+                        with(binding) {
+                            buyCourseBannerTv.text = (if (it)
+                                AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT)
+                            else AppObjectController.getFirebaseRemoteConfig().getString(BUY_COURSE_BANNER_LESSON_TEXT))
+                                .replace(
+                                    "\$DISCOUNT\$",
+                                    AppObjectController.getFirebaseRemoteConfig()
+                                        .getLong(LESSON_COMPLETE_COUPON_DISCOUNT)
+                                        .toString()
+                                )
+                            buyCourseBannerLessonProgressBar.isVisible = it.not()
+                            buyCourseBannerLessonProgressTv.isVisible = it.not()
+                            buyCourseBannerAvailBtn.isVisible = it
+                            buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
+                            binding.buyCourseBannerAvailBtn.setOnClickListener {
+                                viewModel.postGoal(
+                                    GoalKeys.L2_CLAIM_NOW_CLICKED.name,
+                                    CampaignKeys.L2_LESSON_COMPLETE_COUPON.name
+                                )
+                                BuyPageActivity.startBuyPageActivity(
+                                    this@LessonActivity,
+                                    testId.toString(),
+                                    "offer coupon banner"
+                                )
+                            }
+                            if (it.not()) {
+                                buyCourseBannerLessonProgressBar.max = lessonCompletionCount
+                                buyCourseBannerLessonProgressBar.progress = count
+                                buyCourseBannerLessonProgressTv.text =
+                                    getString(R.string.slash_2, count, lessonCompletionCount)
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-//        if (viewModel.abTestRepository.isVariantActive(VariantKeys.OTHER_SCREENS_BANNER_ENABLED)) {
-//            lifecycleScope.launch {
-//                viewModel.getMentorCoupon(testId)?.let { coupon ->
-//                    binding.buyCourseBanner.visibility = View.VISIBLE
-//                    binding.buyCourseBannerTv.text =
-//                        AppObjectController.getFirebaseRemoteConfig().getString(AVAIL_COUPON_BANNER_TEXT)
-//                            .replace("\$DISCOUNT\$", coupon.amountPercent.toString())
-//                            .replace("\$CODE\$", coupon.couponCode)
-//                    binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
-//                    binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
-//                    binding.buyCourseBannerAvailBtn.setOnClickListener {
-//                        when (binding.lessonViewpager.currentItem) {
-//                            SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
-//                            GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
-//                            VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
-//                            READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
-//                            else -> null
-//                        }?.name?.let {
-//                            viewModel.postGoal(
-//                                it,
-//                                CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
-//                            )
-//                        }
-//                        BuyPageActivity.startBuyPageActivity(
-//                            this@LessonActivity,
-//                            testId.toString(),
-//                            "l2 complete banner",
-//                            coupon.couponCode
-//                        )
-//                    }
-//                }
-//            }
-//        }
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.OTHER_SCREENS_BANNER_ENABLED)) {
+            lifecycleScope.launch {
+                viewModel.getMentorCoupon(testId)?.let { coupon ->
+                    binding.buyCourseBanner.visibility = View.VISIBLE
+                    binding.buyCourseBannerTv.text =
+                        AppObjectController.getFirebaseRemoteConfig().getString(AVAIL_COUPON_BANNER_TEXT)
+                            .replace("\$DISCOUNT\$", coupon.amountPercent.toString())
+                            .replace("\$CODE\$", coupon.couponCode)
+                    binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
+                    binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
+                    binding.buyCourseBannerAvailBtn.setOnClickListener {
+                        when (binding.lessonViewpager.currentItem) {
+                            SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
+                            GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
+                            VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
+                            READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
+                            else -> null
+                        }?.name?.let {
+                            viewModel.postGoal(
+                                it,
+                                CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
+                            )
+                        }
+                        BuyPageActivity.startBuyPageActivity(
+                            this@LessonActivity,
+                            testId.toString(),
+                            "l2 complete banner",
+                            coupon.couponCode
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun initToolbar() {

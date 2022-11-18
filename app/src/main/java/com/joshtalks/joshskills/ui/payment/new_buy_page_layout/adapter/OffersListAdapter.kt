@@ -61,6 +61,8 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 holder.binding.couponExpireText.visibility = View.VISIBLE
                 if (offersList[position].validDuration.time < System.currentTimeMillis())
                     holder.disableCoupon(holder.binding, offersList[position], position)
+                else
+                    holder.enableCoupon(holder.binding, offersList[position], position)
             } else if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && offersList[position].isMentorSpecificCoupon != null) {
                 holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 holder.binding.btnApply.text = APPLY
@@ -79,16 +81,17 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 val selectedItem = offersList[holder.bindingAdapterPosition]
                 offersList.remove(selectedItem)
                 offersList.add(0, selectedItem)
-                notifyItemChanged(0)
-                notifyItemRemoved(holder.bindingAdapterPosition)
-                notifyItemInserted(0)
+//                notifyItemChanged(0)
+//                notifyItemRemoved(holder.bindingAdapterPosition)
+//                notifyItemInserted(0)
                 scrollToFirst?.invoke()
             } else {
                 offersList[holder.bindingAdapterPosition].isCouponSelected = 0
-                notifyItemChanged(holder.bindingAdapterPosition)
+               // notifyItemChanged(holder.bindingAdapterPosition)
                 offersList[position]
                     .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
             }
+            notifyDataSetChanged()
         }
     }
 
@@ -103,7 +106,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         }
         try {
             offersList.firstOrNull()?.isCouponSelected = 0
-            notifyItemChanged(0)
+         //   notifyItemChanged(0)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -112,15 +115,16 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             item.isCouponSelected = 1
             offersList.remove(item)
             offersList.add(0, item)
-            notifyItemRemoved(couponIndex)
-            notifyItemInserted(0)
+//            notifyItemRemoved(couponIndex)
+//            notifyItemInserted(0)
             scrollToFirst?.invoke()
         } else {
             coupon.isCouponSelected = 1
             offersList.add(0, coupon)
-            notifyItemInserted(0)
+           // notifyItemInserted(0)
             scrollToFirst?.invoke()
         }
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = offersList.size
@@ -219,6 +223,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             val grayColor =
                 ContextCompat.getColor(binding.couponExpireText.context, R.color.dark_grey)
             binding.rootCard.isEnabled = false
+            binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
             freeTrialTimerJob?.cancel()
             binding.couponExpireText.setTextColor(grayColor)
             binding.couponDiscountPercent.setTextColor(grayColor)

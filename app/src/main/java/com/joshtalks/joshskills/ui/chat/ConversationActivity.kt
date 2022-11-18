@@ -2197,15 +2197,15 @@ class ConversationActivity :
         } else if (PrefManager.hasKey(IS_FIRST_TIME_CONVERSATION).not()) {
             PrefManager.put(IS_FIRST_TIME_CONVERSATION, true)
         }
-//        PrefManager.getIntValue(CONVERSATION_SCREEN_VISIT_COUNT, defValue = 0).let {
-//            val count = it.plus(1)
-//            if (count == 2) {
-//                conversationViewModel.scheduleMessage(count)
-//            }
-//            PrefManager.put(CONVERSATION_SCREEN_VISIT_COUNT, count)
-//        }
-//        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT) && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought)
-//            showBottomCouponBanner()
+        PrefManager.getIntValue(CONVERSATION_SCREEN_VISIT_COUNT, defValue = 0).let {
+            val count = it.plus(1)
+            if (count == 2) {
+                conversationViewModel.scheduleMessage(count)
+            }
+            PrefManager.put(CONVERSATION_SCREEN_VISIT_COUNT, count)
+        }
+        if (inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought.not())
+            showBottomCouponBanner()
         if (inboxEntity.isCapsuleCourse) {
             utilConversationViewModel.getProfileData(Mentor.getInstance().getId())
         }
