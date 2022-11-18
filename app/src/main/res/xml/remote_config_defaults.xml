@@ -2104,4 +2104,9 @@
         <key>LESSON_COMPLETE_VOCAB_151</key>
         <value>नए words , उनकी pronunciation , उनको sentence में बोलकर सीखें।</value>
     </entry>
+
+    <entry>
+        <key>IS_MISSED_NOTIFICATION_ACTIVE</key>
+        <value>false</value>
+    </entry>
 </defaults>

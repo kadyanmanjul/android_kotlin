@@ -24,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.IS_MISSED_NOTIFICATION_ACTIVE
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
@@ -839,7 +840,8 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
 
     override suspend fun doWork(): Result {
         try {
-            NotificationAnalytics().fetchMissedNotification(context)
+            if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_MISSED_NOTIFICATION_ACTIVE))
+                NotificationAnalytics().fetchMissedNotification(context)
             if (shouldFetchClientData()) {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
                     PrefManager.getStringValue(
