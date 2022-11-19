@@ -27,6 +27,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
+import com.anupkumarpanwar.scratchview.ScratchView
+import com.anupkumarpanwar.scratchview.ScratchView.IRevealListener
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -71,6 +73,7 @@ import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import timber.log.Timber
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 
@@ -155,6 +158,21 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         } catch (ex: Throwable) {
             LogException.catchException(ex)
         }
+
+        val scratchView = findViewById<ScratchView>(R.id.scratch_view)
+        scratchView.setRevealListener(object : IRevealListener {
+            override fun onRevealed(scratchView: ScratchView) {
+                Timber.tag("SukeshTest").e("Scratch card revealed")
+                scratchView.reveal()
+            }
+
+            override fun onRevealPercentChangedListener(scratchView: ScratchView, percent: Float) {
+                Timber.tag("SukeshTest").e("Reveal Percentage:: onRevealPercentChangedListener: $percent")
+                if (percent >= 0.5) {
+                    scratchView.reveal()
+                }
+            }
+        })
     }
 
     private fun initABTest() {
