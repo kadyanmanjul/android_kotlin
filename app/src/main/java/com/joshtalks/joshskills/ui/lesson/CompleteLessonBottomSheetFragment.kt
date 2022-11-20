@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -13,9 +14,12 @@ import com.joshtalks.joshskills.databinding.CompleteLessonDialogBinding
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
-class CompleteLessonBottomSheetFragment(val viewModel: LessonViewModel) : BottomSheetDialogFragment() {
+class CompleteLessonBottomSheetFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: CompleteLessonDialogBinding
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity())[LessonViewModel::class.java]
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -102,8 +106,8 @@ class CompleteLessonBottomSheetFragment(val viewModel: LessonViewModel) : Bottom
 
     companion object{
         @JvmStatic
-        fun newInstance(viewModel: LessonViewModel):CompleteLessonBottomSheetFragment{
-            val fragment = CompleteLessonBottomSheetFragment(viewModel)
+        fun newInstance():CompleteLessonBottomSheetFragment{
+            val fragment = CompleteLessonBottomSheetFragment()
             fragment.isCancelable = false
             return fragment
         }

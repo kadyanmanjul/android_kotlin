@@ -1522,7 +1522,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
             isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) && isLessonPopUpFeatureOn -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
-                CompleteLessonBottomSheetFragment.newInstance(viewModel)
+                CompleteLessonBottomSheetFragment.newInstance()
                     .show(supportFragmentManager, "LessonCompleteDialog")
             }
             else -> {

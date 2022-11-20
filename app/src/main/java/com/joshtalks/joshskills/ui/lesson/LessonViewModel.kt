@@ -1177,9 +1177,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             if (response.isSuccessful) {
                 response.body()?.let { body ->
                     body.listOfCoupon?.firstOrNull {
-                        it.isMentorSpecificCoupon == true && it.validDuration.time.minus(
-                            System.currentTimeMillis()
-                        ) > 0L
+                        it.isMentorSpecificCoupon == true && (it.validDuration!=null && it.validDuration.time.minus(System.currentTimeMillis()) > 0L)
                     }?.let { coupon ->
                         return coupon
                     }

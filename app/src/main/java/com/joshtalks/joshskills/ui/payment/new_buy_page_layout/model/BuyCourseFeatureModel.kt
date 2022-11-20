@@ -39,7 +39,7 @@ data class CouponListModel(
 data class Coupon(
     @SerializedName("coupon_code") val couponCode: String,
     @SerializedName("amount_percent") val amountPercent: Int,
-    @SerializedName("expire_at") val validDuration: Date,
+    @SerializedName("expire_at") val validDuration: Date ?= null,
     @SerializedName("max_discount_amount") val maxDiscountAmount: Int,
     @SerializedName("is_mentor_coupon") val isMentorSpecificCoupon: Boolean? = null,
     @SerializedName("coupon_description") val couponDesc: String? = null,

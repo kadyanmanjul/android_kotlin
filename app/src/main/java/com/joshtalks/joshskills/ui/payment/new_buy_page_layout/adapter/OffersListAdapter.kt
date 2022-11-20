@@ -59,11 +59,11 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             if (offersList[position].couponDesc != null) {
                 holder.binding.couponExpireText.text = offersList[position].couponDesc
                 holder.binding.couponExpireText.visibility = View.VISIBLE
-                if (offersList[position].validDuration.time < System.currentTimeMillis())
-                    holder.disableCoupon(holder.binding, offersList[position], position)
-                else
-                    holder.enableCoupon(holder.binding, offersList[position], position)
-            } else if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && offersList[position].isMentorSpecificCoupon != null) {
+                holder.enableCoupon(holder.binding, offersList[position], position)
+            } else if (offersList[position].validDuration != null && (offersList[position].validDuration?.time?.minus(
+                    System.currentTimeMillis()
+                ) ?: 0) > 0L && offersList[position].isMentorSpecificCoupon != null
+            ) {
                 holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 holder.binding.btnApply.text = APPLY
                 holder.binding.couponExpireText.visibility = View.VISIBLE
@@ -81,17 +81,18 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 val selectedItem = offersList[holder.bindingAdapterPosition]
                 offersList.remove(selectedItem)
                 offersList.add(0, selectedItem)
-//                notifyItemChanged(0)
-//                notifyItemRemoved(holder.bindingAdapterPosition)
-//                notifyItemInserted(0)
+                notifyItemChanged(0)
+                notifyItemRemoved(holder.bindingAdapterPosition)
+                notifyItemInserted(0)
                 scrollToFirst?.invoke()
             } else {
                 offersList[holder.bindingAdapterPosition].isCouponSelected = 0
-                // notifyItemChanged(holder.bindingAdapterPosition)
+                notifyItemChanged(holder.bindingAdapterPosition)
                 offersList[position]
                     .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
             }
-            notifyDataSetChanged()
+//            Log.e("sagar", "onBindViewHolder: onBindViewHolder", )
+//            notifyDataSetChanged()
         }
     }
 
@@ -106,7 +107,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         }
         try {
             offersList.firstOrNull()?.isCouponSelected = 0
-            //   notifyItemChanged(0)
+            notifyItemChanged(0)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -115,16 +116,17 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             item.isCouponSelected = 1
             offersList.remove(item)
             offersList.add(0, item)
-//            notifyItemRemoved(couponIndex)
-//            notifyItemInserted(0)
+            notifyItemRemoved(couponIndex)
+            notifyItemInserted(0)
             scrollToFirst?.invoke()
         } else {
             coupon.isCouponSelected = 1
             offersList.add(0, coupon)
-            // notifyItemInserted(0)
+            notifyItemInserted(0)
             scrollToFirst?.invoke()
         }
-        notifyDataSetChanged()
+//        Log.e("sagar", "setData: applyCoupon")
+//        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = offersList.size
@@ -144,6 +146,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             offersList.addAll(listToAdd)
         }
         freeTrialTimerJob?.cancel()
+        Log.e("sagar", "setData: addOffersList", )
         notifyDataSetChanged()
     }
 
@@ -157,14 +160,15 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         fun setData(coupon: Coupon?, position: Int) {
             binding.executePendingBindings()
             if (offersList[position].couponDesc != null) {
+                Log.e("sagar", "setData: 1  ${(offersList[position].couponDesc)} ${offersList[position].couponCode} $position" )
+                countdownTimerBack?.cancel()
+                countdownTimerBack = null
                 binding.couponExpireText.visibility = View.VISIBLE
                 binding.couponExpireText.text = offersList[position].couponDesc
-                if (offersList[position].validDuration.time < System.currentTimeMillis())
-                    disableCoupon(binding, offersList[position], position)
-                else
-                    enableCoupon(binding, offersList[position], position)
-            } else if (offersList[position].validDuration.time.minus(System.currentTimeMillis()) > 0L && coupon?.isMentorSpecificCoupon != null) {
-                startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), coupon, position)
+                enableCoupon(binding, offersList[position], position)
+            } else if (offersList[position].validDuration != null && (offersList[position].validDuration?.time?.minus(System.currentTimeMillis()) ?: 0) > 0L && coupon?.isMentorSpecificCoupon != null) {
+                Log.e("sagar", "setData: 2 ${(offersList[position].couponDesc)} ${offersList[position].couponCode} $position")
+                startFreeTrialTimer(coupon.validDuration?.time?.minus(System.currentTimeMillis())?:0, coupon, position)
             } else {
                 changeTextColor(binding, coupon, position)
                 if (coupon?.isMentorSpecificCoupon != null)
@@ -183,6 +187,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                     override fun onTick(millisUntilFinished: Long) {
                         if (countdownTimerBack != null) {
                             AppObjectController.uiHandler.post {
+                                Log.e("sagar", "setData 3: ${binding.couponExpireText.text} $position ${countdownTimerBack.hashCode()}")
                                 if (coupon?.couponDesc != null)
                                     binding.couponExpireText.text = coupon.couponDesc
                                 else if (coupon?.isMentorSpecificCoupon != null) {
@@ -191,6 +196,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                                 } else {
                                     binding.couponExpireText.visibility = View.GONE
                                 }
+                                Log.e("sagar", "setData 32: ${binding.couponExpireText.text} $position")
                             }
                         }
                     }
