@@ -429,4 +429,11 @@
         <attr name="android:shadowDy" />
         <attr name="android:shadowColor" />
     </declare-styleable>
+
+    <declare-styleable name="ScratchView">
+        <attr format="reference" name="overlay_image"/>
+        <attr format="string" name="tile_mode"/>
+        <attr format="dimension" name="overlay_width"/>
+        <attr format="dimension" name="overlay_height"/>
+    </declare-styleable>
 </resources>

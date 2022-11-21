@@ -63,6 +63,7 @@ import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_RECOMMENDED_COURSE
 import com.joshtalks.joshskills.util.FileUploadService
+import com.joshtalks.joshskills.util.scratch.ScratchView
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
@@ -160,7 +161,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         val scratchView = findViewById<ScratchView>(R.id.scratch_view)
-        scratchView.setRevealListener(object : IRevealListener {
+        scratchView.setRevealListener(object : ScratchView.IRevealListener {
             override fun onRevealed(scratchView: ScratchView) {
                 Timber.tag("SukeshTest").e("Scratch card revealed")
                 scratchView.reveal()
