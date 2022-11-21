@@ -1,0 +1,41 @@
+[versions]
+    kotlin-version = "1.7.20"
+    coroutine-version = "1.6.4"
+    lifecycle-version = "2.5.1"
+    lifecycle-extension-version = "2.2.0"
+    room-version = "2.4.3"
+    sqlite-jdbc-version = "3.36.0"
+    camerax-version = "1.1.0"
+
+[libraries]
+    kotlin-lib = {module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" , version.ref = "kotlin-version"}
+
+    coroutine-core = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" , version.ref = "coroutine-version"}
+    coroutine-android = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-android" , version.ref = "coroutine-version"}
+
+    lifecycle-common = {module = "androidx.lifecycle:lifecycle-common-java8" , version.ref = "lifecycle-version"}
+    viewmodel = {module = "androidx.lifecycle:lifecycle-viewmodel-ktx" , version.ref = "lifecycle-version"}
+    lifecycle-runtime = {module = "androidx.lifecycle:lifecycle-runtime-ktx" , version.ref = "lifecycle-version"}
+    lifecycle-service = {module = "androidx.lifecycle:lifecycle-service" , version.ref = "lifecycle-version"}
+    lifecycle-process = {module = "androidx.lifecycle:lifecycle-process" , version.ref = "lifecycle-version"}
+    lifecycle-extension = {module = "androidx.lifecycle:lifecycle-extensions" , version.ref = "lifecycle-extension-version"}
+
+    room-runtime = {module = "androidx.room:room-runtime" , version.ref = "room-version"}
+    room-ktx = {module = "androidx.room:room-ktx" , version.ref = "room-version"}
+    room-rxjava = {module = "androidx.room:room-rxjava2" , version.ref = "room-version"}
+    room-paging = {module = "androidx.room:room-paging" , version.ref = "room-version"}
+    room-compiler = {module = "androidx.room:room-compiler" , version.ref = "room-version"}
+    silicon-room-support = {module = "org.xerial:sqlite-jdbc" , version.ref = "sqlite-jdbc-version"}
+
+    camerax-core = {module = "androidx.camera:camera-core" , version.ref = "camerax-version"}
+    camerax-camera = {module = "androidx.camera:camera-camera2" , version.ref = "camerax-version"}
+    camerax-extension = {module = "androidx.camera:camera-extensions" , version.ref = "camerax-version"}
+    camerax-video = {module = "androidx.camera:camera-video" , version.ref = "camerax-version"}
+    camerax-view = {module = "androidx.camera:camera-view" , version.ref = "camerax-version"}
+    camerax-lifecycle = {module = "androidx.camera:camera-lifecycle" , version.ref = "camerax-version"}
+
+[bundles]
+    coroutine = ["coroutine-core" , "coroutine-android"]
+    lifecycle = ["lifecycle-common", "viewmodel", "lifecycle-runtime", "lifecycle-service", "lifecycle-process", "lifecycle-extension"]
+    room = ["room-runtime", "room-ktx", "room-rxjava", "room-paging"]
+    camerax = ["camerax-core", "camerax-camera", "camerax-extension", "camerax-video", "camerax-view", "camerax-lifecycle"]
