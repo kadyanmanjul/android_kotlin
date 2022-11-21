@@ -35,11 +35,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-<!--                <include-->
-<!--                    android:id="@+id/toolbar_container"-->
-<!--                    layout="@layout/buy_page_layout_toolbar"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content" />-->
+                <include
+                    android:id="@+id/toolbar_container"
+                    layout="@layout/buy_page_layout_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <androidx.core.widget.NestedScrollView
@@ -199,16 +199,16 @@
                             android:visibility="visible"
                             app:cardCornerRadius="@dimen/_8sdp">
 
-<!--                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer-->
-<!--                                android:id="@+id/video_player"-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="@dimen/_154sdp"-->
-<!--                                android:layout_gravity="center"-->
-<!--                                android:background="#000"-->
-<!--                                android:focusable="true"-->
-<!--                                app:controller_layout_id="@layout/layout_live_player_controller"-->
-<!--                                app:layout_constraintDimensionRatio="1.78"-->
-<!--                                tools:visibility="visible" />-->
+                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                                android:id="@+id/video_player"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_154sdp"
+                                android:layout_gravity="center"
+                                android:background="#000"
+                                android:focusable="true"
+                                app:controller_layout_id="@layout/layout_live_player_controller"
+                                app:layout_constraintDimensionRatio="1.78"
+                                tools:visibility="visible" />
                         </com.google.android.material.card.MaterialCardView>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -466,8 +466,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled" />
+                            android:background="@drawable/dotted_line" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -543,7 +542,6 @@
                             android:layout_marginHorizontal="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_29sdp"
                             android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled"
                             android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -570,7 +568,6 @@
                         android:layout_height="@dimen/_25sdp"
                         android:layout_marginHorizontal="@dimen/_10sdp"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:backgroundTint="@color/pure_white"
                         android:elevation="@dimen/_3sdp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
@@ -578,13 +575,12 @@
                         android:text="Call us"
                         android:textAllCaps="false"
                         android:textColor="@color/primary_500"
+                        app:backgroundTint="@color/surface_information"
                         android:textStyle="bold"
                         android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                         app:cornerRadius="@dimen/_15sdp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout"
-                        app:strokeColor="@color/primary_500"
-                        app:strokeWidth="@dimen/_1sdp" />
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -667,23 +663,23 @@
                     app:layout_constraintTop_toTopOf="@id/video_view"
                     app:srcCompat="@drawable/ic_cancel_black" />
 
-<!--                <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer-->
-<!--                    android:id="@+id/video_view"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="0dp"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginHorizontal="@dimen/_24sdp"-->
-<!--                    android:layout_marginVertical="@dimen/_50sdp"-->
-<!--                    android:layout_marginTop="@dimen/_62ssp"-->
-<!--                    android:layout_marginBottom="@dimen/_42ssp"-->
-<!--                    android:background="@color/pure_black"-->
-<!--                    android:focusable="true"-->
-<!--                    app:controller_layout_id="@layout/layout_live_player_controller"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintVertical_bias="1.0"-->
-<!--                    tools:visibility="visible" />-->
+                <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                    android:id="@+id/video_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_24sdp"
+                    android:layout_marginVertical="@dimen/_50sdp"
+                    android:layout_marginTop="@dimen/_62ssp"
+                    android:layout_marginBottom="@dimen/_42ssp"
+                    android:background="@color/pure_black"
+                    android:focusable="true"
+                    app:controller_layout_id="@layout/layout_live_player_controller"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
