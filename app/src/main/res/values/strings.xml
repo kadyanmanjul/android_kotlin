@@ -983,4 +983,5 @@
     <string name="lesson_popup_heading_reading" translatable="false">Reading Practice</string>
     <string name="lesson_popup_heading_vocab" translatable="false">Daily Vocabulary</string>
     <string name="lesson_popup_heading_speaking" translatable="false">Speaking Practice</string>
+    <string name="view_profile">View Profile</string>
 </resources>

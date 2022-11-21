@@ -2,17 +2,25 @@ package com.joshtalks.joshskills.ui.leaderboard
 
 import android.content.Context
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.getRandomName
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
+import com.joshtalks.joshskills.ui.activity_feed.setImage
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -46,8 +54,14 @@ class LeaderBoardItemViewHolder(
     @View(R.id.online_status_iv)
     lateinit var onlineStatusLayout: FrameLayout
 
+    @View(R.id.horizontal_line)
+    lateinit var horizontalLine: LinearLayout
+
     @View(R.id.img_senior_student_badge)
     lateinit var imgSeniorStudentBadge: AppCompatImageView
+
+    @View(R.id.rankBadge)
+    lateinit var rankBadge: ImageView
 
     lateinit var linearLayoutManager: SmoothLinearLayoutManager
 
@@ -55,13 +69,18 @@ class LeaderBoardItemViewHolder(
     fun onViewInflated() {
         if (isHeader) {
             rank.text = "Rank"
+            TextViewCompat.setTextAppearance(rank, R.style.TextAppearance_JoshTypography_CaptionSemiBold)
+            TextViewCompat.setTextAppearance(name, R.style.TextAppearance_JoshTypography_CaptionSemiBold)
+            TextViewCompat.setTextAppearance(points, R.style.TextAppearance_JoshTypography_CaptionSemiBold)
             name.text = "Students"
             points.text = "Points"
             user_pic.visibility = android.view.View.GONE
             container.isClickable = false
             container.isEnabled = false
+            horizontalLine.visible()
             onlineStatusLayout.visibility = android.view.View.GONE
         } else {
+            horizontalLine.gone()
             container.isClickable = true
             container.isEnabled = true
             if (currentUser) {
@@ -72,6 +91,22 @@ class LeaderBoardItemViewHolder(
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     container.setBackgroundColor(context.getColor(R.color.pure_white))
                 }
+            }
+            if (response.ranking == 1) {
+                rankBadge.visible()
+                rank.gone()
+                rankBadge.setImageResource(R.drawable.first)
+            } else if (response.ranking == 2) {
+                rank.gone()
+                rankBadge.visible()
+                rankBadge.setImageResource(R.drawable.two)
+            } else if (response.ranking == 3) {
+                rank.gone()
+                rankBadge.visible()
+                rankBadge.setImageResource(R.drawable.three)
+            } else {
+                rankBadge.gone()
+                rank.visible()
             }
             rank.text = response.ranking.toString()
             val resp = StringBuilder()
