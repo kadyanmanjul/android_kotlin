@@ -382,7 +382,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     }
 
     private fun requestStoragePermission(requestCode: Int) {
-        PermissionUtils.storageReadAndWritePermissionReading(
+        PermissionUtils.storageReadAndWritePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
