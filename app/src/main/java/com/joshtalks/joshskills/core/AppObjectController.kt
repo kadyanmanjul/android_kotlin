@@ -98,7 +98,8 @@ private val IGNORE_UNAUTHORISED = setOf(
     "$DIR/voicecall/agora_call_feedback_submit/",
     "$DIR/voicecall/call_rating/",
     "$DIR/fpp/block/",
-    "$DIR/ab_test/track_conversion/"
+    "$DIR/ab_test/track_conversion/",
+    "$DIR/impression/tcflow_track_impressions/"
 )
 
 class AppObjectController {
