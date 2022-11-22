@@ -79,6 +79,7 @@ import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
+import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFullScreenFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment

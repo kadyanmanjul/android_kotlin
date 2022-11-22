@@ -27,7 +27,7 @@ import com.joshtalks.joshskills.R;
 
 public class ScratchView extends View {
 
-    public static final float STROKE_WIDTH = 12f;
+    public static final float STROKE_WIDTH = 14f;
     private static final float TOUCH_TOLERANCE = 4;
 
     Bitmap scratchBitmap;

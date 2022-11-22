@@ -97,7 +97,7 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GRO
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
+import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT

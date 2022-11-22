@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.lesson
+package com.joshtalks.joshskills.ui.lesson.popup
 
 import android.content.res.Resources
 import android.graphics.Color
@@ -173,7 +173,7 @@ class PurchaseDialog : BaseDialogFragment() {
         }
     }
 
-    fun savePopupImpression(eventName: String) {
+    private fun savePopupImpression(eventName: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 AppObjectController.commonNetworkService.savePopupImpression(

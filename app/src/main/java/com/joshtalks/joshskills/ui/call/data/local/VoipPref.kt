@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
-import com.joshtalks.joshskills.ui.lesson.PurchaseDialog
+import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -30,6 +29,7 @@ import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.*
+import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.ui.online_test.util.TestCompletedListener
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils

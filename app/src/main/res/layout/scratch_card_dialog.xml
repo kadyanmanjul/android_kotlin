@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.joshtalks.joshskills.ui.lesson.popup.ScratchCardDialog">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/card_confetti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:elevation="@dimen/_5sdp"
+            android:visibility="invisible"
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="lottie/confetti.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="false" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_250sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            app:cardCornerRadius="@dimen/_16sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_90sdp"
+                    android:src="@drawable/ic_call_with_time" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextAppearance.JoshTypography.HeadingBold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:gravity="center"
+                    android:text="Better luck next time" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextAppearance.JoshTypography.BodySemiBold16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Talk longer and get a chance to win exciting offers"
+                    android:textColor="@color/text_subdued" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_15sdp"
+                    android:text="GOT IT"
+                    android:textColor="@color/primary_500" />
+            </LinearLayout>
+
+            <com.joshtalks.joshskills.util.scratch.ScratchView
+                android:id="@+id/scratch_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:visibility="invisible" />
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+</layout>
