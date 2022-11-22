@@ -188,21 +188,21 @@ class InboxAdapter(
                         countdownTimerBack?.stop()
                     } else {
                         if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                            openCourseListener.onStopTrialTimer()
+                            openCourseListener.onStopTrialTimer() // correct
                             tvLastMessage.visibility = View.VISIBLE
                         }else{
                             startTimer(inboxEntity.expiryDate.time - System.currentTimeMillis())
                         }
                     }
                 } else {
-                    openCourseListener.onStopTrialTimer()
+                    openCourseListener.onStopTrialTimer() // correct
                     tvLastMessage.visibility = View.VISIBLE
                 }
             }
         }
 
         private fun startTimer(startTimeInMilliSeconds: Long) {
-            openCourseListener.onStopTrialTimer()
+//            openCourseListener.onStopTrialTimer()
             countdownTimerBack?.stop()
             countdownTimerBack = null
             countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {

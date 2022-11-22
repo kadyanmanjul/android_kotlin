@@ -53,118 +53,128 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_begin="@dimen/_16sdp" />
 
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/trialEndingLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:visibility="visible"
-                app:constraint_referenced_ids="freeTrialBg, freeTrialEndsIn, trialTimerDivider"/>
-
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/timerGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:visibility="visible"
-                app:constraint_referenced_ids="endingHour, hourSemicolon, endingMinutes, minutesSemicolon, endingSeconds, "/>
-
-            <View
-                android:id="@+id/freeTrialBg"
+            <com.joshtalks.joshskills.util.FreeTrialTimerView
+                android:id="@+id/trialTimerView"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
-                android:background="@drawable/free_trial_bg"
-                android:backgroundTint="@color/warning"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@+id/guidelineStart"
                 app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
 
-            <TextView
-                android:id="@+id/freeTrialEndsIn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/free_trial_ends_in"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
-                app:layout_constraintBottom_toBottomOf="@+id/freeTrialBg"
-                app:layout_constraintEnd_toStartOf="@+id/endingHour"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="@id/freeTrialBg"
-                app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
+<!--            <androidx.constraintlayout.widget.Group-->
+<!--                android:id="@+id/trialEndingLayout"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:visibility="gone"-->
+<!--                tools:visibility="visible"-->
+<!--                app:constraint_referenced_ids="freeTrialBg, freeTrialEndsIn, trialTimerDivider"/>-->
 
-            <TextView
-                android:id="@+id/endingHour"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:background="@drawable/free_trial_bg"
-                android:backgroundTint="@color/pure_white_0_2"
-                android:includeFontPadding="false"
-                android:padding="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
-                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"
-                app:layout_constraintEnd_toStartOf="@+id/hourSemicolon"
-                app:layout_constraintStart_toEndOf="@+id/freeTrialEndsIn"
-                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn"
-                tools:text="23" />
+<!--            <androidx.constraintlayout.widget.Group-->
+<!--                android:id="@+id/timerGroup"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:visibility="gone"-->
+<!--                tools:visibility="visible"-->
+<!--                app:constraint_referenced_ids="endingHour, hourSemicolon, endingMinutes, minutesSemicolon, endingSeconds, "/>-->
 
-            <TextView
-                android:id="@+id/hourSemicolon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:includeFontPadding="false"
-                android:text="@string/semicolon"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
-                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"
-                app:layout_constraintEnd_toStartOf="@+id/endingMinutes"
-                app:layout_constraintStart_toEndOf="@+id/endingHour"
-                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn" />
+<!--            <View-->
+<!--                android:id="@+id/freeTrialBg"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="@dimen/_40sdp"-->
+<!--                android:background="@drawable/free_trial_bg"-->
+<!--                android:backgroundTint="@color/warning"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/guidelineStart"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/guidelineTop" />-->
 
-            <TextView
-                android:id="@+id/endingMinutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:background="@drawable/free_trial_bg"
-                android:backgroundTint="@color/pure_white_0_2"
-                android:includeFontPadding="false"
-                android:padding="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
-                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"
-                app:layout_constraintEnd_toStartOf="@+id/minutesSemicolon"
-                app:layout_constraintStart_toEndOf="@+id/hourSemicolon"
-                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn"
-                tools:text="58" />
+<!--            <TextView-->
+<!--                android:id="@+id/freeTrialEndsIn"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/free_trial_ends_in"-->
+<!--                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/freeTrialBg"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/endingHour"-->
+<!--                app:layout_constraintHorizontal_chainStyle="packed"-->
+<!--                app:layout_constraintStart_toStartOf="@id/freeTrialBg"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/guidelineTop" />-->
 
-            <TextView
-                android:id="@+id/minutesSemicolon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:includeFontPadding="false"
-                android:text="@string/semicolon"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
-                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"
-                app:layout_constraintEnd_toStartOf="@+id/endingSeconds"
-                app:layout_constraintStart_toEndOf="@+id/endingMinutes"
-                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn" />
+<!--            <TextView-->
+<!--                android:id="@+id/endingHour"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="@dimen/_10sdp"-->
+<!--                android:background="@drawable/free_trial_bg"-->
+<!--                android:backgroundTint="@color/pure_white_0_2"-->
+<!--                android:includeFontPadding="false"-->
+<!--                android:padding="@dimen/_4sdp"-->
+<!--                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/hourSemicolon"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/freeTrialEndsIn"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn"-->
+<!--                tools:text="23" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/hourSemicolon"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="@dimen/_4sdp"-->
+<!--                android:includeFontPadding="false"-->
+<!--                android:text="@string/semicolon"-->
+<!--                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/endingMinutes"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/endingHour"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/endingMinutes"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="@dimen/_4sdp"-->
+<!--                android:background="@drawable/free_trial_bg"-->
+<!--                android:backgroundTint="@color/pure_white_0_2"-->
+<!--                android:includeFontPadding="false"-->
+<!--                android:padding="@dimen/_4sdp"-->
+<!--                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/minutesSemicolon"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/hourSemicolon"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn"-->
+<!--                tools:text="58" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/minutesSemicolon"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="@dimen/_4sdp"-->
+<!--                android:includeFontPadding="false"-->
+<!--                android:text="@string/semicolon"-->
+<!--                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/endingSeconds"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/endingMinutes"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn" />-->
 
 
-            <TextView
-                android:id="@+id/endingSeconds"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:background="@drawable/free_trial_bg"
-                android:backgroundTint="@color/pure_white_0_2"
-                android:includeFontPadding="false"
-                android:padding="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
-                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"
-                app:layout_constraintEnd_toEndOf="@+id/freeTrialBg"
-                app:layout_constraintStart_toEndOf="@+id/minutesSemicolon"
-                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn"
-                tools:text="58" />
+<!--            <TextView-->
+<!--                android:id="@+id/endingSeconds"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="@dimen/_4sdp"-->
+<!--                android:background="@drawable/free_trial_bg"-->
+<!--                android:backgroundTint="@color/pure_white_0_2"-->
+<!--                android:includeFontPadding="false"-->
+<!--                android:padding="@dimen/_4sdp"-->
+<!--                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/freeTrialEndsIn"-->
+<!--                app:layout_constraintEnd_toEndOf="@+id/freeTrialBg"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/minutesSemicolon"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/freeTrialEndsIn"-->
+<!--                tools:text="58" />-->
 
             <View
                 android:id="@+id/trialTimerDivider"
@@ -172,7 +182,7 @@
                 android:layout_marginTop="@dimen/_12sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/freeTrialBg" />
+                app:layout_constraintTop_toBottomOf="@+id/trialTimerView" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_inbox"

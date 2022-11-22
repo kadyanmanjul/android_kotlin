@@ -696,22 +696,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onStartTrialTimer(startTimeInMilliSeconds: Long) {
-        trialEndingLayout.visible()
-        timerGroup.visible()
-        endingHour.text = UtilTime.getRemainingHours(startTimeInMilliSeconds)
-        endingMinutes.text = UtilTime.getRemainingMinutes(startTimeInMilliSeconds)
-        endingSeconds.text = UtilTime.getRemainingSeconds(startTimeInMilliSeconds)
+        trialTimerView.visible()
+        trialTimerView.startTimer(startTimeInMilliSeconds)
     }
 
     override fun onStopTrialTimer() {
-        trialEndingLayout.gone()
-        timerGroup.gone()
+        trialTimerView.removeTimer()
     }
 
     override fun onFreeTrialEnded() {
-        trialEndingLayout.visible()
-        freeTrialEndsIn.text = getString(R.string.free_trial_ended)
-        timerGroup.gone()
+        trialTimerView.visible()
+        trialTimerView.endFreeTrial()
 
     }
 
