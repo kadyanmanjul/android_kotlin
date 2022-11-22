@@ -27,7 +27,7 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
 
     override fun onBindViewHolder(holder: CouponViewHolder, position: Int) {
         holder.setData(offersList?.get(position), position)
-        if ((offersList?.get(position)?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0) < 0L) {
+        if ((offersList?.get(position)?.validDuration!=null && (offersList?.get(position)?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0) < 0L)) {
             holder.changeTextColors(holder.binding, offersList?.get(position), position)
         }
     }
@@ -48,11 +48,15 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
         var countdownTimerBack: CountDownTimer? = null
 
         fun setData(members: Coupon?, position: Int) {
-            if (members?.couponDesc != null)
+            if (members?.couponDesc != null) {
+                if (members.validDuration?.time == null) {
+                   changeTextColors(binding, members, position)
+                }
                 binding.txtCouponExpireTime.text = members.couponDesc
-            else if (members?.validDuration?.time?.minus(System.currentTimeMillis())!! > 0L)
+            }
+            else if (members?.validDuration?.time != null && members.validDuration.time.minus(System.currentTimeMillis()) > 0L)
                 startFreeTrialTimer(
-                    members?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0,
+                    members.validDuration.time.minus(System.currentTimeMillis()) ?: 0,
                     members,
                     position
                 )

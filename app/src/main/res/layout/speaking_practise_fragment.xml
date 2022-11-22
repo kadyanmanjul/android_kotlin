@@ -547,6 +547,7 @@
                         android:layout_marginHorizontal="@dimen/_24sdp"
                         android:insetBottom="0dp"
                         android:text="@string/continue_label"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"

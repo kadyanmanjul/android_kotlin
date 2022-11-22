@@ -1208,15 +1208,20 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     }
 
     private fun initBottomMargin() {
-        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
-            binding.linearLayout.addView(
-                View(requireContext()).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+                    binding.linearLayout.addView(
+                        View(requireContext()).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                (requireActivity() as LessonActivity).getBottomBannerHeight()
+                            )
+                        }
                     )
                 }
-            )
+            }
         }
     }
 

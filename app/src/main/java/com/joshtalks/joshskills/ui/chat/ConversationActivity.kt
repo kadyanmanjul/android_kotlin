@@ -2205,10 +2205,31 @@ class ConversationActivity :
         }
         if (inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought.not())
             showBottomCouponBanner()
+        else
+            conversationBinding.buyCourseBanner.visibility = GONE
         if (inboxEntity.isCapsuleCourse) {
             utilConversationViewModel.getProfileData(Mentor.getInstance().getId())
         }
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                initBottomMargin()
+            }
+        }
     }
+
+    private fun initBottomMargin() {
+        val height = getBottomBannerHeight()
+        if ( height >= 0) {
+            conversationBinding.chatRv.setPadding(0, 0, 0, height)
+            conversationBinding.chatRv.requestLayout()
+        }
+    }
+
+    fun getBottomBannerHeight(): Int {
+            return if (conversationBinding.buyCourseBanner.isVisible) conversationBinding.buyCourseBanner.height else 0
+    }
+
 
     override fun onPause() {
         super.onPause()

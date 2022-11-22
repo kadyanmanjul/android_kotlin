@@ -279,7 +279,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 count?.let {
                     val lessonCompletionCount =
                         AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT).toInt()
-                    (count == lessonCompletionCount).let {
+                    (count >= lessonCompletionCount).let {
                         with(binding) {
                             buyCourseBannerTv.text = (if (it)
                                 AppObjectController.getFirebaseRemoteConfig()

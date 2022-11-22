@@ -804,8 +804,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun speakingSectionComplete() {
         binding.btnContinue.visibility = VISIBLE
-//        binding.btnStart.pauseAnimation()
-//        binding.btnContinue.playAnimation()
         lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.AT,
             questionId
@@ -994,15 +992,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun initBottomMargin() {
-        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
-            binding.linearLayout.addView(
-                View(requireContext()).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+                    binding.linearLayout.addView(
+                        View(requireContext()).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                (requireActivity() as LessonActivity).getBottomBannerHeight()
+                            )
+                        }
                     )
                 }
-            )
+            }
         }
     }
 

@@ -155,580 +155,580 @@
                         tools:visibility="visible" />
                 </RelativeLayout>
 
-            </com.google.android.material.appbar.MaterialToolbar>
-        </LinearLayout>
+                </com.google.android.material.appbar.MaterialToolbar>
+            </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/free_trial_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar_container"
-            android:background="#FFFBB9"
-            android:elevation="@dimen/_1sdp"
-            android:fillAfter="false"
-            android:visibility="gone"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/free_trial_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_4sdp"
-                android:layout_marginStart="@dimen/_25sdp"
-                android:ellipsize="end"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
-                android:textColor="@color/critical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/buy_btn"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/free_trial_end_in" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/buy_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_4sdp"
-                android:layout_marginStart="@dimen/_25sdp"
-                android:layout_marginEnd="@dimen/_25sdp"
-                android:background="@drawable/rounded_rectangle_attach_2px"
-                android:backgroundTint="@color/accent_600"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:gravity="center"
-                android:onClick="@{handler::moveToPaymentActivity}"
-                android:paddingHorizontal="@dimen/_8sdp"
-                android:paddingVertical="@dimen/_5sdp"
-                android:text="@string/upgrade_now"
-                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
-                android:textColor="@color/text_default"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/user_point_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/free_trial_container"
-            android:layout_marginHorizontal="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@drawable/rounded_rectangle_with_border"
-            android:backgroundTint="@color/pure_white"
-            android:elevation="@dimen/_3sdp"
-            android:fillAfter="false"
-            android:visibility="gone"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/points"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_2sdp"
-                android:elevation="@dimen/_8sdp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:gravity="center"
-                android:text="0 Points"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
-                android:textColor="@color/text_default"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.38" />
-
-            <View
-                android:layout_width="@dimen/_2sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:background="#EAE7E7"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/leaderboard_txt"
-                app:layout_constraintStart_toEndOf="@id/points"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/leaderboard_txt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_2sdp"
-                android:elevation="@dimen/_8sdp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:gravity="center"
-                android:text="@string/leaderboard"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
-                android:textColor="@color/text_default"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
-                app:layout_constraintHorizontal_bias="0.98"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.45" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/leaderboard_btn_Close"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:padding="@dimen/_2sdp"
-                android:tint="@color/disabled"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_cross" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgGroupChatBtn"
-            android:layout_width="@dimen/_50sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_below="@+id/user_point_container"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:elevation="@dimen/_8sdp"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:padding="@dimen/_4sdp"
-            android:visibility="gone"
-            app:srcCompat="@drawable/ic_groups_new_logo"
-            tools:visibility="visible" />
-
-        <RelativeLayout
-            android:id="@+id/ringing_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/user_point_container"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="@dimen/_11sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/well_btn_background"
-            android:elevation="@dimen/_12sdp"
-            android:visibility="gone"
-            app:cardElevation="@dimen/_12sdp">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:padding="@dimen/_2sdp"
-                app:lottie_autoPlay="true"
-                app:lottie_fileName="lottie/ringing_bell.json"
-                app:lottie_imageAssetsFolder="lottie"
-                app:lottie_loop="true" />
-        </RelativeLayout>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgFppBtn"
-            android:layout_width="@dimen/_50sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_below="@+id/imgGroupChatBtn"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_7sdp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:elevation="@dimen/_8sdp"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:padding="@dimen/_4sdp"
-            android:visibility="gone"
-            app:srcCompat="@drawable/ic_fpp_main_logo"
-            tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/fpp_request_count_number"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_15sdp"
-            android:layout_below="@+id/imgGroupChatBtn"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@drawable/bg_quick_view_number"
-            android:elevation="@dimen/_15sdp"
-            android:gravity="center"
-            android:text="@string/zero"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/pure_white"
-            android:visibility="gone"
-            tools:text="39"
-            tools:visibility="visible" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/bottom_bar"
-            android:layout_below="@+id/user_point_container">
-
-            <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
-                android:id="@+id/refresh_layout"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/free_trial_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:srl_direction="bottom">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/chatRv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/_6sdp"
-                    tools:itemCount="1"
-                    tools:listitem="@layout/lesson_progress_stub" />
-            </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
-
-            <FrameLayout
-                android:id="@+id/lesson_tooltip_layout"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_30sdp"
-                android:layout_marginTop="@dimen/_368sdp"
-                android:background="@drawable/bg_tooltip_small_center"
+                android:layout_below="@id/toolbar_container"
+                android:background="#FFFBB9"
+                android:elevation="@dimen/_1sdp"
+                android:fillAfter="false"
                 android:visibility="gone"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/free_trial_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:layout_marginStart="@dimen/_25sdp"
+                    android:ellipsize="end"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                    android:textColor="@color/critical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/buy_btn"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/free_trial_end_in" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/buy_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_12sdp"
-                    android:paddingTop="@dimen/_18sdp"
-                    android:paddingBottom="@dimen/_8sdp"
-                    android:text="@string/we_will_get_new_lesson_here_everyday"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:layout_marginStart="@dimen/_25sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:background="@drawable/rounded_rectangle_attach_2px"
+                    android:backgroundTint="@color/accent_600"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::moveToPaymentActivity}"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:text="@string/upgrade_now"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                     android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/user_point_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/free_trial_container"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/rounded_rectangle_with_border"
+                android:backgroundTint="@color/pure_white"
+                android:elevation="@dimen/_3sdp"
+                android:fillAfter="false"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/points"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_2sdp"
+                    android:elevation="@dimen/_8sdp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="0 Points"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
+                    android:textColor="@color/text_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.38" />
+
+                <View
+                    android:layout_width="@dimen/_2sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:background="#EAE7E7"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/leaderboard_txt"
+                    app:layout_constraintStart_toEndOf="@id/points"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/leaderboard_txt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_2sdp"
+                    android:elevation="@dimen/_8sdp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="@string/leaderboard"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
+                    android:textColor="@color/text_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
+                    app:layout_constraintHorizontal_bias="0.98"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.45" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/leaderboard_btn_Close"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:padding="@dimen/_2sdp"
+                    android:tint="@color/disabled"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_cross" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgGroupChatBtn"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_below="@+id/user_point_container"
+                android:layout_alignParentEnd="true"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:elevation="@dimen/_8sdp"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:padding="@dimen/_4sdp"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_groups_new_logo"
+                tools:visibility="visible" />
+
+            <RelativeLayout
+                android:id="@+id/ringing_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_point_container"
+                android:layout_alignParentEnd="true"
+                android:layout_marginHorizontal="@dimen/_11sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/well_btn_background"
+                android:elevation="@dimen/_12sdp"
+                android:visibility="gone"
+                app:cardElevation="@dimen/_12sdp">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:padding="@dimen/_2sdp"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="lottie/ringing_bell.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="true" />
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgFppBtn"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_below="@+id/imgGroupChatBtn"
+                android:layout_alignParentEnd="true"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_7sdp"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:elevation="@dimen/_8sdp"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:padding="@dimen/_4sdp"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_fpp_main_logo"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fpp_request_count_number"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_below="@+id/imgGroupChatBtn"
+                android:layout_alignParentEnd="true"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/bg_quick_view_number"
+                android:elevation="@dimen/_15sdp"
+                android:gravity="center"
+                android:text="@string/zero"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                android:textColor="@color/pure_white"
+                android:visibility="gone"
+                tools:text="39"
+                tools:visibility="visible" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/bottom_bar"
+                android:layout_below="@+id/user_point_container">
+
+                <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
+                    android:id="@+id/refresh_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:srl_direction="bottom">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/chatRv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/_6sdp"
+                        tools:itemCount="1"
+                        tools:listitem="@layout/lesson_progress_stub" />
+                </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
+
+                <FrameLayout
+                    android:id="@+id/lesson_tooltip_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_30sdp"
+                    android:layout_marginTop="@dimen/_368sdp"
+                    android:background="@drawable/bg_tooltip_small_center"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/_12sdp"
+                        android:paddingTop="@dimen/_18sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:text="@string/we_will_get_new_lesson_here_everyday"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                        android:textColor="@color/text_default"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </FrameLayout>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/scroll_to_end_button"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:adjustViewBounds="true"
+                    android:padding="@dimen/_4sdp"
+                    android:scaleType="centerInside"
+                    android:visibility="gone"
+                    app:elevation="@dimen/_4sdp"
+                    app:srcCompat="@drawable/ic_arrow_down"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgGroupChat"
+                    android:layout_width="@dimen/_28sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginVertical="@dimen/_12sdp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/white_button_round_enabled"
+                    android:backgroundTint="@color/primary_500"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:padding="@dimen/_4sdp"
+                    android:visibility="gone"
+                    app:elevation="@dimen/_4sdp"
+                    app:srcCompat="@drawable/ic_groupchat"
+                    tools:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtUnreadCount"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:layout_marginVertical="@dimen/_6sdp"
+                    android:background="@drawable/round_circle_with_border"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="@color/pure_white"
+                    android:textSize="@dimen/_6ssp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:text="99+"
+                    tools:visibility="gone" />
 
             </FrameLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/scroll_to_end_button"
-                android:layout_width="@dimen/_32sdp"
-                android:layout_height="@dimen/_32sdp"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:adjustViewBounds="true"
-                android:padding="@dimen/_4sdp"
-                android:scaleType="centerInside"
-                android:visibility="gone"
-                app:elevation="@dimen/_4sdp"
-                app:srcCompat="@drawable/ic_arrow_down"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgGroupChat"
-                android:layout_width="@dimen/_28sdp"
-                android:layout_height="@dimen/_28sdp"
-                android:layout_gravity="top|end"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginVertical="@dimen/_12sdp"
-                android:adjustViewBounds="true"
-                android:background="@drawable/white_button_round_enabled"
-                android:backgroundTint="@color/primary_500"
+            <include
+                android:id="@+id/attachment_container"
+                layout="@layout/attachment_bottom_view"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_above="@+id/bottom_bar"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:gravity="center"
-                android:padding="@dimen/_4sdp"
+                android:focusableInTouchMode="true"
                 android:visibility="gone"
-                app:elevation="@dimen/_4sdp"
-                app:srcCompat="@drawable/ic_groupchat"
                 tools:visibility="gone" />
 
-            <TextView
-                android:id="@+id/txtUnreadCount"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
-                android:layout_gravity="top|end"
-                android:layout_marginHorizontal="@dimen/_5sdp"
-                android:layout_marginVertical="@dimen/_6sdp"
-                android:background="@drawable/round_circle_with_border"
-                android:gravity="center"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:textColor="@color/pure_white"
-                android:textSize="@dimen/_6ssp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                tools:text="99+"
-                tools:visibility="gone" />
-
-        </FrameLayout>
-
-        <include
-            android:id="@+id/attachment_container"
-            layout="@layout/attachment_bottom_view"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_above="@+id/bottom_bar"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:visibility="gone"
-            tools:visibility="gone" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/bottom_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/transparent"
-            android:visibility="visible">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_restart_course"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bottom_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_20sdp"
-                android:backgroundTint="@color/primary_500"
-                android:elevation="@dimen/_4sdp"
-                android:onClick="@{()->handler.restartCourse(true)}"
-                android:padding="@dimen/_8sdp"
-                android:text="@string/restart_course"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/pure_white"
-                android:visibility="gone"
-                app:cornerRadius="@dimen/_32sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.8" />
+                android:layout_alignParentBottom="true"
+                android:background="@color/transparent"
+                android:visibility="visible">
 
-            <LinearLayout
-                android:id="@+id/inputLL"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_5sdp"
-                android:background="@drawable/rect_round"
-                android:orientation="vertical"
-                android:paddingStart="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/record_button"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <com.mindorks.placeholderview.PlaceHolderView
-                    android:id="@+id/user_replay_suggestion_rv"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_restart_course"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollbars="vertical"
-                    android:visibility="gone" />
+                    android:layout_marginHorizontal="@dimen/_20sdp"
+                    android:backgroundTint="@color/primary_500"
+                    android:elevation="@dimen/_4sdp"
+                    android:onClick="@{()->handler.restartCourse(true)}"
+                    android:padding="@dimen/_8sdp"
+                    android:text="@string/restart_course"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textColor="@color/pure_white"
+                    android:visibility="gone"
+                    app:cornerRadius="@dimen/_32sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.8" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/inputLL"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_8sdp">
+                    android:layout_margin="@dimen/_5sdp"
+                    android:background="@drawable/rect_round"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/record_button"
+                    app:layout_constraintStart_toStartOf="parent">
 
-
-                    <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/chat_edit"
-                        android:layout_width="0dp"
+                    <com.mindorks.placeholderview.PlaceHolderView
+                        android:id="@+id/user_replay_suggestion_rv"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:backgroundTint="@android:color/transparent"
-                        android:clickable="true"
-                        android:cursorVisible="true"
-                        android:focusable="true"
-                        android:hint="@string/type_message_hint"
-                        android:imeOptions="actionSend"
-                        android:inputType="textCapSentences|textMultiLine"
-                        android:maxLines="3"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                        android:textColor="@color/text_default"
-                        android:textColorHint="@color/dark_grey"
-                        android:textCursorDrawable="@color/primary_500"
-                        tools:targetApi="o" />
+                        android:scrollbars="vertical"
+                        android:visibility="gone" />
 
-                    <FrameLayout
-                        android:id="@+id/fl_attachment"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:onClick="@{()->handler.addAttachmentUIUpdate()}"
-                        android:paddingLeft="@dimen/_10sdp"
-                        android:paddingTop="@dimen/_10sdp"
-                        android:paddingRight="@dimen/_10sdp"
-                        android:paddingBottom="@dimen/_10sdp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:paddingHorizontal="@dimen/_8sdp">
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/attachment_view"
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/chat_edit"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:clickable="true"
+                            android:cursorVisible="true"
+                            android:focusable="true"
+                            android:hint="@string/type_message_hint"
+                            android:imeOptions="actionSend"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:maxLines="3"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                            android:textColor="@color/text_default"
+                            android:textColorHint="@color/dark_grey"
+                            android:textCursorDrawable="@color/primary_500"
+                            tools:targetApi="o" />
+
+                        <FrameLayout
+                            android:id="@+id/fl_attachment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:scaleType="centerInside"
-                            app:srcCompat="@drawable/ic_attachment" />
-                    </FrameLayout>
+                            android:onClick="@{()->handler.addAttachmentUIUpdate()}"
+                            android:paddingLeft="@dimen/_10sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            android:paddingRight="@dimen/_10sdp"
+                            android:paddingBottom="@dimen/_10sdp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
 
-                    <com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout
-                        android:id="@+id/quick_toggle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:onClick="@{()->handler.uploadImageByCameraOrGallery()}"
-                        android:paddingStart="@dimen/_5sdp"
-                        android:paddingTop="@dimen/_10sdp"
-                        android:paddingBottom="@dimen/_10sdp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/attachment_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                app:srcCompat="@drawable/ic_attachment" />
+                        </FrameLayout>
 
-                        <androidx.appcompat.widget.AppCompatImageView
+                        <com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout
+                            android:id="@+id/quick_toggle"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:scaleType="centerInside"
-                            app:srcCompat="@drawable/ic_camera_message" />
+                            android:layout_height="match_parent"
+                            android:clipChildren="false"
+                            android:clipToPadding="false"
+                            android:onClick="@{()->handler.uploadImageByCameraOrGallery()}"
+                            android:paddingStart="@dimen/_5sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            android:paddingBottom="@dimen/_10sdp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
 
-                    </com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout>
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                app:srcCompat="@drawable/ic_camera_message" />
+
+                        </com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-            </LinearLayout>
+                <com.joshtalks.recordview.RecordView
+                    android:id="@+id/record_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:background="@drawable/rect_round"
+                    android:visibility="gone"
+                    app:counter_time_color="@color/critical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/record_button"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+                    app:slide_to_cancel_arrow_color="@color/pure_black"
+                    app:slide_to_cancel_bounds="10dp"
+                    app:slide_to_cancel_margin_right="10dp"
+                    app:slide_to_cancel_text="@string/slide_to_cancel" />
 
-            <com.joshtalks.recordview.RecordView
-                android:id="@+id/record_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_5sdp"
-                android:background="@drawable/rect_round"
+                <com.joshtalks.recordview.CustomImageButton
+                    android:id="@+id/record_button"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:background="@drawable/recv_bg_mic"
+                    android:backgroundTint="@color/primary_500"
+                    android:scaleType="centerInside"
+                    android:textColor="@color/pure_white"
+                    android:visibility="visible"
+                    app:image_first="@drawable/recv_ic_mic_white"
+                    app:image_second="@drawable/ic_send"
+                    app:layout_constraintBottom_toBottomOf="@+id/inputLL"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/inputLL"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/message_button"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:background="@drawable/recv_bg_mic"
+                    android:backgroundTint="@color/primary_500"
+                    android:padding="@dimen/_8sdp"
+                    android:scaleType="centerInside"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@+id/inputLL"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/inputLL"
+                    app:layout_constraintVertical_bias="1.0"
+                    app:srcCompat="@drawable/ic_send" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <FrameLayout
+                android:id="@+id/freeTrialExpiryLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/black_gradient"
                 android:visibility="gone"
-                app:counter_time_color="@color/critical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/record_button"
-                app:layout_constraintStart_toStartOf="parent"
-                app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
-                app:slide_to_cancel_arrow_color="@color/pure_black"
-                app:slide_to_cancel_bounds="10dp"
-                app:slide_to_cancel_margin_right="10dp"
-                app:slide_to_cancel_text="@string/slide_to_cancel" />
+                tools:visibility="visible">
 
-            <com.joshtalks.recordview.CustomImageButton
-                android:id="@+id/record_button"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/recv_bg_mic"
-                android:backgroundTint="@color/primary_500"
-                android:scaleType="centerInside"
-                android:textColor="@color/pure_white"
-                android:visibility="visible"
-                app:image_first="@drawable/recv_ic_mic_white"
-                app:image_second="@drawable/ic_send"
-                app:layout_constraintBottom_toBottomOf="@+id/inputLL"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/inputLL"
-                app:layout_constraintVertical_bias="1.0" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom"
+                    android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/message_button"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/recv_bg_mic"
-                android:backgroundTint="@color/primary_500"
-                android:padding="@dimen/_8sdp"
-                android:scaleType="centerInside"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/inputLL"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/inputLL"
-                app:layout_constraintVertical_bias="1.0"
-                app:srcCompat="@drawable/ic_send" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:gravity="center"
+                        android:text="@string/your_free_trial_has_ended"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                        android:textColor="@color/pure_white" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/materialTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginVertical="@dimen/_5sdp"
+                        android:background="@drawable/bg_cta_button"
+                        android:gravity="center"
+                        android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
+                        android:padding="@dimen/_10sdp"
+                        android:text="Upgrade Now"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                        android:textColor="@color/text_default" />
+                </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/freeTrialExpiryLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/black_gradient"
-            android:visibility="gone"
-            tools:visibility="visible">
+            </FrameLayout>
 
-            <LinearLayout
+            <FrameLayout
+                android:id="@+id/overlay_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                android:gravity="bottom"
-                android:orientation="vertical">
+                android:alpha="1"
+                android:background="@color/surface_overlay"
+                android:clickable="true"
+                android:elevation="@dimen/_4sdp"
+                android:focusable="true"
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/label_tap_to_dismiss"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_10sdp"
-                    android:gravity="center"
-                    android:text="@string/your_free_trial_has_ended"
+                    android:layout_gravity="bottom|center"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginVertical="@dimen/_60sdp"
+                    android:elevation="@dimen/_8sdp"
+                    android:shadowColor="#BD6674"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="10"
+                    android:text="@string/tap_anywhere_to_continue"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                     android:textColor="@color/pure_white" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/materialTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center"
-                    android:layout_marginHorizontal="@dimen/_10sdp"
-                    android:layout_marginVertical="@dimen/_5sdp"
-                    android:background="@drawable/bg_cta_button"
-                    android:gravity="center"
-                    android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
-                    android:padding="@dimen/_10sdp"
-                    android:text="Upgrade Now"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                    android:textColor="@color/text_default" />
-            </LinearLayout>
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/overlay_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="1"
-            android:background="@color/surface_overlay"
-            android:clickable="true"
-            android:elevation="@dimen/_4sdp"
-            android:focusable="true"
-            android:visibility="gone"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/label_tap_to_dismiss"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginVertical="@dimen/_60sdp"
-                android:elevation="@dimen/_8sdp"
-                android:shadowColor="#BD6674"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="10"
-                android:text="@string/tap_anywhere_to_continue"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/pure_white" />
-
-        </FrameLayout>
+            </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -754,136 +754,136 @@
 
         </FrameLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/overlay_leaderboard_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar_container"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@drawable/rounded_rectangle_with_border"
-            android:backgroundTint="@color/pure_white"
-            android:elevation="@dimen/_5sdp"
-            android:fillAfter="false"
-            android:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/leaderboard_txt2"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/overlay_leaderboard_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_32sdp"
-                android:layout_marginVertical="@dimen/_2sdp"
-                android:elevation="@dimen/_8sdp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:gravity="center"
-                android:text="@string/leaderboard"
-                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
-                android:textColor="@color/text_default"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.5" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
-            android:id="@+id/overlay_leaderboard_tooltip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/overlay_leaderboard_container"
-            android:layout_centerHorizontal="true"
-            android:layout_marginHorizontal="@dimen/_8sdp"
-            android:layout_marginVertical="@dimen/_60sdp"
-            android:elevation="@dimen/_8sdp"
-            android:gravity="center"
-            android:padding="@dimen/_18sdp"
-            android:visibility="gone"
-            app:tooltipText="@{handler.getConversationTooltip()}"
-            tools:visibility="gone" />
-
-        <FrameLayout
-            android:id="@+id/leaderboard_tooltip_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/user_point_container"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="end"
-            android:layout_marginHorizontal="@dimen/_8sdp"
-            android:visibility="gone"
-            tools:visibility="gone">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="@dimen/_180sdp"
-                android:layout_height="@dimen/_108sdp"
-                android:layout_marginHorizontal="@dimen/_2sdp"
-                android:background="@drawable/bg_tooltip_large_center">
-
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                    android:id="@+id/joshTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_8sdp"
-                    android:paddingTop="@dimen/_18sdp"
-                    android:paddingBottom="@dimen/_8sdp"
-                    android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                    android:textColor="@color/text_default"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_below="@id/toolbar_container"
+                android:layout_alignParentEnd="true"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/rounded_rectangle_with_border"
+                android:backgroundTint="@color/pure_white"
+                android:elevation="@dimen/_5sdp"
+                android:fillAfter="false"
+                android:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txtTooltipIndex"
+                    android:id="@+id/leaderboard_txt2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_8sdp"
-                    android:paddingVertical="@dimen/_8sdp"
-                    android:text="1 of 3"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:layout_marginHorizontal="@dimen/_32sdp"
+                    android:layout_marginVertical="@dimen/_2sdp"
+                    android:elevation="@dimen/_8sdp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="@string/leaderboard"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
                     android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/btnNextStep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/_8sdp"
-                    android:background="@drawable/rounded_primary_bg_2dp"
-                    android:backgroundTint="@color/primary_500"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:paddingHorizontal="@dimen/_14sdp"
-                    android:paddingVertical="@dimen/_3sdp"
-                    android:text="आगे बढ़े"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
-                    android:textColor="@color/pure_white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.5" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:layout_width="@dimen/_12sdp"
-                android:layout_height="@dimen/_12sdp"
-                android:layout_gravity="end"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:background="@drawable/ic_outline_cancel_24"
-                android:onClick="@{()->handler.hideLeaderboardTooltip()}"
-                android:padding="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+                android:id="@+id/overlay_leaderboard_tooltip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/overlay_leaderboard_container"
+                android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginVertical="@dimen/_60sdp"
+                android:elevation="@dimen/_8sdp"
+                android:gravity="center"
+                android:padding="@dimen/_18sdp"
+                android:visibility="gone"
+                app:tooltipText="@{handler.getConversationTooltip()}"
+                tools:visibility="gone" />
 
-        </FrameLayout>
+            <FrameLayout
+                android:id="@+id/leaderboard_tooltip_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_point_container"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="@dimen/_180sdp"
+                    android:layout_height="@dimen/_108sdp"
+                    android:layout_marginHorizontal="@dimen/_2sdp"
+                    android:background="@drawable/bg_tooltip_large_center">
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/joshTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/_8sdp"
+                        android:paddingTop="@dimen/_18sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                        android:textColor="@color/text_default"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtTooltipIndex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/_8sdp"
+                        android:paddingVertical="@dimen/_8sdp"
+                        android:text="1 of 3"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                        android:textColor="@color/text_default"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/btnNextStep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/_8sdp"
+                        android:background="@drawable/rounded_primary_bg_2dp"
+                        android:backgroundTint="@color/primary_500"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/_14sdp"
+                        android:paddingVertical="@dimen/_3sdp"
+                        android:text="आगे बढ़े"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                        android:textColor="@color/pure_white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:background="@drawable/ic_outline_cancel_24"
+                    android:onClick="@{()->handler.hideLeaderboardTooltip()}"
+                    android:padding="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </FrameLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/buy_course_banner"
@@ -907,8 +907,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/_12sdp"
-                    android:textColor="@color/text_default"
                     android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/buy_course_banner_avail_btn"
                     app:layout_constraintStart_toStartOf="parent"
