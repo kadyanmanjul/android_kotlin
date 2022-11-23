@@ -112,7 +112,10 @@ class BookACallFragment : BaseFragment() {
     }
 
     fun submitReason() {
-        if (binding.phoneNumberEt.text.isNullOrEmpty() || isValidFullNumber("+91", binding.phoneNumberEt.text.toString()).not()
+        if (binding.phoneNumberEt.text.isNullOrEmpty() || isValidFullNumber(
+                "+91",
+                binding.phoneNumberEt.text.toString()
+            ).not() || binding.phoneNumberEt.text.toString().length < 10
         ) {
             showToast(getString(R.string.please_enter_valid_number))
             return

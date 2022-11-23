@@ -259,7 +259,6 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             binding.imgLogo.alpha = 0.5f
             binding.btnApply.setTextColor(grayColor)
             binding.couponExpireText.visibility = View.VISIBLE
-            Log.e("sagar", "onBindViewHolder: APPLY 3")
         }
 
         fun enableCoupon(binding: ItemOfffersCardBinding, coupon: Coupon, position: Int) {

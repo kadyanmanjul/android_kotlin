@@ -231,22 +231,24 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                     setCoursePrices(it.obj as CourseDetailsList, it.arg1)
                 }
                 CLICK_ON_COUPON_APPLY -> {
+                    Log.e("sagar", "initViewState: 1" )
                     val coupon = it.obj as Coupon
                     updateListItem(coupon)
-                    couponApplied(coupon, it.arg1)
+                    couponApplied(coupon, null)
                 }
                 APPLY_COUPON_FROM_BUY_PAGE -> {
+                    Log.e("sagar", "initViewState: 3", )
                     val coupon = it.obj as Coupon
                     onCouponApply(coupon)
                 }
                 APPLY_COUPON_FROM_INTENT -> {
                     if (shouldAutoApplyCoupon) {
                         viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply }?.let { coupon ->
-                            viewModel.applyEnteredCoupon(coupon.couponCode, 1)
+                            viewModel.applyEnteredCoupon(coupon.couponCode, 1111)
                         }
                     }
                     if (couponCodeFromIntent.isNullOrEmpty().not())
-                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!, 1)
+                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!, 1111)
                 }
                 CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
@@ -300,17 +302,24 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
         )
     }
 
-    fun couponApplied(coupon: Coupon, isFromLink: Int) {
+    fun couponApplied(coupon: Coupon, isFromLink: Int?) {
         showToast("Coupon applied")
-        if (isFromLink == 0) {
-            onBackPressed()
-            onCouponApply(coupon)
-        } else {
-            binding.btnCallUs.post {
-                binding.scrollView.smoothScrollTo(
-                    binding.buyPageParentContainer.width,
-                    binding.buyPageParentContainer.height
-                )
+        Log.e("sagar", "couponApplied: $isFromLink", )
+        when (isFromLink) {
+            1000 -> {
+                onBackPressed()
+                onCouponApply(coupon)
+            }
+            null -> {
+                onBackPressed()
+            }
+            else -> {
+                binding.btnCallUs.post {
+                    binding.scrollView.smoothScrollTo(
+                        binding.buyPageParentContainer.width,
+                        binding.buyPageParentContainer.height
+                    )
+                }
             }
         }
     }

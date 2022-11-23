@@ -60,8 +60,12 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
                     members,
                     position
                 )
-            else
-                binding.txtCouponExpireTime.text = "Coupon expired"
+            else {
+                if (members?.validDuration?.time == null)
+                    binding.txtCouponExpireTime.text = "Get 20% off"
+                else
+                    binding.txtCouponExpireTime.text = "Coupon expired"
+            }
             with(binding) {
                 this.txtCouponCode.text = members?.couponCode
                 this.couponDesc.text =
@@ -106,7 +110,6 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
         }
 
         fun changeTextColors(binding: ItemCouponCardBinding, coupon: Coupon?, position: Int) {
-            Log.e("sagar", "changeTextColors: ")
             if (coupon?.isCouponSelected == 1)
                 coupon.let { itemClick?.invoke(it, CLICK_ON_COUPON_APPLY, position, REMOVE) }
             val grayColor = ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.dark_grey)
