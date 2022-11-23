@@ -90,6 +90,9 @@ class CourseOverviewViewHolder(
     @com.mindorks.placeholderview.annotations.View(R.id.carousel_recycler_view)
     lateinit var carouselRecyclerView: PlaceHolderView
 
+    @com.mindorks.placeholderview.annotations.View(R.id.card_offer)
+    lateinit var cardOffer: PlaceHolderView
+
     @Resolve
     fun onResolved() {
         txtCourseName.text = data.courseName
@@ -98,6 +101,8 @@ class CourseOverviewViewHolder(
         txtDescription.text = data.shortDescription
         txtRating.text = String.format("%.1f", data.rating)
         ratingBar.rating = data.rating.toFloat()
+        if (testId == 10)
+            cardOffer.visibility = View.VISIBLE
         if (data.topIconUrl.isNullOrBlank().not()) {
             setImage(data.topIconUrl!!, imgTopIcon)
             imgTopIcon.visibility = View.VISIBLE

@@ -10,10 +10,54 @@
             android:id="@+id/topContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/icon_default"
+            android:background="@color/pure_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_offer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            app:cardCornerRadius="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:visibility="gone"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingHorizontal="@dimen/_6sdp" >
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_44sdp"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:background="@color/surface_information">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:padding="@dimen/_2sdp"
+                    app:lottie_autoPlay="true"
+                    android:layout_marginStart="@dimen/_13sdp"
+                    app:lottie_fileName="lottie/offer.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="true" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_13sdp"
+                    android:text="Buy 65 + courses including this course just for ₹360"
+                    android:textColor="@color/text_default"
+                    style="@style/TextAppearance.JoshTypography.CaptionSemiBold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtCourseName"
@@ -21,11 +65,12 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/_12sdp"
                 android:paddingEnd="@dimen/_8sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-                android:textColor="@color/pure_white"
+               android:layout_marginTop="@dimen/_14sdp"
+                style="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                android:textColor="@color/text_default"
                 app:autoSizeMaxTextSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card_offer"
                 app:layout_constraintWidth_percent="0.8"
                 tools:text="Effective Life Habits For Life Transformation" />
 
@@ -35,37 +80,24 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:paddingStart="@dimen/_12sdp"
+               android:layout_marginTop="@dimen/_4sdp"
                 android:paddingEnd="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/pure_white"
+                style="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                android:textColor="@color/text_subdued"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCourseName"
                 app:layout_constraintWidth_percent="0.8"
                 tools:text="Ankur Warikoo" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/img_top_icon"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:paddingStart="@dimen/_4sdp"
-                android:paddingEnd="@dimen/_12sdp"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/txtTeacherName"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/txtCourseName"
-                app:layout_constraintTop_toTopOf="@+id/txtCourseName"
-                tools:src="@drawable/ic_whatsapp"
-                tools:visibility="visible" />
-
         <com.mindorks.placeholderview.PlaceHolderView
                 android:id="@+id/carousel_recycler_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_36sdp"
                 android:orientation="horizontal"
                 android:scrollbars="none"
+                android:paddingStart="@dimen/_12sdp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
