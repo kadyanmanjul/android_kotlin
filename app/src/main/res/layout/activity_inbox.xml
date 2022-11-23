@@ -8,15 +8,15 @@
     android:background="@color/pure_white"
     tools:context="com.joshtalks.joshskills.ui.inbox.InboxActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
 
-        <include
-            layout="@layout/inbox_toolbar"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-    </com.google.android.material.appbar.AppBarLayout>
+<!--        <include-->
+<!--            layout="@layout/inbox_toolbar"-->
+<!--            app:popupTheme="@style/AppTheme.PopupOverlay" />-->
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/inbox_nested_scroll"
@@ -42,13 +42,38 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/inbox_row_layout" />
 
+            <TextView
+                android:id="@+id/text_recommended"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_inbox"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:text="Recommended Course"
+                app:textColor="@color/text_default"
+                >
+
+            </TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_recommended_course"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_5sdp"
+                android:layout_marginTop=""
+                app:layout_constraintTop_toBottomOf="@+id/text_recommended"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:itemCount="3"
+                tools:listitem="@layout/inbox_item_layout_for_recommended_course" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recycler_view_inbox">
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_recommended_course">
 
                 <include layout="@layout/find_more_layout" />
 
@@ -60,29 +85,4 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_18sdp"
-        android:layout_weight="0"
-        android:clipToPadding="false"
-        android:gravity="center_horizontal"
-        android:paddingBottom="@dimen/_12sdp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/explore_courses"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="center"
-            android:background="@drawable/round_rectangle"
-            android:paddingHorizontal="@dimen/_20ssp"
-            android:paddingBottom="@dimen/_4sdp"
-            android:text="@string/explorer_courses"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
-            android:visibility="gone"
-            app:rippleColor="@color/pure_white"
-            tools:visibility="visible" />
-    </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -424,4 +424,7 @@ interface CommonNetworkService {
     @GET("$DIR/payment/branch_log/")
     suspend fun savePaymentLog(@Query("orderinfo_id") orderInfoId:String) :Response<Any>
 
+    @GET("$DIR/course/course_recommendations")
+    suspend fun getCourseRecommendations()
+
 }

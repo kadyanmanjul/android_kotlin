@@ -343,4 +343,15 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun getRecommendedCourse(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp = AppObjectController.commonNetworkService.getCourseRecommendations()
+                Log.e("sagar", "getRecommendedCourse: $resp")
+            } catch (ex: Exception) {
+                Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
 }

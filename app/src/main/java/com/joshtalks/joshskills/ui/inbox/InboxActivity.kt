@@ -463,10 +463,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                             haveFreeTrialCourse = true
                             PrefManager.put(IS_FREE_TRIAL, true)
                         }
-                        if (inboxEntity.bbTipText?.isNotBlank() == true)
-                            runOnUiThread {
-                                showExploreBBTip(inboxEntity.bbTipText)
-                            }
                     }
                     temp.addAll(courseList)
                     if (courseList.isNullOrEmpty().not()) {
@@ -529,6 +525,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     }
                 }
                 viewModel.checkForPendingPayments()
+                if (capsuleCourse?.bbTipText?.isNotBlank() == true)
+                    viewModel.getRecommendedCourse()
             }
         }
     }
@@ -578,42 +576,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 bbTooltip.showAlignBottom(buy_english_course)
             }
         } catch (_: Exception) {
-        }
-    }
-
-    private fun showExploreBBTip(bbTipText: String) {
-        try {
-            explore_courses.isVisible = true
-            if (this::bbTooltip.isInitialized.not()) {
-                bbTooltip = Balloon.Builder(this)
-                    .setLayout(R.layout.layout_bb_tip)
-                    .setHeight(BalloonSizeSpec.WRAP)
-                    .setIsVisibleArrow(true)
-                    .setBackgroundColorResource(R.color.surface_tip)
-                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
-                    .setWidthRatio(0.85f)
-                    .setDismissWhenTouchOutside(false)
-                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                    .setLifecycleOwner(this)
-                    .setDismissWhenClicked(false)
-                    .build()
-            }
-            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text =
-                bbTipText.replace("__username__", Mentor.getInstance().getUser()?.firstName ?: "User")
-            bbTooltip.isShowing.not().let {
-                bbTooltip.showAlignBottom(explore_courses)
-            }
-            val scale = resources.displayMetrics.density
-            var dpAsPixels = (190 * scale + 0.5f).toInt()
-            if (paymentStatusView.isVisible)
-                dpAsPixels = (100 * scale + 0.5f).toInt()
-            inbox_nested_scroll.updatePadding(0, 0, 0, dpAsPixels)
-        } catch (_: Exception) {
-        }
-
-        explore_courses.setOnClickListener {
-            viewModel.saveImpressionForExplorePage("CLICKED_EXPLORE_COURSE")
-            courseExploreClick()
         }
     }
 
