@@ -404,6 +404,9 @@ interface CommonNetworkService {
     @GET("$DIR/course/list_reviews/")
     suspend fun getReviews(@Query("page") pageNo: Int, @Query("test_id") testId: Int): ReviewsListResponse
 
+    @GET("$DIR/course/get_popup_names/")
+    suspend fun getPopupType(): Response<java.util.HashMap<String, Boolean>>
+
     @POST("$DIR/impression/track_popup_impression/")
     suspend fun savePopupImpression(@Body params: Map<String, String>): Response<Void>
 

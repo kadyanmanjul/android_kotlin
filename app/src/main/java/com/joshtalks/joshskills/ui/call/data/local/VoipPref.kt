@@ -14,17 +14,17 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AUTO_CONN
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AUTO_CONNECT_STATUS
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CALL_RATING
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PURCHASE_POPUP
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SCRATCH_POPUP
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
+import com.joshtalks.joshskills.ui.lesson.popup.ScratchCardDialog
 import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.AutoCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
 import com.joshtalks.joshskills.voip.BeepTimer
@@ -147,53 +147,42 @@ object VoipPref {
         }
 
         // TODO: These logic shouldn't be here
-//        ExpertListRepo().deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
         deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
     }
 
-    fun showPopUp(duration: Long, callType: Int) {
+    private fun showPopUp(duration: Long, callType: Int) {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            when (getPopUpType(duration)) {
-                POPUP.DEFAULT -> showDefaultDialog(callType, duration)
-                POPUP.INTEREST -> startLevelAndInterestForm()
+            when (getPopUpType(duration, callType)) {
                 POPUP.AUTO_CONNECT -> showDialogBox(duration.inSeconds(), AUTO_CALL)
+                POPUP.INTEREST -> startLevelAndInterestForm()
+                POPUP.PURCHASE -> showDialogBox(duration, PURCHASE_POPUP)
+                POPUP.CALL_RATING -> showDialogBox(duration, CALL_RATING)
+                POPUP.SCRATCH_CARD -> showDialogBox(duration, SCRATCH_POPUP)
+                POPUP.ERROR -> {}
             }
         }
     }
 
-    private fun showDefaultDialog(callType: Int, duration: Long) {
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal) {
-            showDialogBox(duration, PURCHASE_POPUP)
-        } else if (callType != Category.EXPERT.ordinal) {
-            showDialogBox(duration, CALL_RATING)
-        }
-    }
-
-    private suspend fun getPopUpType(duration: Long): POPUP {
-        return try {
-            if(shouldAutoConnect(duration))
+    private suspend fun getPopUpType(duration: Long, callType: Int): POPUP {
+        try {
+            if (shouldAutoConnect(duration))
                 return POPUP.AUTO_CONNECT
 
-            val resp = AppObjectController.p2pNetworkService.getFormSubmitStatus()
-            if (duration == 0L || resp.isSuccessful.not() || isLevelAndInterestEnabled().not())
-                POPUP.DEFAULT
-            else {
-                val isInterestFormEnabled = resp.body()?.get("show_screen") ?: 0
-                if (isInterestFormEnabled == 1)
-                    POPUP.INTEREST
-                else
-                    POPUP.DEFAULT
-            }
+            val resp = AppObjectController.commonNetworkService.getPopupType()
+            return if ((resp.body()?.get("show_screen") == true))
+                POPUP.INTEREST
+            else if ((resp.body()?.get("show_scratch_card") == true))
+                POPUP.SCRATCH_CARD
+            else if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal)
+                POPUP.PURCHASE
+            else if (callType != Category.EXPERT.ordinal)
+                POPUP.CALL_RATING
+            else
+                POPUP.ERROR
         } catch (e: Exception) {
             e.printStackTrace()
-            POPUP.DEFAULT
+            return POPUP.ERROR
         }
-    }
-
-    private fun isLevelAndInterestEnabled(): Boolean {
-        return PrefManager.getIntValue(IS_LEVEL_DETAILS_ENABLED) == 1 && PrefManager.getIntValue(
-            IS_INTEREST_FORM_ENABLED
-        ) == 1
     }
 
     private fun shouldAutoConnect(duration: Long): Boolean {
@@ -209,7 +198,6 @@ object VoipPref {
             else -> false
         }
     }
-
 
     private fun startLevelAndInterestForm() {
         val intent = Intent(ActivityLifecycleCallback.currentActivity, UserInterestActivity::class.java)
@@ -274,7 +262,8 @@ object VoipPref {
                 val newFragmentActivity = newCurrentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
                     when (type) {
-                        CALL_RATING -> newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                        CALL_RATING -> newFragmentActivity?.let { showCallRatingDialog(it) }
+                        SCRATCH_POPUP -> newFragmentActivity?.let { showScratchCard(it, totalSecond) }
                         AUTO_CALL -> {
                             val count = preferenceManager.getInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0) + 1
                             val editor = preferenceManager.edit()
@@ -287,14 +276,15 @@ object VoipPref {
                                 )
                             )
                         }
-                        else -> newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
+                        else -> newFragmentActivity?.let { showPurchaseDialog(it, totalSecond) }
                     }
                 }
             } else {
                 val newFragmentActivity = currentActivity as? FragmentActivity
                 withContext(Dispatchers.Main) {
                     when (type) {
-                        CALL_RATING -> newFragmentActivity?.showVoipDialog(totalSecond, CALL_RATING)
+                        CALL_RATING -> newFragmentActivity?.let { showCallRatingDialog(it) }
+                        SCRATCH_POPUP -> newFragmentActivity?.let { showScratchCard(it, totalSecond) }
                         AUTO_CALL -> {
                             val count = preferenceManager.getInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0) + 1
                             val editor = preferenceManager.edit()
@@ -307,19 +297,29 @@ object VoipPref {
                                 )
                             )
                         }
-                        else -> newFragmentActivity?.showVoipDialog(totalSecond, PURCHASE_POPUP)
+                        else -> newFragmentActivity?.let { showPurchaseDialog(it, totalSecond) }
                     }
                 }
             }
         }
     }
 
-    // TODO: These function shouldn't be here
-    private fun FragmentActivity.showVoipDialog(totalSecond: Long, type: String) {
-        if (type == CALL_RATING) {
-            showCallRatingDialog(this)
-        } else {
-            showPurchaseDialog(this, totalSecond)
+    private fun showScratchCard(fragmentActivity: FragmentActivity, duration: Long) {
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            try {
+                val resp = AppObjectController.commonNetworkService.getCoursePopUpData(
+                    courseId = PrefManager.getStringValue(CURRENT_COURSE_ID)
+                        .ifEmpty { DEFAULT_COURSE_ID },
+                    popupName = PurchasePopupType.SCRATCH_CARD.name,
+                    callCount = PrefManager.getIntValue(FT_CALLS_LEFT),
+                    callDuration = duration
+                )
+                resp.body().let {
+                    ScratchCardDialog.newInstance(it).show(fragmentActivity.supportFragmentManager, "ScratchCardDialog")
+                }
+            } catch (ex: Exception) {
+                Log.d(TAG, "showScratchDialog: ${ex.message}")
+            }
         }
     }
 
@@ -352,26 +352,9 @@ object VoipPref {
                         .show(fragmentActivity.supportFragmentManager, "PurchaseDialog")
                 }
             } catch (ex: Exception) {
-                Log.d("sagar", "showPurchaseDialog: ${ex.message}")
+                Log.d(TAG, "showPurchaseDialog: ${ex.message}")
             }
         }
-    }
-
-    private fun showReportDialog(fragmentActivity: FragmentActivity) {
-
-        val function = fun() {
-            showFeedBackDialog(fragmentActivity)
-        }
-        VoipReportDialogFragment.newInstance(
-            getLastRemoteUserAgoraId(),
-            getLocalUserAgoraId(), "REPORT", getLastCallChannelName(), function
-        )
-            .show(fragmentActivity.supportFragmentManager, "ReportDialogFragment")
-    }
-
-    private fun showFeedBackDialog(fragmentActivity: FragmentActivity) {
-        FeedbackDialogFragment.newInstance()
-            .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
     }
 
     fun getStartTimeStamp(): Long {
@@ -466,7 +449,10 @@ object VoipPref {
 }
 
 enum class POPUP {
-    DEFAULT,
     INTEREST,
     AUTO_CONNECT,
+    PURCHASE,
+    CALL_RATING,
+    SCRATCH_CARD,
+    ERROR
 }

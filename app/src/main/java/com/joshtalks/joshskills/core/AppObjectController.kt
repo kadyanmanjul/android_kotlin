@@ -444,8 +444,8 @@ class AppObjectController {
                         PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                         PrefManager.put(SPEED_TEST_FILE_SIZE, resp.testFileSize ?: 100)
                         PrefManager.put(IS_GAME_ON, resp.isGameOn ?: 1)
-                        PrefManager.put(IS_LEVEL_DETAILS_ENABLED, resp.isLevelFormOn?:0)
-                        PrefManager.put(IS_INTEREST_FORM_ENABLED, resp.isLevelFormOn?:0)
+                        PrefManager.put(IS_LEVEL_DETAILS_ENABLED, resp.isLevelFormOn ?: 0)
+                        PrefManager.put(IS_INTEREST_FORM_ENABLED, resp.isInterestFormOn ?: 0)
                         com.joshtalks.joshskills.voip.data.local.PrefManager.setBeepTimerStatus(resp.isBeepTimerEnabled ?: 0)
                     } catch (ex: Exception) {
                         when (ex) {

@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.server
 
-
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -65,6 +64,7 @@ enum class PurchasePopupType {
     READING_COMPLETED,
     VOCAB_COMPLETED,
     LESSON_COMPLETED,
+    SCRATCH_CARD
 }
 
 @Parcelize

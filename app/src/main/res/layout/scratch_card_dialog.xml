@@ -38,11 +38,13 @@
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/card_image"
                     android:layout_width="@dimen/_90sdp"
                     android:layout_height="@dimen/_90sdp"
                     android:src="@drawable/ic_call_with_time" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/card_title"
                     style="@style/TextAppearance.JoshTypography.HeadingBold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -51,6 +53,7 @@
                     android:text="Better luck next time" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/card_body"
                     style="@style/TextAppearance.JoshTypography.BodySemiBold16"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -59,11 +62,12 @@
                     android:textColor="@color/text_subdued" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/card_continue"
                     style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/_15sdp"
-                    android:text="GOT IT"
+                    android:text="@string/got_it"
                     android:textColor="@color/primary_500" />
             </LinearLayout>
 

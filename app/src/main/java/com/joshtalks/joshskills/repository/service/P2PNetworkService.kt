@@ -122,7 +122,4 @@ interface P2PNetworkService {
     @POST("$DIR/p2p/interests/")
     suspend fun sendUserInterestDetails(@Body params: HashMap<String,List<Int>>) : Response<Any>
 
-    @GET("$DIR/p2p/show-level-interests-screen/")
-    suspend fun getFormSubmitStatus() : Response<HashMap<String,Int>>
-
 }

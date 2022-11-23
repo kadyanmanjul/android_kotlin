@@ -10,9 +10,11 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ScratchCardDialogBinding
+import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.util.scratch.ScratchView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 class ScratchCardDialog : BaseDialogFragment() {
 
     private lateinit var binding: ScratchCardDialogBinding
+    private lateinit var cardData: PurchaseDataResponse
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,11 +39,25 @@ class ScratchCardDialog : BaseDialogFragment() {
         isCancelable = true
         savePopupImpression("SCRATCH_CARD_SHOWN")
 
+        arguments?.getParcelable<PurchaseDataResponse>(SCRATCH_CARD_DATA)?.let {
+            cardData = it
+            binding.cardTitle.text = it.popUpTitle
+            binding.cardBody.text = it.popUpBody
+            if (it.couponCode.isNullOrBlank().not()) {
+                binding.cardContinue.text = "CLAIM NOW!"
+                binding.cardImage.setImageResource(R.drawable.ic_coin)
+            }
+        }
+
+        binding.cardContinue.setOnClickListener { dismiss() }
+
         binding.scratchView.setRevealListener(object : ScratchView.IRevealListener {
             override fun onRevealed(scratchView: ScratchView) {
                 scratchView.reveal()
-                binding.cardConfetti.visibility = VISIBLE
-                binding.cardConfetti.playAnimation()
+                if (binding.cardContinue.text != requireActivity().getString(R.string.got_it)) {
+                    binding.cardConfetti.visibility = VISIBLE
+                    binding.cardConfetti.playAnimation()
+                }
             }
 
             override fun onRevealPercentChangedListener(scratchView: ScratchView, percent: Float) {
@@ -74,7 +91,7 @@ class ScratchCardDialog : BaseDialogFragment() {
                 AppObjectController.commonNetworkService.savePopupImpression(
                     mapOf(
                         "event_name" to eventName,
-                        "popup_key" to ("")
+                        "popup_key" to (cardData.popUpKey ?: "scratch_card")
                     )
                 )
             } catch (e: Exception) {
@@ -91,11 +108,13 @@ class ScratchCardDialog : BaseDialogFragment() {
 
     companion object {
 
+        private const val SCRATCH_CARD_DATA = "SCRATCH_CARD_DATA"
+
         @JvmStatic
-        fun newInstance(): ScratchCardDialog =
+        fun newInstance(cardData: PurchaseDataResponse?): ScratchCardDialog =
             ScratchCardDialog().apply {
                 arguments = Bundle().apply {
-
+                    putParcelable(SCRATCH_CARD_DATA, cardData)
                 }
             }
     }
