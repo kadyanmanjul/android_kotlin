@@ -697,15 +697,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onStartTrialTimer(startTimeInMilliSeconds: Long) {
         trialTimerView.visible()
+        trialTimerDivider.visible()
         trialTimerView.startTimer(startTimeInMilliSeconds)
     }
 
     override fun onStopTrialTimer() {
+        trialTimerDivider.gone()
         trialTimerView.removeTimer()
     }
 
     override fun onFreeTrialEnded() {
         trialTimerView.visible()
+        trialTimerDivider.visible()
         trialTimerView.endFreeTrial()
 
     }

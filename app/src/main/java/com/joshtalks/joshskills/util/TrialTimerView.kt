@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.util
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
@@ -15,7 +14,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 This class is a custom view to show remaining time in ending free trial.
  */
 
-class FreeTrialTimerView(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
+class TrialTimerView(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
 
     private var trialEndsTv: TextView
     private var endingHour: TextView
