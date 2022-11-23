@@ -13,8 +13,10 @@ import androidx.fragment.app.FragmentManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.ScratchCardDialogBinding
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.util.scratch.ScratchView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +51,16 @@ class ScratchCardDialog : BaseDialogFragment() {
             }
         }
 
-        binding.cardContinue.setOnClickListener { dismiss() }
+        binding.cardContinue.setOnClickListener {
+            BuyPageActivity.startBuyPageActivity(
+                requireActivity(),
+                AppObjectController.getFirebaseRemoteConfig().getString(
+                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                ),
+                "SCRATCH_CARD"
+            )
+            dismiss()
+        }
 
         binding.scratchView.setRevealListener(object : ScratchView.IRevealListener {
             override fun onRevealed(scratchView: ScratchView) {

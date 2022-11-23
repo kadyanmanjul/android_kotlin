@@ -1114,6 +1114,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         singleLiveEvent.value = message
     }
 
+    private fun showScratchCard() {
+        message.what = SHOW_SCRATCH_CARD
+        singleLiveEvent.value = message
+    }
+
     fun updatePracticeEngagement(requestEngage: RequestEngage) {
         viewModelScope.launch {
             val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
@@ -1188,5 +1193,18 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             Timber.e(ex)
         }
         return null
+    }
+
+    fun checkPopupDisplay() {
+        viewModelScope.launch {
+            try {
+                val resp = AppObjectController.commonNetworkService.getPopupType()
+                if ((resp.body()?.get("show_scratch_card") == true))
+                    showScratchCard()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                e.showAppropriateMsg()
+            }
+        }
     }
 }

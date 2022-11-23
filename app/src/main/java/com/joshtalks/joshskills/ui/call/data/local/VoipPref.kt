@@ -304,7 +304,7 @@ object VoipPref {
         }
     }
 
-    private fun showScratchCard(fragmentActivity: FragmentActivity, duration: Long) {
+    fun showScratchCard(fragmentActivity: FragmentActivity, duration: Long) {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             try {
                 val resp = AppObjectController.commonNetworkService.getCoursePopUpData(

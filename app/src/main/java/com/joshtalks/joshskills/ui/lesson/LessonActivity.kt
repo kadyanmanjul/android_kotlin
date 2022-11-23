@@ -34,7 +34,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -44,16 +43,9 @@ import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
-import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
+import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AVAIL_COUPON_BANNER_TEXT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_LESSON_TEXT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.COUPON_UNLOCK_LESSON_COUNT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.LESSON_COMPLETE_COUPON_DISCOUNT
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -74,6 +66,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
@@ -216,6 +209,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
                 OPEN_READING_SHARING_FULLSCREEN -> openReadingFullScreen()
                 CLOSE_FULL_READING_FRAGMENT -> closeReadingFullScreen()
+                CLOSE_INTEREST_ACTIVITY -> viewModel.checkPopupDisplay()
+                SHOW_SCRATCH_CARD -> VoipPref.showScratchCard(this, VoipPref.getLastCallDurationInSec() * 1000L)
             }
         }
 
