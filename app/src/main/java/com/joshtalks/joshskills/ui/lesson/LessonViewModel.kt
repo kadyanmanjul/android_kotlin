@@ -131,6 +131,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val isExpertBtnEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
     var lessonCompletePopUpClick : MutableLiveData<Int> = MutableLiveData()
+    var lessonActivityScreen :String = "LESSON_ACTIVITY"
 
     init {
         getRating()
@@ -1173,7 +1174,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     suspend fun getMentorCoupon(testId: Int): Coupon? {
         try {
-            val response = AppObjectController.commonNetworkService.getValidCoupon(testId)
+            val response = AppObjectController.commonNetworkService.getValidCoupon(testId, lessonActivityScreen)
             if (response.isSuccessful) {
                 response.body()?.let { body ->
                     body.listOfCoupon?.firstOrNull {
