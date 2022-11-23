@@ -1,32 +1,33 @@
 package com.joshtalks.joshskills.ui.inbox
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
+import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedAdapter
+import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
+import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import org.json.JSONObject
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class InboxViewModel(application: Application) : AndroidViewModel(application) {
+class InboxViewModel : BaseViewModel(){
 
-    var context: JoshApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
@@ -42,6 +43,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         get() = _registerCourseLocalData
 
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
+    val recommendedAdapter = InboxRecommendedAdapter()
 
     fun getA2C1CampaignData(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -347,10 +349,28 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val resp = AppObjectController.commonNetworkService.getCourseRecommendations()
-                Log.e("sagar", "getRecommendedCourse: $resp")
+                withContext(Dispatchers.Main) {
+                    recommendedAdapter.addRecommendedCourseList(resp.body())
+                }
+                Log.e("sagar", "getRecommendedCourse: ${resp.body()}")
             } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }
+        }
+    }
+
+    val onItemClick: (InboxRecommendedCourse, Int, Int) -> Unit = { it, type, position ->
+        try {
+            when (type) {
+                CLICK_ON_RECOMMENDED_COURSE ->{
+                    message.what = CLICK_ON_RECOMMENDED_COURSE
+                    message.obj = it
+                    message.arg1 = position
+                    singleLiveEvent.value = message
+                }
+            }
+        } catch (ex: Exception) {
+            Log.d("BuyPageViewModel.kt", "SAGAR => :145 ${ex.message}")
         }
     }
 

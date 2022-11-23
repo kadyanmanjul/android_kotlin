@@ -750,4 +750,11 @@
         <item name="colorControlActivated">@color/primary_500</item>
         <item name="android:textAppearance">@style/TextAppearance.JoshTypography.SubHeadingRegular20</item>
     </style>
+
+    <style name="line">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/_1sdp</item>
+        <item name="android:background">@color/text_default_0_2</item>
+        <item name="android:alpha">0.4</item>
+    </style>
 </resources>

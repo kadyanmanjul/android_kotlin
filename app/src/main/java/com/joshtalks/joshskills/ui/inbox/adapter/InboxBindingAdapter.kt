@@ -1,7 +1,10 @@
 package com.joshtalks.joshskills.ui.inbox.adapter
 
+import android.util.Log
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -15,6 +18,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -66,5 +70,17 @@ object InboxBindingAdapter {
         caller?.let {
             imageView.setUserImageOrInitials(it.image, it.name, isRound = true)
         } ?: imageView.setImageResource(R.drawable.ic_call_placeholder)
+    }
+
+    @BindingAdapter("recommendedCourseListAdapter", "onCourseItemClick")
+    @JvmStatic
+    fun recommendedCourseListAdapter(
+        view: RecyclerView,
+        adapter: InboxRecommendedAdapter,
+        function: ((InboxRecommendedCourse, Int, Int) -> Unit)?
+    ) {
+        view.setHasFixedSize(false)
+        view.adapter = adapter
+        adapter.setListener(function)
     }
 }

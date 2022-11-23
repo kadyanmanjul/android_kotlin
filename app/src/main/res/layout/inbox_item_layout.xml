@@ -32,20 +32,43 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/_8sdp"
-            android:paddingTop="@dimen/_8sdp"
-            android:paddingEnd="@dimen/_8sdp"
-            android:paddingBottom="@dimen/_4sdp">
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_begin="@dimen/_16sdp"
+                android:orientation="vertical" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_end="@dimen/_16sdp"
+                android:orientation="vertical" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_end="@dimen/_13sdp"
+                android:orientation="horizontal" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_begin="@dimen/_12sdp"
+                android:orientation="horizontal" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+                app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                app:layout_constraintTop_toTopOf="@id/guidelineTop"
                 tools:src="@color/primary_500" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -62,19 +85,16 @@
                 android:id="@+id/tv_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginHorizontal="@dimen/_11sdp"
                 android:layout_marginTop="@dimen/_2sdp"
-                android:layout_toStartOf="@id/tv_last_message_time"
-                android:layout_toEndOf="@id/profile_image"
                 android:ellipsize="end"
                 android:inputType="none"
                 android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="@color/pure_black"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                android:textColor="@color/text_default"
+                app:layout_constraintEnd_toStartOf="@+id/tv_last_message_time"
                 app:layout_constraintStart_toEndOf="@+id/profile_image"
                 app:layout_constraintTop_toTopOf="@+id/profile_image"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.62"
                 tools:ignore="MissingPrefix"
                 tools:text="Course Name" />
 
@@ -99,44 +119,20 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_name"
+                android:layout_marginEnd="@dimen/_11sdp"
                 android:ellipsize="end"
                 android:gravity="start"
                 android:maxLines="1"
                 android:text="@string/click_to_start_the_course"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                android:textColor="@color/dark_grey"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                android:textColor="@color/text_subdued"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_image"
-                app:layout_constraintEnd_toEndOf="@+id/tv_last_message_time"
+                app:layout_constraintEnd_toStartOf="@+id/unseen_msg_count"
                 app:layout_constraintStart_toStartOf="@+id/tv_name"
                 app:layout_constraintTop_toBottomOf="@+id/tv_name"
                 tools:ignore="MissingPrefix"
                 tools:text="Click to start the course"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/free_trial_timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_name"
-                android:layout_marginBottom="@dimen/_8sdp"
-                android:background="@drawable/free_trial_bg_timer"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:maxLines="1"
-                android:paddingHorizontal="@dimen/_6sdp"
-                android:paddingVertical="@dimen/_2sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="#FF0000"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/profile_image"
-                app:layout_constraintEnd_toEndOf="@+id/tv_last_message_time"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintVertical_bias="1"
-                app:layout_constraintStart_toStartOf="@+id/tv_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_name"
-                tools:ignore="MissingPrefix"
-                tools:text="Free Trial ends in 06:00:00"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -145,10 +141,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/tv_name"
                 android:maxLines="1"
+                android:textColor="@color/text_subdued"
                 android:paddingHorizontal="@dimen/_2sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_name"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
                 app:layout_constraintTop_toTopOf="@+id/tv_name"
                 tools:text="08/12/90" />
 
@@ -157,29 +154,25 @@
                 android:layout_width="@dimen/_16sdp"
                 android:layout_height="@dimen/_16sdp"
                 android:layout_alignBottom="@id/tv_last_message"
-                android:layout_marginEnd="@dimen/_12sdp"
                 android:background="@drawable/circle2"
                 android:backgroundTint="@color/primary_500"
                 android:gravity="center"
                 android:maxLines="1"
                 android:paddingHorizontal="@dimen/_2sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
                 android:textColor="@color/pure_white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_last_message"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
                 tools:text="3"
                 tools:visibility="visible" />
 
-            <LinearLayout
+            <View
                 android:id="@+id/horizontal_line"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:background="@color/disabled"
-                android:orientation="horizontal"
+                style="@style/line"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/profile_image" />
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

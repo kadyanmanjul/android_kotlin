@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
@@ -41,17 +43,21 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.databinding.ActivityInboxBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
+import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
+import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_RECOMMENDED_COURSE
 import com.joshtalks.joshskills.util.FileUploadService
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
@@ -92,6 +98,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
     private lateinit var bbTooltip: Balloon
     private var isCapsuleCourseBought = false
+    private val binding by lazy<ActivityInboxBinding> {
+        DataBindingUtil.setContentView(this, R.layout.activity_inbox)
+    }
+    var event = EventLiveData
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -101,6 +112,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
+        binding.vm = viewModel
+        binding.executePendingBindings()
         initView()
         addLiveDataObservable()
         addAfterTime()
@@ -108,6 +121,19 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         viewModel.handleBroadCastEvents()
         MarketingAnalytics.openInboxPage()
         watchTimeEvent()
+        event.observe(this) {
+            when(it.what){
+                CLICK_ON_RECOMMENDED_COURSE -> {
+                    val data = it.obj as InboxRecommendedCourse
+                    CourseDetailsActivity.startCourseDetailsActivity(
+                        this,
+                        data.id,
+                        startedFrom = this@InboxActivity.javaClass.simpleName,
+                        buySubscription = false
+                    )
+                }
+            }
+        }
     }
 
     fun watchTimeEvent() {
@@ -525,8 +551,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     }
                 }
                 viewModel.checkForPendingPayments()
-                if (capsuleCourse?.bbTipText?.isNotBlank() == true)
+                if (capsuleCourse?.bbTipText?.isNotBlank() == true) {
                     viewModel.getRecommendedCourse()
+                    binding.textExploreCourse.visibility = VISIBLE
+                    binding.textRecommended.visibility = VISIBLE
+                }
             }
         }
     }

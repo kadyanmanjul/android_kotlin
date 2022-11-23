@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.callWithExpert.model.*
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
+import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.payment.model.VerifyPayment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.*
@@ -424,7 +425,7 @@ interface CommonNetworkService {
     @GET("$DIR/payment/branch_log/")
     suspend fun savePaymentLog(@Query("orderinfo_id") orderInfoId:String) :Response<Any>
 
-    @GET("$DIR/course/course_recommendations")
-    suspend fun getCourseRecommendations()
+    @GET("$DIR/course/course_recommendations/")
+    suspend fun getCourseRecommendations() :Response<ArrayList<InboxRecommendedCourse>>
 
 }

@@ -170,33 +170,24 @@ class InboxAdapter(
                 if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
                     horizontalLine.visibility = android.view.View.GONE
                 }
-                freeTrialTimer.visibility = View.INVISIBLE
                 if (inboxEntity.isCourseBought) {
-                    freeTrialTimer.visibility = View.INVISIBLE
                     tvLastMessage.visibility = View.VISIBLE
                 } else if (inboxEntity.isCourseLocked) {
-                    freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
-                    freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                     countdownTimerBack?.stop()
                     PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     MarketingAnalytics.freeTrialEndEvent()
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
-                    freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
                     if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
-                        freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                         countdownTimerBack?.stop()
                     } else {
                         if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                            freeTrialTimer.visibility = View.INVISIBLE
                             tvLastMessage.visibility = View.VISIBLE
                         }else{
-                            startTimer(inboxEntity.expiryDate.time - System.currentTimeMillis(), freeTrialTimer)
                         }
                     }
                 } else {
-                    freeTrialTimer.visibility = View.INVISIBLE
                     tvLastMessage.visibility = View.VISIBLE
                 }
             }

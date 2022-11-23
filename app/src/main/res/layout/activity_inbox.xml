@@ -1,88 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/pure_white"
-    tools:context="com.joshtalks.joshskills.ui.inbox.InboxActivity">
+<layout>
 
-<!--    <com.google.android.material.appbar.AppBarLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
+    <data>
+        <import type="android.view.View" />
 
-<!--        <include-->
-<!--            layout="@layout/inbox_toolbar"-->
-<!--            app:popupTheme="@style/AppTheme.PopupOverlay" />-->
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
+        <import type="com.joshtalks.joshskills.R" />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/inbox_nested_scroll"
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.inbox.InboxViewModel" />
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:scrollbars="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:background="@color/pure_white"
+        tools:context="com.joshtalks.joshskills.ui.inbox.InboxActivity">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_inbox"
+            <include
+                layout="@layout/inbox_toolbar"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/inbox_nested_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/_5sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:itemCount="3"
-                tools:listitem="@layout/inbox_row_layout" />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/text_recommended"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/recycler_view_inbox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:text="Recommended Course"
-                app:textColor="@color/text_default"
-                >
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_inbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/inbox_item_layout" />
 
-            </TextView>
+                <TextView
+                    android:id="@+id/text_recommended"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:visibility="gone"
+                    android:text="More recommended courses"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                    android:textColor="@color/text_default"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recycler_view_inbox">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_recommended_course"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/_5sdp"
-                android:layout_marginTop=""
-                app:layout_constraintTop_toBottomOf="@+id/text_recommended"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:itemCount="3"
-                tools:listitem="@layout/inbox_item_layout_for_recommended_course" />
+                </TextView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recycler_view_recommended_course">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_recommended_course"
+                    onCourseItemClick="@{vm.onItemClick}"
+                    recommendedCourseListAdapter="@{vm.recommendedAdapter}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_recommended"
+                    app:rippleColor="@color/pure_white"
+                    tools:listitem="@layout/inbox_item_layout_for_recommended_course" />
 
-                <include layout="@layout/find_more_layout" />
+                <TextView
+                    android:id="@+id/text_explore_course"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:visibility="gone"
+                    android:text="Explore more courses >>"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                    android:textColor="@color/primary_500"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recycler_view_recommended_course">
 
-                <include
-                    layout="@layout/payment_status_layout"
-                    tools:visibility="gone" />
-            </LinearLayout>
+                </TextView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_explore_course">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    <include layout="@layout/find_more_layout" />
+
+                    <include
+                        layout="@layout/payment_status_layout"
+                        tools:visibility="gone" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

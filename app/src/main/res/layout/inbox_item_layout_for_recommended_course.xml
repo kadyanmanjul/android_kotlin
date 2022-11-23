@@ -7,7 +7,7 @@
 
         <variable
             name="obj"
-            type="com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity" />
+            type="com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse" />
 
     </data>
 
@@ -16,6 +16,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/is_best_course"
             android:layout_width="85dp"
             android:layout_height="23dp"
             android:layout_marginTop="@dimen/_5sdp"
@@ -23,18 +24,19 @@
             android:layout_marginBottom="@dimen/_minus10sdp"
             android:elevation="@dimen/_10sdp"
             android:scaleType="fitXY"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/root_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/recommended"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/pure_white"
+            android:clickable="true"
             android:elevation="0dp"
             android:enabled="true"
             android:focusable="true"
@@ -42,95 +44,122 @@
             app:cardBackgroundColor="@color/pure_white"
             app:cardCornerRadius="0dp"
             app:cardElevation="0dp"
+            app:contentPaddingLeft="0dp"
+            app:contentPaddingRight="0dp"
+            app:contentPaddingTop="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:cardBackgroundColor="@color/pure_white"
             tools:cardPreventCornerOverlap="false">
+            <View
+                android:id="@+id/horizontal_line11"
+                style="@style/line"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_8sdp"
-                android:paddingTop="@dimen/_8sdp"
-                android:paddingEnd="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_4sdp">
+                android:layout_height="wrap_content">
+
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guidelineStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="@dimen/_16sdp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guidelineEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="@dimen/_16sdp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guidelineBottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_end="@dimen/_13sdp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guidelineTop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_begin="@dimen/_12sdp" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_image"
                     android:layout_width="@dimen/_40sdp"
                     android:layout_height="@dimen/_40sdp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+                    app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                    app:layout_constraintTop_toTopOf="@id/guidelineTop"
                     tools:src="@color/primary_500" />
 
-
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_name"
+                    android:id="@+id/tv_course_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_11sdp"
+                    android:layout_marginHorizontal="@dimen/_11sdp"
                     android:layout_marginTop="@dimen/_2sdp"
                     android:ellipsize="end"
                     android:inputType="none"
                     android:maxLines="1"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/pure_black"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                    android:textColor="@color/text_default"
+                    app:layout_constraintEnd_toStartOf="@+id/unseen_msg_count"
                     app:layout_constraintStart_toEndOf="@+id/profile_image"
                     app:layout_constraintTop_toTopOf="@+id/profile_image"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.62"
                     tools:ignore="MissingPrefix"
                     tools:text="Course Name" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_last_message"
+                    android:id="@+id/tv_sub_heading"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_course_name"
+                    android:layout_marginEnd="@dimen/_11sdp"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:maxLines="1"
-                    android:text="@string/click_to_start_the_course"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                    android:textColor="@color/dark_grey"
-                    android:visibility="invisible"
+                    android:text="20,000 students"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                    android:textColor="@color/text_subdued"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="@+id/profile_image"
                     app:layout_constraintEnd_toStartOf="@+id/unseen_msg_count"
-                    app:layout_constraintStart_toStartOf="@+id/tv_name"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_name"
-                    tools:ignore="MissingPrefix"
-                    tools:text="Click to start the course"
+                    app:layout_constraintStart_toStartOf="@+id/tv_course_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_course_name"
+                    tools:text="20,000 students"
                     tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/unseen_msg_count"
-                    android:layout_width="@dimen/_16sdp"
-                    android:layout_height="@dimen/_16sdp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
                     android:gravity="center"
-                    android:src="@drawable/ic_lock"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    android:src="@drawable/ic_new_lock"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/tv_name"
+                    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/text_subdued"
                     tools:visibility="visible" />
 
-                <LinearLayout
+                <View
                     android:id="@+id/horizontal_line"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:background="@color/disabled"
-                    android:orientation="horizontal"
+                    style="@style/line"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/profile_image" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
