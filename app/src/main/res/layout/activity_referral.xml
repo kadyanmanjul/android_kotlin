@@ -108,9 +108,9 @@
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:textColor="@color/pure_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/image_view"
                     tools:text="Earn 50 in your account for\nevery friend who joins the\ncourse." />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -121,6 +121,7 @@
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                     android:textColor="@color/text_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/text_view_1"
