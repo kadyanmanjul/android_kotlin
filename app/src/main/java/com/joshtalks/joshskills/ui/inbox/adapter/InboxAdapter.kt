@@ -94,7 +94,6 @@ class InboxAdapter(
 
     inner class InboxViewHolder(val binding: InboxItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private var countdownTimerBack: CountdownTimerBack? = null
 
         fun bind(inboxEntity: InboxEntity, indexPos: Int) {
             with(binding) {
@@ -174,44 +173,18 @@ class InboxAdapter(
                     tvLastMessage.visibility = View.VISIBLE
                 } else if (inboxEntity.isCourseLocked) {
                     tvLastMessage.visibility = View.INVISIBLE
-                    countdownTimerBack?.stop()
                     PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     MarketingAnalytics.freeTrialEndEvent()
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
                     tvLastMessage.visibility = View.INVISIBLE
-                    if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
-                        countdownTimerBack?.stop()
+                    if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
+                        tvLastMessage.visibility = View.VISIBLE
                     } else {
-                        if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                            tvLastMessage.visibility = View.VISIBLE
-                        }else{
-                        }
                     }
                 } else {
                     tvLastMessage.visibility = View.VISIBLE
                 }
             }
-        }
-
-        private fun startTimer(startTimeInMilliSeconds: Long, freeTrialTimer: AppCompatTextView) {
-            countdownTimerBack?.stop()
-            countdownTimerBack = null
-            countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
-                override fun onTimerTick(millis: Long) {
-                    AppObjectController.uiHandler.post {
-                        freeTrialTimer.text = getAppContext().getString(
-                            R.string.free_trial_end_in,
-                            UtilTime.timeFormatted(millis)
-                        )
-                    }
-                }
-
-                override fun onTimerFinish() {
-                    freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
-                    countdownTimerBack?.stop()
-                }
-            }
-            countdownTimerBack?.startTimer()
         }
 
         fun imageUrl(imageView: ImageView, url: String?) {

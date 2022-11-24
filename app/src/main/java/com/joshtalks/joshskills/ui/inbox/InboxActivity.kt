@@ -555,6 +555,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     viewModel.getRecommendedCourse()
                     binding.textExploreCourse.visibility = VISIBLE
                     binding.textRecommended.visibility = VISIBLE
+                    binding.textExploreCourse.setOnClickListener {
+                        openCourseExplorer()
+                    }
                 }
             }
         }

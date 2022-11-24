@@ -56,8 +56,6 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/discount_txt"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -145,6 +143,26 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/price_desc_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/llll"
+                    tools:visibility="visible">
+
+                    <include layout="@layout/layout_expert_feature" />
+
+                    <include layout="@layout/layout_expert_feature" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/discount_txt"
                     android:layout_width="match_parent"
@@ -162,7 +180,7 @@
                     android:textStyle="bold"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/llll"
+                    app:layout_constraintTop_toBottomOf="@+id/price_desc_list"
                     app:textAllCaps="false"
                     tools:text="Offer ends in 59:30. Hurry up!" />
 

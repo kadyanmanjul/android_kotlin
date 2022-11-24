@@ -28,9 +28,9 @@
                 android:id="@+id/collapsing_toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
+                android:background="@color/icon_default"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:contentScrim="@color/white"
+                app:contentScrim="@color/icon_default"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:scrimAnimationDuration="300"
                 app:scrimVisibleHeightTrigger="@dimen/_30sdp">
@@ -47,10 +47,9 @@
                     android:focusable="true"
                     android:gravity="center_vertical|start"
                     android:onClick="@{()->handler.onBackPressed()}"
-                    android:paddingTop="@dimen/_14sdp"
-                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingVertical="@dimen/_17sdp"
                     android:visibility="visible"
-                    android:tint="@color/text_default"
+                    android:tint="@color/pure_white"
                     app:srcCompat="@drawable/ic_arrow_back" />
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
@@ -61,7 +60,6 @@
             android:layout_height="wrap_content"
             android:background="@color/pure_white"
             android:clipToPadding="false"
-            android:layout_marginTop="@dimen/_12sdp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:itemCount="1"
             tools:listitem="@layout/course_overview_view_holder" />

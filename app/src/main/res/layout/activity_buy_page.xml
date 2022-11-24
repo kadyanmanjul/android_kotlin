@@ -534,7 +534,7 @@
                             android:layout_marginHorizontal="@dimen/_13sdp"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:onClick="@{()-> vm.openCourseExplore()}"
-                            android:text="See course list >>"
+                            android:text="See list of courses in unlimited access >>"
                             android:textColor="@color/primary_500"
                             android:textStyle="bold"
                             android:visibility="@{vm.isSeeAllButtonShow ? View.VISIBLE : View.GONE}" />

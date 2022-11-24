@@ -10,6 +10,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
@@ -54,9 +55,6 @@ class CourseOverviewViewHolder(
     @com.mindorks.placeholderview.annotations.View(R.id.txtDescription)
     lateinit var txtDescription: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.img_top_icon)
-    lateinit var imgTopIcon: AppCompatImageView
-
     @com.mindorks.placeholderview.annotations.View(R.id.txtRating)
     lateinit var txtRating: JoshTextView
 
@@ -91,7 +89,7 @@ class CourseOverviewViewHolder(
     lateinit var carouselRecyclerView: PlaceHolderView
 
     @com.mindorks.placeholderview.annotations.View(R.id.card_offer)
-    lateinit var cardOffer: PlaceHolderView
+    lateinit var cardOffer: MaterialCardView
 
     @Resolve
     fun onResolved() {
@@ -103,10 +101,6 @@ class CourseOverviewViewHolder(
         ratingBar.rating = data.rating.toFloat()
         if (testId == 10)
             cardOffer.visibility = View.VISIBLE
-        if (data.topIconUrl.isNullOrBlank().not()) {
-            setImage(data.topIconUrl!!, imgTopIcon)
-            imgTopIcon.visibility = View.VISIBLE
-        }
         setCourseStats()
         setCarouselView()
     }

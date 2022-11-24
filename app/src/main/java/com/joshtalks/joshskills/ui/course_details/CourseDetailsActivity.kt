@@ -15,15 +15,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.view.Gravity
-import android.view.View
+import android.view.*
 import android.view.View.GONE
-import android.view.Window
-import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
@@ -95,7 +93,7 @@ import java.math.BigDecimal
 const val ENGLISH_COURSE_TEST_ID = 102
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
 
-class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGatewayListener {
+class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, PaymentGatewayListener {
 
     private lateinit var binding: ActivityCourseDetailsBinding
     private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
@@ -135,23 +133,24 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        this.window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-
-        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+//        requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+//        this.window.setFlags(
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN
+//        )
+//
+//        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+//            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+//        } else {
+//            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//        }
         super.onCreate(savedInstanceState)
-        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.icon_default)
+       // window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pure_white)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_details)
         binding.lifecycleOwner = this
         binding.handler = this
+        setWhiteStatusBar()
         testId = intent.getIntExtra(KEY_TEST_ID, 0)
         isFromFreeTrial = intent.getBooleanExtra(IS_FROM_FREE_TRIAL, false)
         buySubscription = intent.getBooleanExtra(BUY_SUBSCRIPTION, false)
@@ -1185,6 +1184,23 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             fragment.arguments = bundle
             replace(R.id.details_parent_container, fragment, "Payment Processing")
             disallowAddToBackStack()
+        }
+    }
+
+    private fun setWhiteStatusBar(){
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pure_white)
+    }
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = window.insetsController
+            controller?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            val windowInsetController =  WindowCompat.getInsetsController(window, window.decorView)
+            windowInsetController.isAppearanceLightStatusBars = true
         }
     }
 }

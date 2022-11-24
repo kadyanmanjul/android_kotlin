@@ -7,7 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
@@ -17,6 +20,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetai
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_PRICE_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.util.Date
 
 class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
@@ -88,18 +92,37 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
     inner class PriceListViewHolder(val binding: ItemNewPriceCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         var countdownTimerBack: CountDownTimer? = null
+        var courseDescListCard: View? = null
 
         fun setData(priceList: CourseDetailsList?) {
             binding.itemData = priceList
             binding.discountPrice.text = "MRP: ${priceList?.actualAmount} "
             binding.discountPrice.paintFlags = binding.discountPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
             binding.originalPrice.text = priceList?.discountedPrice + "/yr"
+            if (priceList?.subText!=null) {
+                binding.priceDescList.visibility = View.VISIBLE
+                binding.priceDescList.removeAllViews()
+                priceList.subText?.forEach { it ->
+                    val view = getCourseDescriptionList(it)
+                    if (view != null) {
+                        binding.priceDescList.addView(view)
+                    }
+                }
+            }
             binding.executePendingBindings()
             if ((expireAt?.time?.minus(System.currentTimeMillis())?:0) > 0L && isMentorSpecificCoupon!=null){
                 startFreeTrialTimer(expireAt?.time?.minus(System.currentTimeMillis())?: 0)
             }else{
                 binding.discountTxt.visibility = View.GONE
             }
+        }
+        private fun getCourseDescriptionList(featureText: String): View? {
+            val courseDescListInflate: LayoutInflater = AppObjectController.joshApplication.getSystemService(AppCompatActivity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            courseDescListCard = courseDescListInflate.inflate(R.layout.layout_expert_feature, null, true)
+            val courseDesc = courseDescListCard?.findViewById<TextView>(R.id.feature_text)
+            courseDesc?.compoundDrawablesRelative?.get(0)?.setTint(AppObjectController.joshApplication.resources.getColor(R.color.primary_500))
+            courseDesc?.text = HtmlCompat.fromHtml(featureText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            return courseDescListCard
         }
 
         fun startFreeTrialTimer(endTimeInMilliSeconds: Long) {

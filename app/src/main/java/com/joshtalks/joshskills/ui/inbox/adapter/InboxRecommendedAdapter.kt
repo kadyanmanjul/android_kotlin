@@ -61,7 +61,7 @@ class InboxRecommendedAdapter :
             }
             if (courseList?.id == 10) {
                 binding.horizontalLine11.visibility = View.VISIBLE
-                binding.isBestCourse.visibility = View.GONE
+                binding.isBestCourse.visibility = View.VISIBLE
                 binding.tvSubHeading.text = "35,000 + students enrolled"
                 binding.tvSubHeading.setTextColor(AppObjectController.joshApplication.resources.getColor(R.color.success))
             }
