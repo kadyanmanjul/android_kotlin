@@ -16,219 +16,170 @@
 
     </data>
 
-    <LinearLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/pure_white"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:layout_height="match_parent">
 
-        <com.joshtalks.arclayout.ArcLayout
-            android:id="@+id/diagonalLayout"
+        <include
+            android:id="@+id/referralToolbar"
+            layout="@layout/base_toolbar" />
+
+        <TextView
+            android:id="@+id/heading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:text="@string/referral_header"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/referralToolbar"
+            tools:text="Do you want your friends to grow too?" />
+
+        <TextView
+            android:id="@+id/subheading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:text="@string/share_more_text"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintStart_toStartOf="@+id/heading"
+            app:layout_constraintTop_toBottomOf="@+id/heading" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".75"
-            android:elevation="@dimen/_8sdp"
-            app:arc_cropDirection="cropInside"
-            app:arc_height="@dimen/_32sdp"
-            app:arc_position="bottom">
+            android:layout_height="@dimen/_149sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subheading_text"
+            app:srcCompat="@drawable/friend_img" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#25d366">
+        <ImageView
+            android:id="@+id/pointOneTick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_32sdp"
+            android:src="@drawable/ic_check"
+            app:layout_constraintEnd_toStartOf="@+id/referralPointOne"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/referralPointOne" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:paddingStart="@dimen/_8sdp"
-                    android:paddingTop="@dimen/_16sdp"
-                    android:paddingEnd="@dimen/_8sdp"
-                    android:paddingBottom="@dimen/_8sdp"
-                    android:tint="@color/pure_white"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_baseline_arrow_back_ios" />
+        <TextView
+            android:id="@+id/referralPointOne"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_31sdp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:text="@string/referral_point_one"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pointOneTick"
+            app:layout_constraintTop_toBottomOf="@+id/image_view" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_25sdp"
-                    android:ellipsize="marquee"
-                    android:gravity="center"
-                    android:paddingStart="@dimen/_8sdp"
-                    android:paddingTop="@dimen/_12sdp"
-                    android:paddingEnd="@dimen/_8sdp"
-                    android:paddingBottom="@dimen/_4sdp"
-                    android:singleLine="false"
-                    android:text="@string/paise_kamao"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                    android:textColor="@color/pure_white"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/pointTwoTick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_32sdp"
+            android:src="@drawable/ic_check"
+            app:layout_constraintEnd_toStartOf="@+id/referralPointTwo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/referralPointTwo" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_header2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="176dp"
-                    android:layout_marginEnd="177dp"
-                    android:text="Share Knowledge, Earn Love"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                    android:textColor="@color/pure_white"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_header" />
+        <TextView
+            android:id="@+id/referralPointTwo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:text="@string/referral_point_two"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pointTwoTick"
+            app:layout_constraintTop_toBottomOf="@+id/referralPointOne" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/_50sdp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHeight_default="percent"
-                    app:layout_constraintHeight_percent="0.4"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_header"
-                    app:srcCompat="@drawable/ic_refer_a_friend" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_view_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_24sdp"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                    android:textColor="@color/pure_white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:text="Earn 50 in your account for\nevery friend who joins the\ncourse." />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_view_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                    android:textColor="@color/text_default"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/text_view_1"
-                    tools:text="Your friend also gets\n50 OFF on their course." />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.joshtalks.arclayout.ArcLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <View
+            android:id="@+id/referCodeBg"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".25"
-            android:orientation="vertical">
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_28sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:background="@drawable/small_dotted_stroke_background"
+            app:layout_constraintBottom_toTopOf="@+id/shareOnWhatsAppBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/referralPointTwo" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_view_3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="@string/share_more_text"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                android:textColor="@color/text_default"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/yourReferralCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:text="@string/your_referral_code"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintBottom_toBottomOf="@+id/referCodeBg"
+            app:layout_constraintStart_toStartOf="@+id/referCodeBg"
+            app:layout_constraintTop_toTopOf="@+id/referCodeBg" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:id="@+id/tv_referral_code"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_42sdp"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:background="@drawable/rect_with_bound"
-                android:clickable="true"
-                android:drawablePadding="@dimen/_18sdp"
-                android:drawableTint="@color/icon_default"
-                android:focusable="true"
-                android:gravity="center"
-                android:paddingStart="@dimen/_18sdp"
-                android:paddingTop="@dimen/_8sdp"
-                android:paddingEnd="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_8sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-                android:textColor="@color/text_default"
-                android:textIsSelectable="true"
-                app:drawableEndCompat="@drawable/ic_content_copy"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_view_3"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.65"
-                tools:text="5CFFD" />
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/tv_referral_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_7sdp"
+            android:drawablePadding="@dimen/_8sdp"
+            android:drawableTint="@color/text_default"
+            android:includeFontPadding="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+            android:textColor="@color/text_default"
+            android:textIsSelectable="true"
+            app:drawableEndCompat="@drawable/ic_content_copy"
+            app:layout_constraintBottom_toBottomOf="@+id/referCodeBg"
+            app:layout_constraintEnd_toEndOf="@+id/referCodeBg"
+            app:layout_constraintTop_toTopOf="@+id/referCodeBg"
+            tools:targetApi="m"
+            tools:text="5CFFD" />
 
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_46sdp"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:backgroundTint="#7ED957"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
-                android:text="Whatsapp"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:textColor="@color/pure_white"
-                app:cornerRadius="@dimen/_4sdp"
-                app:icon="@drawable/ic_whatsapp_share"
-                app:iconGravity="textStart"
-                app:iconPadding="@dimen/_3sdp"
-                app:iconSize="@dimen/_20sdp"
-                app:iconTint="@color/pure_white"
-                app:iconTintMode="multiply"
-                app:layout_constraintStart_toStartOf="@+id/tv_referral_code"
-                app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.45"
-                app:rippleColor="@color/pure_white" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/shareOnWhatsAppBtn"
+            style="@style/Primary_Button_Filled"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_28sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:layout_marginBottom="@dimen/_32sdp"
+            android:backgroundTint="@color/external_whatsapp"
+            android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
+            android:text="@string/btn_share_on_whatsapp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_other_share"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_other_share"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_44sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:backgroundTint="@color/pure_grey"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:onClick="@{()->handler.getDeepLinkAndInviteFriends(packageVal)}"
-                android:text="\u00b7\u00b7\u00b7"
-                android:textAllCaps="true"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/text_default"
-                app:cornerRadius="@dimen/_4sdp"
-                app:layout_constraintEnd_toEndOf="@+id/tv_referral_code"
-                app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.16"
-                app:rippleColor="@color/pure_white" />
+        <ImageView
+            android:id="@+id/btn_other_share"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginEnd="@dimen/_26sdp"
+            android:background="@drawable/rounded_rectangle_attach"
+            android:backgroundTint="@color/disabled"
+            android:onClick="@{()->handler.getDeepLinkAndInviteFriends(packageVal)}"
+            android:src="@drawable/navigation_more_vert"
+            app:layout_constraintBottom_toBottomOf="@+id/shareOnWhatsAppBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/shareOnWhatsAppBtn" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

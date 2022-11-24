@@ -406,4 +406,6 @@
     <string name="interests_select_same_interest_users_connect">ਤੁਹਾਡੀਆਂ ਦਿਲਚਸਪੀਆਂ ਦੀ ਚੋਣ ਕਰੋ ਤਾਂ ਜੋ ਅਸੀਂ ਤੁਹਾਨੂੰ ਉਸੇ ਦਿਲਚਸਪੀ ਵਾਲੇ ਉਪਭੋਗਤਾਵਾਂ ਨਾਲ ਜੋੜ ਸਕੀਏ</string>
     <string name="english_level">ਤੁਹਾਡਾ ਅੰਗਰੇਜ਼ੀ ਪੱਧਰ ਕੀ ਹੈ ?</string>
     <string name="label_speaking_spotlight_2">Click here. Lesson ਦਾ ਪਹਿਲਾ ਭਾਗ ਹੈ  speaking practice.</string>
+    <string name="referral_point_one">Invite ਕਰੋ ਤੇ ਜਿੱਤੋ ! ਤੁਹਾਨੂੰ ਤੇ ਤੁਹਾਡੇ ਦੋਸਤ ਨੂੰ ਮਿਲਣਗੇ %1$s</string>
+    <string name="referral_point_two">Share ਕਰੋ ਹੇਠਾਂ ਦਿੱਤਾ ਗਿਆ code ਤੇ ਆਪਣੇ ਦੋਸਤਾਂ ਨੂੰ ਕਹੋ Course ਲੈਣ ਦੇ ਲਈ ਇਹਨੂੰ ਵਰਤਣ।</string>
 </resources>

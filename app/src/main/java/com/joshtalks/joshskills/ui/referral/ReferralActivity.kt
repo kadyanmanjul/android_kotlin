@@ -126,29 +126,7 @@ class ReferralActivity : BaseActivity() {
         val toolbarTitle = findViewById<TextView>(R.id.text_message_title)
         toolbarTitle.text = getString(R.string.referral)
 
-
-        if (referralScreenVersion == "version_1") {
-            activityReferralBinding.tvHeader.text =
-                getString(R.string.referral_header)
-            activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
-                getString(R.string.refferal_desc1, refAmount),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-            activityReferralBinding.textView2.text = HtmlCompat.fromHtml(
-                getString(R.string.referral_desc2, refAmount),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-        } else if (referralScreenVersion == "version_2") {
-            activityReferralBinding.tvHeader.text = getString(R.string.earn_upto)
-            activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
-                getString(R.string.refferal_desc1, refAmount),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-            activityReferralBinding.textView2.text = HtmlCompat.fromHtml(
-                getString(R.string.no_conditions_apply),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-        }
+        activityReferralBinding.referralPointOne.text = getString(R.string.referral_point_one, "₹$refAmount")
 
         val mDetector = GestureDetector(this, object :
             GestureDetector.OnGestureListener {

@@ -983,5 +983,8 @@
     <string name="lesson_popup_heading_reading" translatable="false">Reading Practice</string>
     <string name="lesson_popup_heading_vocab" translatable="false">Daily Vocabulary</string>
     <string name="lesson_popup_heading_speaking" translatable="false">Speaking Practice</string>
-    <string name="view_profile">View Profile</string>
+    <string name="view_profile" translatable="false">View Profile</string>
+    <string name="referral_point_one">Invite and earn, You and your friend each will get %1$s</string>
+    <string name="referral_point_two">Share the code below and ask your friends to enter it when they purchase the course</string>
+    <string name="your_referral_code" translatable="false">Your Referral Code</string>
 </resources>
