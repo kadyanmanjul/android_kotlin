@@ -9,9 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/_8sdp"
-        android:layout_marginStart="@dimen/_13sdp"
-        android:layout_marginEnd="@dimen/_4sdp"
         android:drawableStart="@drawable/ic_check_star"
-        android:drawablePadding="@dimen/_13ssp"
+        android:drawablePadding="@dimen/_13sdp"
         android:text="Learn various topics like Resume Building, Preparing an Intro etc." />
 </FrameLayout>
