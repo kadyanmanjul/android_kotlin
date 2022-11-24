@@ -75,7 +75,22 @@
                 android:id="@+id/scratch_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:visibility="invisible" />
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_scratch_here"
+                style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/_45sdp"
+                android:background="@color/pure_white"
+                android:elevation="0dp"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="Scratch here!"
+                android:visibility="invisible"
+                tools:visibility="visible" />
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
 </layout>

@@ -7,9 +7,12 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.AppObjectController
@@ -20,6 +23,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.util.scratch.ScratchView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ScratchCardDialog : BaseDialogFragment() {
@@ -51,14 +55,21 @@ class ScratchCardDialog : BaseDialogFragment() {
             }
         }
 
+        lifecycleScope.launch(Dispatchers.Main) {
+            delay(3000)
+            binding.tvScratchHere.startAnimation(AnimationUtils.loadAnimation(requireActivity(), R.anim.fade_in))
+            binding.tvScratchHere.visibility = VISIBLE
+        }
+
         binding.cardContinue.setOnClickListener {
-            BuyPageActivity.startBuyPageActivity(
-                requireActivity(),
-                AppObjectController.getFirebaseRemoteConfig().getString(
-                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),
-                "SCRATCH_CARD"
-            )
+            if (binding.cardContinue.text != requireActivity().getString(R.string.got_it))
+                BuyPageActivity.startBuyPageActivity(
+                    requireActivity(),
+                    AppObjectController.getFirebaseRemoteConfig().getString(
+                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                    ),
+                    "SCRATCH_CARD"
+                )
             dismiss()
         }
 
@@ -72,6 +83,7 @@ class ScratchCardDialog : BaseDialogFragment() {
             }
 
             override fun onRevealPercentChangedListener(scratchView: ScratchView, percent: Float) {
+                binding.tvScratchHere.visibility = GONE
                 if (percent >= 0.5) {
                     scratchView.reveal()
                 }
