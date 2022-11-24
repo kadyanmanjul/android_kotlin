@@ -68,7 +68,6 @@ import com.joshtalks.joshskills.ui.special_practice.utils.BACK_PRESSED_ON_LOADIN
 import com.joshtalks.joshskills.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.ui.subscription.TRIAL_TEST_ID
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
@@ -92,6 +91,7 @@ import java.math.BigDecimal
 
 const val ENGLISH_COURSE_TEST_ID = 102
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
+const val TRIAL_TEST_ID = 13
 
 class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, PaymentGatewayListener {
 

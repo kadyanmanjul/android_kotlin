@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.joshtalks.joshskills.repository.local.model.Mentor" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        tools:background="@color/surface_overlay">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rectangle_top_rounded"
+            android:elevation="@dimen/_20sdp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cross"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_14sdp"
+                android:padding="@dimen/_2sdp"
+                android:src="@drawable/ic_cross"
+                app:tint="@color/dark_grey" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_16sdp"
+                android:background="@color/surface_information"
+                android:paddingVertical="@dimen/_12sdp"
+                android:src="@drawable/ic_vector_grammar" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:text="@{`Hello, `  + Mentor.getInstance().getUser().getFirstName() + `!`}"
+                android:textColor="@color/text_subdued"
+                tools:text="Hello, Username!" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:text="English bolne se aati hai ..." />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/TextAppearance.JoshTypography.BodyRegular16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Dial your first call and practice with other students."
+                android:textColor="@color/text_subdued" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/call_now"
+                style="@style/Primary_Button_Filled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_24sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:text="@string/call_now"
+                android:textAllCaps="false"
+                android:textColor="@color/pure_white" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

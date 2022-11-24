@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -46,6 +47,11 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.AVAIL_COUPON_BANNER_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_LESSON_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.COUPON_UNLOCK_LESSON_COUNT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.LESSON_COMPLETE_COUPON_DISCOUNT
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys

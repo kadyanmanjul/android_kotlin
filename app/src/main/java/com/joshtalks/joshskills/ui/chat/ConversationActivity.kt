@@ -85,6 +85,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
+import com.joshtalks.joshskills.ui.chat.extra.FirstCallBottomSheet
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
@@ -108,7 +109,6 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
-import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
@@ -327,8 +327,6 @@ class ConversationActivity :
 
     private fun init() {
         initToolbar()
-        //  groupChatHintLogic()    //Group chat hint UI
-        // initCourseProgressTooltip()    // course progress tooltip
         initSharedPreferences()
         initABTest()
         initRV()
@@ -521,10 +519,11 @@ class ConversationActivity :
 
     }
 
-    private fun initEndTrialBottomSheet() {
-        TrialEndBottomSheetFragment.showDialog(
-            supportFragmentManager
-        )
+    private fun showFirstCallBottomSheet() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            delay(1000)
+            FirstCallBottomSheet.showDialog(supportFragmentManager)
+        }
     }
 
     fun showFreeTrialPaymentScreen() {
