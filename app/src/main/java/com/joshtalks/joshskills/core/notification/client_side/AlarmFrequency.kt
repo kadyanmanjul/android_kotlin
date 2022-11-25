@@ -9,6 +9,8 @@ enum class AlarmFrequency(val type: String) {
     FOUR_HOUR("FOUR_HOUR"),
     SIX_HOUR("SIX_HOUR"),
     DAILY("DAILY"),
+    TWO_DAY("TWO_DAY"),
+    THREE_DAY("THREE_DAY"),
     DAILY_AT("DAILY_AT"),
     TWO_DAY_AT("TWO_DAY_AT"),
     THREE_DAY_AT("THREE_DAY_AT"),

@@ -753,6 +753,7 @@ class NotificationUtils(val context: Context) {
 
                 else -> updateNotificationDb(NotificationCategory.AFTER_LOGIN)
             }
+            updateNotificationDb(NotificationCategory.EVENT_INDEPENDENT)
             if (categoryMap.containsKey(NotificationCategory.PAYMENT_INITIATED.category))
                 updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
             else if (categoryMap.containsKey(NotificationCategory.AFTER_BUY_PAGE.category))
