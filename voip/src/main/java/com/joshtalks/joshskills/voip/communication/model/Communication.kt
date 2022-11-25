@@ -22,6 +22,11 @@ sealed interface IncomingData : Communication {
     }
 }
 
+sealed interface InterestData : IncomingData {
+    fun getInterestHeader() : String
+    fun getInterests() : List<String>
+}
+
 sealed interface OutgoingData : Communication {
     override fun getEventTime(): Long? { return null }
     fun getAddress(): String?

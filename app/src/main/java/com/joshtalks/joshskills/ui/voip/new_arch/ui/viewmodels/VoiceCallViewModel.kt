@@ -180,6 +180,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType
+                if(uiState.interestHeader.isBlank()) {
+                    uiState.interestHeader = state.interestHeader
+                    uiState.interests = state.interests
+                }
+                Log.d(TAG, "listenUIState: ${uiState.interestHeader}")
+                Log.d(TAG, "listenUIState: ${uiState.interests}")
                 uiState.occupation = getOccupationText(state.aspiration, state.occupation)
                 uiState.title = when (state.callType) {
                     PEER_TO_PEER -> "Practice with Partner"

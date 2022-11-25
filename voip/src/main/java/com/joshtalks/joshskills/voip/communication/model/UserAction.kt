@@ -76,3 +76,43 @@ data class UI(
 		return address
 	}
 }
+
+data class Interest(
+
+	@field:SerializedName("type")
+	private val type: Int,
+
+	@field:SerializedName("channel_name")
+	private val channelName: String,
+
+	@field:SerializedName("interest_header")
+	private val header: String,
+
+	@field:SerializedName("common_interests")
+	private val interests: List<String>,
+
+	@field:SerializedName("timetoken")
+	private val timeToken: Long? = null,
+
+) : InterestData {
+
+	override fun getInterestHeader(): String {
+		return header
+	}
+
+	override fun getInterests(): List<String> {
+		return interests
+	}
+
+	override fun getChannel(): String {
+		return channelName
+	}
+
+	override fun getType(): Int {
+		return type
+	}
+
+	override fun getEventTime(): Long? {
+		return timeToken
+	}
+}

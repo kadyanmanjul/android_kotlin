@@ -408,6 +408,8 @@ data class UIState(
     val currentTopicImage: String,
     val occupation: String,
     val aspiration: String,
+    val interestHeader : String = "",
+    val interests : List<String> = emptyList(),
     val isOnHold: Boolean = false,
     val isSpeakerOn: Boolean = false,
     val isRemoteUserMuted: Boolean = false,

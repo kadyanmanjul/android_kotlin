@@ -187,6 +187,17 @@
         <item name="minHeight">@dimen/_20sdp</item>
     </style>
 
+    <style name="CommonInterestChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/common_interest_chip_bg_color</item>
+        <item name="android:textColor">@color/pure_white</item>
+        <item name="fontPath">fonts/JoshOpenSans-SemiBold.ttf</item>
+        <item name="android:textAppearance">
+            @style/TextAppearance.JoshTypography.Interest_Chip_Text
+        </item>
+        <item name="android:padding">@dimen/_20sdp</item>
+        <item name="minHeight">@dimen/_20sdp</item>
+    </style>
+
     <style name="ReminderChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/language_chip_bg_color_selector</item>
         <item name="android:textColor">@color/language_chip_text_selector</item>

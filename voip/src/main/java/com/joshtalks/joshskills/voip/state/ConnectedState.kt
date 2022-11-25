@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_EXPERT_PRICE_PER_MIN
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOTAL_AMOUNT
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.model.Interest
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
@@ -263,6 +264,14 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 extra = msg
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} event don't know how to process")
+                        }
+                        INTEREST -> {
+                            val uiData = event.data as Interest
+                            val uiState = context.currentUiState.copy(
+                                interestHeader = uiData.getInterestHeader(),
+                                interests = uiData.getInterests(),
+                            )
+                            context.updateUIState(uiState = uiState)
                         }
                         else -> {
                             val msg = "In $TAG but received ${event.type} event don't know how to process"

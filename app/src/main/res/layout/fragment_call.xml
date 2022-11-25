@@ -56,6 +56,7 @@
             android:id="@+id/caller_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
             android:layout_marginBottom="@dimen/_5sdp"
             android:gravity="center"
             android:text='@{vm.uiState.startTime &lt;= 0 ? "" :  vm.uiState.name}'
@@ -86,10 +87,41 @@
             android:visibility='@{vm.uiState.occupation.equals("")  ? View.GONE : View.VISIBLE}'
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/caller_name"
+            app:layout_constraintTop_toBottomOf="@+id/interest_list"
             tools:ignore="MissingPrefix"
             tools:text="Engineer, Dream - IAS Officer"
             tools:visibility="gone" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/interest_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@{vm.uiState.interestHeader}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textColor="@color/pure_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/call_time1"
+            tools:ignore="MissingPrefix"
+            tools:text="Interest Header" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/interest_list"
+            setChips="@{vm.uiState.interests}"
+            android:clickable="false"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:layout_width="0dp"
+            app:justifyContent="center"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            app:layout_constraintEnd_toStartOf="@+id/interest_end_guideline"
+            app:layout_constraintStart_toStartOf="@+id/interest_start_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/interest_header">
+        </com.google.android.material.chip.ChipGroup>
 
         <TextView
             android:id="@+id/call_time"
@@ -103,23 +135,25 @@
             app:layout_constraintBottom_toTopOf="@id/incoming_timer_container"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             app:layout_constraintVertical_bias="0.076"
             tools:ignore="MissingPrefix"
-            tools:text="" />
+            tools:text=""
+            tools:visibility="visible" />
 
         <Chronometer
             android:id="@+id/call_time1"
             startTimer="@{vm.uiState.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/pure_white"
             android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             tools:ignore="MissingPrefix" />
 
         <androidx.constraintlayout.widget.Barrier
@@ -128,7 +162,7 @@
             android:layout_height="wrap_content"
             app:barrierDirection="top"
             app:constraint_referenced_ids="call_time1,call_time"
-            app:layout_constraintTop_toBottomOf="@id/occupation_future_goals" />
+            app:layout_constraintTop_toBottomOf="@id/caller_name" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/c_image"
@@ -161,7 +195,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintHorizontal_bias="0.512"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/call_time1" />
+            app:layout_constraintTop_toBottomOf="@+id/occupation_future_goals" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_name"
@@ -334,7 +368,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{vm.uiState.startTime &lt;= 0 &amp;&amp; vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.INVISIBLE : View.VISIBLE }"
-            app:constraint_referenced_ids="occupation_future_goals,topic_header, topic_name"
+            app:constraint_referenced_ids="occupation_future_goals,topic_header, topic_name, interest_header, interest_list"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -350,5 +384,19 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.9" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/interest_start_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/interest_end_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.8" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -250,7 +250,7 @@ class SearchingState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
-                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE,
+                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE, INTEREST,
                         REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT-> {
 
                             val msg =

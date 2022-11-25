@@ -77,4 +77,5 @@
     <color name="profile_request_card">#99EEEEEE</color>
     <color name="pure_white_0_2">#33ffffff</color>
     <color name="text_default_0_2">#33253858</color>
+    <color name="common_interest_chip_bg_color">#33F5F5F5</color>
 </resources>

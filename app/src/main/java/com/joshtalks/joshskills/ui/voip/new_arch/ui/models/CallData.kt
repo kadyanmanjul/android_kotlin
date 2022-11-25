@@ -45,6 +45,20 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var interestHeader : String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.interestHeader)
+        }
+
+    @get:Bindable
+    var interests : List<String> = emptyList()
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.interests)
+        }
+
+    @get:Bindable
     var topic : String = ""
         set(value) {
             field = value

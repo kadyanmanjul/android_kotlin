@@ -366,6 +366,14 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT")
                         }
+                        Event.INTEREST -> {
+                            val uiData = event.data as Interest
+                            val uiState = context.currentUiState.copy(
+                                interestHeader = uiData.getInterestHeader(),
+                                interests = uiData.getInterests(),
+                            )
+                            context.updateUIState(uiState = uiState)
+                        }
                         else -> {
                             val msg = "In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
                             CallAnalytics.addAnalytics(
