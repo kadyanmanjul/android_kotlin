@@ -28,7 +28,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
-import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
@@ -41,7 +40,6 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURS
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
-import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -200,14 +198,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 isSmoothScrollbarEnabled = true
             }
         }
-        recycler_view_inbox.addItemDecoration(
-            LayoutMarginDecoration(
-                Utils.dpToPx(
-                    applicationContext,
-                    6f
-                )
-            )
-        )
         recycler_view_inbox.adapter = inboxAdapter
         iv_setting.setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.THREE_DOTS).push()
@@ -525,12 +515,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         paymentStatusView.visibility = View.GONE
                     }
                     if (isSubscriptionCourseBought) {
-                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = true
-                        findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = false
-                        findMoreLayout.findViewById<View>(R.id.top_line).isVisible = true
-                        findMoreLayout.findViewById<View>(R.id.below_line).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = false
                     } else if (isCapsuleCourseBought.not()) {
-                        findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = true
                         try {
                             runOnUiThread {
                                 btn_upgrade.isVisible = haveFreeTrialCourse
@@ -540,9 +528,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                             e.printStackTrace()
                         }
                         showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
-                        findMoreLayout.findViewById<View>(R.id.top_line).isVisible = false
-                        findMoreLayout.findViewById<View>(R.id.below_line).isVisible = false
-                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
                             findMoreLayout.visibility = View.GONE
