@@ -76,6 +76,7 @@ class ScratchCardDialog : BaseDialogFragment() {
         binding.scratchView.setRevealListener(object : ScratchView.IRevealListener {
             override fun onRevealed(scratchView: ScratchView) {
                 scratchView.reveal()
+                savePopupImpression("SCRATCH_CARD_UNLOCKED")
                 if (binding.cardContinue.text != requireActivity().getString(R.string.got_it)) {
                     binding.cardConfetti.visibility = VISIBLE
                     binding.cardConfetti.playAnimation()

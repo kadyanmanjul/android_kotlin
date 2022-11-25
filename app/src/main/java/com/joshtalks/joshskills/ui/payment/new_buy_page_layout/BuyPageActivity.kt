@@ -929,6 +929,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
 
     private fun showPendingDialog() {
         PrefManager.put(STICKY_COUPON_DATA, EMPTY)
+        stopService(Intent(this, StickyNotificationService::class.java))
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val fragment = PaymentPendingFragment()
