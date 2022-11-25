@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.BuildConfig
@@ -414,7 +415,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         val icon = paymentStatusView.findViewById<AppCompatImageView>(R.id.info_icon)
         val title = paymentStatusView.findViewById<AppCompatTextView>(R.id.title)
         val description = paymentStatusView.findViewById<AppCompatTextView>(R.id.description)
-        val tryAgain = paymentStatusView.findViewById<AppCompatTextView>(R.id.try_again)
+        val tryAgain = paymentStatusView.findViewById<MaterialButton>(R.id.try_again)
         val callText = paymentStatusView.findViewById<AppCompatTextView>(R.id.call)
         val number = paymentStatusView.findViewById<AppCompatTextView>(R.id.number)
 

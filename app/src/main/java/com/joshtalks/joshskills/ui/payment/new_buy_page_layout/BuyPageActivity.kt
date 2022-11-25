@@ -53,6 +53,7 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
@@ -328,7 +329,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
         if (buyCourseFeatureModel.expiryTime != null) {
             if (buyCourseFeatureModel.expiryTime?.time ?: 0 >= System.currentTimeMillis()) {
                 if (buyCourseFeatureModel.expiryTime?.time ?: 0 > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                    binding.freeTrialTimer.visibility = View.GONE
+                    binding.freeTrialTimerNewUi.visibility = View.GONE
                 } else {
                     startTimer(
                         (buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis(),
@@ -340,20 +341,24 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
                     } else {
-                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
+                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
                     }
                     binding.freeTrialTimerNewUi.visibility = View.VISIBLE
                     binding.timeText.visibility = View.GONE
                     binding.timerText.text = getString(R.string.free_trial_ended)
                     binding.timerText.gravity = Gravity.CENTER_HORIZONTAL
                 } else {
-                    binding.freeTrialTimer.visibility = View.VISIBLE
-                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                    binding.freeTrialTimerNewUi.visibility = View.VISIBLE
+                    binding.timerText.text = getString(R.string.free_trial_ended)
+                    binding.timeText.gone()
+//                    binding.freeTrialTimer.visibility = View.VISIBLE
+//                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                 }
                 PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             }
         } else {
-            binding.freeTrialTimer.visibility = View.GONE
+            binding.freeTrialTimerNewUi.gone()
+//            binding.freeTrialTimer.visibility = View.GONE
         }
     }
 
@@ -789,7 +794,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
                         } else {
-                            binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
+                            binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
                         }
                         binding.freeTrialTimerNewUi.visibility = View.VISIBLE
                         binding.timerText.text = buyCourseFeatureModel.timerBannerText
@@ -809,11 +814,20 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                             binding.txtSecond.text = freeTrailTime[1]
                         }
                     } else {
-                        binding.freeTrialTimer.visibility = View.VISIBLE
-                        binding.freeTrialTimer.text = getString(
-                            R.string.free_trial_end_in,
-                            UtilTime.timeFormatted(millis)
-                        )
+                        binding.freeTrialTimerNewUi.visibility = View.VISIBLE
+                        binding.timerText.text = getString(R.string.free_trial_ends_in)
+                        binding.txtHours.text = UtilTime.getRemainingHours(millis)
+                        binding.txtMinute.text = UtilTime.getRemainingMinutes(millis)
+                        binding.txtSecond.text = UtilTime.getRemainingSeconds(millis)
+//                        binding.freeTrialTimer.text = getString(
+//                            R.string.free_trial_end_in,
+//                            UtilTime.timeFormatted(millis)
+//                        )
+//                        binding.freeTrialTimer.visibility = View.VISIBLE
+//                        binding.freeTrialTimer.text = getString(
+//                            R.string.free_trial_end_in,
+//                            UtilTime.timeFormatted(millis)
+//                        )
                     }
                 }
             }
@@ -823,8 +837,11 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                     binding.timeText.visibility = View.GONE
                     binding.timerText.text = getString(R.string.free_trial_ended)
                 } else {
-                    binding.freeTrialTimer.visibility = View.VISIBLE
-                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                    binding.freeTrialTimerNewUi.visibility = View.VISIBLE
+                    binding.timerText.text = getString(R.string.free_trial_ended)
+                    binding.timeText.gone()
+//                    binding.freeTrialTimer.visibility = View.VISIBLE
+//                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                 }
                 PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             }
