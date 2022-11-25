@@ -745,7 +745,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         binding.spotlightTabReading.visibility = View.INVISIBLE
                         binding.lessonSpotlightTooltip.visibility = View.VISIBLE
                         binding.lessonSpotlightTooltip.setTooltipText(
-                            resources.getText(R.string.label_speaking_spotlight_2).toString()
+                            viewModel.speakingTopicLiveData.value?.speakingToolTipText
+                                ?: resources.getText(R.string.label_speaking_spotlight_2).toString()
                         )
                         binding.lessonSpotlightTooltip.post {
                             slideInAnimation(binding.lessonSpotlightTooltip)
@@ -1450,12 +1451,12 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         }
     }
 
-    private fun showSpeakingSpotlight() {
-        if (lessonNumber == 1) {
-            viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-            PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
-        }
-    }
+//    private fun showSpeakingSpotlight() {
+//        if (lessonNumber == 1) {
+//            viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+//            PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+//        }
+//    }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
         tab?.let {

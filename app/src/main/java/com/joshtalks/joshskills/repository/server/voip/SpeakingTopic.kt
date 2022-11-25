@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.server.voip
 
-
 import android.os.Parcelable
 import androidx.room.*
 import com.google.gson.annotations.Expose
@@ -51,14 +50,30 @@ data class SpeakingTopic(
 
     @SerializedName("is_ft_caller_blocked")
     @ColumnInfo(name = "is_ft_caller_blocked")
-    val isFtCallerBlocked: String?
+    val isFtCallerBlocked: String?,
+
+    @SerializedName("p2p_button_text")
+    @ColumnInfo(name = "p2p_button_text")
+    val p2pBtnText: String? = null,
+
+    @SerializedName("speaking_tab_title")
+    @ColumnInfo(name = "speaking_tab_title")
+    val speakingTabTitle: String? = null,
+
+    @SerializedName("speaking_info_text")
+    @ColumnInfo(name = "speaking_info_text")
+    val speakingInfoText: String? = null,
+
+    @SerializedName("speaking_tooltip_text")
+    @ColumnInfo(name = "speaking_tooltip_text")
+    val speakingToolTipText: String? = null
 
 ) : Parcelable
 
 @Dao
 interface SpeakingTopicDao {
 
-    @Query(value = "SELECT * FROM SpeakingTopic where id=:topicId")
+    @Query(value = "SELECT * FROM SpeakingTopic where id = :topicId")
     suspend fun getTopicById(topicId: String): SpeakingTopic?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

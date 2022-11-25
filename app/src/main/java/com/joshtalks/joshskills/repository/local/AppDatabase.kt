@@ -134,7 +134,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class,
     ],
-    version = 57,
+    version = 58,
     exportSchema = true
 )
 @TypeConverters(
@@ -239,7 +239,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_53_54,
                                 MIGRATION_54_55,
                                 MIGRATION_55_56,
-                                MIGRATION_56_57
+                                MIGRATION_56_57,
+                                MIGRATION_57_58
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -709,6 +710,15 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_56_57: Migration = object : Migration(56, 57) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE `feedback_engage`")
+            }
+        }
+
+        private val MIGRATION_57_58: Migration = object : Migration(57, 58) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `p2p_button_text` TEXT")
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `speaking_tab_title` TEXT")
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `speaking_info_text` TEXT")
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `speaking_tooltip_text` TEXT")
             }
         }
 

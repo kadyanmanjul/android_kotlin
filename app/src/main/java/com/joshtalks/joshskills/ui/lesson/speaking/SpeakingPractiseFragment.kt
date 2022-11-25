@@ -159,16 +159,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         if (topicId.isNullOrBlank().not()) {
             viewModel.getTopicDetail(topicId!!)
         }
-        viewModel.lessonSpotlightStateLiveData.postValue(null)
-        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
-            viewModel.lessonSpotlightStateLiveData.postValue(null)
-        } else {
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(100)
-                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-                PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
-            }
-        }
         viewModel.isFavoriteCallerExist()
         subscribeRXBus()
         //checkForVoipState()
@@ -419,9 +409,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     if (response.alreadyTalked >= twentyMinutes)
                         viewModel.postGoal(GoalKeys.CALL_20MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
 
-                    if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
-                            IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-                        )
+                    if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null &&
+                        topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(IS_FREE_TRIAL_CAMPAIGN_ACTIVE)
                     ) {
                         viewModel.postGoal(
                             GoalKeys.EFT_GT_2MIN.name,
@@ -430,12 +419,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                     }
 
-                    if (!PrefManager.getBoolValue(
-                            IS_FIRST_TIME_SPEAKING_SCREEN,
-                            defValue = false
-                        ) && PrefManager.getBoolValue(
-                            IS_FREE_TRIAL
-                        )
+                    if (!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) &&
+                        PrefManager.getBoolValue(IS_FREE_TRIAL)
                     ) {
                         binding.imgRecentCallsHistory.visibility = INVISIBLE
                         PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN, true)
@@ -481,10 +466,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                     binding.tvTodayTopic.text = response.topicName
 
+                    showToolTipOnLesson()
+
                     if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
-                        PrefManager.put(
-                            REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true
-                        )
+                        PrefManager.put(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
                         binding.tvPractiseTime.text =
                             response.alreadyTalked.toString().plus("/")
                                 .plus(response.duration.toString())
@@ -493,11 +478,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.progressBar.progressMax = response.duration.toFloat()
 
                         binding.infoContainer.findViewById<AppCompatTextView>(R.id.info_text_subheading).text =
-                            if (response.duration >= 10) {
-                                getString(R.string.pp_messages, response.duration.toString())
-                            } else {
-                                getString(R.string.pp_message, response.duration.toString())
-                            }
+                            response.speakingInfoText?.let {
+                                it.ifBlank { getInfoTipText(response.duration) }
+                            } ?: getInfoTipText(response.duration)
+
+                        binding.spTitle.text = response.speakingTabTitle?.let {
+                            it.ifBlank { getString(R.string.speak_practise_title) }
+                        } ?: getString(R.string.speak_practise_title)
+
+                        binding.btnPeerToPeerCall.text = response.p2pBtnText?.let {
+                            it.ifBlank { getString(R.string.call_practice_partner) }
+                        } ?: getString(R.string.call_practice_partner)
                     } else {
                         if (binding.txtHowToSpeak.visibility == VISIBLE) {
                             val layoutParams: ConstraintLayout.LayoutParams =
@@ -668,10 +659,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
 
-        binding.btnNextStep.setOnClickListener {
-            showNextTooltip()
-        }
-
         viewModel.lessonLiveData.observe(viewLifecycleOwner) {
             try {
                 lessonNo = it?.lessonNo ?: 0
@@ -698,6 +685,27 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             binding.btnCallWithExpert.isVisible = false
         }
         initDemoViews(lessonNo)
+    }
+
+    private fun showToolTipOnLesson() {
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+            viewModel.lessonSpotlightStateLiveData.postValue(null)
+        } else {
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(100)
+                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+                PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+            }
+        }
+    }
+
+    fun getInfoTipText(duration: Int): String {
+        return if (duration >= 10) {
+            getString(R.string.pp_messages, duration.toString())
+        } else {
+            getString(R.string.pp_message, duration.toString())
+        }
     }
 
     fun startBuyPageActivity(v: View) {
@@ -809,43 +817,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             questionId
         )
         lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
-    }
-
-    private fun showTooltip() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_TOOLTIP, defValue = false)) {
-                withContext(Dispatchers.Main) {
-                    binding.lessonTooltipLayout.visibility = GONE
-                }
-            } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
-                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
-                    withContext(Dispatchers.Main) {
-                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                        binding.txtTooltipIndex.text =
-                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-                        binding.lessonTooltipLayout.visibility = VISIBLE
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showNextTooltip() {
-        if (currentTooltipIndex < lessonTooltipList.size - 1) {
-            currentTooltipIndex++
-            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-            binding.txtTooltipIndex.text =
-                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-        } else {
-            binding.lessonTooltipLayout.visibility = GONE
-            PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
-        }
-    }
-
-    fun hideTooltip() {
-        binding.lessonTooltipLayout.visibility = GONE
-        PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
     private fun startPractise(
