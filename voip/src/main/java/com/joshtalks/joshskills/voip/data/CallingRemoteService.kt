@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
-import com.joshtalks.joshskills.base.model.NotificationData as Data
+import com.joshtalks.joshskills.voip.base.model.NotificationData as Data
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
 
 private const val TAG = "CallingRemoteService"
@@ -122,7 +122,7 @@ class CallingRemoteService : Service() {
                 disconnectCall()
                 return START_NOT_STICKY
             }
-            SERVICE_ACTION_INCOMING_CALL_HIDE->{
+            SERVICE_ACTION_INCOMING_CALL_HIDE ->{
                 mediator.hideIncomingCall()
             }
             SERVICE_ACTION_INCOMING_CALL_DECLINE -> {

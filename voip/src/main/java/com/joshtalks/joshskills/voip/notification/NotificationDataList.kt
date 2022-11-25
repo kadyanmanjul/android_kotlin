@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.RemoteViews
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.voip.base.constants.FROM_INCOMING_CALL
+import com.joshtalks.joshskills.voip.base.constants.INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
@@ -28,7 +28,10 @@ class ConnectedNotification {
         val destination="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
         val callingActivity = Intent()
         val bundle = Bundle().apply {
-            putString(STARTING_POINT, FROM_INCOMING_CALL)
+            putString(
+                STARTING_POINT,
+                FROM_INCOMING_CALL
+            )
             putInt(INCOMING_CALL_ID, data.getCallId())
         }
         callingActivity.apply {

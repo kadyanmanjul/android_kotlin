@@ -13,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.openCallScreen
-import com.joshtalks.joshskills.base.model.NotificationData as Data
+import com.joshtalks.joshskills.voip.base.model.NotificationData as Data
 
 internal class NotificationGenerator {
     private lateinit var notificationBuilder : NotificationCompat.Builder

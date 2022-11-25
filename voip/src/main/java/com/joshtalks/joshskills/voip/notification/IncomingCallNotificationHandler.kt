@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.voip.notification
 
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.constant.*

@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CodeInputField">
+        <attr name="cell_count" format="integer" />
+        <attr name="left_margin" format="float" />
+        <attr name="right_margin" format="float" />
+        <attr name="font_size" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="JoshTooltip">
+        <attr name="tooltipText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="GroupsAppBar">
+        <attr name="title" format="string" />
+        <attr name="sub_title" format="string" />
+        <attr name="img_url" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="AttachmentView">
+        <attr name="image_src" format="reference" />
+        <attr name="text" format="string" />
+        <attr name="tag" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="BlurImageView">
+        <attr name="radius" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="ZoomageView">
+        <attr name="zoomage_zoomable" format="boolean" />
+        <attr name="zoomage_translatable" format="boolean" />
+        <attr name="zoomage_restrictBounds" format="boolean" />
+        <attr name="zoomage_animateOnReset" format="boolean" />
+        <attr name="zoomage_doubleTapToZoom" format="boolean" />
+        <attr name="zoomage_doubleTapToZoomScaleFactor" format="float" />
+        <attr name="zoomage_autoCenter" format="boolean" />
+        <attr name="zoomage_minScale" format="float" />
+        <attr name="zoomage_maxScale" format="float" />
+        <attr name="zoomage_autoResetMode" format="enum">
+            <enum name="UNDER" value="0" />
+            <enum name="OVER" value="1" />
+            <enum name="ALWAYS" value="2" />
+            <enum name="NEVER" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <attr name="superBottomSheet_dim" format="float" />
+    <attr name="superBottomSheet_backgroundColor" format="color" />
+    <attr name="superBottomSheet_cornerRadius" format="dimension" />
+    <attr name="superBottomSheet_animateCornerRadius" format="boolean" />
+    <attr name="superBottomSheet_animateStatusBar" format="boolean" />
+    <attr name="superBottomSheet_alwaysExpanded" format="boolean" />
+    <attr name="superBottomSheet_cancelableOnTouchOutside" format="boolean" />
+    <attr name="superBottomSheet_cancelable" format="boolean" />
+    <attr name="superBottomSheet_statusBarColor" format="color" />
+    <attr name="superBottomSheet_peekHeight" format="dimension" />
+
+    <declare-styleable name="JcPlayerView">
+        <attr name="text_audio_title_color" format="color" />
+        <attr name="text_audio_current_duration_color" format="color" />
+        <attr name="text_audio_duration_color" format="color" />
+        <attr name="seek_bar_color" format="color" />
+        <attr name="seek_bar_progress" format="color" />
+
+        <attr name="progress_color" format="color" />
+
+        <attr name="play_icon_color" format="color" />
+        <attr name="pause_icon_color" format="color" />
+        <attr name="next_icon_color" format="color" />
+        <attr name="previous_icon_color" format="color" />
+        <attr name="random_icon_color" format="color" />
+        <attr name="repeat_icon_color" format="color" />
+        <attr name="repeat_one_icon_color" format="color" />
+
+        <attr name="play_icon" format="reference" />
+        <attr name="pause_icon" format="reference" />
+        <attr name="next_icon" format="reference" />
+        <attr name="previous_icon" format="reference" />
+        <attr name="random_icon" format="reference" />
+        <attr name="repeat_icon" format="reference" />
+        <attr name="repeat_one_icon" format="reference" />
+
+        <attr name="show_random_button" format="boolean" />
+        <attr name="show_repeat_button" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CountryCodePicker">
+        <!--{@deprecated Use defaultNameCode instead.}-->
+        <attr name="ccp_defaultPhoneCode" format="integer" />
+        <attr name="ccp_contentColor" format="color" />
+        <attr name="ccp_arrowColor" format="color" />
+        <attr name="ccp_textSize" format="dimension" />
+        <attr name="ccp_arrowSize" format="dimension" />
+        <attr name="ccp_customMasterCountries" format="string" />
+        <attr name="ccp_excludedCountries" format="string" />
+        <attr name="ccp_flagBorderColor" format="color" />
+        <attr name="ccp_countryPreference" format="string" />
+        <attr name="ccp_defaultNameCode" format="string" />
+        <attr name="ccp_selectionMemoryTag" format="string" />
+        <attr name="ccp_useFlagEmoji" format="boolean" /> <!-- beta -->
+        <attr name="ccp_useDummyEmojiForPreview" format="boolean" /> <!-- beta -->
+
+        <attr name="ccp_textGravity" format="enum">
+            <enum name="LEFT" value="-1" />
+            <enum name="RIGHT" value="1" />
+            <enum name="CENTER" value="0" />
+        </attr>
+        <attr name="ccp_hintExampleNumberType" format="enum">
+            <enum name="MOBILE" value="0" />
+            <enum name="FIXED_LINE" value="1" />
+            <enum name="FIXED_LINE_OR_MOBILE" value="2" />
+            <enum name="TOLL_FREE" value="3" />
+            <enum name="PREMIUM_RATE" value="4" />
+            <enum name="SHARED_COST" value="5" />
+            <enum name="VOIP" value="6" />
+            <enum name="PERSONAL_NUMBER" value="7" />
+            <enum name="PAGER" value="8" />
+            <enum name="UAN" value="9" />
+            <enum name="VOICEMAIL" value="10" />
+            <enum name="UNKNOWN" value="11" />
+        </attr>
+
+        <!--CCP bool properties-->
+        <attr name="ccp_showNameCode" format="boolean" />
+        <attr name="ccp_showFlag" format="boolean" />
+        <attr name="ccp_showFullName" format="boolean" />
+        <attr name="ccp_internationalFormattingOnly" format="boolean" />
+        <attr name="ccp_clickable" format="boolean" />
+        <attr name="ccp_showPhoneCode" format="boolean" />
+        <attr name="ccp_autoDetectLanguage" format="boolean" />
+        <attr name="ccp_autoDetectCountry" format="boolean" />
+        <attr name="ccp_areaCodeDetectedCountry" format="boolean" />
+        <attr name="ccp_autoFormatNumber" format="boolean" />
+        <attr name="ccp_hintExampleNumber" format="boolean" />
+        <attr name="ccp_rememberLastSelection" format="boolean" />
+        <attr name="ccp_showArrow" format="boolean" />
+
+        <!--CCP Dialog properties-->
+        <attr name="ccpDialog_keyboardAutoPopup" format="boolean" />
+        <attr name="ccpDialog_allowSearch" format="boolean" />
+        <attr name="ccpDialog_showPhoneCode" format="boolean" />
+        <attr name="ccpDialog_showNameCode" format="boolean" />
+        <attr name="ccpDialog_showFlag" format="boolean" />
+        <attr name="ccpDialog_showFastScroller" format="boolean" />
+        <attr name="ccpDialog_fastScroller_bubbleColor" format="color" />
+        <attr name="ccpDialog_fastScroller_handleColor" format="color" />
+        <attr name="ccpDialog_fastScroller_bubbleTextAppearance" format="reference" />
+        <attr name="ccpDialog_backgroundColor" format="color" />
+        <attr name="ccpDialog_textColor" format="color" />
+        <attr name="ccpDialog_searchEditTextTint" format="color" />
+        <attr name="ccpDialog_showCloseIcon" format="boolean" />
+        <attr name="ccpDialog_showTitle" format="boolean" />
+        <attr name="ccpDialog_initialScrollToSelection" format="boolean" />
+        <!--list of languages-->
+        <!--Make sure: order in this list must match order of Language Enum in CountryCodePicker.java. Values must be ascending starting from 0.-->
+        <attr name="ccp_defaultLanguage" format="enum">
+            <enum name="AFRIKAANS" value="0" />
+            <enum name="ARABIC" value="1" />
+            <enum name="BENGALI" value="2" />
+            <enum name="CHINESE_SIMPLIFIED" value="3" />
+            <enum name="CHINESE_TRADITIONAL" value="4" />
+            <enum name="CZECH" value="5" />
+            <enum name="DANISH" value="6" />
+            <enum name="DUTCH" value="7" />
+            <enum name="ENGLISH" value="8" />
+            <enum name="FARSI" value="9" />
+            <enum name="FRENCH" value="10" />
+            <enum name="GERMAN" value="11" />
+            <enum name="GREEK" value="12" />
+            <enum name="GUJARATI" value="13" />
+            <enum name="HEBREW" value="14" />
+            <enum name="HINDI" value="15" />
+            <enum name="INDONESIA" value="16" />
+            <enum name="ITALIAN" value="17" />
+            <enum name="JAPANESE" value="18" />
+            <enum name="KAZAKH" value="19" />
+            <enum name="KOREAN" value="20" />
+            <enum name="POLISH" value="21" />
+            <enum name="PORTUGUESE" value="22" />
+            <enum name="PUNJABI" value="23" />
+            <enum name="RUSSIAN" value="24" />
+            <enum name="SLOVAK" value="25" />
+            <enum name="SPANISH" value="26" />
+            <enum name="SWEDISH" value="27" />
+            <enum name="TURKISH" value="28" />
+            <enum name="UKRAINIAN" value="29" />
+            <enum name="URDU" value="30" />
+            <enum name="UZBEK" value="31" />
+            <enum name="VIETNAMESE" value="32" />
+        </attr>
+
+        <attr name="ccp_countryAutoDetectionPref" format="enum">
+            <enum name="SIM_ONLY" value="1" />
+            <enum name="NETWORK_ONLY" value="2" />
+            <enum name="LOCALE_ONLY" value="3" />
+            <enum name="SIM_NETWORK" value="12" />
+            <enum name="NETWORK_SIM" value="21" />
+            <enum name="SIM_LOCALE" value="13" />
+            <enum name="LOCALE_SIM" value="31" />
+            <enum name="NETWORK_LOCALE" value="23" />
+            <enum name="LOCALE_NETWORK" value="32" />
+            <enum name="SIM_NETWORK_LOCALE" value="123" />
+            <enum name="SIM_LOCALE_NETWORK" value="132" />
+            <enum name="NETWORK_SIM_LOCALE" value="213" />
+            <enum name="NETWORK_LOCALE_SIM" value="231" />
+            <enum name="LOCALE_SIM_NETWORK" value="312" />
+            <enum name="LOCALE_NETWORK_SIM" value="321" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="PrefixSuffixEditText">
+        <attr name="prefix" format="string" />
+        <attr name="suffix" format="string" />
+    </declare-styleable>
+    <declare-styleable name="SwipyRefreshLayout">
+        <attr name="srl_direction">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+            <enum name="both" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="RipplePulseRelativeLayout">
+        <attr name="pulse_layout_ShowPreview" format="boolean" />
+        <attr name="pulse_layout_RippleColor" format="color|reference" />
+        <attr name="pulse_layout_PulseType" format="enum">
+            <enum name="fill" value="0" />
+            <enum name="stroke" value="1" />
+        </attr>
+        <attr name="pulse_layout_PulseDuration" format="integer|reference" />
+        <attr name="pulse_layout_StartDelay" format="integer|reference" />
+        <attr name="pulse_layout_EndDelay" format="integer|reference" />
+        <attr name="pulse_layout_RippleStrokeWidth" format="dimension|reference" />
+        <attr name="pulse_layout_RippleStartRadiusPercent" format="float" />
+        <attr name="pulse_layout_RippleEndRadiusPercent" format="float" />
+        <attr name="pulse_layout_PulseInterpolator" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="SubsamplingScaleImageView">
+        <attr name="src" format="reference" />
+        <attr name="assetName" format="string" />
+        <attr name="panEnabled" format="boolean" />
+        <attr name="zoomEnabled" format="boolean" />
+        <attr name="quickScaleEnabled" format="boolean" />
+        <attr name="tileBackgroundColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="PractiseRatingView">
+        <attr name="rating_title" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="RatingBar">
+        <attr name="starImageSize" format="dimension" />
+        <attr name="starImageWidth" format="dimension" />
+        <attr name="starImageHeight" format="dimension" />
+        <attr name="starImagePadding" format="dimension" />
+        <attr name="starCount" format="integer" />
+        <attr name="starNum" format="integer" />
+        <attr name="starEmpty" format="reference" />
+        <attr name="starFill" format="reference" />
+        <attr name="starHalf" format="reference" />
+        <attr name="clickable" format="boolean" />
+        <attr name="halfstart" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="RadialProgressBar">
+        <!--outer view-->
+        <attr name="outerProgress" format="integer" />
+        <attr name="outerProgressColor" format="color" />
+        <attr name="outerProgressStartAngle" format="integer" />
+        <attr name="outerMaxProgress" format="integer" />
+        <attr name="outerEmptyProgressColor" format="color" />
+        <!--center view-->
+        <attr name="centerProgress" format="integer" />
+        <attr name="centerProgressColor" format="color" />
+        <attr name="centerProgressStartAngle" format="integer" />
+        <attr name="centerMaxProgress" format="integer" />
+        <attr name="centerEmptyProgressColor" format="color" />
+
+        <!--inner view-->
+        <attr name="innerProgress" format="integer" />
+        <attr name="innerProgressColor" format="color" />
+        <attr name="innerProgressStartAngle" format="integer" />
+        <attr name="innerMaxProgress" format="integer" />
+        <attr name="innerEmptyProgressColor" format="color" />
+
+        <!--innerMost view-->
+        <attr name="innerMostProgress" format="integer" />
+        <attr name="innerMostProgressColor" format="color" />
+        <attr name="innerMostProgressStartAngle" format="integer" />
+        <attr name="innerMostMaxProgress" format="integer" />
+        <attr name="innerMostEmptyProgressColor" format="color" />
+
+        <!-- Common Attrs-->
+        <attr name="useRoundedCorner" format="boolean" />
+        <attr name="isAnimationOn" format="boolean" />
+        <attr name="hasElevation" format="boolean" />
+        <attr name="hasEmptyProgressBar" format="boolean" />
+        <attr name="hasOneProgressView" format="boolean" />
+        <attr name="hasTwoProgressView" format="boolean" />
+        <attr name="circleThickness" format="float" />
+        <attr name="circlePadding" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="Avatar">
+        <attr name="avatar_shape" format="string" />
+        <attr name="avatar" format="reference" />
+        <attr name="avatar_initials" format="string" />
+        <attr name="border_color" format="color" />
+        <attr name="border_width" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="StatusIndicator">
+        <attr name="user_status" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="CometChatUserList">
+        <attr name="userlist" format="reference" />
+        <attr name="headers" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CometChatReceiptsList">
+        <attr name="receiptlist" format="reference" />
+        <attr name="showDeliveryReceipt" format="boolean" />
+        <attr name="showReadReceipt" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CometChatConversationList">
+        <attr name="conversationlist" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="CometChatGroupList">
+        <attr name="grouplist" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="SmartReplyList">
+        <attr name="replylist" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="SharedMediaView">
+        <attr name="reciever_id" format="string" />
+        <attr name="reciever_type" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="BadgeCount">
+        <attr name="count" format="integer" />
+        <attr name="count_size" format="dimension" />
+        <attr name="count_color" format="color" />
+        <attr name="count_background_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="ComposeBox">
+        <attr name="color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="SwipeRevealLayout">
+        <attr name="dragEdge">
+            <flag name="left" value="1" />
+            <flag name="right" value="2" />
+            <flag name="top" value="4" />
+            <flag name="bottom" value="8" />
+        </attr>
+
+        <attr name="mode">
+            <enum name="normal" value="0" />
+            <enum name="same_level" value="1" />
+        </attr>
+
+        <attr name="flingVelocity" format="integer" />
+        <attr name="minDistRequestDisallowParent" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="RecordAudio">
+        <attr name="slide_to_cancel_text" format="string" />
+        <attr name="slide_to_cancel_arrow" format="reference" />
+        <attr name="slide_to_cancel_margin_right" format="dimension" />
+        <attr name="slide_to_cancel_bounds" format="dimension" />
+        <attr name="slide_to_cancel_arrow_color" format="color" />
+        <attr name="counter_time_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="RecordMic">
+        <attr name="mic_icon" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AudioRecordView">
+        <attr name="chunkWidth" format="dimension" />
+        <attr name="chunkMaxHeight" format="dimension" />
+        <attr name="chunkMinHeight" format="dimension" />
+        <attr name="chunkSpace" format="dimension" />
+        <attr name="chunkColor" format="color" />
+        <attr name="chunkRoundedCorners" format="boolean" />
+        <attr name="chunkAlignTo" format="enum">
+            <enum name="center" value="1" />
+            <enum name="bottom" value="2" />
+        </attr>
+        <attr name="chunkSoftTransition" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ShimmerImageView">
+        <!-- automatically start animation provided there is already a drawable set-->
+        <attr name="startAnimation" format="boolean" />
+        <attr name="maskSpecs_maskColor" format="color" />
+        <attr name="maskSpecs_intensity" format="float" />
+        <attr name="maskSpecs_dropOff" format="float" />
+        <attr name="maskSpecs_maskMode" format="enum">
+            <enum name="src_in" value="3" />
+            <enum name="src_atop" value="7" />
+            <enum name="multiply" value="9" />
+            <enum name="screen" value="15" />
+        </attr>
+        <attr name="maskSpecs_animationDuration" format="integer" />
+        <attr name="maskSpecs_startDelayed" format="integer" />
+    </declare-styleable>
+
+    <!--New GrammarButton-->
+    <declare-styleable name="GrammarButton">
+        <attr name="shadowEnabled" format="boolean" />
+        <attr name="buttonColor" format="color" />
+        <attr name="shadowColor" format="color" />
+        <attr name="shadowHeight" format="dimension" />
+        <attr name="cornerRadius" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="TextViewOutline">
+        <attr name="outlineSize" format="dimension" />
+        <attr name="outlineColor" format="color|reference" />
+        <attr name="android:shadowRadius" />
+        <attr name="android:shadowDx" />
+        <attr name="android:shadowDy" />
+        <attr name="android:shadowColor" />
+    </declare-styleable>
+</resources>

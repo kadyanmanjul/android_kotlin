@@ -3,10 +3,10 @@ package com.joshtalks.joshskills.voip.mediator
 import android.graphics.Bitmap
 import android.util.Log
 import android.widget.RemoteViews
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_COURSE_ID
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.TOAST_MESSAGE
 import com.joshtalks.joshskills.voip.data.api.CallActionRequest

@@ -1,0 +1,1001 @@
+<resources>
+    <string name="app_name">Josh Skills</string>
+    <string name="inbox_header">Josh Skills</string>
+
+    <string name="next">Next</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="downloading_certificate">Downloading your certificate</string>
+    <string name="downloading_complete">Downloading complete</string>
+    <string name="not_now">Not Now</string>
+    <string name="not_now_underline"><u>Not Now</u></string>
+    <string name="settings" translatable="false">Settings</string>
+    <string name="header_congratulation">Congratulations</string>
+
+    <string name="name">Name</string>
+    <string name="email">Email Id</string>
+
+    <string name="gallery">Gallery</string>
+    <string name="audio">Audio</string>
+    <string name="camera">Camera</string>
+
+    <string name="short_seconds">sec</string>
+    <string name="volume_up_message">Please turn the volume up</string>
+    <string name="storage_permission_message">To view or send media, allow Josh Skills access to your device\'s  photos, media and files.</string>
+    <string name="record_permission_message">To record a Voice Message, allow Josh Skills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
+    <string name="camera_permission_message">To capture photos and videos allow Josh Skills access to your camera  and your device\'s  photos, media and files.</string>
+
+    <string name="type_message_hint">Type a message</string>
+
+    <string name="open">OPEN</string>
+    <string name="submit">Submit</string>
+    <string name="play_button_description">Play button</string>
+    <string name="continue_label">Continue</string>
+    <string name="info_text" translatable="false">You will get a video based on your recording that you can share with your friends and family</string>
+    <string name="message_size_limit">Message size limit exceeded</string>
+
+    <string name="pdf_desc" formatted="false">%s Page \u2022 PDF</string>
+    <string name="restart">Restart</string>
+    <string name="restart_now" translatable="false">Restart Now</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+    <string name="logout">Logout</string>
+    <string name="update_message">An update has just been downloaded.</string>
+    <string name="update_download_success_message">An update has just been downloaded.</string>
+    <string name="restart_course_message" translatable="false">क्या आप कोर्स फिर से शुरू करना चाहते हैं?(आपके कमाए Points आपके पास ही रहेंगे, लेकिन Course Lesson 1 से फिर से Start होगा)</string>
+
+    <string name="slide_to_cancel">Slide To Cancel</string>
+
+    <string name="explore_new">Course Dekhein</string>
+
+    <string name="explorer_courses">Explore Courses</string>
+    <string name="select_courses">Select Courses</string>
+    <string name="start_course">Start Course</string>
+    <string name="buy_course" translatable="false">Buy Course</string>
+    <string name="start_learning">Start Learning</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="upgrade_now" translatable="false">Upgrade Now</string>
+    <string name="done">Done</string>
+
+
+    <string name="find_more_courses">Find More Courses</string>
+    <string name="buy_english_course" translatable="false">Buy English Course</string>
+    <string name="internet_not_available_msz">Seems like your Internet is too slow or not available.</string>
+
+    <string name="plz_wait">Please wait&#8230;</string>
+    <string name="plz_wait_feedback">Please be patient \n Your feedback will be available in a few minutes.</string>
+    <string name="your_mobile_number">Your Mobile Number </string>
+    <string name="please_enter_otp">Please enter OTP</string>
+    <string name="please_enter_name">Please enter name</string>
+    <string name="please_enter_email">Please enter valid Email Id</string>
+
+    <string name="join_social_text">Join through your social accounts</string>
+    <string name="confirm_number">Confirm your number</string>
+    <string name="send_otp">Send OTP</string>
+
+    <string name="or">OR</string>
+
+    <string name="no_new_message_arrive">No new classes</string>
+    <string name="something_went_wrong">Oops! Something Went Wrong</string>
+
+    <string name="time_ago_now">few moments ago</string>
+    <string name="time_ago_full_seconds">%1$d seconds ago</string>
+    <string name="time_ago_full_minute">%1$d minute ago</string>
+    <string name="time_ago_full_minutes">%1$d minutes ago</string>
+    <string name="time_ago_full_hour">%1$d hour ago</string>
+    <string name="time_ago_full_hours">%1$d hours ago</string>
+    <string name="time_ago_full_days">%1$d days ago</string>
+    <string name="time_ago_full_month">%1$d month ago</string>
+    <string name="time_ago_full_months">%1$d months ago</string>
+
+    <string name="time_ago_seconds">%1$d sec ago</string>
+    <string name="time_ago_minute">%1$d min ago</string>
+    <string name="time_ago_minutes">%1$d min ago</string>
+    <string name="time_ago_hour">%1$d h ago</string>
+    <string name="time_ago_hours">%1$d h ago</string>
+    <string name="time_ago_yesterday_at">Yesterday at %1$s</string>
+    <string name="time_ago_days">%1$d d ago</string>
+    <string name="time_ago_month">%1$d m ago</string>
+    <string name="time_ago_months">%1$d m ago</string>
+
+    <!-- Help Screen  -->
+    <string name="email_address">Email Address</string>
+
+    <string name="attach_image">Attach an image</string>
+
+
+    <!-- Payment process-->
+    <string name="practice">Practice</string>
+
+    <string name="status_with_colon">Status : </string>
+    <string name="submit_answer">Submit Answer</string>
+    <string name="improve_answer">Improve Answer</string>
+
+    <!-- Help Screen  -->
+    <string name="today_practise">Today\'s Practice</string>
+
+    <string name="hold_to_record_msz">Press and hold to record an answer</string>
+    <string name="upload_file_msz">Upload a file</string>
+    <string name="your_answer">Your Recording</string>
+    <string name="your_feedback">Your Feedback</string>
+    <string name="your_submitted_answer">Your Submitted Recording</string>
+
+    <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>
+    <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>
+    <string name="login_signup">Login\/Signup</string>
+    <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
+    <string name="refer_and_earn">Refer &amp; Earn</string>
+    <string name="paise_kamao">Paise Kamao</string>
+    <string name="copy_code">Referral code copied to clipboard</string>
+    <string name="complete_payment">Complete Payment</string>
+
+    <string name="bill_detail_header">Bill Details</string>
+
+    <string name="answer_not_submitted">Answer not submitted</string>
+    <string name="answer_submitted">Practice Successfully Submitted</string>
+    <string name="use_tip">Use Tip</string>
+
+    <string name="type_answer_label">Type your answer</string>
+    <string name="upload_answer_label">Upload your answer</string>
+    <string name="course_overview">Course Overview</string>
+    <string name="recording_short" translatable="false">The recording should be more than one second!</string>
+    <string name="submit_practise_msz">Please complete your task before Submitting</string>
+    <string name="generic_message_for_error">An error occurred, please try again!</string>
+    <string name="referral_header" formatted="false">Do you want your friends to grow too?</string>
+    <string name="share_more_text"><b>Share Knowledge, Earn Love</b></string>
+    <string name="go_to_course">Go To Course</string>
+    <string name="video_url_not_exist">Something went wrong! Video does not exist</string>
+
+
+    <string name="volume">Volume: %1$d</string>
+    <string name="brightness">Brightness: %1$d</string>
+    <string name="seconds">%1$d seconds</string>
+
+
+    <!-- course progress layout-->
+    <string name="course_progress_detail">You have completed %s of the course</string>
+    <string name="course_duration_day" formatted="false">Day %s %s</string>
+    <string name="unlock_progress_header">To unlock &amp; download certificate, you need to complete at least %s of the course</string>
+    <string name="sample_certificate">View Sample Certificate</string>
+    <string name="certificate_progress_h">Certificate Progress</string>
+    <string name="claim_certificate_h">Claim Certificate</string>
+    <string name="performance_h">Performance</string>
+    <string name="your_performance_so_far">Your Performance So Far</string>
+    <string name="download_certificate">Download Digital Copy</string>
+    <string name="certificate_unmodify_msz">Please fill carefully, no changes will be possible</string>
+    <string name="certificate_generate_message">Your certificate will be sent to you on mail.\n Thank you!</string>
+    <string name="details_not_change_message">Details cannot be changed again</string>
+    <string name="practice_submitted">Practice Submitted!</string>
+    <string name="feedback_sub_practise">Please Rate This Practice</string>
+    <string name="feedback_sub_video">Please Rate This Video</string>
+    <string name="feedback_hint">Please share your detailed feedback</string>
+
+    <!--    Custom Permission Dialog-->
+    <string name="cancel_button">Cancel Button</string>
+    <string name="permission_dialog_description"><![CDATA[Agar aap course ko leke serious ho aur <b>Lessons</b> reminder and <b>Practice partner</b> calls miss nahi karna chahate ho to:<br><br><b>Settings</b> me jake <b>Auto Start</b> ko <b>ON</b> kare]]></string>
+    <string name="allow">Allow</string>
+    <string name="go_to_settings" translatable="false">Go to Settings</string>
+    <string name="allow_autostart" translatable="false">Allow app to Auto Start</string>
+    <string name="serious_student_ho">Kya aap Serious Student ho?</string>
+
+    <!--    Payment Failed Dialog-->
+    <string name="try_again">Try again</string>
+    <string name="chat_option">Chat &amp; Pay</string>
+    <string name="title">Oops! Payment failed.</string>
+    <string name="trx_id">Transaction ID : %s</string>
+    <string name="reason">Reason : %s</string>
+    <string name="starting_title">You Made it!</string>
+    <string name="starting_info">Aapka swaagat hai\n %s mein</string>
+    <string name="starting_info_2">You are Successfully enrolled in\n %s</string>
+    <string name="tutor_line">I am excited to teach you</string>
+    <string name="tutor_register">Please register to start</string>
+    <string name="tutor_start">Let\'s get started</string>
+    <string name="register_now">Register Now</string>
+    <string name="start">Start My Course</string>
+    <string name="tip_used_info">Tip Used! You got bade bhaiya\ndiscount of <b>₹ %s</b></string>
+    <string name="bade_bhaiya_tips_new">Bade\nBhaiya\nTip!</string>
+    <string name="tip_title">You can get discount on all Coures!</string>
+    <string name="tip_valid">Valid for next %s Days</string>
+    <string name="tip_discount">%s OFF</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="apply_coupon">Apply Coupon</string>
+    <string name="be_calm">Be Calm</string>
+    <string name="dont_close">&amp; don\'t close this window</string>
+    <string name="processing">We are processing your payment.\n This may take some time</string>
+    <string name="bilkul_nahi">No</string>
+
+    <!-- Signup V2 Screen  -->
+    <string name="otp_verify_label">Verify your number</string>
+    <string name="otp_received_message" formatted="false">Enter the OTP you received on \n  %s </string>
+    <!--    <string name="waiting_to_detect">Waiting to automatically detect an SMS sent to <font color='#253858'><b>%1$s %2$s</b></font>. <font color='#107be5'>Wrong number?</font></string>-->
+    <string name="waiting_to_detect">Waiting to automatically detect an SMS sent to <![CDATA[<b>%1$s %2$s</b>]]>. <![CDATA[<font color=#107be5>Wrong number?</font>]]></string>
+    <string name="edit_number">Edit number</string>
+    <string name="register">Register</string>
+    <string name="your_name">Your Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="date_of_birth">Date Of Birth</string>
+    <string name="otp_wait_message">Wait kare. Aapko iss time se \n pehle OTP mil jaayega.</string>
+    <string name="did_not_received_message"> Didn\'t receive OTP? </string>
+    <string name="select_gender">Please choose gender</string>
+    <string name="dob_error_toast">Please enter Date of birth</string>
+    <string name="name_error_toast">Name cannot be empty!</string>
+    <string name="please_enter_valid_number">Please enter valid mobile number </string>
+    <string name="enter_valid_email_toast">Please enter valid Email Id</string>
+    <string name="enter_postal_address">Please enter correct Pin Code</string>
+    <string name="enter_postal_house" translatable="false">Please enter a valid House Number, Buiding Name</string>
+    <string name="enter_postal_road" translatable="false">Please enter a valid Road Name, Area, Colony</string>
+    <string name="enter_postal_town" translatable="false">Please enter a valid Town/City</string>
+    <string name="generating_certificate" translatable="false">Generating Your Certificate</string>
+    <string name="missed_call_verify_message"> We make use of missed call verification.\nPlease grant permission to verify</string>
+    <string name="otp_verify_message">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
+    <string name="missed_call_label">Missed Call Verification </string>
+    <string name="wait_for_second">Wait for %s seconds</string>
+    <string name="retry_miss_call_verify">Retry Missed Call Verification </string>
+    <string name="flash_call_verify_permission_message">For verifying your number, JoshSkills need Calls and Phone permission. Tap Settings > Permissions, and Call logs.</string>
+    <string name="registration">Registration</string>
+    <string name="verification_failed">Verification Failed</string>
+    <string name="gender">Gender</string>
+
+    <!--Referral Activity-->
+    <string name="enter_referral_code">Enter a referral code</string>
+    <string name="enter_promo_code">Enter a promo code</string>
+    <string name="wrong_coupon">Wrong coupon code</string>
+    <string name="referral_success_info">You have been referred by your friend\n%s</string>
+    <string name="referral_success_info2">&amp; you get ₹ 50 off on your first course.</string>
+    <string name="back_button_desc">Back Button</string>
+
+    <!--End-->
+    <string name="help" translatable="false">Support</string>
+    <string name="close" translatable="false">Close</string>
+    <string name="favorite_list" translatable="false">Favorite List</string>
+    <string name="restart_course" translatable="false">Restart Course</string>
+    <string name="show_details">Show Details</string>
+    <string name="select_course">Select Course</string>
+    <string name="selected">Selected</string>
+    <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
+    <string name="help_answer">Was this answer helpful?</string>
+    <string name="go_home_text">Go home</string>
+    <string name="faq_title">FAQ</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="gmail_login_error_message">An error occurred, please try again!</string>
+    <!--landing flow-->
+    <string name="read_more">Read More</string>
+    <string name="read_less">Read Less</string>
+
+    <string name="downloading_start">Downloading Syllabus&#8230;</string>
+    <string name="downloaded_syllabus" translatable="false">Syllabus PDF downloaded successfully! </string>
+    <string name="download_syllabus">Download Syllabus</string>
+    <string name="chech_location">Check for your location</string>
+    <string name="meet_me">Meet Me!</string>
+    <string name="meet_the_students">Meet the Students</string>
+    <string name="hi_i_am">Hi! I am</string>
+    <string name="about_teacher_title">About Teacher</string>
+    <string name="joined">Joined</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="conversation_practice">Conversation Practice</string>
+    <string name="select_your_character">Select your character first</string>
+    <string name="usb_connected_message">Your device is connected to PC. Please disconnect the USB data connection to play the videos</string>
+    <string name="usb_disconnect_title">Disconnect USB</string>
+    <string name="ok_got_it_lbl">OK, GOT IT</string>
+    <string name="selection_arrow">selection_arrow</string>
+    <string name="start_practise">START PRACTICE </string>
+    <string name="practise_intro_sub">How to complete this practice?</string>
+    <string name="finish">Finish</string>
+
+    <string name="start_quiz">START QUIZ</string>
+    <string name="conversational_practise">Conversational Practice</string>
+    <string name="tap_to_continue">Tap to continue</string>
+
+    <string name="back_to_course">Back To Course</string>
+    <string name="back_to_question">Back To Question</string>
+    <string name="well_done">Well Done</string>
+    <string name="test_summary">Here is your test summary</string>
+    <string name="test_summary_title">Test Summary</string>
+    <string name="attempted">Attempted</string>
+    <string name="not_attempted">Not Attempted</string>
+    <string name="right">Right</string>
+    <string name="wrong">Wrong</string>
+    <string name="edit_answer">Edit Answer</string>
+    <string name="view_answer">View Answer</string>
+    <string name="revise_concept">Revise Concept</string>
+    <string name="back_to_summary">Back To Summary</string>
+    <string name="hello">"Hello "</string>
+    <string name="total_attempted">Total Attempted \n</string>
+    <string name="total_question">Total Question \n</string>
+    <string name="see_answer">See correct answer</string>
+    <string name="see_your_answer">See your answer</string>
+    <string name="reset">Reset</string>
+    <string name="submitted_recording">Submitted Recordings</string>
+    <string name="submit_record_msz">Do you want to submit this recording?</string>
+    <string name="select_character">Select your character first</string>
+
+    <string name="unlock_class_text">Unlock Next Class</string>
+    <string name="start_now">Start Now</string>
+    <string name="get_started">Get Started</string>
+    <string name="subscription_feature_3">Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</string>
+    <string name="subscription_feature_2">7 dino ke liye aap app ke saare courses unlimited access kar sakte hai</string>
+    <string name="subscription_feature_1">ye pass aapko saare courses ka access dega for 7 days - completely free</string>
+    <string name="unlimited_learning">Unlimited Learning</string>
+    <string name="subscription_heading">India ka pehla subscription with</string>
+    <string name="start_7_day_trial">Start 7-Day Free Trial</string>
+    <string name="start_free_course">Start Free Course Now</string>
+    <string name="trial_ended">Your 2 day trial has ended! Kya aapko mazaa aaya?
+        \nAccess this courses now.</string>
+    <string name="get_one_year_pass">Get All Course Access Pass</string>
+    <string name="free_trial_ended">Your Free trial has ended</string>
+    <string name="me">Me</string>
+    <string name="add_this" translatable="false">Add This</string>
+    <string name="delete_media_title">Clear Course Media</string>
+    <string name="delete_media_message">Are you sure you want to delete all media from this course?</string>
+    <string name="referral" translatable="false">Referral</string>
+    <string name="reminders">Reminders</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="add_reminder">Add Reminder</string>
+    <string name="every_day">Every Day</string>
+    <string name="on_weekdays">On Weekdays</string>
+    <string name="on_weekends">On Weekends</string>
+    <string name="repeat">Repeat</string>
+    <string name="delete">Delete</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="add_more_reminder">"Add More Reminder "</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="class_reminder">Class Reminder</string>
+    <string name="alarms_deleted">Alarms Deleted</string>
+    <string name="resend">Resend</string>
+    <string name="hint_name_field">Your Name</string>
+    <string name="hint_email_field">e.g. abc@xyz.com</string>
+    <string name="hint_date_field">e.g. 01 Jan 1990</string>
+    <string name="total_interests_selected">Total interests selected</string>
+    <string name="click_to_start_the_course">Click to start the course</string>
+    <string name="select_interest">Select Interest</string>
+    <string name="practice_with_partner">Practice With Partner</string>
+
+    <string name="clear_all_media" translatable="false">Clear All Media</string>
+    <string name="download_quality">Download Quality</string>
+    <string name="select_language">Select Language</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="app_settings">App Settings</string>
+    <string name="clear_all_downloads">Clear All Downloads</string>
+    <string name="sign_out">Sign out</string>
+    <string name="notifications">Notifications</string>
+    <string name="autostart">Allow app to Auto Start</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="low">Low</string>
+    <string name="login_type">Login Type</string>
+    <string name="register_number" translatable="false">Register Number</string>
+    <string name="register_email" translatable="false">Register Email</string>
+    <string name="female">Female</string>
+    <string name="male">Male</string>
+    <string name="other">Other</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="auto_start_prompt_message">Please enable Autostart to receive notifications when the app is in the background</string>
+    <string name="already_a_user_login">Already a user? <font color='#107BE5'>Log in</font></string>
+    <string name="not_a_user_sign_up">Not a user? <font color='#107BE5'>Sign Up</font></string>
+
+    <string name="hint_text_btn"><u>OK got it </u></string>
+    <string name="rate_us">Rate Us</string>
+    <string name="pending">Pending</string>
+    <string name="submitted">Submitted</string>
+    <string name="p2p_notification_setting" translatable="false">Speaking partner notifications</string>
+    <string name="p2p_proximity_setting" translatable="false">Proximity Sensor</string>
+    <string name="select_country">Select country</string>
+    <string name="next_class">Next Class</string>
+    <string name="ex_referralcode">eg. L3ARN</string>
+    <string name="enter_country">enter country</string>
+    <string name="no_result_found">no result found</string>
+    <string name="correct_answer_label">Your answer is Correct</string>
+    <string name="wrong_answer_label">Your answer is Wrong</string>
+    <string name="english_practise_hint">Practice English on live call with partner</string>
+    <string name="voice_message">Voice Message</string>
+    <string name="video">Video</string>
+    <string name="conversation">Video %1$s</string>
+    <string name="unlock_class_demo">Unlock Class Demo For now</string>
+    <string name="refferal_desc1"><![CDATA[\Earn <strong><u>₹%1$s</u></strong> in your account for <br/> every friend who joins a <br/> course!\]]></string>
+    <string name="referral_desc2"><![CDATA[\Your friend also gets <br/> <strong>₹%1$s OFF</strong> on their first course\]]></string>
+    <string name="earn_upto">\Earn upto ₹10,000 \</string>
+    <string name="no_conditions_apply">No Conditions Apply</string>
+
+    <string name="c_practise_tab_1">Listen</string>
+    <string name="c_practise_tab_2">Quiz</string>
+    <string name="c_practise_tab_3">Practice</string>
+    <string name="c_practise_tab_4">Record</string>
+    <string name="next_class_started">Next Class Started</string>
+    <string name="whatsApp_not_installed">WhatsApp not Installed</string>
+    <string name="invalid_coupon_code">Invalid Coupon Code. Try Again</string>
+    <string name="speaking">Speaking</string>
+    <string name="grammar">Grammar</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="reading">Reading</string>
+    <string name="lesson_name">Lesson %1$d: %2$s</string>
+    <string name="start_lesson">Start Lesson</string>
+    <string name="continue_lesson">Continue Lesson</string>
+    <string name="show_explanation">Show Explanation</string>
+    <string name="hide_explanation">Hide Explanation</string>
+    <string name="explanation">Explanation</string>
+    <string name="lessons">Lessons</string>
+    <string name="exam">Certification Exam</string>
+    <string name="congratulations">Congratulations </string>
+    <string name="amazing" translatable="false">Amazing</string>
+    <string name="rule_completed_message" translatable="false">Congratulations! You have completed another level</string>
+    <string name="lesson_completed" translatable="false">Lesson Completed!</string>
+    <string name="instructions" translatable="false">Instructions</string>
+    <string name="start_examination" translatable="false">Start Examination</string>
+    <string name="previous_results" translatable="false">Previous Results</string>
+    <string name="questions" translatable="false">Questions</string>
+    <string name="minutes" translatable="false">Minutes</string>
+    <string name="marks" translatable="false">Marks</string>
+    <string name="ce_header" translatable="false">Certification Examination</string>
+    <string name="pause_amp_exit" translatable="false"><![CDATA[Pause & Exit]]></string>
+    <string name="finish_exam" translatable="false">Finish Exam</string>
+    <string name="resume_examination" translatable="false">Resume Examination</string>
+    <string name="your_score" translatable="false">Your Score</string>
+    <string name="download_certificate_2" translatable="false">Generate Certificate</string>
+    <string name="check_exam_details" translatable="false">Check exam details</string>
+    <string name="examination_result" translatable="false">Examination Result</string>
+    <string name="check_answer" translatable="false">Check Answer</string>
+    <string name="next_question" translatable="false">Next Question</string>
+    <string name="hang_up" translatable="false">Hang Up</string>
+    <string name="decline" translatable="false">Decline</string>
+    <string name="answer" translatable="false">Answer</string>
+    <string name="call_back" translatable="false">CALL BACK</string>
+    <string name="finding_practise_partner" translatable="false">Finding a Practice Partner</string>
+    <string name="searching_info_text" translatable="false">1. Make sure you do longer calls, English bolne se aati hai. \n2. Strict action will be taken against Inappropriate behavior. \n3. Frequent short calls may lead to calling suspension.</string>
+    <string name="speak_practise_title" translatable="false">Welcome to practice with \n partner</string>
+    <string name="today_topic" translatable="false">Today\'s Topic</string>
+    <string name="call_practice_partner" translatable="false">Call Practice Partner</string>
+    <string name="pp_message" translatable="false">In this practice you have to speak to a practice partner for %s minute</string>
+    <string name="pp_messages" translatable="false">In this practice you have to speak to a practice partner for %s minutes</string>
+
+    <string name="spoke_with" translatable="false">Spoke for %s minutes with  %s</string>
+
+    <string name="redo_quiz">Redo Quiz</string>
+    <string name="quiz_completed">Quiz Completed!!</string>
+    <string name="marks_text">You got %1$d/%2$d correct</string>
+    <string name="attempts_over" translatable="false">Attempts Over</string>
+    <string name="leaderboard" translatable="false">Leaderboard</string>
+    <string name="cexam_date" translatable="false">Eligibility date - %s </string>
+    <string name="correct" translatable="false">Correct</string>
+    <string name="unanswered" translatable="false">Unanswered</string>
+    <string name="user_does_not_exist">This user does not exist anymore</string>
+    <string name="start_quiz_camel">Start Quiz</string>
+    <string name="word_tag">Word %1$d/%2$d - %3$s</string>
+    <string name="quiz_tag" translatable="false">Revision %1$d/%2$d</string>
+    <string name="ques_short_form">Ques. %1$d/%2$d - %3$s</string>
+    <string name="cexam_marks" translatable="false">%1$d%% Marks</string>
+    <string name="cexam_passed_on" translatable="false">Passed on- %s</string>
+    <string name="cexam_attempted_on" translatable="false">Attempted on - %s</string>
+    <string name="cexam_attempt_left" translatable="false">Attempts left - %1$d </string>
+    <string name="cexam_reattempt" translatable="false">Reattempt</string>
+    <string name="cexam_check_results" translatable="false">Check Results</string>
+    <string name="completed">Completed</string>
+    <string name="age">Age:</string>
+    <string name="batch">Batch:</string>
+    <string name="points">Points</string>
+    <string name="awards">Awards</string>
+    <string name="see_all">See All </string>
+    <string name="profile" translatable="false"> Profile</string>
+    <string name="profile_photo">Profile photo</string>
+    <string name="with">with</string>
+    <string name="vocabulary_completed" translatable="false">Congratulations you have completed vocabulary!</string>
+    <string name="lesson_no">"Lesson %1$d"</string>
+    <string name="today_lesson">Today\'s lesson: %1$s</string>
+    <string name="user_point_text" translatable="false">Total Points Earned</string>
+    <string name="user_minutes_text" translatable="false">Total Minutes Spoken</string>
+    <string name="user_streak_text" translatable="false">Regular for %1$d Days</string>
+    <string name="user_min_text" translatable="false">Minutes Spoken</string>
+    <string name="see_leaderboard" translatable="false">See the Leaderboard >></string>
+    <string name="how_points_work" translatable="false">How to earn points</string>
+    <string name="how_points_work_title" translatable="false">How to Earn Points</string>
+    <string name="points_history" translatable="false">Points History</string>
+    <string name="minutes_history" translatable="false">Minutes Spoken History</string>
+    <string name="go_to_profile" translatable="false">Go to Profile</string>
+
+    <string name="loremIpsum" translatable="false">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer
+        took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,
+        but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
+        with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+        \software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="loremIpsumShort" translatable="false">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer
+        took a galley of type and scrambled it to make a type specimen book.</string>
+    <string name="grant_storage_permission" translatable="false">Please grant storage permission from app setting</string>
+    <string name="call" translatable="false">Call</string>
+    <string name="incorrect" translatable="false">Incorrect</string>
+    <string name="add" translatable="false">Add</string>
+    <string name="group_title" translatable="false">Groups</string>
+
+    <string name="share" translatable="false">Share</string>
+    <string name="view" translatable="false">View</string>
+    <string name="examination_not_unlocked">Examination Not Unlocked</string>
+    <string name="okay">Okay</string>
+    <string name="exam_info">%1$d Questions - %2$d Minutes - %3$d Marks</string>
+    <string name="you_can_only_attempt_the_certification_exam">You can only attempt the Certification exam after %1$d lessons</string>
+    <string name="exam_title" translatable="false">%s Certification Exam</string>
+    <string name="max_unread_count" translatable="false">99+</string>
+    <string name="reading_practice" translatable="false">Reading Practice</string>
+    <string name="reading_sub_title" translatable="false">Neeche diye gai lino ko padhe</string>
+    <string name="record_your_answer">Record your answer</string>
+    <string name="attempt_reading_practice">Here is today\'s reading practice, please record &amp; submit</string>
+    <string name="recording_start" translatable="false">Tap to record your answer</string>
+    <string name="recording_stop" translatable="false">Tap to stop recording&#8230;</string>
+
+    <string name="pro_mis_word" translatable="false">Pronunciation and missing words</string>
+    <string name="speed" translatable="false">Speed</string>
+    <string name="how_to_pronounce">How to pronounce:</string>
+
+    <!-- Groups -->
+    <string name="admin_responsibilities" translatable="false">
+        1. Admin ek tarah se group ka Leader hota h\n2. Admin ne jo group banaya h use uss group k topic k prati JOSHila hona chaiye\n3. Admin logo ko Group se nikal bhi sakta h lekin uske peeche koi reason hona chaiye jaise batameezi, inactive ya irrelevant\n4. Admin ko Closed group me sab ki request barabar se padhni chaiyeaur sirf interested and relevant logo ko allow karna chaiye\n5. Admin baki logo ko Group join karne k liye bhi bol sakta h jisse group me aur acche students aye\n6. Admin ko group me active rehena hoga and group ko engage rakhna hoga takio group k sabhi logo ki progress ho\n7. Admin ko apni powers ka galat istamal nahi karna chaiye
+    </string>
+
+    <string name="group_rules_list" translatable="false">
+        1. Be Kind\n
+        2. Help other members\n
+        3. No spam\n
+        4. Respect everyone\n
+        5. No self promotion
+    </string>
+
+    <string name="closed_group_desc" translatable="false">Ye group ek closed group h. Iss group ko join karne k liye Admin ko aapko Allow karna hoga. En Questions k answers de dijiye taki aapko group  me allow kiya jaye </string>
+
+    <string name="favorite_p2p_title" translatable="false">Favorite Practice Partner Calling</string>
+    <string name="call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone, Phone and Storage </string>
+    <string name="demo_call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone, Phone and Storage </string>
+    <string name="spoke_for_minute" translatable="false">Spoke for %1$s </string>
+    <string name="block" translatable="false">Block</string>
+    <string name="block_user_hint" translatable="false">By clicking block, %s will never be able to call you and your calls will never go to %s</string>
+    <string name="search_leaderboard" translatable="false">Search Leaderboard</string>
+    <string name="rank" translatable="false">Rank</string>
+    <string name="aapki_new_class" translatable="false">Aapki Nayi Classes </string>
+    <string name="favorites_header" translatable="false">Favorites List</string>
+    <string name="mute" translatable="false">Mute</string>
+    <string name="speaker" translatable="false">Speaker</string>
+    <string name="call_favorite_practice_partner" translatable="false">Call Favorite Practice Partner</string>
+    <string name="call_from_group" translatable="false">Call Practice Partner from group</string>
+    <string name="student" translatable="false">Student</string>
+    <string name="call_engage_record_message">Can\'t record practice while on a call</string>
+    <string name="call_engage_initiate_call_message">Can\'t initiate a new call while already on a call</string>
+    <string name="tap_to_return_to_call" translatable="false">Tap to return to call</string>
+    <string name="auto_logout_message">"You have been logged out from this device, because you have logged in from another device."</string>
+    <string name="skip" translatable="false">Skip</string>
+    <string name="add_photo" translatable="false">Add Photo</string>
+    <string name="ucrop_label_edit_photo" translatable="false">Add photo</string>
+    <string name="please_record_answer" translatable="false">Read the following sentences</string>
+
+    <string name="certificate_d_header" translatable="false">Please fill the below details to get your certificate made and delivered home</string>
+    <string name="mname_error_toast" translatable="false">Mother name cannot be empty!</string>
+    <string name="fname_error_toast" translatable="false">Father name cannot be empty!</string>
+    <string name="my_batch" translatable="false">My Batch</string>
+    <string name="privacy_policy" translatable="false">Privacy Policy</string>
+    <string name="privacy_label" translatable="false">By continuing you consent to share your information with Josh Skills &amp; agree to <font color='#107BE5'><u>Josh Skills’ Privacy Policy</u></font></string>
+
+    <string name="grammar_btn_text_check" translatable="false">चेक करें</string>
+    <string name="grammar_btn_text_continue" translatable="false">जारी रखें</string>
+    <string name="grammar_btn_text_start" translatable="false">शुरू करें</string>
+    <string name="grammar_lock_text" translatable="false">क्लास शुरू करने के लिए पहले Lesson %1$d कम्पलीट करे</string>
+    <string name="grammar_continue_test_text" translatable="false">क्लास जारी रखने के लिए नीचे बटन को दबाएं </string>
+    <string name="grammar_input_question_hint" translatable="false">अंग्रेजी में जवाब लिखे </string>
+    <string name="free_trial_dialog_title" translatable="false">जरुरी जानकारी</string>
+    <string name="free_trial_dialog_desc" translatable="false">यह एक 90 दिनों का कोर्स है\\nऔर try करने के बाद अगर आप चाहें तो इसे ₹499 में खरीद सकते हैं\\n  \\nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
+    <string name="free_trial_dialog_btn_no" translatable="false">जी नहीं</string>
+    <string name="free_trial_dialog_btn_yes" translatable="false">जी हाँ</string>
+    <string name="test_completed" translatable="false">Test Completed</string>
+    <string name="test_score" translatable="false">%1$d%% Marks</string>
+    <string name="enter_name_label" translatable="false">आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</string>
+    <!--    Lesson Spotlight-->
+    <string name="label_lesson_spotlight" translatable="false">हर Lesson में चार भाग होते है</string>
+    <string name="label_grammar_spotlight" translatable="false">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
+    <string name="label_speaking_spotlight" translatable="false">एस भाग में आपको एक प्रैक्टिस पार्टनर के साथ 2 मिनट के लिए अंग्रेजी में बात करनी है</string>
+    <string name="label_speaking_spotlight_2" translatable="false"> Click here. Lesson का पहला भाग है speaking practice.</string>
+    <string name="label_vocab_spotlight_1" translatable="false">हर रोज़ यहाँ पर हम नए शब्द सिखेंगे</string>
+    <string name="label_vocab_spotlight_2" translatable="false">Appreciate का सही उच्चारण क्या है यहां से देखे</string>
+    <string name="label_vocab_spotlight_3" translatable="false">अब ये तीन वाक्यों को साथ में पढ़ कर बोले</string>
+    <string name="label_reading_spotlight" translatable="false">इस भाग में हम अपनी रीडिंग की प्रैक्टिस करेंगे</string>
+    <string name="label_become_senior_student" translatable="false"><u>How to become a Senior Student?</u></string>
+    <string name="label_become_senior_student2" translatable="false"><u>Become a Senior Student</u></string>
+    <string name="label_senior_student" translatable="false">%sis a Senior Student</string>
+    <string name="call_new_student" translatable="false">Call New Student</string>
+    <string name="free_trial_end_in" translatable="false">Free Trial ends in %s</string>
+    <string name="feature_locked" translatable="false">%s आपका free trial खतम हो गया है. Please course में admission लें.</string>
+    <string name="my_day_review_title" translatable="false">"My day in review"</string>
+
+    <string name="ignore_ui_msg" translatable="false">Element only for UI purpose</string>
+    <string name="zero" translatable="false">0</string>
+
+    <string name="total_students_enrolled" translatable="false">%s students enrolled</string>
+    <string name="edit_profile" translatable="false">Edit Profile</string>
+    <string name="no_awards_others" translatable="false">%s has not won any awards yet.\n\nIf you ever connect with them motivate them and let them know that they can do it</string>
+    <string name="no_awards_me" translatable="false">%s you have not won any awards yet. But you can do it.\n\nThe entire josh family believes in you.</string>
+    <string name="previous_dp" translatable="false">Previous Profile Photos (0)</string>
+    <string name="delete_popup" translatable="false">This photo will be deleted from your previous profile photos</string>
+
+    <!-- p2p image share strings -->
+    <string name="share_screen_tagline" translatable="false"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new persons <b>के साथ</b>
+</string>
+    <string name="share_screen_line" translatable="false">If I can do it, You can do it</string>
+    <string name="share_screen_heading" translatable="false"><![CDATA[\I Spoke in <b>English</b> for <br/> <b>%1$s minutes</b>\]]></string>
+    <string name="caller_details" translatable="false">%1$s\n%2$s\n%3$s</string>
+    <string name="you_practiced_in_english_prompt" translatable="false">You practiced in English for\n%1$s minutes</string>
+    <string name="mehnat_prompt" translatable="false">Aise hi mehnat krte raho</string>
+    <string name="josh_fam" translatable="false">You are a valuable member of the Josh\nfamily</string>
+    <string name="share_with_friends" translatable="false">Share with friends</string>
+    <string name="great_job" translatable="false">Great Job %1$s!</string>
+    <string name="send_request" translatable="false">Send Request</string>
+    <string name="requested" translatable="false">Requested</string>
+    <string name="recent_calls" translatable="false">Recent calls</string>
+    <string name="favorite_requests" translatable="false">Favorite Requests</string>
+    <string name="profile_test_for_request" translatable="false">Shobhit and you spoke for 20 min, you can request him to be your favorite practice partner to practice again.</string>
+    <string name="not_now_txt" translatable="false">Not Now</string>
+    <string name="fpp_text" translatable="false">Favorite practice partners</string>
+    <string name="start_a_practice_partner_call_from_recent" translatable="false">You will be able to see you practice partner calls here. </string>
+    <string name="view_recent_calls" translatable="false">View recent calls</string>
+    <string name="no_recent_calls_yet" translatable="false">No recent calls yet...</string>
+    <string name="no_favorite_practice_partners" translatable="false">No favorite practice partners...</string>
+    <string name="you_can_add_fpp" translatable="false">You can add favorite practice partners by sending and accepting requests from recent practice partner calls</string>
+    <string name="confirm" translatable="false">Confirm</string>
+    <string name="education_occupation_text" translatable="false">Education and Occupation</string>
+    <string name="education_text" translatable="false">Education</string>
+    <string name="occupation_text" translatable="false">Occupation</string>
+    <string name="record_video" translatable="false">Record Video</string>
+    <string name="record_and_submit_video" translatable="false">Record your video and submit the practice</string>
+    <string name="submit_your_practice" translatable="false">Submit your practice</string>
+    <string name="play_video" translatable="false">Play Video</string>
+    <string name="instruction_text" translatable="false">To understand how to complete this special practice watch this video submitted by Harsh who started this course on 8th of January 2021.</string>
+    <string name="text_temp" translatable="false">In this special practice your task is to create a video where you are teaching the meaning of this word</string>
+    <string name="your_submitted_video" translatable="false">Your Submitted video</string>
+    <string name="special_practice_text" translatable="false"><b>Vedant Maheshwari</b> sir has sent you a special practice for completing total 300 minutes speaking practice</string>
+
+    <string name="how_to_speak" translatable="false"><u>How To Speak?</u></string>
+    <string name="responsd" translatable="false">Respond</string>
+    <string name="previous_profile_text" translatable="false">Previous Profile Photos (%s)</string>
+    <string name="profile_request_removed_text" translatable="false">%s\'s favorite practice partner request has been removed</string>
+    <string name="courses_title" translatable="false">Courses</string>
+    <string name="senior_student" translatable="false">Senior Student</string>
+    <string name="edit_text" translatable="false">Edit</string>
+    <string name="basic_details" translatable="false">Basic Details</string>
+    <string name="name_error_message" translatable="false">Please Enter Your Name</string>
+    <string name="degree_error_message" translatable="false">Please Enter Your Degree</string>
+    <string name="college_error_message" translatable="false">Please Enter Your College Name</string>
+    <string name="dob_error_message" translatable="false">Please Enter Your Date Of Birth</string>
+    <string name="hometown_error_message" translatable="false">Please Enter Hometown</string>
+    <string name="invalid_url_message" translatable="false">Please Enter A Valid YouTube Url</string>
+    <string name="spoke_minutes" translatable="false">Spoke for 20 minutes</string>
+    <string name="recording_start_permission_message" translatable="false">"To start recording video, please allow permission"</string>
+
+    <string name="achieve_100_points_to_buy" translatable="false">Achieve 100 points to buy</string>
+    <string name="select_friend" translatable="false">Select friends</string>
+    <string name="total_help_me" translatable="false">You have helped 4 people start learning English</string>
+    <string name="you_have_helped" translatable="false">You have helped</string>
+    <string name="hindi_txt" translatable="false"> आपके ऐसे कौनसे दोस्त है जिनकी आप अंग्रेजी बोलने में मदद करना चाहते है</string>
+    <string name="share_details" translatable="false">Jab bhi aapke link share karne pe aapka koi dost iss course ko join karega tab aapki profile pe ye number update hoga</string>
+    <string name="referCntText" translatable="false"><b>You have helped %s people start learning English</b></string>
+    <string name="noReferral" translatable="false"><b>You have not helped anyone start learning English yet</b></string>
+    <string name="subStringToColorize" translatable="false">%s people</string>
+    <string name="has_helped" translatable="false"> has helped </string>
+    <string name="people" translatable="false">people</string>
+    <string name="help_toolbar" translatable="false">Help your friends and family</string>
+    <string name="start_learning_english" translatable="false">start learning English</string>
+    <string name="course_restart_success" translatable="false">Course Restarted Successfully</string>
+    <string name="course_restart_fail" translatable="false">Course Can Not Restart</string>
+    <string name="language_text" translatable="false">
+        <font color="@color/text_default">I want to</font>
+        <font color="@color/primary_500">speak English confidently</font>
+        <font color="@color/text_default">from …</font>
+    </string>
+    <string name="goal_text" translatable="false">मैं English इसलिए सीखना चाहता हूँ:</string>
+    <string name="buy_now" translatable="false">Buy now</string>
+    <string name="your_free_trial_has_ended" translatable="false">Your Free Trial has ended</string>
+    <string name="tap_anywhere_to_continue" translatable="false">Tap anywhere to continue</string>
+    <string name="edit_profile_data" translatable="false">Edit</string>
+    <string name="hometown" translatable="false">Hometown:</string>
+    <string name="highlights">Highlights</string>
+    <string name="future_goals" translatable="false">Future goals</string>
+    <string name="favourite_josh_talk" translatable="false">Favourite Josh Talk :</string>
+    <string name="youtube_link" translatable="false">https://www.youtube.com/watch?v=uetRaRuCOwU</string>
+    <string name="education_and_occupation" translatable="false">Education and Occupation</string>
+    <string name="occupation_heading" translatable="false">Occupation</string>
+    <string name="occupation" translatable="false">Occupation</string>
+    <string name="aspiring_ias_officer" translatable="false">Aspiring IAS officer</string>
+    <string name="at_josh_talks" translatable="false">at Josh Talks</string>
+    <string name="education" translatable="false">Education</string>
+    <string name="b_tech" translatable="false">B.Tech</string>
+    <string name="from_vit_2023" translatable="false">from VIT • 2023</string>
+    <string name="awards_cabinet" translatable="false">Awards Cabinet</string>
+    <string name="groups" translatable="false">Groups</string>
+    <string name="courses" translatable="false">Courses</string>
+    <string name="block_harsh" translatable="false">Block Harsh</string>
+    <string name="course_name" translatable="false">Course Name</string>
+    <string name="number_od_student_enrolled" translatable="false">29123 students enrolled</string>
+    <string name="harsh_gupta" translatable="false">Harsh Gupta</string>
+    <string name="spoke_for_20_min" translatable="false">Spoke for 20 minutes</string>
+    <string name="save" translatable="false">Save</string>
+    <string name="change_profile_photo" translatable="false">Change Profile Photo</string>
+    <string name="your_full_name" translatable="false">Your Full Name</string>
+    <string name="time_format" translatable="false">DD/MM/YYYY</string>
+    <string name="ex_aspiring_ias_officer" translatable="false">E.g. Aspiring IAS Officer</string>
+    <string name="ex_ias_officer" translatable="false">e.g. IAS Officer</string>
+    <string name="paste_link_to_your_favourite_josh_talk_here" translatable="false">Paste link to your favourite josh talk here</string>
+    <string name="add_education_details" translatable="false">Add Education Details</string>
+    <string name="subject_degree" translatable="false">Subject / Degree</string>
+    <string name="ex_arts_m_tech" translatable="false">Ex- Arts, M.Tech</string>
+    <string name="name_of_school_college" translatable="false">Name of School / College</string>
+    <string name="ex_dps_vit" translatable="false">Ex- DPS, VIT</string>
+    <string name="completed_expected_to_complete_by" translatable="false">Completed / Expected to Complete by</string>
+    <string name="add_occupation_details" translatable="false">Add Occupation Details</string>
+    <string name="ex_manager_homemaker_etc" translatable="false">Ex- Manager, Homemaker etc.</string>
+    <string name="company_business_name" translatable="false">Company / Business name</string>
+    <string name="ex_josh_talks" translatable="false">Ex- Josh Talks</string>
+    <string name="enrolled_courses" translatable="false">Enrolled Courses</string>
+    <string name="photo">Photo</string>
+    <string name="set_as_profile_photo" translatable="false">Set as profile photo</string>
+    <string name="number_of_min_talked_by" translatable="false">20 minutes talked by Mohit</string>
+    <string name="harsh_has_requested_to_be_your_favorite_practice_partner" translatable="false">Harsh has requested to be your favorite practice partner</string>
+    <string name="year" translatable="false">Year</string>
+    <string name="retry" translatable="false">Retry</string>
+    <string name="help_text_me" translatable="false">You have not helped anyone start learning English</string>
+    <string name="extend_free_trial1" translatable="false">हम आपको एक और दिन का free trial देना चाहते हैं।</string>
+    <string name="extend_free_trial2" translatable="false">आप free trial को एक ही बार बढ़ा सकते हैं।</string>
+    <string name="extend_free_trial3" translatable="false">क्या आप serious हैं अपनी English improve करने के लिए?</string>
+    <string name="extend_free_trial_btn_text" translatable="false">Extend free trial now</string>
+    <string name="extend_free_trial" translatable="false">Extend Free trial!</string>
+    <string name="extend_free_trial_subheading" translatable="false">हमने देखा की आपने lesson 1 पूरा नहीं किया है। यह app सिर्फ serious students के लिए है जो English सीखना चाहते हैं।</string>
+    <string name="unextendable_freetrial" translatable="false">Free Trial can\'t be extended</string>
+    <string name="year_format" translatable="false">YYYY</string>
+    <string name="allowed_name_characters" translatable="false">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM</string>
+    <string name="allowed_name_characters_with_number" translatable="false">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM1234567890</string>
+
+    <string name="submit_report_btn" translatable="false">Submit</string>
+
+    //call ratings strings
+    <string name="how_was_your_call_name" translatable="false">How was your call with %s ?</string>
+    <string name="you_spoke_for_minutes" translatable="false">You spoke for %s</string>
+    <string name="very_bad" translatable="false">Very bad</string>
+    <string name="block_caller" translatable="false">Block %s</string>
+    <string name="excellent" translatable="false">Excellent</string>
+    <string name="submit_call_rating" translatable="false">Submit</string>
+
+    <string name="voip_shared_pref_file_name" translatable="false">com.joshtalks.joshskills.new_arch_voip_shared_pref_file</string>
+    <string name="permission_denied_contacts" translatable="false">Permission to access contacts is required to invite friends.</string>
+    <string name="invite_friend_call_info" translatable="false">Aap apne dost ko unki pehli call kara sakte hai aur unke english bolne ke darr khatam karne me madad kar sakte hai</string>
+    <string name="invite_friend_link_sent" translatable="false">aapke dost ko iss app ko download karne ka link bhej diya gaya hai. \naap unko ye app download karne ke liye bol sakte hai </string>
+    <string name="invite_friend_search_hint" translatable="false">Kisko call krrna hai?</string>
+    <string name="call_a_friend" translatable="false">Call a Friend</string>
+    <string name="allow_permission" translatable="false">Allow Permission</string>
+    <string name="twenty_min_call_incomplete" translatable="false">Aapne last practice partner se 20 minute baat nahi kari. </string>
+    <string name="twenty_min_call_target" translatable="false">Aapka aaj ka target hai ek practice partner se 20 minute baat karein </string>
+    <string name="twenty_min_call_completed" translatable="false">Behetereen! Aapne aaj ka speaking target pura kar lia hai</string>
+    <string name="activity_feed" translatable="false">Activity Feed</string>
+    <string name="no_contacts_found" translatable="false">No contacts found!</string>
+    <string name="remove_from_favorite" translatable="false">Remove from favorite</string>
+    <string name="space" translatable="false">\u0020</string>
+    <string name="slash" translatable="false">/</string>
+    <string name="_1_0x" translatable="false">1.0x</string>
+    <string name="_0_5x" translatable="false">0.5x</string>
+    <string name="_0_75x" translatable="false">0.75x</string>
+    <string name="_1_25x" translatable="false">1.25x</string>
+    <string name="_1_5x" translatable="false">1.5x</string>
+    <string name="_1_75x" translatable="false">1.75x</string>
+    <string name="_of_" formatted="false" translatable="false">%d of %d</string>
+    <string name="translation" translatable="false">Translation</string>
+    <string name="share_with_friends_text" translatable="false">मैं English सीख रहा हूँ ,जहाँ environment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.</string>
+    <string name="we_will_get_new_lesson_here_everyday" translatable="false">हमें यहां हर रोज एक नया पाठ मिलेगा</string>
+
+    <string name="occupation_field" translatable="false">Occupation</string>
+    <string name="occupation_filed_hint_text" translatable="false">e.g. Manager at Flipkart</string>
+    <string name="aspiration_filed" translatable="false">Aspiration</string>
+    <string name="aspiration_filed_hint_text" translatable="false">e.g. IAS Officer </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="continue_text" translatable="false"><![CDATA[Continue >]]></string>
+    <string name="course_continue_steps" translatable="false">Course continue करने से पहले हमें कुछ steps पुरे करने हैं।</string>
+    <string name="_90_day_english_learning" translatable="false">90-Day Ultimate Spoken English \nCourse</string>
+    <string name="_90_day_english_learning_with_commitment" translatable="false">सबसे पहले हम एक शपथ लेंगे</string>
+    <string name="shapath_text" translatable="false">क्या आप यह शपथ लेते हैं?</string>
+    <string name="shapat_detail" translatable="false">नीचे Yes बोलकर मैं शपथ लेता हूँ की मै हर रोज़ कम से कम <b>1 Practice Partner Call</b> करूँगा। दिन में जब भी time मिले आऊंगा और एक भी दिन miss नहीं करूंगा। इसका फल मुझे पूरी ज़िन्दगी मिलेगा।</string>
+    <string name="reminder_text" translatable="false">Receive daily reminders?</string>
+    <string name="reminder_detail" translatable="false">क्या आप चाहते हैं की मै आपकी यह शपथ पूरी करने में मदद करूँ और आपको रोज़ याद दिलाऊं ताकि हम एक भी दिन न miss करें</string>
+    <string name="promise_btn_text" translatable="false">हाँ, मैं शपथ लेता हूँ</string>
+    <string name="live_classes_timing" translatable="false">I will attend Live class at this timing</string>
+    <string name="Schedule_motive" translatable="false">इन live classes का मकसद है हमारा confidence बढ़ाना और अंग्रेजी में बात करने का डर खत्म करना। तो ये सुनिश्चित करें की आप वह समय चुनें जहाँ पर आप रोज़ class में शामिल हो पाएं।</string>
+    <string name="Schedule_timings_selection" translatable="false">हर रोज़ इन timings पर group live class होगी। अपने पसंद का समय बताएं।</string>
+    <string name="Schedule_learning_90days" translatable="false">90-Day English Learning \nDaily Class Schedule</string>
+    <string-array name="form_options">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="states_select">
+        <item>Andaman and Nicobar Islands</item>
+        <item>Andhra Pradesh</item>
+        <item>Arunachal Pradesh</item>
+        <item>Assam</item>
+        <item>Bihar</item>
+        <item>Chandigarh</item>
+        <item>Chhattisgarh</item>
+        <item>Dadra and Nagar Haveli</item>
+        <item>Daman and Diu</item>
+        <item>Delhi</item>
+        <item>Goa</item>
+        <item>Gujarat</item>
+        <item>Haryana</item>
+        <item>Himachal Pradesh</item>
+        <item>Jammu and Kashmir</item>
+        <item>Jharkhand</item>
+        <item>Karnataka</item>
+        <item>Kerala</item>
+        <item>Ladakh</item>
+        <item>Lakshadweep</item>
+        <item>Madhya Pradesh</item>
+        <item>Maharashtra</item>
+        <item>Manipur</item>
+        <item>Meghalaya</item>
+        <item>Mizoram</item>
+        <item>Nagaland</item>
+        <item>Odisha</item>
+        <item>Puducherry</item>
+        <item>Punjab</item>
+        <item>Rajasthan</item>
+        <item>Sikkim</item>
+        <item>Tamil Nadu</item>
+        <item>Telangana</item>
+        <item>Tripura</item>
+        <item>Uttar Pradesh</item>
+        <item>Uttarakhand</item>
+        <item>West Bengal</item>
+    </string-array>
+
+    <string name="tooltip_conversation">आपके सहपाठी कौन है आप यहाँ से देख सकते है</string>
+    <string name="tooltip_lesson_grammar">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
+    <string name="tooltip_leaderboard_sotd">जो student एक दिन में सबसे ज़्यादा मेहनत करता है वह Student of the Day बनता है</string>
+    <string name="tooltip_leaderboard_sotm">जो student एक महीने में सबसे ज़्यादा मेहनत करता है वह Student of the Month बनता है</string>
+    <string name="tooltip_leaderboard_sotw">जो student एक हफ्ते में सबसे ज़्यादा मेहनत करता है वह Student of the Week बनता है</string>
+    <string name="tooltip_online_status">अब हम जान सकते हैं कि कौन से स्टूडेंट्स ऑनलाइन हैं |</string>
+    <string name="tooltip_open_profile">आप किसी की भी Profile खोल सकते हैं</string>
+    <string name="tooltip_points_history_screen">इस student ने points कैसे कमाए हम यहाँ से देख सकते है</string>
+    <string name="tooltip_search_anyone">यहाँ से हम अपने दोस्तों और बाकी स्टूडेंट्स को सर्च कर सकते हैं |</string>
+    <string name="tooltip_user_profile_screen">हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै</string>
+    <string name="referral_share_text">"Mai Bharat 🇮🇳 ke best teachers se Spoken English aur Personality Development seekh raha hu. Mere saath seekhna abhi shuru karo 💪. Ye lo meri taraf se tumhe ₹** OFF: Use my code ****. Download the app by clicking on the link"</string>
+    <string name="free_trial_popup_for_icp" translatable="false">यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹799 में खरीद सकते हैं\n  \nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
+    <string name="send_fpp_text" translatable="false">Send Favorite Practice Partner request</string>
+    <string name="btn_share_on_whatsapp" translatable="false">Share on Whatsapp</string>
+    <string name="btn_share_on_facebook" translatable="false">Share on Facebook</string>
+    <string name="btn_share_on_instagram" translatable="false">Share on Instagram</string>
+    <string name="btn_share_on_linkedin" translatable="false">Share on LinkedIn</string>
+    <string name="btn_download_certificate" translatable="false">Download Certificate</string>
+    <string name="share_your_achievement" translatable="false">Share your achievement with people who have supported you and helped you grow.</string>
+    <string name="you_have_earned_certificate" translatable="false">You have earned the Josh Skills Ultimate Spoken English Course Beginner Level Certificate</string>
+    <string name="full_name" translatable="false">Full Name</string>
+    <string name="certi_date_of_birth" translatable="false">Date of Birth</string>
+    <string name="mother_s_name" translatable="false">Mother’s Name</string>
+    <string name="father_s_name" translatable="false">Father’s Name</string>
+    <string name="mobile_number" translatable="false">Mobile Number</string>
+    <string name="certi_email_address" translatable="false">Email Address</string>
+    <string name="certificate_image" translatable="false">Certificate Image</string>
+    <string name="network_tv" translatable="false">Your Internet speed is currently not fast enough for a call</string>
+    <string name="network_sub_text" translatable="false"><u>How to solve?</u></string>
+    <string name="recheck_text" translatable="false">Recheck</string>
+    <string name="network_message" translatable="false">Aapka Internet theek se nahi chal rha Practice Partner feature use karne ke liye aapko theek interent ki zarurat hogi  \n1. Aap mobile data/wifi ko on off karke dekh sakte hai \n2. Agar aap koi heavy file download kar rahe to uske khatam hone ka wait kar sakte hai \n3. Ya thodi der mei fir try kar sakte hai.  \n\nConnection check karne ke liye Recheck button dabae</string>
+    <string name="rating_title" translatable="false">Your Rating: %s</string>
+    <string name="rating_message" translatable="false">Jab aap apne Practice Partners se baat karte hai to woh aapko ek rating dete hai.    Aapki rating agar achhi hogi to woh darshata hai ki aap ek serious student hai and aapki call bhi serious students ke saath hi connect hogi.</string>
+    <string name="progress_network_text" translatable="false">Checking your Internet Connection</string>
+    <string name="onboarding_course_heading" translatable="false">Spoken English Course</string>
+    <string name="onboarding_course_info1" translatable="false">90 Day Course</string>
+    <string name="onboarding_course_info2" translatable="false">Beginner to Advanced</string>
+    <string name="onboarding_course_info3" translatable="false">English Speaking Environment</string>
+    <string name="sign_up_profile_occupation_aspiration_text">यह Information आपके Practice partners को दिखाई देगी।</string>
+    <string name="pin_code" translatable="false">PIN code</string>
+    <string name="house_number_building_name" translatable="false">House number, Building name</string>
+    <string name="road_name_area_colony" translatable="false">Road Name, Area, Colony</string>
+    <string name="landmark" translatable="false">Landmark</string>
+    <string name="like_famous_shop_nearby" translatable="false">Like famous shop nearby</string>
+    <string name="town_city" translatable="false">Town/City</string>
+    <string name="state" translatable="false">State</string>
+    <string name="_6_digits_pin_code" translatable="false">6 digits PIN Code</string>
+
+    <string name="video_error" translatable="false">Sorry unable to process your video please retry after some time</string>
+    <string name="image_button_to_move_left" translatable="false">Image button to move left</string>
+    <string name="image_button_to_move_right" translatable="false">Image button to move right</string>
+    <string name="warning" translatable="false">WARNING</string>
+    <string name="got_it" translatable="false">GOT IT</string>
+    <string name="shorter_calls_error_message" translatable="false">Dear student, आपकी calls बहुत छोटी जा रही हैं. \n
+        \n मेरी आप से request हैं कि, आप जिससे भी connect हो, उनसे दिल लगा कर बात करें और लम्बी बात करें.
+        यह application उन serious students के लिए बनाई गयी है जिनके दिल में Josh है English सीखने का और आगे बढ़ने का.
+        अगर आपकी future की calls भी बहुत छोटी जाती हैं, तो आपकी calling को बंद भी किया जा सकता है.\n
+        \n Thank you. Best of luck! </string>
+    <string name="you_have_reached_limit_freetrial" translatable="false">You have reached your calling limit in Free Trial</string>
+    <string name="buy_course_to_continue_calling" translatable="false"><u>Buy course to continue calling</u></string>
+    <string name="grammar_completed" translatable="false">Grammar Completed!</string>
+    <string name="call_with_expert" translatable="false">Call With Expert</string>
+    <string name="available_balance" translatable="false">Available Balance</string>
+    <string name="enter_amount_in_inr" translatable="false">Select Amount in INR</string>
+    <string name="proceed" translatable="false">Proceed</string>
+    <string name="your_recharge_is_successful" translatable="false">Your Recharge is successful!</string>
+    <string name="talk_to_expert" translatable="false">Talk To Expert</string>
+    <string name="added_to_your_account" translatable="false">%1$s Added To Your Account</string>
+    <string name="wallet_gift_description" translatable="false">%1$s gift के तौर पर मैं आपको ₹%2$s दे रहा हूँ ताकि आप अपनी पहली Expert Call बिल्कुल मुफ्त में try कर पायें</string>
+    <string name="thankyou_sir" translatable="false">Thank you Sir</string>
+    <string name="minimum_balance_of_5_minutes" translatable="false">Minimum balance of 5 minutes (INR %1$s) is required to start call with %2$s</string>
+    <string name="recharge_now" translatable="false">Recharge Now</string>
+    <string name="tip_90_users_recharge_for_10_mins_or_more" translatable="false">Tip: 90% users recharge for 10 mins or more.</string>
+    <string name="success_payment_text" translatable="false">Payment Successful</string>
+    <string name="success_payment_desc" translatable="false">Start Course. Sorry for keeping you waiting \n (Note : Please Restart your App)</string>
+    <string name="failed_payment_text" translatable="false">Payment Confirmation Failed</string>
+    <string name="failed_payment_desc" translatable="false">Sorry for the inconvenience. Any money deducted will be refunded within 3-5 working days. You can try again. Any additional money deducted will also be refunded within 3-5 working days.\n\nInconvenience के लिए माफ़ी माँगना चाहेंगे कोई amount अगर deduct हुआ हो, उसका Refund आपके पास 3-5 working days में पहुँच जायेगा आगे होने वाली किसी भी unsuccessful transaction को भी refund कर दिया जायेगा\n</string>
+    <string name="processing_payment_text" translatable="false">Processing Payment</string>
+    <string name="processing_payment_desc" translatable="false">Your payment confirmation is taking longer than usual. Status will be updated within 3-4 hours. If unsuccessful,  any money deducted will be refunded within 3-5 working days\n\nआपकी payment की confirmation ज़रूरत से थोड़ा ज़्यादा time ले रही हैं 3-4 hours में आपकी payment का status update कर दिया जायेगा अगर payment unsuccessful रहती हैं, तो वह amount आप तक 3-5 working days में पहुँच जायेगा आप दोबारा try कर सकते है \n</string>
+    <string name="failed_payment_call_text" translatable="false">In case of any queries contact support:</string>
+    <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
+    <string name="aborted_msg" translatable="false">Oops, Looks like you have canceled the payment!</string>
+
+    <string-array name="amount_list">
+        <item>₹ 50</item>
+        <item>₹ 100</item>
+        <item>₹ 200</item>
+        <item>₹ 300</item>
+        <item>₹ 500</item>
+        <item>₹ 1000</item>
+        <item>₹ 2000</item>
+        <item>₹ 3000</item>
+        <item>₹ 4000</item>
+        <item>₹ 8000</item>
+        <item>₹ 15000</item>
+        <item>₹ 12000</item>
+        <item>₹ 50000</item>
+        <item>₹ 100000</item>
+    </string-array>
+    <string name="rup">\u20B9</string>
+    <string name="offer_for_you" translatable="false">Offer for you</string>
+    <string name="default_disconnect_dialog_title" translatable="false">Are you sure you want to disconnect the call?</string>
+    <string name="default_disconnect_dialog_text" translatable="false">Disconnecting calls frequently may lead to account suspension</string>
+    <string name="please_select_amount_to_add" translatable="false">Please select amount to add</string>
+    <string name="minimum_amount_required" translatable="false">Minimum amount required is INR 50</string>
+    <string name="transaction_history" translatable="false">Transaction History</string>
+    <string name="recharge" translatable="false">Recharge</string>
+    <string name="call_info_copied" translatable="false">call info copied</string>
+    <string name="payment_logs" translatable="false">Payment Logs</string>
+    <string name="wallet_transactions" translatable="false">Wallet Transactions</string>
+    <string name="josh_transaction_id" translatable="false">josh_transaction_id</string>
+    <string name="copied_to_clipboard" translatable="false">Copied to Clipboard</string>
+    <string name="empty" translatable="false"> </string>
+    <string name="ft_calls_left" formatted="false" translatable="false">%s calls left in free trial</string>
+    <string name="english_speaking_course" translatable="false">English Speaking Course</string>
+    <string name="about_the_teacher" translatable="false">About the Teacher</string>
+    <string name="course_ratings_and_reviews" translatable="false">Course Ratings and Reviews</string>
+    <string name="insert_code" translatable="false">Insert Code</string>
+    <string name="teacher_youtube_link" translatable="false"><u>Serene Paathshala</u></string>
+    <string name="maximum_amount_is_inr_20000" translatable="false">Maximum Amount is INR 20000</string>
+    <string name="terms_conditions" translatable="false"><![CDATA[Terms & Conditions]]></string>
+    <string name="community_guidelines" translatable="false">Community Guidelines</string>
+    <string name="about_us" translatable="false">About Us</string>
+    <string name="complete_registration" translatable="false">Complete registration</string>
+    <string name="payment_processing_with_elipsize" translatable="false">Payment Processing...</string>
+    <string name="do_not_close_the_app_warning" translatable="false">This might take up to a minute. Please do not close the app.</string>
+    <string name="interests_select_same_interest_users_connect">आपके interests select कीजिए ताकी हम आपको same interest के users से connect करवा सकें</string>
+    <string name="practice_call_experience">Practice call का experience बेहतर बनाएँ</string>
+    <string name="english_level">आपकी English का level क्या है ?</string>
+    <string name="interests" translatable="false">Interests</string>
+    <string name="beginner" translatable="false">Beginner</string>
+    <string name="intermediate" translatable="false">Intermediate</string>
+    <string name="advanced" translatable="false">Advanced</string>
+    <string name="skip_smallcase" translatable="false">skip</string>
+    <string name="resend_code">Resend Code</string>
+    <string name="call_now">Call Now</string>
+    <string name="no_i_ll_skip_learning">No, I\'ll skip learning</string>
+    <string name="call_waiting_info_tip">93% students learn English by speaking for 5 minutes or longer</string>
+    <string name="call_waiting_description" formatted="false">We will start searching a new partner for you in %s seconds.</string>
+    <string name="call_waiting_title">Try doing longer calls</string>
+    <string name="mrp_strike_thru" translatable="false"><strike>MRP: ₹2999.0</strike></string>
+
+
+    <string name="test_chars" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ \nabcdefghijklmnopqrstuvwxyz \n1234567890</string>
+    <string name="slash_2" formatted="false" translatable="false">%d/%d</string>
+    <string name="avail_now" formatted="false" translatable="false">Avail Now</string>
+    <string name="claim_now" formatted="false" translatable="false">Claim Now</string>
+    <string name="lesson_popup_heading_grammar" translatable="false">Grammar Lessons</string>
+    <string name="lesson_popup_heading_reading" translatable="false">Reading Practice</string>
+    <string name="lesson_popup_heading_vocab" translatable="false">Daily Vocabulary</string>
+    <string name="lesson_popup_heading_speaking" translatable="false">Speaking Practice</string>
+</resources>

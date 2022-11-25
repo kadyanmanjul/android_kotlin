@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.voip.mediator
 
 import android.content.Intent
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.context
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData

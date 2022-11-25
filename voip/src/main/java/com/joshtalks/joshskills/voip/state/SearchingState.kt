@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.ignoreException
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants

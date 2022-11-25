@@ -6,7 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_DISCONNECT_SCREEN
+import com.joshtalks.joshskills.voip.base.constants.PREF_KEY_LAST_DISCONNECT_SCREEN
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.Category

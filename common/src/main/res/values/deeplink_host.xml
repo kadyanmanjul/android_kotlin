@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="conversation_open_dlink" translatable="false">conversation</string>
+    <string name="setting_dlink" translatable="false">setting</string>
+    <string name="referral_open_dlink" translatable="false">referral</string>
+    <string name="reminder_open_dlink" translatable="false">reminder</string>
+    <string name="video_open_dlink" translatable="false">video</string>
+    <string name="landing_page_dlink" translatable="false">landing_page</string>
+    <string name="payment_summary_dlink" translatable="false">payment_summary</string>
+    <string name="calling_dlink" translatable="false">calling</string>
+    <string name="url_dlink" translatable="false">url</string>
+    <string name="course_explore_dlink" translatable="false">course_explore</string>
+    <string name="assessment_dlink" translatable="false">assessment</string>
+</resources>

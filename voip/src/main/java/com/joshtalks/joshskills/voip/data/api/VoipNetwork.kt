@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.voip.data.api
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.voipanalytics.data.network.VoipAnalyticsService

@@ -7,7 +7,7 @@ import android.os.Message
 import android.os.Messenger
 import android.os.RemoteException
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_CONNECT_CALL
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_CONNECT_CALL
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.voip.voipLog

@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.voip.mediator
 import android.graphics.Bitmap
 import android.util.Log
 import android.widget.RemoteViews
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.constant.TOAST_MESSAGE

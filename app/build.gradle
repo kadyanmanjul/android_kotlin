@@ -221,26 +221,13 @@ android {
         generateStubs = true
     }
 
-    sourceSets {
-        main{
-            jniLibs.srcDirs = ['src/main/jniLibs']
-        }
-    }
     aaptOptions {
         cruncherEnabled = false
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation project(path: ':recordview')
-    implementation project(path: ':joshlibrary')
-    implementation(project(path: ':mediapicker'), {
-        exclude group: 'com.bumptech.glide'
-    })
-    implementation project(path: ':joshcamerax')
-    implementation project(path: ':voip')
-    implementation project(path: ':base')
+    implementation project(path: ':common')
 
     implementation libs.kotlin.lib
     implementation libs.bundles.coroutine
@@ -386,7 +373,6 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation files("libs/agora-rtc-sdk.jar")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'

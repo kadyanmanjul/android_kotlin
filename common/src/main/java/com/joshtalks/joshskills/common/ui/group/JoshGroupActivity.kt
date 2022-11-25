@@ -1,0 +1,517 @@
+package com.joshtalks.joshskills.common.ui.group
+
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
+import android.os.Bundle
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
+import androidx.lifecycle.ViewModelProvider
+import com.afollestad.materialdialogs.MaterialDialog
+import com.github.dhaval2404.imagepicker.ImagePicker
+
+import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.common.constants.*
+import com.joshtalks.joshskills.common.core.*
+import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.common.core.analytics.ParamKeys
+import com.joshtalks.joshskills.common.databinding.ActivityJoshGroupBinding
+import com.joshtalks.joshskills.common.track.AGORA_UID
+import com.joshtalks.joshskills.common.track.CHANNEL_ID
+import com.joshtalks.joshskills.common.repository.local.model.Mentor
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
+import com.joshtalks.joshskills.common.ui.fpp.constants.GROUP
+import com.joshtalks.joshskills.common.ui.group.analytics.GroupAnalytics
+import com.joshtalks.joshskills.common.ui.group.constants.*
+import com.joshtalks.joshskills.common.ui.group.model.AddGroupRequest
+import com.joshtalks.joshskills.common.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.common.ui.group.viewmodels.JoshGroupViewModel
+import com.joshtalks.joshskills.common.ui.userprofile.fragments.UserPicChooserFragment
+import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.common.ui.userprofile.fragments.MENTOR_ID
+import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.common.voip.constant.Category
+import com.joshtalks.joshskills.common.voip.constant.State
+
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+import timber.log.Timber
+
+private const val TAG = "JoshGroupActivity"
+
+class JoshGroupActivity : com.joshtalks.joshskills.common.ui.group.BaseGroupActivity() {
+    val vm by lazy {
+        ViewModelProvider(this)[JoshGroupViewModel::class.java]
+    }
+
+    val binding by lazy<ActivityJoshGroupBinding> {
+        DataBindingUtil.setContentView(this, R.layout.activity_josh_group)
+    }
+
+    override fun initViewBinding() {
+        binding.vm = vm
+        binding.executePendingBindings()
+    }
+
+    override fun onCreated() {
+        val channelId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CHANNEL_ID) ?: EMPTY
+        if (channelId.isEmpty())
+            openGroupListFragment()
+        else {
+            vm.mentorId = intent.getStringExtra(MENTOR_ID) ?: EMPTY
+            vm.agoraId = intent.getIntExtra(com.joshtalks.joshskills.common.track.AGORA_UID, 0)
+            val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
+            openGroupChat(channelId, chatData)
+        }
+    }
+
+    override fun initViewState() {
+        event.observe(this) {
+            when (it.what) {
+                com.joshtalks.joshskills.common.constants.ON_BACK_PRESSED -> popBackStack()
+                com.joshtalks.joshskills.common.constants.OPEN_GROUP -> openGroupChat(data = it.obj as? GroupItemData)
+                com.joshtalks.joshskills.common.constants.OPEN_NEW_GROUP -> openNewGroupFragment()
+                com.joshtalks.joshskills.common.constants.OPEN_GROUP_INFO -> openGroupInfoFragment()
+                com.joshtalks.joshskills.common.constants.EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
+                com.joshtalks.joshskills.common.constants.OPEN_GROUP_REQUESTS_LIST -> openRequestsFragment(it.obj as String)
+                com.joshtalks.joshskills.common.constants.SEARCH_GROUP -> openGroupSearchFragment()
+                com.joshtalks.joshskills.common.constants.OPEN_ADMIN_RESPONSIBILITY -> openAdminResponseFragment(it.obj as AddGroupRequest)
+                com.joshtalks.joshskills.common.constants.OPEN_IMAGE_CHOOSER -> openImageChooser()
+                com.joshtalks.joshskills.common.constants.OPEN_GROUP_REQUEST -> openGroupRequestFragment()
+                com.joshtalks.joshskills.common.constants.OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
+                com.joshtalks.joshskills.common.constants.SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
+                com.joshtalks.joshskills.common.constants.REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
+                com.joshtalks.joshskills.common.constants.REMOVE_AND_BLOCK_FPP -> removeDmFppDb(it.obj as String)
+                com.joshtalks.joshskills.common.constants.OPEN_PROFILE_PAGE -> openProfileActivity(it.obj as String)
+                com.joshtalks.joshskills.common.constants.OPEN_PROFILE_DM_FPP -> openProfileActivity(mentorId = vm.mentorId,true)
+                com.joshtalks.joshskills.common.constants.SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
+                com.joshtalks.joshskills.common.constants.DISMISS_PROGRESS_BAR -> dismissProgressDialog()
+                com.joshtalks.joshskills.common.constants.REFRESH_GRP_LIST_HIDE_INFO -> {
+                    setNewGroupVisibility(it.data)
+                    vm.setGroupsCount()
+                }
+            }
+        }
+    }
+
+    // TODO: Need to refactor
+    private fun startGroupCall(data: Bundle) {
+        if (PermissionUtils.isCallingPermissionEnabled(this)) {
+            if (data.get(GROUP_TYPE) == DM_CHAT)
+                openFppCallScreen(vm.agoraId,data)
+            else
+                openCallingActivity(data)
+            return
+        }
+        PermissionUtils.callingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                this@JoshGroupActivity,
+                                message = R.string.call_start_permission_message
+                            )
+                            return
+                        }
+                        if (flag) {
+                            if (data.get(GROUP_TYPE) == DM_CHAT)
+                                openFppCallScreen(vm.agoraId,data)
+                            else
+                                openCallingActivity(data)
+                            return
+                        } else {
+                            MaterialDialog(this@JoshGroupActivity).show {
+                                message(R.string.call_start_permission_message)
+                                positiveButton(R.string.ok)
+                            }
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
+    }
+
+    fun openCallingActivity(bundle: Bundle) {
+        if (getVoipState() == State.IDLE) {
+            GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
+
+            val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(
+                    STARTING_POINT,
+                    FROM_ACTIVITY
+                )
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
+                putExtra(INTENT_DATA_GROUP_ID, bundle.getString(GROUPS_ID))
+                putExtra(INTENT_DATA_TOPIC_ID, "5")
+                putExtra(INTENT_DATA_GROUP_NAME, bundle.getString(GROUPS_TITLE))
+            }
+            startActivity(callIntent)
+        } else {
+            showToast("Wait for last call to get disconnected")
+        }
+    }
+
+    private fun openFppCallScreen(uid: Int, data: Bundle) {
+        if (getVoipState() == State.IDLE) {
+            val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(
+                    STARTING_POINT,
+                    FROM_ACTIVITY
+                )
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                putExtra(INTENT_DATA_FPP_MENTOR_ID, vm.mentorId)
+                putExtra(
+                    INTENT_DATA_FPP_NAME, data.getString(
+                        INTENT_DATA_FPP_NAME
+                    ))
+                putExtra(
+                    INTENT_DATA_FPP_IMAGE, data.getString(
+                        INTENT_DATA_FPP_IMAGE
+                    ))
+                startActivity(callIntent)
+            }
+        } else {
+            showToast("You are already on a call")
+        }
+    }
+
+    private fun openGroupListFragment() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.group_fragment_container, GroupListFragment(), LIST_FRAGMENT)
+        }
+    }
+
+    private fun openGroupSearchFragment() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val bundle = Bundle().apply {
+                putString(com.joshtalks.joshskills.common.track.CONVERSATION_ID, vm.conversationId)
+            }
+            val fragment = GroupSearchFragment().apply {
+                arguments = bundle
+            }
+            vm.openedGroupId = null
+            replace(R.id.group_fragment_container, fragment, SEARCH_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openGroupChat(groupId: String = EMPTY, data: GroupItemData?) {
+        if (data?.getJoinedStatus() == NOT_JOINED_GROUP && data.getGroupCategory() == CLOSED_GROUP) {
+            openGroupRequestFragment(data)
+            return
+        }
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val bundle = Bundle().apply {
+                putString(GROUPS_CREATOR, data?.getCreator())
+                putString(GROUPS_TITLE, data?.getTitle())
+                putString(GROUPS_IMAGE, data?.getImageUrl())
+                putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
+                putString(GROUPS_ID, data?.getUniqueId())
+                putString(com.joshtalks.joshskills.common.track.CONVERSATION_ID, vm.conversationId)
+                putString(ADMIN_ID, data?.getCreatorId())
+                putString(GROUP_TYPE, data?.getGroupCategory())
+                vm.groupType.set(data?.getGroupCategory())
+                putString(GROUP_STATUS, data?.getJoinedStatus())
+                putString(CLOSED_GROUP_TEXT, data?.getGroupText())
+                putInt(com.joshtalks.joshskills.common.track.AGORA_UID, data?.getAgoraId() ?: 0)
+                if (groupId == EMPTY){
+                    vm.agoraId = data?.getAgoraId()?:0
+                    vm.mentorId = data?.getCreatorId()?: EMPTY
+                }
+                data?.hasJoined()?.let {
+                    if (it) {
+                        if (data.getGroupCategory() == DM_CHAT) {
+                            vm.groupType.set(data.getGroupCategory())
+                            putString(GROUPS_CHAT_SUB_TITLE, EMPTY)
+                            if (groupId != EMPTY) {
+                                vm.subscribeToChat(groupId)
+                                putInt(com.joshtalks.joshskills.common.track.AGORA_UID, vm.agoraId)
+                            }
+                        }
+                        else
+                            putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
+                        putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
+                        GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
+                        MixPanelTracker.publishEvent(MixPanelEvent.OPEN_GROUP_INBOX)
+                            .addParam(ParamKeys.GROUP_ID, data.getUniqueId())
+                            .addParam(ParamKeys.IS_ADMIN, data.getCreatorId() == Mentor.getInstance().getId())
+                            .push()
+                    }
+                    putBoolean(HAS_JOINED_GROUP, it)
+                }
+            }
+
+            val fragment = GroupChatFragment()
+            fragment.arguments = bundle
+            replace(R.id.group_fragment_container, fragment, CHAT_FRAGMENT)
+            if (groupId == EMPTY)
+                addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openGroupInfoFragment() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val fragment = GroupInfoFragment()
+            add(R.id.group_fragment_container, fragment, GROUP_INFO_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openGroupRequestFragment(data: GroupItemData? = null) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val bundle = Bundle().apply {
+                putString(GROUPS_TITLE, data?.getTitle())
+                putString(GROUPS_IMAGE, data?.getImageUrl())
+                putString(GROUPS_ID, data?.getUniqueId())
+                putString(CLOSED_GROUP_TEXT, data?.getGroupText())
+            }
+
+            val fragment = GroupRequestFragment()
+            fragment.arguments = bundle
+            replace(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openEditGroupInfo(data: Bundle?) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val fragment = NewGroupFragment()
+            fragment.arguments = data
+
+            replace(R.id.group_fragment_container, fragment, EDIT_GROUP_INFO_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openRequestsFragment(groupId: String) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val bundle = Bundle().apply {
+                putString(GROUPS_ID, groupId)
+                putString(com.joshtalks.joshskills.common.track.CONVERSATION_ID, vm.conversationId)
+            }
+            val fragment = RequestListFragment().apply {
+                arguments = bundle
+            }
+
+            replace(R.id.group_fragment_container, fragment, REQUEST_LIST_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openNewGroupFragment() {
+        vm.addingNewGroup.set(false)
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val bundle = Bundle().apply {
+                putBoolean(IS_FROM_GROUP_INFO, false)
+            }
+            val fragment = NewGroupFragment()
+            fragment.arguments = bundle
+
+            vm.openedGroupId = null
+            replace(R.id.group_fragment_container, fragment, ADD_GROUP_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+        GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
+        MixPanelTracker.publishEvent(MixPanelEvent.NEW_GROUP_CLICKED).push()
+    }
+
+    private fun openAdminResponseFragment(addGroupRequest: AddGroupRequest) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val fragment = GroupAdminFragment()
+            fragment.arguments = Bundle().apply {
+                putParcelable(ADD_GROUP_REQUEST, addGroupRequest)
+            }
+            replace(R.id.group_fragment_container, fragment, ADMIN_RESPONSE_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun setNewGroupVisibility(data: Bundle) {
+        vm.hasGroupData.set(data.getBoolean(SHOW_NEW_INFO))
+        vm.hasGroupData.notifyChange()
+        vm.shouldRefreshGroupList = true
+    }
+
+    private fun popBackStack() {
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+            if (supportFragmentManager.backStackEntryCount > 1)
+                supportFragmentManager.popBackStackImmediate()
+            else
+                this.onBackPressed()
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+    }
+
+    private fun openImageChooser() {
+        if (vm.openedGroupId.isNullOrBlank())
+            MixPanelTracker.publishEvent(MixPanelEvent.ADD_GROUP_PHOTO)
+        else {
+            MixPanelTracker.publishEvent(MixPanelEvent.EDIT_GROUP_PHOTO)
+                .addParam(ParamKeys.GROUP_ID, vm.openedGroupId)
+        }
+        MixPanelTracker.push()
+
+        UserPicChooserFragment.showDialog(
+            supportFragmentManager,
+            true,
+            isFromRegistration = false,
+            isFromGroup = true
+        )
+    }
+
+    private fun removeGroupFromDb(groupId: String) {
+        if (groupId == vm.openedGroupId) {
+            if (vm.groupType.get() != DM_CHAT) {
+                while (supportFragmentManager.backStackEntryCount > 0)
+                    onBackPressed()
+            }
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            val groupName: String? = vm.repository.getGroupName(groupId)
+            vm.repository.leaveGroupFromLocal(groupId)
+            if (vm.groupType.get() != DM_CHAT) {
+                withContext(Dispatchers.Main) {
+                    showRemovedAlert(groupName?: EMPTY)
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    onBackPressed()
+                }
+            }
+        }
+    }
+
+    private fun removeDmFppDb(groupId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val groupName = vm.repository.getGroupName(groupId)
+            vm.repository.leaveGroupFromLocal(groupId)
+            withContext(Dispatchers.Main) {
+                showRemovedDmFppAlert(groupName?: EMPTY)
+                if (supportFragmentManager.backStackEntryCount > 0){
+                    while (supportFragmentManager.backStackEntryCount > 0)
+                        onBackPressed()
+                }else{
+                    onBackPressed()
+                }
+            }
+        }
+    }
+
+    override fun getConversationId(): String? {
+        vm.conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID) ?: ""
+        return vm.conversationId
+    }
+
+    fun openProfileActivity(mentorId: String, isDm: Boolean = false) {
+        UserProfileActivity.startUserProfileActivity(
+            activity = this,
+            mentorId = mentorId,
+            flags = arrayOf(),
+            intervalType =  null,
+            previousPage = GROUP,
+            conversationId = null
+        )
+        if (supportFragmentManager.backStackEntryCount < 1 && isDm)
+            this.finish()
+    }
+
+    fun showRemovedAlert(groupName: String) {
+        val builder = AlertDialog.Builder(this)
+        val dialog: AlertDialog = builder
+            .setMessage("You have been removed from \"$groupName\" group")
+            .setPositiveButton("Ok") { dialog, id ->
+                dialog.cancel()
+            }
+            .create()
+
+        dialog.setCancelable(false)
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).let {
+            it.setTypeface(null, Typeface.BOLD)
+            it.setTextColor(Color.parseColor("#107BE5"))
+        }
+    }
+
+    fun showRemovedDmFppAlert(groupName: String) {
+        val builder = AlertDialog.Builder(this)
+        val dialog: AlertDialog = builder
+            .setMessage("You have been removed from fpp by \"$groupName\"")
+            .setPositiveButton("Ok") { dialog, id ->
+                dialog.cancel()
+            }
+            .create()
+
+        dialog.setCancelable(false)
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).let {
+            it.setTypeface(null, Typeface.BOLD)
+            it.setTextColor(Color.parseColor("#107BE5"))
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            val url = data?.data?.path ?: EMPTY
+            if (url.isNotBlank()) {
+                vm.showImageThumb(url)
+            }
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Timber.e(ImagePicker.getError(data))
+            showToast(ImagePicker.getError(data))
+        }
+    }
+
+    override fun setIntentExtras() {
+        AppObjectController.initGroups()
+    }
+
+    override fun onDestroy() {
+        CoroutineScope(Dispatchers.IO).launch {
+            vm.deleteExtraMessages()
+            vm.unSubscribeToChat()
+        }
+        super.onDestroy()
+    }
+}

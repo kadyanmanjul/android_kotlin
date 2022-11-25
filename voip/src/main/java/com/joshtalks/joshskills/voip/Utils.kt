@@ -18,11 +18,11 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.base.log.Feature
-import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.base.model.ApiHeader
-import com.joshtalks.joshskills.base.model.NotificationData
+import com.joshtalks.joshskills.voip.base.constants.*
+import com.joshtalks.joshskills.voip.base.log.Feature
+import com.joshtalks.joshskills.voip.base.log.JoshLog
+import com.joshtalks.joshskills.voip.base.model.ApiHeader
+import com.joshtalks.joshskills.voip.base.model.NotificationData
 import com.joshtalks.joshskills.voip.Utils.Companion.courseId
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
@@ -366,7 +366,10 @@ fun openCallScreen(): PendingIntent {
             putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             putExtra(INTENT_DATA_COURSE_ID, courseId)
             putExtra(INTENT_DATA_TOPIC_ID, "10")
-            putExtra(STARTING_POINT, FROM_ACTIVITY)
+            putExtra(
+                STARTING_POINT,
+                FROM_ACTIVITY
+            )
         }
     }
     return PendingIntent.getActivity(
@@ -385,7 +388,10 @@ fun intentOnNotificationTap(): PendingIntent {
     val intent = Intent()
     intent.apply {
         setClassName(Utils.context!!.applicationContext, destination)
-        putExtra(STARTING_POINT, FROM_CALL_BAR)
+        putExtra(
+            STARTING_POINT,
+            FROM_CALL_BAR
+        )
         flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
     }
     return PendingIntent.getActivity(
@@ -437,7 +443,8 @@ fun openGroupCallScreen(): PendingIntent {
 }
 fun Context.getHangUpIntent(): PendingIntent {
     val intent = Intent(this, CallingRemoteService::class.java).apply {
-        action = SERVICE_ACTION_DISCONNECT_CALL
+        action =
+            SERVICE_ACTION_DISCONNECT_CALL
     }
 
     return PendingIntent.getService(
@@ -461,7 +468,8 @@ fun Context.getTempFileForVideoCallRecording(): File? {
 
 fun getDeclineCallIntent(): PendingIntent {
     val intent = Intent(Utils.context, CallingRemoteService::class.java).apply {
-        action = SERVICE_ACTION_INCOMING_CALL_DECLINE
+        action =
+            SERVICE_ACTION_INCOMING_CALL_DECLINE
     }
 
     return PendingIntent.getService(

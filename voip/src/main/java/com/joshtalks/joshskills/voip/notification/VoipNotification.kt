@@ -1,10 +1,9 @@
 package com.joshtalks.joshskills.voip.notification
 
 import android.app.PendingIntent
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.joshtalks.joshskills.base.model.NotificationData as Data
+import com.joshtalks.joshskills.voip.base.model.NotificationData as Data
 
 class VoipNotification : NotificationInterface {
 

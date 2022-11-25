@@ -2,8 +2,8 @@ package com.joshtalks.joshskills.voip.state
 
 import android.app.Application.ActivityLifecycleCallbacks
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_EXPERT_PRICE_PER_MIN
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOTAL_AMOUNT
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_EXPERT_PRICE_PER_MIN
+import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_TOTAL_AMOUNT
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
