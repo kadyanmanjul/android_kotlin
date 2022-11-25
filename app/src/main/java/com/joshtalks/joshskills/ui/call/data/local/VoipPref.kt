@@ -121,6 +121,7 @@ object VoipPref {
             MarketingAnalytics.callComplete5MinForFirstTime()
         } else if (duration != 0L && preferenceManager.getBoolean(IS_FIRST_CALL, true)) {
             editor.putBoolean(IS_FIRST_CALL, false)
+            editor.commit()
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
                 NotificationCategory.AFTER_LOGIN
             )

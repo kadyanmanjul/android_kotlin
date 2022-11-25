@@ -1,22 +1,19 @@
 package com.joshtalks.joshskills.ui.chat.extra
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.BottomSheetFirstCallBinding
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.extra.setOnShortSingleClickListener
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -24,12 +21,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val FIRST_CALL_POPUP_SHOWN = "FIRST_CALL_POPUP_SHOWN"
 const val CALL_NOW_FIRST_CALL_POPUP = "CALL_NOW_FIRST_CALL_POPUP"
 const val FIRST_CALL_POPUP = "FIRST_CALL_POPUP"
 
-class FirstCallBottomSheet: BottomSheetDialogFragment() {
+class FirstCallBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetFirstCallBinding
 
@@ -46,7 +44,6 @@ class FirstCallBottomSheet: BottomSheetDialogFragment() {
         savePopupImpression(FIRST_CALL_POPUP_SHOWN)
         binding.callNow.setOnShortSingleClickListener {
             savePopupImpression(CALL_NOW_FIRST_CALL_POPUP)
-            dismiss()
             startPractise()
         }
 
@@ -118,17 +115,27 @@ class FirstCallBottomSheet: BottomSheetDialogFragment() {
 
     private fun startPracticeCall() {
         if (isAdded && activity != null) {
-            PrefManager.increaseCallCount()
-
-            val callIntent = Intent(requireActivity(), VoiceCallActivity::class.java)
-            callIntent.apply {
-                putExtra(INTENT_DATA_COURSE_ID, "151")
-                putExtra(INTENT_DATA_TOPIC_ID, "10")
-                putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            lifecycleScope.launch(Dispatchers.IO) {
+                val lessonId = AppObjectController.appDatabase.lessonDao()
+                    .getLastLessonIdForCourse(
+                        (PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }).toInt()
+                    )
+                val conversationId = AppObjectController.appDatabase.courseDao()
+                    .getConversationIdFromCourseId(
+                        (PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+                    )
+                withContext(Dispatchers.Main) {
+                    startActivity(
+                        LessonActivity.getActivityIntent(
+                            requireActivity(),
+                            lessonId = lessonId,
+                            conversationId = conversationId,
+                            shouldStartCall = true
+                        )
+                    )
+                    dismiss()
+                }
             }
-            VoipPref.resetAutoCallCount()
-            requireActivity().startActivityForResult(callIntent, CALLING_ACTIVITY_REQUEST_CODE)
         }
     }
 

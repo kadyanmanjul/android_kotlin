@@ -42,6 +42,7 @@ import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.base.constants.IS_FIRST_CALL
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
@@ -83,6 +84,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.extra.FirstCallBottomSheet
@@ -191,8 +193,6 @@ class ConversationActivity :
             }
     }
 
-    private var buttonClicked = true
-
     private val rotateOpenAnimation: Animation by lazy {
         AnimationUtils.loadAnimation(
             this,
@@ -217,7 +217,6 @@ class ConversationActivity :
             R.anim.to_bottom_animation
         )
     }
-    private var isFirstTime: Boolean = true
     var countdownTimerBack: CountDownTimer? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
@@ -521,7 +520,7 @@ class ConversationActivity :
 
     private fun showFirstCallBottomSheet() {
         lifecycleScope.launch(Dispatchers.Main) {
-            delay(1000)
+            delay(500)
             FirstCallBottomSheet.showDialog(supportFragmentManager)
         }
     }
@@ -1359,6 +1358,8 @@ class ConversationActivity :
     override fun onRestart() {
         super.onRestart()
         getAllPendingRequest()
+        if (VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true))
+            showFirstCallBottomSheet()
     }
 
     private fun profileFeatureActiveView(showLeaderboardMenu: Boolean) {
@@ -1456,7 +1457,6 @@ class ConversationActivity :
                 }
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
-                //conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
             }
         }
         val unseenAwards: ArrayList<Award> = ArrayList()
@@ -1962,14 +1962,11 @@ class ConversationActivity :
             RxBus2.listen(AwardItemClickedEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
+                .subscribe({
 //                        showAward(listOf(it.award), true)
-                    },
-                    {
-                        it.printStackTrace()
-                    }
-                )
+                }, {
+                    it.printStackTrace()
+                })
         )
 
         compositeDisposable.add(
@@ -2054,7 +2051,6 @@ class ConversationActivity :
                     addImageMessage(url)
                 }
 //                data?.let { intent ->
-//
 ////                    when {
 ////                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
 ////                            intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)

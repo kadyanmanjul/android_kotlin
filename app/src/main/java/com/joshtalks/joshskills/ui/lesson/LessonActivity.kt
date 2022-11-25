@@ -44,6 +44,7 @@ import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
@@ -96,6 +97,8 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -238,6 +241,19 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
         if (intent.hasExtra(LESSON_SECTION)) {
             defaultSection = intent.getIntExtra(LESSON_SECTION, 0)
+        }
+
+        if (intent.hasExtra(SHOULD_START_CALL)) {
+            PrefManager.increaseCallCount()
+            val callIntent = Intent(this, VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(INTENT_DATA_COURSE_ID, "151")
+                putExtra(INTENT_DATA_TOPIC_ID, "10")
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            }
+            VoipPref.resetAutoCallCount()
+            startActivity(callIntent)
         }
 
         whatsappUrl =
@@ -1522,7 +1538,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 viewModel.showVideoView()
             }
 
-            isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) && isLessonPopUpFeatureOn -> {
+            isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) &&
+                    isLessonPopUpFeatureOn && !VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
                 CompleteLessonBottomSheetFragment.newInstance()
                     .show(supportFragmentManager, "LessonCompleteDialog")
@@ -1557,6 +1574,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
         const val LESSON_SECTION = "lesson_section"
+        const val SHOULD_START_CALL = "should_start_call"
         val videoEvent: MutableLiveData<Event<VideoModel>> = MutableLiveData()
 
         fun getActivityIntent(
@@ -1566,7 +1584,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             whatsappUrl: String? = null,
             testId: Int? = null,
             conversationId: String? = null,
-            isLessonCompleted: Boolean = false
+            isLessonCompleted: Boolean = false,
+            shouldStartCall: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             // TODO: Pass Free Trail Status
             putExtra(LESSON_ID, lessonId)
@@ -1577,6 +1596,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 putExtra(WHATSAPP_URL, whatsappUrl)
                 putExtra(TEST_ID, testId)
             }
+            if (shouldStartCall)
+                putExtra(SHOULD_START_CALL, true)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
     }
