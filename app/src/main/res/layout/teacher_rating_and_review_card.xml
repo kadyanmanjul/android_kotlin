@@ -18,9 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Course Ratings and Reviews"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-            android:textColor="@color/pure_black"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+            android:textColor="@color/text_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,10 +42,10 @@
             android:id="@+id/rating_in_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_13sdp"
+            android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_15sdp"
             android:text="4.5 out of 5"
-            android:textColor="@color/pure_black"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
             app:layout_constraintStart_toEndOf="@+id/teacher_rating"
             app:layout_constraintTop_toBottomOf="@+id/about_text" />
 
@@ -54,19 +53,21 @@
             android:id="@+id/rating_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:text="16,462 Reviews"
             android:textColor="@color/text_subdued"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/teacher_rating" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_ration_click"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_16sdp"
-            android:layout_marginRight="@dimen/_17sdp"
+            android:layout_marginRight="@dimen/_20sdp"
             android:scaleType="fitXY"
+            android:tint="@color/text_default"
             android:src="@drawable/ic_arrow_forward_black_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/about_text">

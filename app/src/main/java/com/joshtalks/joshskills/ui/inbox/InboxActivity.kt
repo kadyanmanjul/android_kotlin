@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
@@ -46,6 +47,8 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityInboxBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -369,7 +372,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     dismissBbTip()
                     initPaymentStatusView(
                         R.drawable.yellow_rectangle_with_orange_stroke,
-                        R.drawable.ic_payment_exclamation,
+                        R.drawable.alert_processing,
                         R.color.accent_600,
                         R.color.accent_600,
                         R.string.processing_payment_text,
@@ -684,6 +687,24 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         } else {
             ConversationActivity.startConversionActivity(this, inboxEntity)
         }
+    }
+
+    override fun onStartTrialTimer(startTimeInMilliSeconds: Long) {
+        trialTimerView.visible()
+        trialTimerDivider.visible()
+        trialTimerView.startTimer(startTimeInMilliSeconds)
+    }
+
+    override fun onStopTrialTimer() {
+        trialTimerDivider.gone()
+        trialTimerView.removeTimer()
+    }
+
+    override fun onFreeTrialEnded() {
+        trialTimerView.visible()
+        trialTimerDivider.visible()
+        trialTimerView.endFreeTrial()
+
     }
 
     companion object {

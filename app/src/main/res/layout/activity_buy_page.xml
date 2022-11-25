@@ -80,6 +80,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/shimmer1">
@@ -99,37 +100,42 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <RelativeLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/free_trial_timer_new_ui"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_16sdp"
-                            android:layout_marginTop="@dimen/_13sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            android:paddingBottom="@dimen/_13sdp"
+                            android:paddingHorizontal="@dimen/_12sdp"
                             android:background="@drawable/ic_transparent_color_img"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:visibility="visible">
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/timer_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_12sdp"
-                                android:layout_marginTop="@dimen/_10sdp"
-                                android:layout_marginBottom="@dimen/_8sdp"
                                 android:text="Unlimited access for 1 year @ just ₹450"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                                android:textColor="#253858"
-                                android:textStyle="bold" />
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
+                                android:textColor="@color/text_default"
+                                app:layout_constraintBottom_toTopOf="@+id/time_text"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:id="@+id/time_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/timer_text"
-                                android:layout_marginStart="@dimen/_12sdp"
-                                android:layout_marginBottom="@dimen/_12sdp"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="@+id/timer_text"
+                                app:layout_constraintTop_toBottomOf="@+id/timer_text">
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txt_hours"
@@ -139,9 +145,8 @@
                                     android:background="@drawable/golden_color_with_solid_transparent"
                                     android:padding="@dimen/_5sdp"
                                     android:text="23"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                                    android:textColor="#253858"
-                                    android:textStyle="bold" />
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                                    android:textColor="@color/text_default" />
 
                                 <ImageView
                                     android:layout_width="@dimen/_4sdp"
@@ -149,7 +154,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginEnd="@dimen/_4sdp"
                                     android:src="@drawable/ic_colon"
-                                    android:textColor="@color/pure_black" />
+                                    android:textColor="@color/text_default" />
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txt_minute"
@@ -159,9 +164,8 @@
                                     android:background="@drawable/golden_color_with_solid_transparent"
                                     android:padding="@dimen/_5sdp"
                                     android:text="23"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                                    android:textColor="#253858"
-                                    android:textStyle="bold" />
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                                    android:textColor="@color/text_default" />
 
                                 <ImageView
                                     android:layout_width="@dimen/_4sdp"
@@ -169,7 +173,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginEnd="@dimen/_4sdp"
                                     android:src="@drawable/ic_colon"
-                                    android:textColor="@color/pure_black" />
+                                    android:textColor="@color/text_default" />
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txt_second"
@@ -178,12 +182,11 @@
                                     android:background="@drawable/golden_color_with_solid_transparent"
                                     android:padding="@dimen/_5sdp"
                                     android:text="23"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                                    android:textColor="#253858"
-                                    android:textStyle="bold" />
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                                    android:textColor="@color/text_default" />
 
                             </androidx.appcompat.widget.LinearLayoutCompat>
-                        </RelativeLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/video_card"
@@ -191,7 +194,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_marginHorizontal="@dimen/_16sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:background="@drawable/round_rect_default"
                             android:visibility="visible"
                             app:cardCornerRadius="@dimen/_8sdp">
@@ -292,7 +295,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginVertical="@dimen/_15sdp"
                             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                             app:spanCount="2" />
 
@@ -303,7 +305,6 @@
                             android:layout_marginHorizontal="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled"
                             android:visibility="gone" />
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -311,7 +312,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:visibility="visible" />
 
@@ -320,7 +321,7 @@
                             android:layout_width="@dimen/_195sdp"
                             android:layout_height="@dimen/_28sdp"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/_24sdp"
+                            android:layout_marginTop="@dimen/_28sdp"
                             android:gravity="center_horizontal"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
@@ -328,9 +329,8 @@
                             android:stateListAnimator="@null"
                             android:textAlignment="center"
                             android:textAllCaps="false"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                             android:textColor="@color/primary_500"
-                            android:textStyle="bold"
                             android:visibility="gone"
                             app:rippleColor="@color/pure_white" />
 
@@ -339,7 +339,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_19sdp"
                             android:background="@drawable/dotted_line"
                             android:backgroundTint="@color/disabled" />
 
@@ -377,7 +377,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginTop="@dimen/_12sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:visibility="visible" />
 
@@ -386,9 +386,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled" />
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:background="@drawable/dotted_line" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <com.facebook.shimmer.ShimmerFrameLayout
@@ -431,9 +430,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
                                 android:text="@{vm.offerForYouText}"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                                android:textColor="@color/pure_black"
-                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                                android:textColor="@color/text_default"
                                 android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -444,7 +442,7 @@
                                 android:layout_marginTop="@dimen/_2sdp"
                                 android:onClick="@{()->vm.openCouponListScreen()}"
                                 android:text="@string/insert_code"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                                 android:textColor="@color/primary_500"
                                 android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
 
@@ -458,7 +456,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_18sdp"
-                            android:layout_marginBottom="@dimen/_13sdp"
+                            android:layout_marginBottom="@dimen/_16sdp"
                             android:orientation="horizontal"
                             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                             tools:listitem="@layout/item_offfers_card" />
@@ -468,8 +466,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled" />
+                            android:background="@drawable/dotted_line" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -513,8 +510,7 @@
                             android:layout_marginTop="@dimen/_16sdp"
                             android:text="@{vm.priceText}"
                             android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/course_price_list"
@@ -522,7 +518,7 @@
                             priceListAdapter="@{vm.priceListAdapter}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_13sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:visibility="@{vm.isPriceApiCall ? View.GONE : View.VISIBLE}"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -532,11 +528,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_13sdp"
-                            android:layout_marginTop="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                             android:onClick="@{()-> vm.openCourseExplore()}"
                             android:text="See list of courses in unlimited access >>"
                             android:textColor="@color/primary_500"
-                            android:textStyle="bold"
                             android:visibility="@{vm.isSeeAllButtonShow ? View.VISIBLE : View.GONE}" />
 
                         <View
@@ -544,9 +540,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_29sdp"
                             android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled"
                             android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -560,9 +555,7 @@
                         android:lines="2"
                         android:text="@{vm.callUsText}"
                         android:textAlignment="center"
-                        android:textColor="@color/pure_black"
-                        android:textSize="@dimen/_14ssp"
-                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                         android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                         app:layout_constraintEnd_toStartOf="@+id/btn_call_us"
                         app:layout_constraintStart_toStartOf="parent"
@@ -575,7 +568,6 @@
                         android:layout_height="@dimen/_25sdp"
                         android:layout_marginHorizontal="@dimen/_10sdp"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:backgroundTint="@color/pure_white"
                         android:elevation="@dimen/_3sdp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
@@ -583,13 +575,12 @@
                         android:text="Call us"
                         android:textAllCaps="false"
                         android:textColor="@color/primary_500"
+                        app:backgroundTint="@color/surface_information"
                         android:textStyle="bold"
                         android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                         app:cornerRadius="@dimen/_15sdp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout"
-                        app:strokeColor="@color/primary_500"
-                        app:strokeWidth="@dimen/_1sdp" />
+                        app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

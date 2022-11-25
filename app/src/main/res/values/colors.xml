@@ -75,6 +75,6 @@
     <color name="gray_color_special">#33D8D8D8</color>
     <color name="dark_text_color">#99000000</color>
     <color name="profile_request_card">#99EEEEEE</color>
-
+    <color name="pure_white_0_2">#33ffffff</color>
     <color name="text_default_0_2">#33253858</color>
 </resources>

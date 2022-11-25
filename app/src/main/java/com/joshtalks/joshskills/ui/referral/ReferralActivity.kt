@@ -12,7 +12,10 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -25,6 +28,8 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.muddzdev.styleabletoast.StyleableToast
@@ -70,12 +75,6 @@ class ReferralActivity : BaseActivity() {
 
     @ExperimentalUnsignedTypes
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        this.window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
@@ -115,32 +114,19 @@ class ReferralActivity : BaseActivity() {
         val referralScreenVersion =
             AppObjectController.getFirebaseRemoteConfig().getString("referral_screen_page")
 
-        if (referralScreenVersion == "version_1") {
-            activityReferralBinding.tvHeader.text =
-                getString(R.string.referral_header)
-            activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
-                getString(R.string.refferal_desc1, refAmount),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-            activityReferralBinding.textView2.text = HtmlCompat.fromHtml(
-                getString(R.string.referral_desc2, refAmount),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-        } else if (referralScreenVersion == "version_2") {
-            activityReferralBinding.tvHeader.text = getString(R.string.earn_upto)
-            activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
-                getString(R.string.refferal_desc1, refAmount),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-            activityReferralBinding.textView2.text = HtmlCompat.fromHtml(
-                getString(R.string.no_conditions_apply),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
+        findViewById<AppCompatImageView>(R.id.iv_back).apply {
+                visible()
+                setOnClickListener {
+                    onBackPressed()
+                }
         }
 
-        activityReferralBinding.ivBack.setOnClickListener {
-            onBackPressed()
-        }
+        findViewById<AppCompatImageView>(R.id.iv_help).gone()
+
+        val toolbarTitle = findViewById<TextView>(R.id.text_message_title)
+        toolbarTitle.text = getString(R.string.referral)
+
+        activityReferralBinding.referralPointOne.text = getString(R.string.referral_point_one, "₹$refAmount")
 
         val mDetector = GestureDetector(this, object :
             GestureDetector.OnGestureListener {

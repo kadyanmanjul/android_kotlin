@@ -14,42 +14,41 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_begin="@dimen/_8sdp"
+            android:orientation="horizontal" />
+
         <com.mindorks.placeholderview.PlaceHolderView
-                android:id="@+id/recycler_view"
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/pure_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guidelineTop"
+            tools:itemCount="3"
+            tools:listitem="@layout/help_view_layout" />
+
+        <TextView
+                android:id="@+id/info_support"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:background="@color/pure_white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:itemCount="3"
-                tools:listitem="@layout/help_view_layout" />
-
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/info_support"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_16sdp"
-                android:gravity="start|center"
-                android:paddingTop="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_42sdp"
+                android:gravity="center"
                 android:text="@string/permission_dialog_description"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/text_subdued"
                 android:visibility="invisible"
-                app:cornerRadius="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_40sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.8"
-                app:rippleColor="@color/pure_white"
-                app:strokeColor="#9098B1"
-                app:strokeWidth="@dimen/_1sdp"
                 tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

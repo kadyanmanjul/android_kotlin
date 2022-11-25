@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -39,6 +40,10 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import com.userexperior.utilities.SecureViewBucket
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.reflect.Type
 import kotlin.random.Random
 
@@ -113,6 +118,7 @@ class OnlineTestFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        initBottomMargin()
     }
 
     fun initViews() {
@@ -314,6 +320,24 @@ class OnlineTestFragment :
             )
         }catch (ex:Exception){
             ex.printStackTrace()
+        }
+    }
+
+    private fun initBottomMargin() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+                    binding.linearLayout.addView(
+                        View(requireContext()).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                (requireActivity() as LessonActivity).getBottomBannerHeight()
+                            )
+                        }
+                    )
+                }
+            }
         }
     }
 

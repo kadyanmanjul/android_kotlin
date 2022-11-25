@@ -26,11 +26,12 @@
         android:layout_marginHorizontal="@dimen/_12sdp"
         android:minLines="1"
         android:text="Heading"
-        android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+        android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
         android:textColor="@color/primary_500"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="@dimen/_4sdp"
         android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,13 +40,35 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_2sdp"
         android:minLines="1"
         android:text="@string/info_text"
-        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
+        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
         android:textColor="@color/text_default"
         app:layout_constraintTop_toBottomOf="@+id/info_text_heading"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="@string/retry"
+        android:visibility="gone"
+        app:backgroundTint="@color/transparent"
+        tools:visibility="visible"
+        app:iconTint="@color/warning"
+        android:textColor="@color/warning"
+        app:strokeWidth="1dp"
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_6sdp"
+        app:strokeColor="@color/warning"
+        app:icon="@drawable/retry"
+        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+        app:cornerRadius="@dimen/_32sdp"
+        app:layout_constraintEnd_toEndOf="@+id/info_text_subheading"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/info_text_subheading" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

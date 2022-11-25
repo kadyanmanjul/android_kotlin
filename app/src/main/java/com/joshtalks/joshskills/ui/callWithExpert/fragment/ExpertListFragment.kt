@@ -63,7 +63,7 @@ class ExpertListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<TextView>(R.id.iv_earn).setOnClickListener {
-            findNavController().navigate(R.id.action_expertListFragment_to_walletFragment)
+            findNavController().navigate(ExpertListFragmentDirections.actionExpertListFragmentToWalletFragment())
             viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = MENU_TOOLBAR)
         }
     }

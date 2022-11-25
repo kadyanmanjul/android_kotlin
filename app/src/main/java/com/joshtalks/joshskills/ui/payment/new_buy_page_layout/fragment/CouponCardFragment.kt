@@ -51,7 +51,7 @@ class CouponCardFragment : BaseFragment() {
         }
 
         binding.proceedBtn.setOnClickListener {
-            vm.applyEnteredCoupon(binding.enteredAmountTv.text.toString(), 0)
+            vm.applyEnteredCoupon(binding.enteredAmountTv.text.toString(),1000)
         }
     }
 

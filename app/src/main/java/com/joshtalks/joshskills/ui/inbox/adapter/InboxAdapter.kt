@@ -101,7 +101,7 @@ class InboxAdapter(
                 tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                 tvName.text = inboxEntity.course_name
                 courseProgressBar.progress = 0
-                horizontalLine.visibility = android.view.View.VISIBLE
+//                horizontalLine.visibility = android.view.View.VISIBLE
                 imageUrl(binding.profileImage, inboxEntity.course_icon)
                 if (PrefManager.getBoolValue(IS_FREE_TRIAL) && inboxEntity.created == null && inboxEntity.isCapsuleCourse) {
                     unseenMsgCount.visibility = ViewGroup.VISIBLE
@@ -166,25 +166,55 @@ class InboxAdapter(
                 rootView.setOnClickListener {
                     onClickView(inboxEntity)
                 }
-                if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
-                    horizontalLine.visibility = android.view.View.GONE
-                }
+//                if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
+//                    horizontalLine.visibility = android.view.View.GONE
+//                }
                 if (inboxEntity.isCourseBought) {
                     tvLastMessage.visibility = View.VISIBLE
                 } else if (inboxEntity.isCourseLocked) {
-                    tvLastMessage.visibility = View.INVISIBLE
+//                    tvLastMessage.visibility = View.INVISIBLE
+                    tvLastMessage.visibility = View.VISIBLE
+                    openCourseListener.onFreeTrialEnded()
+                    countdownTimerBack?.stop()
                     PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     MarketingAnalytics.freeTrialEndEvent()
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
-                    tvLastMessage.visibility = View.INVISIBLE
-                    if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                        tvLastMessage.visibility = View.VISIBLE
+//                    tvLastMessage.visibility = View.INVISIBLE
+                    tvLastMessage.visibility = View.VISIBLE
+
+                    if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
+                        openCourseListener.onFreeTrialEnded()
+                        countdownTimerBack?.stop()
                     } else {
+                        if (inboxEntity.expiryDate.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
+                            openCourseListener.onStopTrialTimer() // correct
+                            tvLastMessage.visibility = View.VISIBLE
+                        }else{
+                            startTimer(inboxEntity.expiryDate.time - System.currentTimeMillis())
+                        }
                     }
                 } else {
+                    openCourseListener.onStopTrialTimer() // correct
                     tvLastMessage.visibility = View.VISIBLE
                 }
             }
+        }
+
+        private fun startTimer(startTimeInMilliSeconds: Long) {
+//            openCourseListener.onStopTrialTimer()
+            countdownTimerBack?.stop()
+            countdownTimerBack = null
+            countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
+                override fun onTimerTick(millis: Long) {
+                    openCourseListener.onStartTrialTimer(millis)
+                }
+
+                override fun onTimerFinish() {
+                    openCourseListener.onFreeTrialEnded()
+                    countdownTimerBack?.stop()
+                }
+            }
+            countdownTimerBack?.startTimer()
         }
 
         fun imageUrl(imageView: ImageView, url: String?) {

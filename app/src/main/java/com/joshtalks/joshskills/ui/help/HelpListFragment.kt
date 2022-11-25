@@ -86,15 +86,15 @@ class HelpListFragment : Fragment() {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         helpListBinding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
-        val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        divider.setDrawable(
-            ColorDrawable(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.seek_bar_background
-                )
-            )
-        )
-        helpListBinding.recyclerView.addItemDecoration(divider)
+//        val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+//        divider.setDrawable(
+//            ColorDrawable(
+//                ContextCompat.getColor(
+//                    requireContext(),
+//                    R.color.seek_bar_background
+//                )
+//            )
+//        )
+//        helpListBinding.recyclerView.addItemDecoration(divider)
     }
 }

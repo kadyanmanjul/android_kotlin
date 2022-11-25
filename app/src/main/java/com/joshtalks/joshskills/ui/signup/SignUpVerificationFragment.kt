@@ -86,8 +86,7 @@ class SignUpVerificationFragment : Fragment() {
         }
         // STOPSHIP: Only for testing
         if (BuildConfig.DEBUG) {
-            // TODO: uncomment this.
-//            binding.otpView2.otp = "0000"
+            binding.otpView2.otp = "0000"
         }
 
         viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {

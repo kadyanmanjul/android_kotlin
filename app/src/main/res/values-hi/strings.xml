@@ -402,4 +402,6 @@
     <string name="interests_select_same_interest_users_connect">आपके interests select कीजिए ताकी हम आपको same interest के users से connect करवा सकें</string>
     <string name="practice_call_experience">Practice call का experience बेहतर बनाएँ</string>
     <string name="english_level">आपकी English का level क्या है ?</string>
+    <string name="referral_point_one">Invite करो और कमाओ, आपको और आपके दोस्त को मिलेंगे %1$s</string>
+    <string name="referral_point_two">नीचे दिए कोड को शेयर करे and purchase करते टाइम use करिये</string>
 </resources>

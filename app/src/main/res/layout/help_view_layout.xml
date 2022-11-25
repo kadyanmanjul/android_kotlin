@@ -6,24 +6,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
-        android:padding="@dimen/_12sdp"
+        android:paddingVertical="@dimen/_6sdp"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_21sdp"
         tools:ignore="UnusedAttribute">
 
     <FrameLayout
         android:id="@+id/fl_container"
-        android:layout_width="@dimen/_36sdp"
-        android:layout_height="@dimen/_36sdp"
-        android:background="@drawable/timer_drawable"
-        android:backgroundTint="@color/primary_500"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_34sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_category_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-                android:layout_gravity="center" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
     </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -34,7 +34,7 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:gravity="start|center"
             android:lines="1"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
             android:textColor="@color/text_default"
             app:layout_constraintBottom_toBottomOf="@+id/fl_container"
             app:layout_constraintStart_toEndOf="@+id/fl_container"

@@ -46,7 +46,7 @@
             <com.joshtalks.joshskills.ui.leaderboard.CustomTabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_40sdp"
                 android:tabStripEnabled="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/toolbar_container"
@@ -56,8 +56,16 @@
                 app:tabIndicatorHeight="@dimen/_2sdp"
                 app:tabMode="scrollable"
                 app:tabSelectedTextColor="@color/primary_500"
-                app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"
-                app:tabTextColor="#666666" />
+                app:tabTextAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                app:tabTextColor="@color/icon_subdued" />
+
+            <View
+                android:id="@+id/leaderBoardDivider"
+                android:layout_width="match_parent"
+                android:alpha="0.4"
+                android:layout_height="@dimen/_4sdp"
+                app:layout_constraintTop_toBottomOf="@id/tab_layout"
+                android:background="@color/disabled"/>
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
@@ -65,7 +73,7 @@
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tab_layout" />
+                app:layout_constraintTop_toBottomOf="@id/leaderBoardDivider" />
 
             <include
                 android:id="@+id/tab_overlay"

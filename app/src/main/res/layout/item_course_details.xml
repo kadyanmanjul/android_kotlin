@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_7sdp"
-        app:strokeColor="@color/primary_500"
+        app:strokeColor="@color/primary_400"
         app:strokeWidth="@dimen/_1sdp"
         app:cardCornerRadius="@dimen/_6sdp">
 
@@ -24,10 +24,9 @@
             android:layout_height="@dimen/_35sdp"
             android:layout_gravity="center"
             android:gravity="center_vertical"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
             android:textAlignment="center"
             android:textColor="@color/primary_500"
-            android:textSize="@dimen/_13ssp"
-            android:textStyle="bold"
             tools:text="Unlimited Calling" />
 
     </com.google.android.material.card.MaterialCardView>

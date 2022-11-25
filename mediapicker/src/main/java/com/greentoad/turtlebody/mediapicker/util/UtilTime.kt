@@ -20,4 +20,19 @@ object UtilTime {
                     , TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)))
         }
     }
+
+    @JvmStatic
+    fun getRemainingHours(millis: Long): String {
+        return String.format("%02d", TimeUnit.MILLISECONDS.toHours(millis))
+    }
+
+    @JvmStatic
+    fun getRemainingMinutes(millis: Long): String {
+        return String.format("%02d", TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)))
+    }
+
+    @JvmStatic
+    fun getRemainingSeconds(millis: Long): String {
+        return String.format("%02d", (TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))))
+    }
 }
