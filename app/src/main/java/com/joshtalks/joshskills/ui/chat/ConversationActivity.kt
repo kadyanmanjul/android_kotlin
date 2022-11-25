@@ -217,6 +217,7 @@ class ConversationActivity :
             R.anim.to_bottom_animation
         )
     }
+    var openedLesson: Boolean = false
     var countdownTimerBack: CountDownTimer? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
@@ -1358,7 +1359,7 @@ class ConversationActivity :
     override fun onRestart() {
         super.onRestart()
         getAllPendingRequest()
-        if (VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true))
+        if (VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) && openedLesson)
             showFirstCallBottomSheet()
     }
 
@@ -1938,6 +1939,7 @@ class ConversationActivity :
                                 .addParam(ParamKeys.LESSON_ID, it.lessonId)
                                 .push()
                             PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
+                            openedLesson = true
                             startActivityForResult(
                                 LessonActivity.getActivityIntent(
                                     this,

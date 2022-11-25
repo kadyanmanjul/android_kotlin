@@ -56,7 +56,7 @@ class ScratchCardDialog : BaseDialogFragment() {
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
-            delay(3000)
+            delay(1500)
             binding.tvScratchHere.startAnimation(AnimationUtils.loadAnimation(requireActivity(), R.anim.fade_in))
             binding.tvScratchHere.visibility = VISIBLE
         }

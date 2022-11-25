@@ -39,7 +39,9 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
 
     override fun onBindViewHolder(holder: OfferListViewHolder, position: Int) {
         holder.setData(offersList[position], position)
-        holder.binding.couponDiscountPercent.text = "Get Extra ${offersList[position].amountPercent} % Off"
+        holder.binding.couponDiscountPercent.text =
+            if (offersList[position].amountPercent != -1) "Get Extra ${offersList[position].amountPercent}% Off"
+        else "Get Extra ₹${offersList[position].maxDiscountAmount} Off"
 
         if (offersList[position].isCouponSelected == 1) {
             holder.binding.rootCard.isEnabled = true

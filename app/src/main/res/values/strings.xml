@@ -989,6 +989,6 @@
     <string name="your_referral_code" translatable="false">Your Referral Code</string>
     <string name="p2p_notifications_setting" translatable="false">Practice partner notifications</string>
 
-    <string name="first_call_popup_title">English bolne se aati hai....</string>
-    <string name="first_call_popup_subtitle">%s, dial your first call and practice speaking  with other students.</string>
+    <string name="first_call_popup_title">English बोलने से आती है....</string>
+    <string name="first_call_popup_subtitle">%s, अपना पहला call dial करें और दुसरे students के साथ speaking practice करें।</string>
 </resources>

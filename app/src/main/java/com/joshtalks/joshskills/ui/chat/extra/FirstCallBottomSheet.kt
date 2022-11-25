@@ -153,7 +153,7 @@ class FirstCallBottomSheet : BottomSheetDialogFragment() {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag(tag)
             if (prev != null) {
-                fragmentTransaction.remove(prev)
+                return
             }
             fragmentTransaction.addToBackStack(null)
             FirstCallBottomSheet().show(supportFragmentManager, tag)

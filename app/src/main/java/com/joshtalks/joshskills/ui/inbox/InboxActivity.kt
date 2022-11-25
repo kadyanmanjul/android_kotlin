@@ -262,6 +262,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun checkCouponNotification() {
         try {
+            if (PrefManager.getStringValue(STICKY_COUPON_DATA).isEmpty()) {
+                stopService(Intent(this, StickyNotificationService::class.java))
+                return
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 val notifications: Array<StatusBarNotification> = mNotificationManager.activeNotifications
