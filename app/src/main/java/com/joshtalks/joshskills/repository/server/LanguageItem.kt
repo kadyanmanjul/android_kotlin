@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LOCALE
 import java.lang.reflect.Type
 
 data class LanguageItem(
@@ -28,6 +30,12 @@ data class LanguageItem(
                 ex.printStackTrace()
                 emptyList()
             }
+        }
+
+        @JvmStatic
+        fun getSelectedLanguage(): String?{
+            val language = getLanguageList().find { it.code == PrefManager.getStringValue(USER_LOCALE) }
+            return language?.name
         }
     }
 }

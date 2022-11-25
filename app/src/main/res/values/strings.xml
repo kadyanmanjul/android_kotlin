@@ -987,4 +987,5 @@
     <string name="referral_point_one">Invite and earn, You and your friend each will get %1$s</string>
     <string name="referral_point_two">Share the code below and ask your friends to enter it when they purchase the course</string>
     <string name="your_referral_code" translatable="false">Your Referral Code</string>
+    <string name="p2p_notifications_setting" translatable="false">Practice partner notifications</string>
 </resources>
