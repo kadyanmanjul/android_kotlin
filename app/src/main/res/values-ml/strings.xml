@@ -407,4 +407,6 @@
     <string name="referral_point_one">Invite &amp; Earn, നിങ്ങൾക്കും നിങ്ങളുടെ സുഹൃത്തിനും %1$s വീതം ലഭിക്കുന്നതാണ്.</string>
     <string name="referral_point_two">ആകെ ചെയ്യേണ്ടത്, താഴെയുള്ള കോഡ് പങ്കിടുകയും course വാങ്ങുമ്പോൾ അത് enter ചെയ്യാൻ നിങ്ങളുടെ സുഹൃത്തുക്കളോട് ആവശ്യപ്പെടുകയും ചെയ്യുക.</string>
 
+    <string name="first_call_popup_title">English സംസാരിച്ചാൽ മാത്രമേ വളരൂ..</string>
+    <string name="first_call_popup_subtitle">%s, ഇപ്പോൾ തന്നെ നിങ്ങളുടെ first call ചെയ്യൂ and start practice speaking with other students.</string>
 </resources>

@@ -406,4 +406,7 @@
     <string name="label_speaking_spotlight_2">Click here. Lesson యొక్క మొదటి భాగమే speaking practice</string>
     <string name="referral_point_one">ఆహ్వానించి సంపాదించండి, మీరు మరియు మీ స్నేహితుడు ఒక్కొక్కరు %1$s పొందుతారు</string>
     <string name="referral_point_two">కింద ఉన్న Code share చేయండి మరియు మీ స్నేహితులు course ను కొనుగోలు చేసినప్పుడు దాన్ని నమోదు చేయమని అడగండి.</string>
+
+    <string name="first_call_popup_title">English మాట్లాడితేనే వస్తుంది....</string>
+    <string name="first_call_popup_subtitle">%s, మీ ఫస్ట్ కాల్ డయల్ చేయండి మరియు వేరే స్టూడెంట్స్ తో speaking practice చేయండి</string>
 </resources>

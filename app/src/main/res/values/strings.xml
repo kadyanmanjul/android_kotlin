@@ -988,4 +988,7 @@
     <string name="referral_point_two">Share the code below and ask your friends to enter it when they purchase the course</string>
     <string name="your_referral_code" translatable="false">Your Referral Code</string>
     <string name="p2p_notifications_setting" translatable="false">Practice partner notifications</string>
+
+    <string name="first_call_popup_title">English bolne se aati hai....</string>
+    <string name="first_call_popup_subtitle">%s, dial your first call and practice speaking  with other students.</string>
 </resources>

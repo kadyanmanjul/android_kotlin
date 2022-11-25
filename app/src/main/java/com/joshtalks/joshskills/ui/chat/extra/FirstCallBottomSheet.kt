@@ -12,6 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.BottomSheetFirstCallBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.extra.setOnShortSingleClickListener
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -42,6 +43,10 @@ class FirstCallBottomSheet : BottomSheetDialogFragment() {
 
     private fun initView() {
         savePopupImpression(FIRST_CALL_POPUP_SHOWN)
+
+        binding.callPopupSubtitle.text =
+            getString(R.string.first_call_popup_subtitle, Mentor.getInstance().getUser()?.firstName ?: "User")
+
         binding.callNow.setOnShortSingleClickListener {
             savePopupImpression(CALL_NOW_FIRST_CALL_POPUP)
             startPractise()
