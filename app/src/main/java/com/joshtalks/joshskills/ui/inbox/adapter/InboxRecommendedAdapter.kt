@@ -4,6 +4,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.marginBottom
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -61,13 +63,15 @@ class InboxRecommendedAdapter :
             }
             if (courseList?.id == 10) {
                 binding.horizontalLine11.visibility = View.VISIBLE
-                binding.isBestCourse.visibility = View.VISIBLE
+
                 binding.tvSubHeading.text = "35,000 + students enrolled"
+                TextViewCompat.setTextAppearance(binding.tvSubHeading, R.style.TextAppearance_JoshTypography_CaptionSemiBold)
                 binding.tvSubHeading.setTextColor(AppObjectController.joshApplication.resources.getColor(R.color.success))
+                binding.tvSubHeading.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tranding,0,0,0)
             }
             else {
                 binding.horizontalLine11.visibility = View.GONE
-                binding.isBestCourse.visibility = ViewGroup.GONE
+                binding.tvSubHeading.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0)
             }
             binding.executePendingBindings()
         }

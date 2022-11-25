@@ -18,44 +18,74 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_offer"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
+            android:layout_height="@dimen/_60sdp"
             app:cardCornerRadius="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_8sdp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_marginHorizontal="@dimen/_16sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:paddingHorizontal="@dimen/_6sdp" >
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_44sdp"
-                android:orientation="horizontal"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
+                android:layout_height="match_parent"
                 android:background="@color/surface_information">
 
                 <com.airbnb.lottie.LottieAnimationView
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
+                    android:id="@+id/lottite"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/_13sdp"
                     android:padding="@dimen/_2sdp"
                     app:lottie_autoPlay="true"
-                    android:layout_marginStart="@dimen/_13sdp"
                     app:lottie_fileName="lottie/offer.json"
                     app:lottie_imageAssetsFolder="lottie"
                     app:lottie_loop="true" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_15sdp"
-                    android:layout_marginEnd="@dimen/_13sdp"
-                    android:text="Buy 65 + courses including this course just for ₹360"
-                    android:textColor="@color/text_default"
-                    style="@style/TextAppearance.JoshTypography.CaptionSemiBold" />
+                    android:layout_toRightOf="@+id/lottite"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/offer_text"
+                        style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:layout_marginEnd="@dimen/_13sdp"
+                        android:text="Buy 65 + courses including this course just for ₹450"
+                        android:textColor="@color/text_default" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/offer_text"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:layout_marginEnd="@dimen/_13sdp"
+                        android:text="Buy now!"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/primary_500" />
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_2sdp"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:background="@drawable/dotted_line"
+                        android:backgroundTint="@color/primary_500" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -65,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/_12sdp"
                 android:paddingEnd="@dimen/_8sdp"
-               android:layout_marginTop="@dimen/_2sdp"
+               android:layout_marginTop="@dimen/_14sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                 android:textColor="@color/pure_white"
                 app:autoSizeMaxTextSize="@dimen/_15ssp"

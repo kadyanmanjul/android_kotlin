@@ -399,7 +399,8 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 this,
                 testId!!.split("_")[1].toInt(),
                 this@LauncherActivity.javaClass.simpleName,
-                buySubscription = false
+                buySubscription = false,
+                isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

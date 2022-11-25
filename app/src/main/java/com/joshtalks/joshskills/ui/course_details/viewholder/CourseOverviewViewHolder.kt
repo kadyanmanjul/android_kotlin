@@ -22,6 +22,8 @@ import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadSyllabusEvent
+import com.joshtalks.joshskills.repository.local.eventbus.OfferCardEvent
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
 import com.joshtalks.joshskills.repository.server.course_detail.OverviewMediaType
@@ -40,7 +42,8 @@ class CourseOverviewViewHolder(
     private val context: Context = AppObjectController.joshApplication,
     private val testId: Int,
     private val coursePrice: String,
-    private val courseName: String
+    private val courseName: String,
+    private val isFromFreeTrial:Boolean
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.txtCourseName)
@@ -99,8 +102,8 @@ class CourseOverviewViewHolder(
         txtDescription.text = data.shortDescription
         txtRating.text = String.format("%.1f", data.rating)
         ratingBar.rating = data.rating.toFloat()
-        if (testId == 10)
-            cardOffer.visibility = View.VISIBLE
+        if (testId == 10 || testId == 122 || isFromFreeTrial.not())
+            cardOffer.visibility = View.GONE
         setCourseStats()
         setCarouselView()
     }
@@ -199,5 +202,10 @@ class CourseOverviewViewHolder(
             .addParam(ParamKeys.COURSE_PRICE,coursePrice)
             .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
             .push()
+    }
+
+    @Click(R.id.card_offer)
+    fun onClickOfferCard(){
+        RxBus2.publish(OfferCardEvent(testId))
     }
 }

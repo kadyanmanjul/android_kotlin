@@ -532,7 +532,8 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 this,
                 testId.toInt(),
                 startedFrom = this@BuyPageActivity.javaClass.simpleName,
-                buySubscription = false
+                buySubscription = false,
+                isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
             )
         }
     }

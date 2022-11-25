@@ -133,24 +133,23 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        requestWindowFeature(Window.FEATURE_NO_TITLE)
-//        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-//        this.window.setFlags(
-//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//            WindowManager.LayoutParams.FLAG_FULLSCREEN
-//        )
-//
-//        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
-//            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-//        } else {
-//            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-//        }
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        this.window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+
+        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
         super.onCreate(savedInstanceState)
        // window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pure_white)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_details)
         binding.lifecycleOwner = this
         binding.handler = this
-        setWhiteStatusBar()
         testId = intent.getIntExtra(KEY_TEST_ID, 0)
         isFromFreeTrial = intent.getBooleanExtra(IS_FROM_FREE_TRIAL, false)
         buySubscription = intent.getBooleanExtra(BUY_SUBSCRIPTION, false)
@@ -453,7 +452,8 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                     this,
                     testId,
                     viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
-                    courseName
+                    courseName,
+                    isFromFreeTrial
                 )
             }
             CardType.LONG_DESCRIPTION -> {
@@ -675,6 +675,24 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                         getPermissionAndDownloadSyllabus(it.syllabusData)
                     }
                 }, {
+                    it.printStackTrace()
+                })
+        )
+
+        compositeDisposable.add(
+            RxBus2.listen(OfferCardEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe ({
+                    finish()
+                    startCourseDetailsActivity(
+                        this,
+                        10,
+                        startedFrom = this@CourseDetailsActivity.javaClass.simpleName,
+                        isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT),
+                        buySubscription = false
+                    )
+                },{
                     it.printStackTrace()
                 })
         )
@@ -1184,23 +1202,6 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             fragment.arguments = bundle
             replace(R.id.details_parent_container, fragment, "Payment Processing")
             disallowAddToBackStack()
-        }
-    }
-
-    private fun setWhiteStatusBar(){
-        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pure_white)
-    }
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val controller = window.insetsController
-            controller?.setSystemBarsAppearance(
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            )
-        } else {
-            val windowInsetController =  WindowCompat.getInsetsController(window, window.decorView)
-            windowInsetController.isAppearanceLightStatusBars = true
         }
     }
 }

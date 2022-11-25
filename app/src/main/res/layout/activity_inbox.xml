@@ -18,7 +18,7 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/pure_white"
+        android:background="@color/surface_background"
         tools:context="com.joshtalks.joshskills.ui.inbox.InboxActivity">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -48,7 +48,6 @@
                     android:id="@+id/recycler_view_inbox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -62,7 +61,7 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:padding="@dimen/_4sdp"
-                    android:visibility="gone"
+                    android:visibility="@{vm.isRecommendedVisible ? View.VISIBLE : View.GONE}"
                     android:text="More recommended courses"
                     android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
                     android:textColor="@color/text_default"
@@ -72,14 +71,30 @@
 
                 </TextView>
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/is_best_course"
+                    android:layout_width="85dp"
+                    android:layout_height="23dp"
+                    android:layout_marginEnd="@dimen/_13sdp"
+                    android:layout_marginBottom="@dimen/_minus5sdp"
+                    android:elevation="@dimen/_10sdp"
+                    android:scaleType="fitXY"
+                    android:visibility="@{vm.isRecommendedVisible ? View.VISIBLE : View.GONE}"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:layout_constraintTop_toBottomOf="@id/text_recommended"
+                    app:layout_constraintBottom_toTopOf="@+id/recycler_view_recommended_course"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:srcCompat="@drawable/ic_best_value"
+                    tools:visibility="visible" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_recommended_course"
                     onCourseItemClick="@{vm.onItemClick}"
                     recommendedCourseListAdapter="@{vm.recommendedAdapter}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/_5sdp"
                     android:overScrollMode="never"
+                    android:layout_marginTop="@dimen/_8sdp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -87,14 +102,14 @@
                     app:rippleColor="@color/pure_white"
                     tools:listitem="@layout/inbox_item_layout_for_recommended_course" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/text_explore_course"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:padding="@dimen/_4sdp"
-                    android:visibility="gone"
+                    android:visibility="@{vm.isRecommendedVisible ? View.VISIBLE : View.GONE}"
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:paddingHorizontal="@dimen/_15sdp"
+                    android:background="@color/pure_white"
                     android:text="Explore more courses >>"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                     android:textColor="@color/primary_500"
@@ -102,7 +117,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recycler_view_recommended_course">
 
-                </TextView>
+                </com.google.android.material.textview.MaterialTextView>
 
                 <LinearLayout
                     android:layout_width="match_parent"

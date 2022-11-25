@@ -14,6 +14,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.databinding.FragmentPrmotationDialogBinding
@@ -106,7 +108,8 @@ class PromotionDialogFragment : DialogFragment() {
                 activity=requireActivity(),
                 testId = this.toInt(),
                 startedFrom = "Promotion",
-                buySubscription = false
+                buySubscription = false,
+                isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
             )
             dismissAllowingStateLoss()
         }

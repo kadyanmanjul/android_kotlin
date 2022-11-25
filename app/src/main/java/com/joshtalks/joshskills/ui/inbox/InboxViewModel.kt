@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.util.Log
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -44,6 +45,7 @@ class InboxViewModel : BaseViewModel(){
 
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
     val recommendedAdapter = InboxRecommendedAdapter()
+    val isRecommendedVisible = ObservableField(false)
 
     fun getA2C1CampaignData(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -321,20 +323,6 @@ class InboxViewModel : BaseViewModel(){
         }
     }
 
-    fun saveImpressionForExplorePage(eventName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val requestData = hashMapOf(
-                    Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("event_name", eventName)
-                )
-                AppObjectController.commonNetworkService.saveImpressionForExplore(requestData)
-            } catch (ex: Exception) {
-                Timber.e(ex)
-            }
-        }
-    }
-
     fun saveBranchPaymentLog(orderInfoId:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -350,9 +338,9 @@ class InboxViewModel : BaseViewModel(){
             try {
                 val resp = AppObjectController.commonNetworkService.getCourseRecommendations()
                 withContext(Dispatchers.Main) {
+                    isRecommendedVisible.set(true)
                     recommendedAdapter.addRecommendedCourseList(resp.body())
                 }
-                Log.e("sagar", "getRecommendedCourse: ${resp.body()}")
             } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }
@@ -363,6 +351,7 @@ class InboxViewModel : BaseViewModel(){
         try {
             when (type) {
                 CLICK_ON_RECOMMENDED_COURSE ->{
+                    savePaymentImpressionForCourseExplorePage("CLICKED_COURSE_INBOX",it.id.toString())
                     message.what = CLICK_ON_RECOMMENDED_COURSE
                     message.obj = it
                     message.arg1 = position
@@ -373,5 +362,21 @@ class InboxViewModel : BaseViewModel(){
             Log.d("BuyPageViewModel.kt", "SAGAR => :145 ${ex.message}")
         }
     }
+
+    fun savePaymentImpressionForCourseExplorePage(event: String, eventData: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.commonNetworkService.saveImpressionForExplore(
+                    mapOf(
+                        "event_name" to event,
+                        "event_data" to eventData
+                    )
+                )
+            } catch (ex: java.lang.Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
 
 }

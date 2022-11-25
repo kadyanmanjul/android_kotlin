@@ -129,6 +129,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         this,
                         data.id,
                         startedFrom = this@InboxActivity.javaClass.simpleName,
+                        isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT),
                         buySubscription = false
                     )
                 }
@@ -553,9 +554,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 viewModel.checkForPendingPayments()
                 if (capsuleCourse?.bbTipText?.isNotBlank() == true) {
                     viewModel.getRecommendedCourse()
-                    binding.textExploreCourse.visibility = VISIBLE
-                    binding.textRecommended.visibility = VISIBLE
                     binding.textExploreCourse.setOnClickListener {
+                        viewModel.savePaymentImpressionForCourseExplorePage("CLICKED_EXPLORE_COURSE", EMPTY)
                         openCourseExplorer()
                     }
                 }

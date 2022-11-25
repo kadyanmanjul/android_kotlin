@@ -55,6 +55,7 @@
     <color name="surface_tip">#F9ECBD</color>
     <color name="surface_notification">#292D30</color>
     <color name="surface_overlay">#BF173A50</color>
+    <color name="surface_background">#F6F6F6</color>
 
     <!--    external colors    -->
     <color name="external_linkedin">#0077B5</color>
