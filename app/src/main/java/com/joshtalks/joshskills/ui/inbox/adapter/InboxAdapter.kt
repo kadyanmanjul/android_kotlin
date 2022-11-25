@@ -94,6 +94,7 @@ class InboxAdapter(
 
     inner class InboxViewHolder(val binding: InboxItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        private var countdownTimerBack: CountdownTimerBack? = null
 
         fun bind(inboxEntity: InboxEntity, indexPos: Int) {
             with(binding) {

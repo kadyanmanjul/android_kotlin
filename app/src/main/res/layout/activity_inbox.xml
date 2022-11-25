@@ -94,7 +94,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/trialTimerDivider"
                 tools:itemCount="3"
-                tools:listitem="@layout/inbox_row_layout" />
+                tools:listitem="@layout/inbox_item_layout" />
 
                 <TextView
                     android:id="@+id/text_recommended"
