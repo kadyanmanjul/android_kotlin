@@ -34,25 +34,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @SuppressLint("NonConstantResourceId")
-@Layout(R.layout.layout_report_overview_view2)
 class ReportOverviewView2(
     private val certificateExamReport: CertificateExamReportModel,
     private val totalQuestions: List<CertificationQuestion>
 ) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.chart)
+    
     lateinit var chart: PieChart
 
-    @com.mindorks.placeholderview.annotations.View(R.id.recycler_view)
+    
     lateinit var questionRecyclerView: RecyclerView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.tv_correct)
+    
     lateinit var tvCorrect: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.tv_incorrect)
+    
     lateinit var tvIncorrect: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.tv_unanswered)
+    
     lateinit var tvUnanswered: AppCompatTextView
 
 
@@ -166,27 +165,27 @@ class ReportOverviewView2(
         return span
     }
 
-    @Click(R.id.imgBtnLeft)
+    
     fun onClickImgBtnLeft(){
         questionRecyclerView.scrollToPosition(0)
     }
 
-    @Click(R.id.imgBtnRight)
+    
     fun onClickImgBtnRight(){
         questionRecyclerView.adapter?.itemCount?.let { questionRecyclerView.scrollToPosition(it-1) }
     }
 
-    @Click(R.id.ll_correct)
+    
     fun onClickCorrectView() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.RIGHT))
     }
 
-    @Click(R.id.ll_unanswerd)
+    
     fun onClickUnAnsweredView() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNANSWERED))
     }
 
-    @Click(R.id.ll_incorrect)
+    
     fun onClickInCorrectView() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.WRONG))
     }

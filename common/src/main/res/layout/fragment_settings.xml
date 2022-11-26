@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.settings.fragments.SettingsFragment" />
+            type="com.joshtalks.joshskills.common.ui.settings.fragments.SettingsFragment" />
     </data>
 
     <ScrollView

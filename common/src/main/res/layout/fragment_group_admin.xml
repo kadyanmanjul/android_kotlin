@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
+            type="com.joshtalks.joshskills.common.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,7 +26,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+            <com.joshtalks.joshskills.common.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
                 groupHeader="@{`Admin Responsibility`}"
                 groupSubHeader="@{`accept your responsibility`}"

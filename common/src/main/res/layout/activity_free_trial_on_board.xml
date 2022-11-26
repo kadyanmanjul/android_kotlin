@@ -8,11 +8,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity" />
+            type="com.joshtalks.joshskills.common.ui.signup.FreeTrialOnBoardActivity" />
 
         <variable
             name="onboardingData"
-            type="com.joshtalks.joshskills.repository.server.onboarding.OnboardingCourseData" />
+            type="com.joshtalks.joshskills.common.repository.server.onboarding.OnboardingCourseData" />
 
     </data>
 

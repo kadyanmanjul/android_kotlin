@@ -31,7 +31,7 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
 
-@Layout(R.layout.course_overview_view_holder)
+
 class CourseOverviewViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -42,52 +42,52 @@ class CourseOverviewViewHolder(
     private val courseName: String
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtCourseName)
+    
     lateinit var txtCourseName: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtTeacherName)
+    
     lateinit var txtTeacherName: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtViewers)
+    
     lateinit var txtViewers: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtDescription)
+    
     lateinit var txtDescription: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.img_top_icon)
+    
     lateinit var imgTopIcon: AppCompatImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtRating)
+    
     lateinit var txtRating: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.rating_bar)
+    
     lateinit var ratingBar: JoshRatingBar
 
-    @com.mindorks.placeholderview.annotations.View(R.id.icon1)
+    
     lateinit var statsIcon1: AppCompatImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.captionIcon1)
+    
     lateinit var statsCaption1: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.icon2)
+    
     lateinit var statsIcon2: AppCompatImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.captionIcon2)
+    
     lateinit var statsCaption2: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.icon3)
+    
     lateinit var statsIcon3: AppCompatImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.captionIcon3)
+    
     lateinit var statsCaption3: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.icon4)
+    
     lateinit var statsIcon4: AppCompatImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.captionIcon4)
+    
     lateinit var statsCaption4: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.carousel_recycler_view)
+    
     lateinit var carouselRecyclerView: PlaceHolderView
 
     @Resolve
@@ -190,7 +190,7 @@ class CourseOverviewViewHolder(
             }
     }
 
-    @Click(R.id.ratingView)
+    
     fun onClickRatingView() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(CardType.REVIEWS)
 

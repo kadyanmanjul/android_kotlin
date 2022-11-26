@@ -24,7 +24,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 import de.hdodenhof.circleimageview.CircleImageView
 
 
-@Layout(R.layout.layout_listitem_story)
+
 class StudentFeedbackCard(
     private var feedback: Feedback,
     private val context: Context = AppObjectController.joshApplication,
@@ -33,16 +33,16 @@ class StudentFeedbackCard(
     private val courseName: String
 ) : CourseDetailsBaseCell(CardType.OTHER_INFO, 0) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.name)
+    
     lateinit var name: TextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.frameLayout)
+    
     lateinit var frameLayout: FrameLayout
 
-    @com.mindorks.placeholderview.annotations.View(R.id.profession)
+    
     lateinit var profession: TextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.image_circle)
+    
     lateinit var circleImage: CircleImageView
 
     @Resolve
@@ -54,7 +54,7 @@ class StudentFeedbackCard(
         }
     }
 
-    @Click(R.id.image_circle)
+    
     fun onClick() {
         logAnalyticsEvent(feedback.name)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -7,15 +7,15 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.ui.group.model.DefaultImage" />
+        <import type="com.joshtalks.joshskills.common.ui.group.model.DefaultImage" />
 
         <variable
             name="constant"
-            type="com.joshtalks.joshskills.ui.group.constants.GroupsConstantsKt" />
+            type="com.joshtalks.joshskills.common.ui.group.constants.GroupsConstantsKt" />
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.group.model.GroupItemData" />
+            type="com.joshtalks.joshskills.common.ui.group.model.GroupItemData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

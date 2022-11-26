@@ -21,7 +21,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import java.lang.ref.WeakReference
 import java.util.Locale
 
-@Layout(R.layout.layout_student_of_week_card)
+
 class StudentOfTheWeekCardViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -29,25 +29,25 @@ class StudentOfTheWeekCardViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
-    @View(R.id.user_pic)
+    
     lateinit var userPic: CircleImageView
 
-    @View(R.id.iv_award)
+    
     lateinit var awardImage: AppCompatImageView
 
-    @View(R.id.student_name)
+    
     lateinit var studentName: AppCompatTextView
 
-    @View(R.id.total_points)
+    
     lateinit var totalPoints: AppCompatTextView
 
-    @View(R.id.user_text)
+    
     lateinit var userText: AppCompatTextView
 
-    @View(R.id.date_text)
+    
     lateinit var dateText: AppCompatTextView
 
-    @View(R.id.root_view_fl)
+    
     lateinit var rootView: FrameLayout
 
     private var userName: String = "Josh Skills"
@@ -86,7 +86,7 @@ class StudentOfTheWeekCardViewHolder(
         }
     }
 
-    @Click(R.id.root_view_fl)
+    
     fun checkExamDetails() {
         message.awardMentorModel?.mentorId?.let {
             com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenUserProfile(it))

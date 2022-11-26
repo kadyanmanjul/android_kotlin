@@ -7,7 +7,7 @@
 
         <variable
             name="contact"
-            type="com.joshtalks.joshskills.repository.local.entity.PhonebookContact" />
+            type="com.joshtalks.joshskills.common.repository.local.entity.PhonebookContact" />
 
         <variable
             name="callback"

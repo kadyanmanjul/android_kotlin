@@ -38,7 +38,7 @@
                     android:layout_marginHorizontal="@dimen/_2sdp"
                     android:background="@drawable/bg_tooltip_large_start">
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/joshTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

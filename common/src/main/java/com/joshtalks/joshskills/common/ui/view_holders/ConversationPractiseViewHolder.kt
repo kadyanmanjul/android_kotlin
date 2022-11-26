@@ -15,23 +15,23 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
-@Layout(R.layout.conversation_practise_layout)
+
 class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
     BaseChatViewHolder(activityRef, message,previousMessage) {
 
-    @View(R.id.image_view)
+
     lateinit var imageView: AppCompatImageView
 
-    @View(R.id.text_message_time)
+
     lateinit var receivedMessageTime: AppCompatTextView
 
-    @View(R.id.root_view_fl)
+
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_sub_view)
+
     lateinit var subRootView: FrameLayout
 
-    @View(R.id.tv_title)
+
     lateinit var titleTv: AppCompatTextView
 
 
@@ -56,12 +56,12 @@ class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity
         return rootView
     }
 
-    @Click(R.id.root_sub_view)
+    
     fun onClick() {
         openPractise()
     }
 
-    @Click(R.id.btn_start)
+    
     fun onClickButton() {
         openPractise()
     }

@@ -11,18 +11,17 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.test_summay_header_item)
 class TestSummaryHeaderViewHolder(
     var assessment: AssessmentWithRelations
 ) {
 
-    @View(R.id.welcome_msg)
+    
     lateinit var welcomeMsg: AppCompatTextView
 
-    @View(R.id.total_questions)
+    
     lateinit var totalQuestions: AppCompatTextView
 
-    @View(R.id.total_attempted)
+    
     lateinit var totalAttempted: AppCompatTextView
 
     @Resolve

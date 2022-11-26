@@ -38,7 +38,7 @@ import com.joshtalks.joshskills.common.repository.server.assessment.QuestionStat
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.common.util.ExoAudioPlayer
-import com.joshtalks.joshskills.common.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.State
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

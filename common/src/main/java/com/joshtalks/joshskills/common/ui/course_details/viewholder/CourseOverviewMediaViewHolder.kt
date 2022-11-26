@@ -23,19 +23,19 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
-@Layout(R.layout.course_overview_media_item)
+
 class CourseOverviewMediaViewHolder(
     private val overviewMedia: OverviewMedia,
     private val context: Context = AppObjectController.joshApplication
 ) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.imageView)
+    
     lateinit var imageView: AppCompatImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.backgroundFade)
+    
     lateinit var backgroundFade: AppCompatImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.playIcon)
+    
     lateinit var playIcon: AppCompatImageView
 
     @Resolve
@@ -65,7 +65,7 @@ class CourseOverviewMediaViewHolder(
         }
     }
 
-    @Click(R.id.playIcon)
+    
     fun onClick() {
         VideoPlayerActivity.startVideoActivity(
             context,

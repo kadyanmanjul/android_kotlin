@@ -21,18 +21,18 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
-@Layout(R.layout.layout_about_josh_card)
+
 class AboutJoshCardView(
     private var aboutJoshData: Detail,
     private val context: Context = AppObjectController.joshApplication
 ) {
-    @com.mindorks.placeholderview.annotations.View(R.id.description)
+    
     lateinit var description: TextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.title)
+    
     lateinit var title: TextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.image)
+    
     lateinit var image: ImageView
 
     @Resolve
@@ -63,7 +63,7 @@ class AboutJoshCardView(
 
     }
 
-    @Click(R.id.image)
+    
     fun onClick() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(ImageShowEvent(aboutJoshData.imageUrl, aboutJoshData.imageUrl))
     }

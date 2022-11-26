@@ -212,7 +212,7 @@
                 app:iconSize="@dimen/_24sdp"
                 app:rippleColor="@color/pure_white" />
 
-            <com.joshtalks.joshskills.core.custom_ui.exo_audio_player.ExoAudioPlayerView
+            <com.joshtalks.joshskills.common.core.custom_ui.exo_audio_player.ExoAudioPlayerView
                 android:id="@+id/audio_player"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

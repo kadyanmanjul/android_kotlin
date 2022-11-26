@@ -12,7 +12,7 @@ import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
-@Layout(R.layout.layout_student_feedback_viewholder)
+
 class StudentFeedbackViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -23,10 +23,10 @@ class StudentFeedbackViewHolder(
     private val courseName: String
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.story_recycler_view)
+    
     lateinit var item: PlaceHolderView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.title)
+    
     lateinit var title: TextView
     private val linearLayoutManager =
         LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

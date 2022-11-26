@@ -41,7 +41,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtHeading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/headerImage"
                 app:layout_constraintWidth_percent="0.8" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtHeadingMain"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
                     android:layout_marginEnd="@dimen/_12sdp"
                     app:srcCompat="@drawable/ic_green_tick" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/item1_txt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                     android:layout_marginEnd="@dimen/_12sdp"
                     app:srcCompat="@drawable/ic_green_tick" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/item2_txt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -149,7 +149,7 @@
                     android:layout_marginEnd="@dimen/_12sdp"
                     app:srcCompat="@drawable/ic_green_tick" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/item3_txt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

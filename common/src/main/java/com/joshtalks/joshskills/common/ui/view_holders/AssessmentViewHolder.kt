@@ -27,7 +27,7 @@ import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
 import io.github.inflationx.calligraphy3.TypefaceUtils
 import java.lang.ref.WeakReference
 
-@Layout(R.layout.assessment_item_layout)
+
 class AssessmentViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -35,25 +35,25 @@ class AssessmentViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
-    @View(R.id.root_view)
+
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_sub_view)
+
     lateinit var subRootView: FrameLayout
 
-    @View(R.id.message_view)
+
     lateinit var messageView: ConstraintLayout
 
-    @View(R.id.status_tv)
+
     lateinit var practiceStatusTv: AppCompatTextView
 
-    @View(R.id.btn_start)
+
     lateinit var btnStart: MaterialTextView
 
-    @View(R.id.tv_title)
+
     lateinit var title: AppCompatTextView
 
-    @View(R.id.text_message_time)
+
     lateinit var receivedMessageTime: AppCompatTextView
 
     lateinit var viewHolder: AssessmentViewHolder
@@ -150,12 +150,12 @@ class AssessmentViewHolder(
         practiceStatusTv.setText(sBuilder, TextView.BufferType.SPANNABLE)
     }
 
-    @Click(R.id.root_sub_view)
+    
     fun onClickRootView() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(AssessmentStartEventBus(message.chatId, message.question?.assessmentId ?: 0))
     }
 
-    @Click(R.id.btn_start)
+    
     fun onClickStartView() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(AssessmentStartEventBus(message.chatId, message.question?.assessmentId ?: 0))
     }

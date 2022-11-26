@@ -8,7 +8,7 @@
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.userprofile.models.GroupInfo" />
+            type="com.joshtalks.joshskills.common.ui.userprofile.models.GroupInfo" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

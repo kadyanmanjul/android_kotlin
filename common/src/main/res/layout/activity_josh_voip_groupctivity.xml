@@ -5,13 +5,13 @@
 
     <data>
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
         <import type="android.view.View" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
+            type="com.joshtalks.joshskills.common.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat

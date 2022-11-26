@@ -5,10 +5,10 @@
     tools:context=".ui.voip.new_arch.ui.views.CallFragment">
     <data>
         <import type="android.view.View"/>
-        <import type="com.joshtalks.joshskills.base.constants.ConstantsKt"/>
+        <import type="com.joshtalks.joshskills.common.base.constants.ConstantsKt"/>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
+            type="com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
 
     </data>
 

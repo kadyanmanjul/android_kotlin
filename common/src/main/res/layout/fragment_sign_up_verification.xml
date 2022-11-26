@@ -7,11 +7,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.signup.SignUpVerificationFragment" />
+            type="com.joshtalks.joshskills.common.ui.signup.SignUpVerificationFragment" />
 
         <variable
             name="viewModel"
-            type="com.joshtalks.joshskills.ui.signup.SignUpViewModel" />
+            type="com.joshtalks.joshskills.common.ui.signup.SignUpViewModel" />
 
         <import type="android.text.Html" />
 

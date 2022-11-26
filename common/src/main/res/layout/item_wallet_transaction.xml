@@ -6,7 +6,7 @@
     <data>
         <variable
         name="item"
-        type="com.joshtalks.joshskills.ui.callWithExpert.model.Transaction"
+        type="com.joshtalks.joshskills.common.ui.callWithExpert.model.Transaction"
             />
     </data>
 

@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.inbox.ExtendFreeTrialViewModel" />
+            type="com.joshtalks.joshskills.common.ui.inbox.ExtendFreeTrialViewModel" />
 
     </data>
 

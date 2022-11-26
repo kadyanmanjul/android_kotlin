@@ -36,7 +36,7 @@ import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
 
 
-@Layout(R.layout.video_view_holder)
+
 class VideoViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -44,44 +44,44 @@ class VideoViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
-    @View(R.id.image_view)
+    
     lateinit var imageView: AppCompatImageView
 
-    @View(R.id.root_view)
+    
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_sub_view)
+    
     lateinit var rootSubView: FrameLayout
 
-    @View(R.id.message_view)
+    
     lateinit var messageView: ViewGroup
 
-    @View(R.id.text_title)
+    
     lateinit var textTitle: TextView
 
-    @View(R.id.text_message_body)
+    
     lateinit var textMessageBody: JoshTextView
 
 
-    @View(R.id.text_message_time)
+    
     lateinit var textMessageTime: AppCompatTextView
 
 
-    @View(R.id.download_container)
+    
     lateinit var downloadContainer: FrameLayout
 
-    @View(R.id.iv_cancel_download)
+    
     lateinit var ivCancelDownload: AppCompatImageView
 
-    @View(R.id.iv_start_download)
+    
     lateinit var ivStartDownload: AppCompatImageView
 
 
-    @View(R.id.play_icon)
+    
     lateinit var playIcon: android.view.View
 
 
-    @View(R.id.progress_dialog)
+    
     lateinit var progressDialog: ProgressWheel
 
 
@@ -245,23 +245,23 @@ class VideoViewHolder(
         })
     }
 
-    @Click(R.id.video_container_fl)
+    
     fun onClick() {
         executeDownload()
     }
 
-    @Click(R.id.play_icon)
+    
     fun playVideo() {
         executeDownload()
     }
 
 
-    @Click(R.id.iv_start_download)
+    
     fun downloadStart() {
         executeDownload()
     }
 
-    @Click(R.id.download_container)
+    
     fun downloadStartContainer() {
         executeDownload()
     }
@@ -332,7 +332,7 @@ class VideoViewHolder(
     }
 
 
-    @Click(R.id.iv_cancel_download)
+    
     fun downloadCancel() {
         appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Cancelled")
         message.question?.videoList?.getOrNull(0)?.video_url?.run {

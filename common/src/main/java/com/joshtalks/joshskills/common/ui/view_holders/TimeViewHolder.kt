@@ -9,10 +9,10 @@ import com.mindorks.placeholderview.annotations.View
 import java.util.*
 
 
-@Layout(R.layout.time_view_holder_layout)
+
 class TimeViewHolder(var time: Date) : BaseCell() {
 
-    @View(R.id.text_title)
+    
     lateinit var textView: JoshTextView
 
 

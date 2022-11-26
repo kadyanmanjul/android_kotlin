@@ -6,7 +6,7 @@ import android.view.WindowInsetsController
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseActivity
+
 
 abstract class ThemedBaseActivity: BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

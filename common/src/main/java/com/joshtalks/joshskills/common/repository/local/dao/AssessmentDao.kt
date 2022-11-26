@@ -7,16 +7,9 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.joshtalks.joshskills.common.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.common.repository.local.model.assessment.Assessment
-import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentQuestion
-import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentQuestionFeedback
-import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentWithRelations
-import com.joshtalks.joshskills.common.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentIntro
+import com.joshtalks.joshskills.common.repository.local.model.assessment.*
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentStatus
-import com.joshtalks.joshskills.common.repository.server.assessment.ReviseConcept
 
 @Dao
 abstract class AssessmentDao {

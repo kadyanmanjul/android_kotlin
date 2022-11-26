@@ -7,7 +7,7 @@
 
         <variable
                 name="handler"
-                type="com.joshtalks.joshskills.ui.help.FaqDetailsFragment" />
+                type="com.joshtalks.joshskills.common.ui.help.FaqDetailsFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,7 +17,7 @@
             android:paddingHorizontal="@dimen/_16sdp"
             android:paddingVertical="@dimen/_16sdp">
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/faq_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                 app:layout_constraintTop_toBottomOf="@id/faq_question"
                 app:layout_constraintVertical_bias="0">
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/faq_answers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 app:barrierDirection="top"
                 app:constraint_referenced_ids="help_text,yes_btn,no_btn" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/help_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

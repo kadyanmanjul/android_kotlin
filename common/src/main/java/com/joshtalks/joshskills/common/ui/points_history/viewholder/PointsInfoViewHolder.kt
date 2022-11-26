@@ -14,16 +14,14 @@ import com.mindorks.placeholderview.annotations.Position
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.layout_point_info_item)
+
 class PointsInfoViewHolder(var points: PointsWorking,val position: Int) {
 
-    @View(R.id.root_view)
     lateinit var rootView: ConstraintLayout
 
-    @View(R.id.name)
     lateinit var name: AppCompatTextView
 
-    @View(R.id.score)
+
     lateinit var score: AppCompatTextView
 
     @Resolve

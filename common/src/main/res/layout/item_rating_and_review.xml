@@ -7,7 +7,7 @@
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.ReviewItem" />
+            type="com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.model.ReviewItem" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -62,7 +62,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Harsh Gupta" />
 
-            <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+            <com.joshtalks.joshskills.common.core.custom_ui.JoshRatingBar
                 android:id="@+id/course_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_12sdp"

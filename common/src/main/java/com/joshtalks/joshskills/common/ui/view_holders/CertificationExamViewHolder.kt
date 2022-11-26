@@ -30,7 +30,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 
-@Layout(R.layout.certification_exam_layout)
+
 class CertificationExamViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -38,37 +38,37 @@ class CertificationExamViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
-    @View(R.id.root_view)
+
     lateinit var rootView: FrameLayout
 
-    @View(R.id.sub_root_view)
+
     lateinit var subRootView: MaterialCardView
 
-    @View(R.id.message_view)
+
     lateinit var messageView: ConstraintLayout
 
-    @View(R.id.tv_title)
+
     lateinit var tvTitle: JoshTextView
 
-    /*@View(R.id.tv_code)
+    /*
     lateinit var tvCEamCode: AppCompatTextView*/
 
-    @View(R.id.tv_eligibility_date)
+
     lateinit var eligibilityDateTV: AppCompatTextView
 
-    @View(R.id.iv_award)
+
     lateinit var ivAward: AppCompatImageView
 
-    @View(R.id.tv_marks)
+
     lateinit var tvMarks: AppCompatTextView
 
-    @View(R.id.tv_attempt_left)
+
     lateinit var tvAttemptLeft: AppCompatTextView
 
-    @View(R.id.tv_attempted_date)
+
     lateinit var tvAttemptedDate: AppCompatTextView
 
-    @View(R.id.btn_start_exam)
+
     lateinit var btnStartExam: MaterialTextView
 
 
@@ -176,12 +176,12 @@ class CertificationExamViewHolder(
         subRootView.setCardBackgroundColor(Color.parseColor("#FFE82A"))
     }
 
-    @Click(R.id.message_view)
+    
     fun onClickMessageView() {
         analyzeAction(cardClick = true)
     }
 
-    @Click(R.id.btn_start_exam)
+    
     fun btnStartExam() {
         analyzeAction()
     }

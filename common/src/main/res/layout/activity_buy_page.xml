@@ -8,11 +8,11 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
+            type="com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
 
     </data>
 
@@ -196,7 +196,7 @@
                             android:visibility="visible"
                             app:cardCornerRadius="@dimen/_8sdp">
 
-                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                            <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                                 android:id="@+id/video_player"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_154sdp"
@@ -672,7 +672,7 @@
                     app:layout_constraintTop_toTopOf="@id/video_view"
                     app:srcCompat="@drawable/ic_cancel_black" />
 
-                <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                     android:id="@+id/video_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"

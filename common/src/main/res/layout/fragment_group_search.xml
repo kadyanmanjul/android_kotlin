@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupSearchViewModel" />
+            type="com.joshtalks.joshskills.common.ui.group.viewmodels.GroupSearchViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

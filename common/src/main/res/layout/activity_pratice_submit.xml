@@ -60,7 +60,7 @@
                         android:paddingTop="@dimen/_8sdp"
                         android:paddingBottom="@dimen/_8sdp">
 
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/info_tv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                             android:visibility="gone" />
 
 
-                        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                        <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                             android:id="@+id/video_player"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -179,7 +179,7 @@
                     card_view:cardUseCompatPadding="false">
 
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/info_tv_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -329,7 +329,7 @@
                         android:orientation="vertical"
                         android:padding="@dimen/_8sdp">
 
-                        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                        <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                             android:id="@+id/video_player_submit"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_160sdp"
@@ -430,7 +430,7 @@
                                 android:scaleType="fitCenter"
                                 app:srcCompat="@drawable/ic_attchement_upload" />
 
-                            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/file_info_attachment_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -461,7 +461,7 @@
 
                         </RelativeLayout>
 
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/et_submit_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

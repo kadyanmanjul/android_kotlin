@@ -24,28 +24,27 @@ import java.text.SimpleDateFormat
 
 private val DD_MM_YYYY = SimpleDateFormat("dd/MM/yyyy")
 
-@Layout(R.layout.submitted_practise_item_layout)
 class SubmittedPractiseItemHolder(
     private var postion: Int,
     private var data: SubmittedConversationPractiseModel
 ) {
 
-    @View(R.id.root_view)
+    
     lateinit var cardView: CardView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.title)
+    
     lateinit var title: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.duration)
+    
     lateinit var duration: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.date)
+    
     lateinit var date: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.image_view)
+    
     lateinit var imageView: AppCompatImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.iv_share)
+    
     lateinit var ivShare: AppCompatImageView
 
     var context = AppObjectController.joshApplication
@@ -90,7 +89,7 @@ class SubmittedPractiseItemHolder(
     }
 
 
-    @Click(R.id.root_view)
+    
     fun onClick() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(RequestAudioPlayEventBus(postion, data.answerAudioUrl, data.duration))
     }

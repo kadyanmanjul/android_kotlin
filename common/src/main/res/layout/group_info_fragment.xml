@@ -7,13 +7,13 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
-        <import type="com.joshtalks.joshskills.repository.local.model.Mentor" />
+        <import type="com.joshtalks.joshskills.common.repository.local.model.Mentor" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
+            type="com.joshtalks.joshskills.common.ui.group.viewmodels.GroupChatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+            <com.joshtalks.joshskills.common.ui.group.views.GroupsAppBar
                 android:id="@+id/group_info_app_bar"
                 groupHeader="@{vm.groupHeader}"
                 groupImage="@{vm.imageUrl}"
@@ -45,7 +45,7 @@
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="0dp"

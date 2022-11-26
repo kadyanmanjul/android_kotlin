@@ -12,29 +12,29 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 
-@Layout(R.layout.layout_point_summary_child_item)
+
 class PointsSummaryDescViewHolder(
     var pointsHistory: PointsHistory,
     var position: Int,
     var totalItems: Int
 ) {
 
-    @View(R.id.root_view_child)
+    
     lateinit var rootView: ConstraintLayout
 
-    @View(R.id.title)
+    
     lateinit var title: AppCompatTextView
 
-    @View(R.id.score)
+    
     lateinit var score: AppCompatTextView
 
-    @View(R.id.in_lesson)
+    
     lateinit var inLesson: AppCompatTextView
 
-    @View(R.id.divider)
+    
     lateinit var divider: android.view.View
 
-    @View(R.id.divider_top)
+    
     lateinit var dividerTop: android.view.View
 
     //@ParentPosition

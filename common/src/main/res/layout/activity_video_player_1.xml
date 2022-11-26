@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity" />
+            type="com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:background="#000000">
 
-        <com.joshtalks.joshskills.core.videoplayer.BitVideoPlayer
+        <com.joshtalks.joshskills.common.core.videoplayer.BitVideoPlayer
             android:id="@+id/video_player"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

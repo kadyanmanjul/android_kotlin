@@ -7,11 +7,11 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.special_practice.viewmodel.ViewAndShareViewModel" />
+            type="com.joshtalks.joshskills.common.ui.special_practice.viewmodel.ViewAndShareViewModel" />
     </data>
     <FrameLayout
         android:id="@+id/progress_container_view_share"
@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             tools:context=".ui.special_practice.ViewAndShareVideoFragment">
 
-            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+            <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                 android:id="@+id/video_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

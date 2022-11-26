@@ -6,7 +6,7 @@
     <data>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel" />
+            type="com.joshtalks.joshskills.common.ui.userprofile.viewmodel.UserProfileViewModel" />
     </data>
 
     <FrameLayout

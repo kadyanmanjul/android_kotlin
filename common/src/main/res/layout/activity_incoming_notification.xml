@@ -15,7 +15,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity" />
+            type="com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.IncomingNotificationActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

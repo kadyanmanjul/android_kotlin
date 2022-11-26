@@ -9,11 +9,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment" />
+            type="com.joshtalks.joshskills.common.ui.lesson.speaking.SpeakingPractiseFragment" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.lesson.LessonViewModel" />
+            type="com.joshtalks.joshskills.common.ui.lesson.LessonViewModel" />
     </data>
 
     <FrameLayout
@@ -583,7 +583,7 @@
                             android:layout_marginHorizontal="@dimen/_2sdp"
                             android:background="@drawable/bg_tooltip_large_end">
 
-                            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/joshTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.lesson.reading.feedback.ReadingFragment" />
+            type="com.joshtalks.joshskills.common.ui.lesson.reading.feedback.ReadingFragment" />
     </data>
 
     <ScrollView
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtLabelReadingPractice"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtLabelReadingPractice" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtReadingParagraph"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtLabelDemoVoiceNote"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/txtLabelDemoVoiceNote" />
 
 
-                    <com.joshtalks.joshskills.ui.lesson.reading.ReadingPractiseAudioView
+                    <com.joshtalks.joshskills.common.ui.lesson.reading.ReadingPractiseAudioView
                         android:id="@+id/reading_audio_note"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/_38sdp"

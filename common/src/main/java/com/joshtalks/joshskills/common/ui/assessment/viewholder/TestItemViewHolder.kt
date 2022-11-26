@@ -18,19 +18,18 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.test_summary_item_layout)
 class TestItemViewHolder(
     var questionWithRelations: AssessmentQuestionWithRelations,
     var status: AssessmentStatus
 ) {
 
-    @View(R.id.attempt_status)
+    
     lateinit var attempt_status: AppCompatTextView
 
-    @View(R.id.question)
+    
     lateinit var questionText: AppCompatTextView
 
-    @View(R.id.test_button)
+    
     lateinit var testButton: AppCompatTextView
 
     @Resolve
@@ -131,7 +130,7 @@ class TestItemViewHolder(
         return false
     }
 
-    @Click(R.id.test_button)
+    
     fun onClick() {
         if (status == AssessmentStatus.STARTED || status == AssessmentStatus.NOT_STARTED) {
             logEditAnswerClickedEvent()

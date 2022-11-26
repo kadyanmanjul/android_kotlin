@@ -7,11 +7,11 @@
 
         <variable
             name="fragment"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment" />
+            type="com.joshtalks.joshskills.common.ui.voip.new_arch.ui.report.VoipReportDialogFragment" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportViewModel" />
+            type="com.joshtalks.joshskills.common.ui.voip.new_arch.ui.report.VoipReportViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView

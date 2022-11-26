@@ -8,20 +8,20 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
-        <import type="com.joshtalks.joshskills.base.constants.ConstantsKt" />
+        <import type="com.joshtalks.joshskills.common.base.constants.ConstantsKt" />
 
 
-        <import type="com.joshtalks.joshskills.voip.Utils" />
+        <import type="com.joshtalks.joshskills.common.voip.Utils" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
+            type="com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
 
         <variable
             name="callFragment"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallFragment" />
+            type="com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.CallFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

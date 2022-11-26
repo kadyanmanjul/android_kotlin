@@ -4,7 +4,7 @@
     <data>
         <variable
             name="amount"
-            type="com.joshtalks.joshskills.ui.callWithExpert.model.Amount" />
+            type="com.joshtalks.joshskills.common.ui.callWithExpert.model.Amount" />
     </data>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

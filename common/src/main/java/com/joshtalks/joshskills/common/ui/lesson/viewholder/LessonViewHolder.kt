@@ -19,7 +19,6 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
-@Layout(R.layout.layout_lesson_item)
 class LessonViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -29,40 +28,40 @@ class LessonViewHolder(
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
 
-    @View(R.id.lesson_iv)
+    
     lateinit var imageView: AppCompatImageView
 
-    @View(R.id.lesson_name_tv)
+    
     lateinit var lessonNameTv: AppCompatTextView
 
-    @View(R.id.lesson_name_tv__completed)
+    
     lateinit var lessonNameTvCompleted: AppCompatTextView
 
-    @View(R.id.start_lesson_tv)
+    
     lateinit var startLessonTv: AppCompatTextView
 
-    @View(R.id.continue_lesson_tv)
+    
     lateinit var continueLessonTv: AppCompatTextView
 
-    @View(R.id.root_view)
+    
     lateinit var rootViewUncompleted: FrameLayout
 
-    @View(R.id.root_view_fl)
+    
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_view_completed)
+    
     lateinit var rootViewCompleted: FrameLayout
 
-    @View(R.id.view1)
+    
     lateinit var grammarStatus: ImageView
 
-    @View(R.id.view2)
+    
     lateinit var vocabStatus: ImageView
 
-    @View(R.id.view3)
+    
     lateinit var readingStatus: ImageView
 
-    @View(R.id.view4)
+    
     lateinit var speakingStatus: ImageView
 
     override fun getRoot(): FrameLayout {

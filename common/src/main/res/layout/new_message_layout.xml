@@ -24,7 +24,7 @@
         app:contentPaddingRight="@dimen/_8sdp"
         app:contentPaddingTop="@dimen/_4sdp">
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

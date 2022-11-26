@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel" />
+            type="com.joshtalks.joshskills.common.ui.callWithExpert.viewModel.CallWithExpertViewModel" />
 
         <variable
             name="handler"

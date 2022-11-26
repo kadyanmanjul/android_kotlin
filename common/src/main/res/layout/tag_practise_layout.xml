@@ -30,7 +30,7 @@
         android:layout_gravity="center"
         android:layout_marginStart="@dimen/_6sdp">
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/tv_sender_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -10,7 +10,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity" />
+            type="com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity" />
 
     </data>
 
@@ -215,7 +215,7 @@
                             app:layout_constraintTop_toBottomOf="@+id/double_line"
                             tools:text="$ 499" />
 
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tip_used_msg"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -268,7 +268,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
                         tools:visibility="visible">
 
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/title_sub"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -282,7 +282,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="Special Offer" />
 
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/text_sub"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -342,7 +342,7 @@
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.75">
 
-                        <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
+                        <com.joshtalks.joshskills.common.core.custom_ui.countrycodepicker.CountryCodePicker
                             android:id="@+id/country_code_picker"
                             style="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                             android:layout_width="0dp"
@@ -561,7 +561,7 @@
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.3">
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/text_view_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -589,7 +589,7 @@
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.7">
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/tv_tip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -605,7 +605,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/tv_tip_off"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -620,7 +620,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/tv_tip_valid"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

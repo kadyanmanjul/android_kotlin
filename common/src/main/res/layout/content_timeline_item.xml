@@ -6,7 +6,7 @@
 
         <variable
                 name="handler"
-                type="com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity" />
+                type="com.joshtalks.joshskills.common.repository.local.minimalentity.CourseContentEntity" />
     </data>
 
     <LinearLayout
@@ -40,7 +40,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 app:contentPadding="@dimen/_12sdp">
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/text_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

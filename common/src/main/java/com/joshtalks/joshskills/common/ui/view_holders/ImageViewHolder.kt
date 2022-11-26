@@ -24,42 +24,42 @@ import com.mindorks.placeholderview.annotations.View
 import com.pnikosis.materialishprogress.ProgressWheel
 import java.lang.ref.WeakReference
 
-@Layout(R.layout.image_view_holder)
+
 class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
     BaseChatViewHolder(activityRef, message,previousMessage) {
 
-    @View(R.id.image_view)
+
     lateinit var imageView: AppCompatImageView
 
-    @View(R.id.text_message_body)
+
     lateinit var textMessageBody: JoshTextView
 
 
-    @View(R.id.text_message_time)
+
     lateinit var textMessageTime: AppCompatTextView
 
 
-    @View(R.id.root_view)
+
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_sub_view)
+
     lateinit var rootSubView: FrameLayout
 
 
-    @View(R.id.message_view)
+
     lateinit var messageView: ViewGroup
 
 
-    @View(R.id.download_container)
+
     lateinit var downloadContainer: FrameLayout
 
-    @View(R.id.iv_cancel_download)
+
     lateinit var ivCancelDownload: AppCompatImageView
 
-    @View(R.id.iv_start_download)
+
     lateinit var ivStartDownload: AppCompatImageView
 
-    @View(R.id.progress_dialog)
+
     lateinit var progressDialog: ProgressWheel
 
     lateinit var imageViewHolder: ImageViewHolder
@@ -155,7 +155,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
 
-    @Click(R.id.image_view)
+    
     fun onClick() {
         if (message.downloadedLocalPath != null && message.downloadedLocalPath?.isNotEmpty()!!) {
             com.joshtalks.joshskills.common.messaging.RxBus2.publish(ImageShowEvent(message.downloadedLocalPath, message.url))
@@ -175,20 +175,20 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
 
-    @Click(R.id.download_container)
+    
     fun downloadStart() {
         //RxBus2.publish(DownloadMediaEventBus(this, message))
         AppAnalytics.create(AnalyticsEvent.IMAGE_DOWNLOAD.NAME).addParam("ChatId", message.chatId)
     }
 
-    @Click(R.id.iv_cancel_download)
+    
     fun downloadCancel() {
         fileNotDownloadView()
         message.downloadStatus = DOWNLOAD_STATUS.NOT_START
 
     }
 
-    @Click(R.id.iv_start_download)
+    
     fun downloadStart1() {
         // RxBus2.publish(DownloadMediaEventBus(this, message))
     }

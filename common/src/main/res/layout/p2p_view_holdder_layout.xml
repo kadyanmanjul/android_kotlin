@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/text_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                     tools:text="@string/please_enter_valid_number"
                     tools:visibility="visible" />
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/text_message_body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

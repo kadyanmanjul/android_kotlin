@@ -7,13 +7,13 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
-        <import type="com.joshtalks.joshskills.repository.local.model.Mentor" />
+        <import type="com.joshtalks.joshskills.common.repository.local.model.Mentor" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupRequestViewModel" />
+            type="com.joshtalks.joshskills.common.ui.group.viewmodels.GroupRequestViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+            <com.joshtalks.joshskills.common.ui.group.views.GroupsAppBar
                 android:id="@+id/group_info_app_bar"
                 groupHeader="@{`Requests to join`}"
                 groupSubHeader="@{` `}"

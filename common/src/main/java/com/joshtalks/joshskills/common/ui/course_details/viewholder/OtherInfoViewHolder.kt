@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.common.repository.server.course_detail.OtherInfo
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
-@Layout(R.layout.other_info_view_holder)
+
 class OtherInfoViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -21,7 +21,7 @@ class OtherInfoViewHolder(
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.imageView)
+    
     lateinit var imgView: AppCompatImageView
 
     @Resolve

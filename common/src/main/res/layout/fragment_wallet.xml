@@ -7,11 +7,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.callWithExpert.fragment.WalletFragment" />
+            type="com.joshtalks.joshskills.common.ui.callWithExpert.fragment.WalletFragment" />
 
         <variable
             name="viewModel"
-            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel" />
+            type="com.joshtalks.joshskills.common.ui.callWithExpert.viewModel.WalletViewModel" />
 
         <import type="android.view.View" />
     </data>

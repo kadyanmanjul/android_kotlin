@@ -11,19 +11,19 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.award_item_view_holder)
+
 class AwardItemViewHolder(var award: Award, var dateText:String?, var context: Context) {
 
-    @View(R.id.title)
+    
     lateinit var title: AppCompatTextView
 
-    @View(R.id.date)
+    
     lateinit var date: AppCompatTextView
 
-    @View(R.id.image)
+    
     lateinit var image: ImageView
 
-    @View(R.id.root_view)
+    
     lateinit var rootView: ConstraintLayout
 
     @Resolve
@@ -39,7 +39,7 @@ class AwardItemViewHolder(var award: Award, var dateText:String?, var context: C
         }
     }
 
-//    @Click(R.id.root_view)
+//    
 //    fun onClick() {
 //        RxBus2.publish(
 //            AwardItemClickedEventBus(award)

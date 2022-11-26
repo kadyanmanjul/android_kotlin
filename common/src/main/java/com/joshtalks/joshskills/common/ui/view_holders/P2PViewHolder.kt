@@ -18,7 +18,6 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
-@Layout(R.layout.p2p_view_holdder_layout)
 class P2PViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -26,19 +25,19 @@ class P2PViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
-    @View(R.id.root_sub_view)
+    
     lateinit var rootSubView: FrameLayout
 
-    @View(R.id.text_message_body)
+    
     lateinit var messageBody: JoshTextView
 
-    @View(R.id.text_title)
+    
     lateinit var titleView: JoshTextView
 
-    @View(R.id.root_view)
+    
     lateinit var rootView: FrameLayout
 
-    @View(R.id.message_view)
+    
     lateinit var messageView: ViewGroup
 
 
@@ -83,7 +82,7 @@ class P2PViewHolder(
         return rootView
     }
 
-    @Click(R.id.btn_start)
+    
     fun onClickStartView() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(P2PStartEventBus())
     }

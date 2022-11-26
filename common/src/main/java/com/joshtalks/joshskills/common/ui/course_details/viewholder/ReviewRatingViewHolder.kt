@@ -15,26 +15,26 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.review_and_rating_layout)
+
 class ReviewRatingViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
     private var reviews: Reviews
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @View(R.id.header)
+
     lateinit var headerTV: AppCompatTextView
 
-    @View(R.id.course_rating)
+
     lateinit var courseRating: AppCompatTextView
 
-    @View(R.id.rating_rv)
+
     lateinit var ratingRV: PlaceHolderView
 
-    @View(R.id.review_rv)
+
     lateinit var reviewRV: RecyclerView
 
-    @Resolve
+
     fun onViewInflated() {
         headerTV.text = reviews.title
         courseRating.text = reviews.value.toString()

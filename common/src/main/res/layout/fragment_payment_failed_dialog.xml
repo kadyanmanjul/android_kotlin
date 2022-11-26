@@ -8,7 +8,7 @@
 
         <variable
             name="fragment"
-            type="com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment" />
+            type="com.joshtalks.joshskills.common.ui.payment.PaymentFailedDialogFragment" />
 
     </data>
 

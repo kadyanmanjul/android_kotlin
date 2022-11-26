@@ -57,7 +57,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/image_view" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/status_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

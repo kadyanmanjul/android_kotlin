@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.AssessmentStart
 import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
 import io.github.inflationx.calligraphy3.TypefaceUtils
 
-//@Layout(R.layout.assessment_item_layout)
+//
 class AssessmentViewHolder(view: android.view.View, userId: String) : BaseViewHolder(view, userId) {
 
     private val rootView: FrameLayout = view.findViewById(R.id.root_view)

@@ -7,19 +7,19 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel" />
+            type="com.joshtalks.joshskills.common.ui.special_practice.viewmodel.SpecialPracticeViewModel" />
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity" />
+            type="com.joshtalks.joshskills.common.ui.special_practice.SpecialPracticeActivity" />
 
         <variable
             name="itemdata"
-            type="com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice" />
+            type="com.joshtalks.joshskills.common.ui.special_practice.model.SpecialPractice" />
     </data>
 
     <FrameLayout
@@ -295,7 +295,7 @@
                                 android:background="@drawable/round_rect_default"
                                 app:cardCornerRadius="@dimen/_4sdp">
 
-                                <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                                <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                                     android:id="@+id/video_player"
                                     android:layout_width="match_parent"
                                     android:layout_height="@dimen/_215sdp"
@@ -410,7 +410,7 @@
                             app:layout_constraintEnd_toEndOf="@id/video_view"
                             app:layout_constraintTop_toTopOf="@id/video_view" />
 
-                        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                        <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                             android:id="@+id/video_view"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"

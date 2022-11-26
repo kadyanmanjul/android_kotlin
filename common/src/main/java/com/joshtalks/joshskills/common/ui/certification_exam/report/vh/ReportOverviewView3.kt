@@ -37,34 +37,33 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @SuppressLint("NonConstantResourceId")
-@Layout(R.layout.layout_report_overview_view3)
 class ReportOverviewView3(
     private val certificateExamReport: CertificateExamReportModel,
     private val totalQuestions: List<CertificationQuestion>,
     private val reportType: QuestionReportType
 ) {
-    @com.mindorks.placeholderview.annotations.View(R.id.chart)
+    
     lateinit var chart: PieChart
 
-    @com.mindorks.placeholderview.annotations.View(R.id.recycler_view)
+    
     lateinit var questionRecyclerView: RecyclerView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.tv_correct)
+    
     lateinit var tvCorrect: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.tv_incorrect)
+    
     lateinit var tvIncorrect: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.tv_unanswered)
+    
     lateinit var tvUnanswered: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.ll_unanswerd)
+    
     lateinit var llUnAnswered: LinearLayout
 
-    @com.mindorks.placeholderview.annotations.View(R.id.ll_incorrect)
+    
     lateinit var llIncorrect: LinearLayout
 
-    @com.mindorks.placeholderview.annotations.View(R.id.ll_correct)
+    
     lateinit var llcorrect: LinearLayout
 
     private val context: Context = AppObjectController.joshApplication
@@ -207,7 +206,7 @@ class ReportOverviewView3(
         return String.format("%.02f", percent).plus("%")
     }
 
-    @Click(R.id.root_view)
+    
     fun onClickRootView() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNKNOWN))
     }

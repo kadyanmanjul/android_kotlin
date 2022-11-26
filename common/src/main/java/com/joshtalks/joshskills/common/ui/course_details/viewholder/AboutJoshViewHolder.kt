@@ -14,7 +14,7 @@ import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
-@Layout(R.layout.layout_about_josh_view_holder)
+
 class AboutJoshViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -22,13 +22,13 @@ class AboutJoshViewHolder(
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.my_josh_recycler_view)
+    
     lateinit var myJoshRecyclerView: PlaceHolderView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.description)
+    
     lateinit var description: TextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.title)
+    
     lateinit var title: TextView
 
     @Resolve

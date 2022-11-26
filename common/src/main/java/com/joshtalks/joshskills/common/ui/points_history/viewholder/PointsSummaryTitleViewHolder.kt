@@ -25,7 +25,7 @@ import kotlin.math.pow
 
 @Parent
 @SingleTop
-@Layout(R.layout.layout_point_summary_parent_item)
+
 class PointsSummaryTitleViewHolder(
     var date: String,
     var point: Int,
@@ -33,20 +33,20 @@ class PointsSummaryTitleViewHolder(
     var index: Int
 ) {
 
-    @Toggle(R.id.root_view)
-    @View(R.id.root_view)
+
+    
     lateinit var rootView: ConstraintLayout
 
-    @View(R.id.name)
+    
     lateinit var name: AppCompatTextView
 
-    @View(R.id.score)
+    
     lateinit var score: AppCompatTextView
 
-    @View(R.id.expand_unexpand_view)
+    
     lateinit var toggleView: AppCompatImageView
 
-    @View(R.id.iconLayout)
+    
     lateinit var iconLayout: LinearLayout
 
     var isExpanded = false

@@ -31,25 +31,24 @@ import java.text.DecimalFormat
 const val BTN_CHANGED_TEXT = "Show Certificate"
 
 @SuppressLint("NonConstantResourceId")
-@Layout(R.layout.layout_report_overview_view1)
 class ReportOverviewView1(private val certificateExamReport: CertificateExamReportModel, private val examType: String?) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.header_tv)
+    
     lateinit var headerTv: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.score_tv)
+    
     lateinit var scoreTv: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.result_info)
+    
     lateinit var resultInfo: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.check_exam_details)
+    
     lateinit var checkExamDetails: MaterialButton
 
-    @com.mindorks.placeholderview.annotations.View(R.id.group_certificate_download)
+    
     lateinit var cDownloadGroup: androidx.constraintlayout.widget.Group
 
-    @com.mindorks.placeholderview.annotations.View(R.id.btn_download_certificate)
+    
     lateinit var downloadCertificateBtn: MaterialButton
 
     private val context: Context = AppObjectController.joshApplication
@@ -128,7 +127,7 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
         return s
     }
 
-    @Click(R.id.btn_download_certificate)
+    
     fun downloadCertificate() {
         if (Utils.isInternetAvailable()){
             com.joshtalks.joshskills.common.messaging.RxBus2.publish(
@@ -142,7 +141,7 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
         }
     }
 
-    @Click(R.id.check_exam_details)
+    
     fun checkExamDetails() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(EmptyEventBus())
     }

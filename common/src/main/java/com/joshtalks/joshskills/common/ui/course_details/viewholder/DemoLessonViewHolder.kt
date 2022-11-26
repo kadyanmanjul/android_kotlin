@@ -14,7 +14,7 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
-@Layout(R.layout.demo_lesson_view_holder)
+
 class DemoLessonViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -23,10 +23,10 @@ class DemoLessonViewHolder(
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txt_title)
+    
     lateinit var txtTitle: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.imageView)
+    
     lateinit var imgView: AppCompatImageView
 
     @Resolve
@@ -37,7 +37,7 @@ class DemoLessonViewHolder(
         }
     }
 
-    @Click(R.id.cardView)
+    
     fun onClick() {
         if (data.video == null) {
             showToast(getAppContext().getString(R.string.video_url_not_exist))

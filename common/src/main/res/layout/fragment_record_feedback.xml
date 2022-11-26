@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.lesson.reading.feedback.RecordAndFeedbackFragment" />
+            type="com.joshtalks.joshskills.common.ui.lesson.reading.feedback.RecordAndFeedbackFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/_12sdp">
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtLabelRecord"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
             app:layout_constraintTop_toTopOf="@+id/imgRecordButton"
             tools:visibility="gone" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtCaptionRecord"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txtLabelAnswer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -134,7 +134,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.joshtalks.joshskills.ui.lesson.reading.ReadingPractiseAudioView
+                <com.joshtalks.joshskills.common.ui.lesson.reading.ReadingPractiseAudioView
                     android:id="@+id/submit_audio_note"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_38sdp"
@@ -199,7 +199,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Vedant’s Feedback" />
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txtFeedback"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -228,7 +228,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/txtFeedback"
                     tools:visibility="gone">
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtLabelPronunciation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -244,7 +244,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Pronunciation and missing words Pronunciation " />
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtWordsPronounced"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -258,7 +258,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/txtLabelPronunciation"
                         tools:text="74 / 99 words correctly pronounced" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtPronunciationFeedback"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -291,7 +291,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/pronunciationFeedbackView"
                     tools:visibility="gone">
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtLabelReadingSpeed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -307,7 +307,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Speed" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtReadingSpeed"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -321,7 +321,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/txtLabelReadingSpeed"
                         tools:text="59 words per minute" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtReadingSpeedFeedback"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -336,7 +336,7 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txtRecommendation"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

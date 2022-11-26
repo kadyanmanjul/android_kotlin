@@ -7,7 +7,7 @@
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.group.model.ChatItem" />
+            type="com.joshtalks.joshskills.common.ui.group.model.ChatItem" />
     </data>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,7 +17,7 @@
         android:background="#59FFFFFF"
         android:visibility="@{itemData.message.startsWith(`0`) ? View.GONE : View.VISIBLE, default=gone}">
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

@@ -5,7 +5,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.certification_exam.report.CExamReportFragment" />
+            type="com.joshtalks.joshskills.common.ui.certification_exam.report.CExamReportFragment" />
     </data>
 
     <FrameLayout

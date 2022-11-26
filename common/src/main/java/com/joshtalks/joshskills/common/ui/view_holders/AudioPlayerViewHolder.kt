@@ -48,7 +48,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.roundToInt
 
-@Layout(R.layout.audio_player_view)
+
 class AudioPlayerViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -56,52 +56,52 @@ class AudioPlayerViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
-    @View(R.id.audio_view)
+
     lateinit var audioView: RelativeLayout
 
-    @View(R.id.root_view)
+
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_sub_view)
+
     lateinit var rootSubView: FrameLayout
 
-    @View(R.id.message_view)
+
     lateinit var messageView: RelativeLayout
 
-    @View(R.id.audio_view_sent)
+
     lateinit var audioViewSent: android.view.View
 
-    @View(R.id.audio_view_received)
+
     lateinit var audioViewReceived: android.view.View
 
-    @View(R.id.profile_image)
+
     lateinit var profileImage: AppCompatImageView
 
-    @View(R.id.download_container)
+
     lateinit var downloadContainer: FrameLayout
 
-    @View(R.id.start_download_iv)
+
     lateinit var startDownloadImageView: AppCompatImageView
 
-    @View(R.id.progress_bar)
+
     lateinit var progressBar: ProgressBar
 
-    @View(R.id.cancel_download_iv)
+
     lateinit var cancelDownloadImageView: AppCompatImageView
 
-    @View(R.id.btnPlay)
+
     lateinit var btnPlayImageView: AppCompatImageView
 
-    @View(R.id.btnPause)
+
     lateinit var btnPauseImageView: AppCompatImageView
 
-    @View(R.id.seekBar)
+
     lateinit var seekBar: SeekBar
 
-    @View(R.id.txtCurrentDuration)
+
     lateinit var txtCurrentDurationTV: AppCompatTextView
 
-    @View(R.id.message_time)
+
     lateinit var messageTimeTV: AppCompatTextView
 
     private var animBlink: Animation? = null
@@ -396,7 +396,7 @@ class AudioPlayerViewHolder(
         btnPauseImageView.visibility = android.view.View.INVISIBLE
     }
 
-    @Click(R.id.btnPlay)
+    
     fun play() {
         if (PermissionUtils.isStoragePermissionEnabled(activityRef.get()!!).not()) {
             PermissionUtils.storageReadAndWritePermission(
@@ -430,7 +430,7 @@ class AudioPlayerViewHolder(
         playAudioInPlayer()
     }
 
-    @Click(R.id.btnPause)
+    
     fun pause() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(AudioPlayEventBus(PlaybackInfoListener.State.PAUSED, message, null))
         btnPauseImageView.visibility = android.view.View.GONE
@@ -440,13 +440,13 @@ class AudioPlayerViewHolder(
 
     }
 
-    @Click(R.id.cancel_download_iv)
+    
     fun cancelDownload() {
 
     }
 
 
-    @Click(R.id.start_download_iv)
+    
     fun startAudioDownload() {
         /*  RxBus2.publish(
               DownloadMediaEventBus(

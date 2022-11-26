@@ -7,7 +7,7 @@
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
         android:layout_marginVertical="@dimen/_20sdp">
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtTeacherName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Vivek Atray" />
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDesignation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txtTeacherName"
             tools:text="Ex-IAS Officer, Author" />
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

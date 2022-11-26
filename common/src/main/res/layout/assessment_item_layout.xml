@@ -55,7 +55,7 @@
                 app:layout_constraintTop_toTopOf="@id/image_view"
                 tools:text="Assessment" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/status_tv"
                 android:background="@drawable/round_both_bottom_bg"
                 android:backgroundTint="@color/pure_grey"

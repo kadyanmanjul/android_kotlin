@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start">
 
-                <com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
+                <com.joshtalks.joshskills.common.core.custom_ui.ShimmerImageView
                     tools:background="@drawable/video_placeholder"
                     android:id="@+id/image_view"
                     android:layout_width="0dp"
@@ -43,7 +43,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/text_message_body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

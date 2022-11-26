@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.ExpertListViewModel" />
+            type="com.joshtalks.joshskills.common.ui.callWithExpert.viewModel.ExpertListViewModel" />
 
     </data>
 

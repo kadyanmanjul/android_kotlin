@@ -107,7 +107,7 @@
             app:layout_anchorGravity="bottom"
             tools:visibility="visible">
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txt_extra_hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

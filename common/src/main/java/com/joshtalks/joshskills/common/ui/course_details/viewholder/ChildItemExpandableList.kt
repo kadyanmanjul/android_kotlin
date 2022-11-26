@@ -12,20 +12,15 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import com.mindorks.placeholderview.annotations.expand.Toggle
 
-@Layout(R.layout.faq_item)
+
 class ChildItemExpandableList(private val answer: String) {
 
-    @View(R.id.question)
     lateinit var itemNameTxt: TextView
 
-    @Toggle(R.id.imageView4)
-    @View(R.id.imageView4)
     lateinit var itemIcon: ImageView
 
-    @View(R.id.mainView)
     lateinit var mainView: CardView
 
-    @Resolve
     fun onResolved() {
         itemIcon.visibility = INVISIBLE
         itemNameTxt.text = answer

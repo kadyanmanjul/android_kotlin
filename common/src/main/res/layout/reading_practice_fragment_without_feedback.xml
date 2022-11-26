@@ -9,7 +9,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback" />
+            type="com.joshtalks.joshskills.common.ui.lesson.reading.ReadingFragmentWithoutFeedback" />
     </data>
 
     <FrameLayout
@@ -165,7 +165,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/info_tv"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -182,7 +182,7 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:visibility="gone" />
 
-                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                            <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                                 android:id="@+id/video_player"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -423,7 +423,7 @@
                         card_view:cardUseCompatPadding="false"
                         tools:visibility="gone">
 
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/info_tv_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -502,7 +502,7 @@
                             tools:visibility="visible">
 
 
-                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                            <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
                                 android:id="@+id/merged_video"
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
@@ -840,7 +840,7 @@
                 android:layout_marginHorizontal="@dimen/_2sdp"
                 android:background="@drawable/bg_tooltip_large_center">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/joshTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

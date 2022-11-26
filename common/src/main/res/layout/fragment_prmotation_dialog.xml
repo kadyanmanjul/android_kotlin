@@ -22,7 +22,7 @@
                 android:layout_margin="@dimen/_18sdp">
 
 
-            <com.joshtalks.joshskills.core.custom_ui.ZoomageView
+            <com.joshtalks.joshskills.common.core.custom_ui.ZoomageView
                 android:id="@+id/iv_promotion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

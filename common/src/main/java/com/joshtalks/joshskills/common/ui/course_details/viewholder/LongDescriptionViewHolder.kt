@@ -13,7 +13,7 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
 
-@Layout(R.layout.layout_long_description_card_view_holder)
+
 class LongDescriptionViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -21,13 +21,13 @@ class LongDescriptionViewHolder(
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.title)
+    
     lateinit var title: TextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.description)
+    
     lateinit var description: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.text_read_more)
+    
     lateinit var readMoreTV: TextView
 
 
@@ -39,7 +39,7 @@ class LongDescriptionViewHolder(
             MIN_LINES
     }
 
-    @Click(R.id.text_read_more)
+    
     fun onClick() {
         if (description.maxLines == MIN_LINES) {
             description.maxLines = Integer.MAX_VALUE

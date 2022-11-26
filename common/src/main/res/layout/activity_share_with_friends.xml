@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity" />
+            type="com.joshtalks.joshskills.common.ui.voip.share_call.ShareWithFriendsActivity" />
 
     </data>
 

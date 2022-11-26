@@ -5,7 +5,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
+            type="com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -24,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+        <com.joshtalks.joshskills.common.core.custom_ui.JoshRatingBar
             android:id="@+id/teacher_rating"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_12sdp"

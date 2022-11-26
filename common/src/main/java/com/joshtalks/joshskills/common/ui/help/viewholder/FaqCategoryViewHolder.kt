@@ -25,20 +25,19 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.faq_category_item_layout)
 class FaqCategoryViewHolder(
     private val listFAQCategory: List<FAQCategory>,
     private var faqCategory: FAQCategory,
     val position: Int
 ) {
 
-    @View(R.id.iv_category_icon)
+    
     lateinit var categoryIconIV: AppCompatImageView
 
-    @View(R.id.tv_category_name)
+    
     lateinit var categoryNameTV: AppCompatTextView
 
-    @View(R.id.root_view)
+    
     lateinit var cardView: MaterialCardView
 
     @Resolve
@@ -119,7 +118,7 @@ class FaqCategoryViewHolder(
         )
     }
 
-    @Click(R.id.root_view)
+    
     fun onClick() {
         if (position != -1)
             com.joshtalks.joshskills.common.messaging.RxBus2.publish(

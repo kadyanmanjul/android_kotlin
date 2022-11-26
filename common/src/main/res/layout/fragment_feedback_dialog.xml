@@ -9,7 +9,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackViewModel" />
+            type="com.joshtalks.joshskills.common.ui.voip.new_arch.ui.feedback.FeedbackViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView

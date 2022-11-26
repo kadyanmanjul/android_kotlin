@@ -31,7 +31,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-@Layout(R.layout.layout_expandable_view_holder)
+
 class MasterFaqViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -39,13 +39,13 @@ class MasterFaqViewHolder(
     private val testId : Int
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txt_title)
+    
     lateinit var txtTitle: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.expandableView)
+    
     lateinit var expndableRV: ExpandablePlaceHolderView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.recycler_view)
+    
     lateinit var recyclerView: PlaceHolderView
 
     var categoryId: Int? = null

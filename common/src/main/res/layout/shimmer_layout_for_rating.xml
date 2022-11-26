@@ -6,7 +6,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
+            type="com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
 
         <import type="android.view.View" />
     </data>

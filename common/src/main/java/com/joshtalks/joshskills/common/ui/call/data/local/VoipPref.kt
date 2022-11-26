@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AUTO_CALL
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AUTO_CONNECT_MAX_RETRY_PER_CALL
@@ -27,11 +26,13 @@ import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.feedback.FeedbackDial
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.report.VoipReportDialogFragment
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.AutoCallActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.UserInterestActivity
-import com.joshtalks.joshskills.common.voip.BeepTimer
-import com.joshtalks.joshskills.common.voip.constant.Category
-import com.joshtalks.joshskills.common.voip.data.local.AGORA_CALL_ID
-import com.joshtalks.joshskills.common.voip.data.local.LOCAL_USER_AGORA_ID
-import com.joshtalks.joshskills.common.voip.inSeconds
+import com.joshtalks.joshskills.voip.BeepTimer
+import com.joshtalks.joshskills.voip.base.constants.AUTO_CONNECT_CURRENT_TRY_COUNT
+import com.joshtalks.joshskills.voip.base.constants.*
+import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.voip.data.local.AGORA_CALL_ID
+import com.joshtalks.joshskills.voip.data.local.LOCAL_USER_AGORA_ID
+import com.joshtalks.joshskills.voip.inSeconds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

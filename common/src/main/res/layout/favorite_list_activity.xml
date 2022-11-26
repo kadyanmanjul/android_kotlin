@@ -9,7 +9,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.voip.favorite.FavoriteCallerViewModel" />
+            type="com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteCallerViewModel" />
 
     </data>
 
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+            <com.joshtalks.joshskills.common.ui.voip.new_arch.ui.callbar.util.CallBarLayout
                 android:id="@+id/call_bar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

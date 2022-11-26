@@ -14,7 +14,6 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
 @Animate(Animate.CARD_BOTTOM_IN_ASC, duration = 1000)
-@Layout(R.layout.quiz_practise_option_view)
 class QuizPractiseOptionView(
     var postion: Int,
     var answerModel: AnswersModel,
@@ -23,10 +22,10 @@ class QuizPractiseOptionView(
 
     val context: Context = AppObjectController.joshApplication
 
-    @com.mindorks.placeholderview.annotations.View(R.id.choice_container)
+    
     lateinit var container: MaterialCardView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.choice_textview)
+    
     lateinit var choiceTextView: AppCompatTextView
 
 
@@ -83,7 +82,7 @@ class QuizPractiseOptionView(
         )
     }
 
-    @Click(R.id.choice_container)
+    
     fun onClick() {
         if (answerModel.isEvaluate) {
             return

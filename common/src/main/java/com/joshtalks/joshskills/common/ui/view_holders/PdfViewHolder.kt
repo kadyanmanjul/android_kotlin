@@ -35,7 +35,7 @@ import com.tonyodev.fetch2core.DownloadBlock
 import timber.log.Timber
 import java.lang.ref.WeakReference
 
-@Layout(R.layout.pdf_view_holder)
+
 class PdfViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -43,34 +43,34 @@ class PdfViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
-    @View(R.id.root_view)
+    
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_sub_view)
+    
     lateinit var rootSubView: FrameLayout
 
-    @View(R.id.message_view)
+    
     lateinit var messageView: ViewGroup
 
-    @View(R.id.tv_pdf_info)
+    
     lateinit var tvPdfInfo: TextView
 
-    @View(R.id.text_message_time)
+    
     lateinit var receivedMessageTime: AppCompatTextView
 
-    @View(R.id.tv_message_detail)
+    
     lateinit var messageDetail: AppCompatTextView
 
-    @View(R.id.image_view)
+    
     lateinit var imageView: AppCompatImageView
 
-    @View(R.id.iv_cancel_download)
+    
     lateinit var ivCancelDownload: AppCompatImageView
 
-    @View(R.id.iv_start_download)
+    
     lateinit var ivStartDownload: AppCompatImageView
 
-    @View(R.id.progress_dialog)
+    
     lateinit var progressDialog: ProgressWheel
 
     lateinit var pdfViewHolder: PdfViewHolder
@@ -232,7 +232,7 @@ class PdfViewHolder(
         ivCancelDownload.visibility = android.view.View.VISIBLE
     }
 
-    @Click(R.id.image_view)
+    
     fun onClickPdfContainer() {
         if (PermissionUtils.isStoragePermissionEnabled(activityRef.get()!!).not()) {
             PermissionUtils.storageReadAndWritePermission(
@@ -289,14 +289,14 @@ class PdfViewHolder(
     }
 
 
-    @Click(R.id.iv_cancel_download)
+    
     fun downloadCancel() {
         fileNotDownloadView()
         message.downloadStatus = DOWNLOAD_STATUS.NOT_START
 
     }
 
-    @Click(R.id.iv_start_download)
+    
     fun downloadStart() {
         if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
             return

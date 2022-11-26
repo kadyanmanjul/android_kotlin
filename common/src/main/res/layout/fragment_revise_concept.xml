@@ -8,7 +8,7 @@
 
         <variable
                 name="fragment"
-                type="com.joshtalks.joshskills.ui.assessment.fragment.ReviseConceptFragment" />
+                type="com.joshtalks.joshskills.common.ui.assessment.fragment.ReviseConceptFragment" />
 
     </data>
 
@@ -139,7 +139,7 @@
                 app:layout_constraintTop_toBottomOf="@id/thumbnail_image"
                 app:layout_constraintVertical_bias="0">
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/description"
                 android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
                 android:layout_width="match_parent"

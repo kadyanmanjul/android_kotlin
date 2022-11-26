@@ -5,11 +5,11 @@
     <data>
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.callWithExpert.fragment.WalletBottomSheet" />
+            type="com.joshtalks.joshskills.common.ui.callWithExpert.fragment.WalletBottomSheet" />
 
         <variable
             name="viewModel"
-            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.WalletViewModel" />
+            type="com.joshtalks.joshskills.common.ui.callWithExpert.viewModel.WalletViewModel" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"

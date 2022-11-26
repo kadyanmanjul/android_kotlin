@@ -19,7 +19,6 @@ import com.mindorks.placeholderview.annotations.View
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Locale
 
-@Layout(R.layout.winner_list_item)
 class LeaderBoardWinnerItemViewHolder(
     var response: LeaderboardMentor,
     var context: Context,
@@ -27,25 +26,25 @@ class LeaderBoardWinnerItemViewHolder(
     val onViewInflated: ViewInflated?
 ) {
 
-    @View(R.id.award)
+    
     lateinit var award: ImageView
 
-    @View(R.id.title)
+    
     lateinit var title: AppCompatTextView
 
-    @View(R.id.winner_parent_container)
+    
     lateinit var container: ConstraintLayout
 
-    @View(R.id.name)
+    
     lateinit var name: AppCompatTextView
 
-    @View(R.id.points)
+    
     lateinit var points: AppCompatTextView
 
-    @View(R.id.user_pic)
+    
     lateinit var userPic: CircleImageView
 
-    @View(R.id.online_status_iv)
+    
     lateinit var onlineStatusLayout: FrameLayout
 
     lateinit var linearLayoutManager: SmoothLinearLayoutManager
@@ -75,7 +74,7 @@ class LeaderBoardWinnerItemViewHolder(
         onViewInflated?.onViewInflated(response)
     }
 
-    @Click(R.id.user_pic)
+    
     fun onClick() {
         /*response?.id?.let {
             RxBus2.publish(OpenUserProfile(it))
@@ -83,7 +82,7 @@ class LeaderBoardWinnerItemViewHolder(
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenPreviousLeaderboard(type))
     }
 
-    @Click(R.id.view_profile)
+    
     fun onSecondClick() {
         /*response?.id?.let {
             RxBus2.publish(OpenUserProfile(it))
@@ -91,7 +90,7 @@ class LeaderBoardWinnerItemViewHolder(
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenPreviousLeaderboard(type))
     }
 
-    @Click(R.id.winner_parent_container)
+    
     fun onSecondClickContainer() {
         /*response?.id?.let {
             RxBus2.publish(OpenUserProfile(it))

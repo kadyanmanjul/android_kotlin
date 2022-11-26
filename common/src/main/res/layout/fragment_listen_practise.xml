@@ -103,7 +103,7 @@
             card_view:cardPreventCornerOverlap="false"
             tools:visibility="visible">
 
-        <com.joshtalks.joshskills.core.custom_ui.exo_audio_player.ExoAudioPlayerView
+        <com.joshtalks.joshskills.common.core.custom_ui.exo_audio_player.ExoAudioPlayerView
                 android:id="@+id/audio_player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

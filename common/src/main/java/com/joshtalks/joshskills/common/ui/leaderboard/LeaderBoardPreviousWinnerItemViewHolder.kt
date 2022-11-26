@@ -19,32 +19,31 @@ import com.mindorks.placeholderview.annotations.View
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Locale
 
-@Layout(R.layout.leaderboard_pervious_winner_list_item)
 class LeaderBoardPreviousWinnerItemViewHolder(
     var response: LeaderboardMentor,
     var context: Context,
     val awardUrl: String
 ) {
 
-    @View(R.id.rank)
+    
     lateinit var rank: AppCompatTextView
 
-    @View(R.id.container)
+    
     lateinit var container: ConstraintLayout
 
-    @View(R.id.name)
+    
     lateinit var name: AppCompatTextView
 
-    @View(R.id.points)
+    
     lateinit var points: AppCompatTextView
 
-    @View(R.id.user_pic)
+    
     lateinit var user_pic: CircleImageView
 
-    @View(R.id.award)
+    
     lateinit var awardIV: AppCompatImageView
 
-    @View(R.id.online_status_iv)
+    
     lateinit var onlineStatusLayout: FrameLayout
 
     lateinit var linearLayoutManager: SmoothLinearLayoutManager
@@ -73,14 +72,14 @@ class LeaderBoardPreviousWinnerItemViewHolder(
         awardIV.setImage(awardUrl, context)
     }
 
-    @Click(R.id.user_pic)
+    
     fun onClick() {
         response.id?.let {
             com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
         }
     }
 
-    @Click(R.id.container)
+    
     fun onContainerClick() {
         response.id?.let {
             com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))

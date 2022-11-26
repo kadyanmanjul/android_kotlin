@@ -9,11 +9,11 @@
 
         <variable
             name="obj"
-            type="com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller" />
+            type="com.joshtalks.joshskills.common.repository.local.entity.practise.FavoriteCaller" />
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter" />
+            type="com.joshtalks.joshskills.common.ui.voip.favorite.adapter.FppFavoriteAdapter" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

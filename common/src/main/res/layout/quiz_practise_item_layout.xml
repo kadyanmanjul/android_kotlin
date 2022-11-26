@@ -7,7 +7,7 @@
 
         <variable
                 name="quizModel"
-                type="com.joshtalks.joshskills.repository.server.conversation_practice.QuizModel" />
+                type="com.joshtalks.joshskills.common.repository.server.conversation_practice.QuizModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

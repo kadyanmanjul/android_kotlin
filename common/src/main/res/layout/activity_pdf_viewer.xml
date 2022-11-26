@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity" />
+            type="com.joshtalks.joshskills.common.ui.pdfviewer.PdfViewerActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -94,7 +94,7 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.joshtalks.joshskills.core.custom_ui.pdfview.PDFView
+        <com.joshtalks.joshskills.common.core.custom_ui.pdfview.PDFView
             android:id="@+id/pdfView"
             android:layout_width="match_parent"
             android:layout_height="0dp"

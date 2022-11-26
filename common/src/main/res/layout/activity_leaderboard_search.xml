@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity" />
+            type="com.joshtalks.joshskills.common.ui.leaderboard.search.LeaderBoardSearchActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -136,7 +136,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/rank" />
 
-        <com.joshtalks.joshskills.ui.leaderboard.CustomTabLayout
+        <com.joshtalks.joshskills.common.ui.leaderboard.CustomTabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

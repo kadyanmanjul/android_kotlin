@@ -10,16 +10,16 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.rating_item_layout)
+
 class RatingViewHolder(var rating: Rating) {
 
-    @View(R.id.user_rating)
+
     lateinit var userRating: AppCompatTextView
 
-    @View(R.id.progress_bar)
+
     lateinit var progressBar: ProgressBar
 
-    @View(R.id.user_rating_percentage)
+
     lateinit var userRatingPercentage: AppCompatTextView
 
     @Resolve

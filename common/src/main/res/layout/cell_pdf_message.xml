@@ -25,7 +25,7 @@
 
             <include layout="@layout/tag_practise_layout" />
 
-            <com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
+            <com.joshtalks.joshskills.common.core.custom_ui.ShimmerImageView
                 tools:background="@drawable/video_placeholder"
                 android:id="@+id/image_view"
                 android:layout_width="match_parent"
@@ -123,7 +123,7 @@
                 android:layout_marginTop="@dimen/_2sdp"
                 android:orientation="horizontal">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/tv_message_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

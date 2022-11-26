@@ -27,7 +27,7 @@ import io.github.inflationx.calligraphy3.TypefaceUtils
 import java.lang.ref.WeakReference
 
 
-@Layout(R.layout.practice_layout)
+
 class PracticeViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
@@ -35,31 +35,31 @@ class PracticeViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
-    @View(R.id.root_view)
+    
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_sub_view)
+    
     lateinit var subRootView: FrameLayout
 
-    @View(R.id.tv_title)
+    
     lateinit var titleTv: AppCompatTextView
 
-    @View(R.id.status_tv)
+    
     lateinit var practiceStatusTv: AppCompatTextView
 
-    @View(R.id.sub_title_tv)
+    
     lateinit var subTitleTV: AppCompatTextView
 
-    @View(R.id.text_message_time)
+    
     lateinit var receivedMessageTime: AppCompatTextView
 
-    @View(R.id.image_view)
+    
     lateinit var imageView: AppCompatImageView
 
-    @View(R.id.tv_submit_answer)
+    
     lateinit var tvSubmitAnswer: MaterialTextView
 
-    @View(R.id.message_view)
+    
     lateinit var messageView: ConstraintLayout
 
     lateinit var viewHolder: PracticeViewHolder
@@ -168,7 +168,7 @@ class PracticeViewHolder(
     }
 
 
-    @Click(R.id.root_sub_view)
+    
     fun onClickRootView() {
         //RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
     }

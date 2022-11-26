@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.abTest.GoalKeys
 import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.analytics.*
+import com.joshtalks.joshskills.common.core.custom_ui.FullScreenProgressDialog.Companion.hideProgressBar
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.common.messaging.RxBus2

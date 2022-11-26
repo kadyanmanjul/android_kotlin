@@ -1,5 +1,12 @@
 package com.joshtalks.joshskills.common.ui.course_details
 
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.joshtalks.joshskills.common.R
+
+/*
+package com.joshtalks.joshskills.common.ui.course_details
+
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -95,6 +102,9 @@ import java.math.BigDecimal
 const val ENGLISH_COURSE_TEST_ID = 102
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
 
+                if (isPointsScoredMoreThanEqualTo100 || expiredTime <= System.currentTimeMillis()) {
+                appAnalytics.addParam(
+                    )
 class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGatewayListener {
 
     private lateinit var binding: ActivityCourseDetailsBinding
@@ -298,7 +308,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
 
             if (is100PointsActive && testId == ENGLISH_COURSE_TEST_ID) {
                 expiredTime = data?.expiredDate?.time ?: 0L
-                if (isPointsScoredMoreThanEqualTo100 || expiredTime <= System.currentTimeMillis()) {
                     binding.btnStartCourse.isEnabled = true
                     binding.btnStartCourse.alpha = 1f
                 } else if (!isPointsScoredMoreThanEqualTo100 && expiredTime > System.currentTimeMillis()) {
@@ -313,14 +322,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
             if (data.paymentData.discountText.isNullOrEmpty().not()) {
                 binding.txtExtraHint.text = data.paymentData.discountText
-                appAnalytics.addParam(
                     AnalyticsEvent.COURSE_PRICE.NAME,
                     data.paymentData.actualAmount
                 )
                     .addParam(
                         AnalyticsEvent.SHOWN_COURSE_PRICE.NAME,
                         data.paymentData.discountedAmount
-                    )
             } else {
                 binding.txtExtraHint.visibility = GONE
             }
@@ -1190,5 +1197,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
             replace(R.id.details_parent_container, fragment, "Payment Processing")
             disallowAddToBackStack()
         }
+    }
+}
+*/
+class CourseDetailsActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_course_demo)
     }
 }

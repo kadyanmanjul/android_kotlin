@@ -27,17 +27,17 @@ import com.mindorks.placeholderview.annotations.expand.Toggle
 
 @Parent
 @SingleTop
-@Layout(R.layout.faq_item)
+
 class ParentItemExpandableList(val question: String, val testId: Int ,val categoryId: Int) {
 
-    @View(R.id.question)
+
     lateinit var itemNameTxt: TextView
 
-    @View(R.id.imageView4)
+
     lateinit var itemIcon: ImageView
 
-    @Toggle(R.id.mainView)
-    @View(R.id.mainView)
+
+
     lateinit var mainView: CardView
 
     val drawable: Drawable? by lazy {

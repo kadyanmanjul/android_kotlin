@@ -9,14 +9,13 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 private const val TAG = "LeaderboardInfoItemView"
-@Layout(R.layout.leaderboard_info_item)
 class LeaderboardInfoItemViewHolder(
     var text: String,
     var context: Context,
     val type: String
 ) {
 
-    @View(R.id.info_text)
+    
     lateinit var textView: AppCompatTextView
 
     @Resolve

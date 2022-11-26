@@ -21,7 +21,7 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
 
-@Layout(R.layout.layout_syllabus_view)
+
 class SyllabusViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -29,16 +29,16 @@ class SyllabusViewHolder(
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.root_view)
+    
     lateinit var rootView: ConstraintLayout
 
-    @com.mindorks.placeholderview.annotations.View(R.id.title)
+    
     lateinit var title: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.multi_linelayout)
+    
     lateinit var linearLayout: LinearLayout
 
-    @com.mindorks.placeholderview.annotations.View(R.id.download_syllabus)
+    
     lateinit var downloadSyllabus: MaterialTextView
 
     @Resolve
@@ -63,7 +63,7 @@ class SyllabusViewHolder(
         return view
     }
 
-    @Click(R.id.download_syllabus)
+    
     fun onClick() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(DownloadSyllabusEvent(syllabusData))
     }

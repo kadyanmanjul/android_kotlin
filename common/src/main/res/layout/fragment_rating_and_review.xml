@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.RatingAndReviewViewModel" />
+            type="com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.viewmodel.RatingAndReviewViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -33,7 +33,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+                <com.joshtalks.joshskills.common.ui.voip.new_arch.ui.callbar.util.CallBarLayout
                     android:id="@+id/call_bar_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

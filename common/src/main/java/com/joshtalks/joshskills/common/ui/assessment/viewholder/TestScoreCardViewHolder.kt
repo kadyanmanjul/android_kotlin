@@ -19,20 +19,19 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
-@Layout(R.layout.test_score_header_item)
 class TestScoreCardViewHolder(
     var assessment: Assessment) {
 
-    @View(R.id.welcome_msg)
+    
     lateinit var welcomeMsg: AppCompatTextView
 
-    @View(R.id.score)
+    
     lateinit var score: AppCompatTextView
 
-    @View(R.id.extra_text)
+    
     lateinit var extraText: JoshTextView
 
-    @View(R.id.image_view)
+    
     lateinit var imageView: AppCompatImageView
 
     @Resolve

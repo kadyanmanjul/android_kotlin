@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
         <import type="android.view.View" />
 

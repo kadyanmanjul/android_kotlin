@@ -20,7 +20,6 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.util.Locale
 
-@Layout(R.layout.list_item)
 class LeaderBoardItemViewHolder(
     var response: LeaderboardMentor,
     var context: Context,
@@ -28,25 +27,25 @@ class LeaderBoardItemViewHolder(
     var isHeader: Boolean = false
 ) {
 
-    @View(R.id.rank)
+    
     lateinit var rank: AppCompatTextView
 
-    @View(R.id.container)
+    
     lateinit var container: ConstraintLayout
 
-    @View(R.id.name)
+    
     lateinit var name: AppCompatTextView
 
-    @View(R.id.points)
+    
     lateinit var points: AppCompatTextView
 
-    @View(R.id.user_pic)
+    
     lateinit var user_pic: AppCompatImageView
 
-    @View(R.id.online_status_iv)
+    
     lateinit var onlineStatusLayout: FrameLayout
 
-    @View(R.id.img_senior_student_badge)
+    
     lateinit var imgSeniorStudentBadge: AppCompatImageView
 
     lateinit var linearLayoutManager: SmoothLinearLayoutManager
@@ -101,7 +100,7 @@ class LeaderBoardItemViewHolder(
         }
     }
 
-    @Click(R.id.user_pic)
+    
     fun onClick() {
         if (currentUser && User.getInstance().isVerified.not()) {
             //return
@@ -112,7 +111,7 @@ class LeaderBoardItemViewHolder(
             }
     }
 
-    @Click(R.id.container)
+    
     fun onContainerClick() {
         if (currentUser && User.getInstance().isVerified.not()) {
             //return

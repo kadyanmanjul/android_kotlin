@@ -15,7 +15,7 @@ import com.mindorks.placeholderview.annotations.View
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 
 
-@Layout(R.layout.guideline_view_holder)
+
 class GuidelineViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -23,16 +23,16 @@ class GuidelineViewHolder(
     private val fragmentManager: FragmentManager
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @View(R.id.header)
+
     lateinit var headerTV: AppCompatTextView
 
-    @View(R.id.tab_layout)
+
     lateinit var tabLayout: TabLayout
 
-    @View(R.id.view_pager)
+
     lateinit var viewPager: HeightWrappingViewPager
 
-    @View(R.id.worm_dots_indicator)
+
     lateinit var wormDotsIndicator: WormDotsIndicator
 
 

@@ -5,13 +5,13 @@
 
     <data>
 
-        <import type="com.joshtalks.joshskills.ui.group.model.DefaultImage" />
+        <import type="com.joshtalks.joshskills.common.ui.group.model.DefaultImage" />
 
         <import type="android.view.View" />
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.group.model.GroupMember" />
+            type="com.joshtalks.joshskills.common.ui.group.model.GroupMember" />
 
     </data>
 

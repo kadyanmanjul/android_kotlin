@@ -22,7 +22,7 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
-@Layout(R.layout.teacher_details_view_holder)
+
 class TeacherDetailsViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -30,16 +30,16 @@ class TeacherDetailsViewHolder(
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtTeacherName)
+    
     lateinit var txtTeacherName: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtDesignation)
+    
     lateinit var txtDesignation: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtDescription)
+    
     lateinit var txtDescription: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.imgTeacher)
+    
     lateinit var imgTeacher: AppCompatImageView
 
     @Resolve
@@ -52,7 +52,7 @@ class TeacherDetailsViewHolder(
         }
     }
 
-    @Click(R.id.btn_meet_me)
+    
     fun onClick() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(data)
     }

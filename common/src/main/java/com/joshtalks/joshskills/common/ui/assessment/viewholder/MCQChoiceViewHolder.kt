@@ -24,7 +24,6 @@ import com.mindorks.placeholderview.annotations.Resolve
 import timber.log.Timber
 import java.io.InvalidClassException
 
-@Layout(R.layout.mcq_choice_view_holder)
 class MCQChoiceViewHolder(
     override val type: ChoiceType,
     override val sequenceNumber: Int,
@@ -35,13 +34,13 @@ class MCQChoiceViewHolder(
     override val context: Context = AppObjectController.joshApplication
 ) : ChoiceBaseCell(type, sequenceNumber, choiceData, context) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.choice_container)
+    
     lateinit var container: MaterialCardView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.choice_textview)
+    
     lateinit var choiceTextView: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.choice_imgview)
+    
     lateinit var choiceImgView: AppCompatImageView
 
     @Resolve
@@ -78,7 +77,7 @@ class MCQChoiceViewHolder(
         setColor()
     }
 
-    @Click(R.id.choice_container)
+    
     fun onClick() {
         choiceData.imageUrl?.let {
             logImageClickedEvent(choiceData)

@@ -7,15 +7,15 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.common.R" />
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.chat.ConversationActivity" />
+            type="com.joshtalks.joshskills.common.ui.chat.ConversationActivity" />
 
         <variable
             name="viewmodel"
-            type="com.joshtalks.joshskills.ui.chat.ConversationViewModel" />
+            type="com.joshtalks.joshskills.common.ui.chat.ConversationViewModel" />
 
     </data>
 
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+            <com.joshtalks.joshskills.common.ui.voip.new_arch.ui.callbar.util.CallBarLayout
                 android:id="@+id/call_bar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -367,7 +367,7 @@
             android:layout_above="@+id/bottom_bar"
             android:layout_below="@+id/user_point_container">
 
-            <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
+            <com.joshtalks.joshskills.common.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
                 android:id="@+id/refresh_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -380,7 +380,7 @@
                     android:paddingTop="@dimen/_6sdp"
                     tools:itemCount="1"
                     tools:listitem="@layout/lesson_progress_stub" />
-            </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
+            </com.joshtalks.joshskills.common.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
 
             <FrameLayout
                 android:id="@+id/lesson_tooltip_layout"
@@ -392,7 +392,7 @@
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="@dimen/_12sdp"
@@ -577,7 +577,7 @@
                             app:srcCompat="@drawable/ic_attachment" />
                     </FrameLayout>
 
-                    <com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout
+                    <com.joshtalks.joshskills.common.core.custom_ui.HidingLinearLayout
                         android:id="@+id/quick_toggle"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -597,7 +597,7 @@
                             android:scaleType="centerInside"
                             app:srcCompat="@drawable/ic_camera_message" />
 
-                    </com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout>
+                    </com.joshtalks.joshskills.common.core.custom_ui.HidingLinearLayout>
 
                 </LinearLayout>
 
@@ -822,7 +822,7 @@
                 android:layout_marginHorizontal="@dimen/_2sdp"
                 android:background="@drawable/bg_tooltip_large_center">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/joshTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -28,7 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
-@Layout(R.layout.layout_location_stats_view_holder)
+
 open class LocationStatViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
@@ -40,19 +40,19 @@ open class LocationStatViewHolder(
     val courseName: String
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.background_image_view)
+    
     lateinit var imageView: ImageView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.students_enrolled_nearby)
+    
     lateinit var studentsNearby: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.state_country)
+    
     lateinit var stateCityName: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.check_location_btn)
+    
     lateinit var checkLocation: MaterialTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.progress_bar)
+    
     lateinit var progressBar: FrameLayout
     var location: Location? = null
     private var index = 0

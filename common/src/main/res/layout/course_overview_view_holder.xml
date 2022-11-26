@@ -15,7 +15,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtCourseName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
                 app:layout_constraintWidth_percent="0.8"
                 tools:text="Effective Life Habits For Life Transformation" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtTeacherName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -170,7 +170,7 @@
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -187,7 +187,7 @@
                 tools:text="27400 Students"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                 tools:text="50 Day Course"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -219,7 +219,7 @@
                 tools:text="Unlimited Access"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -236,7 +236,7 @@
                 tools:text="Certificate Available"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -282,7 +282,7 @@
                 android:background="@color/success"
                 android:foregroundGravity="center">
 
-            <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+            <com.joshtalks.joshskills.common.core.custom_ui.JoshRatingBar
                     android:id="@+id/rating_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_20sdp"
@@ -301,7 +301,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txtRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -338,7 +338,7 @@
 
     </FrameLayout>
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+    <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtViewers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

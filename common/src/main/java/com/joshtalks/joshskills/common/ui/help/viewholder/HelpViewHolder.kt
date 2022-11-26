@@ -16,13 +16,12 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.help_view_layout)
 class HelpViewHolder(var option: Option, var unreadMessages: Int) {
 
-    @View(R.id.iv_category_icon)
+    
     lateinit var categoryIconIV: AppCompatImageView
 
-    @View(R.id.tv_category_name)
+    
     lateinit var categoryNameTV: AppCompatTextView
 
     @Resolve
@@ -41,7 +40,7 @@ class HelpViewHolder(var option: Option, var unreadMessages: Int) {
             .into(categoryIconIV)
     }
 
-    @Click(R.id.root_view)
+    
     fun onClick() {
         com.joshtalks.joshskills.common.messaging.RxBus2.publish(HelpRequestEventBus(option))
     }
