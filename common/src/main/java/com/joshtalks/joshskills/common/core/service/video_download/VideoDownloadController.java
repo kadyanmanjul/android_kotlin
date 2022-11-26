@@ -37,8 +37,8 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
-import com.joshtalks.joshskills.R;
-import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.common.R;
+import com.joshtalks.joshskills.common.core.AppObjectController;
 
 import java.io.File;
 import java.io.IOException;

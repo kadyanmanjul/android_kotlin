@@ -4,7 +4,7 @@ package com.joshtalks.joshskills.common.core.datetimeutils;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.Log;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

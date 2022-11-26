@@ -21,6 +21,7 @@ import kotlin.collections.HashMap
 import kotlin.collections.set
 import kotlin.collections.toTypedArray
 
+private const val TAG = "InstallReferralUtil"
 object InstallReferralUtil {
 
     fun installReferrer(context: Context) {

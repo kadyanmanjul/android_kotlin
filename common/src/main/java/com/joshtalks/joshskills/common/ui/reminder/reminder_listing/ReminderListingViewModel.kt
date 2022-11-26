@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.JoshApplication
 import com.joshtalks.joshskills.common.core.showToast
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.reminder.DeleteReminderRequest
@@ -17,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class ReminderListingViewModel(application: Application) : AndroidViewModel(application) {
 
-    val context: JoshApplication = getApplication()
+    val context: Application = getApplication()
     var appDatabase = AppObjectController.appDatabase
     var reminderList: LiveData<List<ReminderResponse>>
 

@@ -11,7 +11,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.repository.local.ConvertersForDownloadStatus
 import com.joshtalks.joshskills.common.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.common.repository.local.type_converter.TypeConverterChoiceType
+import com.joshtalks.joshskills.common.repository.local.typeconverter.TypeConverterChoiceType
 import com.joshtalks.joshskills.common.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.common.repository.server.assessment.ChoiceResponse
 import kotlinx.android.parcel.Parcelize

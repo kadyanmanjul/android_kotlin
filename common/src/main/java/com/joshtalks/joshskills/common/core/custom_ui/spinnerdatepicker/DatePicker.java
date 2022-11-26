@@ -35,7 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;

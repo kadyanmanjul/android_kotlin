@@ -37,7 +37,7 @@ import com.joshtalks.joshskills.common.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.common.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.common.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
-import com.joshtalks.joshskills.common.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import kotlinx.coroutines.sync.Mutex
 import java.math.BigDecimal
 

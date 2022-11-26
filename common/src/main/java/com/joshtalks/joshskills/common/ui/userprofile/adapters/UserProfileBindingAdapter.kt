@@ -16,28 +16,6 @@ import com.joshtalks.joshskills.common.ui.userprofile.models.CourseEnrolled
 import com.joshtalks.joshskills.common.ui.userprofile.models.GroupInfo
 import de.hdodenhof.circleimageview.CircleImageView
 
-
-@BindingAdapter("imageResource")
-fun CircleImageView.setImage(url: String?) {
-    if (url.isNullOrEmpty()) {
-        this.setImageResource(R.drawable.ic_call_placeholder)
-    } else {
-        val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
-            .error(R.drawable.ic_call_placeholder)
-            .format(DecodeFormat.PREFER_RGB_565)
-            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-        Glide.with(AppObjectController.joshApplication)
-            .load(url)
-            .optionalTransform(
-                WebpDrawable::class.java,
-                WebpDrawableTransformation(CircleCrop())
-            )
-            .apply(requestOptions)
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .into(this)
-    }
-}
-
 @BindingAdapter("enrolledListAdapter", "onEnrolledItemClick")
 fun setEnrolledCoursesAdapter(
     view: RecyclerView,

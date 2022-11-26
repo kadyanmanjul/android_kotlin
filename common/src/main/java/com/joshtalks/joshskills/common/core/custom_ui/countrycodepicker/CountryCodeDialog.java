@@ -20,7 +20,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 import java.lang.reflect.Field;
 import java.util.List;
 

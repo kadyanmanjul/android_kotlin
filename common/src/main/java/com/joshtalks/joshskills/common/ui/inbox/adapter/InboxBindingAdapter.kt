@@ -21,45 +21,6 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 object InboxBindingAdapter {
 
-    @BindingAdapter(value = ["imageUrl"], requireAll = false)
-    @JvmStatic
-    fun imageUrl(imageView: ImageView, url: String?) {
-        if (url.isNullOrEmpty()) {
-            imageView.setImageResource(R.drawable.ic_josh_course)
-            return
-        }
-
-        val multi = MultiTransformation(
-            CropTransformation(
-                Utils.dpToPx(48),
-                Utils.dpToPx(48),
-                CropTransformation.CropType.CENTER
-            ),
-            RoundedCornersTransformation(
-                Utils.dpToPx(ROUND_CORNER),
-                0,
-                RoundedCornersTransformation.CornerType.ALL
-            )
-        )
-        Glide.with(AppObjectController.joshApplication)
-            .load(url)
-            .optionalTransform(
-                WebpDrawable::class.java,
-                WebpDrawableTransformation(CircleCrop())
-            )
-            .apply(
-                RequestOptions.bitmapTransform(multi).apply(
-                    RequestOptions().placeholder(R.drawable.ic_josh_course)
-                        .error(R.drawable.ic_josh_course)
-                        .format(DecodeFormat.PREFER_RGB_565)
-                        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-                )
-            )
-            .thumbnail(0.05f)
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .into(imageView)
-    }
-
     @BindingAdapter(value = ["favoriteCallerImage"], requireAll = false)
     @JvmStatic
     fun favoriteCallerImage(imageView: ImageView, caller: FavoriteCaller?) {

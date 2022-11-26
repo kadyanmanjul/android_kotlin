@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.common.ui.fpp.constants.CAN_BE_CALL
 import com.joshtalks.joshskills.common.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
-import com.joshtalks.joshskills.common.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

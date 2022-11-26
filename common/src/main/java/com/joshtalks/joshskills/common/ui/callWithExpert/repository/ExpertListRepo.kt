@@ -15,8 +15,8 @@ import com.joshtalks.joshskills.common.ui.callWithExpert.model.AvailableAmount
 import com.joshtalks.joshskills.common.ui.callWithExpert.model.Transaction
 import com.joshtalks.joshskills.common.ui.callWithExpert.model.WalletLogs
 import com.joshtalks.joshskills.common.ui.callWithExpert.repository.db.SkillsDatastore
-import com.joshtalks.joshskills.common.voip.BeepTimer
-import com.joshtalks.joshskills.common.voip.constant.Category
+import com.joshtalks.joshskills.voip.BeepTimer
+import com.joshtalks.joshskills.voip.constant.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

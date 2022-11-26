@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class CertificationExamViewModel(application: Application) : AndroidViewModel(application) {
-    private var context: JoshApplication = getApplication()
+    private var context : Application = getApplication()
 
     var conversationId: String = EMPTY
     private val _certificationQuestionLiveData: MutableLiveData<CertificationQuestionModel> =

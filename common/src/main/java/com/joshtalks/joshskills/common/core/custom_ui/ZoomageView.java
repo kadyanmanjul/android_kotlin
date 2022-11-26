@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.view.ScaleGestureDetectorCompat;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 
 /**
  * ZoomageView is a pinch-to-zoom extension of {@link ImageView}, providing a smooth

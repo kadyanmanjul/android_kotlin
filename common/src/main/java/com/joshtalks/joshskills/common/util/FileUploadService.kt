@@ -40,6 +40,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
+import com.joshtalks.joshskills.common.core.Utils
 
 class FileUploadService : Service() {
     private val MAX_NUMBER_OF_RETRIES = 5

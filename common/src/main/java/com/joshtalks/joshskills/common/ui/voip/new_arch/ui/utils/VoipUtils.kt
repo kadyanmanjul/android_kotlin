@@ -10,8 +10,8 @@ import com.joshtalks.joshskills.common.core.BLOCK_STATUS
 import com.joshtalks.joshskills.common.core.FT_CALLS_LEFT
 import com.joshtalks.joshskills.common.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
-import com.joshtalks.joshskills.common.voip.constant.State
-import com.joshtalks.joshskills.common.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.common.core.PrefManager as CorePrefManager
 import java.time.Duration
 import java.util.*

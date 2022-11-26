@@ -31,7 +31,7 @@ import com.joshtalks.joshskills.common.ui.extra.AUTO_START_SETTINGS_POPUP
 import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.common.voip.data.local.PrefManager as VoipPrefManager
+import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
 
 class SettingsFragment : Fragment() {
 

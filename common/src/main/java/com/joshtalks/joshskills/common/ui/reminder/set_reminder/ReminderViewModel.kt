@@ -8,7 +8,6 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.ApiCallStatus
 import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.JoshApplication
 import com.joshtalks.joshskills.common.core.showToast
 import com.joshtalks.joshskills.common.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.common.repository.server.reminder.ReminderResponse
@@ -20,7 +19,7 @@ import java.net.UnknownHostException
 
 class ReminderViewModel(application: Application) : AndroidViewModel(application) {
 
-    val context: JoshApplication = getApplication()
+    val context: Application = getApplication()
     var appDatabase = AppObjectController.appDatabase
     val submitApiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
 

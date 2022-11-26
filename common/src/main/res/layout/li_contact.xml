@@ -9,9 +9,6 @@
             name="contact"
             type="com.joshtalks.joshskills.common.repository.local.entity.PhonebookContact" />
 
-        <variable
-            name="callback"
-            type="com.joshtalks.joshskills.common.ui.invite_call.ContactsAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +19,6 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/profile_image"
-            setUsername="@{contact.name}"
             android:layout_width="@dimen/_48sdp"
             android:layout_height="@dimen/_48sdp"
             app:civ_circle_background_color="#4A4A4A"
@@ -57,8 +53,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/call"
-            contactCallback="@{callback}"
-            contactItem="@{contact}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/_4sdp"

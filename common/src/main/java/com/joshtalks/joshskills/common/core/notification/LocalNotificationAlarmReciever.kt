@@ -12,13 +12,15 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.core.AppObjectController
+import com.joshtalks.joshskills.common.core.Navigator
+import com.joshtalks.joshskills.common.core.SplashContract
 import com.joshtalks.joshskills.common.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.common.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.common.core.service.NOTIFICATION_TEXT_TEXT
 import com.joshtalks.joshskills.common.core.service.NOTIFICATION_TITLE_TEXT
 import com.joshtalks.joshskills.common.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.common.repository.local.model.User
-import com.joshtalks.joshskills.common.ui.launch.LauncherActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,11 +56,15 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
             title = NOTIFICATION_TITLE_TEXT.get(notificationIndex)
         }
 
-        val intent = Intent(applicationContext, LauncherActivity::class.java).apply {
+        AppObjectController.navigator.with(applicationContext).navigate(object : SplashContract {
+            override val navigator = AppObjectController.navigator
+        })
+
+        val intent: Intent? = null /*Intent(applicationContext, LauncherActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             putExtra(HAS_NOTIFICATION, true)
             putExtra(HAS_LOCAL_NOTIFICATION, true)
-        }
+        }*/
 
         intent.run {
             val activityList = arrayOf(this)

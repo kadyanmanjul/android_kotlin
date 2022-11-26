@@ -24,7 +24,7 @@ object BranchIOAnalytics {
                         branchEvent.setRevenue(this)
                     }
                 }
-                branchEvent.addCustomDataProperty("app_version", BuildConfig.VERSION_NAME)
+                branchEvent.addCustomDataProperty("app_version",  AppObjectController.applicationDetails.versionName())
                 branchEvent.addCustomDataProperty("device_id",Utils.getDeviceId())
                 branchEvent.setCurrency(CurrencyType.INR)
                 branchEvent.logEvent(AppObjectController.joshApplication)

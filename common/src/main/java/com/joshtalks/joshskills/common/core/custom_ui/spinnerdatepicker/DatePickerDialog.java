@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 import java.text.DateFormat;
 import java.util.Calendar;
 

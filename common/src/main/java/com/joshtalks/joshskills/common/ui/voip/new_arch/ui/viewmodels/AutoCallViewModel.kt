@@ -19,10 +19,10 @@ import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AU
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.AutoConnectData
-import com.joshtalks.joshskills.common.voip.constant.CALL_NOW
-import com.joshtalks.joshskills.common.voip.constant.STOP_WAITING
-import com.joshtalks.joshskills.common.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.common.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.voip.constant.CALL_NOW
+import com.joshtalks.joshskills.voip.constant.STOP_WAITING
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

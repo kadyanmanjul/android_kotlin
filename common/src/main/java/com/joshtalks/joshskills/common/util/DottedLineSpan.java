@@ -6,7 +6,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.text.style.ReplacementSpan;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 
 public class DottedLineSpan extends ReplacementSpan {
     private Paint p = new Paint();

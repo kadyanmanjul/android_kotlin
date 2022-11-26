@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.CoreJoshFragment
 import com.joshtalks.joshskills.common.databinding.FragmentReviseConceptBinding
-import com.joshtalks.joshskills.common.repository.server.assessment.ReviseConcept
+import com.joshtalks.joshskills.common.repository.local.model.assessment.ReviseConcept
 import com.joshtalks.joshskills.common.repository.server.assessment.ReviseConceptResponse
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
 

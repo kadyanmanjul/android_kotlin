@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 
 
 public class AnimatingToggle extends FrameLayout {

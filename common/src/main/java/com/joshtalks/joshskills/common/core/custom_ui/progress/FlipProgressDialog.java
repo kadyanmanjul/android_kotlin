@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 import java.util.ArrayList;
 import java.util.List;
 

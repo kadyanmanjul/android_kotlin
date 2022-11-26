@@ -31,7 +31,7 @@ class MatchTheFollowingChoiceAdapter(
     private var question: AssessmentQuestion,
     private var sourceList: List<Choice>,
     private var tragetList: List<Choice>,
-    private val listener: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.listener.EmptyListListener,
+    private val listener: EmptyListListener,
     private var viewType: AssessmentQuestionViewType
 ) : RecyclerView.Adapter<MatchTheFollowingChoiceAdapter.MatchTheFollowingViewHolder>() {
 
@@ -97,14 +97,14 @@ class MatchTheFollowingChoiceAdapter(
         private lateinit var question: AssessmentQuestion
         private lateinit var questionText: TextView
         private lateinit var frameLayout: FrameLayout
-        private var listner: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.listener.EmptyListListener? = null
+        private var listner: EmptyListListener? = null
 
         fun bindView(
             assessment: Assessment,
             question: AssessmentQuestion,
             choice: Choice,
             targetList: List<Choice>,
-            listner: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.listener.EmptyListListener,
+            listner: EmptyListListener,
             position: Int,
             viewType: AssessmentQuestionViewType
         ) {

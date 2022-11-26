@@ -121,7 +121,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
 
             val disabledVersionsArr = disabledVersions.split(",")
             disabledVersionsArr.forEach {
-                if (it == BuildConfig.VERSION_CODE.toString()) {
+                if (it ==  AppObjectController.applicationDetails.versionCode().toString()) {
                     exitProcess(0)
                 }
             }

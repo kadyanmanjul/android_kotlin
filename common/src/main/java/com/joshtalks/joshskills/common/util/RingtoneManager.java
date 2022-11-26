@@ -6,7 +6,7 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 
-import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.common.core.AppObjectController;
 
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -24,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import io.michaelrocks.libphonenumber.android.Phonenumber;

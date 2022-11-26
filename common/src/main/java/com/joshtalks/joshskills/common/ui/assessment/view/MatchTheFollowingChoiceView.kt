@@ -28,7 +28,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class MatchTheFollowingChoiceView : FrameLayout,
-    _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.listener.EmptyListListener {
+    EmptyListListener {
 
     private var assessment: Assessment? = null
     private var viewType = AssessmentQuestionViewType.MY_ANSWER_VIEW

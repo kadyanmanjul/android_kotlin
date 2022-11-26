@@ -24,7 +24,6 @@ class ContactsAdapter :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(contact: PhonebookContact) {
             binding.contact = contact
-            binding.callback = callback
             binding.executePendingBindings()
         }
     }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ScreenViewRecorder {
-    private var recorder: _root_ide_package_.com.joshtalks.joshskills.common.ui.voip.util.ViewRecorder? = null
+    private var recorder: ViewRecorder? = null
     private var recordingJob: CoroutineScope? = null
 
     fun startPlayer(recordFile: String, context:Context, view: View) {
@@ -21,7 +21,7 @@ class ScreenViewRecorder {
         recordingJob?.launch {
             try {
                 recorder =
-                    _root_ide_package_.com.joshtalks.joshskills.common.ui.voip.util.ViewRecorder()
+                    ViewRecorder()
                 recorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
                 recorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                 recorder?.setVideoFrameRate(24)

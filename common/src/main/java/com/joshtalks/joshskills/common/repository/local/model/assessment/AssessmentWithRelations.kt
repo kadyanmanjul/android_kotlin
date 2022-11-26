@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.common.repository.local.model.assessment
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentIntro
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentResponse
 
 data class AssessmentWithRelations(

@@ -5,7 +5,7 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 
 import com.joshtalks.joshskills.common.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
-import com.joshtalks.joshskills.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
+import com.joshtalks.joshskills.common.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
 import java.io.IOException;
 
 public class AudioTrackTranscoder implements TrackTranscoder {

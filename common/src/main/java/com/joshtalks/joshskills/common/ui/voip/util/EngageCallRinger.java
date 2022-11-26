@@ -7,7 +7,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 
 import java.io.IOException;
 

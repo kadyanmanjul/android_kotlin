@@ -237,7 +237,7 @@ public class AppAnalytics {
 
     public AppAnalytics addBasicParam() {
         try {
-            parameters.put(AnalyticsEvent.APP_VERSION_CODE.getNAME(), BuildConfig.VERSION_NAME);
+            parameters.put(AnalyticsEvent.APP_VERSION_CODE.getNAME(),  AppObjectController.applicationDetails.versionName());
             parameters.put(AnalyticsEvent.DEVICE_MANUFACTURER.getNAME(), Build.MANUFACTURER);
             parameters.put(AnalyticsEvent.DEVICE_MODEL.getNAME(), Build.MODEL);
             parameters.put(AnalyticsEvent.ANDROID_OR_IOS.getNAME(), Build.VERSION.SDK_INT);

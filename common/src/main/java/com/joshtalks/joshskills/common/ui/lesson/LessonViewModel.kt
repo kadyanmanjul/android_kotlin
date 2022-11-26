@@ -63,7 +63,7 @@ import java.io.File
 import java.time.Duration
 import java.util.*
 
-
+private const val TAG = "LessonViewModel"
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
     private var message = Message()
     private var singleLiveEvent = com.joshtalks.joshskills.common.base.EventLiveData

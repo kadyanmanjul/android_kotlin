@@ -12,7 +12,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.voip.base.log.Feature
 import com.joshtalks.joshskills.voip.base.log.JoshLog
 import com.joshtalks.joshskills.common.core.PrefManager as CorePrefManager
@@ -22,13 +22,13 @@ import com.joshtalks.joshskills.common.ui.call.repository.RepositoryConstants.CO
 import com.joshtalks.joshskills.common.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.CallUIState
-import com.joshtalks.joshskills.common.voip.Utils
-import com.joshtalks.joshskills.common.voip.constant.*
-import com.joshtalks.joshskills.common.voip.*
-import com.joshtalks.joshskills.common.voip.data.ServiceEvents
-import com.joshtalks.joshskills.common.voip.data.local.PrefManager
-import com.joshtalks.joshskills.common.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.common.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.voip.data.ServiceEvents
+import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import java.util.ArrayDeque
 import kotlinx.coroutines.sync.Mutex

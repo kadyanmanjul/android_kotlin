@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.inbox.adapter
+package com.joshtalks.joshskills.common.ui.voip.favorite.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.joshtalks.joshskills.common.repository.local.entity.practise.FavoriteCaller

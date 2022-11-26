@@ -40,7 +40,7 @@ import retrofit2.Response
 import timber.log.Timber
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
-    var context: JoshApplication = getApplication()
+    var context: Application = getApplication()
 
     enum class ViewState {
         PROCESSING, PROCESSED, INTERNET_NOT_AVAILABLE, ERROR_OCCURED

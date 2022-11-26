@@ -49,6 +49,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
+private const val TAG = "CallRatingsFragment"
+
 class CallRatingsFragment : BottomSheetDialogFragment() {
 
     val CALLER_NAME = "caller_name"
@@ -146,7 +148,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
             ratingList.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
                 val myAnim = AnimationUtils.loadAnimation(activity, R.anim.zoom_in)
                 val interpolator =
-                    _root_ide_package_.com.joshtalks.joshskills.common.ui.voip.new_arch.ui.call_rating.MyBounceInterpolator(
+                    MyBounceInterpolator(
                         0.8,
                         10.0
                     )

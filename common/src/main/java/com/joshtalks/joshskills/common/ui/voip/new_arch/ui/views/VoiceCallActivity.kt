@@ -13,27 +13,27 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.base.BaseActivity
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.PermissionUtils.callingPermissionPermanentlyDeniedDialog
 import com.joshtalks.joshskills.common.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.common.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.voipLog
-import com.joshtalks.joshskills.common.voip.Utils
-import com.joshtalks.joshskills.common.voip.Utils.Companion.onMultipleBackPress
-import com.joshtalks.joshskills.common.voip.constant.*
-import com.joshtalks.joshskills.common.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.common.voip.data.local.PrefManager
-import com.joshtalks.joshskills.common.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.common.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.sync.Mutex
 import java.io.File
 import com.joshtalks.joshskills.common.core.PrefManager as CorePrefManager
 
 private const val TAG = "VoiceCallActivity"
 
-class VoiceCallActivity : com.joshtalks.joshskills.common.base.BaseActivity() {
+class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
     private var isServiceBounded = false
     var file: File? = null

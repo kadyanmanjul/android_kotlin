@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.USER_LOCALE
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 
 private const val TAG = "CallingServiceReceiver"
 class CallingServiceReceiver : BroadcastReceiver() {
@@ -34,9 +34,9 @@ class CallingServiceReceiver : BroadcastReceiver() {
                         )
                     val apiHeader = ApiHeader(
                         token = "JWT " + PrefManager.getStringValue(API_TOKEN),
-                        versionName = BuildConfig.VERSION_NAME,
-                        versionCode = BuildConfig.VERSION_CODE.toString(),
-                        userAgent = "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString(),
+                        versionName =  AppObjectController.applicationDetails.versionName(),
+                        versionCode =  AppObjectController.applicationDetails.versionCode().toString(),
+                        userAgent = "APP_" +  AppObjectController.applicationDetails.versionName() + "_" +  AppObjectController.applicationDetails.versionCode().toString(),
                         acceptLanguage = PrefManager.getStringValue(USER_LOCALE)
                     )
                     remoteServiceIntent.putExtra(

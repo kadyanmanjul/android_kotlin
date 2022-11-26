@@ -16,7 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView

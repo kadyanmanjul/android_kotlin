@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.common.repository.server
 import android.os.Build
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.BuildConfig
+import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.common.core.Utils
@@ -23,9 +24,9 @@ data class UpdateDeviceRequest(
     @SerializedName("os_version_name")
     internal var osVersionName: String = Build.VERSION.CODENAME,
     @SerializedName("app_version_code")
-    internal var appVersionCode: Int = BuildConfig.VERSION_CODE,
+    internal var appVersionCode: Int =  AppObjectController.applicationDetails.versionCode(),
     @SerializedName("app_version_name")
-    internal var appVersionName: String = BuildConfig.VERSION_NAME,
+    internal var appVersionName: String =  AppObjectController.applicationDetails.versionName(),
     @SerializedName("device_id")
     internal var deviceId: String = Utils.getDeviceId(),
     @SerializedName("user_id")

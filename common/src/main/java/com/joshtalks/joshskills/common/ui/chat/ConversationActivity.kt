@@ -2407,7 +2407,7 @@ class ConversationActivity :
     }
 
     fun addAttachmentUIUpdate() {
-        com.joshtalks.joshskills.common.ui.chat.AttachmentUtil.revealAttachments(revealAttachmentView, conversationBinding)
+        AttachmentUtil.revealAttachments(revealAttachmentView, conversationBinding)
         this.revealAttachmentView = !revealAttachmentView
         AppAnalytics.create(AnalyticsEvent.ATTACHMENT_CLICKED.NAME).push()
     }

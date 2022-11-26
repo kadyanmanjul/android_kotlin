@@ -21,7 +21,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.COURSE_ID
 import com.joshtalks.joshskills.common.core.analytics.DismissNotifEventReceiver
@@ -45,7 +45,6 @@ import com.joshtalks.joshskills.common.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.common.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.common.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.common.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.common.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.SPEAKING_POSITION
@@ -57,10 +56,10 @@ import com.joshtalks.joshskills.common.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.common.voip.constant.*
-import com.joshtalks.joshskills.common.voip.constant.INCOMING_CALL_ID
-import com.joshtalks.joshskills.common.voip.constant.REMOTE_USER_NAME
-import com.joshtalks.joshskills.common.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -211,12 +210,20 @@ class NotificationUtils(val context: Context) {
         actionData: String?
     ): Intent? {
         if (PrefManager.getBoolValue(IS_USER_LOGGED_IN, isConsistent = true, defValue = false).not()) {
-            return Intent(context, LauncherActivity::class.java)
+            AppObjectController.navigator.with(context).navigate(object : SplashContract {
+                override val navigator = AppObjectController.navigator
+            })
+            //return Intent(context, LauncherActivity::class.java)
+            return null
         }
 
         return when (action) {
             NotificationAction.OPEN_APP -> {
-                return Intent(context, LauncherActivity::class.java)
+                AppObjectController.navigator.with(context).navigate(object : SplashContract {
+                    override val navigator = AppObjectController.navigator
+                })
+                //return Intent(context, LauncherActivity::class.java)
+                return null
             }
             NotificationAction.ACTION_OPEN_TEST -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -420,14 +427,18 @@ class NotificationUtils(val context: Context) {
                 }
             }
             NotificationAction.EMERGENCY_NOTIFICATION -> {
-                lateinit var intent: Intent
+                var intent: Intent?
                 if (actionData?.isDigitsOnly() == true && isValidFullNumber("+91", actionData)) {
                     intent = Intent(Intent.ACTION_DIAL).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                     intent.data = Uri.parse("tel:$actionData")
                 } else {
-                    intent = Intent(context, LauncherActivity::class.java)
+                    AppObjectController.navigator.with(context).navigate(object : SplashContract {
+                        override val navigator = AppObjectController.navigator
+                    })
+                    //intent = Intent(context, LauncherActivity::class.java)
+                    intent = null
                 }
                 return intent
             }

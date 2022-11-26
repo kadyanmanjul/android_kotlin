@@ -233,6 +233,7 @@ dependencies {
     implementation libs.bundles.coroutine
     implementation libs.bundles.lifecycle
     implementation libs.bundles.room
+    implementation project(path: ':voip')
     kapt libs.silicon.room.support
     kapt libs.room.compiler
     implementation libs.bundles.camerax

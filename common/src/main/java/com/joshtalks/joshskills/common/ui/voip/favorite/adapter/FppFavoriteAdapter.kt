@@ -15,8 +15,6 @@ import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.common.ui.fpp.constants.FAV_CLICK_ON_PROFILE
 import com.joshtalks.joshskills.common.ui.fpp.constants.FAV_USER_LONG_PRESS_CLICK
-import com.joshtalks.joshskills.common.ui.inbox.adapter.FavoriteCallerDiffCallback
-import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxDiffCallback
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -16,7 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 import java.util.ArrayList;
 import java.util.List;
 

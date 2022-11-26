@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.common.constants.OPEN_GROUP
 import com.joshtalks.joshskills.common.constants.SHOULD_REFRESH_GROUP_LIST
@@ -30,7 +30,7 @@ import com.joshtalks.joshskills.common.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.common.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.common.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.common.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.Category
 
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken

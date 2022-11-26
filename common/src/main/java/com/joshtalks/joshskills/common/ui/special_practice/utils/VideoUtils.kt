@@ -83,7 +83,7 @@ fun getAndroidDownloadFolder(): File? {
 }
 
 fun getAppShareUrl(userReferralCode: String): String {
-    return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
+    return "https://play.google.com/store/apps/details?id=" + AppObjectController.applicationDetails.applicationId() + "&referrer=utm_source%3D$userReferralCode"
 }
 
 fun exportMp4ToGallery(context: Context, filePath: String) {

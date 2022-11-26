@@ -97,7 +97,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
             AppObjectController.getFirebaseRemoteConfig().getLong("force_upgrade_after_version")
         val forceUpdateFlag =
             AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")
-        val currentAppVersion = BuildConfig.VERSION_CODE
+        val currentAppVersion =  AppObjectController.applicationDetails.versionCode()
         var updateMode = Constants.UpdateMode.FLEXIBLE
 
         if (currentAppVersion <= forceUpdateMinVersion && forceUpdateFlag) {

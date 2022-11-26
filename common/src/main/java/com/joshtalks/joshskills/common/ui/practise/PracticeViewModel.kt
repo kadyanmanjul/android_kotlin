@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.JoshApplication
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
@@ -46,7 +45,7 @@ import retrofit2.Response
 class PracticeViewModel(application: Application) :
     AndroidViewModel(application) {
     private var compositeDisposable = CompositeDisposable()
-    var context: JoshApplication = getApplication()
+    var context: Application = getApplication()
     var recordFile: File? = null
     val requestStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()

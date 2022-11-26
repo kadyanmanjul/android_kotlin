@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.joshtalks.joshskills">
     <application
+        android:name="com.joshtalks.joshskills.JoshApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="@bool/useHardwareAcceleration"
         android:hasFragileUserData="true"

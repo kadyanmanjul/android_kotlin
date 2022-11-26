@@ -7,7 +7,6 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.core.*
-import com.joshtalks.joshskills.common.core.JoshApplication.Companion.isAppVisible
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.firestore.NotificationAnalytics
@@ -108,7 +107,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     override fun handleIntent(intent: Intent) {
-        if (!isAppVisible) {
+        if (!AppObjectController.applicationDetails.isAppVisual()) {
             Timber.tag(FirebaseNotificationService::class.java.name).e("intent : ${intent.extras}")
 
             var channel = NotificationAnalytics.Channel.FCM

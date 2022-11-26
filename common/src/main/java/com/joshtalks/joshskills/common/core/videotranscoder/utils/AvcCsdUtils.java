@@ -16,7 +16,7 @@
 package com.joshtalks.joshskills.common.core.videotranscoder.utils;
 
 import android.media.MediaFormat;
-import com.joshtalks.joshskills.core.videotranscoder.format.MediaFormatExtraConstants;
+import com.joshtalks.joshskills.common.core.videotranscoder.format.MediaFormatExtraConstants;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 

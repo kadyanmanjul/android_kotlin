@@ -16,9 +16,9 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.common.core.SplashContract
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.common.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.common.util.RingtoneManager
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,7 +43,10 @@ class AlarmNotifierActivity : AppCompatActivity(),
         }
 
         findViewById<MaterialTextView>(R.id.start_course_bt).setOnClickListener {
-            startActivity(Intent(this, LauncherActivity::class.java))
+            AppObjectController.navigator.with(applicationContext).navigate(object :
+                SplashContract {
+                override val navigator = AppObjectController.navigator
+            })
             finish()
         }
 

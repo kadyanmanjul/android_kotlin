@@ -11,7 +11,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentIntro
+import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentIntro
 import kotlinx.android.synthetic.main.intro_question_fragment.image_view
 import kotlinx.android.synthetic.main.intro_question_fragment.root_view
 import kotlinx.android.synthetic.main.intro_question_fragment.tv_description

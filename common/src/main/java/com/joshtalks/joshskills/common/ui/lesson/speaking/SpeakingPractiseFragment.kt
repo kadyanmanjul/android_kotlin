@@ -28,7 +28,7 @@ import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.base.EventLiveData
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.common.core.abTest.GoalKeys
@@ -61,8 +61,8 @@ import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.common.voip.constant.Category
-import com.joshtalks.joshskills.common.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -73,6 +73,7 @@ import kotlinx.coroutines.*
 import java.time.Duration
 import java.util.*
 
+private const val TAG = "SpeakingPractiseFragmen"
 const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
 const val ATTEMPTED = "AT"

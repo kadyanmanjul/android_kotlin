@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.common.core
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -100,13 +101,18 @@ private val IGNORE_UNAUTHORISED = setOf(
     "$DIR/ab_test/track_conversion/"
 )
 
+private const val TAG = "AppObjectController"
+
 class AppObjectController {
 
     companion object {
-
         @JvmStatic
-        lateinit var joshApplication: JoshApplication
+        lateinit var joshApplication: Application
         //private set
+
+        lateinit var applicationDetails: ApplicationDetails
+
+        lateinit var navigator: Navigator
 
         @JvmStatic
         val appDatabase: AppDatabase by lazy { AppDatabase.getDatabase(joshApplication)!! }
@@ -704,11 +710,11 @@ class HeaderInterceptor : Interceptor {
                     KEY_AUTHORIZATION, "JWT " + PrefManager.getStringValue(API_TOKEN)
                 )
             }
-            newRequest.addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
-                .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
+            newRequest.addHeader(KEY_APP_VERSION_NAME, AppObjectController.applicationDetails.versionName())
+                .addHeader(KEY_APP_VERSION_CODE,  AppObjectController.applicationDetails.versionCode().toString())
                 .addHeader(
                     KEY_APP_USER_AGENT,
-                    "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
+                    "APP_" +  AppObjectController.applicationDetails.versionName() + "_" +  AppObjectController.applicationDetails.versionCode().toString()
                 )
                 .addHeader(KEY_APP_ACCEPT_LANGUAGE, PrefManager.getStringValue(USER_LOCALE))
             if (Utils.isInternetAvailable()) {
@@ -757,7 +763,7 @@ class StatusCodeInterceptor : Interceptor {
                         LastSyncPrefManager.clear()
                         WorkManagerAdmin.appInitWorker()
                         WorkManagerAdmin.appStartWorker()
-                        if (JoshApplication.isAppVisible) {
+                        if (AppObjectController.applicationDetails.isAppVisual()) {
                             val intent =
                                 Intent(
                                     AppObjectController.joshApplication,

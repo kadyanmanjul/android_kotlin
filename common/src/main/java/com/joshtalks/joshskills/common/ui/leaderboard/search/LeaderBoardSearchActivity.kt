@@ -118,7 +118,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
 
     private fun initRecentSearchRecyclerview() {
         val linearLayoutManager =
-            com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager(this)
+            com.joshtalks.joshskills.common.core.custom_ui.SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.recentRv.layoutManager = linearLayoutManager
         searchViewModel.fetchRecentSearch()

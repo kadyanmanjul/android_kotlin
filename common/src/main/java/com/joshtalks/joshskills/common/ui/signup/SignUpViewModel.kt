@@ -59,7 +59,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
     val otpField = ObservableField<String>()
-    var context: JoshApplication = getApplication()
+    var context: Application = getApplication()
     var phoneNumber = ObservableField<String>("")
     var countryCode = ObservableField<String>("")
 //    var phWithCountryCode = "$countryCode $phoneNumber"
@@ -254,7 +254,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
             val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT, false)
             val courseExpiryTime =
-                PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
+                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS)
             if ((isCourseBought && User.getInstance().isVerified) || courseExpiryTime != 0L &&
                 courseExpiryTime >= System.currentTimeMillis()
             ) {

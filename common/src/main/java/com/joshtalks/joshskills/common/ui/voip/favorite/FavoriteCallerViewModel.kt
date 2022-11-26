@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.practise.Favorite
 import com.joshtalks.joshskills.common.ui.fpp.constants.*
 import com.joshtalks.joshskills.common.ui.voip.favorite.adapter.FppFavoriteAdapter
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.common.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.*
 import timber.log.Timber
 

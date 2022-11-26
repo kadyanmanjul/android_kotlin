@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.core
+package com.joshtalks.joshskills
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import com.joshtalks.joshskills.common.BuildConfig
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.getLocalBroadcastManager
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.restoreIdReceiver
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.unreadCountChangeReceiver
@@ -23,8 +24,9 @@ import com.joshtalks.joshskills.common.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.common.voip.ProximityHelper
-import com.joshtalks.joshskills.common.voip.constant.State
+import com.joshtalks.joshskills.voip.ProximityHelper
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.constant.State
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import timber.log.Timber
@@ -35,7 +37,7 @@ const val TAG = "JoshSkill"
 class JoshApplication :
     MultiDexApplication(),
     LifecycleEventObserver,
-    ComponentCallbacks2/*, Configuration.Provider*/ {
+    ComponentCallbacks2, ApplicationDetails {
     private var isAudioReset = false
 
     val applicationGraph: com.joshtalks.joshskills.common.di.ApplicationComponent by lazy {
@@ -47,10 +49,6 @@ class JoshApplication :
         public var isAppVisible = false
     }
 
-    fun isAppVisible(): Boolean {
-        return isAppVisible
-    }
-
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         base.let { ViewPumpContextWrapper.wrap(it) }
@@ -59,6 +57,7 @@ class JoshApplication :
     override fun onCreate() {
         super.onCreate()
         AppObjectController.joshApplication = this
+        AppObjectController.applicationDetails = this
         Utils.initUtils(this)
         if (BuildConfig.DEBUG) {
             Branch.enableTestMode()
@@ -97,7 +96,7 @@ class JoshApplication :
         }
     }
 
-    fun onAppForegrounded() {
+    private fun onAppForegrounded() {
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
@@ -132,7 +131,7 @@ class JoshApplication :
         }
     }
 
-    fun onAppBackgrounded() {
+    private fun onAppBackgrounded() {
         Timber.tag(TAG).e("************* backgrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = false
@@ -188,7 +187,7 @@ class JoshApplication :
                 PrefManager.getBoolValue(LESSON_COMPLETED_FOR_NOTIFICATION, defValue = false).not()
     }
 
-    fun onAppDestroy() {
+    private fun onAppDestroy() {
         Timber.tag(TAG).e("************* onAppDestroy")
         AppObjectController.releaseInstance()
         PstnObserver.unregisterPstnReceiver()
@@ -219,6 +218,22 @@ class JoshApplication :
             }
             else -> {}
         }
+    }
+
+    override fun isAppVisual(): Boolean {
+        return isAppVisible
+    }
+
+    override fun versionName(): String {
+        return com.joshtalks.joshskills.BuildConfig.VERSION_NAME
+    }
+
+    override fun versionCode(): Int {
+        return com.joshtalks.joshskills.BuildConfig.VERSION_CODE
+    }
+
+    override fun applicationId(): String {
+        return com.joshtalks.joshskills.BuildConfig.APPLICATION_ID
     }
 
 }

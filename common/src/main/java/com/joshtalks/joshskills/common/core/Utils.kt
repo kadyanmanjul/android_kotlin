@@ -74,7 +74,7 @@ import com.joshtalks.joshskills.common.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.common.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.common.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.State
 import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
 import io.michaelrocks.libphonenumber.android.NumberParseException
@@ -215,6 +215,7 @@ const val Lesson_pop_up_vocab_clicked = "Lesson_pop_up_vocab_clicked"
 const val Lesson_pop_up_cancelled = "Lesson_pop_up_cancelled"
 
 
+private const val TAG = "Utils"
 
 object Utils {
 

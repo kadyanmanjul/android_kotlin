@@ -14,14 +14,12 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.core.JoshApplication
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.core.showToast
-import com.joshtalks.joshskills.common.util.ExoAudioPlayer
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.Fetch
@@ -381,7 +379,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener,
     }
 
     override fun onProgressUpdate(progress: Long) {
-        if (!JoshApplication.isAppVisible)
+        if (!AppObjectController.applicationDetails.isAppVisual())
             onPausePlayer()
         seekPlayerProgress.progress = progress.toInt()
     }

@@ -8,7 +8,7 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.common.base.constants.ConstantsKt" />
+        <import type="com.joshtalks.joshskills.voip.base.constants.ConstantsKt" />
 
         <variable
             name="vm"

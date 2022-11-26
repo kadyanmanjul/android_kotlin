@@ -7,7 +7,7 @@ import android.database.MatrixCursor
 import android.net.Uri
 import android.util.Log
 import com.joshtalks.joshskills.common.BuildConfig
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.voip.base.constants.COURSE_ID
 import com.joshtalks.joshskills.voip.base.model.ApiHeader
 import com.joshtalks.joshskills.common.core.*
@@ -42,9 +42,9 @@ class JoshContentProvider : ContentProvider() {
             API_HEADER -> {
                 val apiHeader = ApiHeader(
                     token = "JWT " + PrefManager.getStringValue(API_TOKEN),
-                    versionName = BuildConfig.VERSION_NAME,
-                    versionCode = BuildConfig.VERSION_CODE.toString(),
-                    userAgent = "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString(),
+                    versionName =  AppObjectController.applicationDetails.versionName(),
+                    versionCode =  AppObjectController.applicationDetails.versionCode().toString(),
+                    userAgent = "APP_" +  AppObjectController.applicationDetails.versionName() + "_" +  AppObjectController.applicationDetails.versionCode().toString(),
                     acceptLanguage = PrefManager.getStringValue(USER_LOCALE)
                 )
 
@@ -77,7 +77,7 @@ class JoshContentProvider : ContentProvider() {
             CURRENT_ACTIVITY -> {
                 val cursor = MatrixCursor(arrayOf(CURRENT_ACTIVITY_COLUMN))
                 try {
-                    if(AppObjectController.joshApplication.isAppVisible())
+                    if(AppObjectController.applicationDetails.isAppVisual())
                         cursor.addRow(arrayOf(ActivityLifecycleCallback.currentActivity::class.java.simpleName))
                     else
                         cursor.addRow(arrayOf("NA"))

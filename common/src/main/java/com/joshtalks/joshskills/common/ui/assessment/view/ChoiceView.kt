@@ -16,9 +16,9 @@ class ChoiceView : FrameLayout {
     private var assessment: Assessment? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
-    private var fillInTheBlankChoiceStub: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub<FillInTheBlankChoiceView>? = null
-    private var matchTheFollowingChoiceStub: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub<MatchTheFollowingChoiceView>? = null
-    private var mcqChoicesStub: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub<MCQChoicesView>? = null
+    private var fillInTheBlankChoiceStub: Stub<FillInTheBlankChoiceView>? = null
+    private var matchTheFollowingChoiceStub: Stub<MatchTheFollowingChoiceView>? = null
+    private var mcqChoicesStub: Stub<MCQChoicesView>? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -38,15 +38,15 @@ class ChoiceView : FrameLayout {
 
     private fun init() {
         View.inflate(context, R.layout.choice_view, this)
-        mcqChoicesStub = _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub(
+        mcqChoicesStub = Stub(
             findViewById(R.id.single_selection_text_stub)
         )
         fillInTheBlankChoiceStub =
-            _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub(
+            Stub(
                 findViewById(R.id.fill_in_the_blank_stub)
             )
         matchTheFollowingChoiceStub =
-            _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub(
+            Stub(
                 findViewById(R.id.match_the_following_stub)
             )
     }

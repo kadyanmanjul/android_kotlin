@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.*
 import com.joshtalks.joshskills.common.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.common.repository.local.model.assessment.ReviseConcept
 import com.joshtalks.joshskills.common.repository.server.assessment.*
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.assessment.adapter.AssessmentQuestionAdapter

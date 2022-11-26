@@ -111,10 +111,10 @@ interface CommonNetworkService {
     suspend fun getSubmittedConversationPractise(@Query("conversationpractice_id") eventName: String): Response<List<SubmittedConversationPractiseModel>>
 
     @POST("$DIR/mentor/reminders/")
-    suspend fun setReminder(@Body requestSetReminderRequest: ReminderRequest): Response<_root_ide_package_.com.joshtalks.joshskills.common.repository.server.BaseResponse<Int>>
+    suspend fun setReminder(@Body requestSetReminderRequest: ReminderRequest): Response<BaseResponse<Int>>
 
     @POST("$DIR/mentor/delete_reminders/")
-    suspend fun deleteReminders(@Body deleteReminderRequest: DeleteReminderRequest): Response<_root_ide_package_.com.joshtalks.joshskills.common.repository.server.BaseResponse<*>>
+    suspend fun deleteReminders(@Body deleteReminderRequest: DeleteReminderRequest): Response<BaseResponse<*>>
 
     @GET("$DIR/leaderboard/get_leaderboard/")
     suspend fun getLeaderBoardData(

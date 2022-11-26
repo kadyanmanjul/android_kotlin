@@ -13,7 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
@@ -35,8 +35,8 @@ import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.common.ui.userprofile.fragments.MENTOR_ID
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.common.voip.constant.Category
-import com.joshtalks.joshskills.common.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.State
 
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken

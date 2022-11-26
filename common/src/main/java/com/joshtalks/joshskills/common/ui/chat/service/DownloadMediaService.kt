@@ -14,13 +14,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.JoshApplication
 import com.joshtalks.joshskills.common.core.JoshSkillExecutors
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.core.service.DOWNLOAD_OBJECT
 import com.joshtalks.joshskills.common.core.service.DownloadUtils
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.*
 import com.joshtalks.joshskills.common.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.DownloadMediaEventBusForLessonQuestion
@@ -66,7 +64,7 @@ class DownloadMediaService : Service(), FetchListener {
                 putExtra(DOWNLOAD_CHAT_OBJECT, chatModel)
                 putExtra(DOWNLOAD_FILE_URL, url)
             }
-            if (JoshApplication.isAppVisible) {
+            if (AppObjectController.applicationDetails.isAppVisual()) {
                 AppObjectController.joshApplication.startService(serviceIntent)
             } else {
                 ContextCompat.startForegroundService(
@@ -85,7 +83,7 @@ class DownloadMediaService : Service(), FetchListener {
                 putExtra(DOWNLOAD_LESSON_QUESTION_OBJECT, lessonQuestion)
                 putExtra(DOWNLOAD_FILE_URL, url)
             }
-            if (JoshApplication.isAppVisible) {
+            if (AppObjectController.applicationDetails.isAppVisual()) {
                 AppObjectController.joshApplication.startService(serviceIntent)
             } else {
                 ContextCompat.startForegroundService(

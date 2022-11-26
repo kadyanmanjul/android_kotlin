@@ -119,7 +119,7 @@ class Mentor {
                 } catch (ex:Exception){
                     LogException.catchException(ex)
                 }
-                if (joshApplication.isAppVisible()) {
+                if (AppObjectController.applicationDetails.isAppVisual()) {
                     val intent = Intent(joshApplication, SignUpActivity::class.java)
                     intent.apply {
                         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

@@ -6,8 +6,8 @@ import android.os.HandlerThread
 
 class ToneThread(name: String, context: Context) : HandlerThread(name) {
     private var mHandler: Handler? = null
-    private var engageCallRinger: _root_ide_package_.com.joshtalks.joshskills.common.ui.voip.util.EngageCallRinger =
-        _root_ide_package_.com.joshtalks.joshskills.common.ui.voip.util.EngageCallRinger(context)
+    private var engageCallRinger: EngageCallRinger =
+        EngageCallRinger(context)
     private var isPlaying = false
 
     override fun onLooperPrepared() {

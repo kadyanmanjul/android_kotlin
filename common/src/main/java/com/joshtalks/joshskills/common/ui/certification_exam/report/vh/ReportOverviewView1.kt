@@ -30,6 +30,7 @@ import java.text.DecimalFormat
 
 const val BTN_CHANGED_TEXT = "Show Certificate"
 
+private const val TAG = "ReportOverviewView1"
 @SuppressLint("NonConstantResourceId")
 class ReportOverviewView1(private val certificateExamReport: CertificateExamReportModel, private val examType: String?) {
 

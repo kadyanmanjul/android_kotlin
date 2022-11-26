@@ -30,9 +30,9 @@ class QuestionView : FrameLayout {
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private lateinit var questionTV: JoshTextView
     private lateinit var cardView: CardView
-    private var miniExoPlayerStub: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub<MiniExoPlayer>? = null
-    private var audioPlayerStub: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub<AudioPlayerView>? = null
-    private var imageViewStub: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub<AppCompatImageView>? = null
+    private var miniExoPlayerStub: Stub<MiniExoPlayer>? = null
+    private var audioPlayerStub: Stub<AudioPlayerView>? = null
+    private var imageViewStub: Stub<AppCompatImageView>? = null
     private var compositeDisposable = CompositeDisposable()
 
 
@@ -59,14 +59,14 @@ class QuestionView : FrameLayout {
         questionTV = findViewById(R.id.tv_question)
         cardView = findViewById(R.id.card_view)
         miniExoPlayerStub =
-            _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub(
+            Stub(
                 findViewById(R.id.video_view_stub)
             )
         audioPlayerStub =
-            _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub(
+            Stub(
                 findViewById(R.id.audio_player_stub)
             )
-        imageViewStub = _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.view.Stub(
+        imageViewStub = Stub(
             findViewById(R.id.image_view_stub)
         )
         addObservers()

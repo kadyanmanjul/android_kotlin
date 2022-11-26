@@ -14,9 +14,9 @@ import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
 import com.joshtalks.joshskills.common.databinding.ActivityIncomingNotificationBinding
-import com.joshtalks.joshskills.common.voip.Utils
-import com.joshtalks.joshskills.common.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.common.voip.data.local.PrefManager as VoipPrefManager
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

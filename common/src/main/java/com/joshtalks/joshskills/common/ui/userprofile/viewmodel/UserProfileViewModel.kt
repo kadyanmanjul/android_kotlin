@@ -91,7 +91,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     var message = Message()
     var singleLiveEvent = com.joshtalks.joshskills.common.base.EventLiveData
 
-    var context: JoshApplication = getApplication()
+    var context: Application = getApplication()
 
     val helpCountAbTestliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }

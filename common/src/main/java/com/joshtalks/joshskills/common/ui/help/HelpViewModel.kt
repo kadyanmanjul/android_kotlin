@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.common.core.ApiCallStatus
 import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.JoshApplication
 import com.joshtalks.joshskills.common.repository.server.FAQ
 import com.joshtalks.joshskills.common.repository.server.FAQCategory
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
@@ -17,7 +16,7 @@ import timber.log.Timber
 
 class HelpViewModel(application: Application) : AndroidViewModel(application) {
 
-    var context: JoshApplication = getApplication()
+    var context: Application = getApplication()
     val faqCategoryLiveData: MutableLiveData<List<FAQCategory>> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val faqListLiveData: MutableLiveData<List<FAQ>> = MutableLiveData()

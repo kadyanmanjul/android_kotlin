@@ -653,7 +653,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         .getLong("force_upgrade_after_version")
                 val forceUpdateFlag =
                     AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")
-                val currentAppVersion = BuildConfig.VERSION_CODE
+                val currentAppVersion =  AppObjectController.applicationDetails.versionCode()
 
                 if (currentAppVersion <= forceUpdateMinVersion && forceUpdateFlag) {
                     inAppUpdateManager?.checkForAppUpdate()

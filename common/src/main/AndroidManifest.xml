@@ -88,7 +88,6 @@ xmlns:tools="http://schemas.android.com/tools"
 </queries>
 
 <application
-    android:name=".core.JoshApplication"
     android:allowBackup="false"
     android:hardwareAccelerated="@bool/useHardwareAcceleration"
     android:hasFragileUserData="true"

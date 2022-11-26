@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 
 private const val TAG = "VoipPrefListener"
 

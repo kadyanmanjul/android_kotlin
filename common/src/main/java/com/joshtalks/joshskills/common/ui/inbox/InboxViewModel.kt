@@ -26,7 +26,7 @@ import timber.log.Timber
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
-    var context: JoshApplication = getApplication()
+    var context: Application = getApplication()
     var appDatabase = AppObjectController.appDatabase
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()

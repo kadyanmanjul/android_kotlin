@@ -267,7 +267,7 @@ class ReferralActivity : BaseActivity() {
 
 
     private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
+        return "https://play.google.com/store/apps/details?id=" + AppObjectController.applicationDetails.applicationId() + "&referrer=utm_source%3D$userReferralCode"
     }
 
     @Synchronized

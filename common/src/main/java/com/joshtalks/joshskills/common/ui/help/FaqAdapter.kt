@@ -16,13 +16,13 @@ class FaqAdapter(
     private val values: ArrayList<FAQ>
 ) : RecyclerView.Adapter<com.joshtalks.joshskills.common.ui.help.FaqAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): _root_ide_package_.com.joshtalks.joshskills.common.ui.help.FaqAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FaqAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.faq_item, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: _root_ide_package_.com.joshtalks.joshskills.common.ui.help.FaqAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FaqAdapter.ViewHolder, position: Int) {
         val item = values[position]
         holder.question.text = item.question.trim()
         holder.itemView.setOnClickListener {

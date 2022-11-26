@@ -3,9 +3,9 @@ package com.joshtalks.joshskills.common.base
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import com.joshtalks.joshskills.common.voip.notification.NotificationData
-import com.joshtalks.joshskills.common.voip.notification.NotificationPriority
-import com.joshtalks.joshskills.common.voip.notification.VoipNotification
+import com.joshtalks.joshskills.voip.notification.NotificationData
+import com.joshtalks.joshskills.voip.notification.NotificationPriority
+import com.joshtalks.joshskills.voip.notification.VoipNotification
 
 class BaseForegroundService : Service() {
     // For Testing Purpose

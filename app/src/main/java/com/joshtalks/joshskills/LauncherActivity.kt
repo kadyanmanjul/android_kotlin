@@ -3,6 +3,7 @@ package com.joshtalks.joshskills
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
@@ -10,16 +11,16 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
-import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
-import com.joshtalks.joshskills.base.constants.STOP_SERVICE
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
+import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.common.core.abTest.VariableMap
@@ -37,10 +38,8 @@ import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.common.util.DeepLinkData
-import com.joshtalks.joshskills.common.util.DeepLinkImpression
-import com.joshtalks.joshskills.common.util.DeepLinkRedirect
-import com.joshtalks.joshskills.common.util.DeepLinkRedirectUtil
+import com.joshtalks.joshskills.common.util.*
+import com.joshtalks.joshskills.navigator.JoshNavigator
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
@@ -78,7 +77,6 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         super.onCreate(savedInstanceState)
         // Setting a View
         setContentView(binding.root)
-        navigator = (intent?.getSerializableExtra(NAVIGATOR) as? Navigator)!!
         AppObjectController.navigator = JoshNavigator
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()

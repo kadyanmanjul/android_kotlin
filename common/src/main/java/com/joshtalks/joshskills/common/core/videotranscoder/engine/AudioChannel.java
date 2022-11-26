@@ -4,7 +4,7 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 
 import com.joshtalks.joshskills.common.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
-import com.joshtalks.joshskills.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
+import com.joshtalks.joshskills.common.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;

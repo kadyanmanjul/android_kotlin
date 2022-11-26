@@ -7,7 +7,7 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.common.ui.assessment.adapter.MatchTheFollowingChoiceAdapter
 
-class DragListener(private val listener: _root_ide_package_.com.joshtalks.joshskills.common.ui.assessment.listener.EmptyListListener) : View.OnDragListener {
+class DragListener(private val listener: EmptyListListener) : View.OnDragListener {
     private var isDropped = false
     override fun onDrag(
         v: View,

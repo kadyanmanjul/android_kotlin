@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.joshtalks.joshskills.common.core.custom_ui.pdfview.subsamplincscaleimageview.SubsamplingScaleImageView;
-import com.joshtalks.joshskills.core.custom_ui.pdfview.subsamplincscaleimageview.SubsamplingScaleImageView;
+import com.joshtalks.joshskills.common.core.custom_ui.pdfview.subsamplincscaleimageview.SubsamplingScaleImageView;
 
 import java.io.InputStream;
 import java.util.List;

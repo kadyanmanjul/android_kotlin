@@ -110,7 +110,7 @@ class DeepLinkUtil(private val context: Context) {
     }
 
     private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D${Mentor.getInstance().referralCode}"
+        return "https://play.google.com/store/apps/details?id=" + AppObjectController.applicationDetails.applicationId() + "&referrer=utm_source%3D${Mentor.getInstance().referralCode}"
     }
 
     interface OnDeepLinkListener {

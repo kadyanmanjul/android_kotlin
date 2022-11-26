@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.GENDER
 import com.joshtalks.joshskills.common.core.RegistrationMethods
 import com.joshtalks.joshskills.common.core.Utils
@@ -75,7 +76,7 @@ class PersonalInfoFragment : Fragment() {
             binding.textView6.visibility = View.GONE
         }
 
-        binding.appVersionTv.text = BuildConfig.VERSION_NAME
+        binding.appVersionTv.text =  AppObjectController.applicationDetails.versionName()
     }
 
     override fun onResume() {

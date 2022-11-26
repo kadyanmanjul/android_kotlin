@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.common.core.ApiCallStatus
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.core.JoshApplication
 import com.joshtalks.joshskills.common.core.PractiseUser
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.custom_ui.recorder.AudioRecording
@@ -39,7 +38,7 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
     var practiseWho: PractiseUser? = null
     var recordFile: File? = null
     var isRecordingRunning = false
-    private var context: JoshApplication = getApplication()
+    private var context: Application = getApplication()
     private val jobs = arrayListOf<Job>()
     private val mAudioRecording: AudioRecording =
         AudioRecording()

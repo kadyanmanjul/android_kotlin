@@ -9,7 +9,7 @@ import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
 import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.voip.Utils
+import com.joshtalks.joshskills.voip.Utils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

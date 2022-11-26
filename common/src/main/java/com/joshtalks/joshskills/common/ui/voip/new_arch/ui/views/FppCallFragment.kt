@@ -21,16 +21,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.base.BaseFragment
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.isValidContextForGlide
 import com.joshtalks.joshskills.common.databinding.FragmentFppCallBinding
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.common.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.common.voip.constant.CANCEL_INCOMING_TIMER
-import com.joshtalks.joshskills.common.voip.constant.State
-import com.joshtalks.joshskills.common.voip.data.local.PrefManager
-import com.joshtalks.joshskills.common.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.common.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
+import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import timber.log.Timber
 

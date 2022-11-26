@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
-import com.joshtalks.joshskills.common.base.constants.*
+import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.common.repository.local.model.User
@@ -24,7 +24,7 @@ import com.joshtalks.joshskills.common.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.common.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.Category
 import org.json.JSONObject
 
 object DeepLinkRedirectUtil {

@@ -18,7 +18,7 @@ import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 
 /**
  * The SwipeRefreshLayout should be used whenever the user can refresh the

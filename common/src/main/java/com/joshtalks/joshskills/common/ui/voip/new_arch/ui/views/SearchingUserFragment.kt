@@ -26,8 +26,8 @@ import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.SearchingRule
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.SearchingTip
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.adapter.SearchUserAdapter
-import com.joshtalks.joshskills.common.voip.constant.State
-import com.joshtalks.joshskills.common.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

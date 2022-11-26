@@ -23,7 +23,7 @@ import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import com.google.android.material.snackbar.Snackbar;
-import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.common.R;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

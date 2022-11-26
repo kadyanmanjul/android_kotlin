@@ -32,13 +32,13 @@ import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.joshtalks.joshskills.R;
-import com.joshtalks.joshskills.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.CompatDecoderFactory;
-import com.joshtalks.joshskills.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.DecoderFactory;
-import com.joshtalks.joshskills.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.ImageDecoder;
-import com.joshtalks.joshskills.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.ImageRegionDecoder;
-import com.joshtalks.joshskills.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.SkiaImageDecoder;
-import com.joshtalks.joshskills.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.SkiaImageRegionDecoder;
+import com.joshtalks.joshskills.common.R;
+import com.joshtalks.joshskills.common.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.CompatDecoderFactory;
+import com.joshtalks.joshskills.common.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.DecoderFactory;
+import com.joshtalks.joshskills.common.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.ImageDecoder;
+import com.joshtalks.joshskills.common.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.ImageRegionDecoder;
+import com.joshtalks.joshskills.common.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.SkiaImageDecoder;
+import com.joshtalks.joshskills.common.core.custom_ui.pdfview.subsamplincscaleimageview.decoder.SkiaImageRegionDecoder;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

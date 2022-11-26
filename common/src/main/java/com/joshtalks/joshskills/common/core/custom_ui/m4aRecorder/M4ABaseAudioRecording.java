@@ -2,8 +2,8 @@ package com.joshtalks.joshskills.common.core.custom_ui.m4aRecorder;
 
 import android.util.Log;
 
-import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener;
-import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem;
+import com.joshtalks.joshskills.common.core.custom_ui.recorder.OnAudioRecordListener;
+import com.joshtalks.joshskills.common.core.custom_ui.recorder.RecordingItem;
 
 import java.io.File;
 import java.io.FileNotFoundException;

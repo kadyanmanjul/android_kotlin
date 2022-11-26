@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.common.core
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import com.joshtalks.joshskills.common.base.BaseActivity
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.ui.referral.PromotionDialogFragment

@@ -60,7 +60,7 @@ class ConversationViewModel(
 ) :
     AndroidViewModel(application) {
     lateinit var recordFile: File
-    private var context: JoshApplication = getApplication()
+    private var context: Application = getApplication()
     private var appDatabase = AppObjectController.appDatabase
     private var chatDao = AppObjectController.appDatabase.chatDao()
     private var mRefreshControl = true

@@ -9,9 +9,9 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.repository.local.ListConverters
-import com.joshtalks.joshskills.common.repository.local.type_converter.TypeConverterAssessmentMediaType
-import com.joshtalks.joshskills.common.repository.local.type_converter.TypeConverterChoiceType
-import com.joshtalks.joshskills.common.repository.local.type_converter.TypeConverterQuestionStatus
+import com.joshtalks.joshskills.common.repository.local.typeconverter.TypeConverterAssessmentMediaType
+import com.joshtalks.joshskills.common.repository.local.typeconverter.TypeConverterChoiceType
+import com.joshtalks.joshskills.common.repository.local.typeconverter.TypeConverterQuestionStatus
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentMediaType
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentQuestionResponse
 import com.joshtalks.joshskills.common.repository.server.assessment.ChoiceType

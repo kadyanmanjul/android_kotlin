@@ -76,8 +76,8 @@ import com.joshtalks.joshskills.common.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.common.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
-import com.joshtalks.joshskills.common.voip.Utils.Companion.onMultipleBackPress
-import com.joshtalks.joshskills.common.voip.Utils.Companion.uiHandler
+import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -640,7 +640,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             )
             this.finish()
         } catch (ex: Exception) {
-            com.joshtalks.joshskills.core.showToast(getString(R.string.something_went_wrong))
+            com.joshtalks.joshskills.common.core.showToast(getString(R.string.something_went_wrong))
             ex.printStackTrace()
         }
     }
@@ -696,7 +696,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             this,
             COURSE_EXPLORER_CODE,
             null,
-            state = com.joshtalks.joshskills.core.BaseActivity.ActivityEnum.BuyPage,
+            state = com.joshtalks.joshskills.common.core.BaseActivity.ActivityEnum.BuyPage,
             isClickable = false
         )
     }

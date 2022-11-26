@@ -210,7 +210,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                 binding.testCompletedContainer.visibility = View.GONE
                 binding.testScoreContainer.visibility = View.GONE
                 binding.lockTestCard.visibility = View.VISIBLE
-                if (BuildConfig.DEBUG && BuildConfig.VERSION_CODE >= 50006) {
+                if (BuildConfig.DEBUG &&  AppObjectController.applicationDetails.versionCode() >= 50006) {
                     binding.startBtn.text = getStartButtonText()
                     binding.startBtn.isEnabled = true
                     binding.startBtn.isClickable = true

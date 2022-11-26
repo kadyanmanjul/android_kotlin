@@ -307,7 +307,7 @@ class SignUpActivity : ThemedBaseActivity() {
 
     private fun setupGoogleLogin() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken("359106841538-b9g8vrstg5aj9eldrg1it15estpdgjsl.apps.googleusercontent.com")
             .requestEmail().requestId().requestProfile().build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
     }
