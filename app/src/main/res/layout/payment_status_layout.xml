@@ -81,7 +81,7 @@
         tools:visibility="visible" />
 
 
-    <com.google.android.material.button.MaterialButton
+    <TextView
         android:id="@+id/try_again"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -92,15 +92,13 @@
         android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
         android:textColor="@color/warning"
         android:visibility="gone"
-        app:backgroundTint="@color/transparent"
-        app:cornerRadius="@dimen/_32sdp"
-        app:icon="@drawable/retry"
-        app:iconTint="@color/warning"
+        android:background="@drawable/rounded_corner_with_stroke"
+        android:includeFontPadding="false"
+        android:drawablePadding="@dimen/_6sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/call"
-        app:strokeColor="@color/warning"
-        app:strokeWidth="1dp"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        app:drawableStartCompat="@drawable/retry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
