@@ -100,6 +100,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
+
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/free_trial_timer_new_ui"
                             android:layout_width="match_parent"
@@ -115,27 +116,27 @@
                             app:layout_constraintTop_toTopOf="parent"
                             tools:visibility="visible">
 
+
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/timer_text"
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Unlimited access for 1 year @ just ₹450"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
                                 android:textColor="@color/text_default"
-                                app:layout_constraintBottom_toTopOf="@+id/time_text"
                                 app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:id="@+id/time_text"
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/timer_text"
+                                android:layout_marginStart="@dimen/_10sdp"
                                 android:orientation="horizontal"
-                                android:layout_marginTop="@dimen/_8sdp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="@+id/timer_text"
-                                app:layout_constraintTop_toBottomOf="@+id/timer_text">
+                                app:layout_constraintStart_toEndOf="@+id/timer_text"
+                                app:layout_constraintTop_toTopOf="parent">
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/txt_hours"
@@ -187,6 +188,7 @@
 
                             </androidx.appcompat.widget.LinearLayoutCompat>
                         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/video_card"

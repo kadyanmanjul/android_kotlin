@@ -23,7 +23,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -80,7 +83,9 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_gif.view.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import java.math.BigDecimal
@@ -182,6 +187,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
         binding.vm = viewModel
         binding.executePendingBindings()
         paymentManager.initializePaymentGateway()
+
     }
 
     override fun onCreated() {
@@ -269,6 +275,8 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                 PAYMENT_PENDING -> showPendingDialog()
             }
         }
+
+//        updateTimerBanner()
     }
 
     fun addObserver() {
@@ -798,6 +806,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                         }
                         binding.freeTrialTimerNewUi.visibility = View.VISIBLE
                         binding.timerText.text = buyCourseFeatureModel.timerBannerText
+                        updateTimerBanner()
                         binding.txtHours.text = freeTrailTime[0]
                         if (freeTrailTime.getOrNull(1) != null)
                             binding.txtMinute.text = freeTrailTime[1]
@@ -997,5 +1006,19 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                 }
             }
         }
+    }
+
+    private fun updateTimerBanner(){
+            binding.timeText.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                startToStart = ConstraintLayout.LayoutParams.UNSET
+                topToTop = ConstraintLayout.LayoutParams.UNSET
+                startToStart = binding.freeTrialTimerNewUi.id
+                topToBottom = binding.timerText.id
+                bottomToBottom = binding.freeTrialTimerNewUi.id
+                updateMargins(0, 16, 0, 0)
+            }
+            binding.timerText.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+            }
     }
 }
