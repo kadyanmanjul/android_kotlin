@@ -1664,3 +1664,18 @@ fun isValidContextForGlide(context: Context?): Boolean {
     }
     return true
 }
+
+//fun ConstraintLayout.updateConstraints(instructions: List<ConstraintInstructions>) {
+//    ConstraintSet().also {
+//        it.clone(this)
+//        for (instruction in instructions) {
+//            if (instruction is ConnectConstraint) it.connect(instruction.startID, instruction.startSide, instruction.endID, instruction.endSide)
+//            if (instruction is DisconnectConstraint) it.clear(instruction.startID, instruction.startSide)
+//        }
+//        it.applyTo(this)
+//    }
+//}
+
+fun Int.pxToDP(context: Context): Int {
+    return (this / context.resources.displayMetrics.density).toInt()
+}

@@ -96,6 +96,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             tools:visibility="visible" />
 
+
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/video_card"
                             android:layout_width="match_parent"
