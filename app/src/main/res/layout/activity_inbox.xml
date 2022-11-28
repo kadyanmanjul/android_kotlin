@@ -169,6 +169,9 @@
 
                     <include
                         layout="@layout/payment_status_layout"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_marginHorizontal="@dimen/_12sdp"
                         tools:visibility="gone" />
                 </LinearLayout>
 

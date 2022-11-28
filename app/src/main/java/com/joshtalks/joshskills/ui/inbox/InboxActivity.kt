@@ -12,6 +12,7 @@ import android.service.notification.StatusBarNotification
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
@@ -409,7 +411,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         val icon = paymentStatusView.findViewById<AppCompatImageView>(R.id.info_icon)
         val title = paymentStatusView.findViewById<AppCompatTextView>(R.id.title)
         val description = paymentStatusView.findViewById<AppCompatTextView>(R.id.description)
-        val tryAgain = paymentStatusView.findViewById<MaterialButton>(R.id.try_again)
+        val tryAgain = paymentStatusView.findViewById<TextView>(R.id.try_again)
         val callText = paymentStatusView.findViewById<AppCompatTextView>(R.id.call)
         val number = paymentStatusView.findViewById<AppCompatTextView>(R.id.number)
 
@@ -432,15 +434,21 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         title.text = getString(titleTextID)
         description.text = getString(descTextId)
         if (isTryAgainVisible && !isCapsuleCourseBought) {
-            tryAgain.visibility = View.VISIBLE
-            tryAgain.setOnClickListener {
-                BuyPageActivity.startBuyPageActivity(
-                    this,
-                    AppObjectController.getFirebaseRemoteConfig().getString(
-                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                    ),
-                    "INBOX_TRY_AGAIN"
-                )
+            tryAgain.apply {
+                visibility = View.VISIBLE
+                textColorSet(colorTintIcon)
+                backgroundTintList = ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon)
+                TextViewCompat.setCompoundDrawableTintList(this, ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon))
+//                compoundDrawableTintList = ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon)
+                setOnClickListener {
+                    BuyPageActivity.startBuyPageActivity(
+                        this@InboxActivity,
+                        AppObjectController.getFirebaseRemoteConfig().getString(
+                            FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                        ),
+                        "INBOX_TRY_AGAIN"
+                    )
+                }
             }
         } else {
             tryAgain.visibility = View.GONE
