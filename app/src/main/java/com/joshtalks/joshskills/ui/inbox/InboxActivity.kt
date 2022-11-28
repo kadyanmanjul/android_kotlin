@@ -131,7 +131,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         this,
                         data.id,
                         startedFrom = this@InboxActivity.javaClass.simpleName,
-                        isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT),
+                        isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT),
                         buySubscription = false
                     )
                 }
@@ -512,6 +512,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 inboxAdapter.addItems(temp)
                 val capsuleCourse = temp.firstOrNull { it.isCapsuleCourse }
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
+                PrefManager.put(IS_SUBSCRIPTION_STARTED, isSubscriptionCourseBought)
                 isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
                     if (paymentStatusView.visibility != View.VISIBLE) {

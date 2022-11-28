@@ -547,7 +547,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                 testId.toInt(),
                 startedFrom = this@BuyPageActivity.javaClass.simpleName,
                 buySubscription = false,
-                isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+                isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
             )
         }
     }

@@ -71,7 +71,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     private fun addObservers() {
         binding.nameEditText.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
-                EditorInfo.IME_ACTION_SEND -> {
+                EditorInfo.IME_ACTION_DONE -> {
                     submitProfile()
                     true
                 }

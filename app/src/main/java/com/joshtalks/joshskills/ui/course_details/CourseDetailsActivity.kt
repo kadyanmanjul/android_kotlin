@@ -106,6 +106,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
     private var flowFrom: String? = null
     private var downloadID: Long = -1
     private var is100PointsActive = false
+    private var isCoursebought : Boolean = false
 
     var expiredTime: Long = 0L
     var isPointsScoredMoreThanEqualTo100 = false
@@ -153,6 +154,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         testId = intent.getIntExtra(KEY_TEST_ID, 0)
         isFromFreeTrial = intent.getBooleanExtra(IS_FROM_FREE_TRIAL, false)
         buySubscription = intent.getBooleanExtra(BUY_SUBSCRIPTION, false)
+        isCoursebought = intent.getBooleanExtra(IS_COURSE_BOUGHT, false)
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
@@ -453,7 +455,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                     testId,
                     viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
                     courseName,
-                    isFromFreeTrial
+                    isCoursebought
                 )
             }
             CardType.LONG_DESCRIPTION -> {
@@ -689,8 +691,8 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                         this,
                         10,
                         startedFrom = this@CourseDetailsActivity.javaClass.simpleName,
-                        isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT),
-                        buySubscription = false
+                        buySubscription = false,
+                        isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
                     )
                 },{
                     it.printStackTrace()
@@ -1016,6 +1018,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         const val WHATSAPP_URL = "whatsapp-url"
         const val IS_FROM_FREE_TRIAL = "is_from_free_trial"
         const val BUY_SUBSCRIPTION = "buy_subscription"
+        const val IS_COURSE_BOUGHT = "is_course_bought"
 
         fun startCourseDetailsActivity(
             activity: Activity,
@@ -1024,12 +1027,14 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             startedFrom: String = EMPTY,
             flags: Array<Int> = arrayOf(),
             isFromFreeTrial: Boolean = false,
-            buySubscription: Boolean = false
+            buySubscription: Boolean = false,
+            isCourseBought: Boolean = false
         ) {
             Intent(activity, CourseDetailsActivity::class.java).apply {
                 putExtra(KEY_TEST_ID, testId)
                 putExtra(IS_FROM_FREE_TRIAL, isFromFreeTrial)
                 putExtra(BUY_SUBSCRIPTION, buySubscription)
+                putExtra(IS_COURSE_BOUGHT, isCourseBought)
                 if (whatsappUrl.isNullOrBlank().not()) {
                     putExtra(WHATSAPP_URL, whatsappUrl)
                 }

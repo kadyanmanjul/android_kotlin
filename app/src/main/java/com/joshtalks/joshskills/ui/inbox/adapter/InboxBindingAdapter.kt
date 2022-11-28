@@ -83,4 +83,12 @@ object InboxBindingAdapter {
         view.adapter = adapter
         adapter.setListener(function)
     }
+
+    @BindingAdapter(value = ["recommendedImage"], requireAll = false)
+    @JvmStatic
+    fun recommendedImage(imageView: ImageView, caller: InboxRecommendedCourse?) {
+        caller?.let {
+            imageView.setUserImageOrInitials(it.courseIcon, it.courseName, isRound = true)
+        } ?: imageView.setImageResource(R.drawable.ic_call_placeholder)
+    }
 }
