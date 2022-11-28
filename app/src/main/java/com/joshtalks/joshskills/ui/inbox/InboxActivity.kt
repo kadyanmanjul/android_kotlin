@@ -441,7 +441,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 textColorSet(colorTintIcon)
                 backgroundTintList = ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon)
                 TextViewCompat.setCompoundDrawableTintList(this, ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon))
-//                compoundDrawableTintList = ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon)
                 setOnClickListener {
                     BuyPageActivity.startBuyPageActivity(
                         this@InboxActivity,
