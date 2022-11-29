@@ -2,9 +2,13 @@ package com.greentoad.turtlebody.mediapicker.ui.component.media.audiovideo
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.FileManager
 import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
 import com.greentoad.turtlebody.mediapicker.ui.common.MediaListFragment
@@ -17,9 +21,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.util.*
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_btn_done
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_recycler_view
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
 
 /**
  * Created by niraj on 12-04-2019.
@@ -42,6 +43,15 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
     private var mDefaultAdapter: DefaultAdapter = DefaultAdapter()
     private var mImageModelList: MutableList<DefaultModel> = arrayListOf()
     private var mSelectedImageModelList: MutableList<DefaultModel> = arrayListOf()
+    private val frameProgress by lazy {
+        view?.findViewById<FrameLayout>(R.id.frame_progress)
+    }
+    private val recyclerView by lazy {
+        view?.findViewById<RecyclerView>(R.id.file_fragment_recycler_view)
+    }
+    private val doneBtn by lazy {
+        view?.findViewById<Button>(R.id.file_fragment_btn_done)
+    }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -118,7 +128,7 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
                 }
             }
             (activity as ActivityLibMain).updateCounter(mSelectedImageModelList.size)
-            file_fragment_btn_done.isEnabled = mSelectedImageModelList.size > 0
+            doneBtn?.isEnabled = mSelectedImageModelList.size > 0
         }
     }
 
@@ -126,8 +136,8 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
     private fun initAdapter() {
         mDefaultAdapter.setListener(this)
         mDefaultAdapter.mShowCheckBox = mMediaPickerConfig.mAllowMultiSelection
-        file_fragment_recycler_view.layoutManager = GridLayoutManager(context, 2)
-        file_fragment_recycler_view.adapter = mDefaultAdapter
+        recyclerView?.layoutManager = GridLayoutManager(context, 2)
+        recyclerView?.adapter = mDefaultAdapter
         fetchImageFiles()
 
     }
@@ -150,21 +160,18 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Boolean> {
                 override fun onSubscribe(@NonNull d: Disposable) {
-                    frame_progress.visibility = View.VISIBLE
+                    frameProgress?.visibility = View.VISIBLE
                 }
 
                 override fun onSuccess(t: Boolean) {
 
                     mDefaultAdapter.setData(mImageModelList)
-                    if (frame_progress!=null) {
-                        frame_progress.visibility = View.GONE
-                    }
+                    frameProgress?.let {it.visibility = View.GONE}
+
                 }
 
                 override fun onError(@NonNull e: Throwable) {
-                    if (frame_progress!=null) {
-                        frame_progress.visibility = View.GONE
-                    }
+                    frameProgress?.let {it.visibility = View.GONE}
                 }
             })
     }

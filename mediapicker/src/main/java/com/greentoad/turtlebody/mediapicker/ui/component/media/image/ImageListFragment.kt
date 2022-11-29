@@ -2,9 +2,13 @@ package com.greentoad.turtlebody.mediapicker.ui.component.media.image
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.FileManager
 import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
 import com.greentoad.turtlebody.mediapicker.ui.common.MediaListFragment
@@ -16,9 +20,6 @@ import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_btn_done
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_recycler_view
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
 
 class ImageListFragment : MediaListFragment(), ImageAdapter.OnImageClickListener {
 
@@ -39,6 +40,15 @@ class ImageListFragment : MediaListFragment(), ImageAdapter.OnImageClickListener
     private var mImageAdapter: ImageAdapter = ImageAdapter()
     private var mImageModelList: MutableList<ImageModel> = arrayListOf()
     private var mSelectedImageModelList: MutableList<ImageModel> = arrayListOf()
+    private val frameProgress by lazy {
+        view?.findViewById<FrameLayout>(R.id.frame_progress)
+    }
+    private val recyclerView by lazy {
+        view?.findViewById<RecyclerView>(R.id.file_fragment_recycler_view)
+    }
+    private val doneBtn by lazy {
+        view?.findViewById<Button>(R.id.file_fragment_btn_done)
+    }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -109,7 +119,7 @@ class ImageListFragment : MediaListFragment(), ImageAdapter.OnImageClickListener
                 }
             }
             (activity as ActivityLibMain).updateCounter(mSelectedImageModelList.size)
-            file_fragment_btn_done.isEnabled = mSelectedImageModelList.size > 0
+            doneBtn?.isEnabled = mSelectedImageModelList.size > 0
         }
     }
 
@@ -117,8 +127,8 @@ class ImageListFragment : MediaListFragment(), ImageAdapter.OnImageClickListener
     private fun initAdapter() {
         mImageAdapter.setListener(this)
         mImageAdapter.mShowCheckBox = mMediaPickerConfig.mAllowMultiSelection
-        file_fragment_recycler_view.layoutManager = GridLayoutManager(context, 2)
-        file_fragment_recycler_view.adapter = mImageAdapter
+        recyclerView?.layoutManager = GridLayoutManager(context, 2)
+        recyclerView?.adapter = mImageAdapter
         fetchImageFiles()
 
     }
@@ -141,16 +151,16 @@ class ImageListFragment : MediaListFragment(), ImageAdapter.OnImageClickListener
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Boolean> {
                 override fun onSubscribe(@NonNull d: Disposable) {
-                    frame_progress.visibility = View.VISIBLE
+                    frameProgress?.visibility = View.VISIBLE
                 }
 
                 override fun onSuccess(t: Boolean) {
                     mImageAdapter.setData(mImageModelList)
-                    frame_progress.visibility = View.GONE
+                    frameProgress?.visibility = View.GONE
                 }
 
                 override fun onError(@NonNull e: Throwable) {
-                    frame_progress.visibility = View.GONE
+                    frameProgress?.visibility = View.GONE
                 }
             })
     }

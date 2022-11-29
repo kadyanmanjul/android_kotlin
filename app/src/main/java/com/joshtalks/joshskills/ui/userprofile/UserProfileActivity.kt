@@ -440,7 +440,7 @@ class UserProfileActivity : CoreJoshActivity() {
             }
         }
         findViewById<AppCompatImageView>(R.id.iv_help).visibility = View.GONE
-        with(findViewById<AppCompatImageView>(R.id.iv_edit)) {
+        with(findViewById<AppCompatTextView>(R.id.iv_edit)) {
             if (mentorId == Mentor.getInstance().getId()) {
                 visibility = View.VISIBLE
                 setOnClickListener {

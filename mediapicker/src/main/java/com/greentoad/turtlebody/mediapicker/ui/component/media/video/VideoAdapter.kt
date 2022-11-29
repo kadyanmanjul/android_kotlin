@@ -3,11 +3,12 @@ package com.greentoad.turtlebody.mediapicker.ui.component.media.video
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
-import kotlinx.android.synthetic.main.tb_media_picker_item_video.view.*
+import com.greentoad.turtlebody.mediapicker.widget.ImageViewCheckable
 import java.io.File
 
 /**
@@ -51,24 +52,25 @@ class VideoAdapter: RecyclerView.Adapter<VideoAdapter.VideoVewHolder>() {
 
     inner class VideoVewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(pData: VideoModel){
+            val videoCheckbox = itemView.findViewById<ImageViewCheckable>(R.id.tb_media_picker_item_video_checkbox)
 
             Glide.with(itemView)
                     .load(File(pData.thumbnailPath))
-                    .into(itemView.tb_media_picker_item_video_image)
+                    .into(itemView.findViewById(R.id.tb_media_picker_item_video_image))
 
-            itemView.tb_media_picker_item_video_checkbox.isChecked = pData.isSelected
+            videoCheckbox.isChecked = pData.isSelected
 
             itemView.setOnClickListener {
                 mOnVideoClickListener?.onVideoCheck(pData)
             }
 
-            itemView.tb_media_picker_item_video_duration.text = UtilTime.timeFormatted(pData.duration.toLong())
+            itemView.findViewById<TextView>(R.id.tb_media_picker_item_video_duration) .text = UtilTime.timeFormatted(pData.duration.toLong())
 
             if(!mShowCheckBox){
-                itemView.tb_media_picker_item_video_checkbox.visibility = View.GONE
+                videoCheckbox.visibility = View.GONE
             }
             else{
-                itemView.tb_media_picker_item_video_checkbox.visibility = View.VISIBLE
+                videoCheckbox.visibility = View.VISIBLE
             }
         }
     }

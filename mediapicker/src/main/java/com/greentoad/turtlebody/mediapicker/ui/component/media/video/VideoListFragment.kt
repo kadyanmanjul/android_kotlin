@@ -2,9 +2,13 @@ package com.greentoad.turtlebody.mediapicker.ui.component.media.video
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.FileManager
 import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
 import com.greentoad.turtlebody.mediapicker.ui.common.MediaListFragment
@@ -16,9 +20,6 @@ import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_btn_done
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_recycler_view
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
 
 class VideoListFragment : MediaListFragment(), VideoAdapter.OnVideoClickListener {
 
@@ -37,6 +38,15 @@ class VideoListFragment : MediaListFragment(), VideoAdapter.OnVideoClickListener
     private var mVideoAdapter: VideoAdapter = VideoAdapter()
     private var mVideoModelList: MutableList<VideoModel> = arrayListOf()
     private var mSelectedVideoModelList: MutableList<VideoModel> = arrayListOf()
+    private val frameProgress by lazy {
+        view?.findViewById<FrameLayout>(R.id.frame_progress)
+    }
+    private val recyclerView by lazy {
+        view?.findViewById<RecyclerView>(R.id.file_fragment_recycler_view)
+    }
+    private val doneBtn by lazy {
+        view?.findViewById<Button>(R.id.file_fragment_btn_done)
+    }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -106,7 +116,7 @@ class VideoListFragment : MediaListFragment(), VideoAdapter.OnVideoClickListener
                 }
             }
             (activity as ActivityLibMain).updateCounter(mSelectedVideoModelList.size)
-            file_fragment_btn_done.isEnabled = mSelectedVideoModelList.size > 0
+            doneBtn?.isEnabled = mSelectedVideoModelList.size > 0
         }
     }
 
@@ -115,8 +125,8 @@ class VideoListFragment : MediaListFragment(), VideoAdapter.OnVideoClickListener
         mVideoAdapter.setListener(this)
         mVideoAdapter.mShowCheckBox = mMediaPickerConfig.mAllowMultiSelection
 
-        file_fragment_recycler_view.layoutManager = GridLayoutManager(context, 2)
-        file_fragment_recycler_view.adapter = mVideoAdapter
+        recyclerView?.layoutManager = GridLayoutManager(context, 2)
+        recyclerView?.adapter = mVideoAdapter
         fetchVideoFiles()
 
     }
@@ -139,16 +149,16 @@ class VideoListFragment : MediaListFragment(), VideoAdapter.OnVideoClickListener
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Boolean> {
                 override fun onSubscribe(@NonNull d: Disposable) {
-                    frame_progress.visibility = View.VISIBLE
+                    frameProgress?.visibility = View.VISIBLE
                 }
 
                 override fun onSuccess(t: Boolean) {
                     mVideoAdapter.setData(mVideoModelList)
-                    frame_progress.visibility = View.GONE
+                    frameProgress?.visibility = View.GONE
                 }
 
                 override fun onError(@NonNull e: Throwable) {
-                    frame_progress.visibility = View.GONE
+                    frameProgress?.visibility = View.GONE
                 }
             })
     }

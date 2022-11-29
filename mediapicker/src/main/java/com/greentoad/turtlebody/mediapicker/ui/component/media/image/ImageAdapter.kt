@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.greentoad.turtlebody.mediapicker.R
-import kotlinx.android.synthetic.main.tb_media_picker_item_image.view.*
+import com.greentoad.turtlebody.mediapicker.widget.ImageViewCheckable
 import java.io.File
 
 /**
@@ -50,22 +50,22 @@ class ImageAdapter: RecyclerView.Adapter<ImageAdapter.ImageVewHolder>() {
 
     inner class ImageVewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(pData: ImageModel){
-
+            val checkable = itemView.findViewById<ImageViewCheckable>(R.id.item_image_checkbox)
             Glide.with(itemView)
                     .load(File(pData.thumbnailPath))
-                    .into(itemView.item_image_cover_image)
+                    .into(itemView.findViewById(R.id.item_image_cover_image))
 
-            itemView.item_image_checkbox.isChecked = pData.isSelected
+            checkable.isChecked = pData.isSelected
 
             itemView.setOnClickListener {
                 mOnImageClickListener?.onImageCheck(pData)
             }
 
             if(!mShowCheckBox){
-                itemView.item_image_checkbox.visibility = View.GONE
+                checkable.visibility = View.GONE
             }
             else{
-                itemView.item_image_checkbox.visibility = View.VISIBLE
+                checkable.visibility = View.VISIBLE
             }
         }
     }

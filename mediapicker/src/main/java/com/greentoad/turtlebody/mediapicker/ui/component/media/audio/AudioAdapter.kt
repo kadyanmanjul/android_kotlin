@@ -4,13 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
+import android.widget.CheckBox
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.greentoad.turtlebody.mediapicker.R
-import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.item_audio_checkbox
-import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.item_audio_mimetype_icon
-import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.item_audio_name
-import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.item_audio_size
 
 class AudioAdapter : RecyclerView.Adapter<AudioAdapter.AudioVewHolder>() {
     private var mData: MutableList<AudioModel> = arrayListOf()
@@ -51,30 +49,30 @@ class AudioAdapter : RecyclerView.Adapter<AudioAdapter.AudioVewHolder>() {
 
     inner class AudioVewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(pData: AudioModel){
-
+            val audioCheckBox = itemView.findViewById<CheckBox>(R.id.item_audio_checkbox)
             Glide.with(itemView)
                     .load(getDrawableForMime(pData.mimeType, pData.filePath))
-                    .into(itemView.item_audio_mimetype_icon)
+                    .into(itemView.findViewById(R.id.item_audio_mimetype_icon))
 
-            itemView.item_audio_checkbox.isChecked = pData.isSelected
+            audioCheckBox.isChecked = pData.isSelected
             val size = (pData.size/1000).toString()
 
-            itemView.item_audio_name.text = pData.name
-            itemView.item_audio_size.text = "$size KB"
+            itemView.findViewById<TextView>(R.id.item_audio_name).text = pData.name
+            itemView.findViewById<TextView>(R.id.item_audio_size).text = "$size KB"
 
             itemView.setOnClickListener {
                 mOnAudioClickListener?.onAudioCheck(pData)
             }
 
-            itemView.item_audio_checkbox.setOnClickListener {
+            audioCheckBox.setOnClickListener {
                 mOnAudioClickListener?.onAudioCheck(pData)
             }
 
             if(!mShowCheckBox){
-                itemView.item_audio_checkbox.visibility = View.GONE
+                audioCheckBox.visibility = View.GONE
             }
             else{
-                itemView.item_audio_checkbox.visibility = View.VISIBLE
+                audioCheckBox.visibility = View.VISIBLE
             }
         }
 
