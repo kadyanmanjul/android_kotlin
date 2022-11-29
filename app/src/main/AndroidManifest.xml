@@ -197,21 +197,7 @@
                 <data
                     android:host="joshskills-alternate.app.link"
                     android:scheme="https" />
-                <data
-                    android:host="joshskills.app.com"
-                    android:scheme="https" />
                 <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="app.joshtalks.org"
-                    android:pathPrefix="/sht/ag"
-                    android:scheme="http" />
             </intent-filter>
         </activity>
         <activity
