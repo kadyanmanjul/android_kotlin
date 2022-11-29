@@ -430,7 +430,10 @@ fun Context.getHangUpIntent(): PendingIntent {
         Utils.context,
         1103,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 
@@ -451,7 +454,10 @@ fun getDeclineCallIntent(): PendingIntent {
         Utils.context,
         1104,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 

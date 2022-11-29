@@ -32,6 +32,7 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         items.clear()
         items.addAll(newList)
+        notifyDataSetChanged()
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -44,6 +45,7 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
         val oldItem = items.clone() as List<FavoriteCaller>
         items.stream().forEach { it.selected = false }
         withContext(Dispatchers.Main) {
+            notifyDataSetChanged()
             val diffResult = DiffUtil.calculateDiff(FavoriteDiffUtilCallback(oldItem, items))
             diffResult.dispatchUpdatesTo(this@FppFavoriteAdapter)
         }

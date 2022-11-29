@@ -201,8 +201,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 )
                 val response = service.verifyOTP(reqObj)
                 if (response.isSuccessful) {
+                    saveTrueCallerImpression(OTP_SUBMITTED)
                     response.body()?.run {
-
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
                             RegistrationMethods.MOBILE_NUMBER

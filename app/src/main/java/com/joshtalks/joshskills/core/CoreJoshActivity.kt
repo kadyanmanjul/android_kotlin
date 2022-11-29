@@ -50,7 +50,7 @@ abstract class CoreJoshActivity : BaseActivity() {
             .show(supportFragmentManager, "promotion_show_dialog")
         this.intent = null
     }
-
+/*
     private fun openFeedbackFragment(feedbackTypes: FeedbackTypes, questionId: String) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         val prev = supportFragmentManager.findFragmentByTag("feedback_fragment_dialog")
@@ -61,7 +61,7 @@ abstract class CoreJoshActivity : BaseActivity() {
         FeedbackFragment.newInstance(feedbackTypes, questionId)
             .show(supportFragmentManager, "feedback_fragment_dialog")
     }
-/*
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         lifecycleScope.launch(Dispatchers.IO){
@@ -96,7 +96,7 @@ abstract class CoreJoshActivity : BaseActivity() {
                 LogException.catchException(ex)
             }
         }
-    }*/
+    }
 
     private suspend fun canTakeRequestFeedbackFromUser(questionId: String): Boolean {
         return withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
@@ -121,4 +121,5 @@ abstract class CoreJoshActivity : BaseActivity() {
     private fun showFeedback(feedbackTypes: FeedbackTypes, questionId: String) {
         openFeedbackFragment(feedbackTypes, questionId)
     }
+*/
 }

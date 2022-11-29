@@ -795,7 +795,7 @@ class StatusCodeInterceptor : Interceptor {
                         AppObjectController.joshApplication.packageName
                     )
                 ) {
-                    if (!IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
+                    if (IGNORE_UNAUTHORISED.none { path -> chain.request().url.toString().contains(path) }) {
                         PrefManager.logoutUser()
                         LastSyncPrefManager.clear()
                         WorkManagerAdmin.instanceIdGenerateWorker()

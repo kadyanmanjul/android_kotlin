@@ -15,26 +15,9 @@ import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
-import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SINGLE_SPACE
-import com.joshtalks.joshskills.core.SignUpStepStatus
-import com.joshtalks.joshskills.core.TIMEOUT_TIME
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.VerificationService
-import com.joshtalks.joshskills.core.VerificationStatus
-import com.joshtalks.joshskills.core.VerificationVia
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.getCountryIsoCode
-import com.joshtalks.joshskills.core.getDefaultCountryIso
-import com.joshtalks.joshskills.core.hideKeyboard
-import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpOptionsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
@@ -210,6 +193,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         startProgress()
         hideKeyboard(requireActivity(), binding.mobileEt)
         evaluateVerificationService()
+        viewModel.saveTrueCallerImpression(PHONE_NUMBER_SUBMITTED)
     }
 
     fun clearPhoneNumber() {

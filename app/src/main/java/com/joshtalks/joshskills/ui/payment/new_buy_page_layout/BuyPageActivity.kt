@@ -203,8 +203,8 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
                 }
                 BUY_COURSE_LAYOUT_DATA -> {
                     try {
-                        dynamicCardCreation(it.obj as BuyCourseFeatureModel)
                         paymentButton()
+                        dynamicCardCreation(it.obj as BuyCourseFeatureModel)
                         clickRatingOpen?.setOnClickListener {
                             openRatingAndReviewScreen()
                         }

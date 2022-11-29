@@ -57,7 +57,9 @@ data class InboxEntity constructor(
     @ColumnInfo(name = "is_extend_ft_applicable")
     @SerializedName("is_extend_ft_applicable") val isFreeTrialExtendable: Boolean = false,
     @ColumnInfo(name = "form_submitted")
-    @SerializedName("form_submitted") val formSubmitted: Boolean = true
+    @SerializedName("form_submitted") val formSubmitted: Boolean = true,
+    @ColumnInfo(name = "bb_tip_text")
+    @SerializedName("bb_tip_text") val bbTipText: String? = null
 
 ) : Parcelable {
     override fun hashCode(): Int {

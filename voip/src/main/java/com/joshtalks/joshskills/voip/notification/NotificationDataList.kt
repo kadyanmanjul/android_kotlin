@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.voip.notification
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.RemoteViews
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
@@ -35,10 +36,16 @@ class ConnectedNotification {
             putExtras(bundle)
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
-        val acceptPendingIntent=
-            PendingIntent.getActivity(Utils.context,1101,callingActivity, PendingIntent.FLAG_CANCEL_CURRENT)
+        val acceptPendingIntent =
+            PendingIntent.getActivity(
+                Utils.context, 1101, callingActivity,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+                else
+                    PendingIntent.FLAG_CANCEL_CURRENT
+            )
         //val declinePendingIntent=PendingIntent.getActivity(Utils.context,1011,tapIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-        remoteView.setOnClickPendingIntent(R.id.answer_text,acceptPendingIntent)
+        remoteView.setOnClickPendingIntent(R.id.answer_text, acceptPendingIntent)
         return remoteView
     }
 }

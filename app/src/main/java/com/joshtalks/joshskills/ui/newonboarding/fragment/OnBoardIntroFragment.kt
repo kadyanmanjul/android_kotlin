@@ -150,6 +150,7 @@ class OnBoardIntroFragment : Fragment() {
                         SelectCourseHeadingFragment.TAG
                     )
                 }
+                else -> {}
             }
         }
     }
