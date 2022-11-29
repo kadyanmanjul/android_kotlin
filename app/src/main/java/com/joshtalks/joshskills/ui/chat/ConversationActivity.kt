@@ -119,10 +119,12 @@ import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -520,10 +522,11 @@ class ConversationActivity :
     }
 
     private fun showFirstCallBottomSheet() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            delay(500)
-            FirstCallBottomSheet.showDialog(supportFragmentManager)
-        }
+        if (getVoipState() == State.IDLE)
+            lifecycleScope.launch(Dispatchers.Main) {
+                delay(500)
+                FirstCallBottomSheet.showDialog(supportFragmentManager)
+            }
     }
 
     fun showFreeTrialPaymentScreen() {
