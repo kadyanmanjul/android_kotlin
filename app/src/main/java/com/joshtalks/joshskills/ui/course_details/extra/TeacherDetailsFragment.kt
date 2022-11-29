@@ -82,6 +82,7 @@ class TeacherDetailsFragment : DialogFragment() {
             when (autoLinkMode) {
                 AutoLinkMode.MODE_PHONE -> Utils.call(requireContext(), matchedText)
                 AutoLinkMode.MODE_URL -> Utils.openUrl(matchedText, requireActivity())
+                else -> {}
             }
         }
     }

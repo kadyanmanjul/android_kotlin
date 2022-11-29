@@ -74,14 +74,23 @@ internal class NotificationGenerator {
         notificationPriority: NotificationPriority
     ): NotificationCompat.Builder {
 
-        val notificationActivity="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
+        val notificationActivity = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
         val callingActivity = Intent()
         callingActivity.apply {
             if (context != null) {
                 setClassName(context,notificationActivity)
             }
         }
-        val pendingIntent=PendingIntent.getActivity(context,(System.currentTimeMillis() and 0xfffffff).toInt(),callingActivity, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent =
+            PendingIntent.getActivity(
+                context,
+                (System.currentTimeMillis() and 0xfffffff).toInt(),
+                callingActivity,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                else
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            )
 
         when(notificationPriority) {
             NotificationPriority.High-> {

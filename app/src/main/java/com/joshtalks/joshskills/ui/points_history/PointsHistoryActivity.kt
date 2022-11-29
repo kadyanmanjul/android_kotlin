@@ -146,6 +146,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
                                 getOverlayView()
                         }
                     }
+                    else -> {}
                 }
             }
         )

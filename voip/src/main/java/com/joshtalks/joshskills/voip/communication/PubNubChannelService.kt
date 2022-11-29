@@ -206,6 +206,7 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
                             is IncomingCall -> eventFlow.emit(it)
                             is UI -> eventFlow.emit(it)
                             is Error -> eventFlow.emit(it)
+                            else -> {}
                         }
                     }
                     catch (e : Exception){

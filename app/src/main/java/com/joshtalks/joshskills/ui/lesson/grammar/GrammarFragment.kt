@@ -438,6 +438,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                     binding.additionalMaterialTv.text = lessonQuestion.title
                     setUpPdfView(lessonQuestion)
                 }
+                else -> {}
             }
         }
     }

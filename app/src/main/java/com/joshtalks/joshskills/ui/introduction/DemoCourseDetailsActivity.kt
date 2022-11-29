@@ -347,6 +347,7 @@ class DemoCourseDetailsActivity : BaseActivity() {
                         binding.btnStartCourse.textSize = 16f
                     }
                 }
+                else -> {}
             }
         }
     }

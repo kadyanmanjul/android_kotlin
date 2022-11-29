@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.util
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
@@ -276,7 +277,10 @@ object DeepLinkRedirectUtil {
         activity,
         (System.currentTimeMillis() and 0xfffffff).toInt(),
         activityList,
-        PendingIntent.FLAG_UPDATE_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        else
+            PendingIntent.FLAG_UPDATE_CURRENT
     ).send()
 }
 

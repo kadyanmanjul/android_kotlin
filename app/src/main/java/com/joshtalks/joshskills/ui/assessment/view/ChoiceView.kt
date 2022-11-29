@@ -103,6 +103,7 @@ class ChoiceView : FrameLayout {
                     }
                     return@let
                 }
+                else -> {}
             }
         }
     }

@@ -900,6 +900,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                         binding.btnStartCourse.textSize = 16f
                     }
                 }
+                else -> {}
             }
         }
 

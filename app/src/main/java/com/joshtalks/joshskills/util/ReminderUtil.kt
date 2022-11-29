@@ -81,7 +81,10 @@ class ReminderUtil(val context: Context) {
 
     fun getAlarmPendingIntent(
         reminderId: Int,
-        flag: Int = PendingIntent.FLAG_UPDATE_CURRENT
+        flag: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        else
+            PendingIntent.FLAG_UPDATE_CURRENT
     ): PendingIntent {
         val intent = Intent(context.applicationContext, AlarmReceiver::class.java)
         intent.putExtra("id", reminderId)

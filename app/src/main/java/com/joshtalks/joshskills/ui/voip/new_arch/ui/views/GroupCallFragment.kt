@@ -105,9 +105,9 @@ class GroupCallFragment : BaseFragment() {
         isAnimationCanceled = false
         var counter = 35
         progressAnimator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator) {}
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 Log.d(TAG, "onAnimationEnd: $counter $isAnimationCanceled")
                 if (counter != 0 && !isAnimationCanceled) {
                     counter -= 1
@@ -123,12 +123,12 @@ class GroupCallFragment : BaseFragment() {
                 }
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
                 if (textAnimator.isStarted && textAnimator.isRunning)
                     textAnimator.cancel()
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {}
+            override fun onAnimationRepeat(animation: Animator) {}
         })
         progressAnimator.start()
     }

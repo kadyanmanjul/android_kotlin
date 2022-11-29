@@ -155,6 +155,7 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                         }
                     }
                 }
+                else -> {}
             }
             AppObjectController.appDatabase.assessmentDao()
                 .updateAssessmentQuestionWithoutRelation(questionWithRelations.question)

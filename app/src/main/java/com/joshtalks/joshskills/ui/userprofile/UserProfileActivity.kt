@@ -1496,20 +1496,20 @@ class UserProfileActivity : CoreJoshActivity() {
             binding.contentOverlay.visibility = View.VISIBLE
             binding.arrowAnimation.visibility = View.VISIBLE
             /*binding.arrowAnimation.addAnimatorListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     animatePoints()
                     Log.d(TAG, "onAnimationStart: ")
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     Log.d(TAG, "onAnimationEnd: ")
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
                     Log.d(TAG, "onAnimationCancel: ")
                 }
 
-                override fun onAnimationRepeat(animation: Animator?) {
+                override fun onAnimationRepeat(animation: Animator) {
                     Log.d(TAG, "onAnimationRepeat: ")
                 }
             })*/

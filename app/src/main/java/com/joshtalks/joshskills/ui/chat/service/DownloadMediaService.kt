@@ -405,6 +405,7 @@ class DownloadMediaService : Service(), FetchListener {
                                 chatDao.updateVideoDownloadStatus(videoType.id, filePath)
                             }
                         }
+                        else -> {}
                     }
 
                     var duration = 0

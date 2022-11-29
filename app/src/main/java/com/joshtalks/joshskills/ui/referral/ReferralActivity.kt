@@ -144,7 +144,7 @@ class ReferralActivity : BaseActivity() {
 
         val mDetector = GestureDetector(this, object :
             GestureDetector.OnGestureListener {
-            override fun onShowPress(e: MotionEvent?) {
+            override fun onShowPress(e: MotionEvent) {
                 // Not Required
             }
 
@@ -158,13 +158,13 @@ class ReferralActivity : BaseActivity() {
                 return true
             }
 
-            override fun onDown(e: MotionEvent?): Boolean {
+            override fun onDown(e: MotionEvent): Boolean {
                 return true
             }
 
             override fun onFling(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
+                e1: MotionEvent,
+                e2: MotionEvent,
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
@@ -172,15 +172,15 @@ class ReferralActivity : BaseActivity() {
             }
 
             override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
+                e1: MotionEvent,
+                e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
                 return true
             }
 
-            override fun onLongPress(e: MotionEvent?) {
+            override fun onLongPress(e: MotionEvent) {
                 copyCodeIntoClipBoard()
             }
 

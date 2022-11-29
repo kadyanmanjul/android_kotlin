@@ -141,7 +141,10 @@ class NotificationUtils(val context: Context) {
                 val pendingIntent = PendingIntent.getActivities(
                     context.applicationContext,
                     uniqueInt, activityList,
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    else
+                        PendingIntent.FLAG_UPDATE_CURRENT
                 )
                 val style = NotificationCompat.BigTextStyle()
                 style.setBigContentTitle(notificationObject.contentTitle)
@@ -172,7 +175,13 @@ class NotificationUtils(val context: Context) {
                     putExtra(HAS_NOTIFICATION, true)
                 }
                 val dismissPendingIntent: PendingIntent =
-                    PendingIntent.getBroadcast(context, uniqueInt, dismissIntent, 0)
+                    PendingIntent.getBroadcast(
+                        context, uniqueInt, dismissIntent,
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            PendingIntent.FLAG_IMMUTABLE
+                        else
+                            0
+                    )
 
                 notificationBuilder.setDeleteIntent(dismissPendingIntent)
 
@@ -465,7 +474,8 @@ class NotificationUtils(val context: Context) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                return null            }
+                return null
+            }
             NotificationAction.CALL_RECORDING_NOTIFICATION -> {
                 if (notificationObject.extraData.isNullOrBlank()){
                     return null
@@ -476,11 +486,11 @@ class NotificationUtils(val context: Context) {
             }
             NotificationAction.INITIATE_RANDOM_CALL -> {
                 val intent = Intent(context, VoiceCallActivity::class.java).apply {
-                        putExtra(INTENT_DATA_COURSE_ID, "151")
-                        putExtra(INTENT_DATA_TOPIC_ID, "10")
-                        putExtra(STARTING_POINT, FROM_ACTIVITY)
-                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
-                    }
+                    putExtra(INTENT_DATA_COURSE_ID, "151")
+                    putExtra(INTENT_DATA_TOPIC_ID, "10")
+                    putExtra(STARTING_POINT, FROM_ACTIVITY)
+                    putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+                }
                 return intent
             }
             else -> {
@@ -732,7 +742,10 @@ class NotificationUtils(val context: Context) {
                     context.applicationContext,
                     it.id.toInt(),
                     intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    else
+                        PendingIntent.FLAG_UPDATE_CURRENT
                 )
                 AlarmUtil(context).createAlarm(pendingIntent, it.frequency!!, it.execute_after)
                 AppObjectController.appDatabase.scheduleNotificationDao().updateScheduled(it.id)
@@ -747,7 +760,13 @@ class NotificationUtils(val context: Context) {
                 val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
                 intent.putExtra("id", it)
                 val pendingIntent =
-                    PendingIntent.getBroadcast(context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    PendingIntent.getBroadcast(
+                        context.applicationContext, it.toInt(), intent,
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                        else
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    )
                 AlarmUtil(context).deleteAlarm(pendingIntent)
             }
         }
@@ -766,7 +785,11 @@ class NotificationUtils(val context: Context) {
                 val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
                 intent.putExtra("id", it)
                 val pendingIntent = PendingIntent.getBroadcast(
-                    context.applicationContext, it.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+                    context.applicationContext, it.toInt(), intent,
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    else
+                        PendingIntent.FLAG_UPDATE_CURRENT
                 )
                 AlarmUtil(context).deleteAlarm(pendingIntent)
             } catch (ex: Exception) {

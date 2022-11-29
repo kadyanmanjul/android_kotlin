@@ -86,6 +86,7 @@ class ReportOverviewView3(
                 QuestionReportType.UNANSWERED -> {
                     llUnAnswered.visibility = View.VISIBLE
                 }
+                else -> {}
             }
             setChart()
             setQuestionRV()

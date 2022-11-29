@@ -126,6 +126,7 @@ class TestItemViewHolder(
                     return true
                 }
             }
+            else -> {}
         }
         return false
     }

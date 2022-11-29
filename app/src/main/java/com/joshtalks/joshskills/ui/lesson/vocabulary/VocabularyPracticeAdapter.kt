@@ -589,7 +589,7 @@ class VocabularyPracticeAdapter(
                     binding.progressAnimation.progress = it.animatedValue as Int
                 }
                 addListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator?) {
+                    override fun onAnimationStart(animation: Animator) {
                         binding.uploadPractiseView.scaleX = 0.95f
                         binding.uploadPractiseView.scaleY = 0.95f
                         binding.uploadPractiseView.backgroundTintList =
@@ -599,7 +599,7 @@ class VocabularyPracticeAdapter(
                             )
                     }
 
-                    override fun onAnimationEnd(animation: Animator?) {
+                    override fun onAnimationEnd(animation: Animator) {
                         binding.progressAnimation.progress = 0
                         binding.uploadPractiseView.scaleX = 1f
                         binding.uploadPractiseView.scaleY = 1f
@@ -610,9 +610,9 @@ class VocabularyPracticeAdapter(
                             )
                     }
 
-                    override fun onAnimationCancel(animation: Animator?) {}
+                    override fun onAnimationCancel(animation: Animator) {}
 
-                    override fun onAnimationRepeat(animation: Animator?) {}
+                    override fun onAnimationRepeat(animation: Animator) {}
 
                 })
             }
@@ -834,15 +834,15 @@ class VocabularyPracticeAdapter(
                     }
                 }
                 binding.vocabHoldHint.addAnimatorListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator?) {}
+                    override fun onAnimationStart(animation: Animator) {}
 
-                    override fun onAnimationEnd(animation: Animator?) {}
+                    override fun onAnimationEnd(animation: Animator) {}
 
-                    override fun onAnimationCancel(animation: Animator?) {
+                    override fun onAnimationCancel(animation: Animator) {
                         progressAnimator.cancel()
                     }
 
-                    override fun onAnimationRepeat(animation: Animator?) {
+                    override fun onAnimationRepeat(animation: Animator) {
                         isChildAnimationStared = false
                     }
 

@@ -151,7 +151,13 @@ class BackgroundService : Service() {
     private fun showNotification() {
         val notificationIntent = Intent(this, InboxActivity::class.java)
 
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, notificationIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.FLAG_IMMUTABLE
+            else
+                0
+        )
 
         startForeground(NOTIF_ID, buildNotification(pendingIntent))
     }

@@ -5,6 +5,7 @@ import android.util.Log
 import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.branch.indexing.BranchUniversalObject
@@ -29,7 +30,9 @@ object MarketingAnalytics {
                     AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT,
                     params
                 )
-                FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SIGN_UP,params)
+                FirebaseAnalytics.getInstance(AppObjectController.joshApplication).logEvent(FirebaseAnalytics.Event.SIGN_UP) {
+                    param(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
+                }
                 BranchEvent(BRANCH_STANDARD_EVENT.COMPLETE_STREAM).addCustomDataProperty(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_STREAM)
             }

@@ -329,7 +329,10 @@ fun getAcceptCallIntent(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 
@@ -356,7 +359,10 @@ fun openCallScreen(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 
@@ -372,7 +378,10 @@ fun intentOnNotificationTap(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 
@@ -388,7 +397,10 @@ fun openFavoriteCallScreen(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 fun openGroupCallScreen(): PendingIntent {
@@ -403,7 +415,10 @@ fun openGroupCallScreen(): PendingIntent {
         Utils.context,
         1102,
         intent,
-        PendingIntent.FLAG_CANCEL_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        else
+            PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
 fun Context.getHangUpIntent(): PendingIntent {

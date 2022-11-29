@@ -259,6 +259,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                         ApiCallStatus.START -> {
                             showProgressBar()
                         }
+                        else -> {}
                     }
                 }
             }
@@ -680,15 +681,15 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                 alphaOverlayView.alpha = it.animatedValue as Float
             }
             addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     showToolTip(tooltipView, tooltipText)
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {}
+                override fun onAnimationEnd(animation: Animator) {}
 
-                override fun onAnimationCancel(animation: Animator?) {}
+                override fun onAnimationCancel(animation: Animator) {}
 
-                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator) {}
             })
         }.start()
     }
@@ -877,7 +878,8 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
 
     fun setRecyclerViewItemAnimation(position: Int) {
         if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, true)
-            && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
+            && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+        )
             showOverlayLayoutForItem(position)
     }
 

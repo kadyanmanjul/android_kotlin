@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.workmanager.WorkManagerScheduler;
@@ -98,11 +99,21 @@ public class VideoDownloadService extends DownloadService {
             //    ex.printStackTrace();
         }
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                101,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            pendingIntent = PendingIntent.getActivity(
+                    this,
+                    101,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+            );
+        else
+            pendingIntent = PendingIntent.getActivity(
+                    this,
+                    101,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
         return notificationHelper.buildProgressNotification(R.drawable.ic_download, pendingIntent, "", downloads);
     }
 

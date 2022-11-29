@@ -53,6 +53,7 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
                         database.groupChatDao().insertMessages(messages)
                     }
                 }
+                else -> {}
             }
             MediatorResult.Success(
                 endOfPaginationReached = if (loadType == LoadType.REFRESH) false else messages.isEmpty()

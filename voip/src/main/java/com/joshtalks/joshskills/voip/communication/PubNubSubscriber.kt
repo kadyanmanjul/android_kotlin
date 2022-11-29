@@ -136,6 +136,7 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                     pubnub.reconnect()
                 }
             }
+            else -> {}
         }
     }
 
