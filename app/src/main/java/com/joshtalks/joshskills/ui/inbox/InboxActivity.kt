@@ -65,9 +65,6 @@ import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -169,18 +166,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun initView() {
         showProgressDialog("Please Wait")
-        text_message_title.text = getString(R.string.inbox_header)
-        iv_reminder.visibility = GONE
-        iv_setting.visibility = View.VISIBLE
+        findViewById<AppCompatTextView>(R.id.text_message_title).text = getString(R.string.inbox_header)
+        findViewById<AppCompatImageView>(R.id.iv_reminder).visibility = GONE
+        findViewById<AppCompatImageView>(R.id.iv_setting).visibility = View.VISIBLE
 
-        iv_icon_referral.setOnClickListener {
+        findViewById<AppCompatImageView>(R.id.iv_icon_referral).setOnClickListener {
             refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
 
             ReferralActivity.startReferralActivity(this@InboxActivity)
             MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
         }
 
-        btn_upgrade.setOnClickListener {
+        findViewById<MaterialTextView>(R.id.btn_upgrade).setOnClickListener {
             BuyPageActivity.startBuyPageActivity(
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
@@ -192,22 +189,22 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
         findMoreLayout = findViewById(R.id.parent_layout)
         paymentStatusView = findViewById(R.id.payment_layout)
-        recycler_view_inbox.apply {
+        binding.recyclerViewInbox.apply {
             itemAnimator = null
             layoutManager = LinearLayoutManager(applicationContext).apply {
                 isSmoothScrollbarEnabled = true
             }
         }
-        recycler_view_inbox.adapter = inboxAdapter
-        iv_setting.setOnClickListener {
+        binding.recyclerViewInbox.adapter = inboxAdapter
+        findViewById<AppCompatImageView>(R.id.iv_setting).setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.THREE_DOTS).push()
             openPopupMenu(it)
         }
 
-        find_more.setOnClickListener {
+        findViewById<MaterialButton>(R.id.find_more).setOnClickListener {
             courseExploreClick()
         }
-        buy_english_course.setOnClickListener {
+        findViewById<MaterialButton>(R.id.buy_english_course).setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
             BuyPageActivity.startBuyPageActivity(
                 this,
@@ -385,7 +382,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             if (paymentStatusView.isVisible) {
                 val scale = resources.displayMetrics.density
                 val dpAsPixels = (100 * scale + 0.5f).toInt()
-                inbox_nested_scroll.updatePadding(0, 0, 0, dpAsPixels)
+                binding.inboxNestedScroll.updatePadding(0, 0, 0, dpAsPixels)
             }
         })
     }
@@ -525,8 +522,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = true
                         try {
                             runOnUiThread {
-                                btn_upgrade.isVisible = haveFreeTrialCourse
-                                iv_icon_referral.isVisible = haveFreeTrialCourse.not()
+                                findViewById<MaterialTextView>(R.id.btn_upgrade).isVisible = haveFreeTrialCourse
+                                findViewById<AppCompatImageView>(R.id.iv_icon_referral).isVisible = haveFreeTrialCourse.not()
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -599,7 +596,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
             bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
             bbTooltip.isShowing.not().let {
-                bbTooltip.showAlignBottom(buy_english_course)
+                bbTooltip.showAlignBottom(findViewById<MaterialTextView>(R.id.buy_english_course))
             }
         } catch (_: Exception) {
         }
@@ -681,20 +678,20 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onStartTrialTimer(startTimeInMilliSeconds: Long) {
-        trialTimerView.visible()
-        trialTimerDivider.visible()
-        trialTimerView.startTimer(startTimeInMilliSeconds)
+        binding.trialTimerView.visible()
+        binding.trialTimerDivider.visible()
+        binding.trialTimerView.startTimer(startTimeInMilliSeconds)
     }
 
     override fun onStopTrialTimer() {
-        trialTimerDivider.gone()
-        trialTimerView.removeTimer()
+        binding.trialTimerDivider.gone()
+        binding.trialTimerView.removeTimer()
     }
 
     override fun onFreeTrialEnded() {
-        trialTimerView.visible()
-        trialTimerDivider.visible()
-        trialTimerView.endFreeTrial()
+        binding.trialTimerView.visible()
+        binding.trialTimerDivider.visible()
+        binding.trialTimerView.endFreeTrial()
 
     }
 

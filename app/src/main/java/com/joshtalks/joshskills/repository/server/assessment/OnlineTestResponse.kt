@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class OnlineTestResponse(

@@ -10,7 +10,7 @@ import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "assessment_revise_concept", foreignKeys = [

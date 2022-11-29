@@ -10,7 +10,7 @@ import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "assessment_intro", foreignKeys = [

@@ -30,9 +30,14 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.annotation.*
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -40,7 +45,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshlibrary.R
 import com.joshtalks.skydoves.balloon.annotations.Dp
 import com.joshtalks.skydoves.balloon.annotations.Sp
-import kotlinx.android.synthetic.main.layout_balloon.view.*
 
 @DslMarker
 annotation class BalloonDsl
@@ -99,24 +103,24 @@ class Balloon(
     }
 
     private fun initializeArrow() {
-        with(bodyView.balloon_arrow) {
+        with(bodyView.findViewById<AppCompatImageView>(R.id.balloon_arrow)) {
             builder.arrowDrawable?.let { setImageDrawable(it) }
             val params = RelativeLayout.LayoutParams(builder.arrowSize, builder.arrowSize)
             when (builder.arrowOrientation) {
                 ArrowOrientation.BOTTOM -> {
-                    params.addRule(RelativeLayout.ALIGN_BOTTOM, bodyView.balloon_content.id)
+                    params.addRule(RelativeLayout.ALIGN_BOTTOM, bodyView.findViewById<RelativeLayout>(R.id.balloon_content).id)
                     rotation = 180f
                 }
                 ArrowOrientation.TOP -> {
-                    params.addRule(RelativeLayout.ALIGN_TOP, bodyView.balloon_content.id)
+                    params.addRule(RelativeLayout.ALIGN_TOP, bodyView.findViewById<RelativeLayout>(R.id.balloon_content).id)
                     rotation = 0f
                 }
                 ArrowOrientation.LEFT -> {
-                    params.addRule(RelativeLayout.ALIGN_LEFT, bodyView.balloon_content.id)
+                    params.addRule(RelativeLayout.ALIGN_LEFT, bodyView.findViewById<RelativeLayout>(R.id.balloon_content).id)
                     rotation = -90f
                 }
                 ArrowOrientation.RIGHT -> {
-                    params.addRule(RelativeLayout.ALIGN_RIGHT, bodyView.balloon_content.id)
+                    params.addRule(RelativeLayout.ALIGN_RIGHT, bodyView.findViewById<RelativeLayout>(R.id.balloon_content).id)
                     rotation = 90f
                 }
             }
@@ -134,7 +138,7 @@ class Balloon(
     }
 
     private fun initializeBackground() {
-        with(bodyView.balloon_background) {
+        with(bodyView.findViewById<LinearLayout>(R.id.balloon_background)) {
             alpha = builder.alpha
             if (builder.backgroundDrawable == null) {
                 background = GradientDrawable().apply {
@@ -176,7 +180,7 @@ class Balloon(
     }
 
     private fun initializeBalloonContent() {
-        with(bodyView.balloon_content) {
+        with(bodyView.findViewById<RelativeLayout>(R.id.balloon_content)) {
             when (builder.arrowOrientation) {
                 ArrowOrientation.BOTTOM, ArrowOrientation.TOP ->
                     setPadding(
@@ -192,7 +196,7 @@ class Balloon(
     }
 
     private fun initializeIcon() {
-        with(bodyView.balloon_icon) {
+        with(bodyView.findViewById<AppCompatImageView>(R.id.balloon_icon)) {
             builder.iconForm?.let {
                 applyIconForm(it)
             } ?: applyIconForm(iconForm(context) {
@@ -205,7 +209,7 @@ class Balloon(
     }
 
     private fun initializeText() {
-        with(bodyView.balloon_text) {
+        with(bodyView.findViewById<TextView>(R.id.balloon_text)) {
             builder.textForm?.let {
                 applyTextForm(it)
             } ?: applyTextForm(textForm(context) {
@@ -219,9 +223,9 @@ class Balloon(
     }
 
     private fun initializeCustomLayout() {
-        bodyView.balloon_detail.removeAllViews()
+        bodyView.findViewById<LinearLayout>(R.id.balloon_detail).removeAllViews()
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.inflate(builder.layout, bodyView.balloon_detail)
+        inflater.inflate(builder.layout, bodyView.findViewById<LinearLayout>(R.id.balloon_detail))
     }
 
     private fun applyBalloonAnimation() {
@@ -579,7 +583,7 @@ class Balloon(
 
     /** gets a content view of the balloon popup window. */
     fun getContentView(): View {
-        return bodyView.balloon_detail
+        return bodyView.findViewById<LinearLayout>(R.id.balloon_detail)
     }
 
     /** dismiss automatically when lifecycle owner is destroyed. */

@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.Lifecycle
@@ -35,7 +36,6 @@ import com.skydoves.balloon.ArrowPositionRules
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
-import kotlinx.android.synthetic.main.activity_call_with_expert.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -140,7 +140,7 @@ class ExpertListFragment : BaseFragment() {
             val textView = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
             textView.text =
                 tipText.replace("__username__", Mentor.getInstance().getUser()?.firstName ?: "User")
-            activity?.toolbar_container?.findViewById<AppCompatTextView>(R.id.iv_earn)?.let {
+            activity?.findViewById<LinearLayout>(R.id.toolbar_container)?.findViewById<AppCompatTextView>(R.id.iv_earn)?.let {
                 balloon.showAlignBottom(it)
             }
         }catch (ex:Exception){

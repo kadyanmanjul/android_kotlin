@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RESUME_CERTIFICATION_EXAM
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.lang.reflect.Type
 
 @Parcelize

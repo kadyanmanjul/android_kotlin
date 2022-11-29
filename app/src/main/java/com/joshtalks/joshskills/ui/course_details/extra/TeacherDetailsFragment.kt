@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
@@ -18,8 +20,8 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
-import kotlinx.android.synthetic.main.fragment_teacher_details.*
 
 const val TEACHER_DETAIL_SOURCE = "teacher_detail_source"
 
@@ -35,6 +37,9 @@ class TeacherDetailsFragment : DialogFragment() {
     }
 
     private var tgDetails: TeacherDetails? = null
+    private val teacherDetailsTv by lazy {
+        view?.findViewById<JoshTextView>(R.id.teacher_details)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,18 +69,18 @@ class TeacherDetailsFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupProfilePicture()
-        teacher_name.text = tgDetails?.name
-        teacher_details.text =
+        view.findViewById<AppCompatTextView>(R.id.teacher_name).text = tgDetails?.name
+        teacherDetailsTv?.text =
             HtmlCompat.fromHtml(
                 tgDetails?.longDescription ?: EMPTY,
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
-        iv_back.setOnClickListener {
+        view.findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
             dismissAllowingStateLoss()
         }
 
-        teacher_details.setAutoLinkOnClickListener { autoLinkMode, matchedText ->
+        teacherDetailsTv?.setAutoLinkOnClickListener { autoLinkMode, matchedText ->
             when (autoLinkMode) {
                 AutoLinkMode.MODE_PHONE -> Utils.call(requireContext(), matchedText)
                 AutoLinkMode.MODE_URL -> Utils.openUrl(matchedText, requireActivity())
@@ -86,15 +91,17 @@ class TeacherDetailsFragment : DialogFragment() {
 
     private fun setupProfilePicture() {
         tgDetails?.dpUrl?.run {
-            Glide.with(requireContext())
-                .load(this)
-                .override(Target.SIZE_ORIGINAL)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CircleCrop())
-                )
-                .apply(RequestOptions.circleCropTransform())
-                .into(iv_profile_pic)
+            view?.findViewById<AppCompatImageView>(R.id.iv_profile_pic)?.let {
+                Glide.with(requireContext())
+                    .load(this)
+                    .override(Target.SIZE_ORIGINAL)
+                    .optionalTransform(
+                        WebpDrawable::class.java,
+                        WebpDrawableTransformation(CircleCrop())
+                    )
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(it)
+            }
         }
     }
 }

@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentMediaType
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionResponse
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 
 @Entity(

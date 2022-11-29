@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.ui.senior_student.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class SeniorStudentModel(

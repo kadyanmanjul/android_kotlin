@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 data class BuyCourseFeatureModel(

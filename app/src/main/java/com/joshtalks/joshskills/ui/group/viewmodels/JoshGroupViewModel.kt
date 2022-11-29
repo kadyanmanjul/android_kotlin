@@ -5,8 +5,10 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -24,6 +26,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.databinding.GroupTypeDialogBinding
 import com.joshtalks.joshskills.ui.group.constants.SHOW_NEW_INFO
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
@@ -35,7 +38,6 @@ import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 
-import kotlinx.android.synthetic.main.group_type_dialog.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -179,17 +181,18 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun openTypeChooser(view: View) {
+        val binding = DataBindingUtil.inflate<GroupTypeDialogBinding>(LayoutInflater.from(view.context), R.layout.group_type_dialog, null, false)
         val groupTypeDialog = AlertDialog.Builder(view.context)
-            .setView(R.layout.group_type_dialog)
+            .setView(binding.root)
             .setCancelable(false)
             .create()
 
         groupTypeDialog.show()
         groupTypeDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        groupTypeDialog.select_group_type.setOnClickListener {
+        binding.selectGroupType.setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.CHOOSE_GROUP_TYPE)
-            if (groupTypeDialog.open_group_radio.isChecked) {
+            if (binding.openGroupRadio.isChecked) {
                 (view as TextView).text = "Open Group"
                 MixPanelTracker.addParam(ParamKeys.GROUP_TYPE, OPENED_GROUP)
                     .push()

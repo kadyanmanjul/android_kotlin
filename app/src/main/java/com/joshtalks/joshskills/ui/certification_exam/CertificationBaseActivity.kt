@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -20,8 +22,7 @@ import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
 import com.joshtalks.joshskills.ui.certification_exam.report.CExamReportActivity
 import com.joshtalks.joshskills.ui.certification_exam.view.InstructionFragment
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
-import kotlinx.android.synthetic.main.activity_certification_base.*
-import kotlinx.android.synthetic.main.inbox_toolbar.*
+import com.pnikosis.materialishprogress.ProgressWheel
 
 const val CERTIFICATION_EXAM_ID = "certification_exam_ID"
 const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
@@ -102,21 +103,21 @@ class CertificationBaseActivity : BaseActivity() {
     }
 
     private fun initView() {
-        with(iv_back) {
+        with(findViewById<AppCompatImageView>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 onBackPressed()
             }
         }
-        text_message_title.text = getString(R.string.ce_header)
-        iv_icon_referral.visibility = View.GONE
+        findViewById<AppCompatTextView>(R.id.text_message_title).text = getString(R.string.ce_header)
+        findViewById<AppCompatImageView>(R.id.iv_icon_referral).visibility = View.GONE
     }
 
     private fun addObserver() {
         viewModel.certificationQuestionLiveData.observe(
             this
         ) {
-            progress_bar.visibility = View.GONE
+            findViewById<ProgressWheel>(R.id.progress_bar).visibility = View.GONE
             openExamInstructionScreen()
             if (isSubmittedExamTest) {
                 isSubmittedExamTest = false

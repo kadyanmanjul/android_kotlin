@@ -11,16 +11,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.server.FAQCategory
-import kotlinx.android.synthetic.main.fragment_faq.chipGroupCategory
-import kotlinx.android.synthetic.main.fragment_faq.faqList
-import kotlinx.android.synthetic.main.fragment_faq.txtCategoryName
 
 class FaqFragment : Fragment() {
 
@@ -29,6 +29,15 @@ class FaqFragment : Fragment() {
     private val viewModel by lazy { ViewModelProvider(this).get(HelpViewModel::class.java) }
     private val faqAdapter by lazy { FaqAdapter(ArrayList()) }
     private lateinit var appAnalytics: AppAnalytics
+    private val chipGroupCategory by lazy {
+        view?.findViewById<ChipGroup>(R.id.chipGroupCategory)
+    }
+    private val txtCategoryName by lazy {
+        view?.findViewById<JoshTextView>(R.id.chipGroupCategory)
+    }
+    private val faqList by lazy {
+        view?.findViewById<RecyclerView>(R.id.faqList)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +68,8 @@ class FaqFragment : Fragment() {
     }
 
     private fun initRV() {
-        faqList.layoutManager = LinearLayoutManager(context)
-        faqList.adapter = faqAdapter
+        faqList?.layoutManager = LinearLayoutManager(context)
+        faqList?.adapter = faqAdapter
         val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         divider.setDrawable(
             ColorDrawable(
@@ -70,7 +79,7 @@ class FaqFragment : Fragment() {
                 )
             )
         )
-        faqList.addItemDecoration(divider)
+        faqList?.addItemDecoration(divider)
     }
 
     private fun addObservers() {
@@ -80,11 +89,11 @@ class FaqFragment : Fragment() {
             })
         })
 
-        chipGroupCategory.setOnCheckedChangeListener { group, checkedId ->
+        chipGroupCategory?.setOnCheckedChangeListener { group, checkedId ->
             try {
                 selectedCategory = categoryList.filter { it.id == checkedId }[0]
                 logCategorySelectedEvent()
-                txtCategoryName.text = selectedCategory?.categoryName
+                txtCategoryName?.text = selectedCategory?.categoryName
                 faqAdapter.updateList(viewModel.faqListLiveData.value?.filter {
                     it.categoryId == selectedCategory?.id
                 } ?: emptyList())
@@ -94,18 +103,18 @@ class FaqFragment : Fragment() {
     }
 
     private fun renderView() {
-        txtCategoryName.text = selectedCategory?.categoryName
-        chipGroupCategory.removeAllViews()
+        txtCategoryName?.text = selectedCategory?.categoryName
+        chipGroupCategory?.removeAllViews()
         categoryList.sortedBy { it.sortOrder }.forEach {
             val chip = LayoutInflater.from(context)
                 .inflate(R.layout.faq_category_item, null, false) as Chip
             chip.text = it.categoryName
             chip.tag = it.id
             chip.id = it.id
-            chipGroupCategory.addView(chip)
+            chipGroupCategory?.addView(chip)
         }
         selectedCategory?.id?.run {
-            chipGroupCategory.check(this)
+            chipGroupCategory?.check(this)
         }
     }
 

@@ -14,6 +14,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.annotation.MainThread
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -22,6 +23,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -32,7 +34,6 @@ import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleV
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
-import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.*
 import java.text.DecimalFormat
 
@@ -67,21 +68,21 @@ class PointsHistoryActivity : CoreJoshActivity() {
     }
 
     private fun initToolbar() {
-        with(iv_back) {
+        with(findViewById<AppCompatImageView>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 onBackPressed()
             }
         }
-        with(iv_help) {
+        with(findViewById<AppCompatImageView>(R.id.iv_help)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                 openHelpActivity()
             }
         }
-        text_message_title.text = getString(R.string.points_history)
+        findViewById<AppCompatTextView>(R.id.text_message_title) .text = getString(R.string.points_history)
     }
 
     private fun addObserver() {

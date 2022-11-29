@@ -44,15 +44,6 @@ import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtJoshTalk
-import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtCollegeName
-import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtHometown
-import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtOccupationPlace
-import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtCompletionDate
-import kotlinx.android.synthetic.main.fragment_edit_profile.txtEducationName
-import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtName
-import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtFutureGoals
-import kotlinx.android.synthetic.main.fragment_edit_profile.txtOccupationName
 import java.util.Calendar
 import java.util.Locale
 
@@ -333,7 +324,7 @@ class EditProfileFragment : DialogFragment(){
             return
         }
 
-        if(binding.txtOccupationName.text.isNullOrBlank() || !isFieldValid(txtOccupationName.text.toString())){
+        if(binding.txtOccupationName.text.isNullOrBlank() || !isFieldValid(binding.txtOccupationName.text.toString())){
             binding.txtoccupationNameSeperator.setBackgroundColor(resources.getColor(R.color.critical))
             binding.txtOccupationName.setHintTextColor(resources.getColor(R.color.critical))
             binding.occupationDetailsContainer.visibility = View.VISIBLE
@@ -343,7 +334,7 @@ class EditProfileFragment : DialogFragment(){
             binding.txtOccupationName.error = getString(R.string.degree_error_message)
             return
         }
-        if(binding.editTxtOccupationPlace.text.isNullOrBlank() || !isFieldValid(editTxtOccupationPlace.text.toString())){
+        if(binding.editTxtOccupationPlace.text.isNullOrBlank() || !isFieldValid(binding.editTxtOccupationPlace.text.toString())){
             binding.editTxtOccupationPlaceSeperator.setBackgroundColor(resources.getColor(R.color.critical))
             isOccupationDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -374,14 +365,14 @@ class EditProfileFragment : DialogFragment(){
             homeTownTxt.error = getString(R.string.hometown_error_message)
             return
         }
-        if (editTxtJoshTalk.text.toString() != EMPTY){
-            if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https") || !(editTxtJoshTalk.text.toString()).startsWith("https")){
+        if (binding.editTxtJoshTalk.text.toString() != EMPTY){
+            if(!isYoutubeUrl(binding.editTxtJoshTalk.text.toString()) || !(binding.editTxtJoshTalk.text.toString()).startsWith("https") || !(binding.editTxtJoshTalk.text.toString()).startsWith("https")){
                 binding.seperator5.setBackgroundColor(resources.getColor(R.color.critical))
-                editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.critical))
+                binding.editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.critical))
                 binding.basicDetailsContainer.visibility = View.VISIBLE
                 isBasicDetailsExpanded = true
                 binding.arrowDownImg.setImageDrawable(drawableUp)
-                editTxtJoshTalk.error = getString(R.string.invalid_url_message)
+                binding.editTxtJoshTalk.error = getString(R.string.invalid_url_message)
                 return
             }
         }
@@ -390,20 +381,20 @@ class EditProfileFragment : DialogFragment(){
         updateProfilePayload.apply {
             basicDetails?.apply{
                 photoUrl= viewModel.getUserProfileUrl()
-                firstName= editTxtName.text.toString().ifEmpty { null }
+                firstName= binding.editTxtName.text.toString().ifEmpty { null }
                 dateOfBirth= userDateOfBirth
-                homeTown= editTxtHometown.text.toString().ifEmpty { null }
-                futureGoals= editTxtFutureGoals.text.toString().ifEmpty { null }
-                favouriteJoshTalk= editTxtJoshTalk.text.toString().ifEmpty { null }
+                homeTown= binding.editTxtHometown.text.toString().ifEmpty { null }
+                futureGoals= binding.editTxtFutureGoals.text.toString().ifEmpty { null }
+                favouriteJoshTalk= binding.editTxtJoshTalk.text.toString().ifEmpty { null }
             }
             educationDetails?.apply {
-                degree=txtEducationName.text.toString().ifEmpty { null }
-                college=editTxtCollegeName.text.toString() .ifEmpty { null }
-                year=editTxtCompletionDate.text.toString().ifEmpty { null }
+                degree= binding.txtEducationName.text.toString().ifEmpty { null }
+                college= binding.editTxtCollegeName.text.toString() .ifEmpty { null }
+                year= binding.editTxtCompletionDate.text.toString().ifEmpty { null }
             }
             occupationDetails?.apply {
-                designation=txtOccupationName.text.toString().ifEmpty { null }
-                company=editTxtOccupationPlace.text.toString().ifEmpty { null }
+                designation= binding.txtOccupationName.text.toString().ifEmpty { null }
+                company= binding.editTxtOccupationPlace.text.toString().ifEmpty { null }
             }
         }
         viewModel.saveProfileInfo(updateProfilePayload, true)

@@ -110,7 +110,6 @@ import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -1764,7 +1763,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     private fun closeReadingFullScreen() {
         supportFragmentManager.popBackStackImmediate()
-        container_reading.visibility = View.GONE
+        binding.containerReading.visibility = View.GONE
     }
 }
 

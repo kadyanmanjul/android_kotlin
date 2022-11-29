@@ -6,12 +6,15 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
 import com.greentoad.turtlebody.mediapicker.ui.base.FragmentBase
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.*
-
 
 /**
  * Created by niraj on 12-04-2019.
@@ -59,20 +62,20 @@ abstract class MediaListFragment : FragmentBase() {
             val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56f, r.displayMetrics).toInt()
 
             params.setMargins(0, 0, 0, px)
-            file_fragment_recycler_view.layoutParams = params
+            view.findViewById<RecyclerView>(R.id.file_fragment_recycler_view).layoutParams = params
         }
     }
 
     private fun initButton() {
-        file_fragment_btn_cancel.setOnClickListener {
+        view?.findViewById<ImageView>(R.id.file_fragment_btn_cancel)?.setOnClickListener {
             (activity as ActivityLibMain).onBackPressed()
         }
-        file_fragment_btn_done.setOnClickListener {
+        view?.findViewById<Button>(R.id.file_fragment_btn_done)?.setOnClickListener {
             getAllUris()
         }
 
         if (!mMediaPickerConfig.mAllowMultiSelection) {
-            file_fragment_bottom_ll.visibility = View.GONE
+            view?.findViewById<LinearLayout>(R.id.file_fragment_bottom_ll)?.visibility = View.GONE
         }
     }
 

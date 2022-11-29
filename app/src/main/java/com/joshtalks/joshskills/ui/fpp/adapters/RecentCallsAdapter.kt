@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
@@ -16,7 +17,6 @@ import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FppRecentItemListBinding
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
-import kotlinx.android.synthetic.main.fpp_recent_item_list.view.btn_sent_request
 
 class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
     RecyclerView.Adapter<RecentCallsAdapter.RecentItemViewHolder>() {
@@ -187,8 +187,9 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                 AppObjectController.joshApplication,
                 backgroundColor
             )
-            view.btn_sent_request.text = context.resources.getText(textData)
-            view.btn_sent_request.setTextColor(
+            val btnSentRequest = view.findViewById<MaterialButton>(R.id.btn_sent_request)
+            btnSentRequest.text = context.resources.getText(textData)
+            btnSentRequest.setTextColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
                     textColor

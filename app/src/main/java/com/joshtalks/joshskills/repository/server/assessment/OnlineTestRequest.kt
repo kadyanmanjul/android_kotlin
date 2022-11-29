@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(tableName = "online_test_request")

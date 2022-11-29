@@ -3,10 +3,11 @@ package com.joshtalks.joshskills.core
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import androidx.appcompat.widget.AppCompatImageView
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
 
 abstract class CoreJoshActivity : BaseActivity() {
 
@@ -24,7 +25,7 @@ abstract class CoreJoshActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         try {
-            iv_help.setOnClickListener {
+            findViewById<AppCompatImageView>(R.id.iv_help).setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                 openHelpActivity()
             }

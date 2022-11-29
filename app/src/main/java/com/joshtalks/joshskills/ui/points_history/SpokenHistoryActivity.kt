@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +18,6 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.SpokenSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
-import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,21 +52,21 @@ class SpokenHistoryActivity : CoreJoshActivity() {
     }
 
     private fun initToolbar() {
-        with(iv_back) {
+        with(findViewById<AppCompatImageView>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 onBackPressed()
             }
         }
-        with(iv_help) {
+        with(findViewById<AppCompatImageView>(R.id.iv_help)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                 openHelpActivity()
             }
         }
-        text_message_title.text = getString(R.string.minutes_history)
+        findViewById<AppCompatTextView>(R.id.text_message_title).text = getString(R.string.minutes_history)
     }
 
     private fun addObserver() {

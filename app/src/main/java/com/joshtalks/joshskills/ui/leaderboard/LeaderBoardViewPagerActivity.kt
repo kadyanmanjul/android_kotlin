@@ -19,6 +19,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -53,7 +54,6 @@ import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -68,6 +68,9 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
     private var toolTipJob: Job? = null
     private var currentAimation: Int? = null
     private var ITEM_ANIMATION = 1
+    private val ivEarn by lazy {
+        findViewById<AppCompatImageView>(R.id.iv_earn)
+    }
 
     val searchActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -121,21 +124,21 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
     }
 
     private fun initToolbar() {
-        with(iv_back) {
+        with(findViewById<AppCompatImageView>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 onBackPressed()
             }
         }
-        with(iv_help) {
+        with(findViewById<AppCompatImageView>(R.id.iv_help)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                 openHelpActivity()
             }
         }
-        with(iv_earn) {
+        with(ivEarn) {
             visibility = View.VISIBLE
             setImageDrawable(
                 ContextCompat.getDrawable(
@@ -148,7 +151,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                 openSearchActivity()
             }
         }
-        text_message_title.text = getString(R.string.leaderboard)
+        findViewById<AppCompatTextView>(R.id.text_message_title).text = getString(R.string.leaderboard)
         lifecycleScope.launch(Dispatchers.Default) {
             PrefManager.put(
                 LEADER_BOARD_OPEN_COUNT,
@@ -290,7 +293,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                     .setDismissWhenClicked(true)
                     .setArrowOrientation(ArrowOrientation.BOTTOM)
                     .build()
-                balloon.showAlignBottom(iv_earn)
+                balloon.showAlignBottom(ivEarn)
                 PrefManager.put(SEARCH_HINT_SHOW, true)
                 isTooltipShow = true
             } catch (ex: Exception) {

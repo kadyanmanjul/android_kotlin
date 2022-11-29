@@ -4,7 +4,7 @@ package com.joshtalks.joshskills.repository.server.conversation_practice
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.entity.AudioType
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ConversationPractiseModel(

@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.ui.group.constants.JOINED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.NOT_JOINED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.REQUESTED_GROUP
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 data class GroupListResponse(
 

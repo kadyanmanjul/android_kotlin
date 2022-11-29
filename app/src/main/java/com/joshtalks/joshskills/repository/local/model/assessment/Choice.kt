@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceResponse
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "assessment_choice", foreignKeys = [

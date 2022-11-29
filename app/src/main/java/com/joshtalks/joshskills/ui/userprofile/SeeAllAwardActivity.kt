@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
@@ -30,9 +31,6 @@ import com.mindorks.placeholderview.PlaceHolderView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class SeeAllAwardActivity : BaseActivity() {
     private lateinit var binding: FragmentSeeAllAwardBinding
@@ -76,20 +74,20 @@ class SeeAllAwardActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        with(iv_back) {
+        with(findViewById<AppCompatImageView>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 onBackPressed()
             }
         }
-        with(iv_help) {
+        with(findViewById<AppCompatImageView>(R.id.iv_help)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 openHelpActivity()
             }
         }
-        text_message_title.text = getString(R.string.awards)
+        findViewById<AppCompatTextView>(R.id.text_message_title).text = getString(R.string.awards)
     }
 
     private fun initRecyclerView() {

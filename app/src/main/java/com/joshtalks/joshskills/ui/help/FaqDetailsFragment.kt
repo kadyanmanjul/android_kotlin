@@ -16,8 +16,6 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentFaqDetailBinding
 import com.joshtalks.joshskills.repository.server.FAQ
-import kotlinx.android.synthetic.main.fragment_faq_detail.no_btn
-import kotlinx.android.synthetic.main.fragment_faq_detail.yes_btn
 
 class FaqDetailsFragment : Fragment() {
     private lateinit var binding: FragmentFaqDetailBinding
@@ -58,22 +56,22 @@ class FaqDetailsFragment : Fragment() {
 
     fun setIsAnswerHelpful(isAnswerHelpful: Boolean) {
         if (isAnswerHelpful) {
-            yes_btn.backgroundTintList =
+            binding.yesBtn.backgroundTintList =
                 ContextCompat.getColorStateList(requireActivity(), R.color.primary_500)
-            yes_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.pure_white))
+            binding.yesBtn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.pure_white))
             MixPanelTracker.publishEvent(MixPanelEvent.FAQ_ANSWER_HELPFUL_YES)
                 .addParam(ParamKeys.QUESTION,faq.question)
                 .push()
         } else {
-            no_btn.backgroundTintList =
+            binding.noBtn.backgroundTintList =
                 ContextCompat.getColorStateList(requireActivity(), R.color.primary_500)
-            no_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.pure_white))
+            binding.noBtn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.pure_white))
             MixPanelTracker.publishEvent(MixPanelEvent.FAQ_ANSWER_HELPFUL_NO)
                 .addParam(ParamKeys.QUESTION,faq.question)
                 .push()
         }
-        yes_btn.isEnabled = false
-        no_btn.isEnabled = false
+        binding.yesBtn.isEnabled = false
+        binding.noBtn.isEnabled = false
         appAnalytics.addParam(AnalyticsEvent.FAQ_QUESTION_FEEDBACK.NAME, isAnswerHelpful)
         patchRequestForAnswer(isAnswerHelpful)
     }

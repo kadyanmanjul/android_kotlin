@@ -6,11 +6,14 @@ import android.text.format.Formatter
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.VideoView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.joshtalks.joshcamerax.R
 import com.joshtalks.joshcamerax.video_trimmer.view.RangeSeekBarView
 import com.joshtalks.joshcamerax.video_trimmer.view.TimeLineView
-import kotlinx.android.synthetic.main.video_trimmer.view.*
 
 
 class VideoTrimmerView @JvmOverloads constructor(
@@ -18,6 +21,17 @@ class VideoTrimmerView @JvmOverloads constructor(
     attrs: AttributeSet,
     defStyleAttr: Int = 0
 ) : BaseVideoTrimmerView(context, attrs, defStyleAttr) {
+    private val trimTimeRangeTextView by lazy {
+        findViewById<TextView>(R.id.trimTimeRangeTextView)
+    }
+    private val playbackTimeTextView by lazy {
+        findViewById<TextView>(R.id.playbackTimeTextView)
+    }
+    private val videoFileSizeTextView by lazy {
+        findViewById<TextView>(R.id.videoFileSizeTextView)
+    }
+
+
     private fun stringForTime(timeMs: Int): String {
         val totalSeconds = timeMs / 1000
         val seconds = totalSeconds % 60
@@ -32,20 +46,20 @@ class VideoTrimmerView @JvmOverloads constructor(
 
     override fun initRootView() {
         LayoutInflater.from(context).inflate(R.layout.video_trimmer, this, true)
-        fab.setOnClickListener { initiateTrimming() }
+        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { initiateTrimming() }
     }
 
-    override fun getTimeLineView(): TimeLineView = timeLineView
+    override fun getTimeLineView(): TimeLineView = findViewById(R.id.timeLineView)
 
-    override fun getTimeInfoContainer(): View = timeTextContainer
+    override fun getTimeInfoContainer(): View = findViewById<FrameLayout>(R.id.timeTextContainer)
 
-    override fun getPlayView(): View = playIndicatorView
+    override fun getPlayView(): View = findViewById<ImageView>(R.id.playIndicatorView)
 
-    override fun getVideoView(): VideoView = videoView
+    override fun getVideoView(): VideoView = findViewById(R.id.videoView)
 
-    override fun getVideoViewContainer(): View = videoViewContainer
+    override fun getVideoViewContainer(): View = findViewById<FrameLayout>(R.id.videoViewContainer)
 
-    override fun getRangeSeekBarView(): RangeSeekBarView = rangeSeekBarView
+    override fun getRangeSeekBarView(): RangeSeekBarView = findViewById(R.id.rangeSeekBarView)
 
 
     @SuppressLint("SetTextI18n")

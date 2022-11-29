@@ -24,6 +24,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -85,7 +86,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -430,7 +430,7 @@ class UserProfileActivity : CoreJoshActivity() {
     }
 
     private fun initToolbar() {
-        with(iv_back) {
+        with(findViewById<AppCompatImageView>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK)
@@ -439,8 +439,8 @@ class UserProfileActivity : CoreJoshActivity() {
                 onBackPressed()
             }
         }
-        iv_help.visibility = View.GONE
-        with(iv_edit) {
+        findViewById<AppCompatImageView>(R.id.iv_help).visibility = View.GONE
+        with(findViewById<AppCompatImageView>(R.id.iv_edit)) {
             if (mentorId == Mentor.getInstance().getId()) {
                 visibility = View.VISIBLE
                 setOnClickListener {
@@ -452,7 +452,7 @@ class UserProfileActivity : CoreJoshActivity() {
                 visibility = View.GONE
             }
         }
-        with(iv_setting) {
+        with(findViewById<AppCompatImageView>(R.id.iv_setting)) {
 //            if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
 //                        .getId()) {
             visibility = View.VISIBLE
@@ -766,7 +766,7 @@ class UserProfileActivity : CoreJoshActivity() {
             }
         }
         this.resp = resp
-        text_message_title.text = resp
+        findViewById<AppCompatTextView>(R.id.text_message_title).text = resp
         binding.userName.text = resp
         userName = userData.name
         binding.userAge.text = userData.age.toString()
