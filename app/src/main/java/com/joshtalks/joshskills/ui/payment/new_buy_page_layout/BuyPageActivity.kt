@@ -341,7 +341,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
                     } else {
-                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
+                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
                     }
                     binding.freeTrialTimerNewUi.visibility = View.VISIBLE
                     binding.timeText.visibility = View.GONE

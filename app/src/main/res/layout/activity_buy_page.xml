@@ -109,7 +109,7 @@
                             android:paddingTop="@dimen/_10sdp"
                             android:paddingBottom="@dimen/_13sdp"
                             android:paddingHorizontal="@dimen/_12sdp"
-                            android:background="@drawable/ic_timer_banner"
+                            android:background="@drawable/ic_transparent_color_img"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
