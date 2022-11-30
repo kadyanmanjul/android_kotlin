@@ -58,7 +58,6 @@
                     app:srcCompat="@drawable/ic_arrow_back"
                     tools:visibility="visible" />
 
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_message_title"
                     android:layout_width="0dp"
@@ -84,7 +83,7 @@
                     android:textColor="@color/text_default"
                     android:textSize="@dimen/_11ssp"
                     android:textStyle="bold"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     android:text="@string/apply_coupon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
