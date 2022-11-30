@@ -16,6 +16,10 @@
 
     </data>
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -116,8 +120,8 @@
             android:layout_marginStart="@dimen/_28sdp"
             android:layout_marginEnd="@dimen/_20sdp"
             android:background="@drawable/small_dotted_stroke_background"
-            app:layout_constraintBottom_toTopOf="@+id/shareOnWhatsAppBtn"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/_36sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/referralPointTwo" />
 
@@ -159,13 +163,14 @@
             android:layout_marginStart="@dimen/_28sdp"
             android:layout_marginEnd="@dimen/_14sdp"
             android:layout_marginBottom="@dimen/_32sdp"
+            android:layout_marginTop="@dimen/_16sdp"
             android:backgroundTint="@color/external_whatsapp"
             android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
             android:text="@string/btn_share_on_whatsapp"
             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_other_share"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/referCodeBg" />
 
         <ImageView
             android:id="@+id/btn_other_share"
@@ -181,5 +186,7 @@
             app:layout_constraintTop_toTopOf="@+id/shareOnWhatsAppBtn" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
 
 </layout>
