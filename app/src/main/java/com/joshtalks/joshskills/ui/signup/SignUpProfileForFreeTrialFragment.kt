@@ -170,13 +170,11 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
             textMarginRes = R.dimen.dp8
         }
         binding.btnLogin.isEnabled = false
-        binding.progressContainer.visibility = View.VISIBLE
     }
 
     private fun hideProgress() {
         binding.btnLogin.isEnabled = true
         binding.btnLogin.hideProgress(R.string.register)
-        binding.progressContainer.visibility = View.GONE
     }
 
     fun showPrivacyPolicyDialog() {
