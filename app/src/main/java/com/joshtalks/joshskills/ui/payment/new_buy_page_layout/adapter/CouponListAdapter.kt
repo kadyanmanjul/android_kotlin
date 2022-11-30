@@ -61,9 +61,12 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
                     position
                 )
             else {
-                if (members?.validDuration?.time == null)
-                    binding.txtCouponExpireTime.text = "Get 20% off"
-                else
+                if (members?.validDuration?.time == null) {
+                    if (members?.amountPercent != -1)
+                        binding.txtCouponExpireTime.text = "Get Extra ${members?.amountPercent}% Off"
+                    else
+                        binding.txtCouponExpireTime.text = "Get Extra ₹${members.maxDiscountAmount} Off"
+                } else
                     binding.txtCouponExpireTime.text = "Coupon expired"
             }
             with(binding) {

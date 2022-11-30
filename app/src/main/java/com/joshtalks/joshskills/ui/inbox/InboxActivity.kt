@@ -116,6 +116,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         setContentView(R.layout.activity_inbox)
         binding.vm = viewModel
         binding.executePendingBindings()
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+            binding.content.setBackgroundColor(this.resources.getColor(R.color.pure_white))
         initView()
         addLiveDataObservable()
         addAfterTime()
@@ -524,6 +526,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = false
                     } else if (isCapsuleCourseBought.not()) {
                         findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                         try {
                             runOnUiThread {
                                 btn_upgrade.isVisible = haveFreeTrialCourse
@@ -533,7 +536,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                             e.printStackTrace()
                         }
                         showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
-                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
                             findMoreLayout.visibility = View.GONE

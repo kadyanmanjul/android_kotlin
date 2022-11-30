@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox.adapter
 
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -79,6 +80,7 @@ object InboxBindingAdapter {
         adapter: InboxRecommendedAdapter,
         function: ((InboxRecommendedCourse, Int, Int) -> Unit)?
     ) {
+        view.visibility = View.VISIBLE
         view.setHasFixedSize(false)
         view.adapter = adapter
         adapter.setListener(function)
