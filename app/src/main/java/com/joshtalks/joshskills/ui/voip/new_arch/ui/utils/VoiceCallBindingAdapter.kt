@@ -7,11 +7,12 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Chronometer
+import android.widget.GridLayout
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -146,7 +147,7 @@ fun AppCompatTextView.setWord(word: String?,color:String?) {
 }
 
 @BindingAdapter("setChips",)
-fun ChipGroup.setChips(interests : List<String>) {
+fun GridLayout.setChips(interests : List<String>) {
     var index = 0
     this.removeAllViews()
     Log.d("ChipGroup.setChips", "setChips: $interests")
@@ -156,6 +157,10 @@ fun ChipGroup.setChips(interests : List<String>) {
         chip.text = interest
         chip.id = index
         this.addView(chip)
+        // this has to be done after adding the view
+        chip.updateLayoutParams<GridLayout.LayoutParams> {
+            setMargins(10,0,0,0)
+        }
         if(index > 4)
             break
         index += 1
