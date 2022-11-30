@@ -17,6 +17,7 @@ import androidx.databinding.BindingAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -147,7 +148,7 @@ fun AppCompatTextView.setWord(word: String?,color:String?) {
 }
 
 @BindingAdapter("setChips",)
-fun GridLayout.setChips(interests : List<String>) {
+fun FlexboxLayout.setChips(interests : List<String>) {
     var index = 0
     this.removeAllViews()
     Log.d("ChipGroup.setChips", "setChips: $interests")
@@ -158,8 +159,8 @@ fun GridLayout.setChips(interests : List<String>) {
         chip.id = index
         this.addView(chip)
         // this has to be done after adding the view
-        chip.updateLayoutParams<GridLayout.LayoutParams> {
-            setMargins(10,0,0,0)
+        chip.updateLayoutParams<FlexboxLayout.LayoutParams> {
+            setMargins(8,0,8,0)
         }
         if(index > 4)
             break
