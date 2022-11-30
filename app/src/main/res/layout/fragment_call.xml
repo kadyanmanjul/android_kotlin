@@ -77,6 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:gravity="center"
             android:lines="2"
             android:text="@{vm.uiState.occupation}"
@@ -87,7 +88,7 @@
             android:visibility='@{vm.uiState.occupation.equals("")  ? View.GONE : View.VISIBLE}'
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/interest_list"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             tools:ignore="MissingPrefix"
             tools:text="Engineer, Dream - IAS Officer"
             tools:visibility="gone" />
@@ -97,31 +98,32 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_8sdp"
             android:gravity="center"
             android:text="@{vm.uiState.interestHeader}"
+            android:layout_marginTop="@dimen/_27sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:textColor="@color/pure_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/call_time1"
+            app:layout_constraintTop_toBottomOf="@+id/topic_name"
             tools:ignore="MissingPrefix"
             tools:text="Interest Header" />
 
-        <com.google.android.material.chip.ChipGroup
+        <GridLayout
             android:id="@+id/interest_list"
             setChips="@{vm.uiState.interests}"
-            android:clickable="false"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
-            android:layout_width="0dp"
-            app:justifyContent="center"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
+            android:clickable="false"
+            android:focusable="false"
+            android:columnCount="2"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            app:justifyContent="center"
             app:layout_constraintEnd_toStartOf="@+id/interest_end_guideline"
             app:layout_constraintStart_toStartOf="@+id/interest_start_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/interest_header">
-        </com.google.android.material.chip.ChipGroup>
+            app:layout_constraintTop_toBottomOf="@+id/interest_header" />
 
         <TextView
             android:id="@+id/call_time"
@@ -146,14 +148,14 @@
             startTimer="@{vm.uiState.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/pure_white"
             android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/caller_name"
+            app:layout_constraintTop_toBottomOf="@+id/occupation_future_goals"
             tools:ignore="MissingPrefix" />
 
         <androidx.constraintlayout.widget.Barrier
@@ -185,17 +187,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="24dp"
             android:gravity="center"
             android:text="Discussion Topic"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             android:textColor="@color/pure_white"
             android:textStyle="bold"
             android:visibility="visible"
+            android:layout_marginTop="@dimen/_30sdp"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintHorizontal_bias="0.512"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/occupation_future_goals" />
+            app:layout_constraintTop_toBottomOf="@+id/call_time1" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_name"
