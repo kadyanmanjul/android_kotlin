@@ -324,6 +324,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         }
+        viewModel.paymentNotInitiated.observe(this) { paymentNotInitiated ->
+
+            if (paymentNotInitiated){
+                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1){
+                    findMoreLayout.visible()
+                }
+            }
+        }
         viewModel.paymentStatus.observe(this, Observer {
             when (it.status) {
                 PaymentStatus.SUCCESS -> {
@@ -542,7 +550,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                        viewModel.paymentNotInitiated.observe(this@InboxActivity) {
+                            if (it) {
+                                showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                            }
+                        }
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
                             findMoreLayout.visibility = View.GONE
@@ -577,7 +590,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
         ) {
             if (paymentStatusView.visibility != View.VISIBLE) {
-                findMoreLayout.visibility = View.VISIBLE
+//                findMoreLayout.visibility = View.VISIBLE
                 paymentStatusView.visibility = View.GONE
             }
         }

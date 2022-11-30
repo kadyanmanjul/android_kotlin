@@ -166,7 +166,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/text_explore_course">
 
-                    <include layout="@layout/find_more_layout" />
+                    <include
+                        layout="@layout/find_more_layout"
+                        android:visibility="gone"/>
 
                     <include
                         layout="@layout/payment_status_layout"

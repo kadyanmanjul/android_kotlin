@@ -34,6 +34,7 @@ class InboxViewModel : BaseViewModel(){
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
     val paymentStatus: MutableLiveData<Payment> = MutableLiveData()
+    val paymentNotInitiated: MutableLiveData<Boolean> = MutableLiveData()
 
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
@@ -298,6 +299,8 @@ class InboxViewModel : BaseViewModel(){
                             }
                         }
                     }
+                } else {
+                    paymentNotInitiated.postValue(true)
                 }
             } catch (ex: Exception) {
 
