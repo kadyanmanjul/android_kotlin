@@ -861,7 +861,7 @@
     </entry>
     <entry>
         <key>help_options_new</key>
-        <value>{"title":"Student Help Center","support_message":"Our Student Help Center Agents is available from 9:30 AM to 6:30 PM. We apologize for the inconvenience.","options":[{"id":1,"name":"Call HelpLine","action":"CALL","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/fixes_lalit/call.svg","action_data":"+918634503202"},{"id":2,"name":"Chat with agent","action":"HELPCHAT","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/fixes_lalit/chat.svg","action_data":"********"},{"id":3,"name":"FAQ","action":"FAQ","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/fixes_lalit/support.svg","action_data":"********"}]}</value>
+        <value>{   "title": "Student Support Center",   "support_message": "Our Student Support Center is available from 9am to 11pm, Monday to Sunday.We apologise for any inconvenience caused.",   "options": [     {       "id": 1,       "name": "Call Customer Support",       "action": "CALL",       "url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/icons/phone.svg",       "action_data": "+918634503202"     },     {       "id": 2,       "name": "Chat with Customer Support",       "action": "HELPCHAT",       "url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/icons/chat.svg",       "action_data": "********"     },     {       "id": 3,       "name": "FAQs",       "action": "FAQ",       "url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/icons/help.svg",       "action_data": "********"     }   ] }</value>
     </entry>
     <entry>
         <key>FREE_TRIAL_PAYMENT_TEST_ID_1891</key>

@@ -1679,3 +1679,10 @@ fun isValidContextForGlide(context: Context?): Boolean {
 fun Int.pxToDP(context: Context): Int {
     return (this / context.resources.displayMetrics.density).toInt()
 }
+
+fun ImageView.paintColor(colorString: String) {
+    val paint = Paint()
+    val colorFilter = PorterDuffColorFilter(Color.parseColor(colorString), PorterDuff.Mode.SRC_ATOP)
+    paint.colorFilter = colorFilter
+    setLayerPaint(paint)
+}
