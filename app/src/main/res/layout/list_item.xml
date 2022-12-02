@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="@dimen/_8sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
             android:textColor="@color/text_default"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
