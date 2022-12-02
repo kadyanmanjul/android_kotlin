@@ -72,7 +72,10 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
             with(binding) {
                 this.txtCouponCode.text = members?.couponCode
                 this.couponDesc.text =
-                    "Use code " + "${members?.couponCode} " + "and get ${members?.amountPercent.toString()}% off on you purchase."
+                    if (members?.amountPercent != -1)
+                        "Use code " + "${members?.couponCode} " + "and get ${members?.amountPercent.toString()}% off on you purchase."
+                    else
+                        "Use code " + "${members.couponCode} " + "and get ₹${members.maxDiscountAmount} off on you purchase."
                 this.saveMoney.text = "Save upto ₹" + members?.maxDiscountAmount.toString() + " with this code"
 
                 this.btnApply.setOnSingleClickListener {
