@@ -533,8 +533,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
                     if (paymentStatusView.visibility != View.VISIBLE) {
-                        findMoreLayout.visibility = View.VISIBLE
-                        paymentStatusView.visibility = View.GONE
+//                        lifecycleScope.launch {
+//                            delay(1000)
+//                            findMoreLayout.visibility = View.VISIBLE
+//                            paymentStatusView.visibility = View.GONE
+//                        }
                     }
                     if (isSubscriptionCourseBought) {
                         findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = true
