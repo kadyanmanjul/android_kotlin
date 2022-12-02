@@ -58,7 +58,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             offersList[position]
                 .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
         } else {
-            if (offersList[position].couponDesc != null) {
+            if (offersList[position].couponDesc != null && offersList[position].isAutoApply) {
                 holder.binding.couponExpireText.text = offersList[position].couponDesc
                 holder.binding.couponExpireText.visibility = View.VISIBLE
                 holder.disableCouponWithoutApiCal(holder.binding, offersList[position], position)
@@ -72,7 +72,12 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             } else {
                 if (offersList[position].couponDesc == null && offersList[position].isMentorSpecificCoupon==null){
                     holder.enableCoupon(holder.binding, offersList[position], position)
-                    holder.binding.couponExpireText.text = "Get extra 20% off"
+                    if (offersList[position].amountPercent != -1){
+                        holder.binding.couponExpireText.text = "Get Extra ${offersList[position].amountPercent}% Off"
+                    }
+                    else{
+                        holder.binding.couponExpireText.visibility = View.GONE
+                    }
                     holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                 }else{
                     offersList[position].let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
@@ -167,7 +172,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         var countdownTimerBack: CountDownTimer? = null
         fun setData(coupon: Coupon?, position: Int) {
             binding.executePendingBindings()
-            if (offersList[position].couponDesc != null) {
+            if (offersList[position].couponDesc != null && offersList[position].isAutoApply) {
                 countdownTimerBack?.cancel()
                 countdownTimerBack = null
                 binding.couponExpireText.visibility = View.VISIBLE
@@ -178,7 +183,12 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             } else {
                 if (offersList[position].couponDesc == null && offersList[position].isMentorSpecificCoupon==null){
                     enableCoupon(binding, offersList[position], position)
-                    binding.couponExpireText.text = "Get extra 20% off"
+                    if (offersList[position].amountPercent != -1){
+                        binding.couponExpireText.text = "Get Extra ${offersList[position].amountPercent}% Off"
+                    }
+                    else{
+                        binding.couponExpireText.visibility = View.GONE
+                    }
                     binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                     countdownTimerBack?.cancel()
                     countdownTimerBack = null
@@ -217,7 +227,12 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                         AppObjectController.uiHandler.post {
                             if (offersList[position].couponDesc == null && offersList[position].isMentorSpecificCoupon==null){
                                 enableCoupon(binding, offersList[position], position)
-                                binding.couponExpireText.text = "Get extra 20% off"
+                                if (offersList[position].amountPercent != -1){
+                                    binding.couponExpireText.text = "Get Extra ${offersList[position].amountPercent}% Off"
+                                }
+                                else{
+                                    binding.couponExpireText.visibility = View.GONE
+                                }
                                 binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
                                 countdownTimerBack?.cancel()
                                 countdownTimerBack = null

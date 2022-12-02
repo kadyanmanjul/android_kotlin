@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.leaderboard
 
 import android.content.Context
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -11,6 +12,8 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -44,6 +47,9 @@ class LeaderBoardPreviousWinnerItemViewHolder(
     @View(R.id.award)
     lateinit var awardIV: AppCompatImageView
 
+    @View(R.id.rankBadge)
+    lateinit var rankBadge: ImageView
+
     @View(R.id.online_status_iv)
     lateinit var onlineStatusLayout: FrameLayout
 
@@ -71,6 +77,30 @@ class LeaderBoardPreviousWinnerItemViewHolder(
             onlineStatusLayout.visibility = android.view.View.GONE
         }
         awardIV.setImage(awardUrl, context)
+
+        // TODO: put rank
+        when (response.ranking) {
+            1 -> {
+                rankBadge.visible()
+                rank.gone()
+                rankBadge.setImageResource(R.drawable.first)
+            }
+            2 -> {
+                rank.gone()
+                rankBadge.visible()
+                rankBadge.setImageResource(R.drawable.two)
+            }
+            3 -> {
+                rank.gone()
+                rankBadge.visible()
+                rankBadge.setImageResource(R.drawable.three)
+            }
+            else -> {
+                rankBadge.gone()
+                rank.visible()
+            }
+        }
+
     }
 
     @Click(R.id.user_pic)

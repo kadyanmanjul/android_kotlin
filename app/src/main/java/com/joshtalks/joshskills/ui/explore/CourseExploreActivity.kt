@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.explore
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +19,7 @@ import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
+import com.joshtalks.joshskills.ui.inbox.SUBSCRIPTION_COURSE_ID
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
@@ -97,68 +99,68 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun initView() {
         courseExploreBinding.titleTv.text = getString(R.string.explorer_courses)
-        if (User.getInstance().isVerified) {
-            courseExploreBinding.toolbar.inflateMenu(R.menu.logout_menu)
-            courseExploreBinding.toolbar.setOnMenuItemClickListener {
-                if (it?.itemId == R.id.menu_logout) {
-                    MaterialDialog(this@CourseExploreActivity).show {
-                        message(R.string.logout_message)
-                        positiveButton(R.string.ok) {
-                            MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
-                                .addParam(ParamKeys.LOGOUT,"ok")
-                                .push()
-                            AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
-                                .addUserDetails()
-                                .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-                            val intent = Intent(
-                                AppObjectController.joshApplication,
-                                SignUpActivity::class.java
-                            )
-                            intent.apply {
-                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                putExtra(FLOW_FROM, "CourseExploreActivity")
-                            }
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                PrefManager.logoutUser()
-                                AppObjectController.joshApplication.startActivity(intent)
-                            }
-                        }
-                        negativeButton(R.string.cancel) {
-                            MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
-                                .addParam(ParamKeys.LOGOUT,"cancel")
-                                .push()
-                            AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
-                                .addUserDetails()
-                                .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
-                        }
-                    }
-                }
-                return@setOnMenuItemClickListener true
-            }
-        }
-        courseExploreBinding.toolbar.setOnMenuItemClickListener {
-            if (it?.itemId == R.id.menu_logout) {
-                MaterialDialog(this@CourseExploreActivity).show {
-                    message(R.string.logout_message)
-                    positiveButton(R.string.ok) {
-                        MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
-                            .addParam(ParamKeys.LOGOUT,"ok")
-                            .push()
-                        logout()
-                    }
-                    negativeButton(R.string.cancel) {
-                        MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
-                            .addParam(ParamKeys.LOGOUT,"cancel")
-                            .push()
-                        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
-                            .addUserDetails()
-                            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
-                    }
-                }
-            }
-            return@setOnMenuItemClickListener true
-        }
+//        if (User.getInstance().isVerified) {
+//            courseExploreBinding.toolbar.inflateMenu(R.menu.logout_menu)
+//            courseExploreBinding.toolbar.setOnMenuItemClickListener {
+//                if (it?.itemId == R.id.menu_logout) {
+//                    MaterialDialog(this@CourseExploreActivity).show {
+//                        message(R.string.logout_message)
+//                        positiveButton(R.string.ok) {
+//                            MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
+//                                .addParam(ParamKeys.LOGOUT,"ok")
+//                                .push()
+//                            AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+//                                .addUserDetails()
+//                                .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
+//                            val intent = Intent(
+//                                AppObjectController.joshApplication,
+//                                SignUpActivity::class.java
+//                            )
+//                            intent.apply {
+//                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                                putExtra(FLOW_FROM, "CourseExploreActivity")
+//                            }
+//                            lifecycleScope.launch(Dispatchers.IO) {
+//                                PrefManager.logoutUser()
+//                                AppObjectController.joshApplication.startActivity(intent)
+//                            }
+//                        }
+//                        negativeButton(R.string.cancel) {
+//                            MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
+//                                .addParam(ParamKeys.LOGOUT,"cancel")
+//                                .push()
+//                            AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+//                                .addUserDetails()
+//                                .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
+//                        }
+//                    }
+//                }
+//                return@setOnMenuItemClickListener true
+//            }
+//        }
+//        courseExploreBinding.toolbar.setOnMenuItemClickListener {
+//            if (it?.itemId == R.id.menu_logout) {
+//                MaterialDialog(this@CourseExploreActivity).show {
+//                    message(R.string.logout_message)
+//                    positiveButton(R.string.ok) {
+//                        MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
+//                            .addParam(ParamKeys.LOGOUT,"ok")
+//                            .push()
+//                        logout()
+//                    }
+//                    negativeButton(R.string.cancel) {
+//                        MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
+//                            .addParam(ParamKeys.LOGOUT,"cancel")
+//                            .push()
+//                        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+//                            .addUserDetails()
+//                            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
+//                    }
+//                }
+//            }
+//            return@setOnMenuItemClickListener true
+//        }
     }
 
     private fun initViewPagerTab() {
@@ -277,6 +279,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
                         ExploreCardType.NORMAL -> {
                             courseExploreModel.id?.let { testId ->
+                                Log.e("sagar", "addObserver: ${PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)}")
                                 saveImpressionForExplorePageLayout("VIEW_UPSELL_COURSE", testId.toString())
                                 CourseDetailsActivity.startCourseDetailsActivity(
                                     activity = this,
@@ -284,7 +287,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                                     whatsappUrl = courseExploreModel.whatsappUrl,
                                     startedFrom = this@CourseExploreActivity.javaClass.simpleName,
                                     buySubscription = false,
-                                    isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+                                    isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
                                 )
                             }
                         }

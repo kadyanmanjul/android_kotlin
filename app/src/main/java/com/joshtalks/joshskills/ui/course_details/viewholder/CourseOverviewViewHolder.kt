@@ -12,10 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -28,6 +25,7 @@ import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
 import com.joshtalks.joshskills.repository.server.course_detail.OverviewMediaType
 import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
+import com.joshtalks.joshskills.ui.inbox.SUBSCRIPTION_COURSE_ID
 import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -43,7 +41,7 @@ class CourseOverviewViewHolder(
     private val testId: Int,
     private val coursePrice: String,
     private val courseName: String,
-    private val isFromFreeTrial:Boolean
+    private val isCourseBought:Boolean
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.txtCourseName)
@@ -102,7 +100,8 @@ class CourseOverviewViewHolder(
         txtDescription.text = data.shortDescription
         txtRating.text = String.format("%.1f", data.rating)
         ratingBar.rating = data.rating.toFloat()
-        if (testId == 10 || testId == 122 || isFromFreeTrial.not())
+        //if (testId == 10 && (isCourseBought || testId == 10))
+        if (testId == 10 || testId == 122 || !isCourseBought || PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED))
             cardOffer.visibility = View.GONE
         setCourseStats()
         setCarouselView()

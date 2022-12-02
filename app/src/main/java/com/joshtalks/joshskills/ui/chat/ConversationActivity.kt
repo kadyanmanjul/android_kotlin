@@ -119,10 +119,12 @@ import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -520,10 +522,11 @@ class ConversationActivity :
     }
 
     private fun showFirstCallBottomSheet() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            delay(500)
-            FirstCallBottomSheet.showDialog(supportFragmentManager)
-        }
+        if (getVoipState() == State.IDLE && PrefManager.getIntValue(FT_CALLS_LEFT) == 15)
+            lifecycleScope.launch(Dispatchers.Main) {
+                delay(300)
+                FirstCallBottomSheet.showDialog(supportFragmentManager)
+            }
     }
 
     fun showFreeTrialPaymentScreen() {
@@ -1359,8 +1362,6 @@ class ConversationActivity :
     override fun onRestart() {
         super.onRestart()
         getAllPendingRequest()
-        if (VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) && openedLesson)
-            showFirstCallBottomSheet()
     }
 
     private fun profileFeatureActiveView(showLeaderboardMenu: Boolean) {
@@ -2052,25 +2053,6 @@ class ConversationActivity :
                 if (url.isNotBlank()) {
                     addImageMessage(url)
                 }
-//                data?.let { intent ->
-////                    when {
-////                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
-////                            intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
-////                                ?.getOrNull(0)?.let {
-////                                    if (it.isNotBlank()) {
-////                                        addImageMessage(it)
-////                                    }
-////                                }
-////                        }
-////                        intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
-////                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
-////                            videoPath?.let {
-////                                addVideoMessage(it)
-////                            }
-////                        }
-////                        else -> return
-////                    }
-//                }
             } else if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE && resultCode == RESULT_OK) {
                 showToast(getString(R.string.answer_submitted))
                 (data?.getParcelableExtra(PRACTISE_OBJECT) as ChatModel?)?.let {
@@ -2089,7 +2071,6 @@ class ConversationActivity :
             } else if (resultCode == RESULT_OK) {
                 when (requestCode) {
                     ASSESSMENT_REQUEST_CODE,
-                    LESSON_REQUEST_CODE,
                     CERTIFICATION_REQUEST_CODE -> {
                         data?.getStringExtra(CHAT_ROOM_ID)?.let {
                             conversationViewModel.refreshMessageObject(it)
@@ -2099,6 +2080,13 @@ class ConversationActivity :
                         data?.getIntExtra(COURSE_ID, -1)?.let {
                             conversationViewModel.refreshLesson(it)
                         }
+                    }
+                    LESSON_REQUEST_CODE -> {
+                        data?.getStringExtra(CHAT_ROOM_ID)?.let {
+                            conversationViewModel.refreshMessageObject(it)
+                        }
+                        if (VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) && openedLesson)
+                            showFirstCallBottomSheet()
                     }
                 }
             }

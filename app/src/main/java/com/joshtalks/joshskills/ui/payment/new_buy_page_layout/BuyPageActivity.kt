@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -23,7 +22,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -33,9 +35,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
-import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.PAYMENT_FAILED
 import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
@@ -45,15 +45,17 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.DIGITAL_C
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityBuyPageBinding
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
-import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
@@ -80,7 +82,10 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_gif.view.*
+import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import java.math.BigDecimal
@@ -89,7 +94,7 @@ const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val SUBSCRIPTION_TEST_ID = "10"
 const val IS_FAKE_CALL = "is_fake_call"
 
-class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
+class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCourseListener {
 
     var englishCourseCard: View? = null
     var otherCourseCard: View? = null
@@ -108,7 +113,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
     private var flowFrom: String = EMPTY
 
     private var countdownTimerBack: CountdownTimerBack? = null
-
+    private var openCourseListener: OnOpenCourseListener? = null
     private val binding by lazy<ActivityBuyPageBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_buy_page)
     }
@@ -189,6 +194,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
 
         errorView = Stub(findViewById(R.id.error_view))
         addObserver()
+        openCourseListener = this
         if (Utils.isInternetAvailable()) {
             viewModel.getCourseContent()
             viewModel.getCoursePriceList(null, null, null)
@@ -326,39 +332,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
     }
 
     private fun setFreeTrialTimer(buyCourseFeatureModel: BuyCourseFeatureModel) {
-        if (buyCourseFeatureModel.expiryTime != null) {
-            if (buyCourseFeatureModel.expiryTime?.time ?: 0 >= System.currentTimeMillis()) {
-                if (buyCourseFeatureModel.expiryTime?.time ?: 0 > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                    binding.freeTrialTimerNewUi.visibility = View.GONE
-                } else {
-                    startTimer(
-                        (buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis(),
-                        buyCourseFeatureModel
-                    )
-                }
-            } else {
-                if (buyCourseFeatureModel.timerBannerText != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
-                    } else {
-                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
-                    }
-                    binding.freeTrialTimerNewUi.visibility = View.VISIBLE
-                    binding.timeText.visibility = View.GONE
-                    binding.timerText.text = getString(R.string.free_trial_ended)
-                    binding.timerText.gravity = Gravity.CENTER_HORIZONTAL
-                } else {
-                    binding.freeTrialTimerNewUi.visibility = View.VISIBLE
-                    binding.timerText.text = getString(R.string.free_trial_ended)
-                    binding.timeText.gone()
-//                    binding.freeTrialTimer.visibility = View.VISIBLE
-//                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
-                }
-                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
-            }
+        if ((buyCourseFeatureModel.expiryTime?.time ?: 0) >= System.currentTimeMillis()) {
+            startTimer((buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis())
         } else {
-            binding.freeTrialTimerNewUi.gone()
-//            binding.freeTrialTimer.visibility = View.GONE
+            PrefManager.put(IS_FREE_TRIAL_ENDED, true)
         }
     }
 
@@ -547,7 +524,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                 testId.toInt(),
                 startedFrom = this@BuyPageActivity.javaClass.simpleName,
                 buySubscription = false,
-                isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+                isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
             )
         }
     }
@@ -785,65 +762,18 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
         return dialogView
     }
 
-    private fun startTimer(startTimeInMilliSeconds: Long, buyCourseFeatureModel: BuyCourseFeatureModel) {
+    private fun startTimer(startTimeInMilliSeconds: Long) {
+        countdownTimerBack?.stop()
+        countdownTimerBack = null
         countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
             override fun onTimerTick(millis: Long) {
-                AppObjectController.uiHandler.post {
-                    val freeTrailTime = UtilTime.timeFormatted(millis).split(":")
-                    if (buyCourseFeatureModel.timerBannerText != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
-                        } else {
-                            binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
-                        }
-                        binding.freeTrialTimerNewUi.visibility = View.VISIBLE
-                        binding.timerText.text = buyCourseFeatureModel.timerBannerText
-                        binding.txtHours.text = freeTrailTime[0]
-                        if (freeTrailTime.getOrNull(1) != null)
-                            binding.txtMinute.text = freeTrailTime[1]
-                        else {
-                            binding.txtHours.text = "00"
-                            binding.txtMinute.text = "00"
-                            binding.txtSecond.text = freeTrailTime[0]
-                        }
-                        if (freeTrailTime.getOrNull(2) != null) {
-                            binding.txtSecond.text = freeTrailTime[2]
-                        } else {
-                            binding.txtHours.text = "00"
-                            binding.txtMinute.text = freeTrailTime[0]
-                            binding.txtSecond.text = freeTrailTime[1]
-                        }
-                    } else {
-                        binding.freeTrialTimerNewUi.visibility = View.VISIBLE
-                        binding.timerText.text = getString(R.string.free_trial_ends_in)
-                        binding.txtHours.text = UtilTime.getRemainingHours(millis)
-                        binding.txtMinute.text = UtilTime.getRemainingMinutes(millis)
-                        binding.txtSecond.text = UtilTime.getRemainingSeconds(millis)
-//                        binding.freeTrialTimer.text = getString(
-//                            R.string.free_trial_end_in,
-//                            UtilTime.timeFormatted(millis)
-//                        )
-//                        binding.freeTrialTimer.visibility = View.VISIBLE
-//                        binding.freeTrialTimer.text = getString(
-//                            R.string.free_trial_end_in,
-//                            UtilTime.timeFormatted(millis)
-//                        )
-                    }
-                }
+                openCourseListener?.onStartTrialTimer(millis)
             }
 
             override fun onTimerFinish() {
-                if (buyCourseFeatureModel.timerBannerText != null) {
-                    binding.timeText.visibility = View.GONE
-                    binding.timerText.text = getString(R.string.free_trial_ended)
-                } else {
-                    binding.freeTrialTimerNewUi.visibility = View.VISIBLE
-                    binding.timerText.text = getString(R.string.free_trial_ended)
-                    binding.timeText.gone()
-//                    binding.freeTrialTimer.visibility = View.VISIBLE
-//                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
-                }
-                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
+                PrefManager.put(IS_FREE_TRIAL, true)
+                openCourseListener?.onFreeTrialEnded()
+                countdownTimerBack?.stop()
             }
         }
         countdownTimerBack?.startTimer()
@@ -997,5 +927,23 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener {
                 }
             }
         }
+    }
+
+    override fun onClick(inboxEntity: InboxEntity) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onStartTrialTimer(startTimeInMilliSeconds: Long) {
+        binding.freeTrialTimerNewUi.visible()
+        binding.freeTrialTimerNewUi.startTimer(startTimeInMilliSeconds)
+    }
+
+    override fun onStopTrialTimer() {
+        binding.freeTrialTimerNewUi.removeTimer()
+    }
+
+    override fun onFreeTrialEnded() {
+        binding.freeTrialTimerNewUi.visible()
+        binding.freeTrialTimerNewUi.endFreeTrial()
     }
 }

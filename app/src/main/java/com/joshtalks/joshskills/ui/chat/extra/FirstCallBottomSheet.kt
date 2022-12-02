@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.BottomSheetFirstCallBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.extra.setOnShortSingleClickListener
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -130,13 +131,14 @@ class FirstCallBottomSheet : BottomSheetDialogFragment() {
                         (PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
                     )
                 withContext(Dispatchers.Main) {
-                    startActivity(
+                    requireActivity().startActivityForResult(
                         LessonActivity.getActivityIntent(
                             requireActivity(),
                             lessonId = lessonId,
                             conversationId = conversationId,
                             shouldStartCall = true
-                        )
+                        ),
+                        LESSON_REQUEST_CODE
                     )
                     dismiss()
                 }

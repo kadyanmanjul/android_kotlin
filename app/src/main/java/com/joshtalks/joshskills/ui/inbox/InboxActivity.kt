@@ -12,6 +12,7 @@ import android.service.notification.StatusBarNotification
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
@@ -116,6 +118,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         setContentView(R.layout.activity_inbox)
         binding.vm = viewModel
         binding.executePendingBindings()
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+            binding.content.setBackgroundColor(this.resources.getColor(R.color.pure_white))
         initView()
         addLiveDataObservable()
         addAfterTime()
@@ -131,7 +135,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         this,
                         data.id,
                         startedFrom = this@InboxActivity.javaClass.simpleName,
-                        isFromFreeTrial = PrefManager.getBoolValue(IS_COURSE_BOUGHT),
+                        isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT),
                         buySubscription = false
                     )
                 }
@@ -320,6 +324,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         }
+        viewModel.paymentNotInitiated.observe(this) { paymentNotInitiated ->
+
+            if (paymentNotInitiated){
+                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1){
+                    findMoreLayout.visible()
+                }
+            }
+        }
         viewModel.paymentStatus.observe(this, Observer {
             when (it.status) {
                 PaymentStatus.SUCCESS -> {
@@ -409,7 +421,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         val icon = paymentStatusView.findViewById<AppCompatImageView>(R.id.info_icon)
         val title = paymentStatusView.findViewById<AppCompatTextView>(R.id.title)
         val description = paymentStatusView.findViewById<AppCompatTextView>(R.id.description)
-        val tryAgain = paymentStatusView.findViewById<MaterialButton>(R.id.try_again)
+        val tryAgain = paymentStatusView.findViewById<TextView>(R.id.try_again)
         val callText = paymentStatusView.findViewById<AppCompatTextView>(R.id.call)
         val number = paymentStatusView.findViewById<AppCompatTextView>(R.id.number)
 
@@ -432,15 +444,20 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         title.text = getString(titleTextID)
         description.text = getString(descTextId)
         if (isTryAgainVisible && !isCapsuleCourseBought) {
-            tryAgain.visibility = View.VISIBLE
-            tryAgain.setOnClickListener {
-                BuyPageActivity.startBuyPageActivity(
-                    this,
-                    AppObjectController.getFirebaseRemoteConfig().getString(
-                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                    ),
-                    "INBOX_TRY_AGAIN"
-                )
+            tryAgain.apply {
+                visibility = View.VISIBLE
+                textColorSet(colorTintIcon)
+                backgroundTintList = ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon)
+                TextViewCompat.setCompoundDrawableTintList(this, ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon))
+                setOnClickListener {
+                    BuyPageActivity.startBuyPageActivity(
+                        this@InboxActivity,
+                        AppObjectController.getFirebaseRemoteConfig().getString(
+                            FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                        ),
+                        "INBOX_TRY_AGAIN"
+                    )
+                }
             }
         } else {
             tryAgain.visibility = View.GONE
@@ -512,17 +529,22 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 inboxAdapter.addItems(temp)
                 val capsuleCourse = temp.firstOrNull { it.isCapsuleCourse }
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
+                PrefManager.put(IS_SUBSCRIPTION_STARTED, isSubscriptionCourseBought)
                 isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
                     if (paymentStatusView.visibility != View.VISIBLE) {
-                        findMoreLayout.visibility = View.VISIBLE
-                        paymentStatusView.visibility = View.GONE
+//                        lifecycleScope.launch {
+//                            delay(1000)
+//                            findMoreLayout.visibility = View.VISIBLE
+//                            paymentStatusView.visibility = View.GONE
+//                        }
                     }
                     if (isSubscriptionCourseBought) {
                         findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = true
                         findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = false
                     } else if (isCapsuleCourseBought.not()) {
                         findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                         try {
                             runOnUiThread {
                                 btn_upgrade.isVisible = haveFreeTrialCourse
@@ -531,7 +553,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                        viewModel.paymentNotInitiated.observe(this@InboxActivity) {
+                            if (it) {
+                                showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                            }
+                        }
                         findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
@@ -567,7 +593,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
         ) {
             if (paymentStatusView.visibility != View.VISIBLE) {
-                findMoreLayout.visibility = View.VISIBLE
+//                findMoreLayout.visibility = View.VISIBLE
                 paymentStatusView.visibility = View.GONE
             }
         }

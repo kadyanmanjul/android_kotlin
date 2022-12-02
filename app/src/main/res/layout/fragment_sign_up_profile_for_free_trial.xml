@@ -65,6 +65,7 @@
                 android:id="@+id/name_edit_text"
                 style="@style/JoshNameEditText"
                 android:layout_width="match_parent"
+                android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true" />
@@ -100,26 +101,5 @@
             app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <FrameLayout
-            android:id="@+id/progress_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/transparent_black"
-            android:elevation="10dp"
-            android:visibility="gone"
-            tools:visibility="gone">
-
-            <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/progress_bar"
-                android:layout_width="@dimen/_82sdp"
-                android:layout_height="@dimen/_82sdp"
-                android:layout_gravity="center"
-                wheel:matProg_barColor="@color/primary_500"
-                wheel:matProg_fillRadius="true"
-                wheel:matProg_linearProgress="false"
-                wheel:matProg_progressIndeterminate="true" />
-
-        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -118,7 +118,7 @@
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/original_price"
                             android:layout_width="wrap_content"
-                            android:layout_height="@dimen/_20sdp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="end"
                             android:gravity="end"
                             android:letterSpacing="0"
@@ -129,7 +129,7 @@
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/discount_price"
                             android:layout_width="wrap_content"
-                            android:layout_height="@dimen/_12sdp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="end"
                             android:gravity="end"
                             android:textAlignment="textEnd"

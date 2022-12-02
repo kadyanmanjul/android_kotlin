@@ -79,10 +79,12 @@
                     android:orientation="horizontal"
                     app:layout_constraintGuide_begin="@dimen/_12sdp" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <ImageView
                     android:id="@+id/profile_image"
                     android:layout_width="@dimen/_40sdp"
                     android:layout_height="@dimen/_40sdp"
+                    app:recommendedImage="@{obj}"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
                     app:layout_constraintStart_toStartOf="@+id/guidelineStart"
                     app:layout_constraintTop_toTopOf="@id/guidelineTop"
@@ -97,6 +99,7 @@
                     android:ellipsize="end"
                     android:inputType="none"
                     android:maxLines="1"
+                    android:text="@{obj.courseName}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                     android:textColor="@color/text_default"
                     app:layout_constraintEnd_toStartOf="@+id/unseen_msg_count"

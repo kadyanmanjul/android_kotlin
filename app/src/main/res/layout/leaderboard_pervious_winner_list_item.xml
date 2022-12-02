@@ -13,6 +13,19 @@
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/_4sdp">
 
+        <ImageView
+            android:id="@+id/rankBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:src="@drawable/first"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/user_pic"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/rank"
             android:layout_width="@dimen/_60sdp"

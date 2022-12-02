@@ -121,7 +121,6 @@ object VoipPref {
             MarketingAnalytics.callComplete5MinForFirstTime()
         } else if (duration != 0L && preferenceManager.getBoolean(IS_FIRST_CALL, true)) {
             editor.putBoolean(IS_FIRST_CALL, false)
-            editor.commit()
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
                 NotificationCategory.AFTER_LOGIN
             )
@@ -129,6 +128,7 @@ object VoipPref {
                 NotificationCategory.AFTER_FIRST_CALL
             )
         }
+        editor.commit()
 
         if (duration.inSeconds() >= 300) {
             MarketingAnalytics.callComplete5Min()
@@ -172,7 +172,7 @@ object VoipPref {
             val resp = AppObjectController.commonNetworkService.getPopupType()
             return if ((resp.body()?.get("show_screen") == true))
                 POPUP.INTEREST
-            else if ((resp.body()?.get("show_scratch_card") == true))
+            else if ((resp.body()?.get("show_scratch_card") == true) && callType == Category.PEER_TO_PEER.ordinal)
                 POPUP.SCRATCH_CARD
             else if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal)
                 POPUP.PURCHASE

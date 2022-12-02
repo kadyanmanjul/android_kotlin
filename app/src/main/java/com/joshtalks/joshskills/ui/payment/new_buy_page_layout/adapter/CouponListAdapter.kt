@@ -61,15 +61,21 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
                     position
                 )
             else {
-                if (members?.validDuration?.time == null)
-                    binding.txtCouponExpireTime.text = "Get 20% off"
-                else
+                if (members?.validDuration?.time == null) {
+                    if (members?.amountPercent != -1)
+                        binding.txtCouponExpireTime.text = "Get Extra ${members?.amountPercent}% Off"
+                    else
+                        binding.txtCouponExpireTime.text = "Get Extra ₹${members.maxDiscountAmount} Off"
+                } else
                     binding.txtCouponExpireTime.text = "Coupon expired"
             }
             with(binding) {
                 this.txtCouponCode.text = members?.couponCode
                 this.couponDesc.text =
-                    "Use code " + "${members?.couponCode} " + "and get ${members?.amountPercent.toString()}% off on you purchase."
+                    if (members?.amountPercent != -1)
+                        "Use code " + "${members?.couponCode} " + "and get ${members?.amountPercent.toString()}% off on you purchase."
+                    else
+                        "Use code " + "${members.couponCode} " + "and get ₹${members.maxDiscountAmount} off on you purchase."
                 this.saveMoney.text = "Save upto ₹" + members?.maxDiscountAmount.toString() + " with this code"
 
                 this.btnApply.setOnSingleClickListener {

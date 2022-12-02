@@ -2,8 +2,11 @@ package com.joshtalks.joshskills.ui.settings.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ALPHA_MIN
+import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.databinding.ItemSettingBinding
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
@@ -42,7 +45,11 @@ class SettingsAdapter(
                     manageClick(setting)
                 } else {
                     settingRoot.isEnabled = false
-                    settingRoot.alpha = ALPHA_MIN
+//                    settingRoot.alpha = ALPHA_MIN
+                    settingIcon.imageTintList = ContextCompat.getColorStateList(binding.root.context, R.color.disabled)
+                    settingTitle.textColorSet(R.color.disabled)
+                    settingSubTitle.textColorSet(R.color.disabled)
+                    settingsGoIcon.imageTintList = ContextCompat.getColorStateList(binding.root.context, R.color.disabled)
                 }
 
             }

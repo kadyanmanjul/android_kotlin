@@ -318,17 +318,18 @@
             app:rippleColor="@color/pure_white"
             tools:visibility="gone" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/spotlight_call_btn_text"
+            style="@style/Secondary_Button_Filled"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:elevation="@dimen/_2sdp"
             android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
             android:text="@string/call_practice_partner"
-            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-            android:textColor="@color/pure_white"
-            android:textSize="@dimen/_12ssp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/spotlight_call_btn"
             app:layout_constraintEnd_toEndOf="@id/spotlight_call_btn"

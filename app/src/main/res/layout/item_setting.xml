@@ -18,7 +18,8 @@
             android:src="@drawable/ic_notifications"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/icon_default" />
 
         <TextView
             android:id="@+id/settingTitle"
@@ -68,6 +69,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_21sdp"
             android:visibility="gone"
+            app:trackTint="@drawable/switch_selector"
+            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

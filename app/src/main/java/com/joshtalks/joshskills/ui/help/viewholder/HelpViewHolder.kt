@@ -1,9 +1,8 @@
 package com.joshtalks.joshskills.ui.help.viewholder
 
+import android.graphics.*
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -15,6 +14,7 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
+
 
 @Layout(R.layout.help_view_layout)
 class HelpViewHolder(var option: Option, var unreadMessages: Int) {
@@ -36,8 +36,6 @@ class HelpViewHolder(var option: Option, var unreadMessages: Int) {
             .with(AppObjectController.joshApplication)
             .requestBuilder
             .load(option.url)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .apply(RequestOptions().centerCrop())
             .into(categoryIconIV)
     }
 
