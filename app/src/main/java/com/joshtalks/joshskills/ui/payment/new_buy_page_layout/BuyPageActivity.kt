@@ -737,6 +737,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         val dialogView = showCustomDialog(R.layout.coupon_applied_alert_dialog)
         val btnGotIt = dialogView.findViewById<AppCompatTextView>(R.id.got_it_button)
         val couponAppleLottie = dialogView.findViewById<LottieAnimationView>(R.id.card_confetti)
+        dialogView.setCancelable(true)
         couponAppleLottie.visibility = View.VISIBLE
         couponAppleLottie.playAnimation()
         dialogView.findViewById<TextView>(R.id.coupon_name_text).text =

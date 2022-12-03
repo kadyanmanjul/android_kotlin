@@ -16,20 +16,16 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_OFFER_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import java.util.*
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.Coupon as CouponEnum
 
 class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>() {
-    private val TAG = "OffersListAdapter"
     var itemClick: ((Coupon, Int, Int, String) -> Unit)? = null
-    var prevHolder: OfferListViewHolder? = null
-    var scrollToFirst: (() -> Unit?)? = null
+    private var scrollToFirst: (() -> Unit?)? = null
     var manager: RecyclerView.LayoutManager? = null
-    var isAnySelected = false
     private var freeTrialTimerJob: Job? = null
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferListViewHolder {
         val binding =
@@ -38,53 +34,24 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     }
 
     override fun onBindViewHolder(holder: OfferListViewHolder, position: Int) {
-        holder.setData(offersList[position], position)
         holder.binding.couponDiscountPercent.text =
             if (offersList[position].amountPercent != -1) "Get Extra ${offersList[position].amountPercent}% Off"
-        else "Get Extra ₹${offersList[position].maxDiscountAmount} Off"
+            else "Get Extra ₹${offersList[position].maxDiscountAmount} Off"
 
         if (offersList[position].isCouponSelected == 1) {
+            Log.e("sagar", "onBindViewHolder: ")
             holder.binding.rootCard.isEnabled = true
             holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_bg_green)
             holder.binding.btnApply.text = REMOVE
             holder.binding.btnApply.isEnabled = true
             holder.binding.imgLogo.alpha = 1.0f
-            val colorAccent =
-                ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.primary_500)
+            val colorAccent = ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.primary_500)
             holder.binding.btnApply.setTextColor(colorAccent)
-            val blackColor =
-                ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.pure_black)
+            val blackColor = ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.pure_black)
             holder.binding.couponDiscountPercent.setTextColor(blackColor)
-            offersList[position]
-                .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
+            offersList[position].let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
         } else {
-            if (offersList[position].couponDesc != null && offersList[position].isAutoApply) {
-                holder.binding.couponExpireText.text = offersList[position].couponDesc
-                holder.binding.couponExpireText.visibility = View.VISIBLE
-                holder.disableCouponWithoutApiCal(holder.binding, offersList[position], position)
-            } else if (offersList[position].validDuration != null && (offersList[position].validDuration?.time?.minus(
-                    System.currentTimeMillis()
-                ) ?: 0) > 0L && offersList[position].isMentorSpecificCoupon != null
-            ) {
-                holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
-                holder.binding.btnApply.text = APPLY
-                holder.binding.couponExpireText.visibility = View.VISIBLE
-            } else {
-                if (offersList[position].couponDesc == null && offersList[position].isMentorSpecificCoupon==null){
-                    holder.enableCoupon(holder.binding, offersList[position], position)
-                    if (offersList[position].amountPercent != -1){
-                        holder.binding.couponExpireText.text = "Get Extra ${offersList[position].amountPercent}% Off"
-                    }
-                    else{
-                        holder.binding.couponExpireText.visibility = View.GONE
-                    }
-                    holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
-                }else{
-                    offersList[position].let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
-                    holder.changeTextColor(holder.binding, offersList[position], position)
-                    holder.binding.couponExpireText.visibility = View.VISIBLE
-                }
-            }
+            holder.setUpUI(position, offersList[position])
         }
 
         holder.binding.btnApply.setOnSingleClickListener {
@@ -104,8 +71,17 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 offersList[position]
                     .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
             }
-//            Log.e("sagar", "onBindViewHolder: onBindViewHolder", )
-//            notifyDataSetChanged()
+        }
+    }
+
+    private fun Coupon.getType(): CouponType {
+        return if (isAutoApply)
+            CouponType.CONDITIONAL
+        else if (validDuration != null) {
+            CouponType.WITH_TIMER
+        }
+        else {
+            CouponType.WITHOUT_TIMER
         }
     }
 
@@ -138,20 +114,18 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             notifyItemInserted(0)
             scrollToFirst?.invoke()
         }
-//        Log.e("sagar", "setData: applyCoupon")
-//        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = offersList.size
 
     fun addOffersList(members: MutableList<Coupon>) {
         val listToAdd = mutableListOf<Coupon>()
-        if (offersList.isNullOrEmpty()) {
+        if (offersList.isEmpty()) {
             offersList.addAll(members)
         } else {
             members.forEach { coupon ->
                 val itemInOffer = offersList.filter { it.couponCode == coupon.couponCode }
-                if (itemInOffer.isNullOrEmpty().not()) {
+                if (itemInOffer.isEmpty().not()) {
                     listToAdd.addAll(itemInOffer)
                 }
             }
@@ -159,8 +133,18 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             offersList.addAll(listToAdd)
         }
         freeTrialTimerJob?.cancel()
-        Log.e("sagar", "setData: addOffersList", )
         notifyDataSetChanged()
+    }
+
+    private fun shouldDisableCoupon(coupon: Coupon): Boolean {
+        if (((coupon.validDuration != null && isCouponValid(coupon.validDuration)) || (coupon.validDuration == null && !coupon.isAutoApply) || (coupon.couponDesc == null && coupon.isAutoApply)))
+            return false
+        else
+            return true
+    }
+
+    private fun isCouponValid(duration: Date): Boolean {
+        return duration.time.minus(System.currentTimeMillis()) > 0L
     }
 
     fun setListener(function: ((Coupon, Int, Int, String) -> Unit)?) {
@@ -170,77 +154,24 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     inner class OfferListViewHolder(val binding: ItemOfffersCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         var countdownTimerBack: CountDownTimer? = null
-        fun setData(coupon: Coupon?, position: Int) {
-            binding.executePendingBindings()
-            if (offersList[position].couponDesc != null && offersList[position].isAutoApply) {
-                countdownTimerBack?.cancel()
-                countdownTimerBack = null
-                binding.couponExpireText.visibility = View.VISIBLE
-                binding.couponExpireText.text = offersList[position].couponDesc
-                disableCouponWithoutApiCal(binding, offersList[position], position)
-            } else if (offersList[position].validDuration != null && (offersList[position].validDuration?.time?.minus(System.currentTimeMillis()) ?: 0) > 0L && coupon?.isMentorSpecificCoupon != null) {
-                startFreeTrialTimer(coupon.validDuration?.time?.minus(System.currentTimeMillis())?:0, coupon, position)
-            } else {
-                if (offersList[position].couponDesc == null && offersList[position].isMentorSpecificCoupon==null){
-                    enableCoupon(binding, offersList[position], position)
-                    if (offersList[position].amountPercent != -1){
-                        binding.couponExpireText.text = "Get Extra ${offersList[position].amountPercent}% Off"
-                    }
-                    else{
-                        binding.couponExpireText.visibility = View.GONE
-                    }
-                    binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
-                    countdownTimerBack?.cancel()
-                    countdownTimerBack = null
-                }else {
-                    changeTextColor(binding, coupon, position)
-                    if (coupon?.isMentorSpecificCoupon != null)
-                        binding.couponExpireText.visibility = View.VISIBLE
-                    else
-                        binding.couponExpireText.visibility = View.GONE
-                }
-            }
-        }
-
-        fun startFreeTrialTimer(endTimeInMilliSeconds: Long, coupon: Coupon?, position: Int) {
+        private fun startFreeTrialTimer(endTimeInMilliSeconds: Long, position: Int) {
             try {
                 if (countdownTimerBack != null)
                     countdownTimerBack?.cancel()
 
                 countdownTimerBack = object : CountDownTimer(endTimeInMilliSeconds, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
-                        if (countdownTimerBack != null) {
-                            AppObjectController.uiHandler.post {
-                                if (coupon?.couponDesc != null)
-                                    binding.couponExpireText.text = coupon.couponDesc
-                                else if (coupon?.isMentorSpecificCoupon != null) {
-                                    binding.couponExpireText.text =
-                                        "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
-                                } else {
-                                    binding.couponExpireText.visibility = View.GONE
-                                }
-                            }
+                        AppObjectController.uiHandler.post {
+                            binding.couponExpireText.text = "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
                         }
                     }
 
                     override fun onFinish() {
                         AppObjectController.uiHandler.post {
-                            if (offersList[position].couponDesc == null && offersList[position].isMentorSpecificCoupon==null){
-                                enableCoupon(binding, offersList[position], position)
-                                if (offersList[position].amountPercent != -1){
-                                    binding.couponExpireText.text = "Get Extra ${offersList[position].amountPercent}% Off"
-                                }
-                                else{
-                                    binding.couponExpireText.visibility = View.GONE
-                                }
-                                binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
-                                countdownTimerBack?.cancel()
-                                countdownTimerBack = null
-                            }else {
-                                changeTextColor(binding, coupon, position)
-                                binding.couponExpireText.visibility = View.VISIBLE
-                                countdownTimerBack?.cancel()
-                            }
+                           setUpUI(position, offersList[position])
+                            if (offersList[position].isCouponSelected == 1)
+                                offersList[position]
+                                    .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
                         }
                     }
                 }
@@ -250,56 +181,63 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             }
         }
 
-        fun changeTextColor(binding: ItemOfffersCardBinding, coupon: Coupon?, position: Int) {
-            if (coupon?.couponDesc != null)
-                binding.couponExpireText.text = coupon.couponDesc
-            else if (coupon?.isMentorSpecificCoupon != null) {
-                binding.couponExpireText.text = "Coupon expired"
-                disableCoupon(binding, coupon, position)
+        fun setUpUI(position: Int, coupon: Coupon) {
+            val state = validateCoupon(position)
+            coupon.setUI(position, state)
+        }
+
+        private fun validateCoupon(
+            position: Int,
+        ): CouponEnum {
+            return if (shouldDisableCoupon(offersList[position])) {
+                disableCoupon()
+                CouponEnum.DISABLE
             } else {
-                binding.couponExpireText.visibility = View.GONE
+                enableCoupon()
+                CouponEnum.ENABLE
             }
         }
 
-        fun disableCoupon(binding: ItemOfffersCardBinding, coupon: Coupon, position: Int) {
-            if (coupon.isCouponSelected == 1)
-                coupon.let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
-            val grayColor =
-                ContextCompat.getColor(binding.couponExpireText.context, R.color.dark_grey)
-            binding.rootCard.isEnabled = false
-            binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
-            freeTrialTimerJob?.cancel()
-            binding.couponExpireText.setTextColor(grayColor)
-            binding.couponDiscountPercent.setTextColor(grayColor)
-            binding.btnApply.isEnabled = false
-            binding.btnApply.text = APPLY
-            binding.imgLogo.alpha = 0.5f
-            binding.btnApply.setTextColor(grayColor)
-            binding.couponExpireText.visibility = View.VISIBLE
+        private fun Coupon.setUI(
+            position: Int,
+            condition: CouponEnum
+        ) {
+            val coupon = this
+            when (offersList[position].getType()) {
+                CouponType.CONDITIONAL -> {
+                    Log.e("sagar", "setUI: 1")
+                    countdownTimerBack?.cancel()
+                    countdownTimerBack = null
+                    binding.couponExpireText.visibility = View.VISIBLE
+                    if (offersList[position].couponDesc != null)
+                        binding.couponExpireText.text = offersList[position].couponDesc
+                    else
+                        binding.couponExpireText.text = "Get extra 20% off" // ye data backend se lena hai
+                }
+                CouponType.WITH_TIMER -> {
+                    Log.e("sagar", "setUI: 2")
+                    if (condition == CouponEnum.ENABLE) {
+                        if (coupon.validDuration?.time?.minus(System.currentTimeMillis())!! > 0)
+                            startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), position)
+                    } else {
+                        countdownTimerBack?.cancel()
+                        countdownTimerBack = null
+                        binding.couponExpireText.visibility = View.VISIBLE
+                        binding.couponExpireText.text = "Coupon Expired"
+                    }
+                }
+                CouponType.WITHOUT_TIMER -> {
+                    Log.e("sagar", "setUI: 3")
+                    binding.couponExpireText.visibility = View.GONE
+                    countdownTimerBack?.cancel()
+                    countdownTimerBack = null
+                }
+            }
         }
 
-        fun enableCoupon(binding: ItemOfffersCardBinding, coupon: Coupon, position: Int) {
-            binding.rootCard.isEnabled = true
-            binding.couponExpireText.setTextColor(
-                ContextCompat.getColor(
-                    binding.couponExpireText.context,
-                    R.color.text_subdued
-                )
-            )
-            binding.couponDiscountPercent.setTextColor(
-                ContextCompat.getColor(
-                    binding.couponExpireText.context,
-                    R.color.pure_black
-                )
-            )
-            binding.btnApply.isEnabled = true
-            binding.btnApply.text = APPLY
-            binding.imgLogo.alpha = 1f
-            binding.btnApply.setTextColor(ContextCompat.getColor(binding.couponExpireText.context, R.color.primary_500))
-            binding.couponExpireText.visibility = View.VISIBLE
-        }
-
-        fun disableCouponWithoutApiCal(binding: ItemOfffersCardBinding, coupon: Coupon, position: Int) {
+        private fun disableCoupon() {
+            countdownTimerBack?.cancel()
+            countdownTimerBack = null
             binding.rootCard.isEnabled = false
             binding.couponExpireText.setTextColor(
                 ContextCompat.getColor(
@@ -317,11 +255,48 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             binding.btnApply.text = APPLY
             binding.imgLogo.alpha = 0.5f
             binding.btnApply.setTextColor(ContextCompat.getColor(binding.couponExpireText.context, R.color.text_subdued))
-            binding.couponExpireText.visibility = View.VISIBLE
         }
+
+        private fun enableCoupon() {
+            countdownTimerBack?.cancel()
+            countdownTimerBack = null
+            binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
+            binding.rootCard.isEnabled = true
+            binding.couponExpireText.setTextColor(
+                ContextCompat.getColor(
+                    binding.couponExpireText.context,
+                    R.color.text_subdued
+                )
+            )
+            binding.couponDiscountPercent.setTextColor(
+                ContextCompat.getColor(
+                    binding.couponExpireText.context,
+                    R.color.pure_black
+                )
+            )
+            binding.btnApply.isEnabled = true
+            binding.btnApply.text = APPLY
+            binding.imgLogo.alpha = 1f
+            binding.btnApply.setTextColor(ContextCompat.getColor(binding.couponExpireText.context, R.color.primary_500))
+        }
+
     }
 
     fun scroll(func: () -> Unit?) {
         scrollToFirst = func
     }
 }
+
+enum class CouponType {
+    CONDITIONAL,
+    WITH_TIMER,
+    WITHOUT_TIMER
+}
+
+enum class Coupon {
+    ENABLE,
+    DISABLE
+}
+// (coupon.validDuration != null && isCouponValid(coupon.validDuration)) ->  This condition for if coupon has some expiry time so we don't have to disable this coupon
+//(coupon.validDuration == null && !coupon.isAutoApply) -> This condition for if coupon doesn't has time but it will not expire so we don't have to disable this coupon
+//(coupon.validDuration == null && coupon.isMentorSpecificCoupon == null) -> This is for conditional coupon

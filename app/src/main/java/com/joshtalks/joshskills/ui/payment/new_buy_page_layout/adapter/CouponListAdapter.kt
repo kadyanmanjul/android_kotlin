@@ -52,7 +52,11 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
                 if (members.validDuration?.time == null) {
                    changeTextColors(binding, members, position)
                 }
-                binding.txtCouponExpireTime.text = members.couponDesc
+                //Use code ENG10 and get 10% off on you purchase.
+                if (members.amountPercent != -1){
+                    binding.txtCouponExpireTime.text = "Use code ${members.couponCode}" + "and get  ${members?.amountPercent}% Off on you purchase"
+                }else
+                    binding.txtCouponExpireTime.text = "Use code ${members.couponCode}" + "and get upto ${members?.maxDiscountAmount} Off on you purchase"
             }
             else if (members?.validDuration?.time != null && members.validDuration.time.minus(System.currentTimeMillis()) > 0L)
                 startFreeTrialTimer(
