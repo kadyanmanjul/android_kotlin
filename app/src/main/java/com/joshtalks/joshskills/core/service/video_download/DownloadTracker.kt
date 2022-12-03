@@ -1,5 +1,8 @@
 package com.joshtalks.joshskills.core.service.video_download
 
+import android.app.ActivityManager
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+import android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE
 import android.content.Context
 import android.net.Uri
 import com.google.android.exoplayer2.C
@@ -14,6 +17,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.util.Log
 import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.gsonMapper
 import com.joshtalks.joshskills.core.PrefManager.getStringValue
 import com.joshtalks.joshskills.core.SELECTED_QUALITY
@@ -318,10 +322,18 @@ class DownloadTracker internal constructor(
             return false
         }
 
+        fun foregrounded() :Boolean{
+            val appProcessInfo:ActivityManager.RunningAppProcessInfo = ActivityManager.RunningAppProcessInfo()
+            ActivityManager.getMyMemoryState(appProcessInfo);
+            return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE)
+        }
+
         private fun startDownload(downloadRequest: DownloadRequest = buildDownloadRequest()) {
-            DownloadService.sendAddDownload(
-                context, VideoDownloadService::class.java, downloadRequest, true
-            )
+            if (foregrounded()) {
+                DownloadService.sendAddDownload(
+                    context, VideoDownloadService::class.java, downloadRequest, true
+                )
+            }
         }
 
         private fun buildDownloadRequest(): DownloadRequest {

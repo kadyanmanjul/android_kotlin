@@ -421,7 +421,7 @@ interface CommonNetworkService {
     @POST("$DIR/impression/track_explore_course_impression/")
     suspend fun saveImpressionForExplore(@Body params: Map<String, String>): Response<Void>
 
-    @GET("$DIR/payment/branch_log/")
-    suspend fun savePaymentLog(@Query("orderinfo_id") orderInfoId:String) :Response<Any>
+    @POST("$DIR/payment/branch_log/")
+    suspend fun savePaymentLog(@Body params: Map<String, Any>) :Response<Void>
 
 }

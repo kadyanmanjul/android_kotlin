@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,6 +24,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import java.math.BigDecimal
+import java.util.HashMap
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -32,6 +35,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
     val paymentStatus: MutableLiveData<Payment> = MutableLiveData()
+    val paymentNotInitiated: MutableLiveData<Boolean> = MutableLiveData()
 
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
@@ -294,6 +298,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                     }
+                }else {
+                    paymentNotInitiated.postValue(true)
                 }
             } catch (ex: Exception) {
 
@@ -333,10 +339,22 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun saveBranchPaymentLog(orderInfoId:String) {
+    fun saveBranchPaymentLog(orderInfoId:String,
+                             amount: BigDecimal?,
+                             testId: Int = 0,
+                             courseName: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+                val extras: HashMap<String, Any> = HashMap()
+                extras["test_id"] = testId
+                extras["orderinfo_id"] = orderInfoId
+                extras["currency"] = CurrencyType.INR.name
+                extras["amount"] = amount ?: 0.0
+                extras["course_name"] = courseName
+                extras["device_id"] = Utils.getDeviceId()
+                extras["guest_mentor_id"] = Mentor.getInstance().getId()
+                extras["payment_done_from"] = "Inbox Screen"
+                val resp = AppObjectController.commonNetworkService.savePaymentLog(extras)
             } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }

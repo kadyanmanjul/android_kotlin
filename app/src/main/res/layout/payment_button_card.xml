@@ -18,7 +18,7 @@
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:padding="@dimen/_10sdp"
-        android:text="Pay ₹499"
+        android:text="Proceed to Payment"
         android:textAllCaps="false"
         android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.JoshTypography.Button"

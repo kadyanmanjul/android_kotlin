@@ -251,7 +251,13 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     }
 
     private fun onPaymentSuccess() {
-        viewModel.saveBranchPaymentLog(paymentManager.getJustPayOrderId())
+        viewModel.saveBranchPaymentLog(
+            paymentManager.getJustPayOrderId(),
+            BigDecimal(paymentManager.getAmount()),
+            testId = 0,
+            courseName = "Spoken English Course",
+        )
+
         MarketingAnalytics.coursePurchased(
             BigDecimal(paymentManager.getAmount()),
             true,

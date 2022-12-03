@@ -17,6 +17,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.IconMarginSpan
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -1016,16 +1017,12 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 PAYMENT_MOBILE_NUMBER,
                 prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
             )
-//        if (isEcommereceEventFire && (paymentManager.getAmount() > 0) && paymentManager.getJustPayOrderId()
-//                .isNotEmpty() && viewModel.getPaymentTestId()
-//                .isNotEmpty()
-//        ) {
-//            isEcommereceEventFire = false
-//            if (viewModel.getCourseDiscountedAmount() <= 0) {
-//                return
-//            }
-//        }
-        viewModel.saveBranchPaymentLog(paymentManager.getJustPayOrderId())
+        viewModel.saveBranchPaymentLog(
+            paymentManager.getJustPayOrderId(),
+            BigDecimal(paymentManager.getAmount()),
+            testId = Integer.parseInt(freeTrialTestId),
+            courseName = "English Course"
+        )
         MarketingAnalytics.coursePurchased(
             BigDecimal(paymentManager.getAmount()),
             true,
@@ -1036,7 +1033,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
         uiHandler.post {
             PrefManager.put(IS_PAYMENT_DONE, true)
-//            showPaymentProcessingFragment()
         }
 
         uiHandler.postDelayed({

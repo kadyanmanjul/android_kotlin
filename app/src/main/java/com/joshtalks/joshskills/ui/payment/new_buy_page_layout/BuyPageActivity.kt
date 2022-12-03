@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.airbnb.lottie.LottieAnimationView
+import com.facebook.stetho.inspector.helper.IntegerFormatter
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
@@ -396,8 +397,6 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
     private fun setCoursePrices(list: CourseDetailsList, position: Int) {
         Log.e("sagar", "setCoursePrices: ${list.discountedPrice}")
         priceForPaymentProceed = list
-        proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text =
-            "Pay ${priceForPaymentProceed?.discountedPrice ?: "Pay ₹499"}"
     }
 
     private fun openCouponList() {
@@ -941,7 +940,12 @@ class BuyPageActivity : BaseActivity(), PaymentGatewayListener {
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
         }
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
-        viewModel.saveBranchPaymentLog(paymentManager.getJustPayOrderId())
+        viewModel.saveBranchPaymentLog(
+            paymentManager.getJustPayOrderId(),
+            BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
+            testId = Integer.parseInt(freeTrialTestId),
+            courseName = priceForPaymentProceed?.courseName ?: EMPTY,
+        )
         MarketingAnalytics.coursePurchased(
             BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
             true,

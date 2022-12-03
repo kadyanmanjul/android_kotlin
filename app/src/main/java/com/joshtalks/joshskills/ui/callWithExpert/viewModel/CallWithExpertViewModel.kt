@@ -9,16 +9,20 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.EXPERT_UPGRADE_CLICK
 import com.joshtalks.joshskills.constants.GET_UPGRADE_DETAILS
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.ui.callWithExpert.repository.FirstTimeAmount
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.math.BigDecimal
+import java.util.HashMap
 
 class CallWithExpertViewModel : BaseViewModel() {
 
@@ -165,10 +169,22 @@ class CallWithExpertViewModel : BaseViewModel() {
             AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
         }
     }
-    fun saveBranchPaymentLog(orderInfoId:String) {
+    fun saveBranchPaymentLog(orderInfoId:String,
+                             amount: BigDecimal?,
+                             testId: Int = 0,
+                             courseName: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+                val extras: HashMap<String, Any> = HashMap()
+                extras["test_id"] = testId
+                extras["orderinfo_id"] = orderInfoId
+                extras["currency"] = CurrencyType.INR.name
+                extras["amount"] = amount ?: 0.0
+                extras["course_name"] = courseName
+                extras["device_id"] = Utils.getDeviceId()
+                extras["guest_mentor_id"] = Mentor.getInstance().getId()
+                extras["payment_done_from"] = "Expert Screen"
+                val resp = AppObjectController.commonNetworkService.savePaymentLog(extras)
             } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }

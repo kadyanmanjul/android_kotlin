@@ -1126,6 +1126,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         NotificationUtils(applicationContext).removeAllScheduledNotification()
 
+        viewModel.saveBranchPaymentLog(
+            paymentManager.getJustPayOrderId(),
+            BigDecimal(paymentManager.getAmount()),
+            testId = testId,
+            courseName = viewModel.getCourseName()
+        )
         MarketingAnalytics.coursePurchased(
             BigDecimal(paymentManager.getAmount()),
             true,

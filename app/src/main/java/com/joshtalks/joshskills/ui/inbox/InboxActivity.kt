@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -43,6 +44,7 @@ import com.joshtalks.joshskills.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -295,6 +297,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         }
+        viewModel.paymentNotInitiated.observe(this) { paymentNotInitiated ->
+
+            if (paymentNotInitiated){
+                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1){
+                    findMoreLayout.visible()
+                }
+            }
+        }
         viewModel.paymentStatus.observe(this, Observer {
             when (it.status) {
                 PaymentStatus.SUCCESS -> {
@@ -303,7 +313,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     } else {
                         PrefManager.getStringValue(PAID_COURSE_TEST_ID)
                     }
-                    viewModel.saveBranchPaymentLog(it.razorpayOrderId)
+                    viewModel.saveBranchPaymentLog(it.razorpayOrderId,
+                        BigDecimal(it?.amount?:0.0),
+                        testId = Integer.parseInt(freeTrialTestId),
+                        courseName = "Spoken English Course")
                     MarketingAnalytics.coursePurchased(
                         BigDecimal(it?.amount?:0.0),
                         true,
@@ -512,7 +525,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                        viewModel.paymentNotInitiated.observe(this@InboxActivity) {
+                            if (it) {
+                                showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                            }
+                        }
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                         findMoreLayout.findViewById<View>(R.id.top_line).isVisible = false
                         findMoreLayout.findViewById<View>(R.id.below_line).isVisible = false
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
@@ -543,7 +561,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
         ) {
             if (paymentStatusView.visibility != View.VISIBLE) {
-                findMoreLayout.visibility = View.VISIBLE
+                //findMoreLayout.visibility = View.VISIBLE
                 paymentStatusView.visibility = View.GONE
             }
         }

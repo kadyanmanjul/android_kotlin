@@ -93,7 +93,8 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
             binding.itemData = priceList
             binding.discountPrice.text = "MRP: ${priceList?.actualAmount} "
             binding.discountPrice.paintFlags = binding.discountPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
-            binding.originalPrice.text = priceList?.discountedPrice + "/yr"
+            binding.originalPrice.text = priceList?.discountedPrice
+            binding.pricePerDay.text = priceList?.perDayPrice +" "
             binding.executePendingBindings()
             if ((expireAt?.time?.minus(System.currentTimeMillis())?:0) > 0L && isMentorSpecificCoupon!=null){
                 startFreeTrialTimer(expireAt?.time?.minus(System.currentTimeMillis())?: 0)
