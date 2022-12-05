@@ -79,6 +79,9 @@ class LeaderBoardItemViewHolder(
             horizontalLine.visible()
             onlineStatusLayout.visibility = android.view.View.GONE
         } else {
+            TextViewCompat.setTextAppearance(rank, R.style.TextAppearance_JoshTypography_BodySemiBold20)
+            TextViewCompat.setTextAppearance(name, R.style.TextAppearance_JoshTypography_SubHeadingSemiBold24)
+            TextViewCompat.setTextAppearance(points, R.style.TextAppearance_JoshTypography_SubHeadingSemiBold24)
             horizontalLine.gone()
             container.isClickable = true
             container.isEnabled = true
