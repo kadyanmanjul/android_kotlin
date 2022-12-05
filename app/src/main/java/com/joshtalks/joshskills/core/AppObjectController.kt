@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -10,13 +9,8 @@ import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
 import android.util.Log
-import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.airbnb.lottie.L
-import com.freshchat.consumer.sdk.Freshchat
-import com.freshchat.consumer.sdk.FreshchatConfig
-import com.freshchat.consumer.sdk.FreshchatNotificationConfig
-import com.freshchat.consumer.sdk.j.af
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -286,10 +280,6 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        var freshChat: Freshchat? = null
-            private set
-
-        @JvmStatic
         var currentActivityClass: String? = null
 
         @JvmStatic
@@ -335,57 +325,9 @@ class AppObjectController {
                     intentFilter.addAction(Intent.ACTION_USER_UNLOCKED)
                 }
 //        registerReceiver(ServiceStartReceiver(), intentFilter)
-
-                JoshSkillExecutors.BOUNDED.submit {
-                    if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
-                        val intentFilterRestoreID =
-                            IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED)
-                        getLocalBroadcastManager().registerReceiver(
-                            restoreIdReceiver,
-                            intentFilterRestoreID
-                        )
-                    }
-                }
-                JoshSkillExecutors.BOUNDED.submit {
-                    val intentFilterUnreadMessages =
-                        IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
-                    getLocalBroadcastManager().registerReceiver(
-                        unreadCountChangeReceiver,
-                        intentFilterUnreadMessages
-                    )
-                }
                 isListeningBroadCast = true
             }
         }
-
-        var unreadCountChangeReceiver: BroadcastReceiver =
-            object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    getUnreadFreshchatMessages()
-                }
-            }
-
-        var restoreIdReceiver: BroadcastReceiver =
-            object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val restoreId = freshChat?.user?.restoreId ?: EMPTY
-                            if (restoreId.isBlank().not()) {
-                                PrefManager.put(RESTORE_ID, restoreId)
-                                val requestMap = mutableMapOf<String, String?>()
-                                requestMap["restore_id"] = restoreId
-                                commonNetworkService.postFreshChatRestoreIDAsync(
-                                    PrefManager.getStringValue(USER_UNIQUE_ID),
-                                    requestMap
-                                )
-                            }
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
-                    }
-                }
-            }
 
         fun getLocalBroadcastManager(): LocalBroadcastManager {
             return LocalBroadcastManager.getInstance(joshApplication)
@@ -548,49 +490,6 @@ class AppObjectController {
             }
         }
 
-        fun initialiseFreshChat() {
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val config = FreshchatConfig(
-                        BuildConfig.FRESH_CHAT_APP_ID,
-                        BuildConfig.FRESH_CHAT_APP_KEY
-                    )
-                    af.eK()?.let {
-                        Freshchat.setImageLoader(
-                            it
-                        )
-                    }
-
-                    config.isCameraCaptureEnabled = true
-                    config.isGallerySelectionEnabled = true
-                    config.isResponseExpectationEnabled = true
-                    config.domain = "https://msdk.in.freshchat.com"
-                    freshChat = Freshchat.getInstance(joshApplication)
-                    freshChat?.init(config)
-                    val notificationConfig = FreshchatNotificationConfig()
-                        .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
-                    freshChat?.setNotificationConfig(notificationConfig)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }
-
-        fun restoreUser(restoreId: String?) {
-            if (restoreId.isNullOrBlank()) {
-                freshChat?.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), null)
-            } else if (PrefManager.getBoolValue(FRESH_CHAT_ID_RESTORED).not()) {
-                PrefManager.put(FRESH_CHAT_ID_RESTORED, true)
-                freshChat?.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), restoreId)
-            }
-        }
-
-        fun getUnreadFreshchatMessages() {
-            freshChat?.getUnreadCountAsync { _, unreadCount ->
-                PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, unreadCount)
-            }
-        }
-
         fun clearDownloadMangerCallback() {
             try {
                 DownloadUtils.objectFetchListener.forEach { (key, value) ->
@@ -690,7 +589,6 @@ class AppObjectController {
 
         fun releaseInstance() {
             fetch = null
-            freshChat = null
             FirestoreNotificationDB.unsubscribe()
         }
     }

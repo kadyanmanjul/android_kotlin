@@ -1,22 +1,27 @@
 package com.joshtalks.joshskills.core.analytics;
 
+import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
+import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
+import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
+
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import com.freshchat.consumer.sdk.FreshchatUser;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.JoshSkillExecutors;
 import com.joshtalks.joshskills.core.PrefManager;
-import static com.joshtalks.joshskills.core.PrefManagerKt.IS_FREE_TRIAL;
-import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
-import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
-import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
 import com.joshtalks.joshskills.core.Utils;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,9 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import timber.log.Timber;
 
@@ -59,64 +61,11 @@ public class AppAnalytics {
     public static void updateUser() {
         init();
         updateMixPanelUser();
-        updateFreshchatSdkUser();
-        updateFreshchatSdkUserProperties();
         updateFirebaseSdkUser();
     }
 
     public static AppAnalytics create(String title) {
         return new AppAnalytics(title);
-    }
-
-    private static void updateFreshchatSdkUser() {
-        try {
-            FreshchatUser freshchatUser = AppObjectController.getFreshChat().getUser();
-            freshchatUser.setFirstName(User.getInstance().getFirstName());
-            freshchatUser.setEmail(User.getInstance().getEmail());
-            String mobileNumber = getPhoneNumber();
-            if (!mobileNumber.isEmpty()) {
-                int length = mobileNumber.length();
-                if (length > 10) {
-                    freshchatUser.setPhone(mobileNumber.substring(0, length - 10), mobileNumber.substring(length - 10));
-                }
-            } else freshchatUser.setPhone("+91", "XXXXXXXXXX");
-
-            AppObjectController.getFreshChat().setUser(freshchatUser);
-        } catch (Exception e) {
-            //   e.printStackTrace();
-        }
-    }
-
-    private static void updateFreshchatSdkUserProperties() {
-        Map<String, String> userMeta = new HashMap<>();
-        userMeta.put("Username", User.getInstance().getFirstName());
-        userMeta.put("Email_id", User.getInstance().getEmail());
-        userMeta.put("Mobile_no", getPhoneNumber());
-        userMeta.put("Age", String.valueOf(getAge(User.getInstance().getDateOfBirth())));
-        userMeta.put("Gender", User.getInstance().getGender());
-        if (Mentor.getInstance().hasId()) {
-            userMeta.put("Mentor_id", Mentor.getInstance().getId());
-            userMeta.put("Login_type", "yes");
-            userMeta.put("Subscribed_user", "yes");
-
-            try {
-                List<String> allConversationId = AppObjectController.getAppDatabase().courseDao().getAllConversationId();
-                userMeta.put("courses_availed", String.valueOf(allConversationId.size()));
-                for (int i = 0; i < allConversationId.size(); i++) {
-                    userMeta.put("courses_" + i, AppObjectController.getAppDatabase().courseDao().chooseRegisterCourseMinimal(allConversationId.get(i)).getCourse_name());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-//Call setUserProperties to sync the user properties with Freshchat's servers
-        try {
-            AppObjectController.getFreshChat().setUserProperties(userMeta);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private static void updateMixPanelUser() {

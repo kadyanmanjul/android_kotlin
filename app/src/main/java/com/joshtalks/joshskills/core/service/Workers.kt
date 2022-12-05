@@ -25,7 +25,10 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.IS_MISSED_NOTIFICATION_ACTIVE
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
@@ -133,7 +136,6 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
         }
         PrefManager.put(P2P_LAST_CALL, false)
-        AppObjectController.initialiseFreshChat()
         Log.i("Workers", "doWork: referrer")
         InstallReferralUtil.installReferrer(context)
         return Result.success()
@@ -561,26 +563,6 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                 details.apiStatus = ApiRespStatus.POST
                 details.update()
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-}
-
-class GenerateRestoreIdWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
-                val id = PrefManager.getStringValue(USER_UNIQUE_ID)
-                val details =
-                    AppObjectController.commonNetworkService.getFreshChatRestoreIdAsync(id)
-                if (details.restoreId.isNullOrBlank().not()) {
-                    PrefManager.put(RESTORE_ID, details.restoreId!!)
-                    AppObjectController.restoreUser(details.restoreId!!)
-                } else AppObjectController.restoreUser(null)
-            } else AppObjectController.restoreUser(PrefManager.getStringValue(RESTORE_ID))
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

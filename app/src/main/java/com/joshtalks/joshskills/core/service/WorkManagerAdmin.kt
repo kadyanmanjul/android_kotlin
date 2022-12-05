@@ -36,7 +36,6 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<DeleteUnlockTypeQuestion>().build()
                 )
             )
-            .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
             .enqueue()
     }
 

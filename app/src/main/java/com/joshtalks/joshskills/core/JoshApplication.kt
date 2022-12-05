@@ -14,9 +14,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.core.AppObjectController.Companion.getLocalBroadcastManager
-import com.joshtalks.joshskills.core.AppObjectController.Companion.restoreIdReceiver
-import com.joshtalks.joshskills.core.AppObjectController.Companion.unreadCountChangeReceiver
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
@@ -73,11 +70,6 @@ class JoshApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-        getLocalBroadcastManager().unregisterReceiver(restoreIdReceiver)
-        getLocalBroadcastManager().unregisterReceiver(unreadCountChangeReceiver)
-    }
 
     private fun turnOnStrictMode() {
         if (BuildConfig.DEBUG) {
