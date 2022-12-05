@@ -522,7 +522,10 @@ class ConversationActivity :
     }
 
     private fun showFirstCallBottomSheet() {
-        if (getVoipState() == State.IDLE && PrefManager.getIntValue(FT_CALLS_LEFT) == 15)
+        if (getVoipState() == State.IDLE &&
+            PrefManager.getIntValue(FT_CALLS_LEFT) == 15 &&
+            PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()
+        )
             lifecycleScope.launch(Dispatchers.Main) {
                 delay(300)
                 FirstCallBottomSheet.showDialog(supportFragmentManager)

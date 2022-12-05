@@ -174,7 +174,7 @@ object VoipPref {
                 POPUP.INTEREST
             else if ((resp.body()?.get("show_scratch_card") == true) && callType == Category.PEER_TO_PEER.ordinal)
                 POPUP.SCRATCH_CARD
-            else if (PrefManager.getBoolValue(IS_FREE_TRIAL) && callType != Category.EXPERT.ordinal)
+            else if ((resp.body()?.get("show_payment_popup") == true) && callType != Category.EXPERT.ordinal)
                 POPUP.PURCHASE
             else if (callType != Category.EXPERT.ordinal)
                 POPUP.CALL_RATING

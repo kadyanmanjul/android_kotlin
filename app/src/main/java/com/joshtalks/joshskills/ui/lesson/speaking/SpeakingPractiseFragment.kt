@@ -23,7 +23,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.BuildConfig
@@ -490,7 +489,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             it.ifBlank { getString(R.string.call_practice_partner) }
                         } ?: getString(R.string.call_practice_partner)
 
-                        requireActivity().findViewById<MaterialButton>(R.id.spotlight_call_btn_text).text =
+                        requireActivity().findViewById<MaterialTextView>(R.id.spotlight_call_btn_text).text =
                             response.p2pBtnText?.let {
                                 it.ifBlank { getString(R.string.call_practice_partner) }
                             } ?: getString(R.string.call_practice_partner)
