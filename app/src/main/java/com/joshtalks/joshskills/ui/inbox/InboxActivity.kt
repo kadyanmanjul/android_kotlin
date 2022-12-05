@@ -501,6 +501,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                             }
                             LocalBroadcastManager.getInstance(this@InboxActivity).sendBroadcast(broadcastIntent)
                         }
+                        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+                            PrefManager.put(IS_COURSE_BOUGHT, true)
+                        }
+
                         if (inboxEntity.isCourseBought.not()) {
                             haveFreeTrialCourse = true
                             PrefManager.put(IS_FREE_TRIAL, true)
