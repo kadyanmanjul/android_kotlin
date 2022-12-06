@@ -105,7 +105,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/gallery_text"
-            android:layout_width="@dimen/_36sdp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_24sdp"
@@ -115,13 +115,14 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/text_default"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/gallery_icon"
             app:layout_constraintStart_toStartOf="@id/gallery_icon"
             app:layout_constraintTop_toBottomOf="@id/gallery_icon"
             app:layout_constraintVertical_bias="0" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/camera_text"
-            android:layout_width="@dimen/_36sdp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_24sdp"
@@ -131,6 +132,7 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/text_default"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/camera_icon"
             app:layout_constraintStart_toStartOf="@id/camera_icon"
             app:layout_constraintTop_toBottomOf="@id/camera_icon"
             app:layout_constraintVertical_bias="0" />

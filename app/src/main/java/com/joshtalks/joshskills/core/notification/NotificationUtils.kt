@@ -837,4 +837,9 @@ class NotificationUtils(val context: Context) {
             }
         }
     }
+
+    fun removeAllNotifications() {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
+    }
 }

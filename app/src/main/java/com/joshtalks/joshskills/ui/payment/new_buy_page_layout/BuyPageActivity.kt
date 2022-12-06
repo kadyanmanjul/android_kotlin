@@ -165,7 +165,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         super.getArguments()
         if (intent.hasExtra(HAS_NOTIFICATION)) {
             flowFrom = "NOTIFICATION"
-            if (!PrefManager.getBoolValue(IS_FREE_TRIAL))
+            if (!PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(IS_COURSE_BOUGHT))
                 finish()
         }
         testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
@@ -910,6 +910,8 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             stopService(Intent(this, StickyNotificationService::class.java))
         } catch (e: Exception) {
             e.printStackTrace()
+        } finally {
+            NotificationUtils(applicationContext).removeAllNotifications()
         }
 
         AppObjectController.uiHandler.postDelayed({
