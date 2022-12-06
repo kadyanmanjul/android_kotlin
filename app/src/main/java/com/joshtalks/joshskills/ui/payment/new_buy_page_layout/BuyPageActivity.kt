@@ -617,13 +617,12 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             setReorderingAllowed(true)
             replace(
                 R.id.buy_page_parent_container,
-                PaymentFailedDialogNew.newInstance(paymentManager) {
-                    onBackPressed()
-                },
+                PaymentFailedDialogNew.newInstance(paymentManager),
                 "Payment Failed"
             )
             disallowAddToBackStack()
         }
+        isPaymentInitiated = false
     }
 
     private fun navigateToStartCourseActivity() {

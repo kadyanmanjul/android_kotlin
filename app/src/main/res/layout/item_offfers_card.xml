@@ -24,7 +24,7 @@
         <LinearLayout
             android:id="@+id/ll"
             android:layout_width="0dp"
-            android:layout_height="53dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_21sdp"
             android:gravity="center_vertical"
