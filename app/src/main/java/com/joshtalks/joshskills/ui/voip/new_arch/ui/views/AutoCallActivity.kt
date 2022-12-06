@@ -95,7 +95,7 @@ class AutoCallActivity : BaseActivity () {
         val callIntent = Intent(this, VoiceCallActivity::class.java)
         callIntent.apply {
             putExtra(INTENT_DATA_COURSE_ID, "151")
-            putExtra(INTENT_DATA_TOPIC_ID, "10")
+            putExtra(INTENT_DATA_TOPIC_ID, "5")
             putExtra(STARTING_POINT, FROM_ACTIVITY)
             putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
         }
