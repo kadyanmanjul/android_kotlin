@@ -340,7 +340,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     } else {
                         PrefManager.getStringValue(PAID_COURSE_TEST_ID)
                     }
-                    viewModel.saveBranchPaymentLog(it.razorpayOrderId)
+                    viewModel.saveBranchPaymentLog(it.razorpayOrderId,
+                        BigDecimal(it?.amount?:0.0),
+                        testId = Integer.parseInt(freeTrialTestId),
+                        courseName = "Spoken English Course")
                     MarketingAnalytics.coursePurchased(
                         BigDecimal(it?.amount?:0.0),
                         true,

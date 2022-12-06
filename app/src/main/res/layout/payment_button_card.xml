@@ -14,7 +14,7 @@
         android:layout_marginHorizontal="@dimen/_20sdp"
         android:layout_marginTop="@dimen/_12sdp"
         style="@style/Primary_Button_Filled"
-        android:text="Pay ₹499"
+        android:text="Proceed to Payment"
         android:textAllCaps="false"
         android:visibility="visible"
         app:cornerRadius="@dimen/_32sdp"

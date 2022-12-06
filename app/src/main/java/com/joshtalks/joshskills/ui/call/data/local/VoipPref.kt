@@ -105,7 +105,7 @@ object VoipPref {
             resetAutoCallCount()
         showPopUp(duration, callType)
         if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) &&
-            duration.inSeconds() >= 300 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+            duration.inSeconds() >= 300 && PrefManager.getBoolValue(IS_FREE_TRIAL)
         ) {
             editor.putBoolean(IS_FIRST_CALL, false)
             editor.putBoolean(IS_FIRST_5MIN_CALL, false)

@@ -16,11 +16,11 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="85dp"
-            android:layout_height="23dp"
+            android:layout_width="@dimen/_85sdp"
+            android:layout_height="@dimen/_23sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_29sdp"
-            android:layout_marginBottom="@dimen/_minus10sdp"
+            android:layout_marginBottom="@dimen/_minus14sdp"
             android:elevation="@dimen/_10sdp"
             android:scaleType="fitXY"
             android:visibility="@{itemData.isRecommended ? View.VISIBLE : View.GONE, default = gone}"
@@ -93,8 +93,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:background="@drawable/green_rectangle_without_solid"
-                            android:backgroundTint="@color/primary_500"
                             android:gravity="center"
+                            android:backgroundTint="@color/decorative_two"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
                             android:paddingHorizontal="@dimen/_8sdp"
@@ -113,7 +113,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_8sdp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_marginVertical="@dimen/_18sdp"
+                        android:layout_gravity="center_vertical">
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/discount_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:textAlignment="textEnd"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                            android:textColor="#888888"
+                            tools:text="₹840" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/original_price"
@@ -124,18 +136,19 @@
                             android:letterSpacing="0"
                             android:textAlignment="textEnd"
                             android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
-                            tools:text="₹4399/yr" />
+                            tools:text="₹4399" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/discount_price"
+                            android:id="@+id/price_per_day"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
                             android:gravity="end"
+                            android:paddingEnd="@dimen/_2sdp"
                             android:textAlignment="textEnd"
                             android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
-                            android:textColor="@color/text_subdued"
-                            tools:text="₹840" />
+                            android:textColor="#A62E2D"
+                            tools:text="₹3/day " />
 
                     </LinearLayout>
 
@@ -166,7 +179,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_20sdp"
                     android:background="@drawable/green_rectangle_without_solid_one_side_corner"
-                    android:backgroundTint="@color/warning"
+                    android:backgroundTint="@color/decorative_two"
                     android:gravity="center_vertical"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
@@ -174,7 +187,7 @@
                     android:text="Offer ends in 59:30. Hurry up!"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
-                    android:textColor="#253858"
+                    android:textColor="@color/pure_white"
                     android:textStyle="bold"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"

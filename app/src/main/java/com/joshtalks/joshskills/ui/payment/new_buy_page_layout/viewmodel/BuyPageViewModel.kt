@@ -25,8 +25,10 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetai
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.PriceParameterModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
+import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.math.BigDecimal
 import java.util.*
 
 class BuyPageViewModel : BaseViewModel() {
@@ -422,10 +424,22 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    fun saveBranchPaymentLog(orderInfoId:String){
+    fun saveBranchPaymentLog(orderInfoId:String,
+                             amount: BigDecimal?,
+                             testId: Int = 0,
+                             courseName: String = EMPTY){
         viewModelScope.launch(Dispatchers.IO){
             try {
-                val resp =  buyPageRepo.saveBranchLog(orderInfoId)
+                val extras: HashMap<String, Any> = HashMap()
+                extras["test_id"] = testId
+                extras["orderinfo_id"] = orderInfoId
+                extras["currency"] = CurrencyType.INR.name
+                extras["amount"] = amount ?: 0.0
+                extras["course_name"] = courseName
+                extras["device_id"] = Utils.getDeviceId()
+                extras["guest_mentor_id"] = Mentor.getInstance().getId()
+                extras["payment_done_from"] = "Buy Page"
+                val resp = buyPageRepo.saveBranchLog(extras)
             }catch (ex:Exception){
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }
