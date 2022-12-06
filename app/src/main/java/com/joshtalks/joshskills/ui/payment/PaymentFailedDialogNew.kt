@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.databinding.DialogPaymentFailedNewBinding
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 
-class PaymentFailedDialogNew : BaseDialogFragment() {
+class PaymentFailedDialogNew : DialogFragment() {
     lateinit var binding: DialogPaymentFailedNewBinding
 
     override fun onCreateView(
