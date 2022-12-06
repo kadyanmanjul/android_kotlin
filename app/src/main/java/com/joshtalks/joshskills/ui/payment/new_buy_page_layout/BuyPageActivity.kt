@@ -250,7 +250,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 }
                 APPLY_COUPON_FROM_INTENT -> {
                     if (shouldAutoApplyCoupon) {
-                        viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply }?.let { coupon ->
+                        viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply == true }?.let { coupon ->
                             viewModel.applyEnteredCoupon(coupon.couponCode, 1111)
                         }
                     }

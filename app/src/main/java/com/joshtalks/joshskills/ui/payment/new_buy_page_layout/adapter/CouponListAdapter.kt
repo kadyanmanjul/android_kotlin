@@ -53,10 +53,7 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
                    changeTextColors(binding, members, position)
                 }
                 //Use code ENG10 and get 10% off on you purchase.
-                if (members.amountPercent != -1){
-                    binding.txtCouponExpireTime.text = "Use code ${members.couponCode}" + "and get  ${members?.amountPercent}% Off on you purchase"
-                }else
-                    binding.txtCouponExpireTime.text = "Use code ${members.couponCode}" + "and get upto ${members?.maxDiscountAmount} Off on you purchase"
+                binding.txtCouponExpireTime.text = members.title
             }
             else if (members?.validDuration?.time != null && members.validDuration.time.minus(System.currentTimeMillis()) > 0L)
                 startFreeTrialTimer(
@@ -66,20 +63,13 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
                 )
             else {
                 if (members?.validDuration?.time == null) {
-                    if (members?.amountPercent != -1)
-                        binding.txtCouponExpireTime.text = "Get Extra ${members?.amountPercent}% Off"
-                    else
-                        binding.txtCouponExpireTime.text = "Get Extra ₹${members.maxDiscountAmount} Off"
+                    binding.txtCouponExpireTime.text = members?.title
                 } else
                     binding.txtCouponExpireTime.text = "Coupon expired"
             }
             with(binding) {
                 this.txtCouponCode.text = members?.couponCode
-                this.couponDesc.text =
-                    if (members?.amountPercent != -1)
-                        "Use code " + "${members?.couponCode} " + "and get ${members?.amountPercent.toString()}% off on you purchase."
-                    else
-                        "Use code " + "${members.couponCode} " + "and get ₹${members.maxDiscountAmount} off on you purchase."
+                this.couponDesc.text = members?.couponCode
                 this.saveMoney.text = "Save upto ₹" + members?.maxDiscountAmount.toString() + " with this code"
 
                 this.btnApply.setOnSingleClickListener {

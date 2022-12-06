@@ -17,42 +17,28 @@ import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_OFFER_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
 import kotlinx.coroutines.Job
-import java.util.*
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.Coupon as CouponEnum
+
+const val CONDITIONAL = "CONDITIONAL"
+const val NON_EXPIRABLE = "NON_EXPIRABLE"
+const val EXPIRABLE = "EXPIRABLE"
 
 class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     RecyclerView.Adapter<OffersListAdapter.OfferListViewHolder>() {
+
+    var manager: RecyclerView.LayoutManager? = null
     var itemClick: ((Coupon, Int, Int, String) -> Unit)? = null
     private var scrollToFirst: (() -> Unit?)? = null
-    var manager: RecyclerView.LayoutManager? = null
     private var freeTrialTimerJob: Job? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferListViewHolder {
-        val binding =
-            ItemOfffersCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemOfffersCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return OfferListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: OfferListViewHolder, position: Int) {
-        holder.binding.couponDiscountPercent.text =
-            if (offersList[position].amountPercent != -1) "Get Extra ${offersList[position].amountPercent}% Off"
-            else "Get Extra ₹${offersList[position].maxDiscountAmount} Off"
+        holder.binding.couponDiscountPercent.text = offersList[position].title
 
-        if (offersList[position].isCouponSelected == 1) {
-            Log.e("sagar", "onBindViewHolder: ")
-            holder.binding.rootCard.isEnabled = true
-            holder.binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_bg_green)
-            holder.binding.btnApply.text = REMOVE
-            holder.binding.btnApply.isEnabled = true
-            holder.binding.imgLogo.alpha = 1.0f
-            val colorAccent = ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.primary_500)
-            holder.binding.btnApply.setTextColor(colorAccent)
-            val blackColor = ContextCompat.getColor(holder.binding.couponExpireText.context, R.color.pure_black)
-            holder.binding.couponDiscountPercent.setTextColor(blackColor)
-            offersList[position].let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
-        } else {
-            holder.setUpUI(position, offersList[position])
-        }
+        holder.setUpUI(position, offersList[position], offersList[position].isCouponSelected)
 
         holder.binding.btnApply.setOnSingleClickListener {
             if (offersList[holder.bindingAdapterPosition].isCouponSelected == 0) {
@@ -68,20 +54,8 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             } else {
                 offersList[holder.bindingAdapterPosition].isCouponSelected = 0
                 notifyItemChanged(holder.bindingAdapterPosition)
-                offersList[position]
-                    .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
+                offersList[position].let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
             }
-        }
-    }
-
-    private fun Coupon.getType(): CouponType {
-        return if (isAutoApply)
-            CouponType.CONDITIONAL
-        else if (validDuration != null) {
-            CouponType.WITH_TIMER
-        }
-        else {
-            CouponType.WITHOUT_TIMER
         }
     }
 
@@ -137,14 +111,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     }
 
     private fun shouldDisableCoupon(coupon: Coupon): Boolean {
-        if (((coupon.validDuration != null && isCouponValid(coupon.validDuration)) || (coupon.validDuration == null && !coupon.isAutoApply) || (coupon.couponDesc == null && coupon.isAutoApply)))
-            return false
-        else
-            return true
-    }
-
-    private fun isCouponValid(duration: Date): Boolean {
-        return duration.time.minus(System.currentTimeMillis()) > 0L
+        return coupon.isEnable == false
     }
 
     fun setListener(function: ((Coupon, Int, Int, String) -> Unit)?) {
@@ -168,7 +135,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
 
                     override fun onFinish() {
                         AppObjectController.uiHandler.post {
-                           setUpUI(position, offersList[position])
+                            setUpUI(position, offersList[position], offersList[position].isCouponSelected)
                             if (offersList[position].isCouponSelected == 1)
                                 offersList[position]
                                     .let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, REMOVE) }
@@ -181,9 +148,9 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             }
         }
 
-        fun setUpUI(position: Int, coupon: Coupon) {
+        fun setUpUI(position: Int, coupon: Coupon, isCouponSelected: Int) {
             val state = validateCoupon(position)
-            coupon.setUI(position, state)
+            coupon.setUI(position, state, isCouponSelected)
         }
 
         private fun validateCoupon(
@@ -200,34 +167,40 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
 
         private fun Coupon.setUI(
             position: Int,
-            condition: CouponEnum
+            condition: CouponEnum,
+            isCouponSelected: Int
         ) {
             val coupon = this
-            when (offersList[position].getType()) {
-                CouponType.CONDITIONAL -> {
-                    Log.e("sagar", "setUI: 1")
+            when (offersList[position].couponType) {
+                CONDITIONAL -> {
+                    if (isCouponSelected == 1 && condition == CouponEnum.ENABLE) {
+                        appliedCoupon(position)
+                    }
                     countdownTimerBack?.cancel()
                     countdownTimerBack = null
                     binding.couponExpireText.visibility = View.VISIBLE
-                    if (offersList[position].couponDesc != null)
-                        binding.couponExpireText.text = offersList[position].couponDesc
-                    else
-                        binding.couponExpireText.text = "Get extra 20% off" // ye data backend se lena hai
+                    binding.couponExpireText.text = offersList[position].couponDesc
                 }
-                CouponType.WITH_TIMER -> {
-                    Log.e("sagar", "setUI: 2")
-                    if (condition == CouponEnum.ENABLE) {
-                        if (coupon.validDuration?.time?.minus(System.currentTimeMillis())!! > 0)
-                            startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), position)
-                    } else {
+                EXPIRABLE -> {
+                    if (isCouponSelected == 1 && coupon.validDuration?.time?.minus(System.currentTimeMillis())!! > 0) {
+                        appliedCoupon(position)
+                        startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), position)
+                    }
+                    else if (condition == CouponEnum.ENABLE && coupon.validDuration?.time?.minus(System.currentTimeMillis())!! > 0) {
+                        startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), position)
+                    }
+                    else {
+                        disableCoupon()
                         countdownTimerBack?.cancel()
                         countdownTimerBack = null
                         binding.couponExpireText.visibility = View.VISIBLE
                         binding.couponExpireText.text = "Coupon Expired"
                     }
                 }
-                CouponType.WITHOUT_TIMER -> {
-                    Log.e("sagar", "setUI: 3")
+                NON_EXPIRABLE -> {
+                    if (isCouponSelected == 1 && condition == CouponEnum.ENABLE) {
+                        appliedCoupon(position)
+                    }
                     binding.couponExpireText.visibility = View.GONE
                     countdownTimerBack?.cancel()
                     countdownTimerBack = null
@@ -280,6 +253,21 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             binding.btnApply.setTextColor(ContextCompat.getColor(binding.couponExpireText.context, R.color.primary_500))
         }
 
+        private fun appliedCoupon(position: Int) {
+            binding.rootCard.isEnabled = true
+            binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_bg_green)
+            binding.btnApply.text = REMOVE
+            binding.btnApply.isEnabled = true
+            binding.imgLogo.alpha = 1.0f
+            if (offersList[position].couponDesc != null)
+                binding.couponExpireText.text = offersList[position].couponDesc
+            val colorAccent = ContextCompat.getColor(binding.couponExpireText.context, R.color.primary_500)
+            val blackColor = ContextCompat.getColor(binding.couponExpireText.context, R.color.pure_black)
+            binding.btnApply.setTextColor(colorAccent)
+            binding.couponDiscountPercent.setTextColor(blackColor)
+            offersList[position].let { itemClick?.invoke(it, CLICK_ON_OFFER_CARD, position, APPLY) }
+        }
+
     }
 
     fun scroll(func: () -> Unit?) {
@@ -287,16 +275,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     }
 }
 
-enum class CouponType {
-    CONDITIONAL,
-    WITH_TIMER,
-    WITHOUT_TIMER
-}
-
-enum class Coupon {
+enum class CouponEnum {
     ENABLE,
     DISABLE
 }
-// (coupon.validDuration != null && isCouponValid(coupon.validDuration)) ->  This condition for if coupon has some expiry time so we don't have to disable this coupon
-//(coupon.validDuration == null && !coupon.isAutoApply) -> This condition for if coupon doesn't has time but it will not expire so we don't have to disable this coupon
-//(coupon.validDuration == null && coupon.isMentorSpecificCoupon == null) -> This is for conditional coupon

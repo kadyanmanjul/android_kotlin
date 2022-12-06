@@ -38,11 +38,13 @@ data class CouponListModel(
 @Parcelize
 data class Coupon(
     @SerializedName("coupon_code") val couponCode: String,
-    @SerializedName("amount_percent") val amountPercent: Int,
+    @SerializedName("title") val title: String,
     @SerializedName("expire_at") val validDuration: Date ?= null,
     @SerializedName("max_discount_amount") val maxDiscountAmount: Int,
     @SerializedName("is_mentor_coupon") val isMentorSpecificCoupon: Boolean? = null,
-    @SerializedName("coupon_description") val couponDesc: String? = null,
-    @SerializedName("is_auto_apply") val isAutoApply: Boolean = false,
+    @SerializedName("description") val couponDesc: String? = null,
+    @SerializedName("is_auto_apply") val isAutoApply: Boolean ?=null,
+    @SerializedName("type") val couponType: String,
+    @SerializedName("is_enabled") val isEnable:Boolean?=null,
     var isCouponSelected: Int = 0
 ) : Parcelable

@@ -343,7 +343,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.buyCourseBanner.visibility = View.VISIBLE
                     binding.buyCourseBannerTv.text =
                         AppObjectController.getFirebaseRemoteConfig().getString(AVAIL_COUPON_BANNER_TEXT)
-                            .replace("\$DISCOUNT\$", coupon.amountPercent.toString())
+                            .replace("\$DISCOUNT\$", coupon.title)
                             .replace("\$CODE\$", coupon.couponCode)
                     binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
                     binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
