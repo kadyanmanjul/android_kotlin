@@ -336,6 +336,8 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             startTimer((buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis())
         } else {
             PrefManager.put(IS_FREE_TRIAL_ENDED, true)
+            openCourseListener?.onFreeTrialEnded() // correct
+            countdownTimerBack?.stop()
         }
     }
 
@@ -946,6 +948,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     }
 
     override fun onFreeTrialEnded() {
+        Log.d("sagar", "onFreeTrialEnded() called")
         binding.freeTrialTimerNewUi.visible()
         binding.freeTrialTimerNewUi.endFreeTrial()
     }

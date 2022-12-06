@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.util
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
@@ -52,6 +53,7 @@ class TrialTimerView(context: Context, attrs: AttributeSet) : ConstraintLayout(c
     }
 
     fun endFreeTrial() {
+        Log.d("sagar", "endFreeTrial() called")
             timerTexts.gone()
             trialEndsTv.text = context.getString(R.string.free_trial_ended)
     }

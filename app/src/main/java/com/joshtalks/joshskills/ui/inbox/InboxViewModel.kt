@@ -329,16 +329,6 @@ class InboxViewModel : BaseViewModel(){
         }
     }
 
-    fun saveBranchPaymentLog(orderInfoId:String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val resp = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
-            } catch (ex: Exception) {
-                Log.e("sagar", "setSupportReason: ${ex.message}")
-            }
-        }
-    }
-
     fun getRecommendedCourse(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
