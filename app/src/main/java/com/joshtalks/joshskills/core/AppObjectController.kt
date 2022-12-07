@@ -162,6 +162,7 @@ class AppObjectController {
 
             if (BuildConfig.DEBUG) {
                 builder.addInterceptor(getOkhhtpToolInterceptor())
+                getDebugLogsInterceptor()?.let { builder.addInterceptor(it) }
                 val logging = HttpLoggingInterceptor { message ->
                     Timber.tag("OkHttp_Builder").d(message)
                 }.apply {
@@ -202,7 +203,11 @@ class AppObjectController {
 
         val retrofit: Retrofit by lazy {
             Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
+                .baseUrl(
+                    if (BuildConfig.DEBUG && PrefManager.hasKey(DEBUG_BASE_URL))
+                        PrefManager.getStringValue(DEBUG_BASE_URL)
+                    else BuildConfig.BASE_URL
+                )
                 .client(builder.build())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gsonMapper))
@@ -707,4 +712,14 @@ fun getOkhhtpToolInterceptor(): Interceptor {
     val clazz = Class.forName("com.itkacher.okhttpprofiler.OkHttpProfilerInterceptor")
     val ctor: Constructor<*> = clazz.getConstructor()
     return ctor.newInstance() as Interceptor
+}
+
+fun getDebugLogsInterceptor(): Interceptor? {
+    return try {
+        val clazz = Class.forName("com.joshtalks.joshskills.util.DebugLogsInterceptor")
+        val ctor: Constructor<*> = clazz.getConstructor()
+        ctor.newInstance() as Interceptor
+    } catch (e: Exception) {
+        null
+    }
 }
