@@ -18,6 +18,7 @@ import com.freshchat.consumer.sdk.FreshchatNotificationConfig
 import com.freshchat.consumer.sdk.j.af
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -34,6 +35,8 @@ import com.joshtalks.joshskills.repository.local.model.User.Companion.getInstanc
 import com.joshtalks.joshskills.repository.server.FAQ
 import com.joshtalks.joshskills.repository.server.FAQCategory
 import com.joshtalks.joshskills.repository.server.help.Action
+import com.joshtalks.joshskills.repository.server.help.Option
+import com.joshtalks.joshskills.ui.special_practice.utils.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -45,6 +48,7 @@ class HelpActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var appAnalytics: AppAnalytics
     private lateinit var freshChat: Freshchat
+    private var event = EventLiveData
 
     var restoreIdReceiver: BroadcastReceiver =
         object : BroadcastReceiver() {
@@ -219,6 +223,29 @@ class HelpActivity : CoreJoshActivity() {
         addObserver()
         freshChat.getUnreadCountAsync { _, unreadCount ->
             PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, unreadCount)
+        }
+    }
+    override fun onStart() {
+        super.onStart()
+        event.observe(this) {
+            when (it.what) {
+                OPEN_FAQ_SCREEN -> {
+                    openFaqCategory()
+                }
+                OPEN_CALL_SCREEN -> {
+                    val obj = it.obj as Option
+                    if (obj.actionData != null)
+                        Utils.call(this@HelpActivity, obj.actionData)
+                }
+                OPEN_HELP_CHAT_SCREEN -> {
+                    Freshchat.showConversations(applicationContext)
+                    PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
+                }
+                OPEN_CATEGORY_SCREEN -> {
+                    val obj = it.obj as HashMap<String, Any>
+                    showFaqFragment(obj["category_data"] as FAQCategory, obj["category_list"] as ArrayList<FAQCategory> )
+                }
+            }
         }
     }
 
