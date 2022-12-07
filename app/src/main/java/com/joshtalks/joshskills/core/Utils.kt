@@ -42,6 +42,7 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -1038,9 +1039,9 @@ fun loadJSONFromAsset(fileName: String): String? {
     }
 }
 
-fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
-    val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
-        .error(R.drawable.ic_call_placeholder)
+fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication, @DrawableRes placeHolder: Int  = R.drawable.ic_call_placeholder) {
+    val requestOptions = RequestOptions().placeholder(placeHolder)
+        .error(placeHolder)
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     if (isValidContextForGlide(context)) {

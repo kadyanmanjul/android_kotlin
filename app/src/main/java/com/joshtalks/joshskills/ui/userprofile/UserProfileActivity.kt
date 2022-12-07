@@ -62,6 +62,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
@@ -1088,6 +1089,11 @@ class UserProfileActivity : CoreJoshActivity() {
         if (haveAchievedAwards.not() && (mentorId == Mentor.getInstance().getId()).not()) {
             return null
         }
+        val titleTv = view.findViewById(R.id.title_award1) as AppCompatTextView
+        val dateTv = view.findViewById(R.id.date_award1) as AppCompatTextView
+        title.gone()
+        titleTv.gone()
+        dateTv.gone()
         return view
     }
 
@@ -1229,7 +1235,7 @@ class UserProfileActivity : CoreJoshActivity() {
             date.text = award.dateText
         }
         award.imageUrl?.let {
-            image.setImage(it, this)
+            image.setImage(it, this, placeHolder = R.drawable.grey_rounded_bg)
         }
         if (award.count > 1) {
             count.visibility = View.VISIBLE
