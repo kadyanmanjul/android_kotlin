@@ -163,7 +163,33 @@ class AppObjectController {
             if (BuildConfig.DEBUG) {
                 builder.addInterceptor(getOkhhtpToolInterceptor())
                 val logging = HttpLoggingInterceptor { message ->
-                    Timber.tag("OkHttp").d(message)
+                    Timber.tag("OkHttp_Builder").d(message)
+                }.apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+                builder.addInterceptor(logging)
+                builder.addNetworkInterceptor(getStethoInterceptor())
+                builder.eventListener(PrintingEventListener())
+            }
+            builder
+        }
+
+        val p2pBuilder: OkHttpClient.Builder by lazy {
+            val builder = OkHttpClient().newBuilder()
+                .connectTimeout(5L, TimeUnit.SECONDS)
+                .writeTimeout(5L, TimeUnit.SECONDS)
+                .readTimeout(5L, TimeUnit.SECONDS)
+                .callTimeout(5L, TimeUnit.SECONDS)
+                .followSslRedirects(true)
+                .addInterceptor(StatusCodeInterceptor())
+                .addInterceptor(HeaderInterceptor())
+                .hostnameVerifier { _, _ -> true }
+                .cache(cache())
+
+            if (BuildConfig.DEBUG) {
+                builder.addInterceptor(getOkhhtpToolInterceptor())
+                val logging = HttpLoggingInterceptor { message ->
+                    Timber.tag("OkHttp_P2P_Builder").d(message)
                 }.apply {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
@@ -214,16 +240,11 @@ class AppObjectController {
         val p2pNetworkService: P2PNetworkService by lazy {
             Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
-                .client(
-                    builder.connectTimeout(5L, TimeUnit.SECONDS)
-                        .writeTimeout(5L, TimeUnit.SECONDS)
-                        .readTimeout(5L, TimeUnit.SECONDS)
-                        .callTimeout(5L, TimeUnit.SECONDS)
-                        .build()
-                )
+                .client(p2pBuilder.build())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gsonMapper))
-                .build().create(P2PNetworkService::class.java)
+                .build()
+                .create(P2PNetworkService::class.java)
         }
 
         val mediaDUNetworkService: MediaDUNetworkService by lazy {
@@ -634,7 +655,7 @@ inline fun Request.safeCall(block: (Request) -> Response): Response {
                 .protocol(Protocol.HTTP_1_1)
                 .code(999)
                 .message(msg)
-                .body("{${e}}".toResponseBody(null)).build()
+                .body("JoshSafeCallException: {${e}}".toResponseBody(null)).build()
         }
         throw e
     }
@@ -650,7 +671,7 @@ class StatusCodeInterceptor : Interceptor {
                         AppObjectController.joshApplication.packageName
                     )
                 ) {
-                  if (IGNORE_UNAUTHORISED.none { path -> chain.request().url.toString().contains(path) }) {
+                    if (IGNORE_UNAUTHORISED.none { path -> chain.request().url.toString().contains(path) }) {
                         PrefManager.logoutUser()
                         LastSyncPrefManager.clear()
                         WorkManagerAdmin.appInitWorker()
