@@ -34,7 +34,8 @@ data class Option(
     @SerializedName("id") val id: Int, // 1
     @SerializedName("name") val name: String, // Call HelpLine
     @SerializedName("url") val url: String, // http://
-    @SerializedName("action_data") val actionData: String? // Action data
+    @SerializedName("action_data") val actionData: String?, // Action data
+    @SerializedName("action_data_for_free_trial") val actionDataForFreeTrial: String?// Action data
 
 )
 

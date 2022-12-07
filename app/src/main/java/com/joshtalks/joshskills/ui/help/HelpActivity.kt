@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.NotificationManagerCompat
@@ -239,17 +240,19 @@ class HelpActivity : CoreJoshActivity() {
                 .subscribe {
                     when {
                         Action.CALL == it.option.action -> {
-                            it.option.actionData?.run {
+                            val number = if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+                                it.option.actionData
+                            } else {
+                                it.option.actionDataForFreeTrial
+                            }
+                            if (number != null) {
+                                appAnalytics.addParam(AnalyticsEvent.CALL_HELPLINE.NAME, number.toString())
                                 MixPanelTracker.publishEvent(MixPanelEvent.CALL_HELPLINE).push()
-                                appAnalytics.addParam(
-                                    AnalyticsEvent.CALL_HELPLINE.NAME,
-                                    it.option.actionData.toString()
-                                )
                                 AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME)
                                     .addBasicParam()
                                     .addUserDetails()
                                     .push()
-                                Utils.call(this@HelpActivity, this)
+                                Utils.call(this@HelpActivity, number)
                             }
                         }
                         Action.HELPCHAT == it.option.action -> {
