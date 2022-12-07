@@ -212,6 +212,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             countdownTimerBack?.cancel()
             countdownTimerBack = null
             binding.rootCard.isEnabled = false
+            binding.rootCard.setBackgroundResource(R.drawable.ic_coupon_card_gary)
             binding.couponExpireText.setTextColor(
                 ContextCompat.getColor(
                     binding.couponExpireText.context,

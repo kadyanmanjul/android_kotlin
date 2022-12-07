@@ -118,7 +118,7 @@ class BuyPageViewModel : BaseViewModel() {
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     withContext(mainDispatcher) {
                         if (methodCallType == COUPON) {
-                            couponListAdapter.addOffersList(response.body()!!.listOfCoupon)
+                            response.body()!!.listOfCoupon?.let { couponListAdapter.addOffersList(it) }
                         } else {
                             response.body()!!.listOfCoupon?.let { offersListAdapter.addOffersList(it) }
 
@@ -136,6 +136,8 @@ class BuyPageViewModel : BaseViewModel() {
                             if (isCouponApplyOrRemove.isEmpty()) {
                                 message.what = APPLY_COUPON_FROM_INTENT
                                 singleLiveEvent.value = message
+                            } else {
+
                             }
                         }
                     }

@@ -50,7 +50,7 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 android:text=""
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                android:textColor="#686E73"
+                android:textColor="@color/text_subdued"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_coupon_code" />
 
@@ -61,7 +61,7 @@
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/dotted_line"
-                android:backgroundTint="@color/disabled"
+                android:backgroundTint="@color/text_subdued"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_coupon_expire_time" />
@@ -86,11 +86,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginEnd="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_13sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:text="Use code ENG10 and get 10% off on you purchase."
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                android:textColor="#686E73"
+                android:textColor="@color/text_subdued"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view3" />
 
@@ -100,9 +100,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:text="Save ₹50 with this codcvdfjhcvyudfdjhvbcdyfjcvuyfdvcudfvufdcvduyfvudfvdyfuvcgyufdvgcuyefvcuydfvcuyfdkvydscbde de"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                android:textColor="#218C38"
+                android:textColor="@color/success"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/coupon_desc" />
