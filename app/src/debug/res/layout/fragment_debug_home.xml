@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.home.DebugHomeFragment" />
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_16sdp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:text="Choose an option"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::viewDeviceInfo}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="Device Info"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::clearData}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="Clear Data"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:weightSum="2">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::deleteGaid}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="Delete GAID"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::deleteUser}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="Delete User"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:weightSum="2">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="Register User"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::abTest}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="A/B Test"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:weightSum="2">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::viewSharedPreferences}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="View Preferences"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::viewDatabase}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="View Database"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:weightSum="2">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::viewApiRequests}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="API Requests"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::viewLogs}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="View Logs"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:weightSum="2">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::loginMentor}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="Mentor Login"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rectangle_with_grey_stroke"
+                    android:backgroundTint="?attr/cardBackgroundColor"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{handler::openActivity}"
+                    android:paddingVertical="@dimen/_24sdp"
+                    android:text="Open Activity"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+</layout>

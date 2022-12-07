@@ -95,6 +95,7 @@ const val ONLINE_TEST_LAST_LESSON_ATTEMPTED = "online_test_last_lesson_attempted
 const val ONLINE_TEST_LIST_OF_COMPLETED_RULES = "online_test_list_of_completed_rules"
 const val ONLINE_TEST_LIST_OF_TOTAL_RULES = "online_test_list_of_total_rules"
 const val INBOX_SCREEN_VISIT_COUNT = "inbox_screen_visit_count"
+const val LAUNCHER_SCREEN_VISIT_COUNT = "launcher_screen_visit_count"
 const val IS_FREE_TRIAL = "joshskills_is_free_trial"
 const val FREE_TRIAL_TEST_SCORE = "free_trial_test_score"
 const val HAS_ENTERED_NAME_IN_FREE_TRIAL = "has_entered_name_in_free_trial"
@@ -220,6 +221,8 @@ const val HAS_SEEN_LEADERBOARD_TOOLTIP_2_ANIMATION = "conversion_pref_has_seen_l
 const val HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION = "conversion_text_view_class_animation"
 const val HAS_SEEN_GROUP_LIST_CBC_TOOLTIP = "group_list_cbc_tooltip"
 const val HAS_COMMITMENT_FORM_SUBMITTED = "commitment_form_submitted"
+const val IS_PURCHASE_BRANCH_EVENT_PUSH = "IS_PURCHASE_BRANCH_EVENT_PUSH"
+const val DEBUG_BASE_URL = "DEBUG_BASE_URL"
 
 object PrefManager {
 
@@ -428,7 +431,9 @@ object PrefManager {
         sendBroadcast()
         clearDatabase()
         Mentor.getInstance().resetMentor()
+        val gaid = getStringValue(USER_UNIQUE_ID)
         prefManagerCommon?.edit()?.clear()?.apply()
+        put(USER_UNIQUE_ID, gaid)
         WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
         put(IS_USER_LOGGED_IN, value = false, isConsistent = true)
@@ -447,10 +452,7 @@ object PrefManager {
     private fun sendBroadcast() {
         val broadcastIntent = Intent().apply {
             action = CALLING_SERVICE_ACTION
-            putExtra(
-                SERVICE_BROADCAST_KEY,
-                STOP_SERVICE
-            )
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
         LocalBroadcastManager.getInstance(AppObjectController.joshApplication).sendBroadcast(broadcastIntent)
     }
