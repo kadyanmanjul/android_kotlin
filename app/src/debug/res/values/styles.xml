@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppTheme.Dev" parent="AppTheme">
+        <item name="android:windowBackground">#1B212C</item>
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textColor">#E1E9F8</item>
+        <item name="cardBackgroundColor">#3C4657</item>
+        <item name="android:textColorPrimary">#E1E9F8</item>
+        <item name="android:textColorHint">#99E1E9F8</item>
+        <item name="android:statusBarColor">#1B212C</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
+        <item name="colorPrimary">#F64B29</item>
+        <item name="colorOnPrimary">#FFD6AE</item>
+        <item name="colorSecondary">#FFD6AE</item>
+        <item name="colorOnSecondary">#1B212C</item>
+        <item name="textInputStyle">@style/AppTheme.Dev.TextInputLayout</item>
+    </style>
+
+    <style name="AppTheme.Dev.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textColorHint">#99E1E9F8</item>
+        <item name="hintTextColor">#FFD6AE</item>
+        <item name="boxStrokeColor">#99E1E9F8</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_8sdp</item>
+        <item name="boxBackgroundColor">?attr/cardBackgroundColor</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/_8sdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_8sdp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_8sdp</item>
+        <item name="endIconTint">#99E1E9F8</item>
+    </style>
+
+    <style name="AppTheme.Dev.TabLayout.TabTextAppearance" parent="TextAppearance.JoshTypography.Body_Text_Normal_Regular">
+        <item name="android:textSize">@dimen/_12sdp</item>
+    </style>
+</resources>
