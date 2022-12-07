@@ -120,6 +120,7 @@
         <item name="android:windowSoftInputMode">adjustResize</item>
         <item name="android:background">@color/pure_white</item>
         <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:statusBarColor">@color/primary_500</item>
     </style>
 
     <style name="TextStyle.ChipText" parent="TextAppearance.JoshTypography.Caption_Normal_SemiBold">

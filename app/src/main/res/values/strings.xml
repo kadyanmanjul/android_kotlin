@@ -695,7 +695,7 @@
     <string name="hometown" translatable="false">Hometown:</string>
     <string name="highlights">Highlights</string>
     <string name="future_goals" translatable="false">Future goals</string>
-    <string name="favourite_josh_talk" translatable="false">Favourite Josh Talk :</string>
+    <string name="favourite_josh_talk" translatable="false">Favourite Josh Talk</string>
     <string name="youtube_link" translatable="false">https://www.youtube.com/watch?v=uetRaRuCOwU</string>
     <string name="education_and_occupation" translatable="false">Occupation and Education</string>
     <string name="occupation_heading" translatable="false">Occupation</string>
@@ -721,15 +721,15 @@
     <string name="ex_ias_officer" translatable="false">e.g. IAS Officer</string>
     <string name="paste_link_to_your_favourite_josh_talk_here" translatable="false">Paste link to your favourite josh talk here</string>
     <string name="add_education_details" translatable="false">Add Education Details</string>
-    <string name="subject_degree" translatable="false">Subject / Degree</string>
-    <string name="ex_arts_m_tech" translatable="false">Ex- Arts, M.Tech</string>
-    <string name="name_of_school_college" translatable="false">Name of School / College</string>
-    <string name="ex_dps_vit" translatable="false">Ex- DPS, VIT</string>
+    <string name="subject_degree" translatable="false">Subject/Degree</string>
+    <string name="ex_arts_m_tech" translatable="false">e.g. Arts, M.Tech</string>
+    <string name="name_of_school_college" translatable="false">Name of School/College</string>
+    <string name="ex_dps_vit" translatable="false">e.g. DPS, VIT</string>
     <string name="completed_expected_to_complete_by" translatable="false">Completed / Expected to Complete by</string>
     <string name="add_occupation_details" translatable="false">Add Occupation Details</string>
     <string name="ex_manager_homemaker_etc" translatable="false">Ex- Manager, Homemaker etc.</string>
-    <string name="company_business_name" translatable="false">Company / Business name</string>
-    <string name="ex_josh_talks" translatable="false">Ex- Josh Talks</string>
+    <string name="company_business_name" translatable="false">Company/Business name</string>
+    <string name="ex_josh_talks" translatable="false">e.g. Josh Talks</string>
     <string name="enrolled_courses" translatable="false">Enrolled Courses</string>
     <string name="photo">Photo</string>
     <string name="set_as_profile_photo" translatable="false">Set as profile photo</string>
@@ -991,4 +991,5 @@
 
     <string name="first_call_popup_title">English बोलने से आती है....</string>
     <string name="first_call_popup_subtitle">%s, अपना पहला call dial करें और दुसरे students के साथ speaking practice करें।</string>
+    <string name="your_hometown" translatable="false">Your Hometown</string>
 </resources>
