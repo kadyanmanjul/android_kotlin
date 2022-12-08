@@ -28,12 +28,17 @@ class InboxRecommendedAdapter :
     }
 
     override fun onBindViewHolder(holder: RecommendedCourseListViewHolder, position: Int) {
-        Log.e("sagar", "onBindViewHolder: ", )
-        holder.setData(courseList[position])
-        holder.binding.rootView.setOnClickListener {
-            itemClick?.invoke(courseList[position], CLICK_ON_RECOMMENDED_COURSE, position)
+        try {
+            val course = courseList[position]
+            holder.setData(course)
+            holder.binding.rootView.setOnClickListener {
+                itemClick?.invoke(course, CLICK_ON_RECOMMENDED_COURSE, position)
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
+
 
     override fun getItemCount(): Int {
         return if (courseList.size>=3)
