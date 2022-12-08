@@ -320,7 +320,7 @@ class BuyPageViewModel : BaseViewModel() {
             manualCoupon.set(code)
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val response = buyPageRepo.getCouponFromCode(code)
+                    val response = buyPageRepo.getCouponFromCode(code, Integer.parseInt(testId))
                     val data = response.body()
                     if (response.isSuccessful && data != null && data.couponCode != null) {
                         viewModelScope.launch(Dispatchers.Main) {

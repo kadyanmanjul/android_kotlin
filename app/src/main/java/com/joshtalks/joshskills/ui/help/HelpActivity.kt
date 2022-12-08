@@ -240,7 +240,8 @@ class HelpActivity : CoreJoshActivity() {
                 .subscribe {
                     when {
                         Action.CALL == it.option.action -> {
-                            val number = if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+                            val number = if (PrefManager.getBoolValue(IS_COURSE_BOUGHT) || PrefManager.getBoolValue(
+                                    IS_SUBSCRIPTION_STARTED)) {
                                 it.option.actionData
                             } else {
                                 it.option.actionDataForFreeTrial

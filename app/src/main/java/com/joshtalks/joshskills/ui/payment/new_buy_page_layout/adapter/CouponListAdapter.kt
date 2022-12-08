@@ -105,7 +105,7 @@ class CouponListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             val title = coupon.title
             binding.couponDesc.text = "Use the coupon and $title"
             binding.saveMoney.text = "Save upto ₹" + coupon?.maxDiscountAmount.toString() + " with this code"
-            binding.couponPercent.text = title.split(" ")[1] +" OFF"
+            binding.couponPercent.text = coupon.couponCode
             when (offersList[position].couponType) {
                 CONDITIONAL -> {
                     binding.txtCouponExpireTime.text = coupon.couponDesc
