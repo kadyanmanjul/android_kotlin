@@ -27,7 +27,8 @@
         app:contentInsetLeft="0dp"
         app:contentInsetRight="0dp"
         app:contentInsetStart="0dp"
-        app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+        app:popupTheme="@style/CustomPopupMenuStyle"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

@@ -9,6 +9,7 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.service.notification.StatusBarNotification
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -216,7 +217,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun openPopupMenu(view: View) {
         if (popupMenu == null) {
-            popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+            popupMenu = PopupMenu(this, view)
             popupMenu?.inflate(R.menu.more_options_menu)
             popupMenu?.setOnMenuItemClickListener {
                 when (it.itemId) {

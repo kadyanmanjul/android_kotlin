@@ -27,8 +27,7 @@
         app:contentInsetEndWithActions="0dp"
         app:contentInsetLeft="0dp"
         app:contentInsetRight="0dp"
-        app:contentInsetStart="0dp"
-        app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+        app:contentInsetStart="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
