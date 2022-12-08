@@ -42,6 +42,8 @@ class FirstCallBottomSheet : BottomSheetDialogFragment() {
         return binding.root
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {}
+
     private fun initView() {
         savePopupImpression(FIRST_CALL_POPUP_SHOWN)
 

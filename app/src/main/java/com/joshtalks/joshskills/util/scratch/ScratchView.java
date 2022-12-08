@@ -20,10 +20,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
 import com.joshtalks.joshskills.R;
+import com.joshtalks.recyclerview_fastscroll.utils.Utils;
 
 public class ScratchView extends View {
 
@@ -139,7 +141,13 @@ public class ScratchView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mScratchBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        try {
+            mScratchBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        } catch (Exception exception) {
+            Toast.makeText(mContext, "Oops! Something went wrong", Toast.LENGTH_SHORT).show();
+            mScratchBitmap = Bitmap.createBitmap(Utils.toPixels(getResources(), 250), Utils.toPixels(getResources(), 250), Bitmap.Config.ARGB_8888);
+            exception.printStackTrace();
+        }
         mCanvas = new Canvas(mScratchBitmap);
 
         Rect rect = new Rect(0, 0, getWidth(), getHeight());
