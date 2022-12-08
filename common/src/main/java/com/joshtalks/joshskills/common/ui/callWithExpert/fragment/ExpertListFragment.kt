@@ -21,7 +21,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseFragment
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.CLICKED_CALL_BUTTON
@@ -29,7 +28,6 @@ import com.joshtalks.joshskills.common.databinding.FragmentExpertListBinding
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.callWithExpert.viewModel.CallWithExpertViewModel
 import com.joshtalks.joshskills.common.ui.callWithExpert.viewModel.ExpertListViewModel
-import com.joshtalks.joshskills.common.ui.fpp.constants.CAN_BE_CALL
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.skydoves.balloon.ArrowPositionRules

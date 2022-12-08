@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.common.base.BaseViewModel
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.core.checkPstnState
@@ -15,8 +14,6 @@ import com.joshtalks.joshskills.common.ui.callWithExpert.model.ExpertListModel
 import com.joshtalks.joshskills.common.ui.callWithExpert.repository.ExpertListRepo
 import com.joshtalks.joshskills.common.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.common.ui.callWithExpert.utils.WalletRechargePaymentManager
-import com.joshtalks.joshskills.common.ui.fpp.constants.CAN_BE_CALL
-import com.joshtalks.joshskills.common.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.constant.State

@@ -17,17 +17,13 @@ import androidx.paging.cachedIn
 import androidx.recyclerview.widget.RecyclerView
 
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseViewModel
 import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_FPP_IMAGE
-import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_FPP_MENTOR_ID
 import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_FPP_NAME
-import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.track.AGORA_UID
 import com.joshtalks.joshskills.common.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.common.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.common.ui.group.analytics.GroupAnalytics

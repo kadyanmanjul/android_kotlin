@@ -11,13 +11,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.EventLiveData
 import com.joshtalks.joshskills.voip.base.constants.USER_NAME
 import com.joshtalks.joshskills.voip.base.constants.USER_PROFILE
-import com.joshtalks.joshskills.common.constants.COURSE_LIST_DATA
-import com.joshtalks.joshskills.common.constants.INVITE_FRIENDS_METHOD
-import com.joshtalks.joshskills.common.constants.MY_GROUP_LIST_DATA
-import com.joshtalks.joshskills.common.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
@@ -27,7 +22,6 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.core.io.AppDirectory
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
@@ -38,7 +32,6 @@ import com.joshtalks.joshskills.common.ui.userprofile.adapters.MyGroupsListAdapt
 import com.joshtalks.joshskills.common.ui.userprofile.models.*
 import com.joshtalks.joshskills.common.ui.userprofile.repository.UserProfileRepo
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteCallerRepository
-import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.quality

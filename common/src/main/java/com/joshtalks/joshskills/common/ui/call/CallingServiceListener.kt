@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_MENTOR_ID

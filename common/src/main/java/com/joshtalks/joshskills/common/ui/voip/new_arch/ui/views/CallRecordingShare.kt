@@ -15,19 +15,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.ANALYTICS_EVENT
-import com.joshtalks.joshskills.voip.base.constants.SERVICE_ACTION_INCOMING_CALL
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.core.showToast
 import com.joshtalks.joshskills.common.databinding.ActivityCallRecordingShareBinding
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.common.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.common.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.common.ui.video_player.VIDEO_URL
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 
 

@@ -38,10 +38,6 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.EventLiveData
-import com.joshtalks.joshskills.common.constants.PAYMENT_FAILED
-import com.joshtalks.joshskills.common.constants.PAYMENT_PENDING
-import com.joshtalks.joshskills.common.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.uiHandler
 import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
@@ -49,7 +45,6 @@ import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.core.notification.NotificationUtils
 import com.joshtalks.joshskills.common.databinding.ActivityCourseDetailsBinding
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.*
 import com.joshtalks.joshskills.common.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
@@ -58,7 +53,6 @@ import com.joshtalks.joshskills.common.repository.server.onboarding.FreeTrialDat
 import com.joshtalks.joshskills.common.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.common.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.common.ui.course_details.viewholder.*
-import com.joshtalks.joshskills.common.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.common.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.common.ui.payment.PaymentInProcessFragment
 import com.joshtalks.joshskills.common.ui.payment.PaymentPendingFragment
@@ -69,10 +63,7 @@ import com.joshtalks.joshskills.common.ui.special_practice.utils.BACK_PRESSED_ON
 import com.joshtalks.joshskills.common.ui.special_practice.utils.BACK_PRESSED_ON_LOADING
 import com.joshtalks.joshskills.common.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.common.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
-import com.joshtalks.joshskills.common.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.common.ui.subscription.TRIAL_TEST_ID
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.common.util.DividerItemDecoration
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.skydoves.balloon.OnBalloonClickListener
 import com.karumi.dexter.MultiplePermissionsReport

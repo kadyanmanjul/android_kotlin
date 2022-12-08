@@ -173,8 +173,7 @@ dependencies {
         exclude group: 'com.bumptech.glide'
     })
     implementation project(path: ':joshcamerax')
-    implementation project(path: ':voip')
-    implementation project(path: ':basenew')
+    implementation project(path: ':feature:voip')
 
     implementation libs.kotlin.lib
     implementation libs.bundles.coroutine

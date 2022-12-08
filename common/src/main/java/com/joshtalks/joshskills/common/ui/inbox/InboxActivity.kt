@@ -26,7 +26,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
-import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
@@ -49,10 +48,6 @@ import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
-import com.joshtalks.joshskills.common.ui.referral.ReferralActivity
-import com.joshtalks.joshskills.common.ui.referral.ReferralViewModel
-import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.common.util.FileUploadService
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec

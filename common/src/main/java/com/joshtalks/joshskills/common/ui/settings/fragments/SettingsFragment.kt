@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.common.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.repository.server.LanguageItem
 import com.joshtalks.joshskills.common.ui.extra.AUTO_START_SETTINGS_POPUP
-import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager

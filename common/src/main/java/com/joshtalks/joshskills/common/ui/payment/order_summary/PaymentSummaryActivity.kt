@@ -40,13 +40,9 @@ import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.EventLiveData
 import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.voip.base.constants.STOP_SERVICE
-import com.joshtalks.joshskills.common.constants.PAYMENT_FAILED
-import com.joshtalks.joshskills.common.constants.PAYMENT_PENDING
-import com.joshtalks.joshskills.common.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_PAYMENT_BTN_TXT
@@ -57,7 +53,6 @@ import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.core.notification.NotificationUtils
 import com.joshtalks.joshskills.common.databinding.ActivityPaymentSummaryBinding
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
@@ -66,12 +61,10 @@ import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.payment.*
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentManager
-import com.joshtalks.joshskills.common.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.common.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
-import com.joshtalks.joshskills.common.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

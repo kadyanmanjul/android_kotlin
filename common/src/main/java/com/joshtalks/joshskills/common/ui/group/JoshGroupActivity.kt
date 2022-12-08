@@ -14,16 +14,12 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.*
-import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.databinding.ActivityJoshGroupBinding
-import com.joshtalks.joshskills.common.track.AGORA_UID
-import com.joshtalks.joshskills.common.track.CHANNEL_ID
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.fpp.constants.GROUP
 import com.joshtalks.joshskills.common.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.common.ui.group.constants.*

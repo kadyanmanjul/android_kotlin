@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import android.util.Log
-import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.voip.base.constants.COURSE_ID
 import com.joshtalks.joshskills.voip.base.model.ApiHeader

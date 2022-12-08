@@ -6,9 +6,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseActivity
-import com.joshtalks.joshskills.common.constants.CLOSE_INTEREST_ACTIVITY
-import com.joshtalks.joshskills.common.constants.START_USER_INTEREST_FRAGMENT
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.databinding.ActivityUserInterestBinding
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel

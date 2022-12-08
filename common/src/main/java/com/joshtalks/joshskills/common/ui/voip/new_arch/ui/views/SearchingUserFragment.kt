@@ -1,21 +1,17 @@
 package com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseFragment
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.CURRENT_COURSE_ID
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.SEARCHING_SCREEN_RULES
@@ -29,7 +25,6 @@ import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.adapter.SearchU
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.reflect.Type
 import kotlin.random.Random

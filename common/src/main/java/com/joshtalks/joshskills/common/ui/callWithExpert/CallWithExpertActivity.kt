@@ -16,11 +16,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseActivity
-import com.joshtalks.joshskills.common.constants.EXPERT_UPGRADE_CLICK
-import com.joshtalks.joshskills.common.constants.PAYMENT_FAILED
-import com.joshtalks.joshskills.common.constants.PAYMENT_PENDING
-import com.joshtalks.joshskills.common.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.core.OPEN_WALLET
 import com.joshtalks.joshskills.common.core.SPEAKING_PAGE

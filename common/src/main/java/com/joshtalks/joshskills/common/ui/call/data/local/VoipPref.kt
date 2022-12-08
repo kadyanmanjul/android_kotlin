@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.common.core.notification.NotificationCategory
 import com.joshtalks.joshskills.common.core.notification.NotificationUtils
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.common.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.common.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.common.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.call_rating.CallRatingsFragment

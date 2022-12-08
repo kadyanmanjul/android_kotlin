@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseFragment
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.isValidContextForGlide
 import com.joshtalks.joshskills.common.databinding.FragmentExpertCallBinding

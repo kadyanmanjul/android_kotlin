@@ -1,14 +1,8 @@
 package com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views
 
 
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.PowerManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseFragment
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.isValidContextForGlide
 import com.joshtalks.joshskills.common.databinding.FragmentFppCallBinding
@@ -32,7 +25,6 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 class FppCallFragment : com.joshtalks.joshskills.common.base.BaseFragment() {
     private val TAG = "FppCallFragment"

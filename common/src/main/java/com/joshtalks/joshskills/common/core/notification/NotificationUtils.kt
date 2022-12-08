@@ -9,7 +9,6 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -33,7 +32,6 @@ import com.joshtalks.joshskills.common.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.common.repository.local.entity.Question
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.*
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.common.ui.chat.UPDATED_CHAT_ROOM_OBJECT

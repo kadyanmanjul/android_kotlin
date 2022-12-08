@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.common.ui.voip.favorite
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.ActionMode
@@ -12,7 +11,6 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.databinding.FavoriteListActivityBinding
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.fpp.BaseFppActivity
 import com.joshtalks.joshskills.common.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.common.ui.fpp.constants.*

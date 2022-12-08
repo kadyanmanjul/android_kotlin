@@ -11,18 +11,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.*
-import com.joshtalks.joshskills.common.constants.ON_BACK_PRESSED
-import com.joshtalks.joshskills.common.constants.OPEN_GROUP
-import com.joshtalks.joshskills.common.constants.SHOULD_REFRESH_GROUP_LIST
-import com.joshtalks.joshskills.common.constants.SEARCH_GROUP
-import com.joshtalks.joshskills.common.constants.SHOW_PROGRESS_BAR
-import com.joshtalks.joshskills.common.constants.DISMISS_PROGRESS_BAR
-import com.joshtalks.joshskills.common.constants.OPEN_GROUP_REQUEST
-import com.joshtalks.joshskills.common.constants.REFRESH_GRP_LIST_HIDE_INFO
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.PermissionUtils
 import com.joshtalks.joshskills.common.databinding.ActivityJoshVoipGroupctivityBinding
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.group.*
 import com.joshtalks.joshskills.common.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.common.ui.group.constants.*

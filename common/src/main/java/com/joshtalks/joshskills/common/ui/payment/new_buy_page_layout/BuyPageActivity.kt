@@ -35,10 +35,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseActivity
-import com.joshtalks.joshskills.common.constants.PAYMENT_FAILED
-import com.joshtalks.joshskills.common.constants.PAYMENT_PENDING
-import com.joshtalks.joshskills.common.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.DIGITAL_CARD_TEXT
@@ -72,8 +68,6 @@ import com.joshtalks.joshskills.common.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.common.ui.special_practice.utils.*
-import com.joshtalks.joshskills.common.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.common.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress

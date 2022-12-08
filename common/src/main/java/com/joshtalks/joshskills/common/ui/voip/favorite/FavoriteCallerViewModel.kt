@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.common.base.BaseViewModel
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent

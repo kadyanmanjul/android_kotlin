@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils
 
 import android.content.Intent
 import android.graphics.Color
-import android.os.SystemClock
 import android.util.Log
 import android.widget.Chronometer
 import androidx.appcompat.widget.AppCompatImageButton
@@ -13,7 +12,6 @@ import androidx.databinding.BindingAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.*
