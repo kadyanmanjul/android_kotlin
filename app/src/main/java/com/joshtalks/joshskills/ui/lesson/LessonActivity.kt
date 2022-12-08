@@ -745,8 +745,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         binding.spotlightTabReading.visibility = View.INVISIBLE
                         binding.lessonSpotlightTooltip.visibility = View.VISIBLE
                         binding.lessonSpotlightTooltip.setTooltipText(
-                            viewModel.speakingTopicLiveData.value?.speakingToolTipText
-                                ?: resources.getText(R.string.label_speaking_spotlight_2).toString()
+                            viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
+                                text.ifBlank { getString(R.string.label_speaking_spotlight_2) }
+                            } ?: getString(R.string.label_speaking_spotlight_2)
                         )
                         binding.lessonSpotlightTooltip.post {
                             slideInAnimation(binding.lessonSpotlightTooltip)

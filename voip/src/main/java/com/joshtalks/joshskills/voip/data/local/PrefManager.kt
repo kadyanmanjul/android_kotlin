@@ -215,6 +215,8 @@ class PrefManager {
         }
 
         fun getExpertPremiumUser(): Boolean {
+            if(::preferenceManager.isInitialized.not())
+                Utils.context?.let { initServicePref(it) }
             return preferenceManager.getBoolean(IS_EXPERT_PREMIUM_USER, false)
         }
     }
