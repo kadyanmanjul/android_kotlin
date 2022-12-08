@@ -257,10 +257,6 @@
         <value>ഒരു ദിവസം ഏറ്റവും അധികം പ്രയത്നിക്കുന്ന STUDENT "student of the day" ആകുന്നതാണ്.</value>
     </entry>
     <entry>
-        <key>TOOLTIP_CONVERSAITON_1207</key>
-        <value>तुमचा वर्गमित्र कोण आहे आपण ते येथे पाहू शकता.</value>
-    </entry>
-    <entry>
         <key>SUBSCRIPTION_TRIAL_TIP_DAY1</key>
         <value>Enjoy your free trial</value>
     </entry>
@@ -690,10 +686,6 @@
         <value>ఈరోజు ఈ భాగంలో మన వ్యాకరణం స్థాయిని తెలుసుకుందాం</value>
     </entry>
     <entry>
-        <key>TOOLTIP_CONVERSAITON_1209</key>
-        <value>നിങ്ങളുടെ സഹപാഠികൾ ആരൊക്കെയാണെന്നു ഇവിടെ കാണുവാൻ സാധിക്കുന്നതാണ്</value>
-    </entry>
-    <entry>
         <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1891</key>
         <value>வேண்டும்</value>
     </entry>
@@ -782,10 +774,6 @@
     <entry>
         <key>is_demo_user</key>
         <value />
-    </entry>
-    <entry>
-        <key>TOOLTIP_CONVERSAITON_1211</key>
-        <value>మీ క్లాస్‌మేట్స్ ఎవరో మీరు ఇక్కడ నుండి చూడవచ్చు</value>
     </entry>
     <entry>
         <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1207</key>
@@ -880,16 +868,8 @@
         <value>7 dino ke liye aap ALL COURSES unlimited access kar sakte hai.</value>
     </entry>
     <entry>
-        <key>TOOLTIP_CONVERSAITON_1203</key>
-        <value>তোমার সহপাঠি কে? এখানে দেখতে পারবেন</value>
-    </entry>
-    <entry>
         <key>FIRST_TIME_USER_HINT</key>
         <value>Aapko apne course se related saari videos aur classes isko click karke milengi</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_CONVERSAITON_1206</key>
-        <value>ਤੁਹਾਡਾ ਜਮਾਤੀ ਕੌਣ ਹੈ ਤੁਸੀਂ ਇਸਨੂੰ ਇੱਥੇ ਦੇਖ ਸਕਦੇ ਹੋ</value>
     </entry>
     <entry>
         <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1211</key>
@@ -990,10 +970,6 @@
     <entry>
         <key>POSTAL_ADDRESS_SUBHEADING_CERT_FORM</key>
         <value>Certificate will be sent to this address</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_CONVERSAITON_151</key>
-        <value>आपके सहपाठी कौन है आप यहाँ से देख सकते है</value>
     </entry>
     <entry>
         <key>EARN_SHARE_IMAGE_URL</key>
@@ -1430,10 +1406,6 @@
     <entry>
         <key>SUBSCRIPTION_COURSE_IDS</key>
         <value>60</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_CONVERSAITON_1210</key>
-        <value>உங்கள் வகுப்பு தோழர்கள் யார் என்பதை இங்கே பார்க்கலாம்</value>
     </entry>
     <entry>
         <key>GRAMMAR_CONTINUE_BUTTON_TEXT_151</key>

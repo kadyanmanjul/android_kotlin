@@ -27,20 +27,6 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <!--        <RelativeLayout-->
-        <!--            android:id="@+id/welcome_container"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="match_parent"-->
-        <!--            android:background="@color/surface_overlay"-->
-        <!--            android:elevation="@dimen/_10sdp"-->
-        <!--            android:visibility="gone">-->
-
-        <!--            <ImageView-->
-        <!--                android:id="@+id/welcome_item"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content" />-->
-        <!--        </RelativeLayout>-->
-
         <include
             android:id="@+id/overlay_view"
             layout="@layout/unlock_class_tooltip"
@@ -68,6 +54,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- TODO: Comment to see design -->
             <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
                 android:id="@+id/call_bar_layout"
                 android:layout_width="match_parent"
@@ -382,32 +369,6 @@
                         tools:listitem="@layout/lesson_progress_stub" />
                 </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
 
-                <FrameLayout
-                    android:id="@+id/lesson_tooltip_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_30sdp"
-                    android:layout_marginTop="@dimen/_368sdp"
-                    android:background="@drawable/bg_tooltip_small_center"
-                    android:visibility="gone"
-                    tools:visibility="visible">
-
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:paddingTop="@dimen/_18sdp"
-                        android:paddingBottom="@dimen/_8sdp"
-                        android:text="@string/we_will_get_new_lesson_here_everyday"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                        android:textColor="@color/text_default"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                </FrameLayout>
-
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/scroll_to_end_button"
                     android:layout_width="@dimen/_32sdp"
@@ -422,46 +383,6 @@
                     app:elevation="@dimen/_4sdp"
                     app:srcCompat="@drawable/ic_arrow_down"
                     tools:visibility="visible" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imgGroupChat"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginHorizontal="@dimen/_12sdp"
-                    android:layout_marginVertical="@dimen/_12sdp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/white_button_round_enabled"
-                    android:backgroundTint="@color/primary_500"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center"
-                    android:padding="@dimen/_4sdp"
-                    android:visibility="gone"
-                    app:elevation="@dimen/_4sdp"
-                    app:srcCompat="@drawable/ic_groupchat"
-                    tools:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/txtUnreadCount"
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginHorizontal="@dimen/_5sdp"
-                    android:layout_marginVertical="@dimen/_6sdp"
-                    android:background="@drawable/round_circle_with_border"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    android:textColor="@color/pure_white"
-                    android:textSize="@dimen/_6ssp"
-                    android:textStyle="bold"
-                    android:visibility="gone"
-                    tools:text="99+"
-                    tools:visibility="gone" />
 
             </FrameLayout>
 
@@ -603,6 +524,7 @@
 
                 </LinearLayout>
 
+                <!-- TODO: Comment to see design -->
                 <com.joshtalks.recordview.RecordView
                     android:id="@+id/record_view"
                     android:layout_width="0dp"

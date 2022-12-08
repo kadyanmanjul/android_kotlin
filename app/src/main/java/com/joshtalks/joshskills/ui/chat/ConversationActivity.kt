@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.chat
 
 import android.animation.ValueAnimator
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -18,7 +17,6 @@ import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
@@ -28,7 +26,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -41,10 +38,7 @@ import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.IS_FIRST_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
-import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
@@ -62,7 +56,6 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLa
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageWithPlaceholder
 import com.joshtalks.joshskills.core.extension.setResourceImageDefault
-import com.joshtalks.joshskills.core.extension.shiftGroupChatIconDown
 import com.joshtalks.joshskills.core.extension.slideOutAnimation
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -81,7 +74,6 @@ import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
@@ -106,9 +98,6 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
-import com.joshtalks.joshskills.ui.referral.ReferralViewModel
-import com.joshtalks.joshskills.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
@@ -120,7 +109,6 @@ import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
@@ -159,11 +147,8 @@ const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
 const val VOICE_CALL_REQUEST_CODE = 1110
 const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
-const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
-const val TOOLTIP_CONVERSAITON = "TOOLTIP_CONVERSAITON_"
 const val FREE_TRIAL_CALL_TOPIC_ID = "10"
 
-const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
 
 private const val TAG = "ConversationActivity"
@@ -176,8 +161,6 @@ class ConversationActivity :
     OnDismissWithSuccess {
 
     companion object {
-        private var unlockOverlayJob: Job? = null
-
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
             val intent = Intent(activity, ConversationActivity::class.java).apply {
                 putExtra(CHAT_ROOM_OBJECT, inboxEntity)
@@ -195,43 +178,14 @@ class ConversationActivity :
             }
     }
 
-    private val rotateOpenAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this,
-            R.anim.rotate_open_animation
-        )
-    }
-    private val rotateCloseAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this,
-            R.anim.rotate_close_animation
-        )
-    }
-    private val fromBottomAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this,
-            R.anim.from_bottom_animation
-        )
-    }
-    private val toBottomAnimation: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this,
-            R.anim.to_bottom_animation
-        )
-    }
     var openedLesson: Boolean = false
     var countdownTimerBack: CountDownTimer? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
     private lateinit var unlockClassViewModel: UnlockClassViewModel
-    private val interestViewModel by lazy { ViewModelProvider(this)[CallInterestViewModel::class.java] }
     val event = EventLiveData
     private val conversationAdapter: ConversationAdapter by lazy {
-        ConversationAdapter(
-            WeakReference(
-                this
-            )
-        )
+        ConversationAdapter(WeakReference(this))
     }
     private var userProfileData: UserProfileResponse? = null
     private var currentAudioPosition: Int = -1
@@ -247,7 +201,6 @@ class ConversationActivity :
     private var flowFrom: String? = EMPTY
     private var loadingPreviousData = false
     private var isNewMessageShowing = false
-    private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
     private var currentTooltipIndex = 0
@@ -257,10 +210,6 @@ class ConversationActivity :
             "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
             "आपके सहपाठी कौन हैं और उनके कितने पॉइंट्स हैं आप यहाँ से देख सकते हैं"
         )
-    }
-
-    private val refViewModel: ReferralViewModel by lazy {
-        ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -275,7 +224,6 @@ class ConversationActivity :
             return
         }
         init()
-        showRestartButton()
     }
 
     override fun getConversationId(): String {
@@ -337,7 +285,7 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        //addIssuesToSharedPref()
+        showRestartButton()
     }
 
     private fun initSharedPreferences() {
@@ -365,39 +313,13 @@ class ConversationActivity :
         conversationViewModel.getPendingRequestsList()
     }
 
-    private fun addIssuesToSharedPref() {
-        CoroutineScope(Dispatchers.IO).launch() {
-
-            try {
-                PrefManager.putPrefObject(
-                    REPORT_ISSUE,
-                    AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT")
-                )
-
-            } catch (e: java.lang.Exception) {
-            }
-            try {
-                PrefManager.putPrefObject(
-                    BLOCK_ISSUE,
-                    AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK")
-                )
-
-            } catch (e: java.lang.Exception) {
-            }
-
-        }
-    }
-
     private fun initFreeTrialTimer() {
         PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
         PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
         if (inboxEntity.isCourseBought) {
             conversationBinding.freeTrialExpiryLayout.visibility = GONE
             return
-        }/*else if (PrefManager.getIntValue(FT_CALLS_LEFT) > 0) {
-            conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.freeTrialText.text = getString(R.string.ft_calls_left, PrefManager.getIntValue(FT_CALLS_LEFT))
-        } */ else if (
+        } else if (
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
@@ -405,12 +327,10 @@ class ConversationActivity :
                 conversationBinding.freeTrialExpiryLayout.visibility = GONE
             } else {
                 conversationBinding.freeTrialContainer.visibility = VISIBLE
-                conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 if (inboxEntity.expiryDate!!.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
                     conversationBinding.freeTrialExpiryLayout.visibility = GONE
                 } else {
                     conversationBinding.freeTrialContainer.visibility = VISIBLE
-                    conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                     startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
                 }
             }
@@ -421,7 +341,6 @@ class ConversationActivity :
             PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
@@ -450,33 +369,12 @@ class ConversationActivity :
         countdownTimerBack?.start()
     }
 
-    private fun showLessonTooltip() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_SEEN_LESSON_TOOLTIP, defValue = false)) {
-                withContext(Dispatchers.Main) {
-                    conversationBinding.lessonTooltipLayout.visibility = GONE
-                }
-            } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
-                if (conversationAdapter.getLastLesson()?.lessonNo == 1 &&
-                    conversationAdapter.getLastLesson()?.status == LESSON_STATUS.NO
-                ) {
-                    withContext(Dispatchers.Main) {
-                        conversationBinding.lessonTooltipLayout.visibility = VISIBLE
-                    }
-                } else {
-                    PrefManager.put(HAS_SEEN_LESSON_TOOLTIP, true)
-                }
-            }
-        }
-    }
-
     fun hideLeaderboardTooltip() {
         conversationBinding.leaderboardTooltipLayout.visibility = GONE
         PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
     }
 
-    private fun showLeaderBoardSpotlight(hasDelay: Boolean = true) {
+    private fun showLeaderBoardSpotlight() {
         lifecycleScope.launch(Dispatchers.Main) {
             window.statusBarColor = ContextCompat.getColor(
                 this@ConversationActivity,
@@ -486,14 +384,7 @@ class ConversationActivity :
             conversationBinding.overlayLayout.visibility = VISIBLE
             conversationBinding.arrowAnimation.visibility = VISIBLE
             conversationBinding.overlayLeaderboardContainer.visibility = VISIBLE
-            //conversationBinding.overlayLeaderboardTooltip.visibility = INVISIBLE
             slideInAnimation(conversationBinding.overlayLeaderboardTooltip)
-            /*conversationBinding.overlayLeaderboardTooltip.startAnimation(
-                AnimationUtils.loadAnimation(
-                    this@ConversationActivity,
-                    R.anim.slide_in_right
-                )
-            )*/
             conversationBinding.labelTapToDismiss.visibility = GONE
             PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
             delay(600)
@@ -517,8 +408,6 @@ class ConversationActivity :
         conversationBinding.overlayLeaderboardContainer.visibility = GONE
         conversationBinding.labelTapToDismiss.visibility = GONE
         conversationBinding.overlayLeaderboardTooltip.visibility = GONE
-//        conversationBinding.cbcTooltip.visibility = GONE
-
     }
 
     private fun showFirstCallBottomSheet() {
@@ -543,31 +432,13 @@ class ConversationActivity :
         )
     }
 
-    private fun navigateToLoginActivity() {
-        val intent = Intent(this, SignUpActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra(FLOW_FROM, "payment journey")
-        }
-        startActivity(intent)
-        val broadcastIntent = Intent().apply {
-            action = CALLING_SERVICE_ACTION
-            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
-        }
-        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent)
-    }
-
     private fun initToolbar() {
-//        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-//        MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         var obj = JSONObject()
-        if (inboxEntity.isCourseBought) {
+        if (inboxEntity.isCourseBought)
             obj.put("is paid", true)
-        } else {
+        else
             obj.put("is paid", false)
-        }
-//        MixPanelTracker.mixPanel.people.set(obj)
-//        MixPanelTracker.mixPanel.registerSuperProperties(obj)
+
         try {
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
@@ -590,7 +461,7 @@ class ConversationActivity :
             }
             conversationBinding.ivIconReferral.isVisible = inboxEntity.isCourseBought
             conversationBinding.ivIconReferral.setOnClickListener {
-                refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
+                conversationViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
 
                 ReferralActivity.startReferralActivity(
                     this@ConversationActivity,
@@ -607,8 +478,7 @@ class ConversationActivity :
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
-
-                        refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
+                        conversationViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
                         MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
@@ -616,8 +486,7 @@ class ConversationActivity :
                         )
                     }
                     R.id.menu_clear_media -> {
-                        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED)
-                            .push()
+                        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED).push()
                         clearMediaFromInternal(inboxEntity.conversation_id)
                     }
                     R.id.menu_help -> {
@@ -645,7 +514,7 @@ class ConversationActivity :
                         val intent = Intent(this, UserInterestActivity::class.java)
                         intent.putExtra("isEditCall", true)
                         startActivity(intent)
-                        interestViewModel.saveImpression(INTEREST_FORM_OPEN_MENU_EDIT)
+                        conversationViewModel.saveImpression(INTEREST_FORM_OPEN_MENU_EDIT)
                     }
                     R.id.menu_restart_course -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)
@@ -662,18 +531,6 @@ class ConversationActivity :
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-    }
-
-    fun buildRestartDialog() {
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.restart_course_dialog, null)
-        dialogBuilder.setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create()
-        val width = AppObjectController.screenWidth * .9
-        val height = ViewGroup.LayoutParams.WRAP_CONTENT
-        alertDialog.show()
-        alertDialog.window?.setLayout(width.toInt(), height)
     }
 
     fun restartCourse(isFromRestartButton: Boolean) {
@@ -723,7 +580,7 @@ class ConversationActivity :
         }
     }
 
-    fun showRestartButton() {
+    private fun showRestartButton() {
         CoroutineScope(Dispatchers.IO).launch {
             val lastLesson = conversationViewModel.getLastLessonForCourse()
             if (lastLesson == 90 && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought) {
@@ -780,9 +637,6 @@ class ConversationActivity :
     }
 
     private fun getPreviousRecord() {
-        /*if (reachEndOfData) {
-            return
-        }*/
         if (loadingPreviousData.not() && linearLayoutManager.findFirstVisibleItemPosition() in 0..8) {
             loadingPreviousData = true
             conversationViewModel.loadPagingMessage(conversationAdapter.getFirstItem())
@@ -790,10 +644,10 @@ class ConversationActivity :
     }
 
     private fun initView() {
-
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
+
         if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
         }
@@ -814,7 +668,6 @@ class ConversationActivity :
         }
 
         conversationBinding.imgGroupChatBtn.setOnSingleClickListener {
-            //hideCohortCourseTooltip()
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -834,10 +687,7 @@ class ConversationActivity :
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_CANCEL).push()
-            conversationBinding.userPointContainer.slideOutAnimation(
-                conversationBinding.imgGroupChat,
-                conversationBinding.txtUnreadCount
-            )
+            conversationBinding.userPointContainer.slideOutAnimation()
             // hideLeaderboardTooltip()
         }
 
@@ -858,8 +708,6 @@ class ConversationActivity :
                 USER_PROFILE_FLOW_FROM.FLOATING_BAR.value
             )
         }
-
-        conversationBinding.imgGroupChat.visibility = GONE
 
         conversationBinding.refreshLayout.setOnRefreshListener {
             if (internetAvailableFlag) {
@@ -926,8 +774,7 @@ class ConversationActivity :
         if (currentTooltipIndex < leaderboardTooltipList.size - 1) {
             currentTooltipIndex++
             conversationBinding.joshTextView.text = leaderboardTooltipList[currentTooltipIndex]
-            conversationBinding.txtTooltipIndex.text =
-                "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
+            conversationBinding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
         } else {
             conversationBinding.leaderboardTooltipLayout.visibility = GONE
             PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
@@ -1095,22 +942,11 @@ class ConversationActivity :
                 }
             }
 
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
         conversationBinding.messageButton.setOnClickListener {
             sendTextMessage()
         }
@@ -1134,31 +970,6 @@ class ConversationActivity :
     }
 
     private fun addObservable() {
-        lifecycleScope.launchWhenResumed {
-            utilConversationViewModel.unreadMessageCount.collectLatest { count ->
-                if (inboxEntity.isGroupActive) {
-                    conversationBinding.txtUnreadCount.visibility = VISIBLE
-                    //conversationBinding.imgGroupChat.visibility = VISIBLE
-                    when {
-                        count in 1..99 -> {
-                            conversationBinding.txtUnreadCount.text = String.format("%d", count)
-                        }
-                        count > 99 -> {
-                            conversationBinding.txtUnreadCount.text =
-                                getString(R.string.max_unread_count)
-                        }
-                        else -> {
-                            conversationBinding.txtUnreadCount.visibility = GONE
-                            conversationBinding.txtUnreadCount.text = EMPTY
-                        }
-                    }
-                } else {
-                    //conversationBinding.imgGroupChat.visibility = GONE
-                    conversationBinding.txtUnreadCount.visibility = GONE
-                }
-            }
-        }
-
         conversationViewModel.pendingRequestsList.observe(this) {
             with(conversationBinding) {
                 if (it.pendingRequestsList.isNotEmpty() && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
@@ -1412,9 +1223,6 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
-//        if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION) && !PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP) && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
-//            showCohortBaseCourse()
-//        }
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
@@ -1574,23 +1382,6 @@ class ConversationActivity :
                     }
                 )
         )
-
-//        compositeDisposable.add(
-//            RxBus2.listen(TextTooltipEvent::class.java)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({
-//                    lifecycleScope.launch(Dispatchers.IO) {
-//                        withContext(Dispatchers.Main) {
-//                            if (inboxEntity.isCourseBought && !inboxEntity.formSubmitted)
-//                                setOverlayAnimationOnText(it.chatModel)
-//                        }
-//                    }
-//                }, {
-//                    showToast(it.message.toString())
-//                    it.printStackTrace()
-//                })
-//        )
 
         compositeDisposable.add(
             RxBus2.listen(DownloadMediaEventBus::class.java)
@@ -1836,8 +1627,6 @@ class ConversationActivity :
                     {
                         isNewMessageShowing = false
                         conversationBinding.refreshLayout.isRefreshing = true
-                        // conversationBinding.chatRv.removeView(it.viewHolder)
-                        // conversationAdapter.removeNewClassCard()
                         unlockClassViewModel.updateBatchChangeRequest()
                         logUnlockCardEvent()
                     },
@@ -1968,9 +1757,7 @@ class ConversationActivity :
             RxBus2.listen(AwardItemClickedEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-//                        showAward(listOf(it.award), true)
-                }, {
+                .subscribe({}, {
                     it.printStackTrace()
                 })
         )
@@ -2031,9 +1818,7 @@ class ConversationActivity :
             .push()
     }
 
-    private fun analyticsAudioPlayed(
-        audioType: AudioType?
-    ) {
+    private fun analyticsAudioPlayed(audioType: AudioType?) {
         AppAnalytics.create(AnalyticsEvent.AUDIO_PLAYED.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -2111,18 +1896,6 @@ class ConversationActivity :
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-//                            val options = Options.init()
-//                                .setRequestCode(IMAGE_SELECT_REQUEST_CODE)
-//                                .setCount(1)
-//                                .setFrontfacing(false)
-//                                .setPath(AppDirectory.getTempPath())
-//                                .setImageQuality(ImageQuality.HIGH)
-//                                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
-//
-//                            JoshCameraActivity.startJoshCameraxActivity(
-//                                this@ConversationActivity,
-//                                options
-//                            )
                             ImagePicker.with(this@ConversationActivity)
                                 .crop()
                                 .cameraOnly()
@@ -2215,9 +1988,8 @@ class ConversationActivity :
     }
 
     fun getBottomBannerHeight(): Int {
-            return if (conversationBinding.buyCourseBanner.isVisible) conversationBinding.buyCourseBanner.height else 0
+        return if (conversationBinding.buyCourseBanner.isVisible) conversationBinding.buyCourseBanner.height else 0
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -2253,11 +2025,6 @@ class ConversationActivity :
                 conversationBinding.overlayView.visibility = INVISIBLE
                 return
             }
-//            conversationBinding.welcomeContainer.visibility == VISIBLE -> {
-//                conversationBinding.welcomeContainer.visibility = INVISIBLE
-//                conversationBinding.overlayView.visibility = INVISIBLE
-//                return
-//            }
             else -> {
                 val resultIntent = Intent()
                 setResult(RESULT_OK, resultIntent)
@@ -2275,7 +2042,6 @@ class ConversationActivity :
             ),
             COURSE_PROGRESS_NEW_REQUEST_CODE
         )
-        courseProgressUIVisible = true
     }
 
     fun visibleItem() {
@@ -2311,7 +2077,7 @@ class ConversationActivity :
                     }
                 }
             } catch (ex: Exception) {
-//  ex.printStackTrace()
+                ex.printStackTrace()
             }
         }
     }
@@ -2330,18 +2096,6 @@ class ConversationActivity :
         AppObjectController.currentPlayingAudioObject?.playProgress = progress
         if (currentAudioPosition != -1) {
             conversationAdapter.notifyItemChanged(currentAudioPosition)
-        }
-    }
-
-    private fun refreshView(chatId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val chatObj = AppObjectController.appDatabase.chatDao()
-                    .getUpdatedChatObjectViaId(chatId)
-                refreshViewAtPos(chatObj)
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
         }
     }
 
@@ -2490,25 +2244,6 @@ class ConversationActivity :
         }
     }
 
-    private fun addVideoMessage(videoPath: String) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val videoSentFile = AppDirectory.videoSentFile()
-            AppDirectory.copy(videoPath, videoSentFile.absolutePath)
-            val tVideoMessage =
-                TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
-            val message = getVideoMessage(tVideoMessage, conversationAdapter.getLastItem())
-            uiHandler.post {
-                conversationAdapter.addMessage(message)
-            }
-            scrollToEnd()
-            conversationViewModel.sendMediaMessage(
-                videoSentFile.absolutePath,
-                tVideoMessage,
-                message
-            )
-        }
-    }
-
     private suspend fun setOverlayAnimation() {
         delay(1000)
         withContext(Dispatchers.Main) {
@@ -2552,39 +2287,6 @@ class ConversationActivity :
         }
     }
 
-//    private suspend fun setOverlayAnimationOnText(chatModel: ChatModel) {
-//        conversationBinding.overlayView.visibility = INVISIBLE
-//        withContext(Dispatchers.Main) {
-//            conversationBinding.chatRv.scrollToPosition(conversationAdapter.getLastItemPosition())
-//            val welcomeTextView =
-//                conversationBinding.chatRv.findViewHolderForAdapterPosition(conversationAdapter.getLastItemPosition())
-//                    ?: return@withContext
-//            val STATUS_BAR_HEIGHT = getStatusBarHeight()
-//            conversationBinding.welcomeContainer.visibility = VISIBLE
-//            val overlayImageView =
-//                conversationBinding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
-//            val overlayItem = TooltipUtils.getOverlayItemFromView(welcomeTextView.itemView)
-//            conversationBinding.welcomeContainer.setOnClickListener {
-//                conversationBinding.welcomeContainer.visibility = INVISIBLE
-//                showCohortBaseCourse()
-//            }
-//            PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, true)
-//            overlayItem?.let {
-//                overlayImageView.setImageBitmap(it.viewBitmap)
-//                overlayImageView.x = it.x.toFloat()
-//                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT
-//                overlayImageView.requestLayout()
-//                conversationBinding.welcomeContainer.visibility = VISIBLE
-//            }
-//        }
-//    }
-
-    fun groupAndFppButtonElevation() {
-        conversationBinding.imgGroupChatBtn.elevation = 24f
-        conversationBinding.imgFppBtn.elevation = 24f
-        conversationBinding.ringingIcon.elevation = 28f
-    }
-
     fun setOverlayView(
         overlayItem: ItemOverlay,
         overlayImageView: ImageView,
@@ -2603,11 +2305,7 @@ class ConversationActivity :
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
         overlayButtonImageView.setImageBitmap(overlayButtonItem.viewBitmap)
         arrowView.x = getScreenHeightAndWidth().second.div(3).toFloat()
-//            overlayButtonItem.x.toFloat() - resources.getDimension(R.dimen._40sdp) + (overlayButtonImageView.width / 2.0).toFloat() - resources.getDimension(
-//                R.dimen._45sdp
-//            )
-        arrowView.y =
-            overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
+        arrowView.y = overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
         overlayImageView.x = overlayItem.x.toFloat()
         overlayImageView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT
         overlayButtonImageView.x = overlayButtonItem.x.toFloat()
@@ -2659,8 +2357,6 @@ class ConversationActivity :
     }
 
     fun getConversationTooltip(): String {
-//        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
-//        requestWorkerForChangeLanguage(getLangCodeFromCourseId(courseId))
         return getString(R.string.tooltip_conversation)
     }
 

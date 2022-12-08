@@ -26,7 +26,6 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
     private val jobs = arrayListOf<Job>()
     val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
     val isLoading: MutableLiveData<Boolean> = MutableLiveData()
-    val unreadMessageCount = MutableSharedFlow<Int>(replay = 0)
     val userData = MutableSharedFlow<UserProfileResponse>(replay = 0)
 
     fun getProfileData(mentorId: String) {
