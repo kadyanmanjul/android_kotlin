@@ -3,9 +3,6 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:color">@color/pure_white</item>
-        <item name="android:popupBackground">@color/text_default</item>
-        <item name="android:textColor">@color/text_default</item>
-        <item name="android:textSize">10sp</item>
     </style>
 
 </resources>
