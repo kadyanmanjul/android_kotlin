@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.databinding.ItemCouponCardBinding
+import com.joshtalks.joshskills.databinding.ItemCouponCardNewBinding
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
@@ -20,7 +20,7 @@ class CouponListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     var itemClick: ((Coupon, Int, Int, String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CouponViewHolder {
-        val binding = ItemCouponCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemCouponCardNewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CouponViewHolder(binding)
     }
 
@@ -51,7 +51,7 @@ class CouponListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
         itemClick = function
     }
 
-    inner class CouponViewHolder(val binding: ItemCouponCardBinding) :
+    inner class CouponViewHolder(val binding: ItemCouponCardNewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         var countdownTimerBack: CountDownTimer? = null
 
@@ -104,9 +104,9 @@ class CouponListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             binding.txtCouponCode.text = coupon.couponCode
             binding.couponDesc.text = "Use the coupon and " + coupon.title
             binding.saveMoney.text = "Save upto ₹" + coupon?.maxDiscountAmount.toString() + " with this code"
-
             when (offersList[position].couponType) {
                 CONDITIONAL -> {
+                    binding.txtCouponExpireTime.text = coupon.couponDesc
                     countdownTimerBack?.cancel()
                     countdownTimerBack = null
                 }
@@ -121,6 +121,7 @@ class CouponListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                     }
                 }
                 NON_EXPIRABLE -> {
+                    binding.txtCouponExpireTime.text = coupon.couponDesc
                     countdownTimerBack?.cancel()
                     countdownTimerBack = null
                 }
@@ -131,19 +132,11 @@ class CouponListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
             binding.rootCard.isEnabled = false
             binding.btnApply.isEnabled = false
             val grayColor = ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.text_subdued)
-            binding.txtCouponCode.setTextColor(grayColor)
-            binding.txtCouponExpireTime.setTextColor(
-                ContextCompat.getColor(
-                    binding.txtCouponExpireTime.context,
-                    R.color.text_subdued
-                )
-            )
-            binding.couponDesc.setTextColor(grayColor)
             binding.saveMoney.setTextColor(grayColor)
             binding.btnApply.text = "APPLY"
-            binding.btnApply.setTextColor(grayColor)
-            binding.rootContainer.background =
-                ContextCompat.getDrawable(binding.rootContainer.context, R.drawable.gray_rectangle_without_solid)
+            binding.btnApply.alpha = 0.8f
+            binding.btnApply.setTextColor(ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.disabled))
+            binding.viewSide.setImageResource(R.drawable.disable_coupon_side_bar)
         }
     }
 }
