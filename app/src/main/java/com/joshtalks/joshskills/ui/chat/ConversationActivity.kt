@@ -341,7 +341,9 @@ class ConversationActivity :
             PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+//            conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+            conversationBinding.trialTimerView.endFreeTrial()
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
     }
@@ -352,17 +354,18 @@ class ConversationActivity :
         countdownTimerBack = object : CountDownTimer(startTimeInMilliSeconds, 1000) {
             override fun onTick(millis: Long) {
                 AppObjectController.uiHandler.post {
-                    conversationBinding.freeTrialText.text = getString(
-                        R.string.free_trial_end_in,
-                        UtilTime.timeFormatted(millis)
-                    )
+//                    conversationBinding.freeTrialText.text = getString(
+//                        R.string.free_trial_end_in,
+//                        UtilTime.timeFormatted(millis)
+//                    )
+                    conversationBinding.trialTimerView.startTimer(millis)
                 }
             }
 
             override fun onFinish() {
                 AppObjectController.uiHandler.post {
                     countdownTimerBack?.cancel()
-                    conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+                    conversationBinding.trialTimerView.endFreeTrial()
                 }
             }
         }

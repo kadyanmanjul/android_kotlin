@@ -150,48 +150,57 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/toolbar_container"
-                android:background="#FFFBB9"
                 android:elevation="@dimen/_1sdp"
                 android:fillAfter="false"
                 android:visibility="gone"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/free_trial_text"
-                    android:layout_width="0dp"
+                <com.joshtalks.joshskills.util.TrialTimerView
+                    android:id="@+id/trialTimerView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_4sdp"
-                    android:layout_marginStart="@dimen/_25sdp"
-                    android:ellipsize="end"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
-                    android:textColor="@color/critical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/buy_btn"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="@string/free_trial_end_in" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/buy_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_4sdp"
-                    android:layout_marginStart="@dimen/_25sdp"
-                    android:layout_marginEnd="@dimen/_25sdp"
-                    android:background="@drawable/rounded_rectangle_attach_2px"
-                    android:backgroundTint="@color/accent_600"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center"
-                    android:onClick="@{handler::moveToPaymentActivity}"
-                    android:paddingHorizontal="@dimen/_8sdp"
-                    android:paddingVertical="@dimen/_5sdp"
-                    android:text="@string/upgrade_now"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
-                    android:textColor="@color/text_default"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_margin="@dimen/_16sdp"
+                    android:onClick="@{handler::moveToPaymentActivity}"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+<!--                <androidx.appcompat.widget.AppCompatTextView-->
+<!--                    android:id="@+id/free_trial_text"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginVertical="@dimen/_4sdp"-->
+<!--                    android:layout_marginStart="@dimen/_25sdp"-->
+<!--                    android:ellipsize="end"-->
+<!--                    android:foreground="?android:attr/selectableItemBackground"-->
+<!--                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"-->
+<!--                    android:textColor="@color/critical"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintEnd_toStartOf="@id/buy_btn"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:text="@string/free_trial_end_in" />-->
+
+<!--                <androidx.appcompat.widget.AppCompatTextView-->
+<!--                    android:id="@+id/buy_btn"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginVertical="@dimen/_4sdp"-->
+<!--                    android:layout_marginStart="@dimen/_25sdp"-->
+<!--                    android:layout_marginEnd="@dimen/_25sdp"-->
+<!--                    android:background="@drawable/rounded_rectangle_attach_2px"-->
+<!--                    android:backgroundTint="@color/accent_600"-->
+<!--                    android:foreground="?android:attr/selectableItemBackground"-->
+<!--                    android:gravity="center"-->
+<!--                    android:onClick="@{handler::moveToPaymentActivity}"-->
+<!--                    android:paddingHorizontal="@dimen/_8sdp"-->
+<!--                    android:paddingVertical="@dimen/_5sdp"-->
+<!--                    android:text="@string/upgrade_now"-->
+<!--                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"-->
+<!--                    android:textColor="@color/text_default"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -200,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/free_trial_container"
                 android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_12sdp"
                 android:background="@drawable/rounded_rectangle_with_border"
                 android:backgroundTint="@color/pure_white"
                 android:elevation="@dimen/_3sdp"
