@@ -666,22 +666,15 @@ class StatusCodeInterceptor : Interceptor {
         return chain.request().safeCall {
             val response = chain.proceed(it)
             if (response.code in 401..403) {
-                if (Utils.isAppRunning(
-                        AppObjectController.joshApplication,
-                        AppObjectController.joshApplication.packageName
-                    )
-                ) {
+                if (Utils.isAppRunning(AppObjectController.joshApplication, AppObjectController.joshApplication.packageName)) {
                     if (IGNORE_UNAUTHORISED.none { path -> chain.request().url.toString().contains(path) }) {
                         PrefManager.logoutUser()
                         LastSyncPrefManager.clear()
-                        WorkManagerAdmin.appInitWorker()
-                        WorkManagerAdmin.appStartWorker()
                         if (JoshApplication.isAppVisible) {
-                            val intent =
-                                Intent(
-                                    AppObjectController.joshApplication,
-                                    SignUpActivity::class.java
-                                )
+                            val intent = Intent(
+                                AppObjectController.joshApplication,
+                                SignUpActivity::class.java
+                            )
                             intent.apply {
                                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
