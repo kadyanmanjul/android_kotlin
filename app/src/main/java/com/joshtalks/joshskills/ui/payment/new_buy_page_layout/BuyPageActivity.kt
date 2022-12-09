@@ -93,6 +93,8 @@ import java.math.BigDecimal
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val SUBSCRIPTION_TEST_ID = "10"
 const val IS_FAKE_CALL = "is_fake_call"
+const val COUPON_APPLY_POP_UP_SHOW_AND_BACK = 1000
+const val NORMAL_BACK_PRESS = 1111
 
 class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCourseListener {
 
@@ -241,7 +243,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     Log.e("sagar", "initViewState: 1" )
                     val coupon = it.obj as Coupon
                     updateListItem(coupon)
-                    couponApplied(coupon, null)
+                    couponApplied(coupon, COUPON_APPLY_POP_UP_SHOW_AND_BACK, 0)
                 }
                 APPLY_COUPON_FROM_BUY_PAGE -> {
                     Log.e("sagar", "initViewState: 3", )
@@ -251,18 +253,18 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 APPLY_COUPON_FROM_INTENT -> {
                     if (shouldAutoApplyCoupon) {
                         viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply == true }?.let { coupon ->
-                            viewModel.applyEnteredCoupon(coupon.couponCode, 1111)
+                            viewModel.applyEnteredCoupon(coupon.couponCode, NORMAL_BACK_PRESS, 0)
                         }
                     }
                     if (couponCodeFromIntent.isNullOrEmpty().not())
-                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!, 1111)
+                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!, NORMAL_BACK_PRESS, 0)
                 }
                 CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
                 MAKE_PHONE_CALL -> openSalesReasonScreenOrMakeCall()
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
-                COUPON_APPLIED -> couponApplied(it.obj as Coupon, it.arg1)
+                COUPON_APPLIED -> couponApplied(it.obj as Coupon, it.arg1, it.arg2)
                 SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
                     binding.scrollView.smoothScrollTo(
                         binding.buyPageParentContainer.width,
@@ -309,13 +311,14 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         )
     }
 
-    fun couponApplied(coupon: Coupon, isFromLink: Int?) {
+    private fun couponApplied(coupon: Coupon, isFromLink: Int?, isApplyFrom:Int) {
         showToast("Coupon applied")
         Log.e("sagar", "couponApplied: $isFromLink", )
         when (isFromLink) {
-            1000 -> {
+            COUPON_APPLY_POP_UP_SHOW_AND_BACK -> {
                 onBackPressed()
-                onCouponApply(coupon)
+                if (isApplyFrom == 0)
+                    onCouponApply(coupon)
             }
             null -> {
                 onBackPressed()

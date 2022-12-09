@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentCoupanCardBinding
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.COUPON_APPLY_POP_UP_SHOW_AND_BACK
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel
@@ -51,7 +52,7 @@ class CouponCardFragment : BaseFragment() {
         }
 
         binding.proceedBtn.setOnClickListener {
-            vm.applyEnteredCoupon(binding.enteredAmountTv.text.toString(),1000)
+            vm.applyEnteredCoupon(binding.enteredAmountTv.text.toString(), COUPON_APPLY_POP_UP_SHOW_AND_BACK, 1)
         }
     }
 

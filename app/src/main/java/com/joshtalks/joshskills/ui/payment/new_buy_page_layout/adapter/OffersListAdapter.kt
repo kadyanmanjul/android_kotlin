@@ -129,6 +129,7 @@ class OffersListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
                 countdownTimerBack = object : CountDownTimer(endTimeInMilliSeconds, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
                         AppObjectController.uiHandler.post {
+                            binding.couponExpireText.visibility = View.VISIBLE
                             binding.couponExpireText.text = "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
                         }
                     }

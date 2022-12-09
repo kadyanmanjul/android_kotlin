@@ -213,7 +213,7 @@ class BuyPageViewModel : BaseViewModel() {
                                 singleLiveEvent.value = message
                             }
                         }else{
-                            if (it.isMentorSpecificCoupon!=null)
+                            if (it.isMentorSpecificCoupon!=null && couponAppliedCode.get().isNullOrEmpty())
                                 showToast("Coupon already applied")
                         }
                     } else {
@@ -314,7 +314,9 @@ class BuyPageViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun applyEnteredCoupon(code: String, isFromLink: Int) {
+    //isApplyFrom = 1 => Coupon Fragment
+    //isApplyFrom = 0 => Null Apply from Anywhere
+    fun applyEnteredCoupon(code: String, isFromLink: Int, isApplyFrom:Int = 0) {
         saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, code)
         if (code.isNotBlank()) {
             manualCoupon.set(code)
@@ -328,6 +330,7 @@ class BuyPageViewModel : BaseViewModel() {
                             message.what = COUPON_APPLIED
                             message.obj = data
                             message.arg1 = isFromLink
+                            message.arg2 = isApplyFrom
                             singleLiveEvent.value = message
                         }
                     } else {
