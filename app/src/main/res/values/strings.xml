@@ -467,7 +467,7 @@
     <string name="cexam_marks" translatable="false">%1$d%% Marks</string>
     <string name="cexam_passed_on" translatable="false">Passed on- %s</string>
     <string name="cexam_attempted_on" translatable="false">Attempted on - %s</string>
-    <string name="cexam_attempt_left" translatable="false">Attempts left - %1$d </string>
+    <string name="cexam_attempt_left" translatable="false">%1$d attempts left</string>
     <string name="cexam_reattempt" translatable="false">Reattempt</string>
     <string name="cexam_check_results" translatable="false">Check Results</string>
     <string name="completed">Completed</string>
@@ -992,4 +992,7 @@
     <string name="first_call_popup_title">English बोलने से आती है....</string>
     <string name="first_call_popup_subtitle">%s, अपना पहला call dial करें और दुसरे students के साथ speaking practice करें।</string>
     <string name="your_hometown" translatable="false">Your Hometown</string>
+
+    <string name="start_exam" translatable="false">Start exam</string>
+    <string name="code_num" translatable="false">Code no.: %s</string>
 </resources>
