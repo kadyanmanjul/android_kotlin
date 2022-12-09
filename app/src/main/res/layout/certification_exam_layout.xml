@@ -27,7 +27,6 @@
             android:id="@+id/message_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFE82A"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingBottom="@dimen/_10sdp"
             android:paddingTop="@dimen/_7sdp">

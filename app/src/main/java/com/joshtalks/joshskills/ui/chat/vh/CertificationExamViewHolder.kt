@@ -101,6 +101,7 @@ class CertificationExamViewHolder(view: View, userId: String) :
             tvTitle.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
             when (examStatus) {
                 CExamStatus.PASSED -> {
+                    subRootView.setCardBackgroundColor(ContextCompat.getColor(getAppContext(),R.color.decorative_two))
                     tvTitle.setTextColor(ContextCompat.getColor(getAppContext(), R.color.pure_white))
 
                     tvMarks.text = getAppContext().getString(R.string.cexam_marks, marks.toInt())
@@ -118,8 +119,8 @@ class CertificationExamViewHolder(view: View, userId: String) :
                         getAppContext().getString(R.string.cexam_passed_on, passedOn)
 
                     btnStartExam.text = getAppContext().getString(R.string.cexam_check_results)
+                    btnStartExam.setTextColor(ContextCompat.getColor(getAppContext(), R.color.pure_white))
 
-                    subRootView.setCardBackgroundColor(ContextCompat.getColor(subRootView.context,R.color.decorative_two))
                 }
                 CExamStatus.ATTEMPTED -> {
                     tvMarks.text = "${getAppContext().getString(R.string.cexam_marks, marks.toInt())} (${getAppContext().getString(R.string.cexam_attempt_left, attemptLeft)})"
