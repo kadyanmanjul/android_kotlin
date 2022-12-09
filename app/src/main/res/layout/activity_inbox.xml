@@ -2,6 +2,7 @@
 <layout>
 
     <data>
+
         <import type="android.view.View" />
 
         <import type="com.joshtalks.joshskills.R" />
@@ -44,52 +45,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guidelineStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="@dimen/_16sdp" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guidelineStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_begin="@dimen/_16sdp" />
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guidelineEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="@dimen/_16sdp" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guidelineEnd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_end="@dimen/_16sdp" />
+                <com.joshtalks.joshskills.util.TrialTimerView
+                    android:id="@+id/trialTimerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+                    app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
 
+                <View
+                    android:id="@+id/trialTimerDivider"
+                    style="@style/line"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/trialTimerView"
+                    tools:visibility="visible" />
 
-            <com.joshtalks.joshskills.util.TrialTimerView
-                android:id="@+id/trialTimerView"
-                android:layout_width="0dp"
-                android:visibility="gone"
-                tools:visibility="visible"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
-                app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-                android:layout_marginTop="@dimen/_16sdp"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/trialTimerDivider"
-                style="@style/line"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:visibility="gone"
-                tools:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/trialTimerView" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_inbox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/trialTimerDivider"
-                tools:itemCount="3"
-                tools:listitem="@layout/inbox_item_layout" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_inbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/trialTimerDivider"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/inbox_item_layout" />
 
                 <TextView
                     android:id="@+id/text_recommended"
@@ -98,29 +97,27 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:padding="@dimen/_4sdp"
-                    android:visibility="@{vm.isRecommendedVisible ? View.VISIBLE : View.GONE}"
                     android:text="More recommended courses"
                     android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
                     android:textColor="@color/text_default"
+                    android:visibility="@{vm.isRecommendedVisible ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recycler_view_inbox">
-
-                </TextView>
+                    app:layout_constraintTop_toBottomOf="@+id/recycler_view_inbox" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/is_best_course"
                     android:layout_width="85dp"
                     android:layout_height="23dp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_13sdp"
                     android:layout_marginBottom="@dimen/_minus5sdp"
                     android:elevation="@dimen/_10sdp"
                     android:scaleType="fitXY"
                     android:visibility="@{vm.isRecommendedVisible ? View.VISIBLE : View.GONE}"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    app:layout_constraintTop_toBottomOf="@id/text_recommended"
                     app:layout_constraintBottom_toTopOf="@+id/recycler_view_recommended_course"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_recommended"
                     app:srcCompat="@drawable/ic_best_value"
                     tools:visibility="visible" />
 
@@ -130,9 +127,9 @@
                     recommendedCourseListAdapter="@{vm.recommendedAdapter}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:overScrollMode="never"
                     android:visibility="gone"
-                    android:layout_marginTop="@dimen/_8sdp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -145,18 +142,16 @@
                     android:id="@+id/text_explore_course"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="@{vm.isRecommendedVisible ? View.VISIBLE : View.GONE}"
-                    android:paddingVertical="@dimen/_10sdp"
-                    android:paddingHorizontal="@dimen/_15sdp"
                     android:background="@color/pure_white"
+                    android:paddingHorizontal="@dimen/_15sdp"
+                    android:paddingVertical="@dimen/_10sdp"
                     android:text="Explore more courses >>"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                     android:textColor="@color/primary_500"
+                    android:visibility="@{vm.isRecommendedVisible ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recycler_view_recommended_course">
-
-                </com.google.android.material.textview.MaterialTextView>
+                    app:layout_constraintTop_toBottomOf="@+id/recycler_view_recommended_course" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -168,12 +163,30 @@
 
                     <include
                         layout="@layout/find_more_layout"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/view_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_12sdp"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_arrow_yellow_stroke" />
+
+                    <include
+                        android:id="@+id/bb_tip_layout"
+                        layout="@layout/layout_bb_tip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_30sdp"
+                        android:layout_marginTop="@dimen/_minus2sdp"
+                        android:visibility="gone" />
 
                     <include
                         layout="@layout/payment_status_layout"
-                        android:layout_height="wrap_content"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_12sdp"
                         tools:visibility="gone" />
                 </LinearLayout>
@@ -182,5 +195,4 @@
         </androidx.core.widget.NestedScrollView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </layout>

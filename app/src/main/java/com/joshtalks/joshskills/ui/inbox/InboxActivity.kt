@@ -24,7 +24,6 @@ import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,13 +58,9 @@ import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
-import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_RECOMMENDED_COURSE
 import com.joshtalks.joshskills.util.FileUploadService
-import com.skydoves.balloon.Balloon
-import com.skydoves.balloon.BalloonAnimation
-import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
@@ -97,16 +92,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
 
     var progressDialog: ProgressDialog? = null
-    private val refViewModel: ReferralViewModel by lazy {
-        ViewModelProvider(this).get(ReferralViewModel::class.java)
-    }
-    private lateinit var bbTooltip: Balloon
     private var isCapsuleCourseBought = false
+    var event = EventLiveData
+
     private val binding by lazy<ActivityInboxBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_inbox)
     }
-    var event = EventLiveData
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -178,7 +169,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         iv_setting.visibility = View.VISIBLE
 
         iv_icon_referral.setOnClickListener {
-            refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
+            viewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
 
             ReferralActivity.startReferralActivity(this@InboxActivity)
             MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
@@ -231,7 +222,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 when (it.itemId) {
                     R.id.menu_referral -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
-                        refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
+                        viewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
                         ReferralActivity.startReferralActivity(this@InboxActivity)
                         return@setOnMenuItemClickListener true
                     }
@@ -406,9 +397,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun dismissBbTip(){
-        if (this::bbTooltip.isInitialized && bbTooltip.isShowing){
-            bbTooltip.dismiss()
-        }
+        binding.viewArrow.visibility = GONE
+        binding.bbTipLayout.visibility = GONE
     }
 
     private fun initPaymentStatusView(
@@ -616,24 +606,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 BUY_COURSE_INBOX_TOOLTIP + courseId
             )
             if (text.isBlank()) return
-            if (this::bbTooltip.isInitialized.not()) {
-                bbTooltip = Balloon.Builder(this)
-                    .setLayout(R.layout.layout_bb_tip)
-                    .setHeight(BalloonSizeSpec.WRAP)
-                    .setIsVisibleArrow(true)
-                    .setBackgroundColorResource(R.color.surface_tip)
-                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
-                    .setWidthRatio(0.85f)
-                    .setDismissWhenTouchOutside(false)
-                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                    .setLifecycleOwner(this)
-                    .setDismissWhenClicked(false)
-                    .build()
-            }
-            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
-            bbTooltip.isShowing.not().let {
-                bbTooltip.showAlignBottom(buy_english_course)
-            }
+            binding.bbTipLayout.visibility = VISIBLE
+            binding.viewArrow.visibility = VISIBLE
+            binding.bbTipLayout.findViewById<MaterialTextView>(R.id.balloon_text).text = text
         } catch (_: Exception) {
         }
     }
