@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.callWithExpert.model.*
-import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.payment.model.VerifyPayment
@@ -295,13 +294,6 @@ interface CommonNetworkService {
 
     @POST("$DIR/course/free_trial_register_course/")
     suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, String>): Response<Void>
-
-    @GET("$DIR/course/cohort_batch/")
-    suspend fun getCohortBatches(): Response<CohortModel>
-
-    @JvmSuppressWildcards
-    @POST("$DIR/course/cohort_batch/")
-    suspend fun postSelectedBatch(@Body params: Map<String, Any>): Response<Unit>
 
     @POST("$DIR/impression/track_impressions/")
     suspend fun saveImpression(@Body params: Map<String, String>): Response<Void>
