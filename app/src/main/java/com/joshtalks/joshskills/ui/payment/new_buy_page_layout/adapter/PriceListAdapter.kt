@@ -29,6 +29,7 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
     var prevHolder: PriceListViewHolder? = null
     var expireAt: Date?=null
     var isMentorSpecificCoupon: Boolean? =null
+    var couponType: String? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PriceListViewHolder {
         val binding = ItemNewPriceCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -77,11 +78,12 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
 
     override fun getItemCount(): Int = priceList?.size ?: 0
 
-    fun addPriceList(members: List<CourseDetailsList>?, validDuration:Date?, isSpecificMentorCoupon:Boolean?) {
+    fun addPriceList(members: List<CourseDetailsList>?, validDuration:Date?, isSpecificMentorCoupon:Boolean?, type:String?) {
         Log.d("PriceListAdapter.kt", "SAGAR => addPriceList:60 ")
         priceList = members
         expireAt = validDuration
         isMentorSpecificCoupon = isSpecificMentorCoupon
+        couponType = type
         notifyDataSetChanged()
     }
 
@@ -111,7 +113,7 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
                 }
             }
             binding.executePendingBindings()
-            if ((expireAt?.time?.minus(System.currentTimeMillis())?:0) > 0L && isMentorSpecificCoupon!=null){
+            if (couponType.equals(EXPIRABLE) && (expireAt?.time?.minus(System.currentTimeMillis())?:0) > 0L){
                 startFreeTrialTimer(expireAt?.time?.minus(System.currentTimeMillis())?: 0)
             }else{
                 binding.discountTxt.visibility = View.GONE
@@ -135,7 +137,7 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
                     override fun onTick(millisUntilFinished: Long) {
                         if (countdownTimerBack != null) {
                             AppObjectController.uiHandler.post {
-                                if (isMentorSpecificCoupon!=null) {
+                                if (couponType.equals(EXPIRABLE)) {
                                     binding.discountTxt.visibility = View.VISIBLE
                                     binding.discountTxt.text =
                                         "Offer ends in " + UtilTime.timeFormatted(millisUntilFinished) + ". Hurry up!"

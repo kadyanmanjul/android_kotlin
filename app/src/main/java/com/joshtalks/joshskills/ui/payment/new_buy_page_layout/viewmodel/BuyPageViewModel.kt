@@ -156,7 +156,7 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     //this method is get price and if pass coupon code then it will return discount price
-    fun getCoursePriceList(code: String?, isSpecificMentorCoupon:Boolean?, validDuration:Date?) {
+    fun getCoursePriceList(code: String?, isSpecificMentorCoupon:Boolean?, validDuration:Date?, couponType:String?) {
         try {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
@@ -173,7 +173,7 @@ class BuyPageViewModel : BaseViewModel() {
                         apiStatus.postValue(ApiCallStatus.SUCCESS)
                         isPriceApiCall.set(false)
                         withContext(mainDispatcher) {
-                            priceListAdapter.addPriceList(response.body()?.courseDetails, validDuration, isSpecificMentorCoupon)
+                            priceListAdapter.addPriceList(response.body()?.courseDetails, validDuration, isSpecificMentorCoupon,couponType)
                         }
                     } else {
                         isPriceApiCall.set(true)
@@ -202,7 +202,7 @@ class BuyPageViewModel : BaseViewModel() {
                             else
                                 couponAppliedCode.set(manualCoupon.get())
                             try {
-                                getCoursePriceList(it.couponCode, it.isMentorSpecificCoupon, it.validDuration)
+                                getCoursePriceList(it.couponCode, it.isMentorSpecificCoupon, it.validDuration, it.couponType)
                                 isDiscount = true
                             } catch (ex: Exception) {
                                 Log.d("BuyPageViewModel.kt", "SAGAR => :139 ${ex.message}")
@@ -223,7 +223,7 @@ class BuyPageViewModel : BaseViewModel() {
                         couponAppliedCode.set(EMPTY)
                         saveImpressionForBuyPageLayout(COUPON_CODE_REMOVED, it.couponCode)
                         isCouponApplied.set(false)
-                        getCoursePriceList(null, null,null)
+                        getCoursePriceList(null, null,null,null)
                     }
                 }
             }

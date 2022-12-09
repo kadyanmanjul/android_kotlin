@@ -199,7 +199,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         openCourseListener = this
         if (Utils.isInternetAvailable()) {
             viewModel.getCourseContent()
-            viewModel.getCoursePriceList(null, null, null)
+            viewModel.getCoursePriceList(null, null, null,null)
             viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
@@ -809,7 +809,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 override fun onRetryButtonClicked() {
                     if (Utils.isInternetAvailable()) {
                         viewModel.getCourseContent()
-                        viewModel.getCoursePriceList(null, null, null)
+                        viewModel.getCoursePriceList(null, null, null,null)
                         viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
                     } else {
                         errorView?.get()?.enableRetryBtn()
