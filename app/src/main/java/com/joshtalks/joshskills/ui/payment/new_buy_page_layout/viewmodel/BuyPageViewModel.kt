@@ -30,6 +30,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import java.math.BigDecimal
 import java.util.*
+import org.json.JSONObject
 
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }
@@ -447,6 +448,24 @@ class BuyPageViewModel : BaseViewModel() {
                 val resp = buyPageRepo.saveBranchLog(extras)
             }catch (ex:Exception){
                 Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
+    fun logPaymentEvent(data: JSONObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.TRACK_JUSPAY_LOG)
+                )
+                    buyPageRepo.logPaymentEvent(
+                        mapOf(
+                            "mentor_id" to Mentor.getInstance().getId(),
+                            "json" to data
+                        )
+                    )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

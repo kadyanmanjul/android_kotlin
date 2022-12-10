@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import kotlinx.coroutines.sync.Mutex
 import java.math.BigDecimal
+import org.json.JSONObject
 
 class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     private val backPressMutex = Mutex(false)
@@ -240,6 +241,12 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
         val bundle = Bundle()
         bundle.putString("ORDER_ID", orderId)
         navController.navigate(R.id.paymentInProcessFragment, bundle)
+    }
+
+    override fun onEvent(data: JSONObject?) {
+        data?.let {
+            viewModel.logPaymentEvent(data)
+        }
     }
 
     companion object {

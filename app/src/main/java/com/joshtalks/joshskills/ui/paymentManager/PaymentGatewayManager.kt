@@ -31,6 +31,7 @@ class PaymentGatewayManager(
         hyperInstance.initiate(payload, object : HyperPaymentsCallbackAdapter() {
             override fun onEvent(data: JSONObject, handler: JuspayResponseHandler?) {
                 Log.e("sagar", "onEvent1122: $data")
+                paymentGatewayListener?.onEvent(data)
                 try {
                     when (data.getString("event")) {
                         "show_loader" -> {
@@ -160,4 +161,5 @@ interface PaymentGatewayListener {
     fun onProcessStart()
     fun onProcessStop()
     fun onPaymentProcessing(orderId: String, status:String)
+    fun onEvent(data: JSONObject?)
 }

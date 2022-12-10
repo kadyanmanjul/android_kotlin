@@ -88,6 +88,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import java.math.BigDecimal
+import org.json.JSONObject
 
 const val ENGLISH_COURSE_TEST_ID = 102
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
@@ -1212,6 +1213,12 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             fragment.arguments = bundle
             replace(R.id.details_parent_container, fragment, "Payment Processing")
             disallowAddToBackStack()
+        }
+    }
+
+    override fun onEvent(data: JSONObject?) {
+        data?.let {
+            viewModel.logPaymentEvent(data)
         }
     }
 }

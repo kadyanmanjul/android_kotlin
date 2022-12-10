@@ -89,6 +89,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import java.math.BigDecimal
+import org.json.JSONObject
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val SUBSCRIPTION_TEST_ID = "10"
@@ -857,6 +858,12 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             fragment.arguments = bundle
             replace(R.id.buy_page_parent_container, fragment, "Payment Processing")
             disallowAddToBackStack()
+        }
+    }
+
+    override fun onEvent(data: JSONObject?) {
+        data?.let {
+            viewModel.logPaymentEvent(data)
         }
     }
 
