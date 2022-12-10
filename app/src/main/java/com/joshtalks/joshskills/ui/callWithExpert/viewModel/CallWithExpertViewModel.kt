@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.math.BigDecimal
 import java.util.HashMap
+import org.json.JSONObject
 
 class CallWithExpertViewModel : BaseViewModel() {
 
@@ -169,6 +170,25 @@ class CallWithExpertViewModel : BaseViewModel() {
             AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
         }
     }
+
+    fun logPaymentEvent(data: JSONObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.TRACK_JUSPAY_LOG)
+                )
+                    AppObjectController.commonNetworkService.saveJuspayPaymentLog(
+                        mapOf(
+                            "mentor_id" to Mentor.getInstance().getId(),
+                            "json" to data
+                        )
+                    )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
     fun saveBranchPaymentLog(orderInfoId:String,
                              amount: BigDecimal?,
                              testId: Int = 0,

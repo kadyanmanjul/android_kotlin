@@ -40,6 +40,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.math.BigDecimal
+import org.json.JSONObject
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
     var context: JoshApplication = getApplication()
@@ -481,6 +482,24 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 val resp =  AppObjectController.commonNetworkService.savePaymentLog(extras)
             }catch (ex:Exception){
                 Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
+    fun logPaymentEvent(data: JSONObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.TRACK_JUSPAY_LOG)
+                )
+                    AppObjectController.commonNetworkService.saveJuspayPaymentLog(
+                        mapOf(
+                            "mentor_id" to Mentor.getInstance().getId(),
+                            "json" to data
+                        )
+                    )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

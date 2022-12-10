@@ -1955,6 +1955,10 @@
         <key>IS_LESSON_COMPLETE_POPUP_ENABLE</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>TRACK_JUSPAY_LOG</key>
+        <value>false</value>
+    </entry>
 
     <entry>
         <key>LESSON_COMPLETE_HEADING_1203</key>

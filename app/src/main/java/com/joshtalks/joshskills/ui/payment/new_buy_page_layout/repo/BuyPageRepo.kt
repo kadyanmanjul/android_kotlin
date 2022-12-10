@@ -33,6 +33,8 @@ class BuyPageRepo {
 
     suspend fun getReasonList() = AppObjectController.commonNetworkService.getSalesSupportReason()
 
+    suspend fun logPaymentEvent(map: Map<String, Any>) = AppObjectController.commonNetworkService.saveJuspayPaymentLog(map)
+
     suspend fun saveBranchLog(params: Map<String, Any>) = AppObjectController.commonNetworkService.savePaymentLog(params)
 
 }

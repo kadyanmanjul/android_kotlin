@@ -430,4 +430,7 @@ interface CommonNetworkService {
     @POST("$DIR/payment/branch_log/")
     suspend fun savePaymentLog(@Body params: Map<String, Any>) :Response<Void>
 
+    @POST("$DIR/payment/juspay_log/")
+    suspend fun saveJuspayPaymentLog(@Body params: Map<String, Any>) :Response<Void>
+
 }

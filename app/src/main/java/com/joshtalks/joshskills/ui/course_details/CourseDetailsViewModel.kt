@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import org.json.JSONObject
 
 class CourseDetailsViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
@@ -187,6 +188,24 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 val resp =  AppObjectController.commonNetworkService.savePaymentLog(extras)
             }catch (ex:Exception){
                 Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
+    fun logPaymentEvent(data: JSONObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.TRACK_JUSPAY_LOG)
+                )
+                    AppObjectController.commonNetworkService.saveJuspayPaymentLog(
+                        mapOf(
+                            "mentor_id" to Mentor.getInstance().getId(),
+                            "json" to data
+                        )
+                    )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
