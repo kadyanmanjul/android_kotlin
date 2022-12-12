@@ -45,7 +45,7 @@
         android:layout_marginTop="@dimen/_100sdp"
         android:layout_marginEnd="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_16sdp"
-        app:tooltipText="बस ना? नहीं अभी भी नहीं. और तेज़ी से आगे बड़ने के लिए आप कल का lesson भी अभी कर सकते हैं" />
+        app:tooltipText="Click to Unlock next lesson and learn more." />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"

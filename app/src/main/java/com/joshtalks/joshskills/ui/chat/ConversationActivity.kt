@@ -376,6 +376,7 @@ class ConversationActivity :
 
     private fun showLeaderBoardSpotlight() {
         lifecycleScope.launch(Dispatchers.Main) {
+            delay(1500)
             window.statusBarColor = ContextCompat.getColor(
                 this@ConversationActivity,
                 R.color.primary_800
@@ -989,19 +990,8 @@ class ConversationActivity :
                 if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)) {
-                        PrefManager.put(
-                            ONE_GROUP_REQUEST_SENT,
-                            conversationViewModel.getClosedGroupCount() != 0
-                        )
+                        PrefManager.put(ONE_GROUP_REQUEST_SENT, conversationViewModel.getClosedGroupCount() != 0)
                         conversationBinding.ringingIcon.visibility = VISIBLE
-                    }
-                    if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
-                        && System.currentTimeMillis()
-                            .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
-                        && PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)
-                    ) {
-                        PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
-//                        checkForOemNotifications(AUTO_START_POPUP)
                     }
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
@@ -1227,45 +1217,14 @@ class ConversationActivity :
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.userPointContainer.visibility = VISIBLE
-                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION) && PrefManager.getBoolValue(
-                        IS_FREE_TRIAL_ENDED,
-                        defValue = false
-                    ).not()
+                if (PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION) &&
+                    !PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION) &&
+                    PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false).not()
                 ) {
                     showLeaderBoardSpotlight()
-                } else {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        delay(1000)
-                        val status =
-                            AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
-                        Log.d(TAG, "initScoreCardView: $status")
-                        withContext(Dispatchers.Main) {
-                            if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(
-                                    HAS_SEEN_UNLOCK_CLASS_ANIMATION
-                                )
-                            ) {
-                                delay(1000)
-                                if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(
-                                        HAS_SEEN_UNLOCK_CLASS_ANIMATION
-                                    )
-                                ) {
-                                    delay(1000)
-                                    setOverlayAnimation()
-                                } else if (PrefManager.getBoolValue(
-                                        SHOULD_SHOW_AUTOSTART_POPUP,
-                                        defValue = true
-                                    )
-                                    && System.currentTimeMillis()
-                                        .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
-                                ) {
-                                    PrefManager.put(
-                                        LAST_TIME_AUTOSTART_SHOWN,
-                                        System.currentTimeMillis()
-                                    )
-//                                    checkForOemNotifications(AUTO_START_POPUP)
-                                }
-                            }
-                        }
+                } else if (!PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        setOverlayAnimation()
                     }
                 }
             } else {
@@ -2245,7 +2204,7 @@ class ConversationActivity :
     }
 
     private suspend fun setOverlayAnimation() {
-        delay(1000)
+        delay(2000)
         withContext(Dispatchers.Main) {
             var i = 0
             while (true) {
@@ -2318,7 +2277,7 @@ class ConversationActivity :
         overlayImageView.visibility = VISIBLE
         overlayButtonImageView.visibility = VISIBLE
         PrefManager.put(HAS_SEEN_UNLOCK_CLASS_ANIMATION, true)
-        tooltipView.setTooltipText("बस ना? नहीं अभी भी नहीं. और तेज़ी से आगे बड़ने के लिए आप कल का lesson भी अभी कर सकते हैं")
+        tooltipView.setTooltipText("Click to Unlock next lesson and learn more.")
         slideInAnimation(tooltipView)
     }
 
