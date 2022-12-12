@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.course_details.extra
 
+import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -11,7 +12,8 @@ import com.joshtalks.joshskills.repository.server.course_detail.Card
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.ui.course_details.viewholder.*
 
-class CourseDetailsAdapter(val testId: Int, val data: List<Card>) : RecyclerView.Adapter<DetailsBaseViewHolder>() {
+class CourseDetailsAdapter(val activity: Activity, val testId: Int, val data: List<Card>) :
+    RecyclerView.Adapter<DetailsBaseViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailsBaseViewHolder {
         return when (viewType) {
             COURSE_OVERVIEW -> {
@@ -33,15 +35,21 @@ class CourseDetailsAdapter(val testId: Int, val data: List<Card>) : RecyclerView
                 val view = setViewHolder<LayoutSyllabusViewBinding>(parent, R.layout.layout_syllabus_view)
                 SyllabusViewHolder(view)
             }
-//            GUIDELINES -> {}
+            GUIDELINES -> {
+                val view = setViewHolder<GuidelineViewHolderBinding>(parent, R.layout.guideline_view_holder)
+                GuidelineViewHolder(view, activity)
+            }
             DEMO_LESSON -> {
                 val view = setViewHolder<DemoLessonViewHolderBinding>(parent, R.layout.demo_lesson_view_holder)
                 DemoLessonViewHolder(view)
             }
-//            REVIEWS -> {}
+            REVIEWS -> {
+                val view = setViewHolder<ReviewAndRatingLayoutBinding>(parent, R.layout.review_and_rating_layout)
+                ReviewRatingViewHolder(view)
+            }
             LOCATION_STATS -> {
                 val view = setViewHolder<LayoutLocationStatsViewHolderBinding>(parent, R.layout.layout_location_stats_view_holder)
-                LocationStatViewHolder(view)
+                LocationStatViewHolder(view, activity)
             }
             STUDENT_FEEDBACK -> {
                 val view =

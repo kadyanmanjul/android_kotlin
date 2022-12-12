@@ -2,8 +2,6 @@ package com.joshtalks.joshskills.ui.course_details.viewholder
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.location.Location
 import android.view.View
 import com.google.gson.JsonObject
@@ -28,7 +26,8 @@ import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 open class LocationStatViewHolder(
-    val item: LayoutLocationStatsViewHolderBinding
+    val item: LayoutLocationStatsViewHolderBinding,
+    val activity: Activity
 ) : DetailsBaseViewHolder(item) {
 
     var location: Location? = null
@@ -84,7 +83,7 @@ open class LocationStatViewHolder(
 
     private fun getLocationPermissionAndLocation() {
         PermissionUtils.locationPermission(
-            getActivity(getAppContext()),
+            activity,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -147,16 +146,5 @@ open class LocationStatViewHolder(
             return 0
         }
         return (start..end).random()
-    }
-
-    private fun getActivity(context: Context): Activity? {
-        var activity = context
-        while (activity is ContextWrapper) {
-            if (activity is Activity) {
-                return activity
-            }
-            activity = activity.baseContext
-        }
-        return null
     }
 }

@@ -316,7 +316,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             }
             binding.txtActualPrice.paintFlags = binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 
-            binding.placeHolderView.adapter = CourseDetailsAdapter(testId, data.cards.sortedBy { it.sequenceNumber })
+            binding.placeHolderView.adapter = CourseDetailsAdapter(this, testId, data.cards.sortedBy { it.sequenceNumber })
 //                .forEach { card ->
 //                getViewHolder(card)?.run {
 //                    binding.placeHolderView.addView(this)
@@ -467,18 +467,18 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
 //                    this
 //                )
 //            }
-            CardType.GUIDELINES -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    Guidelines::class.java
-                )
-                return GuidelineViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    supportFragmentManager
-                )
-            }
+//            CardType.GUIDELINES -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    Guidelines::class.java
+//                )
+//                return GuidelineViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    supportFragmentManager
+//                )
+//            }
 //            CardType.DEMO_LESSON -> {
 //                val data = AppObjectController.gsonMapperForLocal.fromJson(
 //                    card.data.toString(),
@@ -491,17 +491,17 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
 //                    this
 //                )
 //            }
-            CardType.REVIEWS -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    Reviews::class.java
-                )
-                return ReviewRatingViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data
-                )
-            }
+//            CardType.REVIEWS -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    Reviews::class.java
+//                )
+//                return ReviewRatingViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data
+//                )
+//            }
 //            CardType.LOCATION_STATS -> {
 //                val data = AppObjectController.gsonMapperForLocal.fromJson(
 //                    card.data.toString(),
