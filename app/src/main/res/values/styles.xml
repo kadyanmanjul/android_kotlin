@@ -141,7 +141,6 @@
         <item name="android:windowSoftInputMode">adjustResize</item>
         <item name="android:background">@color/pure_white</item>
         <item name="android:backgroundDimEnabled">false</item>
-        <item name="colorControlActivated">@color/primary_500</item>
         <item name="android:statusBarColor">@color/primary_500</item>
     </style>
 
@@ -766,7 +765,6 @@
         <item name="boxCornerRadiusTopEnd">@dimen/_8sdp</item>
         <item name="boxCornerRadiusTopStart">@dimen/_8sdp</item>
         <item name="hintTextColor">@color/text_subdued</item>
-        <item name="colorControlActivated">@color/primary_500</item>
         <item name="boxStrokeColor">@color/text_input_box_stroke_color</item>
     </style>
 
