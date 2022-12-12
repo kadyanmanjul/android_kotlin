@@ -455,18 +455,18 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
 //                    this
 //                )
 //            }
-            CardType.SYLLABUS -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    SyllabusData::class.java
-                )
-                return SyllabusViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this
-                )
-            }
+//            CardType.SYLLABUS -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    SyllabusData::class.java
+//                )
+//                return SyllabusViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this
+//                )
+//            }
             CardType.GUIDELINES -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
@@ -533,30 +533,30 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
 //                    courseName
 //                )
 //            }
-            CardType.FAQ -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    FAQData::class.java
-                )
-                return MasterFaqViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    testId
-                )
-            }
-            CardType.ABOUT_JOSH -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    AboutJosh::class.java
-                )
-                return AboutJoshViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this
-                )
-            }
+//            CardType.FAQ -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    FAQData::class.java
+//                )
+//                return MasterFaqViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    testId
+//                )
+//            }
+//            CardType.ABOUT_JOSH -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    AboutJosh::class.java
+//                )
+//                return AboutJoshViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this
+//                )
+//            }
 //            CardType.OTHER_INFO -> {
 //                val data = AppObjectController.gsonMapperForLocal.fromJson(
 //                    card.data.toString(),

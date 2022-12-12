@@ -29,7 +29,10 @@ class CourseDetailsAdapter(val testId: Int, val data: List<Card>) : RecyclerView
                 val view = setViewHolder<TeacherDetailsViewHolderBinding>(parent, R.layout.teacher_details_view_holder)
                 TeacherDetailsViewHolder(view)
             }
-//            SYLLABUS -> {}
+            SYLLABUS -> {
+                val view = setViewHolder<LayoutSyllabusViewBinding>(parent, R.layout.layout_syllabus_view)
+                SyllabusViewHolder(view)
+            }
 //            GUIDELINES -> {}
             DEMO_LESSON -> {
                 val view = setViewHolder<DemoLessonViewHolderBinding>(parent, R.layout.demo_lesson_view_holder)
@@ -45,8 +48,14 @@ class CourseDetailsAdapter(val testId: Int, val data: List<Card>) : RecyclerView
                     setViewHolder<LayoutStudentFeedbackViewholderBinding>(parent, R.layout.layout_student_feedback_viewholder)
                 StudentFeedbackViewHolder(view, testId)
             }
-//            FAQ -> {}
-//            ABOUT_JOSH -> {}
+            FAQ -> {
+                val view = setViewHolder<LayoutExpandableViewHolderBinding>(parent, R.layout.layout_expandable_view_holder)
+                MasterFaqViewHolder(view, testId)
+            }
+            ABOUT_JOSH -> {
+                val view = setViewHolder<LayoutAboutJoshViewHolderBinding>(parent, R.layout.layout_about_josh_view_holder)
+                AboutJoshViewHolder(view)
+            }
             OTHER_INFO -> {
                 val view = setViewHolder<OtherInfoViewHolderBinding>(parent, R.layout.other_info_view_holder)
                 OtherInfoViewHolder(view)
