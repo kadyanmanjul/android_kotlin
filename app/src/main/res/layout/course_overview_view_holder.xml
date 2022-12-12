@@ -121,7 +121,7 @@
                 app:layout_constraintWidth_percent="0.8"
                 tools:text="Ankur Warikoo" />
 
-            <com.mindorks.placeholderview.PlaceHolderView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/carousel_recycler_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -130,7 +130,6 @@
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/_12sdp"
                 android:scrollbars="none"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"

@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
 import com.joshtalks.joshskills.repository.server.course_detail.OverviewMediaType
 import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
+import com.joshtalks.joshskills.ui.course_details.extra.CourseOverviewAdapter
 
 class CourseOverviewViewHolder(
     val item: CourseOverviewViewHolderBinding,
@@ -107,9 +108,8 @@ class CourseOverviewViewHolder(
             false
         )
         linearLayoutManager.isSmoothScrollbarEnabled = true
-        item.carouselRecyclerView.builder
-            .setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
+        item.carouselRecyclerView.setHasFixedSize(true)
+        item.carouselRecyclerView.layoutManager = linearLayoutManager
 
         if (item.carouselRecyclerView.itemDecorationCount < 1) {
             val cardWidthPixels = (getAppContext().resources.displayMetrics.widthPixels * 0.90f).toInt()
@@ -124,12 +124,11 @@ class CourseOverviewViewHolder(
         }
 
         item.carouselRecyclerView.itemAnimator = null
-        data.media.filter { it.type == OverviewMediaType.IMAGE || it.type == OverviewMediaType.VIDEO }
-            .sortedBy { it.sortOrder }
-            .forEach {
-                item.carouselRecyclerView.addView(
-                    CourseOverviewMediaViewHolder(it)
-                )
-            }
+        item.carouselRecyclerView.adapter =
+            CourseOverviewAdapter(
+                data.media
+                    .filter { it.type == OverviewMediaType.IMAGE || it.type == OverviewMediaType.VIDEO }
+                    .sortedBy { it.sortOrder }
+            )
     }
 }

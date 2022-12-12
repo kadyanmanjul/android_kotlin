@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.LayoutStudentFeedbackViewholderBinding
 import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
 import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
+import com.joshtalks.joshskills.ui.course_details.extra.StudentFeedbackAdapter
 
 class StudentFeedbackViewHolder(
     val item: LayoutStudentFeedbackViewholderBinding,
@@ -24,7 +25,8 @@ class StudentFeedbackViewHolder(
         if (item.storyRecyclerView.adapter == null || item.storyRecyclerView.adapter!!.itemCount == 0) {
             linearLayoutManager.isSmoothScrollbarEnabled = true
             item.storyRecyclerView.itemAnimator = null
-            item.storyRecyclerView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
+            item.storyRecyclerView.setHasFixedSize(true)
+            item.storyRecyclerView.layoutManager = linearLayoutManager
             if (item.storyRecyclerView.itemDecorationCount < 1) {
                 val cardWidthPixels = (getAppContext().resources.displayMetrics.widthPixels * 0.90f).toInt()
                 val cardHintPercent = 0.01f
@@ -36,12 +38,7 @@ class StudentFeedbackViewHolder(
                     )
                 )
             }
-            data.feedbacks.forEach {
-                item.storyRecyclerView.addView(
-                    StudentFeedbackCard(it)
-                )
-            }
-
+            item.storyRecyclerView.adapter = StudentFeedbackAdapter(data.feedbacks)
         }
     }
 }

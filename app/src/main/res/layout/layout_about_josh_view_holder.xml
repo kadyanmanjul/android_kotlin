@@ -37,7 +37,7 @@
             app:layout_constraintWidth_default="percent"
             tools:text="Josh Talks - India ke youth ki awaaz! With over 7 Million Youtube Subs &amp; multiple awards,  Josh is here to help you speed your career" />
 
-        <com.mindorks.placeholderview.PlaceHolderView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/my_josh_recycler_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
