@@ -180,7 +180,6 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_margin="@dimen/_16sdp"
-                    android:onClick="@{handler::moveToPaymentActivity}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
