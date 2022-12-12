@@ -6,7 +6,9 @@ import android.content.Intent
 import android.os.Build
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -25,52 +27,39 @@ import com.joshtalks.joshskills.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.util.DeepLinkRedirectUtil.DeepLinkType.*
 import com.joshtalks.joshskills.voip.constant.Category
+import io.branch.referral.Defines
 import org.json.JSONObject
 
-class DeepLinkRedirectUtil {
+class DeepLinkRedirectUtil(private val jsonParams: JSONObject) {
 
-    suspend fun getIntent(
+    //open an activity or return false if an activity is not found
+    suspend fun redirectFromDeepLink(
         activity: Activity,
-        jsonParams: JSONObject,
         isFreeTrial: Boolean = false
     ): Boolean {
         try {
             when (DeepLinkRedirect.getDeepLinkAction(jsonParams.getString(DeepLinkData.REDIRECT_TO.key))) {
                 DeepLinkRedirect.GROUP_ACTIVITY ->
-                    if (isFreeTrial) getConversationActivityIntent(activity, jsonParams)
-                    else getGroupActivityIntent(activity, jsonParams)
+                    if (isFreeTrial) getConversationActivityIntent(activity)
+                    else getGroupActivityIntent(activity)
                 DeepLinkRedirect.GROUP_CHAT_ACTIVITY ->
-                    if (isFreeTrial) getConversationActivityIntent(activity, jsonParams)
+                    if (isFreeTrial) getConversationActivityIntent(activity)
                     else { // TODO: Implement Open Group Chat Activity
-                        getGroupActivityIntent(
-                            activity,
-                            jsonParams
-                        )
+                        getGroupActivityIntent(activity)
                     }
                 DeepLinkRedirect.CONVERSATION_ACTIVITY ->
-                    getConversationActivityIntent(
-                        activity,
-                        jsonParams
-                    )
-                DeepLinkRedirect.P2P_ACTIVITY -> getP2PActivityIntent(activity, jsonParams)
+                    getConversationActivityIntent(activity)
+                DeepLinkRedirect.P2P_ACTIVITY -> getP2PActivityIntent(activity)
                 DeepLinkRedirect.FPP_ACTIVITY ->
-                    if (isFreeTrial) getP2PActivityIntent(activity, jsonParams)
-                    else getFPPActivityIntent(activity, jsonParams)
-                DeepLinkRedirect.CUSTOMER_SUPPORT_ACTIVITY ->
-                    getCustomerSupportActivityIntent(
-                        activity
-                    )
-                DeepLinkRedirect.LESSON_ACTIVITY -> getLessonActivityIntent(activity, jsonParams)
-                DeepLinkRedirect.COURSE_DETAILS ->
-                    getCourseDetailsActivityIntent(
-                        activity,
-                        jsonParams
-                    )
-                DeepLinkRedirect.P2P_FREE_TRIAL_ACTIVITY -> {
-                    getP2PActivityFreeTrialIntent(activity, jsonParams)
-                }
-                DeepLinkRedirect.BUY_PAGE_ACTIVITY -> getBuyPageActivityIntent(activity, jsonParams)
+                    if (isFreeTrial) getP2PActivityIntent(activity)
+                    else getFPPActivityIntent(activity)
+                DeepLinkRedirect.CUSTOMER_SUPPORT_ACTIVITY -> getCustomerSupportActivityIntent(activity)
+                DeepLinkRedirect.LESSON_ACTIVITY -> getLessonActivityIntent(activity)
+                DeepLinkRedirect.COURSE_DETAILS -> getCourseDetailsActivityIntent(activity)
+                DeepLinkRedirect.P2P_FREE_TRIAL_ACTIVITY -> getP2PActivityFreeTrialIntent(activity)
+                DeepLinkRedirect.BUY_PAGE_ACTIVITY -> getBuyPageActivityIntent(activity)
                 else -> return false
             }
             return true
@@ -80,45 +69,33 @@ class DeepLinkRedirectUtil {
         }
     }
 
-    fun getIntentForCourseOnboarding(
-        activity: Activity,
-        jsonParams: JSONObject? = null,
-        isSpecialCourse: Boolean
-    ): Intent {
-        if (jsonParams != null) {
-            if (isSpecialCourse && jsonParams.has(DeepLinkData.COURSE_ID.key) && jsonParams.has(DeepLinkData.PLAN_ID.key))
-                PrefManager.put(
-                    key = SPECIFIC_ONBOARDING,
-                    value = AppObjectController.gsonMapper.toJson(
-                        SpecificOnboardingCourseData(
-                            jsonParams.getString(DeepLinkData.COURSE_ID.key),
-                            jsonParams.getString(DeepLinkData.PLAN_ID.key)
-                        )
-                    ),
-                    isConsistent = true
-                )
-            else if (jsonParams.has(DeepLinkData.TEST_ID.key))
-                PrefManager.put(FT_COURSE_ONBOARDING, jsonParams.getString(DeepLinkData.TEST_ID.key))
-        }
-        return FreeTrialOnBoardActivity.getIntent(activity)
+    fun initCourseOnboarding(isSpecialCourse: Boolean) {
+        if (isSpecialCourse && jsonParams.has(DeepLinkData.COURSE_ID.key) && jsonParams.has(DeepLinkData.PLAN_ID.key))
+            PrefManager.put(
+                key = SPECIFIC_ONBOARDING,
+                value = AppObjectController.gsonMapper.toJson(
+                    SpecificOnboardingCourseData(
+                        jsonParams.getString(DeepLinkData.COURSE_ID.key),
+                        jsonParams.getString(DeepLinkData.PLAN_ID.key)
+                    )
+                ),
+                isConsistent = true
+            )
+        else if (jsonParams.has(DeepLinkData.TEST_ID.key))
+            PrefManager.put(FT_COURSE_ONBOARDING, jsonParams.getString(DeepLinkData.TEST_ID.key))
     }
 
-    private fun getCourseId(jsonParams: JSONObject): Int =
-        if (jsonParams.has(DeepLinkData.COURSE_ID.key))
-            jsonParams.getString(DeepLinkData.COURSE_ID.key).toInt()
-        else
-            PrefManager.getStringValue(CURRENT_COURSE_ID).toInt()
+    private fun getCourseId(): Int =
+        jsonParams.getStringOrNull(DeepLinkData.COURSE_ID.key)?.toInt()
+            ?: PrefManager.getStringValue(CURRENT_COURSE_ID).toInt()
 
-    private suspend fun getConversationIdFromCourseId(jsonParams: JSONObject): String? =
+    private suspend fun getConversationIdFromCourseId(): String? =
         AppObjectController.appDatabase.courseDao()
-            .getConversationIdFromCourseId(getCourseId(jsonParams).toString())
+            .getConversationIdFromCourseId(getCourseId().toString())
 
 
     @Throws(Exception::class)
-    fun getCourseDetailsActivityIntent(
-        activity: Activity,
-        jsonParams: JSONObject
-    ) = CourseDetailsActivity.getIntent(
+    fun getCourseDetailsActivityIntent(activity: Activity) = CourseDetailsActivity.getIntent(
         activity,
         testId = jsonParams.getString(DeepLinkData.TEST_ID.key).toInt(),
         startedFrom = "Deep Link"
@@ -161,30 +138,30 @@ class DeepLinkRedirectUtil {
     }
 
     @Throws(Exception::class)
-    private suspend fun getP2PActivityIntent(activity: Activity, jsonParams: JSONObject) =
+    private suspend fun getP2PActivityIntent(activity: Activity) =
         if (PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED))
-            getConversationActivityIntent(activity, jsonParams)
+            getConversationActivityIntent(activity)
         else if (PermissionUtils.isCallingPermissionEnabled(activity)) {
             Intent(activity, VoiceCallActivity::class.java).apply {
                 putExtra(
                     INTENT_DATA_COURSE_ID,
-                    getCourseId(jsonParams)
+                    getCourseId()
                 )
                 putExtra(INTENT_DATA_TOPIC_ID, jsonParams.getString(DeepLinkData.TOPIC_ID.key))
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
                 sendPendingIntentForActivityList(
                     activity,
                     arrayOf(
-                        getLessonActivityIntent(activity, jsonParams, speakingSection = true),
+                        getLessonActivityIntent(activity, speakingSection = true),
                         this
                     )
                 )
             }
         } else
-            getLessonActivityIntent(activity, jsonParams, speakingSection = true)
+            getLessonActivityIntent(activity, speakingSection = true)
 
     @Throws(Exception::class)
-    private fun getP2PActivityFreeTrialIntent(activity: Activity, jsonParams: JSONObject) =
+    private fun getP2PActivityFreeTrialIntent(activity: Activity) =
         activity.startActivity(
             Intent(activity, VoiceCallActivity::class.java).apply {
                 putExtra(INTENT_DATA_COURSE_ID, "151")
@@ -195,35 +172,30 @@ class DeepLinkRedirectUtil {
         )
 
     @Throws(Exception::class)
-    private suspend fun getFPPActivityIntent(activity: Activity, jsonParams: JSONObject) =
-        getConversationIdFromCourseId(jsonParams)?.let {
+    private suspend fun getFPPActivityIntent(activity: Activity) =
+        getConversationIdFromCourseId()?.let {
             Intent(activity, FavoriteListActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, it)
                 sendPendingIntentForActivityList(
                     activity,
-                    arrayOf(getConversationActivityIntent(activity, jsonParams), this)
+                    arrayOf(getConversationActivityIntent(activity), this)
                 )
             }
-        } ?: getConversationActivityIntent(activity, jsonParams)
+        } ?: getConversationActivityIntent(activity)
 
     @Throws(Exception::class)
     private suspend fun getLessonActivityIntent(
         activity: Activity,
-        jsonParams: JSONObject,
         speakingSection: Boolean = false
     ): Intent {
         if (PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED))
-            return getConversationActivityIntent(activity, jsonParams)
+            return getConversationActivityIntent(activity)
         val lessonId =
-            if (jsonParams.has(DeepLinkData.LESSON_ID.key) &&
-                jsonParams.getString(DeepLinkData.LESSON_ID.key).isNullOrEmpty().not()
-            )
-                jsonParams.getString(DeepLinkData.LESSON_ID.key).toInt()
-            else
-                AppObjectController.appDatabase.lessonDao()
-                    .getLastLessonIdForCourse(getCourseId(jsonParams))
+            jsonParams.getStringOrNull(DeepLinkData.LESSON_ID.key)?.toInt()
+                ?: AppObjectController.appDatabase.lessonDao().getLastLessonIdForCourse(getCourseId())
+
         val lesson = AppObjectController.appDatabase.lessonDao().getLesson(lessonId)
-        val conversationId = getConversationIdFromCourseId(jsonParams)
+        val conversationId = getConversationIdFromCourseId()
         return if (lesson != null && conversationId != null) {
             LessonActivity.getActivityIntent(
                 activity,
@@ -234,28 +206,28 @@ class DeepLinkRedirectUtil {
                 if (speakingSection) putExtra(LessonActivity.LESSON_SECTION, SPEAKING_POSITION)
                 sendPendingIntentForActivityList(
                     activity,
-                    arrayOf(getConversationActivityIntent(activity, jsonParams), this)
+                    arrayOf(getConversationActivityIntent(activity), this)
                 )
             }
         } else {
-            getConversationActivityIntent(activity, jsonParams)
+            getConversationActivityIntent(activity)
         }
     }
 
     @Throws(Exception::class)
-    private suspend fun getGroupActivityIntent(activity: Activity, jsonParams: JSONObject) =
-        getConversationIdFromCourseId(jsonParams)?.let {
+    private suspend fun getGroupActivityIntent(activity: Activity) =
+        getConversationIdFromCourseId()?.let {
             Intent(activity, JoshGroupActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, it)
                 sendPendingIntentForActivityList(
                     activity,
-                    arrayOf(getConversationActivityIntent(activity, jsonParams), this)
+                    arrayOf(getConversationActivityIntent(activity), this)
                 )
             }
-        } ?: getConversationActivityIntent(activity, jsonParams)
+        } ?: getConversationActivityIntent(activity)
 
     @Throws(Exception::class)
-    private suspend fun getConversationActivityIntent(activity: Activity, jsonParams: JSONObject): Intent =
+    private suspend fun getConversationActivityIntent(activity: Activity): Intent =
         AppObjectController.appDatabase.courseDao()
             .getCourseFromId(jsonParams.getString(DeepLinkData.COURSE_ID.key))?.let {
                 ConversationActivity.getConversationActivityIntent(activity, it).apply {
@@ -267,7 +239,7 @@ class DeepLinkRedirectUtil {
             } ?: getInboxActivityIntent(activity)
 
     @Throws(Exception::class)
-    private fun getBuyPageActivityIntent(activity: Activity, jsonParams: JSONObject): Intent =
+    private fun getBuyPageActivityIntent(activity: Activity): Intent =
         if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
             Intent(activity, BuyPageActivity::class.java).apply {
                 putExtra(FLOW_FROM, "Deep Link")
@@ -299,52 +271,153 @@ class DeepLinkRedirectUtil {
             PendingIntent.FLAG_UPDATE_CURRENT
     ).send()
 
-    suspend fun handleDeepLink(activity: CoreJoshActivity, jsonParams: JSONObject): Intent? =
+    suspend fun handleDeepLink(activity: CoreJoshActivity): RedirectAction? =
         when {
-            User.getInstance().isVerified.not() -> handleDeepLinkForUnverifiedUser(activity, jsonParams)
-            activity.isUserProfileNotComplete() -> Intent(activity, SignUpActivity::class.java)
-            getIntent(
-                activity,
-                jsonParams,
-                PrefManager.getBoolValue(IS_FREE_TRIAL)
-            ) -> null
-            else -> getInboxActivityIntent(activity)
+            User.getInstance().isVerified.not() -> handleDeepLinkForUnverifiedUser(activity)
+            activity.isUserProfileNotComplete() -> RedirectAction.SIGN_UP
+            redirectFromDeepLink(activity, PrefManager.getBoolValue(IS_FREE_TRIAL)) -> null
+            else -> RedirectAction.INBOX
         }
 
-    private suspend fun handleDeepLinkForUnverifiedUser(activity: CoreJoshActivity, jsonParams: JSONObject): Intent? =
+    private suspend fun handleDeepLinkForUnverifiedUser(
+        activity: CoreJoshActivity,
+    ): RedirectAction? =
         when {
             //if guest is enrolled and not paid (free trial)
-            (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
-                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
-                if (getIntent(
-                        activity,
-                        jsonParams,
-                        true
-                    )
-                ) null
-                else getInboxActivityIntent(activity)
+            isGuestEnrolled() -> {
+                if (redirectFromDeepLink(activity, true))
+                    null
+                else
+                    RedirectAction.INBOX
             }
 
-            //start onboarding for a specific course
-            PrefManager.hasKey(
-                SPECIFIC_ONBOARDING,
-                isConsistent = true
-            ) || (jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
-            -> getIntentForCourseOnboarding(activity, jsonParams, true)
+            isSpecificOnboarding() -> {
+                initCourseOnboarding(true)
+                RedirectAction.COURSE_ONBOARDING
+            }
 
-            //start onboarding for free trial course
-            PrefManager.hasKey(FT_COURSE_ONBOARDING, isConsistent = true) ||
-                    (jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
-            -> getIntentForCourseOnboarding(activity, jsonParams, false)
+            isFreeTrialOnboarding() -> {
+                initCourseOnboarding(false)
+                RedirectAction.COURSE_ONBOARDING
+            }
 
-            //redirect to a specific course details
-            jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key -> {
-                getCourseDetailsActivityIntent(activity, jsonParams)
+            isCourseDetailsRedirect() -> {
+                getCourseDetailsActivityIntent(activity)
                 null
             }
-            else -> getInboxActivityIntent(activity)
+            else -> RedirectAction.INBOX
         }
+
+    private inline fun isCourseDetailsRedirect(): Boolean =
+        jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key
+
+    private inline fun isGuestEnrolled(): Boolean =
+        (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
+                PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not())
+
+    private inline fun isSpecificOnboarding(): Boolean =
+        PrefManager.hasKey(
+            SPECIFIC_ONBOARDING,
+            isConsistent = true
+        ) || (jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
+
+
+    private fun isFreeTrialOnboarding(): Boolean =
+        PrefManager.hasKey(FT_COURSE_ONBOARDING, isConsistent = true) ||
+                (jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
+
+    suspend fun handleBranchAnalytics() {
+        when (getDeepLinkType()) {
+            NOTIFICATION ->
+                addDeepLinkNotificationAnalytics(
+                    jsonParams.getString((DeepLinkData.NOTIFICATION_ID.key)),
+                    jsonParams.getString(DeepLinkData.NOTIFICATION_CHANNEL.key)
+                )
+            REFERRAL ->
+                saveDeepLinkImpression(
+                    deepLink = getDeepLink(),
+                    action = DeepLinkImpression.REFERRAL.name
+                )
+            REDIRECT ->
+                saveDeepLinkImpression(
+                    deepLink = getDeepLink(),
+                    action = getRedirectAction(),
+                )
+            OTHER ->
+                saveDeepLinkImpression(
+                    deepLink = getDeepLink(),
+                    action = DeepLinkImpression.OTHER.name
+                )
+        }
+    }
+
+    private fun getRedirectAction(): String =
+        "${DeepLinkImpression.REDIRECT_}${
+            jsonParams.getString(DeepLinkData.REDIRECT_TO.key).uppercase()
+        }${
+            when (jsonParams.getString(DeepLinkData.REDIRECT_TO.key)) {
+                DeepLinkRedirect.ONBOARDING.key -> "_${jsonParams.getString(DeepLinkData.COURSE_ID.key)}"
+                DeepLinkRedirect.COURSE_DETAILS.key -> "_${jsonParams.getString(DeepLinkData.TEST_ID.key)}"
+                else -> ""
+            }
+        }"
+
+    private fun getDeepLinkType() =
+        when {
+            isNotificationLink() -> NOTIFICATION
+            jsonParams.has(DeepLinkData.REDIRECT_TO.key) -> REDIRECT
+            isReferralLink() -> REFERRAL
+            else -> OTHER
+        }
+
+    private inline fun isNotificationLink() =
+        jsonParams.has(DeepLinkData.NOTIFICATION_ID.key) && jsonParams.has(DeepLinkData.NOTIFICATION_CHANNEL.key)
+
+    fun isReferralLink(): Boolean =
+        jsonParams.getStringOrNull(Defines.Jsonkey.UTMMedium.key) == "referral"
+
+    fun isRedirectLink(): Boolean =
+        jsonParams.has(DeepLinkData.REDIRECT_TO.key)
+
+    private fun getDeepLink(): String =
+        jsonParams.getStringOrNull(DeepLinkData.REFERRING_LINK.key) ?: ""
+
+    suspend fun saveDeepLinkImpression(deepLink: String, action: String) {
+        try {
+            AppObjectController.commonNetworkService.saveDeepLinkImpression(
+                mapOf(
+                    "mentor" to Mentor.getInstance().getId(),
+                    "deep_link" to deepLink,
+                    "link_action" to action
+                )
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun addDeepLinkNotificationAnalytics(notificationID: String, notificationChannel: String) {
+        NotificationAnalytics().addAnalytics(
+            notificationId = notificationID,
+            mEvent = NotificationAnalytics.Action.CLICKED,
+            channel = notificationChannel
+        )
+    }
+
+    private enum class DeepLinkType {
+        NOTIFICATION,
+        REFERRAL,
+        REDIRECT,
+        OTHER
+    }
 }
+
+enum class RedirectAction {
+    SIGN_UP,
+    COURSE_ONBOARDING,
+    INBOX,
+}
+
 
 enum class DeepLinkRedirect(val key: String) {
     GROUP_ACTIVITY("group_activity"),

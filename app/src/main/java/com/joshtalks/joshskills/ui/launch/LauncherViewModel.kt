@@ -15,15 +15,15 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.*
-import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.signup.LastLoginType
 import com.joshtalks.joshskills.util.DeepLinkData
-import com.joshtalks.joshskills.util.DeepLinkImpression
 import com.joshtalks.joshskills.util.DeepLinkRedirect
+import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
+import com.joshtalks.joshskills.util.RedirectAction
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import kotlinx.coroutines.Dispatchers
@@ -37,19 +37,21 @@ import java.util.*
 const val FETCH_GAID = 1001
 const val UPDATE_GAID = 1002
 const val FETCH_MENTOR = 1003
-
-//const val REDIRECT = 1004
+const val ANALYZE_APP_REQUIREMENT = 1004
 const val START_ACTIVITY = 1005
 
 class LauncherViewModel(application: Application) : AndroidViewModel(application) {
+    var jsonParams: JSONObject = JSONObject()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val abTestRepository by lazy { ABTestRepository() }
     var testId: String? = null
     var exploreType: String? = null
+    val deepLinkRedirectUtil by lazy { DeepLinkRedirectUtil(jsonParams) }
     private val launcherScreenImpressionService by lazy {
         AppObjectController.retrofit.create(LauncherScreenImpressionService::class.java)
     }
     val event = EventLiveData
+    val redirectEvent: MutableLiveData<RedirectAction> = MutableLiveData()
 
     fun initApp() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -78,11 +80,9 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             ?: ""
 
     private fun isUserOnline(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
             if (capabilities != null) {
                 when {
                     capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
@@ -123,7 +123,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                     Branch.getInstance().setIdentity(response.body()!!.gaID)
                     event.value = Message().apply { what = UPDATE_GAID }
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)
-
                 } else {
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
                 }
@@ -202,105 +201,44 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun initReferral(jsonParams: JSONObject) {
-        viewModelScope.launch {
-            parseReferralCode(jsonParams)?.let {
-                AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME).addBasicParam().addUserDetails()
-                    .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId)
-                    .addParam(AnalyticsEvent.EXPLORE_TYPE.NAME, exploreType).addParam(
-                        AnalyticsEvent.REFERRAL_CODE.NAME, it
-                    ).push()
-            }
-        }
-    }
-
-    private fun parseReferralCode(jsonParams: JSONObject) =
-        if (jsonParams.has(Defines.Jsonkey.ReferralCode.key)) jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
-        else null
-
-    fun addDeepLinkNotificationAnalytics(
-        notificationID: String, notificationChannel: String
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            NotificationAnalytics().addAnalytics(
-                notificationId = notificationID,
-                mEvent = NotificationAnalytics.Action.CLICKED,
-                channel = notificationChannel
-            )
-        }
-    }
-
-    fun saveDeepLinkImpression(deepLink: String, action: String) {
-        viewModelScope.launch {
-            try {
-
-
-                AppObjectController.commonNetworkService.saveDeepLinkImpression(
-                    mapOf(
-                        "mentor" to Mentor.getInstance().getId(), "deep_link" to deepLink, "link_action" to action
-                    )
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun handleBranchAnalytics(jsonParams: JSONObject) {
+    fun handleBranchAnalytics() {
         testId = jsonParams.getStringOrNull(Defines.Jsonkey.AndroidDeepLinkPath.key)
         exploreType = jsonParams.getStringOrNull(Defines.Jsonkey.ContentType.key)
-
-        //save notification impression
-        if (jsonParams.has(DeepLinkData.NOTIFICATION_ID.key) && jsonParams.has(DeepLinkData.NOTIFICATION_CHANNEL.key)) {
-            addDeepLinkNotificationAnalytics(
-                jsonParams.getString((DeepLinkData.NOTIFICATION_ID.key)),
-                jsonParams.getString(DeepLinkData.NOTIFICATION_CHANNEL.key)
-            )
-        }
-
-        //save referral impression
-        if (jsonParams.getStringOrNull(Defines.Jsonkey.UTMMedium.key) == "referral") {
-            saveDeepLinkImpression(
-                deepLink = jsonParams.getStringOrNull(DeepLinkData.REFERRING_LINK.key) ?: "",
-                action = DeepLinkImpression.REFERRAL.name
-            )
-            updateReferralModel(jsonParams)
-            initReferral(jsonParams)
-        }
-
-        //save redirect impression
-        if (jsonParams.has(DeepLinkData.REDIRECT_TO.key)) {
-            if (jsonParams.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.LOGIN.key) {
-                PrefManager.put(LOGIN_ONBOARDING, true)
+        viewModelScope.launch {
+            deepLinkRedirectUtil.handleBranchAnalytics()
+            if (deepLinkRedirectUtil.isReferralLink()) {
+                initReferral()
             }
-            saveDeepLinkImpression(
-                deepLink = jsonParams.getStringOrNull(DeepLinkData.REFERRING_LINK.key) ?: "",
-                action = "${DeepLinkImpression.REDIRECT_}${
-                    jsonParams.getString(DeepLinkData.REDIRECT_TO.key).uppercase()
-                }${
-                    when (jsonParams.getString(DeepLinkData.REDIRECT_TO.key)) {
-                        DeepLinkRedirect.ONBOARDING.key -> "_${jsonParams.getString(DeepLinkData.COURSE_ID.key)}"
-                        DeepLinkRedirect.COURSE_DETAILS.key -> "_${jsonParams.getString(DeepLinkData.TEST_ID.key)}"
-                        else -> ""
-                    }
-                }",
-            )
         }
     }
 
-    fun updateReferralModel(jsonParams: JSONObject) {
-        (InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()).let {
-            if (jsonParams.has(Defines.Jsonkey.ReferralCode.key)) it.utmSource =
-                jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
-            if (jsonParams.has(Defines.Jsonkey.UTMMedium.key)) it.utmMedium =
-                jsonParams.getString(Defines.Jsonkey.UTMMedium.key)
+    private suspend fun initReferral() {
+        parseReferralCode()?.let {
+            updateReferralModel()
+            AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId)
+                .addParam(AnalyticsEvent.EXPLORE_TYPE.NAME, exploreType)
+                .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, it)
+                .push()
+        }
+    }
 
-            if (jsonParams.has(Defines.Jsonkey.UTMCampaign.key)) it.utmTerm =
-                jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
+    private fun parseReferralCode() =
+        jsonParams.getStringOrNull(Defines.Jsonkey.ReferralCode.key)
+
+    private fun updateReferralModel() {
+        (InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()).let {
+            if (jsonParams.has(Defines.Jsonkey.ReferralCode.key))
+                it.utmSource = jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
+            if (jsonParams.has(Defines.Jsonkey.UTMMedium.key))
+                it.utmMedium = jsonParams.getString(Defines.Jsonkey.UTMMedium.key)
+            if (jsonParams.has(Defines.Jsonkey.UTMCampaign.key))
+                it.utmTerm = jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
             InstallReferrerModel.update(it)
         }
     }
-
 
     fun canRunApplication(): Boolean {
         val path = getApplication<Application>().filesDir.absolutePath
@@ -344,15 +282,13 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    suspend fun updateABTestCampaigns() =
-        abTestRepository.updateAllCampaigns()
+    suspend fun updateABTestCampaigns() = abTestRepository.updateAllCampaigns()
 
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
-                    Pair("gaid", PrefManager.getStringValue(USER_UNIQUE_ID)),
-                    Pair("event_name", eventName)
+                    Pair("gaid", PrefManager.getStringValue(USER_UNIQUE_ID)), Pair("event_name", eventName)
                 )
                 launcherScreenImpressionService.saveImpression(requestData)
             } catch (ex: Exception) {
@@ -360,6 +296,45 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             }
         }
     }
+
+    fun initDeepLinkData() {
+        if (jsonParams.getBooleanOrNull(Defines.Jsonkey.Clicked_Branch_Link.key) == true) {
+            handleBranchAnalytics()
+        }
+        if (jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.LOGIN.key) {
+            PrefManager.put(LOGIN_ONBOARDING, true)
+        }
+    }
+
+    fun redirectToActivity(activity: CoreJoshActivity, userProfileNotComplete: Boolean) {
+        viewModelScope.launch {
+            redirectEvent.postValue(
+                when {
+                    deepLinkRedirectUtil.isRedirectLink() -> deepLinkRedirectUtil.handleDeepLink(activity)
+                    User.getInstance().isVerified.not() -> getUnverifiedUserRedirectAction()
+                    userProfileNotComplete -> RedirectAction.SIGN_UP
+                    else -> RedirectAction.INBOX
+                }
+            )
+        }
+    }
+
+    private fun getUnverifiedUserRedirectAction(): RedirectAction =
+        when {
+            isPaymentDone() -> RedirectAction.SIGN_UP
+            isFreeTrialStarted() -> RedirectAction.COURSE_ONBOARDING
+            else -> RedirectAction.SIGN_UP
+        }
+
+    private fun isPaymentDone(): Boolean =
+        PrefManager.getBoolValue(IS_PAYMENT_DONE, false)
+
+    private fun isFreeTrialStarted(): Boolean =
+        PrefManager.getBoolValue(
+            IS_FREE_TRIAL,
+            isConsistent = false,
+            defValue = false
+        )
 }
 
 fun JSONObject.getStringOrNull(key: String): String? {

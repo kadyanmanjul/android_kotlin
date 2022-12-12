@@ -30,7 +30,7 @@ import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
+import com.joshtalks.joshskills.util.RedirectAction.*
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
@@ -47,6 +47,9 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
     private val binding by lazy {
         ActivityLauncherBinding.inflate(layoutInflater)
     }
+
+    private val jsonParams: JSONObject
+        get() = viewModel.jsonParams
 
     companion object {
         @JvmStatic
@@ -102,8 +105,20 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 FETCH_GAID -> viewModel.getGaid()
                 UPDATE_GAID -> viewModel.updateGaid()
                 FETCH_MENTOR -> viewModel.getGuestMentor()
+                ANALYZE_APP_REQUIREMENT -> analyzeAppRequirement()
                 START_ACTIVITY -> startNextActivity()
                 else -> {}
+            }
+        }
+        viewModel.redirectEvent.observe(this) {
+            when (it) {
+                SIGN_UP -> Intent(this, SignUpActivity::class.java)
+                INBOX -> getInboxActivityIntent()
+                COURSE_ONBOARDING -> FreeTrialOnBoardActivity.getIntent(this)
+                else -> null
+            }?.let { intent ->
+                startActivity(intent)
+                finish()
             }
         }
     }
@@ -177,46 +192,40 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 .withData(this.intent?.data)
                 .init()
         } else {
-            analyzeAppRequirement()
+            viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
         }
     }
 
     override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
         if (error != null) {
-            analyzeAppRequirement()
+            viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
             return
         }
-        val jsonParams = referringParams ?: (Branch.getInstance().firstReferringParams
+        viewModel.jsonParams = referringParams ?: (Branch.getInstance().firstReferringParams
             ?: Branch.getInstance().latestReferringParams)
-        if (jsonParams?.getBooleanOrNull(Defines.Jsonkey.Clicked_Branch_Link.key) == true) {
-            viewModel.handleBranchAnalytics(jsonParams)
-        }
-        analyzeAppRequirement(jsonParams)
+        viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
     }
 
-
-    private fun analyzeAppRequirement(jsonParams: JSONObject? = null) {
-        when {
-            PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> viewModel.event.postValue(Message().apply {
-                what = FETCH_GAID
-            })
-            Mentor.getInstance().hasId().not() -> viewModel.event.postValue(Message().apply {
-                what = FETCH_MENTOR
-            })
-            else -> startNextActivity(jsonParams)
-        }
+    private fun analyzeAppRequirement() {
+        viewModel.event.postValue(Message().apply {
+            what = when {
+                PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> FETCH_GAID
+                PrefManager.getIntValue(SERVER_GID_ID, defValue = -1) == -1 -> UPDATE_GAID
+                Mentor.getInstance().hasId().not() -> FETCH_MENTOR
+                else -> START_ACTIVITY
+            }
+        })
     }
 
-    private fun startNextActivity(jsonParams: JSONObject? = null) {
+    private fun startNextActivity() {
         if (viewModel.canRunApplication()) {
             WorkManagerAdmin.appStartWorker()
             viewModel.addAnalytics()
             lifecycleScope.launch {
                 viewModel.updateABTestCampaigns()
+                viewModel.initDeepLinkData()
                 AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                getIntentForNextActivity(jsonParams)?.let {
-                    startActivity(it)
-                }
+                viewModel.redirectToActivity(this@LauncherActivity, isUserProfileNotComplete())
                 finish()
             }
         } else {
@@ -231,33 +240,6 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 .show()
         }
     }
-
-    private suspend fun getIntentForNextActivity(jsonParams: JSONObject? = null): Intent? =
-        when {
-            jsonParams?.getBooleanOrNull(Defines.Jsonkey.Clicked_Branch_Link.key) == true -> {
-                DeepLinkRedirectUtil().handleDeepLink(this, jsonParams)
-            }
-            //unverified (new) user
-            User.getInstance().isVerified.not() -> when {
-                //payment completed but not registered
-                PrefManager.getBoolValue(IS_PAYMENT_DONE, false) ->
-                    Intent(this, SignUpActivity::class.java)
-
-                //start free trial if not started already
-                PrefManager.getBoolValue(IS_FREE_TRIAL, isConsistent = false, defValue = false) ->
-                    Intent(
-                        this,
-                        FreeTrialOnBoardActivity::class.java
-                    )
-                else ->
-                    Intent(this, SignUpActivity::class.java)
-            }
-
-            //paid user but profile not completed
-            isUserProfileNotComplete() -> Intent(this, SignUpActivity::class.java)
-
-            else -> getInboxActivityIntent()
-        }
 
     override fun onStop() {
         super.onStop()
