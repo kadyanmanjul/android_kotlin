@@ -76,6 +76,8 @@ import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
+import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.extra.FirstCallBottomSheet
@@ -316,18 +318,20 @@ class ConversationActivity :
         PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
         PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
         if (inboxEntity.isCourseBought) {
-            conversationBinding.freeTrialExpiryLayout.visibility = GONE
+//            conversationBinding.freeTrialExpiryLayout.visibility = GONE
             return
         } else if (
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
             if (inboxEntity.expiryDate!!.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                conversationBinding.freeTrialExpiryLayout.visibility = GONE
+//                conversationBinding.freeTrialExpiryLayout.visibility = GONE
+                conversationBinding.freeTrialContainer.gone()
             } else {
                 conversationBinding.freeTrialContainer.visibility = VISIBLE
                 if (inboxEntity.expiryDate!!.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                    conversationBinding.freeTrialExpiryLayout.visibility = GONE
+//                    conversationBinding.freeTrialExpiryLayout.visibility = GONE
+                    conversationBinding.freeTrialContainer.gone()
                 } else {
                     conversationBinding.freeTrialContainer.visibility = VISIBLE
                     startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
@@ -341,7 +345,7 @@ class ConversationActivity :
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             conversationBinding.freeTrialContainer.visibility = VISIBLE
             conversationBinding.trialTimerView.endFreeTrial()
-            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
+//            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
     }
 
@@ -456,7 +460,13 @@ class ConversationActivity :
                 finish()
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             }
-            conversationBinding.ivIconReferral.isVisible = inboxEntity.isCourseBought
+            if (inboxEntity.isCourseBought) {
+                conversationBinding.ivIconReferral.visible()
+                conversationBinding.btnUpgrade.gone()
+            } else {
+                conversationBinding.btnUpgrade.visible()
+                conversationBinding.ivIconReferral.gone()
+            }
             conversationBinding.ivIconReferral.setOnClickListener {
                 conversationViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
 

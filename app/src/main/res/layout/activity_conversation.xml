@@ -113,7 +113,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_title"
-                        android:layout_width="@dimen/_180sdp"
+                        android:layout_width="@dimen/_130sdp"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
                         android:layout_marginHorizontal="@dimen/_6sdp"
@@ -125,6 +125,25 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                         android:textColor="@color/pure_white"
                         tools:text="Spoken English Course" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/btn_upgrade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:background="@drawable/rect_round"
+                        android:backgroundTint="@color/warning"
+                        android:text="Upgrade Now"
+                        android:textAllCaps="false"
+                        android:paddingVertical="@dimen/_4sdp"
+                        android:paddingHorizontal="@dimen/_8sdp"
+                        android:onClick="@{handler::moveToPaymentActivity}"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                        android:textColor="@color/text_default"
+                        android:textSize="@dimen/_10ssp"
+                        android:visibility="gone"
+                        android:layout_centerInParent="true"
+                        android:layout_alignParentEnd="true"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_icon_referral"
@@ -587,49 +606,6 @@
                     app:srcCompat="@drawable/ic_send" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <FrameLayout
-                android:id="@+id/freeTrialExpiryLayout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/black_gradient"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="bottom"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/_10sdp"
-                        android:gravity="center"
-                        android:text="@string/your_free_trial_has_ended"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                        android:textColor="@color/pure_white" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/materialTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|center"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
-                        android:layout_marginVertical="@dimen/_5sdp"
-                        android:background="@drawable/bg_cta_button"
-                        android:gravity="center"
-                        android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
-                        android:padding="@dimen/_10sdp"
-                        android:text="Upgrade Now"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                        android:textColor="@color/text_default" />
-                </LinearLayout>
-
-            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/overlay_layout"

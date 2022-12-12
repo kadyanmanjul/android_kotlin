@@ -82,6 +82,11 @@ class EditProfileFragment : DialogFragment(){
         changeDialogConfiguration()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideKeyboard(requireActivity())
+    }
+
     private fun changeDialogConfiguration() {
         val params: WindowManager.LayoutParams? = dialog?.window?.attributes
         params?.width = WindowManager.LayoutParams.MATCH_PARENT
@@ -252,30 +257,6 @@ class EditProfileFragment : DialogFragment(){
             binding.editTxtName.error = getString(R.string.name_error_message)
             return
         }
-        val educationText=binding.txtEducationName
-        val collegeName=binding.editTxtCollegeName
-
-        if(educationText.text.isNullOrBlank() || !isFieldValid(educationText.text.toString())){
-            educationText.setHintTextColor(resources.getColor(R.color.critical))
-            educationText.error = getString(R.string.degree_error_message)
-            return
-        }
-        if(collegeName.text.isNullOrBlank() || !isFieldValid(collegeName.text.toString())){
-            collegeName.setHintTextColor(resources.getColor(R.color.critical))
-            collegeName.error = getString(R.string.college_error_message)
-            return
-        }
-
-        if(binding.txtOccupationName.text.isNullOrBlank() || !isFieldValid(txtOccupationName.text.toString())){
-            binding.txtOccupationName.setHintTextColor(resources.getColor(R.color.critical))
-            binding.txtOccupationName.error = getString(R.string.degree_error_message)
-            return
-        }
-        if(binding.editTxtOccupationPlace.text.isNullOrBlank() || !isFieldValid(editTxtOccupationPlace.text.toString())){
-            binding.editTxtOccupationPlace.setHintTextColor(resources.getColor(R.color.critical))
-            binding.editTxtOccupationPlace.error = getString(R.string.college_error_message)
-            return
-        }
 
         if (userDateOfBirth.isNullOrBlank()) {
             binding.editTxtDob.setHintTextColor(resources.getColor(R.color.critical))
@@ -288,13 +269,6 @@ class EditProfileFragment : DialogFragment(){
             homeTownTxt.setHintTextColor(resources.getColor(R.color.critical))
             homeTownTxt.error = getString(R.string.hometown_error_message)
             return
-        }
-        if (editTxtJoshTalk.text.toString() != EMPTY){
-            if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https") || !(editTxtJoshTalk.text.toString()).startsWith("https")){
-                editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.critical))
-                editTxtJoshTalk.error = getString(R.string.invalid_url_message)
-                return
-            }
         }
 
         var updateProfilePayload = UpdateProfilePayload()

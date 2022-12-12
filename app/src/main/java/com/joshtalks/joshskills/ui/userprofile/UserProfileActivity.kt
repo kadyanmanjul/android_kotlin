@@ -147,6 +147,11 @@ class UserProfileActivity : CoreJoshActivity() {
         setOnClickListeners()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        hideKeyboard(this)
+    }
+
     private fun initABTest(mentorId: String, intervalType: String?, previousPage: String?) {
         viewModel.getHelpCountCampaignData(CampaignKeys.PEOPLE_HELP_COUNT.name, mentorId, intervalType, previousPage)
     }
@@ -1178,7 +1183,6 @@ class UserProfileActivity : CoreJoshActivity() {
             0 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award1)
                 v.visibility = View.VISIBLE
-
                 setViewToLayout(
                     award,
                     view.findViewById(R.id.image_award1),
@@ -1200,6 +1204,7 @@ class UserProfileActivity : CoreJoshActivity() {
                 )
             }
             2 -> {
+
                 v = view.findViewById<ConstraintLayout>(R.id.award3)
                 v.visibility = View.VISIBLE
                 setViewToLayout(
@@ -1228,21 +1233,13 @@ class UserProfileActivity : CoreJoshActivity() {
         count: AppCompatTextView
     ) {
         title.text = award.awardText
-        if (award.dateText.isNullOrBlank()) {
-            date.visibility = View.INVISIBLE
-        } else {
-            date.visibility = View.VISIBLE
-            date.text = award.dateText
-        }
         award.imageUrl?.let {
             image.setImage(it, this, placeHolder = R.drawable.grey_rounded_bg)
         }
-        if (award.count > 1) {
-            count.visibility = View.VISIBLE
-            count.text = award.count.toString()
-        } else {
-            count.visibility = View.GONE
-        }
+
+        title.gone()
+        date.gone()
+        count.gone()
     }
 
     private fun getProfileData(intervalType: String?, previousPage: String?) {
