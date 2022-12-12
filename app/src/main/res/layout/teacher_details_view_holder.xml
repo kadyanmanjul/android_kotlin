@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
         android:layout_marginVertical="@dimen/_20sdp">
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtTeacherName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -19,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Vivek Atray" />
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDesignation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -33,7 +35,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txtTeacherName"
             tools:text="Ex-IAS Officer, Author" />
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -45,8 +47,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txtDesignation"
             tools:text="I will be your teacher in this course, and I am super excited to teach you.\nLet’s start! " />
 
-
-    <com.google.android.material.textview.MaterialTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/btn_meet_me"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,7 +64,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgTeacher"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_124sdp"
@@ -76,11 +77,12 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/com_facebook_profile_picture_blank_portrait" />
 
-    <androidx.constraintlayout.widget.Barrier
+        <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="start"
             app:constraint_referenced_ids="imgTeacher" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

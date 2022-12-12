@@ -54,7 +54,7 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.mindorks.placeholderview.PlaceHolderView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/placeHolderView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

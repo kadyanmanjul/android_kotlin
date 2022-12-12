@@ -20,8 +20,6 @@ import android.view.View.GONE
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
@@ -45,6 +43,7 @@ import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -54,6 +53,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.course_detail.*
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
+import com.joshtalks.joshskills.ui.course_details.extra.CourseDetailsAdapter
 import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.ui.course_details.viewholder.*
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
@@ -76,7 +76,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
@@ -248,7 +247,8 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
     private fun initView() {
         linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
-        binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
+        binding.placeHolderView.setHasFixedSize(true)
+        binding.placeHolderView.layoutManager = linearLayoutManager
 //        binding.placeHolderView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 //            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 //                super.onScrollStateChanged(recyclerView, newState)
@@ -343,20 +343,21 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             binding.txtActualPrice.paintFlags =
                 binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 
-            data.cards.sortedBy { it.sequenceNumber }.forEach { card ->
-                getViewHolder(card)?.run {
-                    binding.placeHolderView.addView(this)
-                }
-            }.also {
-                binding.placeHolderView.addView(
-                    OtherInfoViewHolder(
-                        CardType.OTHER_INFO,
-                        -1,
-                        null,
-                        this
-                    )
-                )
-            }
+            binding.placeHolderView.adapter = CourseDetailsAdapter(data.cards.sortedBy { it.sequenceNumber })
+//                .forEach { card ->
+//                getViewHolder(card)?.run {
+//                    binding.placeHolderView.addView(this)
+//                }
+//            }.also {
+//                binding.placeHolderView.addView(
+//                    OtherInfoViewHolder(
+//                        CardType.OTHER_INFO,
+//                        -1,
+//                        null,
+//                        this
+//                    )
+//                )
+//            }
 
             updateButtonText(data.paymentData.discountedAmount.substring(1).toDouble())
 
@@ -459,30 +460,30 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                     isCoursebought
                 )
             }
-            CardType.LONG_DESCRIPTION -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    LongDescription::class.java
-                )
-                return LongDescriptionViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this
-                )
-            }
-            CardType.TEACHER_DETAILS -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    TeacherDetails::class.java
-                )
-                return TeacherDetailsViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this
-                )
-            }
+//            CardType.LONG_DESCRIPTION -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    LongDescription::class.java
+//                )
+//                return LongDescriptionViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this
+//                )
+//            }
+//            CardType.TEACHER_DETAILS -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    TeacherDetails::class.java
+//                )
+//                return TeacherDetailsViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this
+//                )
+//            }
             CardType.SYLLABUS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
@@ -507,18 +508,18 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                     supportFragmentManager
                 )
             }
-            CardType.DEMO_LESSON -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    DemoLesson::class.java
-                )
-                return DemoLessonViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this
-                )
-            }
+//            CardType.DEMO_LESSON -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    DemoLesson::class.java
+//                )
+//                return DemoLessonViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this
+//                )
+//            }
             CardType.REVIEWS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
@@ -585,18 +586,18 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                     this
                 )
             }
-            CardType.OTHER_INFO -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    OtherInfo::class.java
-                )
-                return OtherInfoViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this
-                )
-            }
+//            CardType.OTHER_INFO -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    OtherInfo::class.java
+//                )
+//                return OtherInfoViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this
+//                )
+//            }
             else -> {
                 return null
             }
@@ -607,18 +608,19 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 var tempView: CourseDetailsBaseCell
-                binding.placeHolderView.allViewResolvers.let {
-                    it.forEachIndexed { index, view ->
-                        if (view is CourseDetailsBaseCell) {
-                            tempView = view
-                            if (tempView.sequenceNumber == pos) {
-                                AppObjectController.uiHandler.post {
-                                    linearLayoutManager.scrollToPositionWithOffset(index, 0)
-                                }
-                            }
-                        }
-                    }
-                }
+                // TODO : Correct this
+//                binding.placeHolderView.allViewResolvers.let {
+//                    it.forEachIndexed { index, view ->
+//                        if (view is CourseDetailsBaseCell) {
+//                            tempView = view
+//                            if (tempView.sequenceNumber == pos) {
+//                                AppObjectController.uiHandler.post {
+//                                    linearLayoutManager.scrollToPositionWithOffset(index, 0)
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -629,18 +631,19 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 var tempView: CourseDetailsBaseCell
-                binding.placeHolderView.allViewResolvers.let {
-                    it.forEachIndexed { index, view ->
-                        if (view is CourseDetailsBaseCell) {
-                            tempView = view
-                            if (tempView.type == type) {
-                                AppObjectController.uiHandler.post {
-                                    linearLayoutManager.scrollToPositionWithOffset(index, 0)
-                                }
-                            }
-                        }
-                    }
-                }
+                // TODO : Correct this
+//                binding.placeHolderView.allViewResolvers.let {
+//                    it.forEachIndexed { index, view ->
+//                        if (view is CourseDetailsBaseCell) {
+//                            tempView = view
+//                            if (tempView.type == type) {
+//                                AppObjectController.uiHandler.post {
+//                                    linearLayoutManager.scrollToPositionWithOffset(index, 0)
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -768,17 +771,18 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
     }
 
     private fun refreshLocationViewHolder(location: Location?) {
-        binding.placeHolderView.allViewResolvers?.let {
-            it.forEachIndexed { index, view ->
-                if (view is LocationStatViewHolder) {
-                    view.location = location
-                    AppObjectController.uiHandler.postDelayed({
-                        binding.placeHolderView.refreshView(index)
-                    }, 250)
-                    return@let
-                }
-            }
-        }
+        //TODO : Correct this
+//        binding.placeHolderView.allViewResolvers?.let {
+//            it.forEachIndexed { index, view ->
+//                if (view is LocationStatViewHolder) {
+//                    view.location = location
+//                    AppObjectController.uiHandler.postDelayed({
+//                        binding.placeHolderView.refreshView(index)
+//                    }, 250)
+//                    return@let
+//                }
+//            }
+//        }
     }
 
     fun buyCourse() {

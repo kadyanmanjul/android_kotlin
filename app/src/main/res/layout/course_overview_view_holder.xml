@@ -120,21 +120,23 @@
                 tools:text="Ankur Warikoo" />
 
         <com.mindorks.placeholderview.PlaceHolderView
-                android:id="@+id/carousel_recycler_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_marginBottom="@dimen/_36sdp"
-                android:orientation="horizontal"
-                android:scrollbars="none"
-                android:paddingStart="@dimen/_12sdp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtTeacherName"
-                tools:itemCount="1"
-                tools:listitem="@layout/course_overview_media_item" />
+            android:id="@+id/carousel_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_36sdp"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/_12sdp"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtTeacherName"
+            app:layout_constraintVertical_bias="1.0"
+            tools:itemCount="1"
+            tools:listitem="@layout/course_overview_media_item" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
