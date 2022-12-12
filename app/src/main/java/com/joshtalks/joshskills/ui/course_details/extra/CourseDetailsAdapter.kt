@@ -6,18 +6,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.databinding.DemoLessonViewHolderBinding
-import com.joshtalks.joshskills.databinding.LayoutLongDescriptionCardViewHolderBinding
-import com.joshtalks.joshskills.databinding.OtherInfoViewHolderBinding
-import com.joshtalks.joshskills.databinding.TeacherDetailsViewHolderBinding
+import com.joshtalks.joshskills.databinding.*
 import com.joshtalks.joshskills.repository.server.course_detail.Card
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.ui.course_details.viewholder.*
 
-class CourseDetailsAdapter(val data: List<Card>) : RecyclerView.Adapter<DetailsBaseViewHolder>() {
+class CourseDetailsAdapter(val testId: Int, val data: List<Card>) : RecyclerView.Adapter<DetailsBaseViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailsBaseViewHolder {
         return when (viewType) {
-//            COURSE_OVERVIEW -> {}
+            COURSE_OVERVIEW -> {
+                val view = setViewHolder<CourseOverviewViewHolderBinding>(parent, R.layout.course_overview_view_holder)
+                CourseOverviewViewHolder(view, testId)
+            }
             LONG_DESCRIPTION -> {
                 val view = setViewHolder<LayoutLongDescriptionCardViewHolderBinding>(
                     parent,
@@ -36,8 +36,15 @@ class CourseDetailsAdapter(val data: List<Card>) : RecyclerView.Adapter<DetailsB
                 DemoLessonViewHolder(view)
             }
 //            REVIEWS -> {}
-//            LOCATION_STATS -> {}
-//            STUDENT_FEEDBACK -> {}
+            LOCATION_STATS -> {
+                val view = setViewHolder<LayoutLocationStatsViewHolderBinding>(parent, R.layout.layout_location_stats_view_holder)
+                LocationStatViewHolder(view)
+            }
+            STUDENT_FEEDBACK -> {
+                val view =
+                    setViewHolder<LayoutStudentFeedbackViewholderBinding>(parent, R.layout.layout_student_feedback_viewholder)
+                StudentFeedbackViewHolder(view, testId)
+            }
 //            FAQ -> {}
 //            ABOUT_JOSH -> {}
             OTHER_INFO -> {

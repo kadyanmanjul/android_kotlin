@@ -286,8 +286,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                                     testId = testId,
                                     whatsappUrl = courseExploreModel.whatsappUrl,
                                     startedFrom = this@CourseExploreActivity.javaClass.simpleName,
-                                    buySubscription = false,
-                                    isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+                                    buySubscription = false
                                 )
                             }
                         }

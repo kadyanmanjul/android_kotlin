@@ -222,20 +222,14 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                     offerPercentage,
                     "${PrefManager.getIntValue(REMAINING_TRIAL_DAYS).minus(4)}"
                 )
-
-//                binding.continueTip.setText(text)
                 binding.txtExtraHint.visibility = GONE
-//                binding.continueTip.visibility = View.VISIBLE
             }
             3, 4 -> {
                 val text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.BUY_COURSE_LAST_DAY_OFFER_HINT)
-
-//                binding.continueTip.setText(text)
                 binding.txtExtraHint.visibility = GONE
             }
             else -> {
-//                binding.continueTip.visibility = View.GONE
                 if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
                     binding.txtExtraHint.visibility = GONE
                 else
@@ -249,21 +243,6 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.setHasFixedSize(true)
         binding.placeHolderView.layoutManager = linearLayoutManager
-//        binding.placeHolderView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-//                super.onScrollStateChanged(recyclerView, newState)
-//                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > 0) {
-//                    visibleBuyButton()
-//                }
-//            }
-//
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                if (dy > 100) {
-//                    visibleBuyButton()
-//                }
-//            }
-//        })
         binding.placeHolderView.addItemDecoration(
             DividerItemDecoration(this, R.drawable.list_divider)
         )
@@ -271,11 +250,6 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
 
     private fun visibleBuyButton() {
         if (binding.buyCourseLl.visibility == GONE) {
-//            val transition: Transition = Slide(Gravity.BOTTOM)
-//            transition.duration = 2000
-//            transition.interpolator = LinearInterpolator()
-//            transition.addTarget(binding.buyCourseLl)
-//            TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
         }
     }
@@ -340,10 +314,9 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                 appAnalytics.addParam(VERSION, PrefManager.getStringValue(VERSION))
                 PrefManager.put(VERSION, data.version)
             }
-            binding.txtActualPrice.paintFlags =
-                binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            binding.txtActualPrice.paintFlags = binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 
-            binding.placeHolderView.adapter = CourseDetailsAdapter(data.cards.sortedBy { it.sequenceNumber })
+            binding.placeHolderView.adapter = CourseDetailsAdapter(testId, data.cards.sortedBy { it.sequenceNumber })
 //                .forEach { card ->
 //                getViewHolder(card)?.run {
 //                    binding.placeHolderView.addView(this)
@@ -366,9 +339,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         viewModel.apiCallStatusLiveData.observe(this) {
             binding.progressBar.visibility = GONE
             if (it == ApiCallStatus.FAILED) {
-                val imageUrl =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString("ERROR_API_IMAGE_URL")
+                val imageUrl = AppObjectController.getFirebaseRemoteConfig().getString("ERROR_API_IMAGE_URL")
                 val imageView = ImageView(this).apply {
                     adjustViewBounds = true
                     scaleType = ImageView.ScaleType.FIT_CENTER
@@ -441,25 +412,25 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
 
     private fun getViewHolder(card: Card): CourseDetailsBaseCell? {
         when (card.cardType) {
-            CardType.COURSE_OVERVIEW -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    CourseOverviewData::class.java
-                )
-                courseName = data.courseName
-                if (data.courseName.isNotBlank())
-                    appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, data.courseName)
-                return CourseOverviewViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this,
-                    testId,
-                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
-                    courseName,
-                    isCoursebought
-                )
-            }
+//            CardType.COURSE_OVERVIEW -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    CourseOverviewData::class.java
+//                )
+//                courseName = data.courseName
+//                if (data.courseName.isNotBlank())
+//                    appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, data.courseName)
+//                return CourseOverviewViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this,
+//                    testId,
+//                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
+//                    courseName,
+//                    isCoursebought
+//                )
+//            }
 //            CardType.LONG_DESCRIPTION -> {
 //                val data = AppObjectController.gsonMapperForLocal.fromJson(
 //                    card.data.toString(),
@@ -531,37 +502,37 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                     data
                 )
             }
-            CardType.LOCATION_STATS -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    LocationStats::class.java
-                )
-                return LocationStatViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this,
-                    this,
-                    testId,
-                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
-                    courseName
-                )
-            }
-            CardType.STUDENT_FEEDBACK -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    StudentFeedback::class.java
-                )
-                return StudentFeedbackViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this,
-                    testId,
-                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
-                    courseName
-                )
-            }
+//            CardType.LOCATION_STATS -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    LocationStats::class.java
+//                )
+//                return LocationStatViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this,
+//                    this,
+//                    testId,
+//                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
+//                    courseName
+//                )
+//            }
+//            CardType.STUDENT_FEEDBACK -> {
+//                val data = AppObjectController.gsonMapperForLocal.fromJson(
+//                    card.data.toString(),
+//                    StudentFeedback::class.java
+//                )
+//                return StudentFeedbackViewHolder(
+//                    card.cardType,
+//                    card.sequenceNumber,
+//                    data,
+//                    this,
+//                    testId,
+//                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
+//                    courseName
+//                )
+//            }
             CardType.FAQ -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
@@ -695,8 +666,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                         this,
                         10,
                         startedFrom = this@CourseDetailsActivity.javaClass.simpleName,
-                        buySubscription = false,
-                        isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+                        buySubscription = false
                     )
                 },{
                     it.printStackTrace()
@@ -1032,14 +1002,13 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             startedFrom: String = EMPTY,
             flags: Array<Int> = arrayOf(),
             isFromFreeTrial: Boolean = false,
-            buySubscription: Boolean = false,
-            isCourseBought: Boolean = false
+            buySubscription: Boolean = false
         ) {
             Intent(activity, CourseDetailsActivity::class.java).apply {
                 putExtra(KEY_TEST_ID, testId)
                 putExtra(IS_FROM_FREE_TRIAL, isFromFreeTrial)
                 putExtra(BUY_SUBSCRIPTION, buySubscription)
-                putExtra(IS_COURSE_BOUGHT, isCourseBought)
+                putExtra(IS_COURSE_BOUGHT, PrefManager.getBoolValue(IS_COURSE_BOUGHT))
                 if (whatsappUrl.isNullOrBlank().not()) {
                     putExtra(WHATSAPP_URL, whatsappUrl)
                 }

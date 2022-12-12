@@ -1,59 +1,36 @@
 package com.joshtalks.joshskills.ui.course_details.viewholder
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.location.Location
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import androidx.fragment.app.FragmentActivity
-import com.google.android.material.textview.MaterialTextView
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.*
-import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.google.gson.JsonObject
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.VERSION
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.databinding.LayoutLocationStatsViewHolderBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
-import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.LocationStats
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.mindorks.placeholderview.annotations.Layout
-import com.mindorks.placeholderview.annotations.Resolve
 import com.patloew.colocation.CoGeocoder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
-@Layout(R.layout.layout_location_stats_view_holder)
 open class LocationStatViewHolder(
-    override val type: CardType,
-    override val sequenceNumber: Int,
-    private var locationStats: LocationStats,
-    val activity: FragmentActivity,
-    private val context: Context = AppObjectController.joshApplication,
-    val testId: Int,
-    val coursePrice: String,
-    val courseName: String
-) : CourseDetailsBaseCell(type, sequenceNumber) {
+    val item: LayoutLocationStatsViewHolderBinding
+) : DetailsBaseViewHolder(item) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.background_image_view)
-    lateinit var imageView: ImageView
-
-    @com.mindorks.placeholderview.annotations.View(R.id.students_enrolled_nearby)
-    lateinit var studentsNearby: JoshTextView
-
-    @com.mindorks.placeholderview.annotations.View(R.id.state_country)
-    lateinit var stateCityName: JoshTextView
-
-    @com.mindorks.placeholderview.annotations.View(R.id.check_location_btn)
-    lateinit var checkLocation: MaterialTextView
-
-    @com.mindorks.placeholderview.annotations.View(R.id.progress_bar)
-    lateinit var progressBar: FrameLayout
     var location: Location? = null
     private var index = 0
     val p: Pattern = Pattern.compile("\\d+")
@@ -61,28 +38,31 @@ open class LocationStatViewHolder(
     var state: String? = null
     var randomStudents = 0
 
-    @Resolve
-    fun onResolved() {
-        studentsNearby.text = locationStats.studentText
+    override fun bindData(sequence: Int, cardData: JsonObject) {
+        val data = AppObjectController.gsonMapperForLocal.fromJson(
+            cardData.toString(),
+            LocationStats::class.java
+        )
+        item.studentsEnrolledNearby.text = data.studentText
         if (randomStudents > 0) {
-            studentsNearby.text = randomStudents.toString().plus(" students from")
+            item.studentsEnrolledNearby.text = randomStudents.toString().plus(" students from")
         }
         if (city.isNullOrBlank()) {
-            stateCityName.text = locationStats.locationText
+            item.stateCountry.text = data.locationText
         } else {
-            stateCityName.text = city.plus(" , ").plus(state)
+            item.stateCountry.text = city.plus(" , ").plus(state)
         }
-        locationStats.imageUrls[index].run {
+        data.imageUrls[index].run {
             if (this.isNotEmpty()) {
-                setDefaultImageView(imageView, this)
+                setDefaultImageView(item.backgroundImageView, this)
             }
         }
-        checkLocation.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
+        item.checkLocationBtn.setOnClickListener {
+            item.progressBar.visibility = View.VISIBLE
             onClick()
         }
         location?.let {
-            getAddressAndSetView(it.latitude, it.longitude)
+            getAddressAndSetView(it.latitude, it.longitude, data)
         }
     }
 
@@ -94,23 +74,17 @@ open class LocationStatViewHolder(
     }
 
     fun logAnalyticsEvent() {
-        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_CHECK_LOCATION)
-            .addParam(ParamKeys.TEST_ID,testId)
-            .addParam(ParamKeys.COURSE_NAME,courseName)
-            .addParam(ParamKeys.COURSE_PRICE,coursePrice)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-            .push()
         AppAnalytics.create(AnalyticsEvent.CHECK_LOCATION_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam(VERSION, PrefManager.getStringValue(VERSION)).push()
     }
 
-    private fun locationPermissionGranted() = (PermissionUtils.isLocationPermissionEnabled(context))
+    private fun locationPermissionGranted() = (PermissionUtils.isLocationPermissionEnabled(getAppContext()))
 
     private fun getLocationPermissionAndLocation() {
         PermissionUtils.locationPermission(
-            activity,
+            getActivity(getAppContext()),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -118,7 +92,7 @@ open class LocationStatViewHolder(
                             getLocationAndUpload()
                             return
                         } else {
-                            progressBar.visibility = View.GONE
+                            item.progressBar.visibility = View.GONE
                         }
                     }
                 }
@@ -138,16 +112,16 @@ open class LocationStatViewHolder(
         RxBus2.publish(EmptyEventBus())
     }
 
-    private fun getAddressAndSetView(latitude: Double, longitude: Double) {
+    private fun getAddressAndSetView(latitude: Double, longitude: Double, data: LocationStats) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val coGeocoder = CoGeocoder.from(context)
+                val coGeocoder = CoGeocoder.from(getAppContext())
                 coGeocoder.getAddressFromLocation(latitude, longitude)?.let {
                     if (city.isNullOrBlank().not() && city.equals(it.locality))
                         return@launch
                     AppObjectController.uiHandler.post {
-                        stateCityName.text = it.locality.plus(" , ").plus(it.subAdminArea)
-                        showNextImageAndRandomData()
+                        item.stateCountry.text = it.locality.plus(" , ").plus(it.subAdminArea)
+                        showNextImageAndRandomData(data)
                     }
                 }
             } catch (ex: Throwable) {
@@ -155,17 +129,17 @@ open class LocationStatViewHolder(
         }
     }
 
-    private fun showNextImageAndRandomData() {
+    private fun showNextImageAndRandomData(data: LocationStats) {
         index++
-        if (index >= locationStats.imageUrls.size)
+        if (index >= data.imageUrls.size)
             index = 0
         randomStudents = randomNumberGenerator(
-            locationStats.totalEnrolled.times(0.70).toInt(),
-            locationStats.totalEnrolled.times(0.90).toInt()
+            data.totalEnrolled.times(0.70).toInt(),
+            data.totalEnrolled.times(0.90).toInt()
         )
-        studentsNearby.text = randomStudents.toString().plus(" students from")
-        setDefaultImageView(imageView, locationStats.imageUrls.get(index))
-        checkLocation.visibility = View.GONE
+        item.studentsEnrolledNearby.text = randomStudents.toString().plus(" students from")
+        setDefaultImageView(item.backgroundImageView, data.imageUrls.get(index))
+        item.checkLocationBtn.visibility = View.GONE
     }
 
     private fun randomNumberGenerator(start: Int, end: Int): Int {
@@ -173,5 +147,16 @@ open class LocationStatViewHolder(
             return 0
         }
         return (start..end).random()
+    }
+
+    private fun getActivity(context: Context): Activity? {
+        var activity = context
+        while (activity is ContextWrapper) {
+            if (activity is Activity) {
+                return activity
+            }
+            activity = activity.baseContext
+        }
+        return null
     }
 }

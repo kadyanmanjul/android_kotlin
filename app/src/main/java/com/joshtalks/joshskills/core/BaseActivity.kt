@@ -530,7 +530,8 @@ abstract class BaseActivity :
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
                             CourseDetailsActivity.startCourseDetailsActivity(
-                                this@BaseActivity, id.toInt(),
+                                activity = this@BaseActivity,
+                                testId = id.toInt(),
                                 flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                             )
                         }

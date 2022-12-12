@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/_16sdp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/topContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -15,87 +17,87 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_offer"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_60sdp"
-            app:cardCornerRadius="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:visibility="visible"
-            android:layout_marginHorizontal="@dimen/_16sdp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingHorizontal="@dimen/_6sdp" >
-
-            <RelativeLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_offer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/surface_information">
+                android:layout_height="@dimen/_60sdp"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:paddingHorizontal="@dimen/_6sdp"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottite"
-                    android:layout_width="@dimen/_36sdp"
-                    android:layout_height="@dimen/_36sdp"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/_13sdp"
-                    android:padding="@dimen/_2sdp"
-                    app:lottie_autoPlay="true"
-                    app:lottie_fileName="lottie/offer.json"
-                    app:lottie_imageAssetsFolder="lottie"
-                    app:lottie_loop="true" />
-
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/lottite"
-                    android:layout_centerVertical="true"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:background="@color/surface_information">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/offer_text"
-                        style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottite"
+                        android:layout_width="@dimen/_36sdp"
+                        android:layout_height="@dimen/_36sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_13sdp"
+                        android:padding="@dimen/_2sdp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="lottie/offer.json"
+                        app:lottie_imageAssetsFolder="lottie"
+                        app:lottie_loop="true" />
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_15sdp"
-                        android:layout_marginEnd="@dimen/_13sdp"
-                        android:text="Buy 65 + courses including this course just for ₹450"
-                        android:textColor="@color/text_default" />
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/lottite"
+                        android:orientation="vertical">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/offer_text"
-                        android:layout_marginStart="@dimen/_15sdp"
-                        android:layout_marginEnd="@dimen/_13sdp"
-                        android:text="Buy now!"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
-                        android:textColor="@color/primary_500" />
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/offer_text"
+                            style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_15sdp"
+                            android:layout_marginEnd="@dimen/_13sdp"
+                            android:text="Buy 65 + courses including this course just for ₹450"
+                            android:textColor="@color/text_default" />
 
-                    <View
-                        android:id="@+id/view3"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_marginStart="@dimen/_15sdp"
-                        android:background="@drawable/dotted_line"
-                        android:backgroundTint="@color/primary_500" />
-                </LinearLayout>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/offer_text"
+                            android:layout_marginStart="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_13sdp"
+                            android:text="Buy now!"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                            android:textColor="@color/primary_500" />
 
-            </RelativeLayout>
+                        <View
+                            android:id="@+id/view3"
+                            android:layout_width="@dimen/_45sdp"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginStart="@dimen/_15sdp"
+                            android:background="@drawable/dotted_line"
+                            android:backgroundTint="@color/primary_500" />
+                    </LinearLayout>
+
+                </RelativeLayout>
 
 
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtCourseName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_14sdp"
                 android:paddingStart="@dimen/_12sdp"
                 android:paddingEnd="@dimen/_8sdp"
-               android:layout_marginTop="@dimen/_14sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                 android:textColor="@color/pure_white"
                 app:autoSizeMaxTextSize="@dimen/_15ssp"
@@ -104,49 +106,49 @@
                 app:layout_constraintWidth_percent="0.8"
                 tools:text="Effective Life Habits For Life Transformation" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtTeacherName"
+                style="@style/TextAppearance.JoshTypography.BodySemiBold20"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:maxLines="1"
                 android:paddingStart="@dimen/_12sdp"
-               android:layout_marginTop="@dimen/_4sdp"
                 android:paddingEnd="@dimen/_4sdp"
-                style="@style/TextAppearance.JoshTypography.BodySemiBold20"
                 android:textColor="@color/pure_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCourseName"
                 app:layout_constraintWidth_percent="0.8"
                 tools:text="Ankur Warikoo" />
 
-        <com.mindorks.placeholderview.PlaceHolderView
-            android:id="@+id/carousel_recycler_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:layout_marginBottom="@dimen/_36sdp"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/_12sdp"
-            android:scrollbars="none"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtTeacherName"
-            app:layout_constraintVertical_bias="1.0"
-            tools:itemCount="1"
-            tools:listitem="@layout/course_overview_media_item" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.mindorks.placeholderview.PlaceHolderView
+                android:id="@+id/carousel_recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_36sdp"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/_12sdp"
+                android:scrollbars="none"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtTeacherName"
+                app:layout_constraintVertical_bias="1.0"
+                tools:itemCount="1"
+                tools:listitem="@layout/course_overview_media_item" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/pure_white"
             app:layout_constraintTop_toBottomOf="@+id/topContainer">
 
-        <View
+            <View
                 android:id="@+id/emptyView"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
@@ -154,13 +156,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.Barrier
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="top"
                 app:constraint_referenced_ids="icon1,icon2,icon3,icon4" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/icon1"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_34sdp"
@@ -179,7 +181,7 @@
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/icon2"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_34sdp"
@@ -197,7 +199,7 @@
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/icon3"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_34sdp"
@@ -215,7 +217,7 @@
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/icon4"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_34sdp"
@@ -234,7 +236,7 @@
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -251,7 +253,7 @@
                 tools:text="27400 Students"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -267,7 +269,7 @@
                 tools:text="50 Day Course"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -283,7 +285,7 @@
                 tools:text="Unlimited Access"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -300,7 +302,7 @@
                 tools:text="Certificate Available"
                 tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -315,16 +317,16 @@
                 app:layout_constraintTop_toBottomOf="@id/icons_bottom_barier"
                 tools:text="Learn the secrets to become a dynamic personality and impress your peers - in the office, college and everywhere else. India’s highest rated Personality Development course is here!" />
 
-        <androidx.constraintlayout.widget.Barrier
+            <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/icons_bottom_barier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="captionIcon1,captionIcon2,captionIcon3,captionIcon4" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <FrameLayout
+        <FrameLayout
             android:id="@+id/ratingView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -339,14 +341,14 @@
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.575">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@color/success"
                 android:foregroundGravity="center">
 
-            <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+                <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
                     android:id="@+id/rating_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_20sdp"
@@ -365,7 +367,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txtRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -384,7 +386,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="4.0" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/rating_arrow"
                     android:layout_width="@dimen/_16sdp"
                     android:layout_height="@dimen/_16sdp"
@@ -398,11 +400,11 @@
                     app:srcCompat="@drawable/recv_ic_arrow"
                     app:tint="@color/pure_white" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </FrameLayout>
+        </FrameLayout>
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtViewers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -417,4 +419,5 @@
             app:layout_constraintTop_toBottomOf="@id/ratingView"
             tools:text="37 log iss page ko dekh rahe hai" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

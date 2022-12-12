@@ -126,7 +126,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         this,
                         data.id,
                         startedFrom = this@InboxActivity.javaClass.simpleName,
-                        isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT),
                         buySubscription = false
                     )
                 }

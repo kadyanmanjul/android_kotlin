@@ -527,8 +527,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 this,
                 testId.toInt(),
                 startedFrom = this@BuyPageActivity.javaClass.simpleName,
-                buySubscription = false,
-                isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+                buySubscription = false
             )
         }
     }

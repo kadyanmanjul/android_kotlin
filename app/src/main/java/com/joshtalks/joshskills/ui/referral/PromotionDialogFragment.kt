@@ -108,8 +108,7 @@ class PromotionDialogFragment : DialogFragment() {
                 activity=requireActivity(),
                 testId = this.toInt(),
                 startedFrom = "Promotion",
-                buySubscription = false,
-                isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+                buySubscription = false
             )
             dismissAllowingStateLoss()
         }
