@@ -35,7 +35,6 @@ import com.google.android.exoplayer2.offline.Download
 import com.google.android.material.button.MaterialButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
-import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.IS_FIRST_CALL
@@ -341,8 +340,6 @@ class ConversationActivity :
             PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-//            conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.trialTimerView.endFreeTrial()
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
@@ -354,10 +351,6 @@ class ConversationActivity :
         countdownTimerBack = object : CountDownTimer(startTimeInMilliSeconds, 1000) {
             override fun onTick(millis: Long) {
                 AppObjectController.uiHandler.post {
-//                    conversationBinding.freeTrialText.text = getString(
-//                        R.string.free_trial_end_in,
-//                        UtilTime.timeFormatted(millis)
-//                    )
                     conversationBinding.trialTimerView.startTimer(millis)
                 }
             }
