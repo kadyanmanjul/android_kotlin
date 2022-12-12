@@ -47,7 +47,6 @@ import com.joshtalks.joshskills.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.yariksoffice.lingver.Lingver
-import io.branch.referral.Branch
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -74,31 +73,6 @@ val NOTIFICATION_TITLE_TEXT = arrayOf(
     "Meet people from across the country.",
     "Apka aaj ka goal hai Lesson 1 complete karna"
 )
-
-class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            if (PrefManager.getStringValue(USER_UNIQUE_ID).isBlank()) {
-                delay(200)
-            }
-            if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                val response =
-                    AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
-                if (response.isSuccessful && response.body() != null) {
-                    PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
-                    Branch.getInstance().setIdentity(response.body()!!.gaID)
-                } else {
-                    return Result.failure()
-                }
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-            return Result.failure()
-        }
-        return Result.success()
-    }
-}
 
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

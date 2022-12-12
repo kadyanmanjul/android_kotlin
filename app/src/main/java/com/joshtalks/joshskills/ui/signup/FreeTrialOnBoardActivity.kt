@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -20,7 +19,10 @@ import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -55,6 +57,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
+        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
         layout = DataBindingUtil.setContentView(
             this,
             R.layout.activity_free_trial_on_board
@@ -115,7 +118,6 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
             }
         }
         initTrueCallerUI()
-        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
     }
 
     override fun onPause() {

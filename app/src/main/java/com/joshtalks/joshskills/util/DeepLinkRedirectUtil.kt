@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.launch.getStringOrNull
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
@@ -27,7 +28,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import org.json.JSONObject
 
-object DeepLinkRedirectUtil {
+class DeepLinkRedirectUtil {
 
     suspend fun getIntent(
         activity: Activity,
@@ -297,6 +298,52 @@ object DeepLinkRedirectUtil {
         else
             PendingIntent.FLAG_UPDATE_CURRENT
     ).send()
+
+    suspend fun handleDeepLink(activity: CoreJoshActivity, jsonParams: JSONObject): Intent? =
+        when {
+            User.getInstance().isVerified.not() -> handleDeepLinkForUnverifiedUser(activity, jsonParams)
+            activity.isUserProfileNotComplete() -> Intent(activity, SignUpActivity::class.java)
+            getIntent(
+                activity,
+                jsonParams,
+                PrefManager.getBoolValue(IS_FREE_TRIAL)
+            ) -> null
+            else -> getInboxActivityIntent(activity)
+        }
+
+    private suspend fun handleDeepLinkForUnverifiedUser(activity: CoreJoshActivity, jsonParams: JSONObject): Intent? =
+        when {
+            //if guest is enrolled and not paid (free trial)
+            (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
+                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
+                if (getIntent(
+                        activity,
+                        jsonParams,
+                        true
+                    )
+                ) null
+                else getInboxActivityIntent(activity)
+            }
+
+            //start onboarding for a specific course
+            PrefManager.hasKey(
+                SPECIFIC_ONBOARDING,
+                isConsistent = true
+            ) || (jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
+            -> getIntentForCourseOnboarding(activity, jsonParams, true)
+
+            //start onboarding for free trial course
+            PrefManager.hasKey(FT_COURSE_ONBOARDING, isConsistent = true) ||
+                    (jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
+            -> getIntentForCourseOnboarding(activity, jsonParams, false)
+
+            //redirect to a specific course details
+            jsonParams.getStringOrNull(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key -> {
+                getCourseDetailsActivityIntent(activity, jsonParams)
+                null
+            }
+            else -> getInboxActivityIntent(activity)
+        }
 }
 
 enum class DeepLinkRedirect(val key: String) {
