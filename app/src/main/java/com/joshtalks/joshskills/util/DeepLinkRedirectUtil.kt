@@ -271,10 +271,10 @@ class DeepLinkRedirectUtil(private val jsonParams: JSONObject) {
             PendingIntent.FLAG_UPDATE_CURRENT
     ).send()
 
-    suspend fun handleDeepLink(activity: CoreJoshActivity): RedirectAction? =
+    suspend fun handleDeepLink(activity: CoreJoshActivity, userProfileNotComplete: Boolean): RedirectAction? =
         when {
             User.getInstance().isVerified.not() -> handleDeepLinkForUnverifiedUser(activity)
-            activity.isUserProfileNotComplete() -> RedirectAction.SIGN_UP
+            userProfileNotComplete -> RedirectAction.SIGN_UP
             redirectFromDeepLink(activity, PrefManager.getBoolValue(IS_FREE_TRIAL)) -> null
             else -> RedirectAction.INBOX
         }

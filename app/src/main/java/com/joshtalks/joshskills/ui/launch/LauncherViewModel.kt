@@ -310,7 +310,10 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             redirectEvent.postValue(
                 when {
-                    deepLinkRedirectUtil.isRedirectLink() -> deepLinkRedirectUtil.handleDeepLink(activity)
+                    deepLinkRedirectUtil.isRedirectLink() -> deepLinkRedirectUtil.handleDeepLink(
+                        activity,
+                        userProfileNotComplete
+                    )
                     User.getInstance().isVerified.not() -> getUnverifiedUserRedirectAction()
                     userProfileNotComplete -> RedirectAction.SIGN_UP
                     else -> RedirectAction.INBOX
@@ -322,6 +325,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     private fun getUnverifiedUserRedirectAction(): RedirectAction =
         when {
             isPaymentDone() -> RedirectAction.SIGN_UP
+            isGuestEnrolled() -> RedirectAction.INBOX
             isFreeTrialStarted() -> RedirectAction.COURSE_ONBOARDING
             else -> RedirectAction.SIGN_UP
         }
@@ -335,6 +339,10 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             isConsistent = false,
             defValue = false
         )
+
+    private fun isGuestEnrolled(): Boolean =
+        PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)
+
 }
 
 fun JSONObject.getStringOrNull(key: String): String? {
