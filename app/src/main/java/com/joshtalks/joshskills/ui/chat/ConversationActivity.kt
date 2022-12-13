@@ -464,7 +464,9 @@ class ConversationActivity :
                 conversationBinding.ivIconReferral.visible()
                 conversationBinding.btnUpgrade.gone()
             } else {
-                conversationBinding.btnUpgrade.visible()
+                inboxEntity.isCapsuleCourse
+                if (inboxEntity.courseId == DEFAULT_COURSE_ID)
+                    conversationBinding.btnUpgrade.visible()
                 conversationBinding.ivIconReferral.gone()
             }
             conversationBinding.ivIconReferral.setOnClickListener {
