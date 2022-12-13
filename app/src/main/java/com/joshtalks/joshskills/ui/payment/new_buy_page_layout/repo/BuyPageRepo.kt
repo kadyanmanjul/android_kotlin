@@ -9,11 +9,13 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.utils.ReviewPagin
 class BuyPageRepo {
 
     //it's need test id
-    suspend fun getFeatureList(testId:Int) = AppObjectController.commonNetworkService.getCourseFeatureDetails(testId)
+    suspend fun getFeatureList(testId: Int) = AppObjectController.commonNetworkService.getCourseFeatureDetails(testId)
 
-    suspend fun getCouponList(testId: Int) = AppObjectController.commonNetworkService.getValidCoupon(testId)
+    suspend fun getCouponList(testId: Int, lessonsCompleted: Int? = null) =
+        AppObjectController.commonNetworkService.getValidCoupon(testId = testId, lessonsCompleted = lessonsCompleted)
 
-    suspend fun getPriceList(params: PriceParameterModel) = AppObjectController.commonNetworkService.getCoursePriceList(params)
+    suspend fun getPriceList(params: PriceParameterModel) =
+        AppObjectController.commonNetworkService.getCoursePriceList(params)
 
     fun getReviewResult(testId: Int) =
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
@@ -23,7 +25,12 @@ class BuyPageRepo {
             )
         }
 
-    suspend fun getCouponFromCode(code: String, testId:Int) = AppObjectController.commonNetworkService.getCouponFromCode(code, testId)
+    suspend fun getCouponFromCode(code: String, testId: Int, lessonsCompleted: Int? = null) =
+        AppObjectController.commonNetworkService.getCouponFromCode(
+            code = code,
+            testId = testId,
+            lessonsCompleted = lessonsCompleted
+        )
 
     suspend fun saveBuyPageImpression(map: Map<String, String>) =
         AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(map)
@@ -33,8 +40,10 @@ class BuyPageRepo {
 
     suspend fun getReasonList() = AppObjectController.commonNetworkService.getSalesSupportReason()
 
-    suspend fun logPaymentEvent(map: Map<String, Any>) = AppObjectController.commonNetworkService.saveJuspayPaymentLog(map)
+    suspend fun logPaymentEvent(map: Map<String, Any>) =
+        AppObjectController.commonNetworkService.saveJuspayPaymentLog(map)
 
-    suspend fun saveBranchLog(params: Map<String, Any>) = AppObjectController.commonNetworkService.savePaymentLog(params)
+    suspend fun saveBranchLog(params: Map<String, Any>) =
+        AppObjectController.commonNetworkService.savePaymentLog(params)
 
 }

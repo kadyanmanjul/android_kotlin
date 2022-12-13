@@ -365,10 +365,16 @@ interface CommonNetworkService {
     suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)
 
     @GET("$DIR/micro_payment/get_wallet_transactions/{mentor}/")
-    suspend fun getWalletTransactions(@Path("mentor") mentorId: String, @Query("page") page: Int): Response<TransactionResponse>
+    suspend fun getWalletTransactions(
+        @Path("mentor") mentorId: String,
+        @Query("page") page: Int
+    ): Response<TransactionResponse>
 
     @GET("$DIR/micro_payment/get_payment_logs/{mentor}/")
-    suspend fun getPaymentTransactions(@Path("mentor") mentorId: String, @Query("page") page: Int): Response<WalletLogResponse>
+    suspend fun getPaymentTransactions(
+        @Path("mentor") mentorId: String,
+        @Query("page") page: Int
+    ): Response<WalletLogResponse>
 
     @GET("$DIR/micro_payment/get_upgrade_details/")
     suspend fun getUpgradeDetails(@Query("gaid") gaid: String): Response<ExpertUpgradeDetails>
@@ -385,10 +391,18 @@ interface CommonNetworkService {
     suspend fun getCourseFeatureDetails(@Query("test_id") testId: Int): Response<BuyCourseFeatureModel>
 
     @GET("$DIR/course/get_user_coupons/")
-    suspend fun getValidCoupon(@Query("test_id") testId: Int, @Query("screen_name") screenName:String? = null): Response<CouponListModel>
+    suspend fun getValidCoupon(
+        @Query("test_id") testId: Int,
+        @Query("screen_name") screenName: String? = null,
+        @Query("lessons_completed") lessonsCompleted: Int? = null
+    ): Response<CouponListModel>
 
     @GET("$DIR/course/get_coupon_code/")
-    suspend fun getCouponFromCode(@Query("code") code: String, @Query("test_id") testId: Int): Response<Coupon>
+    suspend fun getCouponFromCode(
+        @Query("code") code: String,
+        @Query("test_id") testId: Int,
+        @Query("lessons_completed") lessonsCompleted: Int? = null
+    ): Response<Coupon>
 
     @POST("$DIR/course/course_price_details/")
     suspend fun getCoursePriceList(@Body params: PriceParameterModel): Response<CoursePriceListModel>
@@ -409,20 +423,21 @@ interface CommonNetworkService {
     suspend fun getButtonExpertVisibility(): Response<ButtonVisibilityResponse>
 
     @POST("$DIR/support/sales_support/")
-    suspend fun saveSalesSupportReason(@Body params: Map<String, String>) : Response<Any>
+    suspend fun saveSalesSupportReason(@Body params: Map<String, String>): Response<Any>
 
     @GET("$DIR/support/sales_support/")
-    suspend fun getSalesSupportReason() : Response<SalesReasonList>
+    suspend fun getSalesSupportReason(): Response<SalesReasonList>
 
     @POST("$DIR/impression/track_explore_course_impression/")
     suspend fun saveImpressionForExplore(@Body params: Map<String, String>): Response<Void>
 
     @GET("$DIR/course/course_recommendations/")
-    suspend fun getCourseRecommendations() :Response<ArrayList<InboxRecommendedCourse>>
+    suspend fun getCourseRecommendations(): Response<ArrayList<InboxRecommendedCourse>>
+
     @POST("$DIR/payment/branch_log/")
-    suspend fun savePaymentLog(@Body params: Map<String, Any>) :Response<Void>
+    suspend fun savePaymentLog(@Body params: Map<String, Any>): Response<Void>
 
     @POST("$DIR/payment/juspay_log/")
-    suspend fun saveJuspayPaymentLog(@Body params: Map<String, Any>) :Response<Void>
+    suspend fun saveJuspayPaymentLog(@Body params: Map<String, Any>): Response<Void>
 
 }
