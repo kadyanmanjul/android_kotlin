@@ -59,10 +59,11 @@
                 app:layout_constraintWidth_percent="0.5"
                 tools:text="4.7" />
 
-            <com.mindorks.placeholderview.PlaceHolderView
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/rating_rv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

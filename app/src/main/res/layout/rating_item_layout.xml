@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/_3sdp">
 
-    <androidx.appcompat.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_rating"
             android:layout_width="@dimen/_12sdp"
             android:layout_height="wrap_content"
@@ -17,18 +20,18 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="5" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/star_iv"
-        android:layout_width="@dimen/_12sdp"
-        android:layout_height="@dimen/_12sdp"
-        android:layout_marginHorizontal="@dimen/_2sdp"
-        android:tint="@color/dark_grey"
-        app:srcCompat="@drawable/ic_baseline_star"
-        app:layout_constraintBottom_toBottomOf="@+id/user_rating"
-        app:layout_constraintStart_toEndOf="@+id/user_rating"
-        app:layout_constraintTop_toTopOf="@+id/user_rating" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/star_iv"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginHorizontal="@dimen/_2sdp"
+            android:tint="@color/dark_grey"
+            app:layout_constraintBottom_toBottomOf="@+id/user_rating"
+            app:layout_constraintStart_toEndOf="@+id/user_rating"
+            app:layout_constraintTop_toTopOf="@+id/user_rating"
+            app:srcCompat="@drawable/ic_baseline_star" />
 
-    <ProgressBar
+        <ProgressBar
             android:id="@+id/progress_bar"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="0dp"
@@ -41,7 +44,7 @@
             app:layout_constraintStart_toEndOf="@+id/star_iv"
             app:layout_constraintTop_toTopOf="@+id/star_iv" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_rating_percentage"
             android:layout_width="@dimen/_28sdp"
             android:layout_height="wrap_content"
@@ -53,4 +56,5 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="10%" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

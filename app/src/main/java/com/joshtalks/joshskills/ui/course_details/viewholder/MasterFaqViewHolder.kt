@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.repository.server.FAQ
 import com.joshtalks.joshskills.repository.server.course_detail.FAQData
 import com.joshtalks.joshskills.ui.help.viewholder.FaqCategoryViewHolder
 import com.mindorks.placeholderview.annotations.Recycle
-import com.mindorks.placeholderview.annotations.Resolve
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -30,7 +29,6 @@ class MasterFaqViewHolder(val item: LayoutExpandableViewHolderBinding,  private 
     var categoryId: Int? = null
     private var compositeDisposable = CompositeDisposable()
 
-    @Resolve
     override fun bindData(sequence: Int, cardData: JsonObject) {
         val data = AppObjectController.gsonMapperForLocal.fromJson(
             cardData.toString(),
