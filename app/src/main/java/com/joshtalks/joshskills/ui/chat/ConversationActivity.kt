@@ -2337,7 +2337,7 @@ class ConversationActivity :
                     if (count >=
                         AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT).toInt()
                     ) {
-                        conversationViewModel.postGoal(GoalKeys.L2_COUPON_UNLOCKED)
+                        conversationViewModel.saveImpression(GoalKeys.L2_COUPON_UNLOCKED.name)
                         conversationBinding.buyCourseBanner.visibility = View.VISIBLE
                         with(conversationBinding) {
                             buyCourseBannerTv.text =
@@ -2351,7 +2351,7 @@ class ConversationActivity :
                                     )
                             buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
                             buyCourseBannerAvailBtn.setOnClickListener {
-                                conversationViewModel.postGoal(GoalKeys.L2_CLAIM_NOW_CLICKED)
+                                conversationViewModel.saveImpression(GoalKeys.L2_CLAIM_NOW_CLICKED.name)
                                 BuyPageActivity.startBuyPageActivity(
                                     this@ConversationActivity,
                                     AppObjectController.getFirebaseRemoteConfig()

@@ -314,10 +314,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                             buyCourseBannerAvailBtn.isVisible = it
                             buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
                             binding.buyCourseBannerAvailBtn.setOnClickListener {
-                                viewModel.postGoal(
-                                    GoalKeys.L2_CLAIM_NOW_CLICKED.name,
-                                    CampaignKeys.L2_LESSON_COMPLETE_COUPON.name
-                                )
+                                viewModel.saveImpression(CampaignKeys.L2_LESSON_COMPLETE_COUPON.name)
                                 BuyPageActivity.startBuyPageActivity(
                                     this@LessonActivity,
                                     testId.toString(),

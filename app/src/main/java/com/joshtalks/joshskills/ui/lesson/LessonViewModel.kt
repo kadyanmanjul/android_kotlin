@@ -5,9 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Message
 import android.util.Log
-import android.view.View
 import androidx.databinding.ObservableField
-import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -116,7 +114,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val isNewStudentActive = ObservableField(false)
     val completedLessonCount: MutableLiveData<Int?> = MutableLiveData(null)
     val mentorCoupon: MutableLiveData<Coupon> = MutableLiveData(null)
-    val isFreeTrialUser : MutableLiveData<Boolean> = MutableLiveData(false)
+    val isFreeTrialUser: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)
@@ -130,8 +128,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     val isExpertBtnEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
-    var lessonCompletePopUpClick : MutableLiveData<Int> = MutableLiveData()
-    var lessonActivityScreen :String = "LESSON_ACTIVITY"
+    var lessonCompletePopUpClick: MutableLiveData<Int> = MutableLiveData()
+    var lessonActivityScreen: String = "LESSON_ACTIVITY"
 
     init {
         getRating()
@@ -1173,17 +1171,26 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getCompletedLessonCount(courseId: String) {
         viewModelScope.launch {
-            completedLessonCount.value = appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+            completedLessonCount.value = getCompletedLessonCountSuspend(courseId)
         }
     }
 
+    suspend fun getCompletedLessonCountSuspend(courseId: String = PrefManager.getStringValue(CURRENT_COURSE_ID)) =
+        appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+
     suspend fun getMentorCoupon(testId: Int): Coupon? {
         try {
-            val response = AppObjectController.commonNetworkService.getValidCoupon(testId, lessonActivityScreen)
+            val response = AppObjectController.commonNetworkService.getValidCoupon(
+                testId = testId,
+                screenName = lessonActivityScreen,
+                lessonsCompleted = getCompletedLessonCountSuspend()
+            )
             if (response.isSuccessful) {
                 response.body()?.let { body ->
                     body.listOfCoupon?.firstOrNull {
-                        it.isMentorSpecificCoupon == true && (it.validDuration!=null && it.validDuration.time.minus(System.currentTimeMillis()) > 0L)
+                        it.isMentorSpecificCoupon == true && (it.validDuration != null && it.validDuration.time.minus(
+                            System.currentTimeMillis()
+                        ) > 0L)
                     }?.let { coupon ->
                         return coupon
                     }

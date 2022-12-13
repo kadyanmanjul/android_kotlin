@@ -113,7 +113,7 @@ class BuyPageViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 isCouponApiCall.set(true)
-                val response = buyPageRepo.getCouponList(testId)
+                val response = buyPageRepo.getCouponList(testId, getCompletedLessonCount())
                 if (response.isSuccessful && response.body() != null) {
                     isCouponApiCall.set(false)
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
@@ -250,6 +250,9 @@ class BuyPageViewModel : BaseViewModel() {
             }
         }
 
+    suspend fun getCompletedLessonCount(courseId: String = PrefManager.getStringValue(CURRENT_COURSE_ID)) =
+        AppObjectController.appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+
     //I am making position means come from Insert coupon flow
     // position = 1 come from insert flow
     val onItemCouponClick: (Coupon, Int, Int, String) -> Unit = { it, type, position, couponType ->
@@ -323,7 +326,7 @@ class BuyPageViewModel : BaseViewModel() {
             manualCoupon.set(code)
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val response = buyPageRepo.getCouponFromCode(code, Integer.parseInt(testId))
+                    val response = buyPageRepo.getCouponFromCode(code, Integer.parseInt(testId), getCompletedLessonCount())
                     val data = response.body()
                     if (response.isSuccessful && data != null && data.couponCode != null) {
                         viewModelScope.launch(Dispatchers.Main) {

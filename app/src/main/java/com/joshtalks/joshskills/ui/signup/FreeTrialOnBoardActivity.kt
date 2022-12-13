@@ -76,6 +76,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
                         signUp(it)
                     else {
                         viewModel.postGoal(GoalKeys.START_NOW_BUTTON_CLICKED)
+                        viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
                         startTrial(it)
                     }
                 }
