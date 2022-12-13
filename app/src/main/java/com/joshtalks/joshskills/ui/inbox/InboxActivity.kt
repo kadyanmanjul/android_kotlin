@@ -23,6 +23,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.add
+
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -52,6 +54,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.ui.errorState.ErrorStateDialog
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
@@ -67,6 +70,7 @@ import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.math.BigDecimal
@@ -132,6 +136,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     )
                 }
             }
+        }
+
+        lifecycleScope.launch {
+            delay(3000)
+            val ft = supportFragmentManager.beginTransaction().add(R.id.viewRoot, ErrorStateDialog(), "").commit()
+//            ErrorStateDialog().show(ft, "")
         }
     }
 
