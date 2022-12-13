@@ -460,9 +460,10 @@ class ConversationActivity :
                 finish()
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             }
+
             if (inboxEntity.isCourseBought) {
                 conversationBinding.ivIconReferral.visible()
-                conversationBinding.btnUpgrade.gone()
+                conversationBinding.btnUpgrade.visibility = View.INVISIBLE
             } else {
                 inboxEntity.isCapsuleCourse
                 if (inboxEntity.courseId == DEFAULT_COURSE_ID)

@@ -271,6 +271,14 @@ class EditProfileFragment : DialogFragment(){
             return
         }
 
+        if (editTxtJoshTalk.text.toString() != EMPTY){
+            if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https") || !(editTxtJoshTalk.text.toString()).startsWith("https")){
+                binding.favouriteJtInputLayout.error = getString(R.string.invalid_url_message)
+                return
+            }
+        }
+
+
         var updateProfilePayload = UpdateProfilePayload()
         updateProfilePayload.apply {
             basicDetails?.apply{
