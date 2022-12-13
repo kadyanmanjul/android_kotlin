@@ -138,17 +138,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
 
-        // TODO: Example snippet to inflate error dialog.
-//        lifecycleScope.launch {
-//            delay(3000)
-//            ErrorStateDialog.showBelowToolbar(
-//                icon = R.drawable.freshchat_no_internet,
-//                errorTitle = "No Internet Connection",
-//                errorSubtitle = "hjhjkahjkjkhjksa kjahjkshhhjkas",
-//                fragmentManager = supportFragmentManager,
-//                container = R.id.viewRoot
-//            )
-//        }
     }
 
     fun watchTimeEvent() {
