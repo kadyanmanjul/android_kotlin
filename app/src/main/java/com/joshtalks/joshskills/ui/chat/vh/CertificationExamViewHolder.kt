@@ -137,9 +137,9 @@ class CertificationExamViewHolder(view: View, userId: String) :
                 }
                 else -> {
                     btnStartExam.text = getAppContext().getString(R.string.start_exam)
-                    tvMarks.visibility = View.VISIBLE
+                    //tvMarks.visibility = View.VISIBLE
                     tvAttemptedDate.visibility = View.VISIBLE
-                    tvMarks.text = getAppContext().getString(R.string.code_num, code)
+                    //tvMarks.text = code
                     tvAttemptedDate.text = getAppContext().getString(R.string.cexam_date,eligibilityDate)
                     //        tvCEamCode.text = getAppContext().getString(R.string.cexam_code, code)
                     //      tvCEamCode.visibility = android.view.View.VISIBLE
