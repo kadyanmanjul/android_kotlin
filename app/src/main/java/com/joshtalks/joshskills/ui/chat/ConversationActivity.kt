@@ -318,19 +318,19 @@ class ConversationActivity :
         PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
         PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
         if (inboxEntity.isCourseBought) {
-//            conversationBinding.freeTrialExpiryLayout.visibility = GONE
+            conversationBinding.freeTrialExpiryLayout.visibility = GONE
             return
         } else if (
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
             if (inboxEntity.expiryDate!!.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-//                conversationBinding.freeTrialExpiryLayout.visibility = GONE
+                conversationBinding.freeTrialExpiryLayout.visibility = GONE
                 conversationBinding.freeTrialContainer.gone()
             } else {
                 conversationBinding.freeTrialContainer.visibility = VISIBLE
                 if (inboxEntity.expiryDate!!.time > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-//                    conversationBinding.freeTrialExpiryLayout.visibility = GONE
+                    conversationBinding.freeTrialExpiryLayout.visibility = GONE
                     conversationBinding.freeTrialContainer.gone()
                 } else {
                     conversationBinding.freeTrialContainer.visibility = VISIBLE
@@ -345,7 +345,7 @@ class ConversationActivity :
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             conversationBinding.freeTrialContainer.visibility = VISIBLE
             conversationBinding.trialTimerView.endFreeTrial()
-//            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
+            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
     }
 
