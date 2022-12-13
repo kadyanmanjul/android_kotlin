@@ -138,11 +138,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
 
-        lifecycleScope.launch {
-            delay(3000)
-            val ft = supportFragmentManager.beginTransaction().add(R.id.viewRoot, ErrorStateDialog(), "").commit()
-//            ErrorStateDialog().show(ft, "")
-        }
+        // TODO: Example snippet to inflate error dialog.
+//        lifecycleScope.launch {
+//            delay(3000)
+//            ErrorStateDialog.showBelowToolbar(
+//                icon = R.drawable.freshchat_no_internet,
+//                errorTitle = "No Internet Connection",
+//                errorSubtitle = "hjhjkahjkjkhjksa kjahjkshhhjkas",
+//                fragmentManager = supportFragmentManager,
+//                container = R.id.viewRoot
+//            )
+//        }
     }
 
     fun watchTimeEvent() {
