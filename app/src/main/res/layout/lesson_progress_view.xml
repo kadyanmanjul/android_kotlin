@@ -5,6 +5,7 @@
     android:layout_width="@dimen/_220sdp"
     android:layout_height="wrap_content"
     android:clipToPadding="false"
+    app:cardElevation="0dp"
     android:background="@color/transparent"
     app:cardCornerRadius="@dimen/_6sdp">
 

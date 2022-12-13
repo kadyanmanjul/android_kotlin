@@ -151,20 +151,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:layout_marginLeft="@dimen/_8sdp"
-                            android:layout_toEndOf="@id/text_message_title"
+                            android:layout_toStartOf="@id/iv_setting"
                             android:clickable="true"
                             android:focusable="true"
                             android:foreground="?android:attr/selectableItemBackground"
                             android:gravity="start"
-                            android:padding="@dimen/_4sdp"
+                            android:paddingHorizontal="@dimen/_2sdp"
+                            android:paddingVertical="@dimen/_4sdp"
                             android:text="@string/edit_profile_data"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                             android:textColor="@color/pure_white"
                             android:visibility="gone"
                             tools:visibility="visible" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
+<!--                        <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_help"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
                             android:tint="@color/pure_white"
                             android:visibility="visible"
                             app:srcCompat="@drawable/ic_help_outline"
-                            tools:visibility="gone" />
+                            tools:visibility="gone" />-->
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_setting"

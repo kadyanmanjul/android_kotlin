@@ -445,7 +445,7 @@ class UserProfileActivity : CoreJoshActivity() {
                 onBackPressed()
             }
         }
-        iv_help.visibility = View.GONE
+//        iv_help.visibility = View.GONE
         with(iv_edit) {
             if (mentorId == Mentor.getInstance().getId()) {
                 visibility = View.VISIBLE
