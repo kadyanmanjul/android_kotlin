@@ -113,7 +113,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_title"
-                        android:layout_width="match_parent"
+                        android:layout_width="@dimen/_180sdp"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
                         android:layout_marginHorizontal="@dimen/_6sdp"
@@ -141,7 +141,7 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
                         android:textColor="@color/text_default"
                         android:textSize="@dimen/_10ssp"
-                        android:visibility="invisible"
+                        android:visibility="gone"
                         android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"/>
 
@@ -608,7 +608,7 @@
                     android:padding="@dimen/_10sdp"
                     android:text="Upgrade Now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/text_default" />
 
             </LinearLayout>
 

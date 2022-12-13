@@ -463,7 +463,7 @@ class ConversationActivity :
 
             if (inboxEntity.isCourseBought) {
                 conversationBinding.ivIconReferral.visible()
-                conversationBinding.btnUpgrade.visibility = View.INVISIBLE
+                conversationBinding.btnUpgrade.gone()
             } else {
                 inboxEntity.isCapsuleCourse
                 if (inboxEntity.courseId == DEFAULT_COURSE_ID)
