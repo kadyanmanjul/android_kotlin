@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
@@ -18,6 +19,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
@@ -32,6 +34,7 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
     lateinit var binding: ActivityPreviousLeaderboardBinding
     private var intervalType: String = EMPTY
     private val compositeDisposable = CompositeDisposable()
+    private val leaderBoardAdapter = LeaderBoardPreviousWinnerAdapter(this)
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
@@ -114,18 +117,25 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
         val userRank = leaderboardResponse.currentMentor?.ranking ?: 0
         var userPosition = 0
 
-        leaderboardResponse.top50MentorList?.forEachIndexed { index, data ->
-            if (index == 0) {
-                binding.recyclerView.addView(
-                    leaderboardResponse.awardUrl?.let {
-                        LeaderBoardPreviousWinnerItemViewHolder(
-                            data, this,
-                            it
-                        )
-                    }
-                )
-            } else binding.recyclerView.addView(LeaderBoardItemViewHolder(data, this))
-        }
+        binding.recyclerView.adapter = leaderboardResponse.top50MentorList?.let { LeaderBoardPreviousWinnerAdapter(this, it) }
+        binding.recyclerView.layoutManager = LinearLayoutManager(this@PreviousLeaderboardActivity)
+
+//        leaderboardResponse.top50MentorList?.forEachIndexed { index, data ->
+//            if (index == 0) {
+//                binding.recyclerView.addView(
+//                    leaderboardResponse.awardUrl?.let {
+//                        LeaderBoardPreviousWinnerItemViewHolder(
+//                            data, this,
+//                            it
+//                        )
+//                    }
+//                )
+//            } else{
+//                binding.recyclerView.layoutManager = LinearLayoutManager(this@PreviousLeaderboardActivity)
+//                binding.recyclerView.adapter = LeaderBoardPreviousWinnerAdapter(this@PreviousLeaderboardActivity, arrayListOf(data))
+//               // binding.recyclerView.addView(LeaderBoardItemViewHolder(data, this))
+//            }
+//        }
 
         if (userRank in 1..47) {
             userPosition = userRank.minus(3)
@@ -135,33 +145,53 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
             userPosition = 53
         }
 
-        if (leaderboardResponse.belowThreeMentorList.isNullOrEmpty().not() &&
-            leaderboardResponse.belowThreeMentorList?.get(0)?.ranking!! > 51
-        )
+        if (leaderboardResponse.belowThreeMentorList.isNullOrEmpty().not() && leaderboardResponse.belowThreeMentorList?.get(0)?.ranking!! > 51)
             binding.recyclerView.addView(EmptyItemViewHolder())
-        leaderboardResponse.belowThreeMentorList?.forEach {
-            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, this))
-        }
-        if (userPosition == 53)
-            leaderboardResponse.currentMentor?.let {
-                binding.recyclerView.addView(
-                    LeaderBoardItemViewHolder(
-                        it,
-                        this,
-                        true
-                    )
-                )
-            }
+//        leaderboardResponse.belowThreeMentorList?.forEach {
+//            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, this))
+//        }
 
-        leaderboardResponse.aboveThreeMentorList?.forEach {
-            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, this))
+        leaderboardResponse.currentMentor?.let {
+            binding.recyclerView.layoutManager = LinearLayoutManager(this)
+            binding.recyclerView.adapter =
+                leaderboardResponse.belowThreeMentorList?.let { it1 -> LeaderBoardPreviousWinnerAdapter(this, it1) }
         }
+
+        if (userPosition == 53){
+            leaderboardResponse.currentMentor?.let {
+                binding.recyclerView.layoutManager = LinearLayoutManager(this)
+                binding.recyclerView.adapter = LeaderBoardPreviousWinnerAdapter(this, listOf(it))
+            }
+        }
+//            leaderboardResponse.currentMentor?.let {
+//                binding.recyclerView.addView(
+//                    LeaderBoardItemViewHolder(
+//                        it,
+//                        this,
+//                        true
+//                    )
+//                )
+//            }
+
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter =
+            leaderboardResponse.aboveThreeMentorList?.let { it1 -> LeaderBoardPreviousWinnerAdapter(this, it1) }
+
+//        leaderboardResponse.aboveThreeMentorList?.forEach {
+//            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, this))
+//        }
 
         binding.recyclerView.addView(EmptyItemViewHolder())
 
-        leaderboardResponse.lastMentorList?.forEach {
-            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, this))
-        }
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter =
+            leaderboardResponse.lastMentorList?.let { it1 -> LeaderBoardPreviousWinnerAdapter(this, it1) }
+
+
+//        leaderboardResponse.lastMentorList?.forEach {
+//            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, this))
+//        }
     }
 
     override fun onResume() {

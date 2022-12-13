@@ -331,14 +331,20 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                 //viewModel.overlayLiveData.postValue(it)
             }
         }
-        binding.recyclerView.addView(
-            LeaderBoardItemViewHolder(
-                LeaderboardMentor(
-                    null, null, null, null, null, 0, 0
-                ),
-                requireContext(), isHeader = true
-            )
-        )
+//        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+//        binding.recyclerView.adapter = LeaderBoardPreviousWinnerAdapter(
+//            requireContext(),
+//            arrayListOf(LeaderboardMentor(null, null, null, null, null, 0, 0)),
+//            isHeader = true
+//        )
+//        binding.recyclerView.addView(
+//            LeaderBoardItemViewHolder(
+//                LeaderboardMentor(
+//                    null, null, null, null, null, 0, 0
+//                ),
+//                requireContext(), isHeader = true
+//            )
+//        )
 
         if (type == "TODAY") {
             leaderboardResponse1.top_50_mentor_list?.let { list ->
