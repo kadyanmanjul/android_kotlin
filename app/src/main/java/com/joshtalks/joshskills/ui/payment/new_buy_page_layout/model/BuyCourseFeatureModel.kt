@@ -28,7 +28,8 @@ data class BuyCourseFeatureModel(
     @SerializedName("banner_text") val timerBannerText: String? = null,
     @SerializedName("ab_test_video_url") val abTestVideoUrl: String? = null,
     @SerializedName("is_video") val isVideo: Boolean? = null,
-    @SerializedName("is_call_us_active") var isCallUsActive:Int?= null
+    @SerializedName("is_call_us_active") var isCallUsActive:Int?= null,
+    @SerializedName("payment_button_text") var paymentButtonText: Int = 0
 )
 
 data class CouponListModel(

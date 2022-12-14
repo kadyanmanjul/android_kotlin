@@ -114,6 +114,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
     private var flowFrom: String = EMPTY
+    var paymentButtonValue = 0
 
     private var countdownTimerBack: CountdownTimerBack? = null
     private var openCourseListener: OnOpenCourseListener? = null
@@ -224,7 +225,8 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 }
                 BUY_COURSE_LAYOUT_DATA -> {
                     try {
-                        paymentButton()
+                        paymentButtonValue = (it.obj as BuyCourseFeatureModel).paymentButtonText
+                        paymentButton(it.obj as BuyCourseFeatureModel)
                         dynamicCardCreation(it.obj as BuyCourseFeatureModel)
                         clickRatingOpen?.setOnClickListener {
                             openRatingAndReviewScreen()
@@ -384,6 +386,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     private fun setCoursePrices(list: CourseDetailsList, position: Int) {
         Log.e("sagar", "setCoursePrices: ${list.discountedPrice}")
         priceForPaymentProceed = list
+        proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text =
+            if (paymentButtonValue == 0)
+                "Pay ${priceForPaymentProceed?.discountedPrice ?: "Pay ₹499"}"
+            else "Proceed to Payment"
     }
 
     private fun openCouponList() {
@@ -569,7 +575,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         ratingInText?.text = buyCourseFeatureModel.rating.toString() + " out of 5"
     }
 
-    private fun paymentButton() {
+    private fun paymentButton(buyCourseFeatureModel: BuyCourseFeatureModel) {
         val paymentInflate: LayoutInflater =
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         proceedButtonCard = paymentInflate.inflate(R.layout.payment_button_card, null, true)

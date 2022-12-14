@@ -332,17 +332,20 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     } else {
                         PrefManager.getStringValue(PAID_COURSE_TEST_ID)
                     }
-                    viewModel.saveBranchPaymentLog(it.razorpayOrderId,
-                        BigDecimal(it?.amount?:0.0),
-                        testId = Integer.parseInt(freeTrialTestId),
-                        courseName = "Spoken English Course")
-                    MarketingAnalytics.coursePurchased(
-                        BigDecimal(it?.amount?:0.0),
-                        true,
-                        testId = freeTrialTestId,
-                        courseName = "Spoken English Course",
-                        juspayPaymentId = it.razorpayOrderId
-                    )
+                    if (!PrefManager.getBoolValue(IS_PURCHASE_BRANCH_EVENT_PUSH)){
+                        PrefManager.put(IS_PURCHASE_BRANCH_EVENT_PUSH, true)
+                        viewModel.saveBranchPaymentLog(it.razorpayOrderId,
+                            BigDecimal(it?.amount?:0.0),
+                            testId = Integer.parseInt(freeTrialTestId),
+                            courseName = "Spoken English Course")
+                        MarketingAnalytics.coursePurchased(
+                            BigDecimal(it?.amount?:0.0),
+                            true,
+                            testId = freeTrialTestId,
+                            courseName = "Spoken English Course",
+                            juspayPaymentId = it.razorpayOrderId
+                        )
+                    }
                     dismissBbTip()
                     PrefManager.put(IS_APP_RESTARTED, false)
                     initPaymentStatusView(
