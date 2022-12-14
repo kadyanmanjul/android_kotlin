@@ -122,21 +122,21 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
 
     private fun initToolbar() {
         with(iv_back) {
-            visibility = View.VISIBLE
+            visibility = VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 onBackPressed()
             }
         }
         with(iv_help) {
-            visibility = View.VISIBLE
+            visibility = VISIBLE
             setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                 openHelpActivity()
             }
         }
         with(iv_earn) {
-            visibility = View.VISIBLE
+            visibility = VISIBLE
             setImageDrawable(
                 ContextCompat.getDrawable(
                     this@LeaderBoardViewPagerActivity,
@@ -199,7 +199,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    binding.tabOverlay.visibility = View.INVISIBLE
+                    binding.tabOverlay.visibility = INVISIBLE
                     try {
                         toolTipJob?.cancel()
                     } catch (e: Exception) {
@@ -529,7 +529,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
 
                             4 -> {
                                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, true)) {
-                                    binding.tabOverlay.visibility = View.VISIBLE
+                                    binding.tabOverlay.visibility = VISIBLE
                                     cardLayout.visibility = GONE
                                     swipeAnimationView.visibility = GONE
                                     showToolTip(batchTooltipView, tooltipTextList[position])
@@ -610,19 +610,19 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
             alphaOverlayView.x = overlayPosition[0].toFloat()
             alphaOverlayView.y = overlayPosition[1].toFloat() - STATUS_BAR_HEIGHT
             alphaOverlayView.requestLayout()
-            alphaOverlayView.visibility = View.VISIBLE
-            alphaView.visibility = View.VISIBLE
-            cardLayout.visibility = View.VISIBLE
-            topLayout.visibility = View.VISIBLE
+            alphaOverlayView.visibility = VISIBLE
+            alphaView.visibility = VISIBLE
+            cardLayout.visibility = VISIBLE
+            topLayout.visibility = VISIBLE
             cardLayout.setOnClickListener {
-                binding.tabOverlay.visibility = View.INVISIBLE
+                binding.tabOverlay.visibility = INVISIBLE
                 when (position) {
                     0 -> RxBus2.publish(OpenPreviousLeaderboard("TODAY"))
                     1 -> RxBus2.publish(OpenPreviousLeaderboard("WEEK"))
                     2 -> RxBus2.publish(OpenPreviousLeaderboard("MONTH"))
                 }
             }
-            binding.tabOverlay.visibility = View.VISIBLE
+            binding.tabOverlay.visibility = VISIBLE
             animateAlpha(
                 alphaView,
                 alphaOverlayView,
@@ -705,16 +705,16 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
             }
 
             labelTapToDismiss.setOnClickListener {
-                binding.tabOverlay.visibility = View.INVISIBLE
+                binding.tabOverlay.visibility = INVISIBLE
                 removeListener()
             }
             topLayout.setOnClickListener {
-                binding.tabOverlay.visibility = View.INVISIBLE
+                binding.tabOverlay.visibility = INVISIBLE
                 removeListener()
             }
 
             cardLayout.setOnClickListener {
-                binding.tabOverlay.visibility = View.INVISIBLE
+                binding.tabOverlay.visibility = INVISIBLE
                 when (position) {
                     0 -> RxBus2.publish(OpenPreviousLeaderboard("TODAY"))
                     1 -> RxBus2.publish(OpenPreviousLeaderboard("WEEK"))
@@ -724,13 +724,13 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
             }
 
             binding.tabOverlay.setOnClickListener {
-                binding.tabOverlay.visibility = View.INVISIBLE
+                binding.tabOverlay.visibility = INVISIBLE
                 removeListener()
             }
         }
         delay(500)
         setDismissListener()
-        labelTapToDismiss.visibility = View.VISIBLE
+        labelTapToDismiss.visibility = VISIBLE
         labelTapToDismiss.startAnimation(
             AnimationUtils.loadAnimation(this, R.anim.slide_up_dialog)
         )
@@ -743,7 +743,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         tooltipView: JoshTooltip
     ) {
         withContext(Dispatchers.Main) {
-            labelTapToDismiss.visibility = View.INVISIBLE
+            labelTapToDismiss.visibility = INVISIBLE
             fun setDismissListener() {
                 fun removeListener() {
                     labelTapToDismiss.setOnClickListener(null)
@@ -754,27 +754,27 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                 }
 
                 labelTapToDismiss.setOnClickListener {
-                    binding.tabOverlay.visibility = View.INVISIBLE
+                    binding.tabOverlay.visibility = INVISIBLE
                     removeListener()
                 }
                 arrowView.setOnClickListener {
-                    binding.itemTabOverlay.visibility = View.INVISIBLE
+                    binding.itemTabOverlay.visibility = INVISIBLE
                     removeListener()
                 }
 
                 tooltipView.setOnClickListener {
-                    binding.itemTabOverlay.visibility = View.INVISIBLE
+                    binding.itemTabOverlay.visibility = INVISIBLE
                     removeListener()
                 }
 
                 binding.itemTabOverlay.setOnClickListener {
-                    binding.itemTabOverlay.visibility = View.INVISIBLE
+                    binding.itemTabOverlay.visibility = INVISIBLE
                     removeListener()
                 }
             }
 //            delay(6500)
             setDismissListener()
-            labelTapToDismiss.visibility = View.VISIBLE
+            labelTapToDismiss.visibility = VISIBLE
             labelTapToDismiss.startAnimation(
                 AnimationUtils.loadAnimation(
                     this@LeaderBoardViewPagerActivity,
@@ -801,15 +801,15 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         val alphaOverlayView = binding.tabOverlay.findViewById<FrameLayout>(R.id.winner_card_overlay_container)
         val batchTooltipView = binding.tabOverlay.findViewById<JoshTooltip>(R.id.batch_tooltip)
 
-        tooltipView.visibility = View.INVISIBLE
-        topLayout.visibility = View.INVISIBLE
-        cardLayout.visibility = View.INVISIBLE
-        tabToDismissView.visibility = View.INVISIBLE
+        tooltipView.visibility = INVISIBLE
+        topLayout.visibility = INVISIBLE
+        cardLayout.visibility = INVISIBLE
+        tabToDismissView.visibility = INVISIBLE
         alphaView.visibility = INVISIBLE
         swipeAnimationView.visibility = GONE
         batchTooltipView.visibility = INVISIBLE
         alphaOverlayView.visibility = INVISIBLE
-        binding.tabOverlay.visibility = View.INVISIBLE
+        binding.tabOverlay.visibility = INVISIBLE
     }
 
     private fun hideItemTabOverlay() {
@@ -818,11 +818,11 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         val arrowView = binding.itemTabOverlay.findViewById<ImageView>(R.id.arrow_animation)
         val tabToDismissView = binding.itemTabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
 
-        tooltipView.visibility = View.INVISIBLE
-        tabToDismissView.visibility = View.INVISIBLE
-        itemImageView.visibility = View.INVISIBLE
-        arrowView.visibility = View.INVISIBLE
-        binding.itemTabOverlay.visibility = View.INVISIBLE
+        tooltipView.visibility = INVISIBLE
+        tabToDismissView.visibility = INVISIBLE
+        itemImageView.visibility = INVISIBLE
+        arrowView.visibility = INVISIBLE
+        binding.itemTabOverlay.visibility = INVISIBLE
         currentAimation = null
     }
 
@@ -858,7 +858,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
             award.setImage(it)
         }
         if (response.isOnline) {
-            onlineStatusLayout.visibility = View.VISIBLE
+            onlineStatusLayout.visibility = VISIBLE
         } else {
             onlineStatusLayout.visibility = View.GONE
         }
@@ -917,7 +917,9 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         arrowView.visibility = VISIBLE
         itemImageView.visibility = VISIBLE
         tooltipView.setTooltipText(getString(R.string.tooltip_open_profile))
-
+        binding.itemTabOverlay.setOnClickListener {
+            hideItemTabOverlay()
+        }
         slideInAnimation(tooltipView)
         CoroutineScope(Dispatchers.IO).launch {
             showTapToDismiss(tapToDismissView, arrowView, tooltipView)
