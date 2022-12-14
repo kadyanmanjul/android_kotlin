@@ -381,7 +381,7 @@
     <string name="mute">Mute</string>
 
     <string name="occupation_field">Occupation</string>
-    <string name="occupation_filed_hint_text">e.g. Manager at Flipkart</string>
+    <string name="occupation_filed_hint_text">e.g.- Manager at Flipkart</string>
     <string name="aspiration_filed">Aspiration</string>
     <string name="aspiration_filed_hint_text">e.g. IAS Officer </string>
     <string name="tooltip_conversation">आपके सहपाठी कौन है आप यहाँ से देख सकते है</string>
