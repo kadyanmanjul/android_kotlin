@@ -339,7 +339,7 @@
                 android:layout_below="@+id/imgGroupChatBtn"
                 android:layout_alignParentEnd="true"
                 android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_16sdp"
                 android:background="@drawable/bg_quick_view_number"
                 android:elevation="@dimen/_15sdp"
                 android:gravity="center"
