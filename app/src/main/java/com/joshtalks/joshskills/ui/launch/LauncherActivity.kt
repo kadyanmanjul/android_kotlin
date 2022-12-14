@@ -130,7 +130,10 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
         backgroundColorAnimator.duration = 300
         backgroundColorAnimator.start()
         binding.retry.setOnClickListener {
-            if (Utils.isInternetAvailable().not()) {
+            if (Utils.isInternetAvailable()) {
+                viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
+                binding.retry.visibility = View.INVISIBLE
+            } else {
                 Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
                     .setAction(getString(R.string.settings)) {
                         startActivity(
@@ -142,8 +145,6 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                             )
                         )
                     }.show()
-            } else {
-                binding.retry.visibility = View.INVISIBLE
             }
         }
     }
