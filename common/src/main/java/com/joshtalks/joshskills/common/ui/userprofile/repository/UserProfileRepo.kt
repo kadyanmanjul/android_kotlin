@@ -12,9 +12,6 @@ class UserProfileRepo {
     private val p2pNetwork by lazy { AppObjectController.p2pNetworkService }
 
 
-    suspend fun getAnimatedLeaderBoardData(mentorId: String) =
-        commService.getAnimatedLeaderBoardData(mentorId)
-
     suspend fun updateUserProfile(requestMap: MutableMap<String, String?>) =
         signupNetwork.updateUserProfile(Mentor.getInstance().getUserId(), requestMap)
 

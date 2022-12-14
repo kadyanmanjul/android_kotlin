@@ -1,25 +1,15 @@
 package com.joshtalks.joshskills.common.ui.cohort_based_course.views
 
-import android.icu.number.NumberFormatter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.BaseActivity
-import com.joshtalks.joshskills.common.constants.CLOSE_ACTIVITY
-import com.joshtalks.joshskills.common.constants.OPEN_PROMISE_FRAGMENT
-import com.joshtalks.joshskills.common.constants.OPEN_SCHEDULE_FRAGMENT
-import com.joshtalks.joshskills.common.constants.START_CONVERSATION_ACTIVITY
-import com.joshtalks.joshskills.common.core.EMPTY
+import com.joshtalks.joshskills.common.core.HAS_COMMITMENT_FORM_SUBMITTED
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.databinding.ActivityCommitmentFormBinding
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.common.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
-import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_COMMITMENT_FORM_SUBMITTED
-import com.joshtalks.joshskills.common.util.ReminderUtil
-import kotlin.math.nextUp
 
 
 class CommitmentFormActivity : com.joshtalks.joshskills.common.base.BaseActivity() {

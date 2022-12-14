@@ -114,25 +114,6 @@ interface CommonNetworkService {
     @POST("$DIR/mentor/delete_reminders/")
     suspend fun deleteReminders(@Body deleteReminderRequest: DeleteReminderRequest): Response<BaseResponse<*>>
 
-    @GET("$DIR/leaderboard/get_leaderboard/")
-    suspend fun getLeaderBoardData(
-        @Query("mentor_id") mentorId: String,
-        @Query("interval_type") interval: String,
-        @Query("course_id") course_id: String?
-    ): Response<LeaderboardResponse>
-
-    // not using this
-    @GET("$DIR/leaderboard/get_leaderboard/")
-    suspend fun getLeaderBoardDataViaPage(
-        @Query("mentor_id") mentorId: String,
-        @Query("interval_type") interval: String,
-        @Query("above_list_page") page: Int
-    ): Response<LeaderboardResponse>
-
-    @GET("$DIR/leaderboard/get_animated_leaderboard/")
-    suspend fun getAnimatedLeaderBoardData(
-        @Query("mentor_id") mentorId: String
-    ): Response<AnimatedLeaderBoardResponse>
 
     @GET("$DIR/fpp/profile_favourite/{user_profile_mentor_id}/")
     suspend fun getFppStatusInProfile(
@@ -276,20 +257,7 @@ interface CommonNetworkService {
     @POST("$DIR/mentor/gaid/")
     suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): GaIDMentorModel
 
-    @GET("$DIR/leaderboard/get_filtered_leaderboard/")
-    suspend fun searchLeaderboardMember(
-        @Query("key") word: String,
-        @Query("page") page: Int,
-        @Query("interval_type") intervalType: LeaderboardType,
-        @Query("course_id") courseId: String
-    ): Response<List<LeaderboardMentor>>
 
-    @GET("$DIR/leaderboard/get_previous_leaderboard/")
-    suspend fun getPreviousLeaderboardData(
-        @Query("mentor_id") mentorId: String,
-        @Query("interval_type") intervalType: String,
-        @Query("course_id") courseId: String
-    ): Response<PreviousLeaderboardResponse>
 
     @POST("$DIR/course/free_trial_register_course/")
     suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, String>): Response<Void>

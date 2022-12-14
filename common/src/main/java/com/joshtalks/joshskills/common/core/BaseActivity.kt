@@ -41,7 +41,6 @@ import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.voip.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.common.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.common.ui.gif.GIFActivity
-import com.joshtalks.joshskills.common.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.common.core.custom_ui.PointSnackbar
@@ -71,7 +70,6 @@ import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.termsandconditions.WebViewFragment
-import com.joshtalks.joshskills.common.ui.userprofile.fragments.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.common.ui.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
 import com.patloew.colocation.CoLocation
@@ -207,13 +205,13 @@ abstract class BaseActivity :
                 }
         )
     }
-
+    //TODO: fix this
     fun openLeaderBoard(conversationId: String, courseId: String?) {
-        val i = Intent(this, LeaderBoardViewPagerActivity::class.java).apply {
+        /*val i = Intent(this, com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity::class.java).apply {
             putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
             putExtra(COURSE_ID, courseId)
         }
-        startActivity(i)
+        startActivity(i)*/
     }
 
     fun openPointHistory(mentorId: String? = null, conversationId: String? = null) {
@@ -648,20 +646,6 @@ abstract class BaseActivity :
         WebViewFragment.showDialog(supportFragmentManager, webUrl)
     }
 
-    fun showLeaderboardAchievement(
-        outrankData: OutrankedDataResponse,
-        lessonInterval: Int,
-        chatId: String,
-        lessonNo: Int
-    ) {
-        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            ShowAnimatedLeaderBoardFragment.showDialog(
-                supportFragmentManager,
-                outrankData, lessonInterval, chatId, lessonNo
-            )
-        }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

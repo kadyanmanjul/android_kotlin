@@ -43,10 +43,6 @@ import com.google.android.material.textview.MaterialTextView
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.EventLiveData
-import com.joshtalks.joshskills.common.constants.CLOSE_FULL_READING_FRAGMENT
-import com.joshtalks.joshskills.common.constants.OPEN_READING_SHARING_FULLSCREEN
-import com.joshtalks.joshskills.common.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.ApiCallStatus.*
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AVAIL_COUPON_BANNER_TEXT
@@ -66,17 +62,13 @@ import com.joshtalks.joshskills.common.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.common.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.common.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.common.databinding.LessonActivityBinding
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.common.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.common.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.repository.server.course_detail.VideoModel
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
-import com.joshtalks.joshskills.common.ui.leaderboard.ItemOverlay
-import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.common.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.common.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.common.ui.lesson.reading.ReadingFragmentWithoutFeedback
@@ -84,15 +76,11 @@ import com.joshtalks.joshskills.common.ui.lesson.reading.ReadingFullScreenFragme
 import com.joshtalks.joshskills.common.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.common.ui.lesson.vocabulary.VocabularyFragment
-import com.joshtalks.joshskills.common.ui.online_test.GrammarAnimation
-import com.joshtalks.joshskills.common.ui.online_test.GrammarOnlineTestFragment
-import com.joshtalks.joshskills.common.ui.online_test.util.A2C1Impressions
-import com.joshtalks.joshskills.common.ui.online_test.util.AnimateAtsOptionViewEvent
-import com.joshtalks.joshskills.common.ui.online_test.vh.AtsOptionView
+import com.joshtalks.joshskills.common.ui.online_test.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
-import com.joshtalks.joshskills.common.ui.tooltip.JoshTooltip
+import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.common.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.common.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
@@ -1616,7 +1604,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 
-    override fun showGrammarAnimation(overlayItem: ItemOverlay) {
+    override fun showGrammarAnimation(overlayItem: TooltipUtils.ItemOverlay) {
         binding.itemOverlay.visibility = View.INVISIBLE
         binding.itemOverlay.setOnClickListener(null)
         val OFFSET = getStatusBarHeight()

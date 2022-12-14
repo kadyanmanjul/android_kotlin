@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -27,8 +26,6 @@ import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
-import com.joshtalks.joshskills.common.ui.leaderboard.ItemOverlay
-import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.common.ui.lesson.*
 import com.joshtalks.joshskills.common.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.common.ui.online_test.util.TestCompletedListener
@@ -39,25 +36,29 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.*
 
+const val HAS_SEEN_GRAMMAR_ANIMATION = "grammar_pref_has_seen_grammar_button_animation"
+
 class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
     private var lessonActivityListener: LessonActivityListener? = null
-    private val viewModel: LessonViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
-    }
 
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity())[LessonViewModel::class.java]
+    }
     private val viewModelOnlineTest: OnlineTestViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(OnlineTestViewModel::class.java)
+        ViewModelProvider(requireActivity())[OnlineTestViewModel::class.java]
     }
     private var lessonNumber: Int = -1
     private var lessonId: Int = -1
     private var scoreText: Int = -1
     private var pointsList: String? = null
     private var hasCompletedTest: Boolean = false
-    private var timerPopText = EMPTY
 
+    private var timerPopText = EMPTY
     private var currentTooltipIndex = 0
+
     private var grammarAnimationListener: GrammarAnimation? = null
+
 
     private val lessonTooltipList by lazy {
         listOf(
@@ -528,5 +529,5 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
 }
 
 interface GrammarAnimation {
-    fun showGrammarAnimation(overlayItem: ItemOverlay)
+    fun showGrammarAnimation(overlayItem: TooltipUtils.ItemOverlay)
 }

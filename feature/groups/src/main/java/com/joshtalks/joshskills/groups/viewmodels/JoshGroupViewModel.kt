@@ -174,7 +174,7 @@ class JoshGroupViewModel : com.joshtalks.joshskills.common.base.BaseViewModel() 
 
     fun onTooltipClick(view: View) {
         try {
-            PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, true)
+            //PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, true)
             adapter.peek(0)?.let { onItemClick.invoke(it) }
         }catch (ex:Exception){
             ex.printStackTrace()

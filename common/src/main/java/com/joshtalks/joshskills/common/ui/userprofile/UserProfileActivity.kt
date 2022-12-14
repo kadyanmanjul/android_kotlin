@@ -42,10 +42,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.EventLiveData
-import com.joshtalks.joshskills.common.constants.COURSE_LIST_DATA
-import com.joshtalks.joshskills.common.constants.MY_GROUP_LIST_DATA
-import com.joshtalks.joshskills.common.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.common.core.abTest.VariantKeys
@@ -54,16 +50,11 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.databinding.ActivityUserProfileBinding
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.track.AGORA_UID
-import com.joshtalks.joshskills.common.track.CHANNEL_ID
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.fpp.constants.*
-import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.common.ui.senior_student.SeniorStudentActivity

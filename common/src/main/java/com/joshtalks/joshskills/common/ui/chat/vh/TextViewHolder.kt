@@ -9,13 +9,12 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.EMPTY
+import com.joshtalks.joshskills.common.core.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.common.repository.local.eventbus.TextTooltipEvent
-import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 
 class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
     val rootSubView: FrameLayout = view.findViewById(R.id.root_sub_view)

@@ -40,7 +40,6 @@ import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.common.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
@@ -370,10 +369,11 @@ class NotificationUtils(val context: Context) {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
             }
+            //TODO: LeaderBoardViewPagerActivity shifted to leaderboard module..
             NotificationAction.AWARD_DECLARE -> {
-                Intent(context, LeaderBoardViewPagerActivity::class.java).apply {
+                /*Intent(context, com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                }
+                }*/
                 return null
             }
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN -> {

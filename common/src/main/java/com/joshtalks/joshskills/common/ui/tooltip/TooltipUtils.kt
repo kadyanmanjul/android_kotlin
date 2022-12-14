@@ -4,10 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
 import android.view.View
-import com.joshtalks.joshskills.common.ui.leaderboard.ItemOverlay
 
 private const val TAG = "TooltipUtils"
 class TooltipUtils {
+
+    data class ItemOverlay(val viewBitmap: Bitmap, val x: Int, val y: Int)
 
     companion object {
         fun getOverlayItemFromView(view: View): ItemOverlay? {

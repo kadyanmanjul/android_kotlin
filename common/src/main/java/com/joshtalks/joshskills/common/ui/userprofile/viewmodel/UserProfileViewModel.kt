@@ -26,7 +26,6 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.SaveProfileClic
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.common.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.common.ui.userprofile.adapters.EnrolledCoursesListAdapter
 import com.joshtalks.joshskills.common.ui.userprofile.adapters.MyGroupsListAdapter
 import com.joshtalks.joshskills.common.ui.userprofile.models.*
@@ -52,7 +51,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val userProfileUrl: MutableLiveData<String?> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val animatedLeaderBoardData: MutableLiveData<AnimatedLeaderBoardResponse> = MutableLiveData()
     val previousProfilePics: MutableLiveData<PreviousProfilePictures> = MutableLiveData()
     val fppList: MutableLiveData<List<FppDetails>> = MutableLiveData()
     val fppRequest: MutableLiveData<FppRequest> = MutableLiveData()
@@ -103,19 +101,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun getMentorData(mentorId: String) {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = userProfileRepo.getAnimatedLeaderBoardData(mentorId)
-                if (response.isSuccessful && response.body() != null) {
-                    animatedLeaderBoardData.postValue(response.body())
-                }
-
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-            }
-        }
-    }
 
     fun patchAwardDetails(awardIds: ArrayList<Int>) {
         jobs += viewModelScope.launch(Dispatchers.IO) {

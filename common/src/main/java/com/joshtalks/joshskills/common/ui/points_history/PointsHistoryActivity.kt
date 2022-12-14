@@ -23,14 +23,10 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.databinding.ActivityPointsHistoryBinding
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
-import com.joshtalks.joshskills.common.ui.leaderboard.ItemOverlay
-import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_POINTS_HISTORY_ANIMATION
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.common.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.common.ui.points_history.viewmodel.PointsViewModel
-import com.joshtalks.joshskills.common.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.*
@@ -38,10 +34,12 @@ import java.text.DecimalFormat
 
 const val MENTOR_ID = "mentor_id"
 private const val TAG = "PointsHistoryActivity"
+const val HAS_SEEN_POINTS_HISTORY_ANIMATION = "points_pref_has_seen_point_history_animation"
+
 
 class PointsHistoryActivity : CoreJoshActivity() {
     private val viewModel: PointsViewModel by lazy {
-        ViewModelProvider(this).get(PointsViewModel::class.java)
+        ViewModelProvider(this)[PointsViewModel::class.java]
     }
     private lateinit var binding: ActivityPointsHistoryBinding
     private var mentorId: String? = null
@@ -86,42 +84,42 @@ class PointsHistoryActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         viewModel.pointsHistoryLiveData.observe(
-            this, {
-                binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalPoints)
-                binding.userScoreText.text = it.totalPointsText
+            this
+        ) {
+            binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalPoints)
+            binding.userScoreText.text = it.totalPointsText
 
-                if (it.isCourseBought.not() &&
-                    it.expiryDate != null &&
-                    it.expiryDate.time < System.currentTimeMillis()
-                ) {
-                    binding.freeTrialExpiryLayout.visibility = View.VISIBLE
-                } else {
-                    binding.freeTrialExpiryLayout.visibility = View.GONE
-                }
+            if (it.isCourseBought.not() &&
+                it.expiryDate != null &&
+                it.expiryDate.time < System.currentTimeMillis()
+            ) {
+                binding.freeTrialExpiryLayout.visibility = View.VISIBLE
+            } else {
+                binding.freeTrialExpiryLayout.visibility = View.GONE
+            }
 
-                it.pointsHistoryDateList?.forEachIndexed { index, list ->
-                    if (list.pointsSum != null) {
+            it.pointsHistoryDateList?.forEachIndexed { index, list ->
+                if (list.pointsSum != null) {
+                    binding.recyclerView.addView(
+                        PointsSummaryTitleViewHolder(
+                            list.date!!,
+                            list.pointsSum,
+                            list.awardIconList,
+                            index
+                        )
+                    )
+                    list.pointsHistoryList?.forEachIndexed { index, pointsHistory ->
                         binding.recyclerView.addView(
-                            PointsSummaryTitleViewHolder(
-                                list.date!!,
-                                list.pointsSum,
-                                list.awardIconList,
-                                index
+                            PointsSummaryDescViewHolder(
+                                pointsHistory,
+                                index,
+                                list.pointsHistoryList.size
                             )
                         )
-                        list.pointsHistoryList?.forEachIndexed { index, pointsHistory ->
-                            binding.recyclerView.addView(
-                                PointsSummaryDescViewHolder(
-                                    pointsHistory,
-                                    index,
-                                    list.pointsHistoryList.size
-                                )
-                            )
-                        }
                     }
                 }
             }
-        )
+        }
 
         viewModel.apiCallStatusLiveData.observe(
             this,
@@ -174,7 +172,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
     }
 
     fun setOverlayView(
-        overlayItem: ItemOverlay,
+        overlayItem: TooltipUtils.ItemOverlay,
         overlayImageView: ImageView,
         arrowPoint: Point,
         arrowWidth: Int
@@ -308,7 +306,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
 
     fun getStatusBarHeight(): Int {
         val rectangle = Rect()
-        window.getDecorView().getWindowVisibleDisplayFrame(rectangle)
+        window.decorView.getWindowVisibleDisplayFrame(rectangle)
         val statusBarHeight = rectangle.top
         val contentViewTop: Int = window.findViewById<View>(Window.ID_ANDROID_CONTENT).getTop()
         val titleBarHeight = contentViewTop - statusBarHeight

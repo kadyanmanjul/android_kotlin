@@ -80,8 +80,6 @@ import com.joshtalks.joshskills.common.ui.certification_exam.CertificationBaseAc
 import com.joshtalks.joshskills.common.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.common.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.common.ui.leaderboard.ItemOverlay
-import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
@@ -90,6 +88,7 @@ import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.SPECIAL_ID
+import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
 import com.joshtalks.joshskills.common.ui.userprofile.models.UserProfileResponse
@@ -135,6 +134,7 @@ const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
 const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
 const val TOOLTIP_CONVERSAITON = "TOOLTIP_CONVERSAITON_"
 const val FREE_TRIAL_CALL_TOPIC_ID = "10"
+const val HAS_SEEN_UNLOCK_CLASS_ANIMATION = "conversion_pref_has_seen_unlock_class_animation"
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -2562,9 +2562,9 @@ class ConversationActivity : BaseConversationActivity(),
     }
 
     fun setOverlayView(
-        overlayItem: ItemOverlay,
+        overlayItem: TooltipUtils.ItemOverlay,
         overlayImageView: ImageView,
-        overlayButtonItem: ItemOverlay,
+        overlayButtonItem: TooltipUtils.ItemOverlay,
         overlayButtonImageView: ImageView,
     ) {
         val STATUS_BAR_HEIGHT = getStatusBarHeight()
