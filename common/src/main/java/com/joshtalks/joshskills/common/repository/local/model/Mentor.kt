@@ -22,10 +22,8 @@ import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.common.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.common.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.common.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
@@ -84,7 +82,7 @@ class Mentor {
                     .setUserId(loginResponse.userId)
                     .update()
                 AppAnalytics.updateUser()
-                NotificationUtils(joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
+                ClientNotificationUtils(joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 UserExperior.setUserIdentifier(getInstance().getId())
             }
         }
@@ -183,23 +181,23 @@ class Mentor {
                 notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
             }
 
-            val dismissIntent =
-                Intent(joshApplication, DismissNotifEventReceiver::class.java).apply {
-                    putExtra(NOTIFICATION_ID, notificationId)
-                    putExtra(HAS_NOTIFICATION, true)
-                }
-            val dismissPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(
-                    joshApplication,
-                    uniqueInt,
-                    dismissIntent,
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        PendingIntent.FLAG_IMMUTABLE
-                    else
-                        0
-                )
-
-            notificationBuilder.setDeleteIntent(dismissPendingIntent)
+            //TODO : Uncomment code (VERY IMP) -- Sukesh (Refactor)
+//            val dismissIntent = Intent(joshApplication, DismissNotifEventReceiver::class.java).apply {
+//                putExtra(NOTIFICATION_ID, notificationId)
+//                putExtra(HAS_NOTIFICATION, true)
+//            }
+//            val dismissPendingIntent: PendingIntent =
+//                PendingIntent.getBroadcast(
+//                    joshApplication,
+//                    uniqueInt,
+//                    dismissIntent,
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//                        PendingIntent.FLAG_IMMUTABLE
+//                    else
+//                        0
+//                )
+//
+//            notificationBuilder.setDeleteIntent(dismissPendingIntent)
 
             val notificationManager =
                 joshApplication.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

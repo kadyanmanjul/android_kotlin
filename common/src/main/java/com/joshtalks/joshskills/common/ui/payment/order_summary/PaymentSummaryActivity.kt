@@ -51,7 +51,7 @@ import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.common.core.abTest.GoalKeys
 import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.analytics.*
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.common.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
@@ -1006,7 +1006,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
-        NotificationUtils(applicationContext).removeAllScheduledNotification()
+        ClientNotificationUtils(applicationContext).removeAllScheduledNotification()
         //viewModel.updateSubscriptionStatus()
         if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
             PrefManager.put(

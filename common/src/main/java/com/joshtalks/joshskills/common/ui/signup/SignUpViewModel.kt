@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
@@ -250,7 +250,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             fetchMentor(isNewUser = loginResponse.isUserExist.not())
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
             ABTestRepository().updateAllCampaigns()
-            NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
+            ClientNotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
             PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
             val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT, false)
             val courseExpiryTime =
@@ -607,8 +607,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 )
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
-                NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
-                NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+                ClientNotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
+                ClientNotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

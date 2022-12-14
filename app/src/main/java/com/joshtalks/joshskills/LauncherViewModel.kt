@@ -21,9 +21,8 @@ import com.joshtalks.joshskills.common.core.analytics.LogException
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.common.repository.local.model.GaIDMentorModel
@@ -62,11 +61,12 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         notificationChannel: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            NotificationAnalytics().addAnalytics(
-                notificationId = notificationID,
-                mEvent = NotificationAnalytics.Action.CLICKED,
-                channel = notificationChannel
-            )
+            //TODO: (IMP) uncomment code fix -- Sukesh
+//            NotificationAnalytics().addAnalytics(
+//                notificationId = notificationID,
+//                mEvent = NotificationAnalytics.Action.CLICKED,
+//                channel = notificationChannel
+//            )
         }
     }
 
@@ -302,7 +302,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             try {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications()
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
-                NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.APP_OPEN)
+                ClientNotificationUtils(AppObjectController.joshApplication).updateNotificationDb(NotificationCategory.APP_OPEN)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

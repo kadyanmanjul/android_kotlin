@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.CA
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.PURCHASE_POPUP
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.ui.callWithExpert.repository.db.SkillsDatastore
@@ -109,22 +109,22 @@ object VoipPref {
         ) {
             editor.putBoolean(IS_FIRST_CALL, false)
             editor.putBoolean(IS_FIRST_5MIN_CALL, false)
-            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
+            ClientNotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
                 NotificationCategory.AFTER_LOGIN
             )
-            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
+            ClientNotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
                 NotificationCategory.AFTER_FIRST_CALL
             )
-            NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(
+            ClientNotificationUtils(AppObjectController.joshApplication).updateNotificationDb(
                 NotificationCategory.AFTER_FIVE_MIN_CALL
             )
             MarketingAnalytics.callComplete5MinForFirstTime()
         } else if (duration != 0L && preferenceManager.getBoolean(IS_FIRST_CALL, true)) {
             editor.putBoolean(IS_FIRST_CALL, false)
-            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
+            ClientNotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(
                 NotificationCategory.AFTER_LOGIN
             )
-            NotificationUtils(AppObjectController.joshApplication).updateNotificationDb(
+            ClientNotificationUtils(AppObjectController.joshApplication).updateNotificationDb(
                 NotificationCategory.AFTER_FIRST_CALL
             )
         }

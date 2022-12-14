@@ -43,7 +43,7 @@ import com.joshtalks.joshskills.common.core.AppObjectController.Companion.uiHand
 import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.analytics.*
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.common.repository.local.eventbus.*
 import com.joshtalks.joshskills.common.repository.local.model.ExploreCardType
@@ -1119,7 +1119,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
-        NotificationUtils(applicationContext).removeAllScheduledNotification()
+        ClientNotificationUtils(applicationContext).removeAllScheduledNotification()
 
         MarketingAnalytics.coursePurchased(
             BigDecimal(paymentManager.getAmount()),

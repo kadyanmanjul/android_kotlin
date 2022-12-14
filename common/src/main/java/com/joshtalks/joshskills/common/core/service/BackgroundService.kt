@@ -12,15 +12,12 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
-import com.joshtalks.joshskills.common.core.firestore.NotificationAnalytics
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
 import com.joshtalks.joshskills.common.repository.local.AppDatabase
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.NotificationChannelData
 import com.joshtalks.joshskills.common.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.common.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.common.util.ReminderUtil
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -121,13 +118,16 @@ class BackgroundService : Service() {
                         )
                         nc.contentTitle = item.title
                         nc.contentText = item.body
-                        val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
-                            notificationId = nc.id.toString(),
-                            mEvent = NotificationAnalytics.Action.RECEIVED,
-                            channel = NotificationAnalytics.Channel.API
-                        )
-                        if (isFirstTimeNotification)
-                            NotificationUtils(this@BackgroundService).sendNotification(nc)
+
+                        //TODO: Fix the code here -- Sukesh
+//                        val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+//                            notificationId = nc.id.toString(),
+//                            mEvent = NotificationAnalytics.Action.RECEIVED,
+//                            channel = NotificationAnalytics.Channel.API
+//                        )
+//                        if (isFirstTimeNotification) {
+//                            NotificationUtils(this@BackgroundService).sendNotification(nc)
+//                        }
                     }
                 }
             } catch (e: Exception) {

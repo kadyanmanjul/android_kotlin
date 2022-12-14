@@ -6,14 +6,13 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.common.base.EventLiveData
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.GoalKeys
 import com.joshtalks.joshskills.common.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.common.repository.local.model.FCMResponse
@@ -131,7 +130,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
-            NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
+            ClientNotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
             PrefManager.put(IS_USER_LOGGED_IN, value = true, isConsistent = true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
         }

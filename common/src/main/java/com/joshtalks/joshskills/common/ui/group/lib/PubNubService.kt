@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.gson.Gson
 import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.core.PrefManager
-import com.joshtalks.joshskills.common.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.common.ui.group.constants.FROM_BACKEND_MSG_TIME
@@ -29,6 +28,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
 private const val TAG = "PubNubService"
+// TODO: Added variable, to be removed -- Sukesh
+private const val FCM_TOKEN = "fcmToken"
 
 object PubNubService : ChatService {
 

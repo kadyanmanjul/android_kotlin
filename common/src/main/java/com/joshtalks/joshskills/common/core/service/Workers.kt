@@ -21,27 +21,18 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
-import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.*
-import com.joshtalks.joshskills.common.core.firestore.NotificationAnalytics
-import com.joshtalks.joshskills.common.core.notification.FCM_ACTIVE
-import com.joshtalks.joshskills.common.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.common.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
-import com.joshtalks.joshskills.common.engage_notification.AppUsageModel
-import com.joshtalks.joshskills.common.messaging.RxBus2
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.common.repository.local.model.*
 import com.joshtalks.joshskills.common.repository.server.UpdateDeviceRequest
-import com.joshtalks.joshskills.common.track.CourseUsageSync
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
-import com.joshtalks.joshskills.common.util.ReminderUtil
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import kotlinx.coroutines.*
@@ -70,6 +61,10 @@ val NOTIFICATION_TITLE_TEXT = arrayOf(
     "Meet people from across the country.",
     "Apka aaj ka goal hai Lesson 1 complete karna"
 )
+
+private const val HAS_NOTIFICATION = "has_notification"
+private const val FCM_TOKEN = "fcmToken"
+private const val FCM_ACTIVE = "FCM_ACTIVE"
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -296,8 +291,9 @@ class BackgroundNotificationWorker(val context: Context, workerParams: WorkerPar
         return try {
             buildNotification()
             com.joshtalks.joshskills.common.util.ReminderUtil(context).setAlarmNotificationWorker()
-            NotificationAnalytics().fetchMissedNotification(context)
-            NotificationAnalytics().pushToServer()
+            //TODO: Uncomment code (IMP) -- Sukesh
+//            NotificationAnalytics().fetchMissedNotification(context)
+//            NotificationAnalytics().pushToServer()
             removeNotification()
             Result.success()
         } catch (e: Exception) {
@@ -843,7 +839,8 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
 
     override suspend fun doWork(): Result {
         try {
-            NotificationAnalytics().fetchMissedNotification(context)
+            //TODO: (IMP) Uncomment code -- Sukesh
+//            NotificationAnalytics().fetchMissedNotification(context)
             if (shouldFetchClientData()) {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
                     PrefManager.getStringValue(
@@ -854,9 +851,9 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
                     PrefManager.getIntValue(DAILY_NOTIFICATION_COUNT).toString()
                 )
                 if (response.isNotEmpty()) {
-                    NotificationUtils(context).removeAllNotificationAsync()
+                    ClientNotificationUtils(context).removeAllNotificationAsync()
                     AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
-                    NotificationUtils(context).updateNotificationDb()
+                    ClientNotificationUtils(context).updateNotificationDb()
                 }
                 PrefManager.put(LAST_TIME_FETCHED_NOTIFICATION, System.currentTimeMillis())
                 PrefManager.put(DAILY_NOTIFICATION_COUNT, PrefManager.getIntValue(DAILY_NOTIFICATION_COUNT, defValue = 0) + 1)
@@ -878,7 +875,8 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
                     PrefManager.put(NOTIFICATION_LAST_TIME_STATUS, System.currentTimeMillis())
                 }
             }
-            when(NotificationAnalytics().pushToServer()) {
+            //TODO: (IMP) uncomment code -- Sukesh
+            when(true/*NotificationAnalytics().pushToServer()*/) {
                 true -> Result.success()
                 false -> Result.failure()
             }
@@ -929,7 +927,8 @@ class FakeCallNotificationWorker(
                 try {
                     val resp = AppObjectController.p2pNetworkService.getFakeCall()
                     val nc = resp.toNotificationObject(null)
-                    NotificationUtils(context).sendNotification(nc)
+                    //TODO : (IMP) Uncomment code -- Sukesh
+//                    NotificationUtils(context).sendNotification(nc)
                 }catch (ex:Exception){}
             }
         } catch (ex: Throwable) {

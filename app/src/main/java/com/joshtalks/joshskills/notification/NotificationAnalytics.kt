@@ -1,15 +1,14 @@
-package com.joshtalks.joshskills.common.core.firestore
+package com.joshtalks.joshskills.notification
 
 import android.content.Context
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.core.*
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.common.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
-import timber.log.Timber
 import java.lang.reflect.Type
 
 private const val TAG = "NotificationAnalytics"
@@ -128,7 +127,7 @@ class NotificationAnalytics {
                         channel = Channel.API
                     )
                     if (isFirstTimeNotification)
-                        NotificationUtils(context).sendNotification(nc)
+                        com.joshtalks.joshskills.notification.NotificationUtils(context).sendNotification(nc)
                 }
             }
         } catch (e: Exception) {

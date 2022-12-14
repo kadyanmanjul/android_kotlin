@@ -493,9 +493,6 @@ xmlns:tools="http://schemas.android.com/tools"
         </intent-filter>
     </receiver>
     <receiver
-        android:name=".core.analytics.DismissNotifEventReceiver"
-        android:exported="false" />
-    <receiver
         android:name=".core.analytics.LocalNotificationDismissEventReceiver"
         android:exported="false" />
     <receiver
@@ -503,14 +500,6 @@ xmlns:tools="http://schemas.android.com/tools"
         android:exported="false" />
     <receiver
         android:name=".ui.reminder.set_reminder.AlarmReceiver"
-        android:enabled="true"
-        android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED" />
-        </intent-filter>
-    </receiver>
-    <receiver
-        android:name=".core.notification.LocalNotificationAlarmReciever"
         android:enabled="true"
         android:exported="true">
         <intent-filter>
@@ -590,16 +579,6 @@ xmlns:tools="http://schemas.android.com/tools"
         android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
         android:exported="true"
         android:permission="android.permission.BIND_JOB_SERVICE" />
-    <service
-        android:name=".core.notification.FirebaseNotificationService"
-        android:directBootAware="true"
-        android:enabled="true"
-        android:exported="false"
-        tools:ignore="ExportedService">
-        <intent-filter android:priority="1000">
-            <action android:name="com.google.firebase.MESSAGING_EVENT" />
-        </intent-filter>
-    </service>
     <service
         android:name=".core.chrome.KeepAliveService"
         android:exported="true"

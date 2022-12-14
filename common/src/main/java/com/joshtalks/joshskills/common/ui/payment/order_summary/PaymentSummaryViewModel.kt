@@ -2,24 +2,21 @@ package com.joshtalks.joshskills.common.ui.payment.order_summary
 
 import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.common.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.repository.server.CreateOrderResponse
@@ -30,13 +27,11 @@ import com.joshtalks.joshskills.common.repository.server.onboarding.VersionRespo
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
-import kotlinx.coroutines.CoroutineScope
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import retrofit2.Response
 import timber.log.Timber
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
@@ -437,8 +432,8 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             try {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(testId)
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
-                NotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
-                NotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+                ClientNotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
+                ClientNotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

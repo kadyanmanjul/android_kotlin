@@ -77,6 +77,8 @@ class StickyNotificationService : Service() {
     }
 
     private fun getPendingIntent(code: String = EMPTY): PendingIntent {
+        // TODO: variable added, to be removed -- Sukesh
+        val HAS_NOTIFICATION = "has_notification"
         val notificationIntent = Intent(this, BuyPageActivity::class.java).apply {
             putExtra(FLOW_FROM, "Sticky Notification")
             putExtra(COUPON_CODE, code)

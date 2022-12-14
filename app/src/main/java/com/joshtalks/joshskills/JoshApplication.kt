@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.getLocalBroadcastManager
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.restoreIdReceiver
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.unreadCountChangeReceiver
-import com.joshtalks.joshskills.common.core.notification.LocalNotificationAlarmReciever
+import com.joshtalks.joshskills.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.common.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.common.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin

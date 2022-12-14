@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.core.notification
+package com.joshtalks.joshskills.notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -19,14 +19,13 @@ import com.facebook.share.internal.ShareConstants
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.LauncherActivity
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.COURSE_ID
-import com.joshtalks.joshskills.common.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.joshskills.common.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.common.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.common.core.notification.client_side.AlarmUtil
+import com.joshtalks.joshskills.common.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.common.repository.local.entity.Question
@@ -208,20 +207,12 @@ class NotificationUtils(val context: Context) {
         actionData: String?
     ): Intent? {
         if (PrefManager.getBoolValue(IS_USER_LOGGED_IN, isConsistent = true, defValue = false).not()) {
-            AppObjectController.navigator.with(context).navigate(object : SplashContract {
-                override val navigator = AppObjectController.navigator
-            })
-            //return Intent(context, LauncherActivity::class.java)
-            return null
+            return Intent(context, LauncherActivity::class.java)
         }
 
         return when (action) {
             NotificationAction.OPEN_APP -> {
-                AppObjectController.navigator.with(context).navigate(object : SplashContract {
-                    override val navigator = AppObjectController.navigator
-                })
-                //return Intent(context, LauncherActivity::class.java)
-                return null
+                return Intent(context, LauncherActivity::class.java)
             }
             NotificationAction.ACTION_OPEN_TEST -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -425,18 +416,14 @@ class NotificationUtils(val context: Context) {
                 }
             }
             NotificationAction.EMERGENCY_NOTIFICATION -> {
-                var intent: Intent?
+                lateinit var intent: Intent
                 if (actionData?.isDigitsOnly() == true && isValidFullNumber("+91", actionData)) {
                     intent = Intent(Intent.ACTION_DIAL).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                     intent.data = Uri.parse("tel:$actionData")
                 } else {
-                    AppObjectController.navigator.with(context).navigate(object : SplashContract {
-                        override val navigator = AppObjectController.navigator
-                    })
-                    //intent = Intent(context, LauncherActivity::class.java)
-                    intent = null
+                    intent = Intent(context, LauncherActivity::class.java)
                 }
                 return intent
             }
@@ -752,104 +739,6 @@ class NotificationUtils(val context: Context) {
     fun pushAnalytics(groupId: String?) {
         if (groupId != null) {
             GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_RECEIVED, groupId)
-        }
-    }
-
-    fun updateNotificationDb() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val categoryMap = PrefManager.getPrefMap(NOTIFICATION_CATEGORY_SCHEDULED) ?: mutableMapOf()
-            PrefManager.putPrefObject(NOTIFICATION_CATEGORY_SCHEDULED, categoryMap)
-            when {
-                categoryMap.containsKey(NotificationCategory.AFTER_FIVE_MIN_CALL.category) ->
-                    updateNotificationDb(NotificationCategory.AFTER_FIVE_MIN_CALL)
-                categoryMap.containsKey(NotificationCategory.AFTER_FIRST_CALL.category) ->
-                    updateNotificationDb(NotificationCategory.AFTER_FIRST_CALL)
-                categoryMap.containsKey(NotificationCategory.AFTER_LOGIN.category) ->
-                    updateNotificationDb(NotificationCategory.AFTER_LOGIN)
-
-                else -> updateNotificationDb(NotificationCategory.AFTER_LOGIN)
-            }
-            if (categoryMap.containsKey(NotificationCategory.PAYMENT_INITIATED.category))
-                updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
-            else if (categoryMap.containsKey(NotificationCategory.AFTER_BUY_PAGE.category))
-                updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
-        }
-    }
-
-    fun updateNotificationDb(category: NotificationCategory) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val notificationList =
-                AppObjectController.appDatabase.scheduleNotificationDao()
-                    .getUnscheduledCatNotifications(category.category)
-            val categoryMap = PrefManager.getPrefMap(NOTIFICATION_CATEGORY_SCHEDULED) ?: mutableMapOf()
-            categoryMap[category.category] = 1
-            PrefManager.putPrefObject(NOTIFICATION_CATEGORY_SCHEDULED, categoryMap)
-            notificationList.forEach {
-                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
-                intent.putExtra("id", it.id)
-                val pendingIntent = PendingIntent.getBroadcast(
-                    context.applicationContext,
-                    it.id.hashCode(),
-                    intent,
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                    else
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                )
-                AlarmUtil(context).createAlarm(pendingIntent, it.frequency!!, it.execute_after)
-                AppObjectController.appDatabase.scheduleNotificationDao().updateScheduled(it.id)
-            }
-        }
-    }
-
-    fun removeScheduledNotification(category: NotificationCategory) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val notificationIds =
-                AppObjectController.appDatabase.scheduleNotificationDao().removeCategory(category.category)
-            notificationIds.forEach {
-                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
-                intent.putExtra("id", it)
-                val pendingIntent =
-                    PendingIntent.getBroadcast(
-                        context.applicationContext,
-                        it.hashCode(),
-                        intent,
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                        else
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                AlarmUtil(context).deleteAlarm(pendingIntent)
-            }
-        }
-    }
-
-    fun removeAllScheduledNotification() {
-        CoroutineScope(Dispatchers.IO).launch {
-            removeAllNotificationAsync()
-        }
-    }
-
-    suspend fun removeAllNotificationAsync() {
-        val notificationIds = AppObjectController.appDatabase.scheduleNotificationDao().clearAllNotifications()
-        notificationIds.forEach {
-            try {
-                val intent = Intent(context.applicationContext, ScheduledNotificationReceiver::class.java)
-                intent.putExtra("id", it)
-                val pendingIntent =
-                    PendingIntent.getBroadcast(
-                        context.applicationContext,
-                        it.hashCode(),
-                        intent,
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                        else
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                AlarmUtil(context).deleteAlarm(pendingIntent)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
         }
     }
 }

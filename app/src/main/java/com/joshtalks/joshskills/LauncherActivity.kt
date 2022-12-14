@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.analytics.LogException
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.core.notification.HAS_LOCAL_NOTIFICATION
+import com.joshtalks.joshskills.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.databinding.ActivityLauncherBinding
 import com.joshtalks.joshskills.common.repository.local.model.Mentor

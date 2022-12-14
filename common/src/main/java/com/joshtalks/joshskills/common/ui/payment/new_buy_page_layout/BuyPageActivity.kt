@@ -41,10 +41,9 @@ import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.DI
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.common.core.custom_ui.JoshRatingBar
-import com.joshtalks.joshskills.common.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
-import com.joshtalks.joshskills.common.core.notification.NotificationUtils
 import com.joshtalks.joshskills.common.core.notification.StickyNotificationService
+import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.databinding.ActivityBuyPageBinding
 import com.joshtalks.joshskills.common.repository.local.model.User
@@ -150,6 +149,8 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
 
     override fun getArguments() {
         super.getArguments()
+        // TODO: Variable added, to be removed -- Sukesh
+        val HAS_NOTIFICATION = "has_notification"
         if (intent.hasExtra(HAS_NOTIFICATION)) {
             flowFrom = "NOTIFICATION"
             if (!PrefManager.getBoolValue(IS_FREE_TRIAL))
@@ -193,7 +194,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         }
 
         viewModel.saveImpressionForBuyPageLayout(OPEN_BUY_PAGE_LAYOUT, flowFrom)
-        NotificationUtils(this).updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
+        ClientNotificationUtils(this).updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
         MarketingAnalytics.openPreCheckoutPage()
         initToolbar()
     }
@@ -589,8 +590,8 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         if (phoneNumber.isEmpty()) {
             phoneNumber = "+919999999999"
         }
-        NotificationUtils(applicationContext).removeScheduledNotification(NotificationCategory.AFTER_BUY_PAGE)
-        NotificationUtils(applicationContext).updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
+        ClientNotificationUtils(applicationContext).removeScheduledNotification(NotificationCategory.AFTER_BUY_PAGE)
+        ClientNotificationUtils(applicationContext).updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
         try {
             paymentManager.createOrder(
                 priceForPaymentProceed?.testId ?: EMPTY,
@@ -927,7 +928,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         )
         try {
             PrefManager.put(STICKY_COUPON_DATA, EMPTY)
-            NotificationUtils(applicationContext).removeAllScheduledNotification()
+            ClientNotificationUtils(applicationContext).removeAllScheduledNotification()
             WorkManagerAdmin.removeStickyNotificationWorker()
             stopService(Intent(this, StickyNotificationService::class.java))
         } catch (e: Exception) {

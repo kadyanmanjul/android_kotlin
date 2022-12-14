@@ -61,7 +61,6 @@ import com.joshtalks.joshskills.common.core.extension.shiftGroupChatIconDown
 import com.joshtalks.joshskills.common.core.extension.slideOutAnimation
 import com.joshtalks.joshskills.common.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.common.core.io.AppDirectory
-import com.joshtalks.joshskills.common.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.common.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.common.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.common.databinding.ActivityConversationBinding
@@ -145,8 +144,7 @@ const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
 
 private const val TAG = "ConversationActivity"
 
-class ConversationActivity :
-    com.joshtalks.joshskills.common.ui.chat.BaseConversationActivity(),
+class ConversationActivity : BaseConversationActivity(),
     Player.EventListener,
     com.joshtalks.joshskills.common.util.ExoAudioPlayer.ProgressUpdateListener,
     AudioPlayerEventListener,
@@ -280,6 +278,8 @@ class ConversationActivity :
             }
             inboxEntity = temp
         }
+        // TODO: Variable added, to be removed -- Sukesh
+        val HAS_COURSE_REPORT = "has_course_report"
         if (intent.hasExtra(HAS_COURSE_REPORT)) {
             openCourseProgressListingScreen()
         }

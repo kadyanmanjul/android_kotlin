@@ -45,9 +45,6 @@ import com.joshtalks.joshskills.common.ui.leaderboard.LeaderBoardViewPagerActivi
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.common.core.custom_ui.PointSnackbar
-import com.joshtalks.joshskills.common.core.firestore.NotificationAnalytics
-import com.joshtalks.joshskills.common.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.common.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
@@ -274,16 +271,20 @@ abstract class BaseActivity :
 
     protected fun processIntent(mIntent: Intent?) {
         try {
+            // TODO: Variables added, to be checked -- Sukesh
+            val HAS_NOTIFICATION = "has_notification"
+            val NOTIFICATION_ID = "notification_id"
             lifecycleScope.launch(Dispatchers.IO) {
                 if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) &&
                     mIntent.hasExtra(NOTIFICATION_ID) &&
                     mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
                 ) {
-                    NotificationAnalytics().addAnalytics(
-                        notificationId = mIntent.getStringExtra(NOTIFICATION_ID)!!,
-                        mEvent = NotificationAnalytics.Action.CLICKED,
-                        channel = null
-                    )
+                    // TODO: (IMP) Uncomment code -- Sukesh
+//                    NotificationAnalytics().addAnalytics(
+//                        notificationId = mIntent.getStringExtra(NOTIFICATION_ID)!!,
+//                        mEvent = NotificationAnalytics.Action.CLICKED,
+//                        channel = null
+//                    )
                 }
             }
         } catch (ex: Throwable) {

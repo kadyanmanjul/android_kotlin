@@ -1,11 +1,9 @@
-package com.joshtalks.joshskills.common.core.analytics
+package com.joshtalks.joshskills.notification
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.joshtalks.joshskills.common.core.firestore.NotificationAnalytics
-import com.joshtalks.joshskills.common.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.common.core.notification.NOTIFICATION_ID
+import com.joshtalks.joshskills.common.core.analytics.LogException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

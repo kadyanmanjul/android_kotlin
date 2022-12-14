@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.core.notification
+package com.joshtalks.joshskills.notification
 
 import android.content.Intent
 import com.freshchat.consumer.sdk.Freshchat
@@ -9,7 +9,6 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.common.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.common.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.NotificationObject
@@ -92,7 +91,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
-           else if (remoteMessage.data.containsKey("is_group")) {
+            else if (remoteMessage.data.containsKey("is_group")) {
                 NotificationUtils(this)
                     .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.GROUPS)
                 NotificationUtils(this).pushAnalytics(remoteMessage.data["group_id"])
