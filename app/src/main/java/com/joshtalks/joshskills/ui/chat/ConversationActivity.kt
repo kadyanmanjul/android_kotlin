@@ -35,6 +35,7 @@ import com.google.android.exoplayer2.offline.Download
 import com.google.android.material.button.MaterialButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.IS_FIRST_CALL
@@ -344,7 +345,8 @@ class ConversationActivity :
             PrefManager.put(IS_FREE_TRIAL_ENDED, true)
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.trialTimerView.endFreeTrial()
+//            conversationBinding.trialTimerView.endFreeTrial()
+            conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
     }
@@ -354,15 +356,21 @@ class ConversationActivity :
             countdownTimerBack?.cancel()
         countdownTimerBack = object : CountDownTimer(startTimeInMilliSeconds, 1000) {
             override fun onTick(millis: Long) {
-                AppObjectController.uiHandler.post {
-                    conversationBinding.trialTimerView.startTimer(millis)
-                }
+//                AppObjectController.uiHandler.post {
+//                    conversationBinding.trialTimerView.startTimer(millis)
+//                }
+                conversationBinding.freeTrialText.text = getString(
+                    R.string.free_trial_end_in,
+                    UtilTime.timeFormatted(millis)
+                )
             }
 
             override fun onFinish() {
                 AppObjectController.uiHandler.post {
                     countdownTimerBack?.cancel()
-                    conversationBinding.trialTimerView.endFreeTrial()
+//                    conversationBinding.trialTimerView.endFreeTrial()
+                    conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+
                 }
             }
         }
@@ -463,11 +471,11 @@ class ConversationActivity :
 
             if (inboxEntity.isCourseBought) {
                 conversationBinding.ivIconReferral.visible()
-                conversationBinding.btnUpgrade.gone()
+//                conversationBinding.btnUpgrade.gone()
             } else {
-                inboxEntity.isCapsuleCourse
-                if (inboxEntity.courseId == DEFAULT_COURSE_ID)
-                    conversationBinding.btnUpgrade.visible()
+//                inboxEntity.isCapsuleCourse
+//                if (inboxEntity.courseId == DEFAULT_COURSE_ID)
+////                    conversationBinding.btnUpgrade.visible()
                 conversationBinding.ivIconReferral.gone()
             }
             conversationBinding.ivIconReferral.setOnClickListener {
