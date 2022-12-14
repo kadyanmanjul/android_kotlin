@@ -285,6 +285,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_12sdp"
+                            app:errorIconDrawable="@null"
                             android:hint="@string/favourite_josh_talk"
                             app:helperText="@string/paste_link_to_your_favourite_josh_talk_here"
                             app:layout_constraintTop_toBottomOf="@+id/aspirationInputLayout">
@@ -301,8 +302,7 @@
                                 android:maxLength="100"
                                 android:maxLines="1"
                                 android:minLines="1"
-                                android:singleLine="true"
-                                android:textCursorDrawable="@drawable/cursor_drawable" />
+                                android:singleLine="true" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
