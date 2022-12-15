@@ -30,8 +30,6 @@ import com.joshtalks.joshskills.common.databinding.ActivityStartCourseBinding
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.ui.payment.order_summary.TRANSACTION_ID
 import com.joshtalks.joshskills.common.ui.pdfviewer.COURSE_NAME
-import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -169,21 +167,21 @@ class StartCourseActivity : CoreJoshActivity() {
                 if(isRegProfileComplete())
                 startActivity(getInboxActivityIntent())
                 else {
-                    val intent = Intent(this, SignUpActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        putExtra(FLOW_FROM, "payment journey")
-                    }
-                    startActivity(intent)
-                    val broadcastIntent=Intent().apply {
-                        action =
-                            CALLING_SERVICE_ACTION
-                        putExtra(
-                            SERVICE_BROADCAST_KEY,
-                            STOP_SERVICE
-                        )
-                    }
-                    LocalBroadcastManager.getInstance(this@StartCourseActivity).sendBroadcast(broadcastIntent)
+//                    val intent = Intent(this, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                        putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
+//                    }
+//                    startActivity(intent)
+//                    val broadcastIntent=Intent().apply {
+//                        action =
+//                            CALLING_SERVICE_ACTION
+//                        putExtra(
+//                            SERVICE_BROADCAST_KEY,
+//                            STOP_SERVICE
+//                        )
+//                    }
+//                    LocalBroadcastManager.getInstance(this@StartCourseActivity).sendBroadcast(broadcastIntent)
                     this.finish()
                 }
             } else {
@@ -199,12 +197,12 @@ class StartCourseActivity : CoreJoshActivity() {
                     .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
                     .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, transactionId)
                     .push()
-                val intent = Intent(this, SignUpActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    putExtra(FLOW_FROM, "payment journey")
-                }
-                startActivity(intent)
+//                val intent = Intent(this, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
+//                }
+//                startActivity(intent)
                 val broadcastIntent=Intent().apply {
                     action =
                         CALLING_SERVICE_ACTION
@@ -225,21 +223,21 @@ class StartCourseActivity : CoreJoshActivity() {
             if(isRegProfileComplete())
                 startActivity(getInboxActivityIntent())
             else {
-                val intent = Intent(this, SignUpActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    putExtra(FLOW_FROM, "payment journey")
-                }
-                startActivity(intent)
+//                val intent = Intent(this, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
+//                }
+//                startActivity(intent)
                 this.finish()
             }
         } else {
-            val intent = Intent(this, SignUpActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                putExtra(FLOW_FROM, "payment journey")
-            }
-            startActivity(intent)
+//            val intent = Intent(this, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
+//            }
+//            startActivity(intent)
             this.finish()
         }
     }

@@ -46,7 +46,6 @@ import com.joshtalks.joshskills.common.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.common.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.common.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.common.repository.service.UtilsAPIService
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.voip.analytics.data.network.VoipAnalyticsService
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
@@ -758,17 +757,18 @@ class StatusCodeInterceptor : Interceptor {
                         WorkManagerAdmin.appInitWorker()
                         WorkManagerAdmin.appStartWorker()
                         if (AppObjectController.applicationDetails.isAppVisual()) {
-                            val intent =
-                                Intent(
-                                    AppObjectController.joshApplication,
-                                    SignUpActivity::class.java
-                                )
-                            intent.apply {
-                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                putExtra("Flow", "StatusCodeInterceptor")
-                            }
-                            AppObjectController.joshApplication.startActivity(intent)
+                            //TODO : Add navigator
+//                            val intent =
+//                                Intent(
+//                                    AppObjectController.joshApplication,
+//                                    com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java
+//                                )
+//                            intent.apply {
+//                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                                putExtra("Flow", "StatusCodeInterceptor")
+//                            }
+//                            AppObjectController.joshApplication.startActivity(intent)
                         }
                     }
                 }

@@ -6,10 +6,6 @@
 
     <data>
 
-        <variable
-                name="handler"
-                type="com.joshtalks.joshskills.common.ui.signup.VerificationTimeoutBottomSheet" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -61,8 +61,6 @@ import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.payment.*
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentManager
-import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.common.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
@@ -966,22 +964,22 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     private fun navigateToLoginActivity() {
-        val intent = Intent(this, SignUpActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra(FLOW_FROM, "payment journey")
-        }
-        startActivity(intent)
-        val broadcastIntent = Intent().apply {
-            action =
-                CALLING_SERVICE_ACTION
-            putExtra(
-                SERVICE_BROADCAST_KEY,
-                STOP_SERVICE
-            )
-        }
-        LocalBroadcastManager.getInstance(this@PaymentSummaryActivity)
-            .sendBroadcast(broadcastIntent)
+//        val intent = Intent(this, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
+//        }
+//        startActivity(intent)
+//        val broadcastIntent = Intent().apply {
+//            action =
+//                CALLING_SERVICE_ACTION
+//            putExtra(
+//                SERVICE_BROADCAST_KEY,
+//                STOP_SERVICE
+//            )
+//        }
+//        LocalBroadcastManager.getInstance(this@PaymentSummaryActivity)
+//            .sendBroadcast(broadcastIntent)
         this.finish()
     }
 

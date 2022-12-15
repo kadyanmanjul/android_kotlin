@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.common.repository.local.model
 
+import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -26,7 +27,6 @@ import com.joshtalks.joshskills.common.core.notification.NotificationCategory
 import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.common.repository.server.signup.LoginResponse
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.userexperior.UserExperior
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -118,12 +118,12 @@ class Mentor {
                     LogException.catchException(ex)
                 }
                 if (AppObjectController.applicationDetails.isAppVisual()) {
-                    val intent = Intent(joshApplication, SignUpActivity::class.java)
-                    intent.apply {
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                    joshApplication.startActivity(intent)
+//                    val intent = Intent(joshApplication, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java)
+//                    intent.apply {
+//                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    }
+//                    joshApplication.startActivity(intent)
                 }
                 if (showNotification) {
                     showLogoutNotification()
@@ -132,12 +132,13 @@ class Mentor {
         }
 
         fun showLogoutNotification() {
-            val activityList = arrayOf(
-                Intent(joshApplication, SignUpActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-            )
+            val activityList =  emptyList<Intent>()
+//                arrayOf(
+//                Intent(joshApplication, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                }
+//            )
 
             val notificationId = 101567
             val notificationChannelId = NotificationChannelData.UPDATES.id
@@ -149,7 +150,7 @@ class Mentor {
             val pendingIntent = PendingIntent.getActivities(
                 joshApplication,
                 uniqueInt,
-                activityList,
+                activityList.toTypedArray(),
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 else

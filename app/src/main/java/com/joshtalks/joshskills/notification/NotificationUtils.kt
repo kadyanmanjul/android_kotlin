@@ -46,7 +46,6 @@ import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageAct
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.common.ui.reminder.reminder_listing.ReminderListActivity
-import com.joshtalks.joshskills.common.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
@@ -111,6 +110,7 @@ class NotificationUtils(val context: Context) {
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID, notificationObject.id)
 
+                // Used for backstack
                 val activityList =
                     if (notificationObject.action == NotificationAction.ACTION_OPEN_PAYMENT_PAGE
                         || notificationObject.action == NotificationAction.ACTION_OPEN_SPEAKING_SECTION
@@ -377,12 +377,13 @@ class NotificationUtils(val context: Context) {
                 return null
             }
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN -> {
-                Intent(
-                    AppObjectController.joshApplication,
-                    FreeTrialOnBoardActivity::class.java
-                ).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                }
+//                Intent(
+//                    AppObjectController.joshApplication,
+//                    com.joshtalks.joshskills.auth.freetrail.FreeTrialOnBoardActivity::class.java
+//                ).apply {
+//                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                }
+                null
             }
             NotificationAction.ACTION_OPEN_GROUPS -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id

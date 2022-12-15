@@ -84,8 +84,6 @@ import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.pdfviewer.PdfViewerActivity
-import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.SPECIAL_ID
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
@@ -516,11 +514,11 @@ class ConversationActivity : BaseConversationActivity(),
     }
 
     private fun navigateToLoginActivity() {
-        val intent = Intent(this, SignUpActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra(FLOW_FROM, "payment journey")
-        }
+//        val intent = Intent(this, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
+//        }
         startActivity(intent)
         val broadcastIntent = Intent().apply {
             action =

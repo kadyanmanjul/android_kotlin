@@ -12,8 +12,6 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.common.databinding.FragmentSignupPermissionDialogBinding
-import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 
 class SignUpPermissionDialogFragment : BottomSheetDialogFragment() {
 
@@ -66,10 +64,10 @@ class SignUpPermissionDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun navigateToSignUpScreen() {
-        val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
-            putExtra(FLOW_FROM, "inbox flow journey")
-        }
-        startActivity(intent)
-        requireActivity().finish()
+//        val intent = Intent(requireActivity(), com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//            putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "inbox flow journey")
+//        }
+//        startActivity(intent)
+//        requireActivity().finish()
     }
 }

@@ -30,8 +30,6 @@ import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.ui.call.CallingServiceReceiver
 import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.common.ui.signup.FreeTrialOnBoardActivity
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.util.*
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
 import com.joshtalks.joshskills.navigator.JoshNavigator
@@ -61,10 +59,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         var isLingverInit = false
 
         fun openLauncherActivity(contracts: SplashContract, context: Context) {
-            val intent = Intent(context, LauncherActivity::class.java).apply {
-                putExtra(NAVIGATOR, contracts.navigator)
-            }
-            context.startActivity(intent)
+
         }
     }
 
@@ -73,6 +68,9 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         // Setting a View
         setContentView(binding.root)
         AppObjectController.navigator = JoshNavigator
+        //navigator.with(this).navigate(GroupContract)
+        //navigator.with(this).navigateTo<Group.ListScreen>()
+        //navigator.with(this).navigate(screen = Group.ListScreen, contract = )
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
         AppObjectController.configureCrashlytics()
@@ -239,9 +237,9 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 if (testId.isNullOrEmpty().not()) {
                     navigateToCourseDetailsScreen()
                 } else {
-                    getIntentForNextActivity()?.let {
-                        startActivity(it)
-                    }
+//                    getIntentForNextActivity()?.let {
+//                        startActivity(it)
+//                    }
                     finish()
                 }
             }
@@ -257,60 +255,60 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         }
     }
 
-    suspend fun getIntentForNextActivity() =
-        when {
-            User.getInstance().isVerified.not() -> {
-                when {
-                    (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
-                            PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
-                        if (jsonParams != null &&
-                            (DeepLinkRedirectUtil.getIntent(
-                                this@LauncherActivity,
-                                jsonParams!!,
-                                true
-                            ))
-                        ) {
-                            null
-                        } else getInboxActivityIntent()
-                    }
-                    PrefManager.hasKey(
-                        SPECIFIC_ONBOARDING,
-                        isConsistent = true
-                    ) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
-                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
-                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, true)
-                    PrefManager.hasKey(
-                        FT_COURSE_ONBOARDING,
-                        isConsistent = true
-                    ) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
-                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
-                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, false)
-                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
-                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
-                    -> {
-                        DeepLinkRedirectUtil.getCourseDetailsActivityIntent(this, jsonParams!!)
-                        null
-                    }
-                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false) ->
-                        Intent(this@LauncherActivity, SignUpActivity::class.java)
-                    PrefManager.getBoolValue(IS_FREE_TRIAL, isConsistent = false, defValue = false) ->
-                        Intent(
-                            this@LauncherActivity,
-                            FreeTrialOnBoardActivity::class.java
-                        )
-                    else ->
-                        Intent(this@LauncherActivity, SignUpActivity::class.java)
-                }
-            }
-            isUserProfileNotComplete() -> Intent(this@LauncherActivity, SignUpActivity::class.java)
-            jsonParams != null -> if (DeepLinkRedirectUtil.getIntent(
-                    this@LauncherActivity,
-                    jsonParams!!,
-                    PrefManager.getBoolValue(IS_FREE_TRIAL)
-                )
-            ) null else getInboxActivityIntent()
-            else -> getInboxActivityIntent()
-        }
+//    suspend fun getIntentForNextActivity() =
+//        when {
+//            User.getInstance().isVerified.not() -> {
+//                when {
+//                    (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
+//                            PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
+//                        if (jsonParams != null &&
+//                            (DeepLinkRedirectUtil.getIntent(
+//                                this@LauncherActivity,
+//                                jsonParams!!,
+//                                true
+//                            ))
+//                        ) {
+//                            null
+//                        } else getInboxActivityIntent()
+//                    }
+//                    PrefManager.hasKey(
+//                        SPECIFIC_ONBOARDING,
+//                        isConsistent = true
+//                    ) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+//                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
+//                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, true)
+//                    PrefManager.hasKey(
+//                        FT_COURSE_ONBOARDING,
+//                        isConsistent = true
+//                    ) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+//                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
+//                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, false)
+//                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+//                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
+//                    -> {
+//                        DeepLinkRedirectUtil.getCourseDetailsActivityIntent(this, jsonParams!!)
+//                        null
+//                    }
+//                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false) ->
+//                        Intent(this@LauncherActivity, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java)
+//                    PrefManager.getBoolValue(IS_FREE_TRIAL, isConsistent = false, defValue = false) ->
+//                        Intent(
+//                            this@LauncherActivity,
+//                            com.joshtalks.joshskills.auth.freetrail.FreeTrialOnBoardActivity::class.java
+//                        )
+//                    else ->
+//                        Intent(this@LauncherActivity, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java)
+//                }
+//            }
+//            isUserProfileNotComplete() -> Intent(this@LauncherActivity, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java)
+//            jsonParams != null -> if (DeepLinkRedirectUtil.getIntent(
+//                    this@LauncherActivity,
+//                    jsonParams!!,
+//                    PrefManager.getBoolValue(IS_FREE_TRIAL)
+//                )
+//            ) null else getInboxActivityIntent()
+//            else -> getInboxActivityIntent()
+//        }
 
     private fun initAfterBranch(
         exploreType: String? = null

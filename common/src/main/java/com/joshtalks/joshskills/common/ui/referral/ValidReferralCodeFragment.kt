@@ -15,8 +15,6 @@ import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.databinding.FragmentValidReferralCodeBinding
 import com.joshtalks.joshskills.common.repository.server.ReferralCouponDetailResponse
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -76,15 +74,15 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
 
     fun signUp() {
         lifecycleScope.launch(Dispatchers.IO) {
-            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
-                .push()
-            val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
-                putExtra(FLOW_FROM, "onboarding journey")
-            }
-            startActivity(intent)
+//            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+//                .addBasicParam()
+//                .addUserDetails()
+//                .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+//                .push()
+//            val intent = Intent(requireActivity(), com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//                putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "onboarding journey")
+//            }
+//            startActivity(intent)
         }
     }
 

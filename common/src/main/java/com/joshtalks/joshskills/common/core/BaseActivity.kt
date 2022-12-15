@@ -66,8 +66,6 @@ import com.joshtalks.joshskills.common.ui.points_history.PointsHistoryActivity
 import com.joshtalks.joshskills.common.ui.points_history.SpokenHistoryActivity
 import com.joshtalks.joshskills.common.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.common.ui.reminder.set_reminder.ReminderActivity
-import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.common.ui.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
@@ -229,7 +227,7 @@ abstract class BaseActivity :
             is InboxActivity -> ActivityEnum.Inbox
             is LauncherActivity -> ActivityEnum.Launcher
             is CourseDetailsActivity -> ActivityEnum.CourseDetails
-            is SignUpActivity -> ActivityEnum.Signup
+            //is com.joshtalks.joshskills.auth.freetrail.SignUpActivity -> ActivityEnum.Signup
             else -> ActivityEnum.Empty
         }
     }
@@ -447,12 +445,12 @@ abstract class BaseActivity :
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
             //TODO: Uncomment (IMP) -- Sukesh
 //            PubNubService.cancelAllPubNubNotifications()
-            val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
-            intent.apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                putExtra(FLOW_FROM, "CourseExploreActivity")
-            }
+//            val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+//            intent.apply {
+//                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                putExtra(FLOW_FROM, "CourseExploreActivity")
+//            }
 
             try {
                 AppObjectController.signUpNetworkService.signoutUser(Mentor.getInstance().getId())
@@ -506,7 +504,6 @@ abstract class BaseActivity :
                             }
                     }
                     this == getString(R.string.setting_dlink) -> {
-
                         // TODO: Navigate to settings module.
 //                        openSettingActivity.launch(com.joshtalks.joshskills.settings.SettingsActivity.getIntent(this@BaseActivity))
                     }
@@ -646,7 +643,6 @@ abstract class BaseActivity :
     fun showWebViewDialog(webUrl: String) {
         WebViewFragment.showDialog(supportFragmentManager, webUrl)
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

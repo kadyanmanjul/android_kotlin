@@ -12,15 +12,11 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.databinding.ActivityCourseExploreBinding
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.*
 import com.joshtalks.joshskills.common.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.inbox.PAYMENT_FOR_COURSE_CODE
-import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.common.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
@@ -110,15 +106,15 @@ class CourseExploreActivity : CoreJoshActivity() {
                             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                                 .addUserDetails()
                                 .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-                            val intent = Intent(
-                                AppObjectController.joshApplication,
-                                SignUpActivity::class.java
-                            )
-                            intent.apply {
-                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                putExtra(FLOW_FROM, "CourseExploreActivity")
-                            }
+//                            val intent = Intent(
+//                                AppObjectController.joshApplication,
+//                                com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java
+//                            )
+//                            intent.apply {
+//                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                                putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "CourseExploreActivity")
+//                            }
                             lifecycleScope.launch(Dispatchers.IO) {
                                 PrefManager.logoutUser()
                                 AppObjectController.joshApplication.startActivity(intent)

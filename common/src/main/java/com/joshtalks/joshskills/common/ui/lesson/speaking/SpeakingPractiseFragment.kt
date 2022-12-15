@@ -51,8 +51,6 @@ import com.joshtalks.joshskills.common.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.common.ui.lesson.*
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
-import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
@@ -715,21 +713,21 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun navigateToLoginActivity() {
-        val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra(FLOW_FROM, "payment journey")
-        }
-        startActivity(intent)
-        val broadcastIntent = Intent().apply {
-            action =
-                CALLING_SERVICE_ACTION
-            putExtra(
-                SERVICE_BROADCAST_KEY,
-                STOP_SERVICE
-            )
-        }
-        LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(broadcastIntent)
+//        val intent = Intent(requireActivity(), com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
+//            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
+//        }
+//        startActivity(intent)
+//        val broadcastIntent = Intent().apply {
+//            action =
+//                CALLING_SERVICE_ACTION
+//            putExtra(
+//                SERVICE_BROADCAST_KEY,
+//                STOP_SERVICE
+//            )
+//        }
+//        LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(broadcastIntent)
     }
 
     private fun postSpeakingScreenSeenGoal() {
