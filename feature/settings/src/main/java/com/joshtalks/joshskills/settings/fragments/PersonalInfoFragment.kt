@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.settings.fragments
+package com.joshtalks.joshskills.settings.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,16 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.joshtalks.joshskills.common.BuildConfig
-import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.settings.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.GENDER
 import com.joshtalks.joshskills.common.core.RegistrationMethods
 import com.joshtalks.joshskills.common.core.Utils
-import com.joshtalks.joshskills.common.databinding.FragmentPersonalInfoBinding
+import com.joshtalks.joshskills.settings.databinding.FragmentPersonalInfoBinding
 import com.joshtalks.joshskills.common.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
+import com.joshtalks.joshskills.settings.SettingsActivity
 
 class PersonalInfoFragment : Fragment() {
     companion object {
@@ -81,6 +80,6 @@ class PersonalInfoFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (requireActivity() as com.joshtalks.joshskills.common.ui.settings.SettingsActivity).setTitle(getString(R.string.personal_information))
+        (requireActivity() as SettingsActivity).setTitle(getString(R.string.personal_information))
     }
 }

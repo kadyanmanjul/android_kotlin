@@ -66,7 +66,6 @@ import com.joshtalks.joshskills.common.ui.points_history.PointsHistoryActivity
 import com.joshtalks.joshskills.common.ui.points_history.SpokenHistoryActivity
 import com.joshtalks.joshskills.common.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.common.ui.reminder.set_reminder.ReminderActivity
-import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.termsandconditions.WebViewFragment
@@ -507,7 +506,9 @@ abstract class BaseActivity :
                             }
                     }
                     this == getString(R.string.setting_dlink) -> {
-                        openSettingActivity.launch(SettingsActivity.getIntent(this@BaseActivity))
+
+                        // TODO: Navigate to settings module.
+//                        openSettingActivity.launch(com.joshtalks.joshskills.settings.SettingsActivity.getIntent(this@BaseActivity))
                     }
                     this == getString(R.string.referral_open_dlink) -> {
                         ReferralActivity.startReferralActivity(this@BaseActivity)

@@ -4,6 +4,8 @@ include ':feature:splash'
 include ':feature:voip'
 include ':feature:groups'
 include ':feature:leaderboard'
+include ':feature:settings'
+
 include ':data:splash'
 
 enableFeaturePreview("VERSION_CATALOGS")

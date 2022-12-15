@@ -221,7 +221,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun openSettingActivity() {
-        openSettingActivity.launch(com.joshtalks.joshskills.common.ui.settings.SettingsActivity.getIntent(this))
+        // TODO: Navigate to settings module
+//        openSettingActivity.launch(com.joshtalks.joshskills.settings.SettingsActivity.getIntent(this))
     }
 
     private fun workInBackground() {

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.settings.fragments
+package com.joshtalks.joshskills.settings.fragments
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -15,8 +15,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.joshtalks.joshskills.common.BuildConfig
-import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.settings.BuildConfig
+import com.joshtalks.joshskills.settings.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
@@ -24,12 +24,13 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.core.memory.MemoryManagementWorker
-import com.joshtalks.joshskills.common.databinding.FragmentSettingsBinding
+import com.joshtalks.joshskills.settings.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.common.repository.local.model.User
-import com.joshtalks.joshskills.common.repository.server.LanguageItem
+import com.joshtalks.joshskills.settings.model.LanguageItem
 import com.joshtalks.joshskills.common.ui.extra.AUTO_START_SETTINGS_POPUP
 import com.joshtalks.joshskills.common.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.settings.SettingsActivity
 import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
 
 class SettingsFragment : Fragment() {
@@ -137,7 +138,7 @@ class SettingsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (requireActivity() as com.joshtalks.joshskills.common.ui.settings.SettingsActivity).setTitle(getString(R.string.app_settings))
+        (requireActivity() as SettingsActivity).setTitle(getString(R.string.app_settings))
     }
 
     fun clearDownloads() {
@@ -249,7 +250,7 @@ class SettingsFragment : Fragment() {
 
     fun showNotificationSettingPopup() {
         MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATIONS).push()
-        (requireActivity() as com.joshtalks.joshskills.common.ui.settings.SettingsActivity).openAppNotificationSettings()
+        (requireActivity() as SettingsActivity).openAppNotificationSettings()
     }
 
     fun showAutoStartPermissionPopup() {

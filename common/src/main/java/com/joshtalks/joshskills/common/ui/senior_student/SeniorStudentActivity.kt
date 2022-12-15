@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.common.databinding.ActivitySeniorStudentBinding
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.common.ui.senior_student.viewmodel.SeniorStudentViewModel
-import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
 
 class SeniorStudentActivity : CoreJoshActivity() {
     lateinit var binding: ActivitySeniorStudentBinding
@@ -98,7 +97,8 @@ class SeniorStudentActivity : CoreJoshActivity() {
     }
 
     private fun openSettingActivity() {
-        openSettingActivity.launch(com.joshtalks.joshskills.common.ui.settings.SettingsActivity.getIntent(this))
+        // TODO:  navigate to settings module
+//        openSettingActivity.launch(com.joshtalks.joshskills.settings.SettingsActivity.getIntent(this))
     }
 
     companion object {

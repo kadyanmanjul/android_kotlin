@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.repository.server
+package com.joshtalks.joshskills.settings.model
 
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken

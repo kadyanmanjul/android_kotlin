@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.settings.adapter
+package com.joshtalks.joshskills.settings.adapter
 
 import android.content.Context
 import android.os.Message
@@ -6,15 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.joshtalks.joshskills.common.base.EventLiveData
-import com.joshtalks.joshskills.common.constants.SHOW_PROGRESS_BAR
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.databinding.StringAdapterItemBinding
-import com.joshtalks.joshskills.common.repository.server.LanguageItem
+import com.joshtalks.joshskills.settings.databinding.StringAdapterItemBinding
+import com.joshtalks.joshskills.settings.model.LanguageItem
 
 class LanguageAdapter(
     val itemList: List<LanguageItem>,
@@ -31,7 +29,7 @@ class LanguageAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): LanguageAdapter.LanguageViewHolder {
+    ): LanguageViewHolder {
         context = parent.context
         val inflater = LayoutInflater.from(parent.context)
         val binding = StringAdapterItemBinding.inflate(inflater, parent, false)

@@ -339,7 +339,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:theme="@style/AppNoBarTheme"
         android:windowSoftInputMode="stateHidden|adjustResize" />
     <activity
-        android:name=".ui.settings.SettingsActivity"
+        android:name="com.joshtalks.joshskills.settings.SettingsActivity"
         android:alwaysRetainTaskState="true"
         android:launchMode="singleTop"
         android:screenOrientation="portrait"

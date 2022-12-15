@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.settings.fragments
+package com.joshtalks.joshskills.settings.fragments
 
 import android.app.ProgressDialog
 import android.os.Bundle
@@ -8,18 +8,15 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.EventLiveData
-import com.joshtalks.joshskills.common.constants.DISMISS_PROGRESS_BAR
-import com.joshtalks.joshskills.common.constants.SHOW_PROGRESS_BAR
+import com.joshtalks.joshskills.settings.R
 import com.joshtalks.joshskills.common.core.BaseActivity
 import com.joshtalks.joshskills.common.core.IS_LOCALE_UPDATED_IN_SETTINGS
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.USER_LOCALE
-import com.joshtalks.joshskills.common.databinding.FragmentSelectLanguageBinding
-import com.joshtalks.joshskills.common.repository.server.LanguageItem
-import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.common.ui.settings.adapter.LanguageAdapter
+import com.joshtalks.joshskills.settings.databinding.FragmentSelectLanguageBinding
+import com.joshtalks.joshskills.settings.model.LanguageItem
+import com.joshtalks.joshskills.settings.SettingsActivity
+import com.joshtalks.joshskills.settings.adapter.LanguageAdapter
 
 class LanguageFragment : Fragment() {
     lateinit var binding: FragmentSelectLanguageBinding
@@ -54,7 +51,7 @@ class LanguageFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (requireActivity() as com.joshtalks.joshskills.common.ui.settings.SettingsActivity).setTitle(getString(R.string.select_language))
+        (requireActivity() as SettingsActivity).setTitle(getString(R.string.select_language))
     }
 
     private fun initLiveData() {

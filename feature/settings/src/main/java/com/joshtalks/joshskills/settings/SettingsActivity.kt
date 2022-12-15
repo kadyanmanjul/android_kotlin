@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.settings
+package com.joshtalks.joshskills.settings
 
 import android.content.Context
 import android.content.Intent
@@ -7,13 +7,13 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.widget.TextView
-import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.settings.R
 import com.joshtalks.joshskills.common.core.CoreJoshActivity
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.common.ui.extra.NOTIFICATION_POPUP
-import com.joshtalks.joshskills.common.ui.settings.fragments.SettingsFragment
+import com.joshtalks.joshskills.settings.fragments.SettingsFragment
 import kotlinx.android.synthetic.main.base_toolbar.*
 
 class SettingsActivity : CoreJoshActivity() {
@@ -35,7 +35,7 @@ class SettingsActivity : CoreJoshActivity() {
 
     companion object {
         fun getIntent(context: Context): Intent {
-            return Intent(context, com.joshtalks.joshskills.common.ui.settings.SettingsActivity::class.java)
+            return Intent(context, SettingsActivity::class.java)
         }
     }
 

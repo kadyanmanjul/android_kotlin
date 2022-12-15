@@ -1,16 +1,16 @@
-package com.joshtalks.joshskills.common.ui.settings.adapter
+package com.joshtalks.joshskills.settings.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.settings.R
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.SELECTED_QUALITY
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.common.databinding.StringAdapterItemBinding
+import com.joshtalks.joshskills.settings.databinding.StringAdapterItemBinding
 
 class StringAdapter(
     private val itemList: Array<String>,

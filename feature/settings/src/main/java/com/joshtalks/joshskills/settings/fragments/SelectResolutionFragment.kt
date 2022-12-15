@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.settings.fragments
+package com.joshtalks.joshskills.settings.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,14 +7,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.settings.R
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.SELECTED_QUALITY
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.databinding.FragmentSelectLanguageBinding
-import com.joshtalks.joshskills.common.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.common.ui.settings.adapter.StringAdapter
+import com.joshtalks.joshskills.settings.databinding.FragmentSelectLanguageBinding
+import com.joshtalks.joshskills.settings.SettingsActivity
+import com.joshtalks.joshskills.settings.adapter.StringAdapter
 
 class SelectResolutionFragment : Fragment() {
     companion object {
@@ -44,7 +44,7 @@ class SelectResolutionFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (requireActivity() as com.joshtalks.joshskills.common.ui.settings.SettingsActivity).setTitle(getString(R.string.download_quality))
+        (requireActivity() as SettingsActivity).setTitle(getString(R.string.download_quality))
     }
 
     fun onItemClick(item: String, position: Int): Unit {
