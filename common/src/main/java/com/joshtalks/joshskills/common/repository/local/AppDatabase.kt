@@ -20,10 +20,14 @@ import com.joshtalks.joshskills.common.core.notification.database.NotificationEv
 import com.joshtalks.joshskills.common.core.notification.database.ScheduleNotificationDao
 import com.joshtalks.joshskills.common.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.common.core.notification.model.ScheduleNotification
-import com.joshtalks.joshskills.common.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.common.engage_notification.AppActivityModel
-import com.joshtalks.joshskills.common.engage_notification.AppUsageDao
 import com.joshtalks.joshskills.common.engage_notification.AppUsageModel
+import com.joshtalks.joshskills.common.repository.local.entity.groups.ChatItem
+import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsAnalyticsEntity
+import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupChatAnalyticsEntity
+import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsItem
+import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupMember
+import com.joshtalks.joshskills.common.repository.local.entity.groups.TimeTokenRequest
 import com.joshtalks.joshskills.common.repository.local.dao.AssessmentDao
 import com.joshtalks.joshskills.common.repository.local.dao.BroadCastDao
 import com.joshtalks.joshskills.common.repository.local.dao.ChatDao
@@ -31,6 +35,7 @@ import com.joshtalks.joshskills.common.repository.local.dao.CommonDao
 import com.joshtalks.joshskills.common.repository.local.dao.LessonDao
 import com.joshtalks.joshskills.common.repository.local.dao.PendingTaskDao
 import com.joshtalks.joshskills.common.repository.local.dao.PhonebookDao
+import com.joshtalks.joshskills.common.repository.local.dao.groups.*
 import com.joshtalks.joshskills.common.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.common.repository.local.entity.AudioType
 import com.joshtalks.joshskills.common.repository.local.entity.AwardMentorModel
@@ -91,17 +96,6 @@ import com.joshtalks.joshskills.common.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.common.repository.server.voip.SpeakingTopicDao
 import com.joshtalks.joshskills.common.track.CourseUsageDao
 import com.joshtalks.joshskills.common.track.CourseUsageModel
-import com.joshtalks.joshskills.common.ui.group.analytics.data.local.GroupChatAnalyticsEntity
-import com.joshtalks.joshskills.common.ui.group.analytics.data.local.GroupsAnalyticsDao
-import com.joshtalks.joshskills.common.ui.group.analytics.data.local.GroupsAnalyticsEntity
-import com.joshtalks.joshskills.common.ui.group.data.local.GroupChatDao
-import com.joshtalks.joshskills.common.ui.group.data.local.GroupListDao
-import com.joshtalks.joshskills.common.ui.group.data.local.GroupMemberDao
-import com.joshtalks.joshskills.common.ui.group.data.local.TimeTokenDao
-import com.joshtalks.joshskills.common.ui.group.model.ChatItem
-import com.joshtalks.joshskills.common.ui.group.model.GroupMember
-import com.joshtalks.joshskills.common.ui.group.model.GroupsItem
-import com.joshtalks.joshskills.common.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentDao
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
@@ -121,7 +115,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
-        com.joshtalks.joshskills.common.engage_notification.AppUsageModel::class, com.joshtalks.joshskills.common.engage_notification.AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
+        AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,

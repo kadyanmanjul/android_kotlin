@@ -6,6 +6,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.common.constants.IS_USER_EXIST
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.GoalKeys
 import com.joshtalks.joshskills.common.core.abTest.repository.ABTestRepository
@@ -22,7 +23,6 @@ import com.joshtalks.joshskills.common.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.common.repository.server.GoalSelectionResponse
 import com.joshtalks.joshskills.common.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.common.repository.server.signup.LoginResponse
-import com.joshtalks.joshskills.common.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior

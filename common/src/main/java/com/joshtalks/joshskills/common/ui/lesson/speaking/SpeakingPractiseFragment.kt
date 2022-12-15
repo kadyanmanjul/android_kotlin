@@ -49,7 +49,6 @@ import com.joshtalks.joshskills.common.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.fpp.RecentCallActivity
-import com.joshtalks.joshskills.common.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.common.ui.lesson.*
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
@@ -336,10 +335,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (getVoipState() == State.IDLE) {
-                val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
-                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
-                }
-                startActivity(intent)
+                //TODO : Integrate Navigator -- Sukesh
+//                val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
+//                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
+//                }
+//                startActivity(intent)
                 MixPanelTracker.publishEvent(MixPanelEvent.CALL_PP_FROM_GROUP_LESSON)
                     .addParam(ParamKeys.LESSON_ID, lessonID)
                     .addParam(ParamKeys.LESSON_NUMBER, lessonNo)

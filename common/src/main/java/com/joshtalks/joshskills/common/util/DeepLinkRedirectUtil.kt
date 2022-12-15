@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.common.repository.server.onboarding.SpecificOnbo
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.common.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.common.ui.help.HelpActivity
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
@@ -249,16 +248,17 @@ object DeepLinkRedirectUtil {
     }
 
     @Throws(Exception::class)
-    private suspend fun getGroupActivityIntent(activity: Activity, jsonParams: JSONObject) =
-        getConversationIdFromCourseId(jsonParams)?.let {
-            Intent(activity, JoshGroupActivity::class.java).apply {
-                putExtra(CONVERSATION_ID, it)
-                sendPendingIntentForActivityList(
-                    activity,
-                    arrayOf(getConversationActivityIntent(activity, jsonParams), this)
-                )
-            }
-        } ?: getConversationActivityIntent(activity, jsonParams)
+    private suspend fun getGroupActivityIntent(activity: Activity, jsonParams: JSONObject): Intent? { return null }
+    //TODO : Uncomment and move file to app module -- Sukesh
+//        getConversationIdFromCourseId(jsonParams)?.let {
+//            Intent(activity, JoshGroupActivity::class.java).apply {
+//                putExtra(CONVERSATION_ID, it)
+//                sendPendingIntentForActivityList(
+//                    activity,
+//                    arrayOf(getConversationActivityIntent(activity, jsonParams), this)
+//                )
+//            }
+//        } ?: getConversationActivityIntent(activity, jsonParams)
 
     @Throws(Exception::class)
     private suspend fun getConversationActivityIntent(activity: Activity, jsonParams: JSONObject): Intent =

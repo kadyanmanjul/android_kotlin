@@ -63,10 +63,6 @@ import com.joshtalks.joshskills.common.track.AGORA_UID
 import com.joshtalks.joshskills.common.track.CHANNEL_ID
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.fpp.constants.*
-import com.joshtalks.joshskills.common.ui.group.JoshGroupActivity
-import com.joshtalks.joshskills.common.ui.group.constants.DM_CHAT
-import com.joshtalks.joshskills.common.ui.group.constants.DM_CHAT_DATA
-import com.joshtalks.joshskills.common.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.points_history.PointsInfoActivity
@@ -318,23 +314,24 @@ class UserProfileActivity : CoreJoshActivity() {
         }
 
         binding.btnSendMessage.setOnClickListener {
-            val intent = Intent(this, JoshGroupActivity::class.java).apply {
-                putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
-                putExtra(com.joshtalks.joshskills.common.track.CHANNEL_ID, viewModel.fppRequest.value?.groupId)
-                putExtra(com.joshtalks.joshskills.common.track.AGORA_UID, viewModel.fppRequest.value?.agoraUid)
-                putExtra(MENTOR_ID, mentorId)
-                putExtra(
-                    DM_CHAT_DATA, GroupsItem(
-                        groupIcon = viewModel.userData.value?.photoUrl,
-                        groupId = viewModel.fppRequest.value?.groupId?: EMPTY,
-                        unreadCount = "0",
-                        name = viewModel.userData.value?.name,
-                        groupType = DM_CHAT,
-                        lastMessage = DM_CHAT
-                    )
-                )
-            }
-            startActivity(intent)
+            //TODO: Integrate navigator -- Sukesh
+//            val intent = Intent(this, JoshGroupActivity::class.java).apply {
+//                putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
+//                putExtra(com.joshtalks.joshskills.common.track.CHANNEL_ID, viewModel.fppRequest.value?.groupId)
+//                putExtra(com.joshtalks.joshskills.common.track.AGORA_UID, viewModel.fppRequest.value?.agoraUid)
+//                putExtra(MENTOR_ID, mentorId)
+//                putExtra(
+//                    DM_CHAT_DATA, GroupsItem(
+//                        groupIcon = viewModel.userData.value?.photoUrl,
+//                        groupId = viewModel.fppRequest.value?.groupId?: EMPTY,
+//                        unreadCount = "0",
+//                        name = viewModel.userData.value?.name,
+//                        groupType = DM_CHAT,
+//                        lastMessage = DM_CHAT
+//                    )
+//                )
+//            }
+//            startActivity(intent)
             if (previousPage == GROUP)
                 this.finish()
         }

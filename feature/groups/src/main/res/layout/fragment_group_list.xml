@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.group.GroupListFragment">
+
+    <data>
+
+        <import type="com.joshtalks.joshskills.groups.R" />
+
+        <import type="android.view.View" />
+
+        <import type="com.joshtalks.joshskills.groups.constants.GroupsConstantsKt" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.groups.viewmodels.JoshGroupViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.joshtalks.joshskills.groups.views.GroupsAppBar
+                android:id="@+id/group_app_bar"
+                firstIcon="@{vm.isFromVoip() ? R.drawable.josh_skill_logo : R.drawable.ic_search}"
+                groupHeader="@{vm.isFromVoip() ? `Choose group to call` : `Inbox`}"
+                groupSubHeader="@{` `}"
+                onBackPressed="@{vm::onBackPress}"
+                onFirstIconPressed="@{vm::onSearch}"
+                onSecondIconPressed="@{vm::onMoreOption}"
+                secondIcon="@{vm.newGroupVisible ? 0 : R.drawable.ic_more_option}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/group_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="@color/pure_white"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_4sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:text="Groups के ज़रिये हम अपने उन सहपाठिओं को खोज सकते हैं जिनके future के सपने हमसे मिलते हैं या जो हमारे interests share करते हैं"
+            android:textColor="@color/text_default"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/group_search_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@color/pure_white"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_4sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:text="Find the first group you want to join by clicking on the button below or create your own group"
+            android:textColor="@color/text_default"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/group_description" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/find_groups_btn"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/primary_500"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:onClick="@{vm::onSearch}"
+            android:text="Find Groups to join"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/pure_white"
+            android:textSize="@dimen/_12ssp"
+            app:cornerRadius="@dimen/_36sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/appBarLayout"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            app:rippleColor="@color/pure_white" />
+
+        <RelativeLayout
+            android:id="@+id/ringing_icon_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_minus18sdp"
+            android:layout_marginBottom="@dimen/_minus16sdp"
+            android:background="@drawable/well_btn_background"
+            android:elevation="@dimen/_12sdp"
+            app:layout_constraintBottom_toTopOf="@+id/find_groups_btn"
+            app:layout_constraintStart_toEndOf="@+id/find_groups_btn">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:padding="@dimen/_3sdp"
+                android:paddingTop="@dimen/_2sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/ringing_bell.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/group_rv"
+            groupAdapter="@{vm.adapter}"
+            onGroupItemClick="@{vm.onItemClick}"
+            stateAdapter="@{vm.stateAdapter}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/no_groups_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{vm.hasGroupData ? View.GONE : View.VISIBLE}"
+            app:constraint_referenced_ids="group_search_description,group_description,find_groups_btn,ringing_icon_1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/materialButton2"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_50sdp"
+            android:backgroundTint="@color/primary_500"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:onClick="@{vm::onSearch}"
+            android:text="Find Groups to join"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/pure_white"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="@{(vm.groupListCount > 3 || vm.groupListCount == 0) ? View.GONE : View.VISIBLE}"
+            app:cornerRadius="@dimen/_36sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            app:rippleColor="@color/pure_white" />
+
+        <RelativeLayout
+            android:id="@+id/ringing_icon_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_minus18sdp"
+            android:layout_marginBottom="@dimen/_minus16sdp"
+            android:background="@drawable/well_btn_background"
+            android:elevation="@dimen/_12sdp"
+            android:visibility="@{(vm.groupListCount > 3 || vm.groupListCount == 0 || vm.getOneGrpReqStatus()) ? View.INVISIBLE : View.VISIBLE, default=invisible}"
+            app:layout_constraintBottom_toTopOf="@+id/materialButton2"
+            app:layout_constraintStart_toEndOf="@id/materialButton2">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:padding="@dimen/_2sdp"
+                android:paddingTop="@dimen/_2sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/ringing_bell.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true" />
+        </RelativeLayout>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/bells_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="ringing_icon_1,ringing_icon_2" />
+
+        <FrameLayout
+            android:id="@+id/anim_layout"
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="0dp"
+            android:elevation="@dimen/_20sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/appBarLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/_2sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/leaderboard_arrow.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="reverse" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@color/primary_500"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_7sdp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:tint="@color/pure_white"
+                    app:srcCompat="@drawable/ic_search" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/overlay_new_group"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_more_option" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <com.joshtalks.joshskills.common.ui.tooltip.JoshTooltip
+            android:id="@+id/overlay_group_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_28sdp"
+            android:layout_marginTop="@dimen/_60sdp"
+            android:elevation="@dimen/_12sdp"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            app:tooltipText="You can search for groups here" />
+
+        <FrameLayout
+            android:id="@+id/overlay_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="1"
+            android:background="@color/surface_overlay"
+            android:clickable="true"
+            android:elevation="@dimen/_8sdp"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginVertical="@dimen/_60sdp"
+                android:elevation="@dimen/_10sdp"
+                android:shadowColor="#BD6674"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="10"
+                android:text="Tap anywhere to continue"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                android:textColor="@color/pure_white" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/surface_overlay"
+            android:clickable="false"
+            android:elevation="@dimen/_8sdp"
+            android:visibility="@{vm.addingNewGroup ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -39,8 +39,6 @@ import com.joshtalks.joshskills.common.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.fpp.SeeAllRequestsActivity
-import com.joshtalks.joshskills.common.ui.group.JoshGroupActivity
-import com.joshtalks.joshskills.common.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.common.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
@@ -389,9 +387,11 @@ class NotificationUtils(val context: Context) {
             NotificationAction.ACTION_OPEN_GROUPS -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
                 notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
-                return Intent(context, JoshGroupActivity::class.java).apply {
-                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, actionData)
-                }
+                return null
+                //TODO: uncomment code after adding dependency -- Sukesh
+//                return Intent(context, JoshGroupActivity::class.java).apply {
+//                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, actionData)
+//                }
             }
             NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
@@ -411,9 +411,11 @@ class NotificationUtils(val context: Context) {
                 notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
                 if (actionData.equals(Mentor.getInstance().getId()))
                     return null
-                return Intent(context, JoshGroupActivity::class.java).apply {
-                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, actionData)
-                }
+                return null
+                //TODO: uncomment code after adding dependency -- Sukesh
+//                return Intent(context, JoshGroupActivity::class.java).apply {
+//                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, actionData)
+//                }
             }
             NotificationAction.EMERGENCY_NOTIFICATION -> {
                 lateinit var intent: Intent
@@ -738,7 +740,8 @@ class NotificationUtils(val context: Context) {
 
     fun pushAnalytics(groupId: String?) {
         if (groupId != null) {
-            GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_RECEIVED, groupId)
+            //TODO: uncomment code after adding dependency -- Sukesh
+//            GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_RECEIVED, groupId)
         }
     }
 }

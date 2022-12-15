@@ -80,9 +80,6 @@ import com.joshtalks.joshskills.common.ui.certification_exam.CertificationBaseAc
 import com.joshtalks.joshskills.common.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.common.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.common.ui.group.JoshGroupActivity
-import com.joshtalks.joshskills.common.ui.group.analytics.GroupAnalytics
-import com.joshtalks.joshskills.common.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
 import com.joshtalks.joshskills.common.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
@@ -807,11 +804,12 @@ class ConversationActivity : BaseConversationActivity(),
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
                 MixPanelTracker.publishEvent(MixPanelEvent.GROUP_ICON_CLICKED).push()
-                val intent = Intent(this, JoshGroupActivity::class.java).apply {
-                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
-                }
-                GroupAnalytics.push(MAIN_GROUP_ICON)
-                startActivity(intent)
+                //TODO: uncomment code to open groups -- Sukesh
+//                val intent = Intent(this, JoshGroupActivity::class.java).apply {
+//                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
+//                }
+//                GroupAnalytics.push(MAIN_GROUP_ICON)
+//                startActivity(intent)
             }
         }
 

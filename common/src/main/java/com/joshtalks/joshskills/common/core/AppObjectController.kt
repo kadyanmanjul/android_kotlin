@@ -46,7 +46,6 @@ import com.joshtalks.joshskills.common.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.common.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.common.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.common.repository.service.UtilsAPIService
-import com.joshtalks.joshskills.common.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.common.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.common.ui.voip.analytics.data.network.VoipAnalyticsService
 import com.tonyodev.fetch2.Fetch
@@ -213,10 +212,6 @@ class AppObjectController {
 
         val utilsAPIService: UtilsAPIService by lazy {
             retrofit.create(UtilsAPIService::class.java)
-        }
-
-        val groupsNetworkService: GroupApiService by lazy {
-            retrofit.create(GroupApiService::class.java)
         }
 
         val p2pNetworkService: P2PNetworkService by lazy {

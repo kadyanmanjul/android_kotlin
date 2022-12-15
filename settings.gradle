@@ -1,7 +1,8 @@
 include ':app', ':joshlibrary', ':recordview', ':mediapicker', ':joshcamerax'
+include ':common'
 include ':feature:splash'
 include ':feature:voip'
+include ':feature:groups'
 include ':data:splash'
 
 enableFeaturePreview("VERSION_CATALOGS")
-include ':common'

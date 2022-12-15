@@ -59,7 +59,6 @@ import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.common.ui.extra.SignUpPermissionDialogFragment
-import com.joshtalks.joshskills.common.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.common.ui.help.HelpActivity
 import com.joshtalks.joshskills.common.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
@@ -449,7 +448,8 @@ abstract class BaseActivity :
             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-            PubNubService.cancelAllPubNubNotifications()
+            //TODO: Uncomment (IMP) -- Sukesh
+//            PubNubService.cancelAllPubNubNotifications()
             val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
             intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

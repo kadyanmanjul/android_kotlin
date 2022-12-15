@@ -9,10 +9,8 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.common.core.analytics.LogException
-import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.common.ui.userprofile.models.UserProfileResponse
@@ -21,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import timber.log.Timber
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
@@ -193,8 +190,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     fun handleGroupTimeTokens() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                GroupRepository().fireTimeTokenAPI()
-                GroupRepository().subscribeNotifications()
+                //TODO: uncomment code for working of groups -- Sukesh
+//                GroupRepository().fireTimeTokenAPI()
+//                GroupRepository().subscribeNotifications()
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
