@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="amount"
+            type="com.joshtalks.joshskills.expertcall.model.Amount" />
+    </data>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@drawable/ic_amount_bg_for_item"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/itemAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@{amount.amountInRupees()}"
+        android:textStyle="bold"
+        android:textColor="@color/text_default"
+        android:textSize="@dimen/_14ssp"
+        android:layout_gravity="center"
+        tools:text="₹ 50000"/>
+
+</FrameLayout>
+</layout>

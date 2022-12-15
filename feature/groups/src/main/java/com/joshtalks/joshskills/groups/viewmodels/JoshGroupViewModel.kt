@@ -36,7 +36,6 @@ import com.joshtalks.joshskills.groups.constants.OPENED_GROUP
 import com.joshtalks.joshskills.groups.model.*
 import com.joshtalks.joshskills.groups.utils.GroupItemComparator
 import com.joshtalks.joshskills.groups.repository.GroupRepository
-import com.joshtalks.joshskills.common.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 import com.joshtalks.joshskills.groups.databinding.GroupTypeDialogBinding
 
 import kotlinx.coroutines.Dispatchers

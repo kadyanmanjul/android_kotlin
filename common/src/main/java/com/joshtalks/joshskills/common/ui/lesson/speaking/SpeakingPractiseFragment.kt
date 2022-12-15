@@ -45,7 +45,6 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
-import com.joshtalks.joshskills.common.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.fpp.RecentCallActivity
@@ -656,9 +655,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnCallWithExpert.setOnClickListener {
             viewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = SPEAKING_PAGE)
             if (User.getInstance().isVerified) {
-                Intent(requireActivity(), CallWithExpertActivity::class.java).also {
-                    startActivity(it)
-                }
+                //TODO: add navigator -- sahil
+//                Intent(requireActivity(), CallWithExpertActivity::class.java).also {
+//                    startActivity(it)
+//                }
             } else {
                 navigateToLoginActivity()
             }

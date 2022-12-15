@@ -16,9 +16,9 @@ import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.PU
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
 import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
+import com.joshtalks.joshskills.common.repository.local.SkillsDatastore
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.common.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.common.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
@@ -218,10 +218,12 @@ object VoipPref {
     }
 
     private fun openExpertUpgradeScreen() {
-        val intent = Intent(ActivityLifecycleCallback.currentActivity, com.joshtalks.joshskills.common.ui.callWithExpert.CallWithExpertActivity::class.java)
-        intent.putExtra("open_upgrade_page", true)
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        ActivityLifecycleCallback.currentActivity.startActivity(intent)
+
+        //TODO: add navigator to expert call
+//        val intent = Intent(ActivityLifecycleCallback.currentActivity, com.joshtalks.joshskills.common.ui.callWithExpert.CallWithExpertActivity::class.java)
+//        intent.putExtra("open_upgrade_page", true)
+//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//        ActivityLifecycleCallback.currentActivity.startActivity(intent)
     }
 
     private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {

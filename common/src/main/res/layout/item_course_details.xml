@@ -2,13 +2,6 @@
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <variable
-            name="amount"
-            type="com.joshtalks.joshskills.common.ui.callWithExpert.model.Amount" />
-    </data>
-
     <com.google.android.material.card.MaterialCardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"

@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.common.repository.service
 
 import com.joshtalks.joshskills.common.repository.local.entity.BroadCastEvent
+import com.joshtalks.joshskills.common.repository.local.model.ButtonVisibilityResponse
 import com.joshtalks.joshskills.common.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.common.repository.local.model.RequestRegisterGAId
+import com.joshtalks.joshskills.common.repository.local.model.WalletBalance
 import com.joshtalks.joshskills.common.repository.server.*
 import com.joshtalks.joshskills.common.repository.server.certification_exam.*
 import com.joshtalks.joshskills.common.repository.server.conversation_practice.ConversationPractiseModel
@@ -23,7 +25,6 @@ import com.joshtalks.joshskills.common.repository.server.translation.WordDetails
 import com.joshtalks.joshskills.common.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.common.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.common.track.CourseUsageSync
-import com.joshtalks.joshskills.common.ui.callWithExpert.model.*
 import com.joshtalks.joshskills.common.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.common.ui.payment.model.VerifyPayment
@@ -317,33 +318,6 @@ interface CommonNetworkService {
     @POST("$DIR/impression/track_reading_practice_impression/")
     suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
 
-    @GET("$DIR/micro_payment/get_experts/")
-    suspend fun getExpertList(): Response<ExpertListResponse>
-
-    @GET("$DIR/micro_payment/user_wallet/{pk}/")
-    suspend fun getWalletBalance(@Path("pk") mentorId: String): Response<WalletBalance>
-
-    @POST("$DIR/micro_payment/user_wallet/")
-    suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
-
-    @GET("$DIR/micro_payment/check_wallet_balance/")
-    suspend fun getCallNowStatus(@Query("expert_id") expertId: String): Response<WalletBalance>
-
-    @GET("$DIR/micro_payment/get_amount_list/")
-    suspend fun getAvailableAmounts(@Query("gaid") gaid: String): Response<AvailableAmount>
-
-    @POST("$DIR/impression/track_micro_payment_impression/")
-    suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)
-
-    @GET("$DIR/micro_payment/get_wallet_transactions/{mentor}/")
-    suspend fun getWalletTransactions(@Path("mentor") mentorId: String, @Query("page") page: Int): Response<TransactionResponse>
-
-    @GET("$DIR/micro_payment/get_payment_logs/{mentor}/")
-    suspend fun getPaymentTransactions(@Path("mentor") mentorId: String, @Query("page") page: Int): Response<WalletLogResponse>
-
-    @GET("$DIR/micro_payment/get_upgrade_details/")
-    suspend fun getUpgradeDetails(@Query("gaid") gaid: String): Response<ExpertUpgradeDetails>
-
     @GET("$DIR/course/show_popup/")
     suspend fun getCoursePopUpData(
         @Query("course_id") courseId: String,
@@ -354,6 +328,9 @@ interface CommonNetworkService {
 
     @GET("$DIR/course/buy_course_feature/")
     suspend fun getCourseFeatureDetails(@Query("test_id") testId: Int): Response<BuyCourseFeatureModel>
+
+    @POST("$DIR/impression/track_micro_payment_impression/")
+    suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)
 
     @GET("$DIR/course/get_user_coupons/")
     suspend fun getValidCoupon(@Query("test_id") testId: Int): Response<CouponListModel>
@@ -387,5 +364,8 @@ interface CommonNetworkService {
 
     @GET("$DIR/payment/branch_log/")
     suspend fun savePaymentLog(@Query("orderinfo_id") orderInfoId:String) :Response<Any>
+
+    @POST("$DIR/micro_payment/user_wallet/")
+    suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
 
 }

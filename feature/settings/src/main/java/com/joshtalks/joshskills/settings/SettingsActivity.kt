@@ -7,14 +7,13 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.widget.TextView
-import com.joshtalks.joshskills.settings.R
+import androidx.appcompat.widget.AppCompatImageView
 import com.joshtalks.joshskills.common.core.CoreJoshActivity
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.common.ui.extra.NOTIFICATION_POPUP
 import com.joshtalks.joshskills.settings.fragments.SettingsFragment
-import kotlinx.android.synthetic.main.base_toolbar.*
 
 class SettingsActivity : CoreJoshActivity() {
 
@@ -23,9 +22,9 @@ class SettingsActivity : CoreJoshActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         titleView = findViewById(R.id.text_message_title)
-        iv_help.visibility = View.GONE
-        iv_back.visibility = View.VISIBLE
-        iv_back.setOnClickListener {
+        findViewById<AppCompatImageView>(R.id.iv_help).visibility = View.GONE
+        findViewById<AppCompatImageView>(R.id.iv_back).visibility = View.VISIBLE
+        findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }

@@ -9,7 +9,6 @@ import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.CourseData
 import com.joshtalks.joshskills.common.repository.server.JuspayPayLoad
-import com.joshtalks.joshskills.common.ui.callWithExpert.model.Amount
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.repo.BuyPageRepo

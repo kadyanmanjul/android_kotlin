@@ -5,6 +5,7 @@ include ':feature:voip'
 include ':feature:groups'
 include ':feature:leaderboard'
 include ':feature:settings'
+include ':feature:expertcall'
 
 include ':data:splash'
 
