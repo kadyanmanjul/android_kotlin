@@ -8,5 +8,6 @@ include ':feature:settings'
 include ':feature:expertcall'
 
 include ':data:splash'
+include ':feature:auth'
 
 enableFeaturePreview("VERSION_CATALOGS")

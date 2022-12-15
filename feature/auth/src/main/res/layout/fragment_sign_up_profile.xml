@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.auth.freetrail.SignUpProfileFragment" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:background="@color/pure_white"
+        android:fillViewport="true"
+        android:paddingStart="@dimen/_24sdp"
+        android:paddingEnd="@dimen/_24sdp"
+        android:scrollbarThumbHorizontal="@null"
+        android:scrollbarThumbVertical="@null">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/nameInputLayout"
+                    style="@style/JoshInputField"
+                    android:layout_width="match_parent"
+                    android:hint="@string/name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/name_edit_text"
+                        style="@style/JoshNameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/emailInputLayout"
+                    style="@style/JoshInputField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/email"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/email_edit_text"
+                        style="@style/JoshEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapSentences|textEmailAddress"
+                        android:lines="1"
+                        android:maxLength="60"
+                        android:minLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/et_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_48sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="@drawable/mobile_no_bg_v2"
+                    android:paddingStart="@dimen/_14sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_14sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <com.joshtalks.joshskills.common.core.custom_ui.countrycodepicker.CountryCodePicker
+                        android:id="@+id/country_code_picker"
+                        style="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="@dimen/_2sdp"
+                        app:ccpDialog_allowSearch="true"
+                        app:ccpDialog_backgroundColor="@color/pure_grey"
+                        app:ccpDialog_fastScroller_bubbleColor="@color/primary_400"
+                        app:ccpDialog_fastScroller_bubbleTextAppearance="@style/TextAppearance.JoshTypography.BodyBold20"
+                        app:ccpDialog_fastScroller_handleColor="@color/primary_500"
+                        app:ccpDialog_initialScrollToSelection="true"
+                        app:ccpDialog_keyboardAutoPopup="false"
+                        app:ccpDialog_searchEditTextTint="@color/disabled"
+                        app:ccpDialog_showCloseIcon="true"
+                        app:ccpDialog_showFastScroller="true"
+                        app:ccpDialog_showPhoneCode="true"
+                        app:ccpDialog_showTitle="false"
+                        app:ccpDialog_textColor="@color/text_default"
+                        app:ccp_areaCodeDetectedCountry="true"
+                        app:ccp_arrowColor="@color/primary_500"
+                        app:ccp_arrowSize="@dimen/_4sdp"
+                        app:ccp_autoDetectCountry="true"
+                        app:ccp_autoDetectLanguage="true"
+                        app:ccp_autoFormatNumber="false"
+                        app:ccp_clickable="true"
+                        app:ccp_contentColor="@color/text_default"
+                        app:ccp_countryAutoDetectionPref="SIM_LOCALE"
+                        app:ccp_countryPreference="IN"
+                        app:ccp_defaultLanguage="ENGLISH"
+                        app:ccp_defaultNameCode="IN"
+                        app:ccp_defaultPhoneCode="91"
+                        app:ccp_hintExampleNumber="false"
+                        app:ccp_rememberLastSelection="true"
+                        app:ccp_showArrow="false"
+                        app:ccp_showFullName="false"
+                        app:ccp_showNameCode="false"
+                        app:ccp_showPhoneCode="true"
+                        app:ccp_textGravity="CENTER"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/phone_number_et"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@null"
+                        android:digits="1234567890"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:gravity="start|center"
+                        android:hint="@string/mobile_number"
+                        android:imeOptions="actionDone"
+                        android:importantForAutofill="no"
+                        android:inputType="phone"
+                        android:lines="1"
+                        android:maxLength="13"
+                        android:paddingStart="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_4sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                        android:textColor="@color/text_default"
+                        android:textColorHint="@color/text_light"
+                        app:backgroundTint="@color/pure_white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/iv_tick"
+                        app:layout_constraintStart_toEndOf="@+id/country_code_picker"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_tick"
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:gravity="center_vertical|start"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_check"
+                        tools:visibility="visible" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/dobInputLayout"
+                    style="@style/JoshInputField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/date_of_birth">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/dob_edit_text"
+                        style="@style/JoshEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:gravity="start"
+                        android:imeOptions="actionNone"
+                        android:importantForAutofill="no"
+                        android:inputType="none"
+                        android:onClick="@{()->handler.selectDateOfBirth()}"
+                        tools:ignore="KeyboardInaccessibleWidget" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <RadioGroup
+                    android:id="@+id/gender_toggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:orientation="horizontal"
+                    android:paddingVertical="@dimen/_8sdp">
+
+                    <RadioButton
+                        android:id="@+id/tv_male_gender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/male"
+                        android:theme="@style/JoshRadioButton" />
+
+                    <RadioButton
+                        android:id="@+id/tv_female_gender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/female"
+                        android:theme="@style/JoshRadioButton" />
+
+                    <RadioButton
+                        android:id="@+id/tv_other_gender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/other"
+                        android:theme="@style/JoshRadioButton" />
+
+                </RadioGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/occupationInputLayout"
+                    style="@style/JoshInputFieldWithHelper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/occupation"
+                    app:helperText="@string/occupation_filed_hint_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/occupation_edit_text"
+                        style="@style/JoshEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="@string/allowed_name_characters"
+                        android:gravity="start"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapWords"
+                        android:lines="1"
+                        android:maxLength="24"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/cursor_drawable" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/aspirationInputLayout"
+                    style="@style/JoshInputFieldWithHelper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/aspiration_filed"
+                    app:helperText="@string/ex_ias_officer">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/aspiration_edit_text"
+                        style="@style/JoshEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="@string/allowed_name_characters"
+                        android:gravity="start"
+                        android:imeOptions="actionDone"
+                        android:inputType="textCapWords"
+                        android:lines="1"
+                        android:maxLength="24"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@drawable/cursor_drawable" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:text="@string/sign_up_profile_occupation_aspiration_text"
+                    android:textColor="@color/text_subdued" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_24sdp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_login"
+                    style="@style/Primary_Button_Filled"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:backgroundTint="@color/primary_500"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:maxLines="1"
+                    android:onClick="@{()->handler.submitProfile()}"
+                    android:text="@string/next"
+                    android:textAllCaps="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintWidth_default="percent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>
