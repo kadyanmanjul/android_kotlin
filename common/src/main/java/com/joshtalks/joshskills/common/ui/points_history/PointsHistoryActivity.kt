@@ -34,8 +34,6 @@ import java.text.DecimalFormat
 
 const val MENTOR_ID = "mentor_id"
 private const val TAG = "PointsHistoryActivity"
-const val HAS_SEEN_POINTS_HISTORY_ANIMATION = "points_pref_has_seen_point_history_animation"
-
 
 class PointsHistoryActivity : CoreJoshActivity() {
     private val viewModel: PointsViewModel by lazy {

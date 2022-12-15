@@ -224,8 +224,6 @@ const val HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION = "conversion_text_view_class_anima
 const val HAS_SEEN_GROUP_LIST_CBC_TOOLTIP = "group_list_cbc_tooltip"
 const val HAS_COMMITMENT_FORM_SUBMITTED = "commitment_form_submitted"
 
-
-
 object PrefManager {
 
     private const val PREF_NAME_COMMON = "JoshSkills"

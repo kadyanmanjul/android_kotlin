@@ -76,7 +76,6 @@ import com.joshtalks.joshskills.common.ui.lesson.reading.ReadingFullScreenFragme
 import com.joshtalks.joshskills.common.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.common.ui.lesson.vocabulary.VocabularyFragment
-import com.joshtalks.joshskills.common.ui.online_test.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION

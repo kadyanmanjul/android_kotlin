@@ -36,8 +36,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.*
 
-const val HAS_SEEN_GRAMMAR_ANIMATION = "grammar_pref_has_seen_grammar_button_animation"
-
 class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
     private var lessonActivityListener: LessonActivityListener? = null

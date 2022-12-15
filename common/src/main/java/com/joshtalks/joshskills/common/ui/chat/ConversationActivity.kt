@@ -134,7 +134,6 @@ const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
 const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
 const val TOOLTIP_CONVERSAITON = "TOOLTIP_CONVERSAITON_"
 const val FREE_TRIAL_CALL_TOPIC_ID = "10"
-const val HAS_SEEN_UNLOCK_CLASS_ANIMATION = "conversion_pref_has_seen_unlock_class_animation"
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
