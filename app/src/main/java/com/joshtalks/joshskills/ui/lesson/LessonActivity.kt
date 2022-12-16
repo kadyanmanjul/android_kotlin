@@ -427,6 +427,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     override fun onResume() {
         super.onResume()
+        if (PrefManager.getBoolValue("SHOW_POP_UP")) {
+            PrefManager.put("SHOW_POP_UP", false)
+            VoipPref.showScratchCard(this,PrefManager.getLongValue(PREF_KEY_LAST_CALL_DURATION))
+        }
         viewModel.isUserCallBlock()
         PrefManager.put(LESSON_ACTIVITY_VISIT_COUNT, PrefManager.getIntValue(LESSON_ACTIVITY_VISIT_COUNT).plus(1))
         subscribeRxBus()

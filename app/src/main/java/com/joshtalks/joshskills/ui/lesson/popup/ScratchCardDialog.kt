@@ -5,12 +5,14 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
@@ -36,12 +38,17 @@ class ScratchCardDialog : BaseDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d(
+            "sagar",
+            "onCreateView() called with: inflater = $inflater, container = $container, savedInstanceState = $savedInstanceState"
+        )
         binding = ScratchCardDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("sagar", "onViewCreated() called with: view = $view, savedInstanceState = $savedInstanceState")
         isCancelable = true
         savePopupImpression("SCRATCH_CARD_SHOWN")
 
@@ -125,9 +132,9 @@ class ScratchCardDialog : BaseDialogFragment() {
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
-        if (!manager.isDestroyed && !manager.isStateSaved) {
-            super.show(manager, tag)
-        }
+        val ft = manager.beginTransaction()
+        ft.add(this, tag)
+        ft.commitAllowingStateLoss()
     }
 
     companion object {
@@ -137,6 +144,7 @@ class ScratchCardDialog : BaseDialogFragment() {
         @JvmStatic
         fun newInstance(cardData: PurchaseDataResponse?): ScratchCardDialog =
             ScratchCardDialog().apply {
+                Log.d("sagar", "newInstance() called ${cardData}")
                 arguments = Bundle().apply {
                     putParcelable(SCRATCH_CARD_DATA, cardData)
                 }

@@ -1,10 +1,20 @@
 package com.joshtalks.joshskills.ui.call.data.local
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
+import android.view.View
+import android.view.Window
+import android.view.animation.AnimationUtils
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.LottieAnimationView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
@@ -19,14 +29,16 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.ui.lesson.popup.ScratchCardDialog
 import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
 import com.joshtalks.joshskills.ui.callWithExpert.repository.db.SkillsDatastore
 import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.AutoCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
+import com.joshtalks.joshskills.util.scratch.ScratchView
 import com.joshtalks.joshskills.voip.BeepTimer
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.local.AGORA_CALL_ID
@@ -151,7 +163,7 @@ object VoipPref {
         deductAmountAfterCall(getLastCallDurationInSec().toString(), remoteUserMentorId, callType)
     }
 
-    private fun showPopUp(duration: Long, callType: Int) {
+    fun showPopUp(duration: Long, callType: Int) {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             when (getPopUpType(duration, callType)) {
                 POPUP.AUTO_CONNECT -> showDialogBox(duration.inSeconds(), AUTO_CALL)
@@ -254,6 +266,7 @@ object VoipPref {
 
     // TODO: These function shouldn't be here
     private fun showDialogBox(totalSecond: Long, type: String) {
+        Log.d("sagar", "showDialogBox() called with: totalSecond = $totalSecond, type = $type")
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             delay(500)
             val currentActivity = ActivityLifecycleCallback.currentActivity
@@ -264,7 +277,8 @@ object VoipPref {
                 withContext(Dispatchers.Main) {
                     when (type) {
                         CALL_RATING -> newFragmentActivity?.let { showCallRatingDialog(it) }
-                        SCRATCH_POPUP -> newFragmentActivity?.let { showScratchCard(it, totalSecond) }
+                        SCRATCH_POPUP -> PrefManager.put("SHOW_POP_UP", true)
+//                        SCRATCH_POPUP -> newFragmentActivity?.let { showScratchCard(it, totalSecond) }
                         AUTO_CALL -> {
                             val count = preferenceManager.getInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0) + 1
                             val editor = preferenceManager.edit()
@@ -285,7 +299,8 @@ object VoipPref {
                 withContext(Dispatchers.Main) {
                     when (type) {
                         CALL_RATING -> newFragmentActivity?.let { showCallRatingDialog(it) }
-                        SCRATCH_POPUP -> newFragmentActivity?.let { showScratchCard(it, totalSecond) }
+                        SCRATCH_POPUP -> PrefManager.put("SHOW_POP_UP", true)
+//                        SCRATCH_POPUP -> newFragmentActivity?.let { showScratchCard(it, totalSecond) }
                         AUTO_CALL -> {
                             val count = preferenceManager.getInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0) + 1
                             val editor = preferenceManager.edit()
@@ -306,6 +321,8 @@ object VoipPref {
     }
 
     fun showScratchCard(fragmentActivity: FragmentActivity, duration: Long) {
+        Log.d("sagar", "showScratchCard() called with: fragmentActivity = $fragmentActivity, duration = $duration")
+        PrefManager.put("SHOW_POP_UP", false)
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             try {
                 val resp = AppObjectController.commonNetworkService.getCoursePopUpData(
@@ -315,11 +332,75 @@ object VoipPref {
                     callCount = PrefManager.getIntValue(FT_CALLS_LEFT),
                     callDuration = duration
                 )
-                resp.body().let {
-                    ScratchCardDialog.newInstance(it).show(fragmentActivity.supportFragmentManager, "ScratchCardDialog")
+                withContext(Dispatchers.Main) {
+                    resp.body()?.let {
+                        try {
+                            Log.d("sagar", "showScratchCard() called")
+                            val dialogView = showCustomDialog(R.layout.scratch_card_dialog, fragmentActivity)
+                            val cardConfetti = dialogView.findViewById<LottieAnimationView>(R.id.card_confetti)
+                            val cardTitle = dialogView.findViewById<AppCompatTextView>(R.id.card_title)
+                            val cardBody = dialogView.findViewById<AppCompatTextView>(R.id.card_body)
+                            val cardContinue = dialogView.findViewById<AppCompatTextView>(R.id.card_continue)
+                            val tvScratchHere = dialogView.findViewById<AppCompatTextView>(R.id.tv_scratch_here)
+                            val cardImage = dialogView.findViewById<AppCompatImageView>(R.id.card_image)
+                            val scratchView = dialogView.findViewById<ScratchView>(R.id.scratch_view)
+
+                            Log.d("sagar", "showScratchCard() called${cardTitle}")
+                            savePopupImpression("SCRATCH_CARD_SHOWN", it.popUpKey)
+                            var shouldShowText = true
+
+                            cardTitle.text = it.popUpTitle
+                            cardBody.text = it.popUpBody
+                            if (it.couponCode.isNullOrBlank().not()) {
+                                cardContinue.text = "CLAIM NOW!"
+                                cardImage.setImageResource(R.drawable.ic_coin)
+                            }
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                delay(1500)
+                                tvScratchHere.startAnimation(AnimationUtils.loadAnimation(fragmentActivity, R.anim.fade_in))
+                                if (shouldShowText)
+                                    tvScratchHere.visibility = View.VISIBLE
+                            }
+
+                            cardContinue.setOnClickListener {
+                                if (cardContinue.text != fragmentActivity.getString(R.string.got_it))
+                                    BuyPageActivity.startBuyPageActivity(
+                                        fragmentActivity,
+                                        AppObjectController.getFirebaseRemoteConfig().getString(
+                                            FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                                        ),
+                                        "SCRATCH_CARD"
+                                    )
+                                dialogView.dismiss()
+                            }
+
+                            scratchView.setRevealListener(object : ScratchView.IRevealListener {
+                                override fun onRevealed(scratchView: ScratchView) {
+                                    scratchView.reveal()
+                                    savePopupImpression("SCRATCH_CARD_UNLOCKED", it.popUpKey)
+                                    if (cardContinue.text != fragmentActivity.getString(R.string.got_it)) {
+                                        cardConfetti.visibility = View.VISIBLE
+                                        cardConfetti.playAnimation()
+                                    }
+                                }
+
+                                override fun onRevealPercentChangedListener(scratchView: ScratchView, percent: Float) {
+                                    shouldShowText = false
+                                    tvScratchHere.visibility = View.GONE
+                                    if (percent >= 0.5) {
+                                        scratchView.reveal()
+                                    }
+                                }
+                            })
+                            Log.e("sagar", "onCouponApply: $dialogView")
+                        }catch (ex:Exception){
+                            Log.d("sagar", "onCouponApply() called with: context = ${ex.message}")
+                        }
+                    }
                 }
             } catch (ex: Exception) {
-                Log.d(TAG, "showScratchDialog: ${ex.message}")
+                Log.d("sagar", "showScratchDialog: ${ex.message}")
             }
         }
     }
@@ -446,6 +527,32 @@ object VoipPref {
 
     fun getExpertCallDuration(): String? {
         return com.joshtalks.joshskills.voip.data.local.PrefManager.getExpertCallDuration()
+    }
+
+    private fun showCustomDialog(view: Int, context:FragmentActivity): Dialog {
+        Log.d("sagar", "showCustomDialog() called with: view = $view, context = $context")
+        val dialogView = Dialog(context)
+        dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialogView.setCancelable(true)
+        dialogView.setContentView(view)
+        dialogView.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogView.show()
+        return dialogView
+    }
+
+    private fun savePopupImpression(eventName: String, popUpKey: String?) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                AppObjectController.commonNetworkService.savePopupImpression(
+                    mapOf(
+                        "event_name" to eventName,
+                        "popup_key" to (popUpKey ?: "scratch_card")
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }
 

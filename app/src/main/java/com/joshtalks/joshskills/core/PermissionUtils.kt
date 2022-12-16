@@ -289,32 +289,18 @@ object PermissionUtils {
             return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) +
                     ContextCompat.checkSelfPermission(context, Manifest.permission.MODIFY_AUDIO_SETTINGS) +
                     ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) +
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_NETWORK_STATE) +
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) +
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) +
                     ContextCompat.checkSelfPermission(context, Manifest.permission.MODIFY_AUDIO_SETTINGS) +
                     ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) +
                     ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_NETWORK_STATE) +
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) +
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VIDEO) +
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.READ_MEDIA_AUDIO
-                    ) == PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED
         else {
             return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) +
                     ContextCompat.checkSelfPermission(context, Manifest.permission.MODIFY_AUDIO_SETTINGS) +
                     ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) +
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_NETWORK_STATE) +
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_NETWORK_STATE)  == PackageManager.PERMISSION_GRANTED
         }
     }
 
@@ -358,9 +344,7 @@ object PermissionUtils {
                     Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.ACCESS_NETWORK_STATE,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                    Manifest.permission.READ_PHONE_STATE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_PHONE_STATE
                 )
                 .withListener(multiplePermissionsListener).check()
         } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
@@ -369,8 +353,7 @@ object PermissionUtils {
                     Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.ACCESS_NETWORK_STATE,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                    Manifest.permission.READ_PHONE_STATE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_PHONE_STATE
                 )
                 .withListener(multiplePermissionsListener).check()
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
@@ -380,7 +363,6 @@ object PermissionUtils {
                     Manifest.permission.ACCESS_NETWORK_STATE,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS,
                     Manifest.permission.READ_PHONE_STATE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.BLUETOOTH_CONNECT
                 )
                 .withListener(multiplePermissionsListener).check()
@@ -391,9 +373,6 @@ object PermissionUtils {
                     Manifest.permission.ACCESS_NETWORK_STATE,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS,
                     Manifest.permission.READ_PHONE_STATE,
-                    Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_VIDEO,
-                    Manifest.permission.READ_MEDIA_AUDIO,
                     Manifest.permission.BLUETOOTH_CONNECT
                 )
                 .withListener(multiplePermissionsListener).check()
