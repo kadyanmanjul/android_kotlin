@@ -43,10 +43,11 @@ class AlarmNotifierActivity : AppCompatActivity(),
         }
 
         findViewById<MaterialTextView>(R.id.start_course_bt).setOnClickListener {
-            AppObjectController.navigator.with(applicationContext).navigate(object :
-                SplashContract {
-                override val navigator = AppObjectController.navigator
-            })
+            AppObjectController.navigator.with(applicationContext).navigate(
+                object : SplashContract {
+                    override val navigator = AppObjectController.navigator
+                }
+            )
             finish()
         }
 

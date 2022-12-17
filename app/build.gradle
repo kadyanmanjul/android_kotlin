@@ -229,8 +229,11 @@ android {
 dependencies {
     implementation project(path: ':common')
     implementation project(path: ':feature:voip')
-//    implementation project(path: ':feature:groups')
-//    implementation project(path: ':feature:leaderboard')
+    implementation project(path: ':feature:groups')
+    implementation project(path: ':feature:leaderboard')
+    implementation project(path: ':feature:settings')
+    implementation project(path: ':feature:expertcall')
+    implementation project(path: ':feature:auth')
 
     implementation libs.kotlin.lib
     implementation libs.bundles.coroutine

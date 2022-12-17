@@ -73,6 +73,7 @@ const val IS_FROM_NEW_ONBOARDING = "is_from_new_on_boarding_flow"
 
 class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListener {
 
+    private lateinit var navigator: Navigator
     private var popupMenu: PopupMenu? = null
     private var compositeDisposable = CompositeDisposable()
     private lateinit var findMoreLayout: View
@@ -96,6 +97,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
+        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         initView()
         addLiveDataObservable()
         addAfterTime()
@@ -221,8 +223,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun openSettingActivity() {
-        // TODO: Navigate to settings module
-//        openSettingActivity.launch(com.joshtalks.joshskills.settings.SettingsActivity.getIntent(this))
+        // TODO: Navigated to settings module ---- DONE (Sukesh)
+        navigator.with(this).navigate(
+            object : SettingsContract {
+                override val navigator = this@InboxActivity.navigator
+            }
+        )
     }
 
     private fun workInBackground() {
@@ -693,6 +699,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     companion object {
+        //TODO: Remove this intent -- Sukesh
         fun getInboxIntent(context: Context) = Intent(context, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -705,12 +712,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun applicationClosed() {
         val broadcastIntent = Intent().apply {
-            action =
-                CALLING_SERVICE_ACTION
-            putExtra(
-                SERVICE_BROADCAST_KEY,
-                STOP_SERVICE
-            )
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(broadcastIntent)
     }

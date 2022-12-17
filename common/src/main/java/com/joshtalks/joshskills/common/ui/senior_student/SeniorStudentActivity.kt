@@ -11,7 +11,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.CoreJoshActivity
+import com.joshtalks.joshskills.common.core.SettingsContract
+import com.joshtalks.joshskills.common.core.SignUpContract
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
@@ -97,8 +100,12 @@ class SeniorStudentActivity : CoreJoshActivity() {
     }
 
     private fun openSettingActivity() {
-        // TODO:  navigate to settings module
-//        openSettingActivity.launch(com.joshtalks.joshskills.settings.SettingsActivity.getIntent(this))
+        //TODO: Replace AppObjectController with intent navigator -- Sukesh
+        AppObjectController.navigator.with(this).navigate(
+            object : SettingsContract {
+                override val navigator = AppObjectController.navigator
+            }
+        )
     }
 
     companion object {

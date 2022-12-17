@@ -653,10 +653,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnCallWithExpert.setOnClickListener {
             viewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = SPEAKING_PAGE)
             if (User.getInstance().isVerified) {
-                //TODO: add navigator -- sahil
-//                Intent(requireActivity(), CallWithExpertActivity::class.java).also {
-//                    startActivity(it)
-//                }
+                //TODO: Replace AppObjectController with intent navigator -- Sukesh
+                AppObjectController.navigator.with(requireActivity()).navigate(
+                    object : ExpertCallContract {
+                        override val navigator = AppObjectController.navigator
+                    }
+                )
             } else {
                 navigateToLoginActivity()
             }

@@ -218,12 +218,14 @@ object VoipPref {
     }
 
     private fun openExpertUpgradeScreen() {
-
-        //TODO: add navigator to expert call
-//        val intent = Intent(ActivityLifecycleCallback.currentActivity, com.joshtalks.joshskills.common.ui.callWithExpert.CallWithExpertActivity::class.java)
-//        intent.putExtra("open_upgrade_page", true)
+        //TODO: Replace AppObjectController and fix flags -- Sukesh
+        AppObjectController.navigator.with(ActivityLifecycleCallback.currentActivity).navigate(
+            object : ExpertCallContract {
+                override val navigator = AppObjectController.navigator
+                override val openUpgradePage = true
+            }
+        )
 //        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//        ActivityLifecycleCallback.currentActivity.startActivity(intent)
     }
 
     private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {

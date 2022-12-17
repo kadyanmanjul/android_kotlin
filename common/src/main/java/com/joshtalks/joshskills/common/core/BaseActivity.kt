@@ -445,11 +445,17 @@ abstract class BaseActivity :
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
             //TODO: Uncomment (IMP) -- Sukesh
 //            PubNubService.cancelAllPubNubNotifications()
-//            val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+            //TODO: Replace AppObjectController with intent navigator -- Sukesh
+            AppObjectController.navigator.with(this@BaseActivity).navigate(
+                object : SignUpContract {
+                    override val flowFrom = "UserLogout"
+                    override val navigator = AppObjectController.navigator
+                }
+            )
+            //TODO: add flags for the above contract
 //            intent.apply {
 //                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 //                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                putExtra(FLOW_FROM, "CourseExploreActivity")
 //            }
 
             try {
@@ -504,8 +510,12 @@ abstract class BaseActivity :
                             }
                     }
                     this == getString(R.string.setting_dlink) -> {
-                        // TODO: Navigate to settings module.
-//                        openSettingActivity.launch(com.joshtalks.joshskills.settings.SettingsActivity.getIntent(this@BaseActivity))
+                        //TODO: Replace AppObjectController with intent navigator -- Sukesh
+                        AppObjectController.navigator.with(this@BaseActivity).navigate(
+                            object : SettingsContract {
+                                override val navigator = AppObjectController.navigator
+                            }
+                        )
                     }
                     this == getString(R.string.referral_open_dlink) -> {
                         ReferralActivity.startReferralActivity(this@BaseActivity)

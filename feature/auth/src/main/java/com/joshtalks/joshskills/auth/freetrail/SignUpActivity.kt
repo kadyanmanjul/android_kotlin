@@ -751,6 +751,16 @@ class SignUpActivity : ThemedBaseActivity() {
                 .putExtra(START_FREE_TRIAL, shouldStartFreeTrial)
             context.startActivity(starter)
         }
+
+        fun openSignUpActivity(contract: SignUpContract, context: Context) {
+            context.startActivity(
+                Intent(context, SignUpActivity::class.java).apply {
+                    putExtra(NAVIGATOR, contract.navigator)
+                    putExtra(FLOW_FROM, contract.flowFrom)
+                    putExtra(START_FREE_TRIAL, contract.shouldStartFreeTrial)
+                }
+            )
+        }
     }
 }
 

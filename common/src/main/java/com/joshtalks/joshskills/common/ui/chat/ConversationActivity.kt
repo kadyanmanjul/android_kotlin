@@ -801,12 +801,17 @@ class ConversationActivity : BaseConversationActivity(),
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
                 MixPanelTracker.publishEvent(MixPanelEvent.GROUP_ICON_CLICKED).push()
-                //TODO: uncomment code to open groups -- Sukesh
-//                val intent = Intent(this, JoshGroupActivity::class.java).apply {
-//                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
-//                }
+                //TODO: Remove AppObjectController and pass from intent -- Sukesh
+                AppObjectController.navigator.with(this).navigate(
+                    object : GroupsContract {
+                        override val conversationId = getConversationId()
+                        override val flowFrom = this.javaClass.simpleName
+                        override val navigator = AppObjectController.navigator
+
+                    }
+                )
+                //TODO: Implement analytics in Groups
 //                GroupAnalytics.push(MAIN_GROUP_ICON)
-//                startActivity(intent)
             }
         }
 

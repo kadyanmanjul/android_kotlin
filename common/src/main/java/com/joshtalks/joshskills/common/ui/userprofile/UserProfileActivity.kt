@@ -50,10 +50,12 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.databinding.ActivityUserProfileBinding
+import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsItem
 import com.joshtalks.joshskills.common.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.fpp.constants.*
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.points_history.PointsInfoActivity
@@ -137,8 +139,8 @@ class UserProfileActivity : CoreJoshActivity() {
         viewModel.getHelpCountCampaignData(CampaignKeys.PEOPLE_HELP_COUNT.name, mentorId, intervalType, previousPage)
     }
 
-    override fun getConversationId(): String? {
-        return intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+    override fun getConversationId(): String {
+        return intent.getStringExtra(CONVERSATION_ID) ?: EMPTY
     }
 
     private fun setOnClickListeners() {
@@ -305,24 +307,25 @@ class UserProfileActivity : CoreJoshActivity() {
         }
 
         binding.btnSendMessage.setOnClickListener {
-            //TODO: Integrate navigator -- Sukesh
-//            val intent = Intent(this, JoshGroupActivity::class.java).apply {
-//                putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
-//                putExtra(com.joshtalks.joshskills.common.track.CHANNEL_ID, viewModel.fppRequest.value?.groupId)
-//                putExtra(com.joshtalks.joshskills.common.track.AGORA_UID, viewModel.fppRequest.value?.agoraUid)
-//                putExtra(MENTOR_ID, mentorId)
-//                putExtra(
-//                    DM_CHAT_DATA, GroupsItem(
-//                        groupIcon = viewModel.userData.value?.photoUrl,
-//                        groupId = viewModel.fppRequest.value?.groupId?: EMPTY,
-//                        unreadCount = "0",
-//                        name = viewModel.userData.value?.name,
-//                        groupType = DM_CHAT,
-//                        lastMessage = DM_CHAT
-//                    )
-//                )
-//            }
-//            startActivity(intent)
+            //TODO: Replace AppObjectController with navigator from intent -- Sukesh
+            AppObjectController.navigator.with(this).navigate(
+                object : GroupsContract {
+                    override val conversationId = getConversationId()
+                    override val flowFrom = this@UserProfileActivity.javaClass.simpleName
+                    override val navigator = AppObjectController.navigator
+                    override val channelId = viewModel.fppRequest.value?.groupId ?: EMPTY
+                    override val agoraUid = viewModel.fppRequest.value?.agoraUid ?: 0
+                    override val mentorId = this@UserProfileActivity.mentorId
+                    override val dmChatData = GroupsItem(
+                        groupIcon = viewModel.userData.value?.photoUrl,
+                        groupId = viewModel.fppRequest.value?.groupId ?: EMPTY,
+                        unreadCount = "0",
+                        name = viewModel.userData.value?.name,
+                        groupType = "fpp",
+                        lastMessage = "fpp"
+                    )
+                }
+            )
             if (previousPage == GROUP)
                 this.finish()
         }

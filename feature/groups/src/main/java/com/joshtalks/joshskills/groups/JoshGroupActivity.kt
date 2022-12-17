@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.groups
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -26,10 +27,10 @@ import com.joshtalks.joshskills.groups.analytics.GroupAnalytics
 import com.joshtalks.joshskills.groups.constants.*
 import com.joshtalks.joshskills.groups.model.AddGroupRequest
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupItemData
+import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.groups.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.common.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.common.ui.userprofile.fragments.MENTOR_ID
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
@@ -61,12 +62,12 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun onCreated() {
-        val channelId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CHANNEL_ID) ?: EMPTY
+        val channelId = intent.getStringExtra(CHANNEL_ID) ?: EMPTY
         if (channelId.isEmpty())
             openGroupListFragment()
         else {
             vm.mentorId = intent.getStringExtra(MENTOR_ID) ?: EMPTY
-            vm.agoraId = intent.getIntExtra(com.joshtalks.joshskills.common.track.AGORA_UID, 0)
+            vm.agoraId = intent.getIntExtra(AGORA_UID, 0)
             val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
             openGroupChat(channelId, chatData)
         }
@@ -153,10 +154,7 @@ class JoshGroupActivity : BaseGroupActivity() {
 
             val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
             callIntent.apply {
-                putExtra(
-                    STARTING_POINT,
-                    FROM_ACTIVITY
-                )
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
                 putExtra(INTENT_DATA_GROUP_ID, bundle.getString(GROUPS_ID))
                 putExtra(INTENT_DATA_TOPIC_ID, "5")
@@ -172,20 +170,11 @@ class JoshGroupActivity : BaseGroupActivity() {
         if (getVoipState() == State.IDLE) {
             val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
             callIntent.apply {
-                putExtra(
-                    STARTING_POINT,
-                    FROM_ACTIVITY
-                )
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
                 putExtra(INTENT_DATA_FPP_MENTOR_ID, vm.mentorId)
-                putExtra(
-                    INTENT_DATA_FPP_NAME, data.getString(
-                        INTENT_DATA_FPP_NAME
-                    ))
-                putExtra(
-                    INTENT_DATA_FPP_IMAGE, data.getString(
-                        INTENT_DATA_FPP_IMAGE
-                    ))
+                putExtra(INTENT_DATA_FPP_NAME, data.getString(INTENT_DATA_FPP_NAME))
+                putExtra(INTENT_DATA_FPP_IMAGE, data.getString(INTENT_DATA_FPP_IMAGE))
                 startActivity(callIntent)
             }
         } else {
@@ -204,7 +193,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
-                putString(com.joshtalks.joshskills.common.track.CONVERSATION_ID, vm.conversationId)
+                putString(CONVERSATION_ID, vm.conversationId)
             }
             val fragment = GroupSearchFragment().apply {
                 arguments = bundle
@@ -228,14 +217,14 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUPS_IMAGE, data?.getImageUrl())
                 putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
                 putString(GROUPS_ID, data?.getUniqueId())
-                putString(com.joshtalks.joshskills.common.track.CONVERSATION_ID, vm.conversationId)
+                putString(CONVERSATION_ID, vm.conversationId)
                 putString(ADMIN_ID, data?.getCreatorId())
                 putString(GROUP_TYPE, data?.getGroupCategory())
                 vm.groupType.set(data?.getGroupCategory())
                 putString(GROUP_STATUS, data?.getJoinedStatus())
                 putString(CLOSED_GROUP_TEXT, data?.getGroupText())
                 putInt(com.joshtalks.joshskills.common.track.AGORA_UID, data?.getAgoraId() ?: 0)
-                if (groupId == EMPTY){
+                if (groupId == EMPTY) {
                     vm.agoraId = data?.getAgoraId()?:0
                     vm.mentorId = data?.getCreatorId()?: EMPTY
                 }
@@ -316,7 +305,7 @@ class JoshGroupActivity : BaseGroupActivity() {
 
             val bundle = Bundle().apply {
                 putString(GROUPS_ID, groupId)
-                putString(com.joshtalks.joshskills.common.track.CONVERSATION_ID, vm.conversationId)
+                putString(CONVERSATION_ID, vm.conversationId)
             }
             val fragment = RequestListFragment().apply {
                 arguments = bundle
@@ -432,11 +421,11 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun getConversationId(): String? {
-        vm.conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID) ?: ""
+        vm.conversationId = intent.getStringExtra(CONVERSATION_ID) ?: ""
         return vm.conversationId
     }
 
-    fun openProfileActivity(mentorId: String, isDm: Boolean = false) {
+    private fun openProfileActivity(mentorId: String, isDm: Boolean = false) {
         UserProfileActivity.startUserProfileActivity(
             activity = this,
             mentorId = mentorId,
@@ -508,5 +497,27 @@ class JoshGroupActivity : BaseGroupActivity() {
             vm.unSubscribeToChat()
         }
         super.onDestroy()
+    }
+
+    companion object {
+        private const val CONVERSATION_ID = "conversation_id"
+        private const val AGORA_UID = "agora_uid"
+        private const val CHANNEL_ID = "channel_id"
+        private const val MENTOR_ID = "mentor_id"
+        private const val DM_CHAT_DATA = "DM_CHAT_DATA"
+
+        fun openGroupsActivity(contract: GroupsContract, context: Context) {
+            context.startActivity(
+                Intent(context, JoshGroupActivity::class.java).apply {
+                    putExtra(NAVIGATOR, contract.navigator)
+                    putExtra(CONVERSATION_ID, contract.conversationId)
+                    putExtra(FLOW_FROM, contract.flowFrom)
+                    putExtra(CHANNEL_ID, contract.channelId)
+                    putExtra(AGORA_UID, contract.agoraUid)
+                    putExtra(MENTOR_ID, contract.mentorId)
+                    putExtra(DM_CHAT_DATA, contract.dmChatData)
+                }
+            )
+        }
     }
 }

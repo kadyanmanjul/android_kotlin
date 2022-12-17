@@ -335,5 +335,12 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
 
     companion object {
         fun getIntent(context: Context) = Intent(context, FreeTrialOnBoardActivity::class.java)
+        fun openFreeTrialOnBoardActivity(contract: OnBoardingContract, context: Context) {
+            context.startActivity(
+                Intent(context, FreeTrialOnBoardActivity::class.java).apply {
+                    putExtra(NAVIGATOR, contract.navigator)
+                }
+            )
+        }
     }
 }

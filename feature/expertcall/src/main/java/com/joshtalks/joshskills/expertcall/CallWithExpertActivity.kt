@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.expertcall
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -15,10 +16,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
-import com.joshtalks.joshskills.expertcall.R
-import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.core.OPEN_WALLET
-import com.joshtalks.joshskills.common.core.SPEAKING_PAGE
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.expertcall.databinding.ActivityCallWithExpertBinding
 import com.joshtalks.joshskills.expertcall.fragment.RechargeSuccessFragment
@@ -196,7 +194,7 @@ class CallWithExpertActivity : com.joshtalks.joshskills.common.base.BaseActivity
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (intent?.extras?.getBoolean("open_upgrade_page") == true)
+        if (intent?.extras?.getBoolean(OPEN_UPGRADE_PAGE) == true)
             navController.navigate(R.id.expertCallUpgrade)
     }
 
@@ -241,10 +239,15 @@ class CallWithExpertActivity : com.joshtalks.joshskills.common.base.BaseActivity
     }
 
     companion object {
-        fun open(activity: AppCompatActivity) {
-            Intent(activity, CallWithExpertActivity::class.java).also {
-                activity.startActivity(it)
-            }
+        private const val OPEN_UPGRADE_PAGE = "open_upgrade_page"
+
+        fun openExpertActivity(contract: ExpertCallContract, context: Context) {
+            context.startActivity(
+                Intent(context, CallWithExpertActivity::class.java).apply {
+                    putExtra(NAVIGATOR, contract.navigator)
+                    putExtra(OPEN_UPGRADE_PAGE, contract.openUpgradePage)
+                }
+            )
         }
     }
 

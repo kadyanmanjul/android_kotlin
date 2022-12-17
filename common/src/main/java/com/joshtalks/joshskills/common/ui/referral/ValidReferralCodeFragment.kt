@@ -10,6 +10,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.core.AppObjectController
+import com.joshtalks.joshskills.common.core.SignUpContract
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.databinding.FragmentValidReferralCodeBinding
@@ -17,7 +19,6 @@ import com.joshtalks.joshskills.common.repository.server.ReferralCouponDetailRes
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 
 class ValidReferralCodeFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentValidReferralCodeBinding
@@ -74,15 +75,18 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
 
     fun signUp() {
         lifecycleScope.launch(Dispatchers.IO) {
-//            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
-//                .addBasicParam()
-//                .addUserDetails()
-//                .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
-//                .push()
-//            val intent = Intent(requireActivity(), com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
-//                putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "onboarding journey")
-//            }
-//            startActivity(intent)
+            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+                .push()
+            //TODO: Replace AppObjectController -- Sukesh
+            AppObjectController.navigator.with(requireContext()).navigate(
+                object : SignUpContract {
+                    override val flowFrom = "onboarding journey"
+                    override val navigator = AppObjectController.navigator
+                }
+            )
         }
     }
 

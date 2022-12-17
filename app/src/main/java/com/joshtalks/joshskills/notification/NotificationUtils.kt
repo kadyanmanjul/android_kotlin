@@ -20,6 +20,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.LauncherActivity
+import com.joshtalks.joshskills.auth.freetrail.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
@@ -49,6 +50,9 @@ import com.joshtalks.joshskills.common.ui.reminder.reminder_listing.ReminderList
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.groups.JoshGroupActivity
+import com.joshtalks.joshskills.groups.analytics.GroupAnalytics
+import com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
@@ -369,30 +373,24 @@ class NotificationUtils(val context: Context) {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
             }
-            //TODO: LeaderBoardViewPagerActivity shifted to leaderboard module..
             NotificationAction.AWARD_DECLARE -> {
-                /*Intent(context, com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity::class.java).apply {
+                Intent(context, LeaderBoardViewPagerActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                }*/
+                }
                 return null
             }
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN -> {
-//                Intent(
-//                    AppObjectController.joshApplication,
-//                    com.joshtalks.joshskills.auth.freetrail.FreeTrialOnBoardActivity::class.java
-//                ).apply {
-//                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                }
+                Intent(context, FreeTrialOnBoardActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
                 null
             }
             NotificationAction.ACTION_OPEN_GROUPS -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
                 notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
-                return null
-                //TODO: uncomment code after adding dependency -- Sukesh
-//                return Intent(context, JoshGroupActivity::class.java).apply {
-//                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, actionData)
-//                }
+                return Intent(context, JoshGroupActivity::class.java).apply {
+                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, actionData)
+                }
             }
             NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
@@ -412,11 +410,9 @@ class NotificationUtils(val context: Context) {
                 notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
                 if (actionData.equals(Mentor.getInstance().getId()))
                     return null
-                return null
-                //TODO: uncomment code after adding dependency -- Sukesh
-//                return Intent(context, JoshGroupActivity::class.java).apply {
-//                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, actionData)
-//                }
+                return Intent(context, JoshGroupActivity::class.java).apply {
+                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, actionData)
+                }
             }
             NotificationAction.EMERGENCY_NOTIFICATION -> {
                 lateinit var intent: Intent
@@ -741,8 +737,7 @@ class NotificationUtils(val context: Context) {
 
     fun pushAnalytics(groupId: String?) {
         if (groupId != null) {
-            //TODO: uncomment code after adding dependency -- Sukesh
-//            GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_RECEIVED, groupId)
+            GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_RECEIVED, groupId)
         }
     }
 }

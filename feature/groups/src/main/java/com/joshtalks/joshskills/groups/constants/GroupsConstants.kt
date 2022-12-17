@@ -26,7 +26,6 @@ const val GROUP_TYPE = "GROUP_TYPE"
 const val GROUP_STATUS = "GROUP_STATUS"
 const val CLOSED_GROUP_TEXT = "CLOSED_GROUP_TEXT"
 const val ADD_GROUP_REQUEST = "ADD_GROUP_REQUEST"
-const val DM_CHAT_DATA = "DM_CHAT_DATA"
 const val FROM_BACKEND_MSG_TIME = "from_backend_message_time"
 
 const val OPENED_GROUP = "open"

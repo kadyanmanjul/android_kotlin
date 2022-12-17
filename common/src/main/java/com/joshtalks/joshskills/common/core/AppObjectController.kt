@@ -757,12 +757,18 @@ class StatusCodeInterceptor : Interceptor {
                         WorkManagerAdmin.appInitWorker()
                         WorkManagerAdmin.appStartWorker()
                         if (AppObjectController.applicationDetails.isAppVisual()) {
-                            //TODO : Add navigator
-//                            val intent =
-//                                Intent(
-//                                    AppObjectController.joshApplication,
-//                                    com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java
-//                                )
+                            //TODO : Add navigator ---- Done (Sukesh)
+                            AppObjectController.navigator.with(AppObjectController.joshApplication).navigate(
+                                object : SignUpContract {
+                                    override val flowFrom = "StatusCodeInterceptor"
+                                    override val navigator = AppObjectController.navigator
+                                }
+                            )
+                            //TODO: Check flags, discuss -- Sukesh
+//                            val intent = Intent(
+//                                AppObjectController.joshApplication,
+//                                SignUpActivity::class.java
+//                            )
 //                            intent.apply {
 //                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 //                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
