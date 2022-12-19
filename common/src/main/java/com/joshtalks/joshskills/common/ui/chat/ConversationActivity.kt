@@ -784,8 +784,9 @@ class ConversationActivity : BaseConversationActivity(),
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
                 MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUESTS_ICON_CLICKED).push()
-                val intent = Intent(this, com.joshtalks.joshskills.common.ui.fpp.SeeAllRequestsActivity::class.java)
-                startActivity(intent)
+                //TODO: add navigation
+                //val intent = Intent(this, com.joshtalks.joshskills.fpp.SeeAllRequestsActivity::class.java)
+                //startActivity(intent)
             }
         }
 

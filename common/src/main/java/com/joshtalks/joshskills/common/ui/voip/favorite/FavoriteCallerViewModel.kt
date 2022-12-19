@@ -6,12 +6,12 @@ import android.widget.Toast
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.repository.local.entity.practise.FavoriteCaller
-import com.joshtalks.joshskills.common.ui.fpp.constants.*
 import com.joshtalks.joshskills.common.ui.voip.favorite.adapter.FppFavoriteAdapter
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State

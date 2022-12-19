@@ -1,0 +1,123 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.joshtalks.joshskills.fpp'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+    }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
+    buildTypes {
+        debug {
+            versionNameSuffix "_Debug"
+            debuggable true
+            resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
+            resValue("bool", "branch_test", "true")
+            resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
+            ext.enableCrashlytics = true
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
+            resValue("bool", "branch_test", "false")
+            resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    flavorDimensions "version"
+    productFlavors {
+        dev {
+            buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
+            buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
+            buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
+            /*For Port */
+            //buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9008\""
+        }
+        skills {
+            buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
+
+        }
+        prod {
+            buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
+            buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-b61aad14-403b-4408-9a21-3d8d3485feb1\""
+            buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-060dd328-7060-11ec-9c8d-9eb9413efc82\""
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+    implementation project(path: ':common')
+
+    implementation 'com.google.firebase:firebase-config-ktx:21.2.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-ktx:20.2.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.2.0'
+
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+
+    def room_version = "2.4.3"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "org.xerial:sqlite-jdbc:3.36.0"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    kapt 'com.github.bumptech.glide:compiler:4.13.2'
+
+    implementation 'jp.wasabeef:glide-transformations:4.3.0'
+    implementation 'com.zlc.glide:webpdecoder:1.6.4.9.0'
+
+    implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+
+}

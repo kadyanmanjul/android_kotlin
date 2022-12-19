@@ -8,12 +8,11 @@ import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.base.BaseActivity
+import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.databinding.FavoriteListActivityBinding
-import com.joshtalks.joshskills.common.ui.fpp.BaseFppActivity
-import com.joshtalks.joshskills.common.ui.fpp.RecentCallActivity
-import com.joshtalks.joshskills.common.ui.fpp.constants.*
 import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
@@ -22,7 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FavoriteListActivity : BaseFppActivity() {
+const val FAVOURITE_LIST = "FAVOURITE_LIST"
+
+class FavoriteListActivity : BaseActivity() {
 
     private var conversationId1: String = EMPTY
 
@@ -34,7 +35,7 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     private val viewModel: FavoriteCallerViewModel by lazy {
-        ViewModelProvider(this).get(FavoriteCallerViewModel::class.java)
+        ViewModelProvider(this)[FavoriteCallerViewModel::class.java]
     }
 
     private var actionModeCallback = object : ActionMode.Callback {
@@ -68,7 +69,7 @@ class FavoriteListActivity : BaseFppActivity() {
         }
     }
 
-    override fun setIntentExtras() {
+    fun setIntentExtras() {
         conversationId1 = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID).toString()
     }
 
@@ -78,6 +79,7 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     override fun onCreated() {
+        setIntentExtras()
         viewModel.getFavorites()
     }
 
@@ -119,7 +121,8 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     private fun openRecentScreen() {
-        RecentCallActivity.openRecentCallActivity(this, conversationId1)
+        //TODO: navigate
+        //com.joshtalks.joshskills.fpp.RecentCallActivity.openRecentCallActivity(this, conversationId1)
     }
 
     private fun popBackStack() {

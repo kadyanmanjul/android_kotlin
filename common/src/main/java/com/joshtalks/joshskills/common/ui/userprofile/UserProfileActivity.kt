@@ -56,7 +56,6 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePi
 import com.joshtalks.joshskills.common.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
-import com.joshtalks.joshskills.common.ui.fpp.constants.*
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.common.ui.senior_student.SeniorStudentActivity
@@ -88,6 +87,13 @@ const val FOR_REST = "For_Rest"
 const val FOR_EDIT_SCREEN = "For_Edit_Screen"
 const val TOOLTIP_USER_PROFILE_SCREEN = "TOOLTIP_USER_PROFILE_SCREEN_"
 const val REFERRAL_COUNT = "REFERRAL_COUNT"
+const val IS_REJECTED = "is_rejected"
+const val IS_ACCEPTED = "is_accepted"
+const val GROUP = "GROUP"
+const val SENT_REQUEST = "send_request"
+const val ALREADY_FPP = "already_fpp"
+const val REQUESTED = "requested"
+const val HAS_RECIEVED_REQUEST = "recieved_request"
 
 class UserProfileActivity : CoreJoshActivity() {
 
@@ -149,14 +155,14 @@ class UserProfileActivity : CoreJoshActivity() {
             MixPanelTracker.publishEvent(MixPanelEvent.VIEW_POINTS_HISTORY)
                 .addParam(ParamKeys.MENTOR_ID,mentorId)
                 .push()
-            openPointHistory(mentorId, intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID))
+            openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
         binding.minutesLayout.setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.VIEW_MINUTES_SPOKEN)
                 .addParam(ParamKeys.MENTOR_ID,mentorId)
                 .push()
-            openSpokenMinutesHistory(mentorId, intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID))
+            openSpokenMinutesHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
         binding.userPic.setOnClickListener {
@@ -263,14 +269,14 @@ class UserProfileActivity : CoreJoshActivity() {
         binding.fppListLayout.setOnClickListener {
             FavoriteListActivity.openFavoriteCallerActivity(
                 this,
-                com.joshtalks.joshskills.common.track.CONVERSATION_ID
+                CONVERSATION_ID
             )
         }
 
         binding.viewAllFpp.setOnClickListener {
             FavoriteListActivity.openFavoriteCallerActivity(
                 this,
-                com.joshtalks.joshskills.common.track.CONVERSATION_ID
+                CONVERSATION_ID
             )
         }
 
@@ -473,21 +479,21 @@ class UserProfileActivity : CoreJoshActivity() {
                     MixPanelTracker.publishEvent(MixPanelEvent.VIEW_POINTS_HISTORY)
                         .addParam(ParamKeys.MENTOR_ID,mentorId)
                         .push()
-                    openPointHistory(mentorId, intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID))
+                    openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.minutes_points_history -> {
                     MixPanelTracker.publishEvent(MixPanelEvent.VIEW_MINUTES_SPOKEN)
                         .addParam(ParamKeys.MENTOR_ID,mentorId)
                         .push()
-                    openSpokenMinutesHistory(mentorId, intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID))
+                    openSpokenMinutesHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.how_to_get_points -> {
                     MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_EARN_POINTS).push()
                     startActivity(
                         Intent(this, PointsInfoActivity::class.java).apply {
                             putExtra(
-                                com.joshtalks.joshskills.common.track.CONVERSATION_ID, intent.getStringExtra(
-                                    com.joshtalks.joshskills.common.track.CONVERSATION_ID
+                                CONVERSATION_ID, intent.getStringExtra(
+                                    CONVERSATION_ID
                                 ))
                         }
                     )
@@ -1339,7 +1345,7 @@ class UserProfileActivity : CoreJoshActivity() {
                     putExtra(INTERVAL_TYPE, it)
                 }
                 putExtra(PREVIOUS_PAGE, previousPage)
-                putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
+                putExtra(CONVERSATION_ID, conversationId)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

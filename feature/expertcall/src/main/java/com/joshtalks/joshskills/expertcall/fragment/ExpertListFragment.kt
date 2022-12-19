@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textview.MaterialTextView
+import com.joshtalks.joshskills.common.constants.CAN_BE_CALL
 import com.joshtalks.joshskills.expertcall.R
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.AppObjectController
@@ -37,6 +38,7 @@ import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
 
 class ExpertListFragment : com.joshtalks.joshskills.common.base.BaseFragment() {
     private lateinit var binding: FragmentExpertListBinding
@@ -104,7 +106,7 @@ class ExpertListFragment : com.joshtalks.joshskills.common.base.BaseFragment() {
 
         liveData.observe(this) {
             when (it.what) {
-                com.joshtalks.joshskills.common.ui.fpp.constants.CAN_BE_CALL -> {
+                CAN_BE_CALL -> {
                     if (it.obj == false) {
                         WalletBottomSheet(
                             expertListViewModel.neededAmount,

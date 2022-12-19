@@ -8,8 +8,8 @@ import com.joshtalks.joshskills.common.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.common.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.common.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
-import com.joshtalks.joshskills.common.ui.fpp.model.PendingRequestResponse
-import com.joshtalks.joshskills.common.ui.fpp.model.RecentCallResponse
+import com.joshtalks.joshskills.common.ui.fpp.PendingRequestResponse
+import com.joshtalks.joshskills.common.ui.fpp.RecentCallResponse
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.InterestModel
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.VoipStatusResponse
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.report.model.VoipReportModel

@@ -39,7 +39,6 @@ import com.joshtalks.joshskills.common.ui.conversation_practice.ConversationPrac
 import com.joshtalks.joshskills.common.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.common.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.SPEAKING_POSITION
@@ -395,7 +394,9 @@ class NotificationUtils(val context: Context) {
             NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
                 notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
-                return Intent(context, SeeAllRequestsActivity::class.java)
+                //TODO: intent and remove null
+                return null
+                //return Intent(context, com.joshtalks.joshskills.fpp.SeeAllRequestsActivity::class.java)
             }
             NotificationAction.ACTION_OPEN_FPP_LIST -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id

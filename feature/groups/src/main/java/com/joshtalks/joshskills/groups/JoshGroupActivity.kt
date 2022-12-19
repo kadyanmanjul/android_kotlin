@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.fpp.constants.GROUP
 import com.joshtalks.joshskills.groups.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.groups.analytics.GroupAnalytics
 import com.joshtalks.joshskills.groups.constants.*
@@ -505,6 +504,8 @@ class JoshGroupActivity : BaseGroupActivity() {
         private const val CHANNEL_ID = "channel_id"
         private const val MENTOR_ID = "mentor_id"
         private const val DM_CHAT_DATA = "DM_CHAT_DATA"
+        private const val GROUP = "GROUP"
+
 
         fun openGroupsActivity(contract: GroupsContract, context: Context) {
             context.startActivity(

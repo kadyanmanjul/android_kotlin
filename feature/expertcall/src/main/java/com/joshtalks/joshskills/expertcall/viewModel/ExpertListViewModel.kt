@@ -4,6 +4,8 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.common.constants.CAN_BE_CALL
+import com.joshtalks.joshskills.common.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.core.checkPstnState
@@ -64,7 +66,7 @@ class ExpertListViewModel : com.joshtalks.joshskills.common.base.BaseViewModel()
 
     val onItemClick: (ExpertListModel, Int, Int) -> Unit = { it, type, position ->
         when (type) {
-            com.joshtalks.joshskills.common.ui.fpp.constants.FAV_CLICK_ON_CALL -> {
+            FAV_CLICK_ON_CALL -> {
                 saveMicroPaymentImpression("CLICKED_CALL_EXPERT", eventId = it.mentorId)
 
                 getCallStatus(it)
@@ -105,8 +107,7 @@ class ExpertListViewModel : com.joshtalks.joshskills.common.base.BaseViewModel()
                     200 -> {
                         withContext(Dispatchers.Main){
                             clickOnPhoneCall(expert)
-                            message.what =
-                                com.joshtalks.joshskills.common.ui.fpp.constants.CAN_BE_CALL
+                            message.what = CAN_BE_CALL
                             message.obj = true
                             singleLiveEvent.value = message
                         }
@@ -117,8 +118,7 @@ class ExpertListViewModel : com.joshtalks.joshskills.common.base.BaseViewModel()
                     202 -> {
                         neededAmount = response.body()!!.amount
                         withContext(Dispatchers.Main) {
-                            message.what =
-                                com.joshtalks.joshskills.common.ui.fpp.constants.CAN_BE_CALL
+                            message.what = CAN_BE_CALL
                             message.obj = false
                             singleLiveEvent.value = message
                         }
@@ -136,7 +136,7 @@ class ExpertListViewModel : com.joshtalks.joshskills.common.base.BaseViewModel()
 
     fun updateCanBeCalled(canBe: Boolean) {
         //_canBeCalled.postValue(canBe)
-        message.what = com.joshtalks.joshskills.common.ui.fpp.constants.CAN_BE_CALL
+        message.what = CAN_BE_CALL
         message.obj = canBe
         singleLiveEvent.value = message
     }

@@ -20,7 +20,6 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.google.android.material.textview.MaterialTextView
@@ -47,7 +46,6 @@ import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.common.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.common.ui.lesson.*
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
@@ -380,10 +378,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
         binding.imgRecentCallsHistory.setOnSingleClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
-            RecentCallActivity.openRecentCallActivity(
+            //TODO: navigate
+           /* com.joshtalks.joshskills.fpp.RecentCallActivity.openRecentCallActivity(
                 requireActivity(),
                 com.joshtalks.joshskills.common.track.CONVERSATION_ID
-            )
+            )*/
         }
         // redirect to buy screen
         binding.txtBuyToContinueCalls.setOnClickListener {

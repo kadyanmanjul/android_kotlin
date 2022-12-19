@@ -9,10 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.common.base.EventLiveData
-import com.joshtalks.joshskills.common.constants.COURSE_RESTART_FAILURE
-import com.joshtalks.joshskills.common.constants.COURSE_RESTART_SUCCESS
-import com.joshtalks.joshskills.common.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.common.core.abTest.GoalKeys
@@ -22,7 +18,6 @@ import com.joshtalks.joshskills.common.core.custom_ui.recorder.OnAudioRecordList
 import com.joshtalks.joshskills.common.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.common.repository.local.entity.*
 import com.joshtalks.joshskills.common.repository.local.eventbus.MessageCompleteEventBus
@@ -36,7 +31,7 @@ import com.joshtalks.joshskills.common.repository.server.chat_message.BaseMediaM
 import com.joshtalks.joshskills.common.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.common.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.common.repository.service.SyncChatService
-import com.joshtalks.joshskills.common.ui.fpp.model.PendingRequestResponse
+import com.joshtalks.joshskills.common.ui.fpp.PendingRequestResponse
 import com.joshtalks.joshskills.common.ui.userprofile.models.UserProfileResponse
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.quality
@@ -103,7 +98,7 @@ class ConversationViewModel(
     }
 
     private val p2pNetworkService = AppObjectController.p2pNetworkService
-    val pendingRequestsList = MutableLiveData<com.joshtalks.joshskills.common.ui.fpp.model.PendingRequestResponse>()
+    val pendingRequestsList = MutableLiveData<PendingRequestResponse>()
     val apiCallStatus = MutableLiveData<ApiCallStatus>()
 
     fun confirmOrRejectFppRequest(senderMentorId: String, userStatus: String, pageType: String) {

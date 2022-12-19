@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.common.ui.voip.favorite.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,13 +7,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.constants.FAV_CLICK_ON_CALL
+import com.joshtalks.joshskills.common.constants.FAV_CLICK_ON_PROFILE
+import com.joshtalks.joshskills.common.constants.FAV_USER_LONG_PRESS_CLICK
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.databinding.FppItemListBinding
 import com.joshtalks.joshskills.common.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.common.ui.fpp.constants.FAV_CLICK_ON_CALL
-import com.joshtalks.joshskills.common.ui.fpp.constants.FAV_CLICK_ON_PROFILE
-import com.joshtalks.joshskills.common.ui.fpp.constants.FAV_USER_LONG_PRESS_CLICK
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

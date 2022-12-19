@@ -102,12 +102,12 @@ xmlns:tools="http://schemas.android.com/tools"
         android:exported="false"
         android:screenOrientation="portrait" />
     <activity
-        android:name=".ui.fpp.SeeAllRequestsActivity"
+        android:name="com.joshtalks.joshskills.fpp.SeeAllRequestsActivity"
         android:exported="false"
         android:screenOrientation="portrait"
         tools:ignore="Instantiatable" />
     <activity
-        android:name=".ui.fpp.RecentCallActivity"
+        android:name="com.joshtalks.joshskills.fpp.RecentCallActivity"
         android:exported="true"
         android:launchMode="singleTop"
         android:screenOrientation="portrait"
