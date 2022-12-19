@@ -449,6 +449,20 @@ class ConversationViewModel(
         }
     }
 
+    fun saveImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
     suspend fun getLastLessonForCourse(): Int {
         return AppObjectController.appDatabase.lessonDao()
             .getLastLessonNoForCourse(inboxEntity.courseId.toInt())

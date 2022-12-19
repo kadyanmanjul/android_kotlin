@@ -15,15 +15,14 @@ import androidx.lifecycle.viewModelScope
 import com.daasuu.mp4compose.FillMode
 import com.daasuu.mp4compose.composer.Mp4Composer
 import com.daasuu.mp4compose.filter.GlWatermarkFilter
-import com.joshtalks.joshskills.common.base.BaseViewModel
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.EMPTY
+import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.common.core.showToast
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.common.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.common.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.common.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.common.ui.special_practice.repo.SpecialPracticeRepo
@@ -35,7 +34,6 @@ import com.joshtalks.joshskills.common.ui.special_practice.utils.getHeightByPixe
 import com.joshtalks.joshskills.common.ui.special_practice.utils.getVideoFilePath
 import com.joshtalks.joshskills.common.ui.special_practice.utils.getWindowWidth
 import com.joshtalks.joshskills.common.ui.special_practice.utils.saveVideoFromPracticeModelQ
-import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

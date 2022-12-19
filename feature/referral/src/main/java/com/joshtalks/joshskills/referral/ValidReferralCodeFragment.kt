@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.referral
+package com.joshtalks.joshskills.referral
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,12 +9,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.SignUpContract
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.common.databinding.FragmentValidReferralCodeBinding
+import com.joshtalks.joshskills.referral.databinding.FragmentValidReferralCodeBinding
 import com.joshtalks.joshskills.common.repository.server.ReferralCouponDetailResponse
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import kotlinx.coroutines.Dispatchers

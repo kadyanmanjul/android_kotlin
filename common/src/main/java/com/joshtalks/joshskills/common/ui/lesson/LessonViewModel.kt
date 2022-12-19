@@ -5,14 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Message
 import android.util.Log
-import android.view.View
 import androidx.databinding.ObservableField
-import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.base.EventLiveData
 import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.appDatabase
@@ -47,11 +44,8 @@ import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatus
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.VideoPopupItem
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.model.Coupon
-import com.joshtalks.joshskills.common.ui.referral.WHATSAPP_PACKAGE_STRING
+import com.joshtalks.joshskills.common.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.callbar.CallBar
-import com.joshtalks.joshskills.common.util.AudioRecording
-import com.joshtalks.joshskills.common.util.DeepLinkUtil
-import com.joshtalks.joshskills.common.util.FileUploadService
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -1052,7 +1046,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         try {
             val destination = path
             val waIntent = Intent(Intent.ACTION_SEND)
-            waIntent.setPackage(com.joshtalks.joshskills.common.ui.referral.WHATSAPP_PACKAGE_STRING)
+            waIntent.setPackage(WHATSAPP_PACKAGE_STRING)
             waIntent.type = "*/*"
             waIntent.putExtra(Intent.EXTRA_TEXT, dynamicLink)
             waIntent.putExtra(
@@ -1060,7 +1054,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 Uri.parse(destination)
             )
             waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            message.what = com.joshtalks.joshskills.common.constants.SHARE_VIDEO
+            message.what = SHARE_VIDEO
             message.obj = waIntent
             singleLiveEvent.value = message
         } catch (e: Exception) {
@@ -1069,12 +1063,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun showVideoOnFullScreen() {
-        message.what = com.joshtalks.joshskills.common.constants.OPEN_READING_SHARING_FULLSCREEN
+        message.what = OPEN_READING_SHARING_FULLSCREEN
         singleLiveEvent.value = message
     }
 
     fun closeCurrentFragment() {
-        message.what = com.joshtalks.joshskills.common.constants.CLOSE_FULL_READING_FRAGMENT
+        message.what = CLOSE_FULL_READING_FRAGMENT
         singleLiveEvent.value = message
     }
 

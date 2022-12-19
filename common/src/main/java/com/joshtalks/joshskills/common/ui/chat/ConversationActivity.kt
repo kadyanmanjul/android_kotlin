@@ -229,10 +229,6 @@ class ConversationActivity : BaseConversationActivity(),
         )
     }
 
-    private val refViewModel: com.joshtalks.joshskills.common.ui.referral.ReferralViewModel by lazy {
-        ViewModelProvider(this).get(com.joshtalks.joshskills.common.ui.referral.ReferralViewModel::class.java)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
@@ -563,12 +559,13 @@ class ConversationActivity : BaseConversationActivity(),
             }
             conversationBinding.ivIconReferral.isVisible = inboxEntity.isCourseBought
             conversationBinding.ivIconReferral.setOnClickListener {
-                refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
+                conversationViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
 
-                com.joshtalks.joshskills.common.ui.referral.ReferralActivity.startReferralActivity(
-                    this@ConversationActivity,
-                    ConversationActivity::class.java.name
-                )
+                // TODO: Use navigator -- Sahil
+//                com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(
+//                    this@ConversationActivity,
+//                    ConversationActivity::class.java.name
+//                )
                 MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
             }
 
@@ -581,12 +578,12 @@ class ConversationActivity : BaseConversationActivity(),
                 when (it.itemId) {
                     R.id.menu_referral -> {
 
-                        refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
+                        conversationViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
                         MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
-                        com.joshtalks.joshskills.common.ui.referral.ReferralActivity.startReferralActivity(
-                            this@ConversationActivity,
-                            ConversationActivity::class.java.name
-                        )
+//                        com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(
+//                            this@ConversationActivity,
+//                            ConversationActivity::class.java.name
+//                        )
                     }
                     R.id.menu_clear_media -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED)

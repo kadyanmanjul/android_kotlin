@@ -44,7 +44,6 @@ import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
-import com.joshtalks.joshskills.common.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.common.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.CallRecordingShare
@@ -329,9 +328,12 @@ class NotificationUtils(val context: Context) {
             NotificationAction.ACTION_OPEN_REFERRAL -> {
                 notificationChannelId = NotificationChannelData.REMINDERS.id
                 notificationChannelName = NotificationChannelData.REMINDERS.type
-                return Intent(context, ReferralActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                }
+
+                // TODO: Use Mavigator -- Sahil
+//                return Intent(context, com.joshtalks.joshskills.referral.ReferralActivity::class.java).apply {
+//                    flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+//                }
+                return null
             }
             NotificationAction.ACTION_DELETE_DATA -> {
                 if (User.getInstance().isVerified) {

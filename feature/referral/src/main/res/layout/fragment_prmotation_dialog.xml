@@ -5,7 +5,7 @@
 
         <variable
                 name="handler"
-                type="com.joshtalks.joshskills.common.ui.referral.PromotionDialogFragment" />
+                type="com.joshtalks.joshskills.referral.PromotionDialogFragment" />
     </data>
 
     <RelativeLayout

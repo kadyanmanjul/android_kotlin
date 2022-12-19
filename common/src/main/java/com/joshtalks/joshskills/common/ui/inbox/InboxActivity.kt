@@ -83,9 +83,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
 
     var progressDialog: ProgressDialog? = null
-    private val refViewModel: com.joshtalks.joshskills.common.ui.referral.ReferralViewModel by lazy {
-        ViewModelProvider(this).get(com.joshtalks.joshskills.common.ui.referral.ReferralViewModel::class.java)
-    }
     private lateinit var bbTooltip: Balloon
     private var isCapsuleCourseBought = false
 
@@ -142,9 +139,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         iv_setting.visibility = View.VISIBLE
 
         iv_icon_referral.setOnClickListener {
-            refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
+            viewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
 
-            com.joshtalks.joshskills.common.ui.referral.ReferralActivity.startReferralActivity(this@InboxActivity)
+                // TODO: Use navigator -- Sahil
+//            com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(this@InboxActivity)
             MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
         }
 
@@ -203,8 +201,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 when (it.itemId) {
                     R.id.menu_referral -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
-                        refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
-                        com.joshtalks.joshskills.common.ui.referral.ReferralActivity.startReferralActivity(this@InboxActivity)
+                        viewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
+
+                        // TODO: Use Navigator -- Sahil
+//                        com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(this@InboxActivity)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_help -> {

@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.ui.referral.PromotionDialogFragment
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 
 abstract class CoreJoshActivity : BaseActivity() {
@@ -40,8 +39,10 @@ abstract class CoreJoshActivity : BaseActivity() {
             fragmentTransaction.remove(prev)
         }
         fragmentTransaction.addToBackStack(null)
-        PromotionDialogFragment.newInstance(courseId, placeholderImageUrl)
-            .show(supportFragmentManager, "promotion_show_dialog")
+
+        // TODO: Use Navigator -- Sahil
+//        com.joshtalks.joshskills.referral.PromotionDialogFragment.newInstance(courseId, placeholderImageUrl)
+//            .show(supportFragmentManager, "promotion_show_dialog")
         this.intent = null
     }
 }

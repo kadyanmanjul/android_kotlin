@@ -14,14 +14,12 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.CoreJoshActivity
 import com.joshtalks.joshskills.common.core.SettingsContract
-import com.joshtalks.joshskills.common.core.SignUpContract
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.databinding.ActivitySeniorStudentBinding
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.common.ui.senior_student.viewmodel.SeniorStudentViewModel
 
 class SeniorStudentActivity : CoreJoshActivity() {
@@ -84,7 +82,9 @@ class SeniorStudentActivity : CoreJoshActivity() {
                                 Mentor.getInstance().referralCode
                             )
                             .push()
-                        ReferralActivity.startReferralActivity(this)
+
+                        // TODO: Use navigator -- Sahil
+//                        com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(this)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_help -> {

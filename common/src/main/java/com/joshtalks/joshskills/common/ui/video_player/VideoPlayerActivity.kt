@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.BaseActivity
 import com.joshtalks.joshskills.common.core.CountUpTimer
+import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.common.core.PermissionUtils
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
@@ -56,13 +57,10 @@ import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.engage.Graph
 import com.joshtalks.joshskills.common.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.common.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
-import com.joshtalks.joshskills.common.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
-import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest

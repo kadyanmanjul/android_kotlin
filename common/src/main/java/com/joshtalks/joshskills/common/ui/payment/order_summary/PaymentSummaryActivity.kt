@@ -32,7 +32,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -40,9 +39,6 @@ import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
-import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
-import com.joshtalks.joshskills.voip.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_PAYMENT_BTN_TXT
@@ -504,8 +500,10 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     private fun openPromoCodeBottomSheet() {
-        val bottomSheetFragment = com.joshtalks.joshskills.common.ui.referral.EnterReferralCodeFragment.newInstance(true)
-        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+
+        // TODO: Use Navigator -- Sahil
+//        val bottomSheetFragment = com.joshtalks.joshskills.referral.EnterReferralCodeFragment.newInstance(true)
+//        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
     }
 
     private fun subscribeRXBus() {

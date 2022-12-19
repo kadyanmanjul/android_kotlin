@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.referral
+package com.joshtalks.joshskills.referral
 
 import android.os.Bundle
 import android.text.Editable
@@ -12,13 +12,12 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.databinding.FragmentEnterReferralCodeBinding
+import com.joshtalks.joshskills.referral.databinding.FragmentEnterReferralCodeBinding
 import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
@@ -96,7 +95,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
 
         binding.next.setOnClickListener {
             if (is_promo_code_fragment) {
-                com.joshtalks.joshskills.common.messaging.RxBus2.publish(PromoCodeSubmitEventBus(binding.tvReferralCode.text.toString()))
+                RxBus2.publish(PromoCodeSubmitEventBus(binding.tvReferralCode.text.toString()))
                 requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
             } else {
                 validateAndMoveToNextFragment()

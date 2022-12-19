@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.referral
+package com.joshtalks.joshskills.referral
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -16,14 +16,12 @@ import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.joshtalks.joshskills.common.BuildConfig
-import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.databinding.ActivityReferralBinding
+import com.joshtalks.joshskills.referral.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.common.util.DeepLinkUtil
@@ -35,15 +33,9 @@ import java.io.IOException
 
 const val REFERRAL_WHATAPP_MESSAGE = "REFERRAL_WHATAPP_MESSAGE"
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
-const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT_"
-const val REFERRAL_SHARE_TEXT_SHARABLE_VIDEO = "REFERRAL_SHARE_TEXT_SHARABLE_VIDEO"
-const val REFERRAL_IMAGE_URL_KEY = "REFERRAL_IMAGE_URL"
-const val VIDEO_URL = "https://www.youtube.com/watch?v=CMZohcIMQfc "
-const val SHARE_DOMAIN = "SHARE_DOMAIN"
 const val REPLACE_HOLDER = "****"
 const val REFERRAL_AMOUNT_HOLDER = "**"
 const val DRAWABLE_RIGHT = 2
-const val USER_SHARE_SHORT_URL = "user_share_url"
 const val FROM_CLASS = "parent_class"
 const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 

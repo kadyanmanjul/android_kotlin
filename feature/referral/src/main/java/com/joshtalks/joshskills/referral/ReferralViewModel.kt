@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.referral
+package com.joshtalks.joshskills.referral
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

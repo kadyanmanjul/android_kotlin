@@ -240,7 +240,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:parentActivityName=".ui.inbox.InboxActivity"
         android:theme="@style/AppNoBarTheme" />
     <activity
-        android:name=".ui.referral.ReferralActivity"
+        android:name="com.joshtalks.joshskills.referral.ReferralActivity"
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
         android:exported="false"
         android:launchMode="singleTask"

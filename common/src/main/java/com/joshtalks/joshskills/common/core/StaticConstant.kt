@@ -319,6 +319,10 @@ class FirebaseRemoteConfigKey {
         const val LESSON_COMPLETE_COUPON_DISCOUNT = "LESSON_COMPLETE_COUPON_DISCOUNT"
         const val AVAIL_COUPON_BANNER_TEXT = "AVAIL_COUPON_BANNER_TEXT"
 
+        // Referral
+        const val REFERRAL_SHARE_TEXT_SHARABLE_VIDEO = "REFERRAL_SHARE_TEXT_SHARABLE_VIDEO"
+        const val USER_SHARE_SHORT_URL = "user_share_url"
+
     }
 }
 

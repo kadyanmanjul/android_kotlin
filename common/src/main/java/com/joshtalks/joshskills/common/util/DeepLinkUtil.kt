@@ -1,12 +1,11 @@
 package com.joshtalks.joshskills.common.util
 
 import android.content.Context
-import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.core.AppObjectController
+import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.LinkAttribution
-import com.joshtalks.joshskills.common.ui.referral.USER_SHARE_SHORT_URL
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
 import io.branch.referral.util.LinkProperties

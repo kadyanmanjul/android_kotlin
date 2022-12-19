@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.referral
+package com.joshtalks.joshskills.referral
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,11 +12,10 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
-import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.interfaces.OnDismissDialog
-import com.joshtalks.joshskills.common.databinding.FragmentPrmotationDialogBinding
+import com.joshtalks.joshskills.referral.databinding.FragmentPrmotationDialogBinding
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
