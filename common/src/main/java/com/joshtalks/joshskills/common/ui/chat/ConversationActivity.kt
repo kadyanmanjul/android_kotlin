@@ -76,7 +76,6 @@ import com.joshtalks.joshskills.common.repository.server.chat_message.TChatMessa
 import com.joshtalks.joshskills.common.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.common.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.common.ui.assessment.AssessmentActivity
-import com.joshtalks.joshskills.common.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.common.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.common.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
@@ -1854,8 +1853,9 @@ class ConversationActivity : BaseConversationActivity(),
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     {
-                        startActivityForResult(
-                            CertificationBaseActivity.certificationExamIntent(
+                    //TODO: navigation
+                        /*startActivityForResult(
+                            com.joshtalks.joshskills.certificate.CertificationBaseActivity.certificationExamIntent(
                                 this,
                                 conversationId = it.conversationId,
                                 chatMessageId = it.messageId,
@@ -1864,7 +1864,7 @@ class ConversationActivity : BaseConversationActivity(),
                                 lessonInterval = it.lessonInterval
                             ),
                             CERTIFICATION_REQUEST_CODE
-                        )
+                        )*/
                     },
                     {
                         it.printStackTrace()

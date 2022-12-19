@@ -27,12 +27,10 @@ import com.joshtalks.joshskills.common.repository.server.course_overview.CourseO
 import com.joshtalks.joshskills.common.repository.server.course_overview.CourseOverviewResponse
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.assessment.view.Stub
-import com.joshtalks.joshskills.common.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.chat.vh.PdfCourseProgressView
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
-import com.joshtalks.joshskills.common.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -311,15 +309,16 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
                         )
                     }
                 } else {
-                    activityListener.launch(
-                        CertificationBaseActivity.certificationExamIntent(
+                    //TODO: navigate
+                    /*activityListener.launch(
+                        com.joshtalks.joshskills.certificate.CertificationBaseActivity.certificationExamIntent(
                             this@CourseProgressActivityNew,
                             conversationId = conversationId,
                             chatMessageId = chatMessageId,
                             certificationId = certificationId,
                             cExamStatus = cExamStatus
                         )
-                    )
+                    )*/
                 }
             }
         }

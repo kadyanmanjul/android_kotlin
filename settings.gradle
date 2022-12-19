@@ -11,3 +11,4 @@ include ':data:splash'
 include ':feature:auth'
 
 enableFeaturePreview("VERSION_CATALOGS")
+include ':feature:certificate'

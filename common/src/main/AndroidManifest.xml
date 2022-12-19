@@ -371,22 +371,22 @@ xmlns:tools="http://schemas.android.com/tools"
         android:screenOrientation="portrait"
         android:theme="@style/AppThemeNoAction" />
     <activity
-        android:name=".ui.certification_exam.CertificationBaseActivity"
+        android:name="com.joshtalks.joshskills.certificate.CertificationBaseActivity"
         android:launchMode="singleTop"
         android:screenOrientation="portrait"
         android:theme="@style/AppNoBarTheme" />
     <activity
-        android:name=".ui.certification_exam.examview.CExamMainActivity"
+        android:name="com.joshtalks.joshskills.certificate.examview.CExamMainActivity"
         android:launchMode="singleTop"
         android:screenOrientation="portrait"
         android:theme="@style/AppNoBarTheme" />
     <activity
-        android:name=".ui.certification_exam.report.CExamReportActivity"
+        android:name="com.joshtalks.joshskills.certificate.report.CExamReportActivity"
         android:launchMode="singleTop"
         android:screenOrientation="portrait"
         android:theme="@style/AppNoBarTheme" />
     <activity
-        android:name=".ui.certification_exam.report.udetail.CertificateDetailActivity"
+        android:name="com.joshtalks.joshskills.certificate.report.udetail.CertificateDetailActivity"
         android:launchMode="singleTop"
         android:screenOrientation="portrait"
         android:theme="@style/AppNoBarTheme" />
