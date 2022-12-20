@@ -57,7 +57,6 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
         layout = DataBindingUtil.setContentView(
             this,
             R.layout.activity_free_trial_on_board
@@ -67,6 +66,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
         initABTest()
         initOnboardingCourse()
         addViewModelObservers()
+        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
         PrefManager.getBoolValue(LOGIN_ONBOARDING, defValue = false).let { isLogin ->
             layout.btnStartTrialText.apply {
                 text = if (isLogin) "Sign In" else
