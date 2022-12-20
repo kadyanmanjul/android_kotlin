@@ -48,9 +48,6 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
         ActivityLauncherBinding.inflate(layoutInflater)
     }
 
-    private val jsonParams: JSONObject
-        get() = viewModel.jsonParams
-
     companion object {
         @JvmStatic
         var isLingverInit = false

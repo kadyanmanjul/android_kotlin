@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.OFFER_FOR_YOU_TEXT
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
@@ -27,10 +28,10 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.*
+import org.json.JSONObject
 import timber.log.Timber
 import java.math.BigDecimal
 import java.util.*
-import org.json.JSONObject
 
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }
@@ -302,6 +303,7 @@ class BuyPageViewModel : BaseViewModel() {
                 )
                 AppObjectController.commonNetworkService.saveImpression(requestData)
             } catch (ex: Exception) {
+                LogException.catchException(ex)
                 Timber.e(ex)
             }
         }
@@ -359,6 +361,7 @@ class BuyPageViewModel : BaseViewModel() {
                 )
             } catch (ex: java.lang.Exception) {
                 ex.printStackTrace()
+                LogException.catchException(ex)
             }
         }
     }
@@ -469,6 +472,7 @@ class BuyPageViewModel : BaseViewModel() {
                     )
             } catch (ex: Exception) {
                 ex.printStackTrace()
+                LogException.catchException(ex)
             }
         }
     }

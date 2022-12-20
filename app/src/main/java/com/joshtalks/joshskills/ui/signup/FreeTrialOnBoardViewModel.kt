@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.NotificationCategory
 import com.joshtalks.joshskills.core.notification.NotificationUtils
@@ -57,6 +58,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 AppObjectController.commonNetworkService.saveImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
+                LogException.catchException(ex)
             }
         }
     }
@@ -71,6 +73,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
+                LogException.catchException(ex)
             }
         }
     }

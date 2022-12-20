@@ -175,6 +175,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             } catch (ex: Exception) {
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
+                LogException.catchException(ex)
             }
         }
     }
