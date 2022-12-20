@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.common.repository.server.translation.WordDetails
 import com.joshtalks.joshskills.common.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.common.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.common.track.CourseUsageSync
-import com.joshtalks.joshskills.common.ui.cohort_based_course.models.CohortModel
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.common.ui.payment.model.VerifyPayment
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.model.*
@@ -114,7 +113,6 @@ interface CommonNetworkService {
 
     @POST("$DIR/mentor/delete_reminders/")
     suspend fun deleteReminders(@Body deleteReminderRequest: DeleteReminderRequest): Response<BaseResponse<*>>
-
 
     @GET("$DIR/fpp/profile_favourite/{user_profile_mentor_id}/")
     suspend fun getFppStatusInProfile(
@@ -258,17 +256,8 @@ interface CommonNetworkService {
     @POST("$DIR/mentor/gaid/")
     suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): GaIDMentorModel
 
-
-
     @POST("$DIR/course/free_trial_register_course/")
     suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, String>): Response<Void>
-
-    @GET("$DIR/course/cohort_batch/")
-    suspend fun getCohortBatches(): Response<CohortModel>
-
-    @JvmSuppressWildcards
-    @POST("$DIR/course/cohort_batch/")
-    suspend fun postSelectedBatch(@Body params: Map<String, Any>): Response<Unit>
 
     @POST("$DIR/impression/track_impressions/")
     suspend fun saveImpression(@Body params: Map<String, String>): Response<Void>

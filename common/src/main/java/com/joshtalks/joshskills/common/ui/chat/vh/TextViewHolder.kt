@@ -9,12 +9,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.core.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
-import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.common.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.common.repository.local.eventbus.TextTooltipEvent
 
 class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
     val rootSubView: FrameLayout = view.findViewById(R.id.root_sub_view)
@@ -46,9 +43,6 @@ class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) 
         } else {
             messageBody.text = HtmlCompat.fromHtml(message.text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
             messageBody.visibility = VISIBLE
-            if(!PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)) {
-                com.joshtalks.joshskills.common.messaging.RxBus2.publish(TextTooltipEvent(message))
-            }
         }
 
         textMessageTime.text = Utils.messageTimeConversion(message.created)
