@@ -75,6 +75,7 @@ import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.chat.extra.FirstCallBottomSheet
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
@@ -97,8 +98,10 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -741,20 +744,22 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         binding.spotlightTabVocab.visibility = View.INVISIBLE
                         binding.spotlightTabReading.visibility = View.INVISIBLE
                         binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                        binding.lessonSpotlightTooltip.setTooltipText(
-                            viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
-                                text.ifBlank { getString(R.string.label_speaking_spotlight_2) }
-                            } ?: getString(R.string.label_speaking_spotlight_2)
-                        )
-                        binding.lessonSpotlightTooltip.post {
-                            slideInAnimation(binding.lessonSpotlightTooltip)
-                        }
                         binding.spotlightStartGrammarTest.visibility = View.GONE
                         binding.spotlightCallBtn.visibility = View.VISIBLE
                         binding.spotlightCallBtnText.visibility = View.VISIBLE
                         binding.arrowAnimation.visibility = View.VISIBLE
+                        viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
+                            if (text.isBlank()) hideSpotlight()
+                            else {
+                                binding.lessonSpotlightTooltip.setTooltipText(text)
+                                binding.lessonSpotlightTooltip.post {
+                                    slideInAnimation(binding.lessonSpotlightTooltip)
+                                }
+                            }
+                        } ?: run {
+                            hideSpotlight()
+                        }
                     }
-
                 }
                 else -> {
                     // Hide lesson Spotlight
@@ -1526,19 +1531,19 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
             binding.containerReading.isVisible -> {
-                Log.e("Ayaaz", "OnBackPressedddddd")
-//                videoView.stopPlayback()
-//                supportFragmentManager.remove(yourfragment).commit()
-
                 supportFragmentManager.beginTransaction().remove(ReadingFullScreenFragment()).commit()
-//                merged_video.stopPlayback()
                 viewModel.closeVideoView()
                 closeReadingFullScreen()
                 viewModel.showVideoView()
             }
-
-            isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) &&
-                    isLessonPopUpFeatureOn && !VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) -> {
+            VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) && PrefManager.getBoolValue(IS_FREE_TRIAL) -> {
+                if (getVoipState() == State.IDLE &&
+                    PrefManager.getIntValue(FT_CALLS_LEFT) == 15 &&
+                    PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()
+                )
+                    FirstCallBottomSheet.showDialog(supportFragmentManager)
+            }
+            isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) && isLessonPopUpFeatureOn -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
                 CompleteLessonBottomSheetFragment.newInstance()
                     .show(supportFragmentManager, "LessonCompleteDialog")

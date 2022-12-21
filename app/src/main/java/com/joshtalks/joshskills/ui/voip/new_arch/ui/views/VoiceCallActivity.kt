@@ -99,9 +99,7 @@ class VoiceCallActivity : BaseActivity() {
                         Manifest.permission.RECORD_AUDIO,
                         Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.ACCESS_NETWORK_STATE,
-                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS
                     )
                 )
             } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
@@ -111,7 +109,6 @@ class VoiceCallActivity : BaseActivity() {
                         Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.ACCESS_NETWORK_STATE,
                         Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
 
                         )
                 )
@@ -122,7 +119,6 @@ class VoiceCallActivity : BaseActivity() {
                         Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.ACCESS_NETWORK_STATE,
                         Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.BLUETOOTH_CONNECT
                     )
                 )
@@ -420,10 +416,10 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     private fun getConformationDialogMessage() : String {
-            return AppObjectController.getFirebaseRemoteConfig()
-                .getString(
-                    "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TEXT}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
-                ).ifBlank { getString(R.string.default_disconnect_dialog_text) }
+        return AppObjectController.getFirebaseRemoteConfig()
+            .getString(
+                "${FirebaseRemoteConfigKey.DISCONNECT_DIALOG_TEXT}${CorePrefManager.getStringValue(CURRENT_COURSE_ID)}"
+            ).ifBlank { getString(R.string.default_disconnect_dialog_text) }
     }
 }
 
