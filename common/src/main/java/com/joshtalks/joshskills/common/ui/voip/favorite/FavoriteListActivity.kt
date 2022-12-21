@@ -13,7 +13,6 @@ import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.databinding.FavoriteListActivityBinding
-import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import kotlinx.coroutines.CoroutineScope
@@ -157,17 +156,18 @@ class FavoriteListActivity : BaseActivity() {
         actionMode?.invalidate()
     }
 
+    //TODO Make navigation to Open UserProfileActivity
     private fun openProfileScreen(mId: String,position:Int) {
-        if (viewModel.deleteRecords.isEmpty()){
-            UserProfileActivity.startUserProfileActivity(
-                this,
-                mentorId = mId,
-                conversationId = conversationId1,
-                previousPage = FAVOURITE_LIST
-            )
-            return
-        }
-        viewModel.updateListRow(position)
+//        if (viewModel.deleteRecords.isEmpty()){
+//            UserProfileActivity.startUserProfileActivity(
+//                this,
+//                mentorId = mId,
+//                conversationId = conversationId1,
+//                previousPage = FAVOURITE_LIST
+//            )
+//            return
+//        }
+//        viewModel.updateListRow(position)
     }
 
     companion object {

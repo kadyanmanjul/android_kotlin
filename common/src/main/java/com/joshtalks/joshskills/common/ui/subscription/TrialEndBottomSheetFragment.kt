@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
-import com.joshtalks.joshskills.common.ui.userprofile.fragments.UserPicChooserFragment
+//import com.joshtalks.joshskills.userprofile.fragments.UserPicChooserFragment
 
 const val TRIAL_TEST_ID = 13
 
@@ -91,16 +91,17 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
         @JvmStatic
         fun newInstance() = TrialEndBottomSheetFragment()
 
+        //TODO Make navigation for open UserPicChooserFragment()
         fun showDialog(
             supportFragmentManager: FragmentManager
         ) {
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            val prev = supportFragmentManager.findFragmentByTag(UserPicChooserFragment.TAG)
-            if (prev != null) {
-                fragmentTransaction.remove(prev)
-            }
-            fragmentTransaction.addToBackStack(null)
-            newInstance().show(supportFragmentManager, UserPicChooserFragment.TAG)
+//            val fragmentTransaction = supportFragmentManager.beginTransaction()
+//            val prev = supportFragmentManager.findFragmentByTag(com.joshtalks.joshskills.userprofile.fragments.UserPicChooserFragment.TAG)
+//            if (prev != null) {
+//                fragmentTransaction.remove(prev)
+//            }
+//            fragmentTransaction.addToBackStack(null)
+//            newInstance().show(supportFragmentManager, com.joshtalks.joshskills.userprofile.fragments.UserPicChooserFragment.TAG)
         }
     }
 

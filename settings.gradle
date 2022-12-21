@@ -6,10 +6,11 @@ include ':feature:groups'
 include ':feature:leaderboard'
 include ':feature:settings'
 include ':feature:expertcall'
+include ':feature:certificate'
+include ':feature:fpp'
+include ':feature:userprofile'
 
 include ':data:splash'
 include ':feature:auth'
 
 enableFeaturePreview("VERSION_CATALOGS")
-include ':feature:certificate'
-include ':feature:fpp'

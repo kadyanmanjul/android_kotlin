@@ -28,8 +28,6 @@ import com.joshtalks.joshskills.groups.model.AddGroupRequest
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupItemData
 import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.groups.viewmodels.JoshGroupViewModel
-import com.joshtalks.joshskills.common.ui.userprofile.fragments.UserPicChooserFragment
-import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
@@ -373,12 +371,13 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
         MixPanelTracker.push()
 
-        UserPicChooserFragment.showDialog(
-            supportFragmentManager,
-            true,
-            isFromRegistration = false,
-            isFromGroup = true
-        )
+        //TODO Create navigation to open UserPicChooserFragment()
+//        com.joshtalks.joshskills.userprofile.fragments.UserPicChooserFragment.showDialog(
+//            supportFragmentManager,
+//            true,
+//            isFromRegistration = false,
+//            isFromGroup = true
+//        )
     }
 
     private fun removeGroupFromDb(groupId: String) {
@@ -424,17 +423,18 @@ class JoshGroupActivity : BaseGroupActivity() {
         return vm.conversationId
     }
 
+    //TODO Make navigation to Open UserProfileActivity
     private fun openProfileActivity(mentorId: String, isDm: Boolean = false) {
-        UserProfileActivity.startUserProfileActivity(
-            activity = this,
-            mentorId = mentorId,
-            flags = arrayOf(),
-            intervalType =  null,
-            previousPage = GROUP,
-            conversationId = null
-        )
-        if (supportFragmentManager.backStackEntryCount < 1 && isDm)
-            this.finish()
+//        UserProfileActivity.startUserProfileActivity(
+//            activity = this,
+//            mentorId = mentorId,
+//            flags = arrayOf(),
+//            intervalType =  null,
+//            previousPage = GROUP,
+//            conversationId = null
+//        )
+//        if (supportFragmentManager.backStackEntryCount < 1 && isDm)
+//            this.finish()
     }
 
     fun showRemovedAlert(groupName: String) {

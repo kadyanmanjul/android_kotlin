@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePi
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
-import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
+//import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -201,19 +201,21 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
         )
     }
 
+    //TODO Make navigation to Open UserProfileActivity
+
     private fun openUserProfileActivity(
         id: String,
         intervalType: String,
         isOnline: Boolean = false
     ) {
-        UserProfileActivity.startUserProfileActivity(
-            this,
-            id,
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            intervalType,
-            USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
-        )
+//        UserProfileActivity.startUserProfileActivity(
+//            this,
+//            id,
+//            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+//            intervalType,
+//            USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
+//            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
+//        )
     }
 
     fun showFreeTrialPaymentScreen() {

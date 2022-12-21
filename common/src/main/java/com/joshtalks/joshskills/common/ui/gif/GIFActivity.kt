@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.common.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.common.databinding.ActivityGifBinding
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
-import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
+//import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -95,12 +95,13 @@ class GIFActivity : CoreJoshActivity() {
         finish()
     }
 
+    //TODO Make navigation to Open UserProfileActivity
     fun goToProfile() {
-        UserProfileActivity.startUserProfileActivity(
-            this, Mentor.getInstance().getId(),
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            null, USER_PROFILE_FLOW_FROM.AWARD.value,
-            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
-        )
+//        UserProfileActivity.startUserProfileActivity(
+//            this, Mentor.getInstance().getId(),
+//            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+//            null, USER_PROFILE_FLOW_FROM.AWARD.value,
+//            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
+//        )
     }
 }

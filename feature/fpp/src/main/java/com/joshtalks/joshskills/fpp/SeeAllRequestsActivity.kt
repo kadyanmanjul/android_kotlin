@@ -9,7 +9,6 @@ import com.joshtalks.joshskills.fpp.constants.FAVOURITE_REQUEST
 import com.joshtalks.joshskills.fpp.constants.FPP_SEE_ALL_BACK_PRESSED
 import com.joshtalks.joshskills.fpp.constants.FPP_OPEN_USER_PROFILE
 import com.joshtalks.joshskills.fpp.viewmodels.SeeAllRequestsViewModel
-import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.fpp.databinding.ActivitySeeAllRequestsBinding
 import java.lang.Exception
 
@@ -42,15 +41,16 @@ class SeeAllRequestsActivity : BaseActivity() {
         }
     }
 
+    //TODO Make navigation to Open UserProfileActivity
     private fun openUserProfile(senderMentorId: String) {
-        UserProfileActivity.startUserProfileActivity(
-            this,
-            senderMentorId,
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            null,
-            previousPage = FAVOURITE_REQUEST,
-            conversationId = null
-        )
+//        UserProfileActivity.startUserProfileActivity(
+//            this,
+//            senderMentorId,
+//            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+//            null,
+//            previousPage = FAVOURITE_REQUEST,
+//            conversationId = null
+//        )
     }
 
     private fun popBackStack() {

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.joshtalks.joshskills.userprofile.fragments.ShowAwardFragment" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pure_black">
+
+        <FrameLayout
+            android:id="@+id/circle_bg_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/pure_white"
+            android:padding="@dimen/_4sdp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.40">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_bg"
+                android:layout_width="248dp"
+                android:layout_height="263dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/pure_white" />
+        </FrameLayout>
+
+
+        <WebView
+            android:id="@+id/web_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layout_constraintDimensionRatio="30:37"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/close"
+            app:layout_constraintVertical_bias="0" />
+
+        <ImageView
+            android:id="@+id/next"
+            android:layout_width="@dimen/_8sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:onClick="@{()->fragment.nextAward()}"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/circle_bg_container"
+            app:layout_constraintTop_toTopOf="@id/image"
+            app:srcCompat="@drawable/ic_arrow_right"
+            app:tint="@color/pure_white" />
+
+        <ImageView
+            android:id="@+id/previous"
+            android:layout_width="@dimen/_8sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:onClick="@{()->fragment.prevAward()}"
+            android:rotation="180"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image"
+            app:layout_constraintEnd_toStartOf="@id/circle_bg_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/image"
+            app:srcCompat="@drawable/ic_arrow_right"
+            app:tint="@color/pure_white" />
+
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/circle_bg_container"
+            app:layout_constraintEnd_toEndOf="@id/circle_bg_container"
+            app:layout_constraintStart_toStartOf="@id/circle_bg_container"
+            app:layout_constraintTop_toTopOf="@id/circle_bg_container"
+            app:srcCompat="@drawable/ic_new_shadow_tick" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/congratulations"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+            android:textColor="@color/pure_white"
+            app:layout_constraintBottom_toTopOf="@id/text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/web_view" />
+
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="26dp"
+            android:layout_height="27dp"
+            android:background="@drawable/ic_cross"
+            android:onClick="@{()->fragment.dismiss()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.05"
+            app:rippleColor="@color/primary_500" />
+
+        <com.joshtalks.joshskills.common.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_46sdp"
+            android:text="@string/congratulations"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textColor="@color/pure_white"
+            app:layout_constraintBottom_toTopOf="@id/btn_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2"
+            app:layout_constraintVertical_bias="0.4" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_profile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:backgroundTint="@color/primary_500"
+            android:clickable="true"
+            android:focusable="true"
+            android:maxLines="1"
+            android:onClick="@{()->fragment.goToProfile()}"
+            android:paddingTop="@dimen/_12sdp"
+            android:paddingBottom="@dimen/_12sdp"
+            android:text="@string/go_to_profile"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/pure_white"
+            android:visibility="gone"
+            app:cornerRadius="@dimen/_32sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.65"
+            app:rippleColor="@color/pure_white" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

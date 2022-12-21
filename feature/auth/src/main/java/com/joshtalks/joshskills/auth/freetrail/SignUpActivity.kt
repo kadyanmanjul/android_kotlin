@@ -45,7 +45,7 @@ import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.common.ui.userprofile.viewmodel.UserProfileViewModel
+//import com.joshtalks.joshskills.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -71,9 +71,11 @@ class SignUpActivity : ThemedBaseActivity() {
     private val viewModel: SignUpViewModel by lazy {
         ViewModelProvider(this)[SignUpViewModel::class.java]
     }
-    private val viewModelForDpUpload: UserProfileViewModel by lazy {
-        ViewModelProvider(this)[UserProfileViewModel::class.java]
-    }
+    //TODO Create UserProfileViewModel Object
+
+//    private val viewModelForDpUpload: com.joshtalks.joshskills.userprofile.viewmodel.UserProfileViewModel by lazy {
+//        ViewModelProvider(this)[com.joshtalks.joshskills.userprofile.viewmodel.UserProfileViewModel::class.java]
+//    }
     private lateinit var binding: ActivitySignUpV2Binding
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
@@ -213,23 +215,24 @@ class SignUpActivity : ThemedBaseActivity() {
                 moveToConversationScreen(it)
             }
         }
-        viewModelForDpUpload.apiCallStatus.observe(this) {
-            when (it) {
-                ApiCallStatus.SUCCESS -> {
-                    hideProgressBar()
-                    viewModel.changeSignupStatusToProfilePicUploaded()
-                }
-                ApiCallStatus.FAILED -> {
-                    hideProgressBar()
-                }
-                ApiCallStatus.START -> {
-                    showProgressBar()
-                }
-                else -> {
-
-                }
-            }
-        }
+        //TODO By using viewmodel object observe data
+//        viewModelForDpUpload.apiCallStatus.observe(this) {
+//            when (it) {
+//                ApiCallStatus.SUCCESS -> {
+//                    hideProgressBar()
+//                    viewModel.changeSignupStatusToProfilePicUploaded()
+//                }
+//                ApiCallStatus.FAILED -> {
+//                    hideProgressBar()
+//                }
+//                ApiCallStatus.START -> {
+//                    showProgressBar()
+//                }
+//                else -> {
+//
+//                }
+//            }
+//        }
     }
 
     private fun openChooseLanguageFragment() {
@@ -450,7 +453,8 @@ class SignUpActivity : ThemedBaseActivity() {
         if (url.isNotBlank() && resultCode == Activity.RESULT_OK) {
             val imageUpdatedPath = AppDirectory.getImageSentFilePath()
             AppDirectory.copy(url, imageUpdatedPath)
-            viewModelForDpUpload.uploadMedia(imageUpdatedPath)
+            //TODO upload media
+//            viewModelForDpUpload.uploadMedia(imageUpdatedPath)
         } else if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {

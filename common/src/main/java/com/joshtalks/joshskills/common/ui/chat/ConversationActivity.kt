@@ -86,7 +86,7 @@ import com.joshtalks.joshskills.common.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.common.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.SPECIAL_ID
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
-import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
+//import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
 import com.joshtalks.joshskills.common.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.common.ui.video_player.VIDEO_OBJECT
@@ -1099,17 +1099,18 @@ class ConversationActivity : BaseConversationActivity(),
         }
     }
 
+    //TODO Make navigation to Open UserProfileActivity
     private fun openUserProfileActivity(id: String, previousPage: String?) {
-        previousPage?.let {
-            UserProfileActivity.startUserProfileActivity(
-                this,
-                id,
-                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                null,
-                it,
-                conversationId = inboxEntity.conversation_id,
-            )
-        }
+//        previousPage?.let {
+//            UserProfileActivity.startUserProfileActivity(
+//                this,
+//                id,
+//                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+//                null,
+//                it,
+//                conversationId = inboxEntity.conversation_id,
+//            )
+//        }
     }
 
     private fun fetchMessage() {

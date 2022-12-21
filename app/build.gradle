@@ -234,6 +234,7 @@ dependencies {
     implementation project(path: ':feature:settings')
     implementation project(path: ':feature:expertcall')
     implementation project(path: ':feature:auth')
+    implementation project(path: ':feature:userprofile')
 
     implementation libs.kotlin.lib
     implementation libs.bundles.coroutine

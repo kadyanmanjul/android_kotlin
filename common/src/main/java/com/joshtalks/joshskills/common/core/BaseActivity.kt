@@ -67,7 +67,7 @@ import com.joshtalks.joshskills.common.ui.points_history.SpokenHistoryActivity
 import com.joshtalks.joshskills.common.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.common.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.common.ui.termsandconditions.WebViewFragment
-import com.joshtalks.joshskills.common.ui.userprofile.fragments.ShowAwardFragment
+//import com.joshtalks.joshskills.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
@@ -637,16 +637,16 @@ abstract class BaseActivity :
             }
         }
     }
-
+    //TODO Make navigation to Open ShowAwardFragment
     fun showAward(awarList: List<Award>, isFromUserProfile: Boolean = false) {
         if (true) {
             // TODO add when awards functionality is over
             // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            ShowAwardFragment.showDialog(
-                supportFragmentManager,
-                awarList,
-                isFromUserProfile
-            )
+//            com.joshtalks.joshskills.userprofile.fragments.ShowAwardFragment.showDialog(
+//                supportFragmentManager,
+//                awarList,
+//                isFromUserProfile
+//            )
         }
     }
 

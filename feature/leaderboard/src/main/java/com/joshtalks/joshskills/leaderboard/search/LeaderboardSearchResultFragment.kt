@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.common.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.leaderboard.EndlessRecyclerViewScrollListener
-import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
+//import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.leaderboard.LeaderboardMentor
 import com.joshtalks.joshskills.leaderboard.LeaderboardType
 import com.joshtalks.joshskills.leaderboard.R
@@ -158,24 +158,25 @@ class LeaderboardSearchResultFragment : Fragment() {
         )
     }
 
+    //TODO Make navigation to Open UserProfileActivity
     private fun openUserProfileActivity(
         id: String,
         intervalType: String,
         isOnline: Boolean = false
     ) {
-        itemList.first { it.id == id }.name?.let {
-            viewModel.insertRecentSearch(it)
-        }
-        context?.let {
-            UserProfileActivity.startUserProfileActivity(
-                requireActivity(),
-                id,
-                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                intervalType,
-                USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-                conversationId = requireActivity().intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
-            )
-        }
+//        itemList.first { it.id == id }.name?.let {
+//            viewModel.insertRecentSearch(it)
+//        }
+//        context?.let {
+//            UserProfileActivity.startUserProfileActivity(
+//                requireActivity(),
+//                id,
+//                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+//                intervalType,
+//                USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
+//                conversationId = requireActivity().intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
+//            )
+//        }
     }
 
     companion object {

@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.fpp.constants.IS_REJECTED
 import com.joshtalks.joshskills.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.common.ui.fpp.RecentCall
 import com.joshtalks.joshskills.fpp.viewmodels.RecentCallViewModel
-import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.fpp.databinding.ActivityRecentCallBinding
 import java.lang.Exception
 
@@ -112,15 +111,16 @@ class RecentCallActivity : BaseActivity() {
         }
     }
 
+    //TODO Make navigation to Open UserProfileActivity
     fun openUserProfileActivity(id: String) {
-        UserProfileActivity.startUserProfileActivity(
-            this,
-            id,
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            null,
-            RECENT_CALL,
-            conversationId = conversationId1
-        )
+//        UserProfileActivity.startUserProfileActivity(
+//            this,
+//            id,
+//            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+//            null,
+//            RECENT_CALL,
+//            conversationId = conversationId1
+//        )
     }
 
     fun onRecentCallHasRequest(recentCall: RecentCall) {

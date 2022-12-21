@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.ui.userprofile.fragments.UserPicChooserFragment
+//import com.joshtalks.joshskills.userprofile.fragments.UserPicChooserFragment
 
 class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
 
@@ -46,16 +46,17 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
                 )
     }
 
+    //TODO Make navigation for open UserPicChooserFragment()
     fun submitProfilePic() {
         //val requestMap = mutableMapOf<String, String?>()
         //viewModel.completingProfile(requestMap)
         MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_PHOTO).push()
         logAnalyticsEvent(AnalyticsEvent.UPLOAD_PROFILE_PIC.NAME)
-        UserPicChooserFragment.showDialog(
-            childFragmentManager,
-            true,
-            isFromRegistration = true
-        )
+//        com.joshtalks.joshskills.userprofile.fragments.UserPicChooserFragment.showDialog(
+//            childFragmentManager,
+//            true,
+//            isFromRegistration = true
+//        )
     }
 
 
