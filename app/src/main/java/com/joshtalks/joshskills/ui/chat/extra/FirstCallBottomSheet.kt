@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
@@ -15,7 +17,11 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.BottomSheetFirstCallBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.extra.setOnShortSingleClickListener
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.karumi.dexter.MultiplePermissionsReport
@@ -33,6 +39,10 @@ const val FIRST_CALL_POPUP = "FIRST_CALL_POPUP"
 class FirstCallBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetFirstCallBinding
+
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity())[LessonViewModel::class.java]
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         isCancelable = true
@@ -58,6 +68,14 @@ class FirstCallBottomSheet : BottomSheetDialogFragment() {
 
         binding.cross.setOnClickListener {
             dismiss()
+            val resultIntent = Intent()
+            viewModel.lessonLiveData.value?.let {
+                resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
+                resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
+                resultIntent.putExtra(LessonActivity.LAST_LESSON_STATUS, it.status?.name)
+                resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+            }
+            activity?.setResult(AppCompatActivity.RESULT_OK, resultIntent)
             activity?.finish()
         }
     }
@@ -136,6 +154,7 @@ class FirstCallBottomSheet : BottomSheetDialogFragment() {
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             }
             VoipPref.resetAutoCallCount()
+            dismiss()
             startActivity(callIntent)
         }
     }

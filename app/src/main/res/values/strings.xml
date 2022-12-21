@@ -990,7 +990,7 @@
     <string name="p2p_notifications_setting" translatable="false">Practice partner notifications</string>
 
     <string name="first_call_popup_title">English बोलने से आती है....</string>
-    <string name="first_call_popup_subtitle">%s, अपना पहला call dial करें और दुसरे students के साथ speaking practice करें।</string>
+    <string name="first_call_popup_subtitle">%s, अपना पहला call dial करें और दुसरे students के साथ English में बात करें।</string>
     <string name="your_hometown" translatable="false">Your Hometown</string>
 
     <string name="start_exam" translatable="false">Start exam</string>
