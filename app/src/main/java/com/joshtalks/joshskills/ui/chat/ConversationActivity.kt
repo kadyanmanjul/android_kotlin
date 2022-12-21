@@ -38,7 +38,6 @@ import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.base.constants.IS_FIRST_CALL
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
@@ -76,12 +75,10 @@ import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
-import com.joshtalks.joshskills.ui.chat.extra.FirstCallBottomSheet
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
@@ -417,17 +414,6 @@ class ConversationActivity :
         conversationBinding.overlayLeaderboardContainer.visibility = GONE
         conversationBinding.labelTapToDismiss.visibility = GONE
         conversationBinding.overlayLeaderboardTooltip.visibility = GONE
-    }
-
-    private fun showFirstCallBottomSheet() {
-        if (getVoipState() == State.IDLE &&
-            PrefManager.getIntValue(FT_CALLS_LEFT) == 15 &&
-            PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()
-        )
-            lifecycleScope.launch(Dispatchers.Main) {
-                delay(300)
-                FirstCallBottomSheet.showDialog(supportFragmentManager)
-            }
     }
 
     fun showFreeTrialPaymentScreen() {
@@ -1835,7 +1821,7 @@ class ConversationActivity :
             } else if (resultCode == RESULT_OK) {
                 when (requestCode) {
                     ASSESSMENT_REQUEST_CODE,
-                    CERTIFICATION_REQUEST_CODE -> {
+                    CERTIFICATION_REQUEST_CODE, LESSON_REQUEST_CODE -> {
                         data?.getStringExtra(CHAT_ROOM_ID)?.let {
                             conversationViewModel.refreshMessageObject(it)
                         }
@@ -1844,13 +1830,6 @@ class ConversationActivity :
                         data?.getIntExtra(COURSE_ID, -1)?.let {
                             conversationViewModel.refreshLesson(it)
                         }
-                    }
-                    LESSON_REQUEST_CODE -> {
-                        data?.getStringExtra(CHAT_ROOM_ID)?.let {
-                            conversationViewModel.refreshMessageObject(it)
-                        }
-                        if (VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) && openedLesson)
-                            showFirstCallBottomSheet()
                     }
                 }
             }
