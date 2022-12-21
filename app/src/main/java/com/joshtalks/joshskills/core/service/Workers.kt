@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.launch.LauncherScreenImpressionService
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.COUPON_CODE
@@ -916,6 +917,42 @@ class UpdateServerTimeWorker(context: Context, workerParams: WorkerParameters) :
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+class LogNextActivityWorker(context: Context, private var workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val className = workerParams.inputData.getString("className") ?: "EMPTY"
+            val request = mapOf(
+                Pair("gaid", PrefManager.getStringValue(USER_UNIQUE_ID)),
+                Pair("event_name", className)
+            )
+            AppObjectController.retrofit.create(LauncherScreenImpressionService::class.java)
+                .saveImpression(request)
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
+class LogImpressionWorker(context: Context, private var workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val requestData = hashMapOf(
+                Pair("mentor_id", Mentor.getInstance().getId()),
+                Pair("event_name", IMPRESSION_OPEN_FREE_TRIAL_SCREEN_WORKER)
+            )
+            AppObjectController.commonNetworkService.saveImpression(requestData)
+        } catch (ex: Exception) {
+            Timber.e(ex)
+            LogException.catchException(ex)
         }
         return Result.success()
     }

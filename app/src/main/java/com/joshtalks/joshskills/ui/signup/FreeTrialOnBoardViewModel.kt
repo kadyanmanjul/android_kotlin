@@ -231,4 +231,8 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             abTestRepository.postGoal(goal.NAME)
         }
     }
+
+    fun logImpressionFromWorker() {
+        WorkManagerAdmin.logImpressionFromWorker()
+    }
 }

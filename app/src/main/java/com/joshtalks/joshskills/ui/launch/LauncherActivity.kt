@@ -108,12 +108,16 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
             }
         }
         viewModel.redirectEvent.observe(this) {
-            when (it) {
+            val intent = when (it) {
                 SIGN_UP -> Intent(this, SignUpActivity::class.java)
                 INBOX -> getInboxActivityIntent()
                 COURSE_ONBOARDING -> FreeTrialOnBoardActivity.getIntent(this)
                 else -> null
-            }?.let { intent ->
+            }
+            if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) < 2) {
+                WorkManagerAdmin.logNextActivity(intent?.component?.className)
+            }
+            if (intent != null) {
                 startActivity(intent)
                 finish()
             }

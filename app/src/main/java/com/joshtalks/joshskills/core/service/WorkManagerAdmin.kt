@@ -36,6 +36,21 @@ object WorkManagerAdmin {
             )
             .enqueue()
     }
+    fun logNextActivity(className: String?) {
+        val data = workDataOf(
+            "className" to className
+        )
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(
+            OneTimeWorkRequestBuilder<LogNextActivityWorker>()
+                .setInputData(data)
+                .build()
+        )
+    }
+    fun logImpressionFromWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(
+            OneTimeWorkRequestBuilder<LogImpressionWorker>().build()
+        )
+    }
 
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)

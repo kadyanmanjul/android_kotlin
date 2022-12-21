@@ -63,15 +63,17 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
+        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
+        viewModel.logImpressionFromWorker()
         initABTest()
         initOnboardingCourse()
         addViewModelObservers()
-        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
         PrefManager.getBoolValue(LOGIN_ONBOARDING, defValue = false).let { isLogin ->
             layout.btnStartTrialText.apply {
                 text = if (isLogin) "Sign In" else
                     "Start Now"
                 setOnClickListener {
+                    viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN_CLICK)
                     if (isLogin)
                         signUp(it)
                     else {
@@ -82,6 +84,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
                 }
             }
             layout.txtLogin.setOnClickListener {
+                viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN_CLICK)
                 if (isLogin) startTrial(it)
                 else signUp(it)
             }
