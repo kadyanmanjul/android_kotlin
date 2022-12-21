@@ -48,7 +48,7 @@ class RedirectFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.recyclerView.adapter = adapter
         adapter.submitList(activityMap.keys.map { it.name })
-        adapter.setOnClickListener { activityName, position ->
+        adapter.setOnClickListener { activityName, _ ->
             val dialog = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_text, null)
             //remove all views from dialog
             (dialog as ViewGroup).removeAllViews()
@@ -62,7 +62,7 @@ class RedirectFragment : Fragment() {
             jsonObject.put(DeepLinkData.REDIRECT_TO.key, DeepLinkRedirect.valueOf(activityName).key)
             if (deepLinkDataList?.isEmpty() == true) {
                 lifecycleScope.launch {
-                    DeepLinkRedirectUtil.getIntent(requireActivity(), jsonObject)
+                    DeepLinkRedirectUtil(jsonObject).redirectFromDeepLink(requireActivity())
                 }
                 return@setOnClickListener
             }
@@ -93,7 +93,7 @@ class RedirectFragment : Fragment() {
                         }
                     }
                     lifecycleScope.launch {
-                        if (DeepLinkRedirectUtil.getIntent(requireActivity(), jsonObject))
+                        if (DeepLinkRedirectUtil(jsonObject).redirectFromDeepLink(requireActivity()))
                             Toast.makeText(requireContext(), "Opening activity", Toast.LENGTH_SHORT).show()
                         else
                             Toast.makeText(requireContext(), "Invalid Data", Toast.LENGTH_SHORT).show()
