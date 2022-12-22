@@ -6,16 +6,16 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.constants.ALREADY_FPP
+import com.joshtalks.joshskills.common.constants.HAS_RECIEVED_REQUEST
+import com.joshtalks.joshskills.common.constants.REQUESTED
+import com.joshtalks.joshskills.common.constants.SENT_REQUEST
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.fpp.constants.*
 import com.joshtalks.joshskills.common.ui.fpp.RecentCall
-import com.joshtalks.joshskills.common.ui.userprofile.ALREADY_FPP
-import com.joshtalks.joshskills.common.ui.userprofile.HAS_RECIEVED_REQUEST
-import com.joshtalks.joshskills.common.ui.userprofile.REQUESTED
-import com.joshtalks.joshskills.common.ui.userprofile.SENT_REQUEST
 import com.joshtalks.joshskills.fpp.databinding.FppRecentItemListBinding
 import kotlinx.android.synthetic.main.fpp_recent_item_list.view.btn_sent_request
 
@@ -116,7 +116,7 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                                 0
                             )
                         }
-                        com.joshtalks.joshskills.fpp.constants.NONE -> {
+                        NONE -> {
                             btnSentRequest.visibility = View.INVISIBLE
                         }
                     }

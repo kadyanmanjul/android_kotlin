@@ -41,6 +41,10 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.joshtalks.joshskills.common.constants.ALREADY_FPP
+import com.joshtalks.joshskills.common.constants.HAS_RECIEVED_REQUEST
+import com.joshtalks.joshskills.common.constants.REQUESTED
+import com.joshtalks.joshskills.common.constants.SENT_REQUEST
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.common.core.abTest.VariantKeys
@@ -53,8 +57,7 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.AwardItemClicke
 import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.fpp.constants.*
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.common.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.common.ui.userprofile.models.*
@@ -88,10 +91,6 @@ const val REFERRAL_COUNT = "REFERRAL_COUNT"
 const val IS_REJECTED = "is_rejected"
 const val IS_ACCEPTED = "is_accepted"
 const val GROUP = "GROUP"
-const val SENT_REQUEST = "send_request"
-const val ALREADY_FPP = "already_fpp"
-const val REQUESTED = "requested"
-const val HAS_RECIEVED_REQUEST = "recieved_request"
 
 class UserProfileActivity : CoreJoshActivity() {
 
