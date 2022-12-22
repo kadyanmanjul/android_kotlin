@@ -32,6 +32,7 @@ import org.json.JSONObject
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.coroutines.delay
 
 
 const val FETCH_GAID = 1001
@@ -193,6 +194,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 if (response.lastLoginType != LastLoginType.NEVER)
                     PrefManager.put(LAST_LOGIN_TYPE, response.lastLoginType.name)
                 Mentor.updateFromLoginResponse(response)
+                delay(700)
                 event.value = Message().apply { what = START_ACTIVITY }
                 apiCallStatus.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Exception) {
@@ -327,8 +329,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         when {
             isPaymentDone() -> RedirectAction.SIGN_UP
             isGuestEnrolled() -> RedirectAction.INBOX
-            isFreeTrialStarted() -> RedirectAction.COURSE_ONBOARDING
-            else -> RedirectAction.SIGN_UP
+            else -> RedirectAction.COURSE_ONBOARDING
         }
 
     private fun isPaymentDone(): Boolean =

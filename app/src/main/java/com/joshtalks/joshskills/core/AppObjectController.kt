@@ -93,7 +93,10 @@ private val IGNORE_UNAUTHORISED = setOf(
     "$DIR/voicecall/call_rating/",
     "$DIR/fpp/block/",
     "$DIR/ab_test/track_conversion/",
-    "$DIR/impression/tcflow_track_impressions/"
+    "$DIR/impression/tcflow_track_impressions/",
+    "$DIR/notification/client_side/",
+    "$DIR/impression/track_impressions/",
+    "$DIR/impression/launcher_screen/"
 )
 
 class AppObjectController {
@@ -668,6 +671,7 @@ class StatusCodeInterceptor : Interceptor {
             if (response.code in 401..403) {
                 if (Utils.isAppRunning(AppObjectController.joshApplication, AppObjectController.joshApplication.packageName)) {
                     if (IGNORE_UNAUTHORISED.none { path -> chain.request().url.toString().contains(path) }) {
+                        WorkManagerAdmin.logNextActivity(chain.request().url.toString())
                         PrefManager.logoutUser()
                         LastSyncPrefManager.clear()
                         if (JoshApplication.isAppVisible) {

@@ -114,7 +114,11 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 COURSE_ONBOARDING -> FreeTrialOnBoardActivity.getIntent(this)
                 else -> null
             }
-            if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) < 2) {
+            if (PrefManager.getIntValue(LAUNCHER_SCREEN_VISIT_COUNT) < 5) {
+                PrefManager.put(
+                    LAUNCHER_SCREEN_VISIT_COUNT,
+                    PrefManager.getIntValue(LAUNCHER_SCREEN_VISIT_COUNT).plus(1)
+                )
                 WorkManagerAdmin.logNextActivity(intent?.component?.className)
             }
             if (intent != null) {
