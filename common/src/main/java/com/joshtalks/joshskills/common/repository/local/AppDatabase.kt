@@ -20,8 +20,8 @@ import com.joshtalks.joshskills.common.core.notification.database.NotificationEv
 import com.joshtalks.joshskills.common.core.notification.database.ScheduleNotificationDao
 import com.joshtalks.joshskills.common.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.common.core.notification.model.ScheduleNotification
-import com.joshtalks.joshskills.common.engage_notification.AppActivityModel
-import com.joshtalks.joshskills.common.engage_notification.AppUsageModel
+import com.joshtalks.joshskills.common.repository.local.entity.engage_notification.AppActivityModel
+import com.joshtalks.joshskills.common.repository.local.entity.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.common.repository.local.entity.groups.ChatItem
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupChatAnalyticsEntity
@@ -73,6 +73,8 @@ import com.joshtalks.joshskills.common.repository.local.entity.User
 import com.joshtalks.joshskills.common.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.common.repository.local.entity.VideoEngageDao
 import com.joshtalks.joshskills.common.repository.local.entity.VideoType
+import com.joshtalks.joshskills.common.repository.local.entity.engage_notification.AppActivityDao
+import com.joshtalks.joshskills.common.repository.local.entity.engage_notification.AppUsageDao
 import com.joshtalks.joshskills.common.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.common.repository.local.entity.leaderboard.RecentSearchDao
 import com.joshtalks.joshskills.common.repository.local.entity.practise.FavoriteCaller
@@ -724,8 +726,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun videoEngageDao(): VideoEngageDao
     abstract fun assessmentDao(): AssessmentDao
     abstract fun reminderDao(): ReminderDao
-    abstract fun appUsageDao(): com.joshtalks.joshskills.common.engage_notification.AppUsageDao
-    abstract fun appActivityDao(): com.joshtalks.joshskills.common.engage_notification.AppActivityDao
+    abstract fun appUsageDao(): AppUsageDao
+    abstract fun appActivityDao(): AppActivityDao
     abstract fun lessonDao(): LessonDao
     abstract fun lessonQuestionDao(): LessonQuestionDao
     abstract fun awardMentorModelDao(): AwardMentorModelDao

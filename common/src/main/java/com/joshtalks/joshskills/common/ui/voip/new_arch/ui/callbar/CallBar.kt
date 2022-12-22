@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.common.ui.voip.new_arch.ui.callbar
 
 import androidx.lifecycle.LiveData
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPrefListener
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPrefListener
 
 /**
  * Require DataBinding in targeted xml with following instruction ->

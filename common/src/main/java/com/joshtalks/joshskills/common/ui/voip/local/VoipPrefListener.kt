@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.call.data.local
+package com.joshtalks.joshskills.common.ui.voip.local
 
 import android.content.SharedPreferences
 import android.util.Log

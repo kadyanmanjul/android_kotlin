@@ -8,12 +8,11 @@ include ':feature:settings'
 include ':feature:expertcall'
 include ':feature:certificate'
 include ':feature:fpp'
+include ':feature:userprofile'
+include ':feature:auth'
+include ':feature:referral'
+include ':feature:buypage'
 
 include ':data:splash'
-include ':feature:auth'
 
 enableFeaturePreview("VERSION_CATALOGS")
-include ':feature:userprofile'
-include ':feature:buypage'
-include ':feature:referral'
-

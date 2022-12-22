@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics;
-import com.joshtalks.joshskills.common.engage_notification.AppActivityModel;
+import com.joshtalks.joshskills.common.repository.local.entity.engage_notification.AppActivityModel;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <application>
+        <activity
+            android:name="com.joshtalks.joshskills.referral.ReferralActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:parentActivityName="com.joshtalks.joshskills.common.ui.inbox.InboxActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.joshtalks.joshskills.common.ui.inbox.InboxActivity" />
+
+            <intent-filter>
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>

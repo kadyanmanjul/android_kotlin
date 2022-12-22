@@ -17,11 +17,11 @@ import com.joshtalks.joshskills.voip.base.log.Feature
 import com.joshtalks.joshskills.voip.base.log.JoshLog
 import com.joshtalks.joshskills.common.core.PrefManager as CorePrefManager
 import com.joshtalks.joshskills.common.core.BLOCK_STATUS
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
-import com.joshtalks.joshskills.common.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
-import com.joshtalks.joshskills.common.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.common.ui.voip.repository.RepositoryConstants
+import com.joshtalks.joshskills.common.ui.voip.repository.WebrtcRepository
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.*
@@ -84,7 +84,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         viewModelScope.launch(Dispatchers.IO) {
             repository.observeRepositoryEvents().collect {
                 when (it) {
-                    CONNECTION_ESTABLISHED -> {
+                    RepositoryConstants.CONNECTION_ESTABLISHED -> {
                         if (isListening.not()) {
                             isListening  = true
                             listenUIState()

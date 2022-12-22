@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.voip.base.model.ApiHeader
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.isBlocked
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.voipLog
 import kotlinx.coroutines.sync.Mutex

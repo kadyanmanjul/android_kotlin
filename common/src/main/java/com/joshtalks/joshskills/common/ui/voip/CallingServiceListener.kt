@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.call
+package com.joshtalks.joshskills.common.ui.voip
 
 import android.content.BroadcastReceiver
 import android.content.Context

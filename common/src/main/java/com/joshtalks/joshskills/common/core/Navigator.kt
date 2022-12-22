@@ -14,6 +14,7 @@ interface SplashContract : Contract
 interface SettingsContract : Contract
 interface LeaderboardContract : Contract
 interface OnBoardingContract : Contract
+interface NotificationContract: Contract
 
 interface GroupsContract : Contract {
     val conversationId: String

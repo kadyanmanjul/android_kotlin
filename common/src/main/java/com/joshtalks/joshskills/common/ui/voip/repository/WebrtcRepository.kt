@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.call.repository
+package com.joshtalks.joshskills.common.ui.voip.repository
 
 import android.app.Activity
 import android.content.ComponentName
@@ -9,7 +9,6 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.voip.base.constants.INTENT_DATA_MENTOR_ID
-import com.joshtalks.joshskills.common.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
@@ -53,7 +52,7 @@ class WebrtcRepository(scope : CoroutineScope) {
             mService =  (service as CallingRemoteService.RemoteServiceBinder).getService()
             scope.launch {
                 Log.d(TAG, "onServiceConnected: ")
-                repositoryToVMFlow.emit(CONNECTION_ESTABLISHED)
+                repositoryToVMFlow.emit(RepositoryConstants.CONNECTION_ESTABLISHED)
             }
         }
 

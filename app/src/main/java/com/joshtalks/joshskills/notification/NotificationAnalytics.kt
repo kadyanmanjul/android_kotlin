@@ -127,7 +127,7 @@ class NotificationAnalytics {
                         channel = Channel.API
                     )
                     if (isFirstTimeNotification)
-                        com.joshtalks.joshskills.notification.NotificationUtils(context).sendNotification(nc)
+                        NotificationUtils(context).sendNotification(nc)
                 }
             }
         } catch (e: Exception) {

@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AU
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AUTO_CONNECT_SCREEN_TIPS
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AUTO_CONNECT_TIPS_DEFAULT
 import com.joshtalks.joshskills.common.core.PrefManager
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.AutoConnectData
 import com.joshtalks.joshskills.voip.constant.CALL_NOW
 import com.joshtalks.joshskills.voip.constant.STOP_WAITING

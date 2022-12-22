@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.engage_notification
+package com.joshtalks.joshskills.common.repository.local.entity.engage_notification
 
 
 import androidx.room.ColumnInfo

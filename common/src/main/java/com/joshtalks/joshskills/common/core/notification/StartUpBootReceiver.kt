@@ -9,7 +9,6 @@ import timber.log.Timber
 class StartUpBootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Timber.tag(StartUpBootReceiver::class.java.name).e("onReceive")
-        // TODO: Check
         AppObjectController.init()
     }
 }

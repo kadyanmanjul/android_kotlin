@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.common.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.common.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.common.repository.server.groupchat.GroupDetails
 import java.util.ConcurrentModificationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,7 +23,6 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
     private val commonNetworkService by lazy { AppObjectController.commonNetworkService }
     private val appDatabase by lazy { AppObjectController.appDatabase }
     private val jobs = arrayListOf<Job>()
-    val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
     val isLoading: MutableLiveData<Boolean> = MutableLiveData()
     val unreadMessageCount = MutableSharedFlow<Int>(replay = 0)
     val userData = MutableSharedFlow<UserProfileResponse>(replay = 0)

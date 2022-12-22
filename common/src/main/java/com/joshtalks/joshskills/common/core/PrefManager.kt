@@ -23,8 +23,6 @@ import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.UserRating
-import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.report.model.VoipReportModel
-import com.joshtalks.joshskills.common.ui.voip.voip_rating.model.ReportModel
 import java.io.ByteArrayOutputStream
 
 const val USER_UNIQUE_ID = "user_unique_id"
@@ -360,12 +358,6 @@ object PrefManager {
         put(key = key, value = jsonString)
     }
 
-    fun getPrefObject(key: String): ReportModel? {
-        val gson = Gson()
-        val json: String = getStringValue(key = key, defaultValue = "") as String
-        return gson.fromJson(json, ReportModel::class.java)
-    }
-
     fun getPrefMap(key: String): MutableMap<String, Any?>? {
         val gson = Gson()
         val json: String = getStringValue(key = key, defaultValue = "") as String
@@ -395,12 +387,6 @@ object PrefManager {
         val gson = Gson()
         val json: String = getStringValue(key = key, defaultValue = "") as String
         return gson.fromJson(json, LessonModel::class.java)
-    }
-
-    fun getVoipPrefObject(key: String): VoipReportModel? {
-        val gson = Gson()
-        val json: String = getStringValue(key = key, defaultValue = "") as String
-        return gson.fromJson(json, VoipReportModel::class.java)
     }
 
     fun getRatingObject(key: String): UserRating? {

@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <application>
+        <activity
+            android:name="com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PreviousLeaderboardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".search.LeaderBoardSearchActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustPan" />
+    </application>
 </manifest>

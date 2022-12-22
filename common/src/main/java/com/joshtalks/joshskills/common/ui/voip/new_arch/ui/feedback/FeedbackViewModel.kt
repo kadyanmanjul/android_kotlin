@@ -5,12 +5,12 @@ import com.joshtalks.joshskills.common.base.BaseViewModel
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.model.KFactor
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import kotlinx.coroutines.*
 import retrofit2.Response
 import java.util.HashMap
 
-class FeedbackViewModel : com.joshtalks.joshskills.common.base.BaseViewModel() {
+class FeedbackViewModel : BaseViewModel() {
 
     var responseLiveData = MutableLiveData<Response<KFactor>?>()
 

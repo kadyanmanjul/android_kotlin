@@ -29,8 +29,8 @@ import com.joshtalks.joshskills.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
-import com.joshtalks.joshskills.common.ui.call.CallingServiceReceiver
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.common.ui.voip.CallingServiceReceiver
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.util.*
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding

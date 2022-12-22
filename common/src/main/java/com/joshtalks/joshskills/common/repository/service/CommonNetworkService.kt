@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.common.repository.service
 
 import com.joshtalks.joshskills.common.repository.local.entity.BroadCastEvent
+import com.joshtalks.joshskills.common.repository.local.entity.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.common.repository.local.model.ButtonVisibilityResponse
 import com.joshtalks.joshskills.common.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.common.repository.local.model.RequestRegisterGAId
@@ -22,7 +23,6 @@ import com.joshtalks.joshskills.common.repository.server.points.SpokenMinutesHis
 import com.joshtalks.joshskills.common.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.common.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.common.repository.server.translation.WordDetailsResponse
-import com.joshtalks.joshskills.common.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.common.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.common.track.CourseUsageSync
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.VerifyPaymentStatus
@@ -117,9 +117,6 @@ interface CommonNetworkService {
     suspend fun getFppStatusInProfile(
         @Path("user_profile_mentor_id") mentorId: String
     ): Response<FppStatusInProfileResponse>
-
-    @POST("$DIR/voicecall/feedback")
-    suspend fun feedbackVoipCallAsync(@Body request: RequestVoipRating): Response<FeedbackVoipResponse>
 
     @GET("$DIR/voicecall/topic/v2/{id}/")
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopic
@@ -244,7 +241,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/engage/user-activity/")
     suspend fun engageUserSession(
-        @Body params: HashMap<String, List<com.joshtalks.joshskills.common.engage_notification.AppUsageModel>>
+        @Body params: HashMap<String, List<AppUsageModel>>
     ): Response<Void>
 
     @POST("$DIR/engage/course-user-activity/")

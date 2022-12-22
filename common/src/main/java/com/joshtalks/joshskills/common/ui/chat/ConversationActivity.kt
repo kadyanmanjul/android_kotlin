@@ -86,7 +86,6 @@ import com.joshtalks.joshskills.common.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.common.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.SPECIAL_ID
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
-//import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
 import com.joshtalks.joshskills.common.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.common.ui.video_player.VIDEO_OBJECT
@@ -333,29 +332,6 @@ class ConversationActivity : BaseConversationActivity(),
 
     private fun getAllPendingRequest() {
         conversationViewModel.getPendingRequestsList()
-    }
-
-    private fun addIssuesToSharedPref() {
-        CoroutineScope(Dispatchers.IO).launch() {
-
-            try {
-                PrefManager.putPrefObject(
-                    REPORT_ISSUE,
-                    AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT")
-                )
-
-            } catch (e: java.lang.Exception) {
-            }
-            try {
-                PrefManager.putPrefObject(
-                    BLOCK_ISSUE,
-                    AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK")
-                )
-
-            } catch (e: java.lang.Exception) {
-            }
-
-        }
     }
 
     private fun initFreeTrialTimer() {

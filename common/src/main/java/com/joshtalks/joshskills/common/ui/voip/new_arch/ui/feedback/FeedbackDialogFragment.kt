@@ -14,12 +14,12 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.common.databinding.FragmentFeedbackDialogBinding
 import com.joshtalks.joshskills.common.repository.local.model.KFactor
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.common.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.share_call.ShareWithFriendsActivity
 import retrofit2.Response
 
-class FeedbackDialogFragment : com.joshtalks.joshskills.common.base.BaseDialogFragment() {
+class FeedbackDialogFragment : BaseDialogFragment() {
 
     lateinit var binding: FragmentFeedbackDialogBinding
     val YES = "YES"

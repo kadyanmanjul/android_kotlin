@@ -2,11 +2,10 @@ package com.joshtalks.joshskills.common.ui.voip.new_arch.ui.call_rating
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.common.base.BaseViewModel
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.repository.local.model.KFactor
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import kotlinx.coroutines.*
 import retrofit2.Response
 import timber.log.Timber

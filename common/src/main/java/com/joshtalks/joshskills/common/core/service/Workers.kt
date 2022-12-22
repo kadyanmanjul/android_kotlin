@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
+import com.joshtalks.joshskills.common.repository.local.entity.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.common.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.common.repository.local.model.*
 import com.joshtalks.joshskills.common.repository.server.UpdateDeviceRequest
@@ -717,7 +718,7 @@ class AppUsageWorker(context: Context, private var workerParams: WorkerParameter
                 val time = cTime - uTime
                 AppObjectController.appDatabase.appUsageDao()
                     .insertIntoAppUsage(
-                        com.joshtalks.joshskills.common.engage_notification.AppUsageModel(
+                        AppUsageModel(
                             time
                         )
                     )
@@ -744,7 +745,7 @@ class AppUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
                     }
                     it.gaidId = gaid
                 }
-                val body: HashMap<String, List<com.joshtalks.joshskills.common.engage_notification.AppUsageModel>> = HashMap()
+                val body: HashMap<String, List<AppUsageModel>> = HashMap()
                 body["data"] = list
                 val resp = AppObjectController.commonNetworkService.engageUserSession(body)
                 if (resp.isSuccessful) {

@@ -8,7 +8,7 @@ import com.joshtalks.joshskills.common.core.PrefManager
 import com.joshtalks.joshskills.common.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.common.repository.local.SkillsDatastore
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.expertcall.adapter.WalletLogsPagingSource
 import com.joshtalks.joshskills.expertcall.adapter.WalletTransactionPagingSource
 import com.joshtalks.joshskills.expertcall.constant.PER_PAGE_ITEMS

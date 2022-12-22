@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.common.ui.call.data.local
+package com.joshtalks.joshskills.common.ui.voip.local
 
 import android.content.Context
 import android.content.Intent
@@ -22,7 +22,6 @@ import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.ui.lesson.PurchaseDialog
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
-import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.report.VoipReportDialogFragment
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.AutoCallActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.UserInterestActivity
 import com.joshtalks.joshskills.voip.BeepTimer
@@ -359,18 +358,6 @@ object VoipPref {
                 Log.d("sagar", "showPurchaseDialog: ${ex.message}")
             }
         }
-    }
-
-    private fun showReportDialog(fragmentActivity: FragmentActivity) {
-
-        val function = fun() {
-            showFeedBackDialog(fragmentActivity)
-        }
-        VoipReportDialogFragment.newInstance(
-            getLastRemoteUserAgoraId(),
-            getLocalUserAgoraId(), "REPORT", getLastCallChannelName(), function
-        )
-            .show(fragmentActivity.supportFragmentManager, "ReportDialogFragment")
     }
 
     private fun showFeedBackDialog(fragmentActivity: FragmentActivity) {

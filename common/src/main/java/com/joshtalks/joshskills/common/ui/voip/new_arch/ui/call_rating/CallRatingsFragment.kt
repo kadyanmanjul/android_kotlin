@@ -35,13 +35,13 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.common.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.common.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.common.ui.video_player.LAST_LESSON_INTERVAL
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope

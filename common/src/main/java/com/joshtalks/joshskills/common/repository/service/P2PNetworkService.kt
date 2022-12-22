@@ -4,23 +4,16 @@ import com.joshtalks.joshskills.voip.base.constants.DIR
 import com.joshtalks.joshskills.common.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.common.repository.local.model.FirestoreNotificationObject
 import com.joshtalks.joshskills.common.repository.local.model.KFactor
-import com.joshtalks.joshskills.common.repository.server.voip.AgoraTokenRequest
-import com.joshtalks.joshskills.common.repository.server.voip.RequestUserLocation
-import com.joshtalks.joshskills.common.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
 import com.joshtalks.joshskills.common.ui.fpp.PendingRequestResponse
 import com.joshtalks.joshskills.common.ui.fpp.RecentCallResponse
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.InterestModel
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.VoipStatusResponse
-import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.report.model.VoipReportModel
 
 import retrofit2.Response
 import retrofit2.http.*
 
 interface P2PNetworkService {
-
-    @POST("${DIR}/voicecall/agora_token/")
-    suspend fun getAgoraClientToken(@Body params: AgoraTokenRequest): Response<HashMap<String, String>>
 
     @POST("${DIR}/voicecall/agora_token/")
     suspend fun sendAgoraTokenConformation(@Body params: Map<String, String?>): Response<HashMap<String, String>>
@@ -39,9 +32,6 @@ interface P2PNetworkService {
 
     @GET("${DIR}/voicecall/agora_user_profile_v2/{id}/")
     suspend fun getTopicImage(@Path("id") id: String): HashMap<String, String>
-
-    @POST("${DIR}/voicecall/agora_call_location/")
-    suspend fun uploadUserLocationAgora(@Body params: RequestUserLocation): Response<Void>
 
     @POST("${DIR}/voicecall/agora_call_feedback/")
     suspend fun p2pCallFeedbackV2(@Body params: Map<String, String?>): Response<KFactor>//FeedbackVoipResponse
@@ -67,12 +57,6 @@ interface P2PNetworkService {
     @JvmSuppressWildcards
     @POST("${DIR}/voicecall/agora_call_feedback_submit/")
     suspend fun sendP2pCallReportSubmit(@Body params: Map<String, Any>):Response<Unit>
-
-    @GET("${DIR}/voicecall/agora_call_feedback_options/{value}")
-    suspend fun getP2pCallOptions(@Path("value") value: String): ReportModel
-
-    @GET("${DIR}/voicecall/agora_call_feedback_options/{value}")
-    suspend fun getVoipCallOptions(@Path("value") value: String): VoipReportModel
 
     @GET("${DIR}/fpp/get_recent_calls/")
     suspend fun getRecentCallsList(@Query("mentor_id") mentorId: String) : Response<RecentCallResponse>

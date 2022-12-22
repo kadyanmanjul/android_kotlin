@@ -8,9 +8,9 @@ import android.view.View
 import android.widget.Chronometer
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPrefListener
 import com.joshtalks.joshskills.voip.base.constants.FROM_CALL_BAR
 import com.joshtalks.joshskills.voip.base.constants.STARTING_POINT
-import com.joshtalks.joshskills.common.ui.call.data.local.VoipPrefListener
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import java.lang.Exception
 
