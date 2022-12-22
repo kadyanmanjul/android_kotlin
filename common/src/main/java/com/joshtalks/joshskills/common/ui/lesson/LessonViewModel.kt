@@ -43,7 +43,7 @@ import com.joshtalks.joshskills.common.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.VideoPopupItem
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.model.Coupon
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.common.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
@@ -109,7 +109,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val callCountLiveData: MutableLiveData<Int?> = MutableLiveData(null)
     val isNewStudentActive = ObservableField(false)
     val completedLessonCount: MutableLiveData<Int?> = MutableLiveData(null)
-    val mentorCoupon: MutableLiveData<Coupon> = MutableLiveData(null)
+
+    //TODO Coupon model moved in buy page module so we have create such a way so we can use that module here also
+
+    //val mentorCoupon: MutableLiveData<com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon> = MutableLiveData(null)
     val isFreeTrialUser : MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
@@ -1165,19 +1168,20 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    suspend fun getMentorCoupon(testId: Int): Coupon? {
-        try {
-            val response = AppObjectController.commonNetworkService.getValidCoupon(testId)
-            if (response.isSuccessful) {
-                response.body()?.let { body ->
-                    body.listOfCoupon?.firstOrNull { it.isMentorSpecificCoupon == true }?.let { coupon ->
-                        return coupon
-                    }
-                }
-            }
-        } catch (ex: Exception) {
-            Timber.e(ex)
-        }
-        return null
-    }
+    //TODO Coupon model moved in buy page module so we have create such a way so we can use that module here also
+//    suspend fun getMentorCoupon(testId: Int): com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon? {
+//        try {
+//            val response = AppObjectController.commonNetworkService.getValidCoupon(testId)
+//            if (response.isSuccessful) {
+//                response.body()?.let { body ->
+//                    body.listOfCoupon?.firstOrNull { it.isMentorSpecificCoupon == true }?.let { coupon ->
+//                        return coupon
+//                    }
+//                }
+//            }
+//        } catch (ex: Exception) {
+//            Timber.e(ex)
+//        }
+//        return null
+//    }
 }

@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.common.repository.server.CourseData
 import com.joshtalks.joshskills.common.repository.server.JuspayPayLoad
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.repo.BuyPageRepo
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.repo.BuyPageRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

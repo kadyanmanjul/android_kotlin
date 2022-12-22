@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.common.ui.help.HelpActivity
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.SPEAKING_POSITION
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity

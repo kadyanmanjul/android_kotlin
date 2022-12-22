@@ -81,7 +81,7 @@ import com.joshtalks.joshskills.common.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.PurchaseDialog
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.common.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.SPECIAL_ID
@@ -496,16 +496,16 @@ class ConversationActivity : BaseConversationActivity(),
             supportFragmentManager
         )
     }
-
+    //TODO Create navigation to open BuyPageActivity
     fun showFreeTrialPaymentScreen() {
-        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
-        BuyPageActivity.startBuyPageActivity(
-            this,
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            "CONVERSATION_FT_ENDED_BTN"
-        )
+//        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
+//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            "CONVERSATION_FT_ENDED_BTN"
+//        )
     }
 
     private fun navigateToLoginActivity() {
@@ -891,15 +891,16 @@ class ConversationActivity : BaseConversationActivity(),
         }
     }
 
+    //TODO Create navigation to open BuyPageActivity
     fun moveToPaymentActivity(v: View) {
-        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
-        BuyPageActivity.startBuyPageActivity(
-            this,
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            "CONVERSATION_FT_TIMER"
-        )
+//        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
+//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            "CONVERSATION_FT_TIMER"
+//        )
     }
 
     private fun showNextTooltip() {

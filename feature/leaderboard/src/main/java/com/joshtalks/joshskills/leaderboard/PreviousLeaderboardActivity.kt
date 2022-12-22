@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.common.databinding.ActivityPreviousLeaderboardBi
 import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 //import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -226,13 +226,14 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
 //            ),
 //            viewModel.previousLeaderBoardData.value?.currentMentor?.expiryDate?.time
 //        )
-        BuyPageActivity.startBuyPageActivity(
-            this,
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            "PREV_LEADERBOARD_FT_ENDED"
-        )
+        //TODO Create navigation to open BuyPageActivity
+//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            "PREV_LEADERBOARD_FT_ENDED"
+//        )
         // finish()
     }
 

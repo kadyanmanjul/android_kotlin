@@ -1,10 +1,6 @@
 package com.joshtalks.joshskills.common.ui.payment.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.common.base.BaseViewModel
-import com.joshtalks.joshskills.common.constants.PAYMENT_FAILED
-import com.joshtalks.joshskills.common.constants.PAYMENT_PENDING
-import com.joshtalks.joshskills.common.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.common.ui.payment.PaymentRepository
 import com.joshtalks.joshskills.common.ui.payment.model.PaymentStatus
 import kotlinx.coroutines.Dispatchers

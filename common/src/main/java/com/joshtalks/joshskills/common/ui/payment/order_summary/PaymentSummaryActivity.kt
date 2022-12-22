@@ -775,7 +775,9 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                         )
                     else ->
                         uiHandler.post {
-                            showChatNPayDialog()
+                            //TODO Create navigation to open ChatNPayDialogFragment
+
+                            // showChatNPayDialog()
                         }
                 }
             }
@@ -930,15 +932,16 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         }
     }
 
+    //TODO Create navigation to open ChatNPayDialogFragment
     private fun showChatNPayDialog() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.parent_Container,
-                com.joshtalks.joshskills.common.ui.payment.ChatNPayDialogFragment.newInstance(),
-                "Chat N Pay"
-            )
-            .commitAllowingStateLoss()
+//        supportFragmentManager
+//            .beginTransaction()
+//            .replace(
+//                R.id.parent_Container,
+//                com.joshtalks.joshskills.buypage.ChatNPayDialogFragment.newInstance(),
+//                "Chat N Pay"
+//            )
+//            .commitAllowingStateLoss()
     }
 
     private fun navigateToStartCourseActivity(hasOrderId: Boolean) {

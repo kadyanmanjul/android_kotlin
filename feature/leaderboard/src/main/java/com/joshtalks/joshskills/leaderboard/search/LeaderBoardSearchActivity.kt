@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.leaderboard.Recen
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.track.COURSE_EXPIRY_TIME_IN_MS
 import com.joshtalks.joshskills.common.track.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.leaderboard.LeaderboardResponse
 import com.joshtalks.joshskills.leaderboard.R
 import com.joshtalks.joshskills.leaderboard.databinding.ActivityLeaderboardSearchBinding
@@ -239,13 +239,14 @@ class LeaderBoardSearchActivity : BaseActivity() {
 //            ),
 //            intent.getLongExtra(COURSE_EXPIRY_TIME_IN_MS, -1L)
 //        )
-        BuyPageActivity.startBuyPageActivity(
-            this,
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            "SEARCH_LEADERBOARD_FT_ENDED"
-        )
+        //TODO Create navigation to open BuyPageActivity
+//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            "SEARCH_LEADERBOARD_FT_ENDED"
+//        )
         // finish()
     }
 

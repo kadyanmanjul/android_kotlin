@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.databinding.FragmentTrialEndBottomsheetBinding
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 //import com.joshtalks.joshskills.userprofile.fragments.UserPicChooserFragment
 
 const val TRIAL_TEST_ID = 13
@@ -78,13 +78,15 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
 //            )
 //
 //        )
-        BuyPageActivity.startBuyPageActivity(
-            requireActivity(),
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            "BOTTOM_SHEET_FT_ENDED"
-        )
+        //TODO Create navigation to open BuyPageActivity
+
+//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//            requireActivity(),
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            "BOTTOM_SHEET_FT_ENDED"
+//        )
     }
 
     companion object {

@@ -27,7 +27,6 @@ import com.joshtalks.joshskills.common.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.common.track.CourseUsageSync
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.common.ui.payment.model.VerifyPayment
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.model.*
 import com.joshtalks.joshskills.common.ui.senior_student.model.SeniorStudentModel
 import com.joshtalks.joshskills.common.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.common.ui.special_practice.model.SpecialPracticeModel
@@ -315,23 +314,8 @@ interface CommonNetworkService {
         @Query("call_duration") callDuration: Long = 0
     ): Response<PurchaseDataResponse>
 
-    @GET("$DIR/course/buy_course_feature/")
-    suspend fun getCourseFeatureDetails(@Query("test_id") testId: Int): Response<BuyCourseFeatureModel>
-
     @POST("$DIR/impression/track_micro_payment_impression/")
     suspend fun saveMicroPaymentImpression(@Body params: Map<String, String>)
-
-    @GET("$DIR/course/get_user_coupons/")
-    suspend fun getValidCoupon(@Query("test_id") testId: Int): Response<CouponListModel>
-
-    @GET("$DIR/course/get_coupon_code/")
-    suspend fun getCouponFromCode(@Query("code") code: String): Response<Coupon>
-
-    @POST("$DIR/course/course_price_details/")
-    suspend fun getCoursePriceList(@Body params: PriceParameterModel): Response<CoursePriceListModel>
-
-    @GET("$DIR/course/list_reviews/")
-    suspend fun getReviews(@Query("page") pageNo: Int, @Query("test_id") testId: Int): ReviewsListResponse
 
     @POST("$DIR/impression/track_popup_impression/")
     suspend fun savePopupImpression(@Body params: Map<String, String>): Response<Void>
@@ -344,9 +328,6 @@ interface CommonNetworkService {
 
     @POST("$DIR/support/sales_support/")
     suspend fun saveSalesSupportReason(@Body params: Map<String, String>) : Response<Any>
-
-    @GET("$DIR/support/sales_support/")
-    suspend fun getSalesSupportReason() : Response<SalesReasonList>
 
     @POST("$DIR/impression/track_explore_course_impression/")
     suspend fun saveImpressionForExplore(@Body params: Map<String, String>): Response<Void>

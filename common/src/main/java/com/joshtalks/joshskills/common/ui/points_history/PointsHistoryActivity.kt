@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.databinding.ActivityPointsHistoryBinding
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.common.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.common.ui.points_history.viewmodel.PointsViewModel
@@ -267,13 +267,15 @@ class PointsHistoryActivity : CoreJoshActivity() {
 //            ),
 //            viewModel.pointsHistoryLiveData.value?.expiryDate?.time
 //        )
-        BuyPageActivity.startBuyPageActivity(
-            this,
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            "POINTS_HISTORY"
-        )
+        //TODO Create navigation to open BuyPageActivity
+
+//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            "POINTS_HISTORY"
+//        )
         // finish()
     }
 

@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.common.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.common.repository.server.PurchaseDataResponse
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import kotlinx.coroutines.*
 
 class PurchaseDialog : com.joshtalks.joshskills.common.base.BaseDialogFragment() {
@@ -120,14 +120,14 @@ class PurchaseDialog : com.joshtalks.joshskills.common.base.BaseDialogFragment()
 
     fun showFreeTrialPaymentScreen() {
         try {
-            BuyPageActivity.startBuyPageActivity(
-                requireActivity(),
-                AppObjectController.getFirebaseRemoteConfig().getString(
-                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),
-                "PURCHASE_DIALOG"
-            )
-            closeDialog(isPopupIgnored = false)
+//            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//                requireActivity(),
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                ),
+//                "PURCHASE_DIALOG"
+//            )
+//            closeDialog(isPopupIgnored = false)
         } catch (ex: Exception) {
             showToast(getString(R.string.something_went_wrong))
         }

@@ -30,7 +30,8 @@ import com.joshtalks.joshskills.common.ui.assessment.view.Stub
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.chat.vh.PdfCourseProgressView
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
+import com.joshtalks.joshskills.common.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -341,14 +342,15 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
 //            ),
 //            viewModel.progressLiveData.value?.expiryDate?.time
 //        )
-        BuyPageActivity.startBuyPageActivity(
-            this,
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            "COURSE_OVERVIEW"
-        )
-        // finish()
+        //TODO Create navigation to open BuyPageActivity
+//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            "COURSE_OVERVIEW"
+//        )
+//        // finish()
     }
 
     override fun onBackPressed() {

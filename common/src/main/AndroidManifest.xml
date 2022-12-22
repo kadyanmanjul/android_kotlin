@@ -94,7 +94,7 @@ xmlns:tools="http://schemas.android.com/tools"
         android:name=".ui.voip.new_arch.ui.views.AutoCallActivity"
         android:exported="false" />
     <activity
-        android:name=".ui.payment.new_buy_page_layout.BuyPageActivity"
+        android:name="com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity"
         android:exported="true"
         android:screenOrientation="portrait" />
     <activity

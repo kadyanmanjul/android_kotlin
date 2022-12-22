@@ -48,7 +48,7 @@ import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.lesson.*
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
@@ -703,13 +703,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 //                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
 //                )
 //            )
-            BuyPageActivity.startBuyPageActivity(
-                it1,
-                AppObjectController.getFirebaseRemoteConfig().getString(
-                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),
-                "SPEAKING_BUY_TO_CALL"
-            )
+            //TODO Create navigation to open BuyPageActivity
+
+//            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//                it1,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                ),
+//                "SPEAKING_BUY_TO_CALL"
+//            )
         }
     }
 

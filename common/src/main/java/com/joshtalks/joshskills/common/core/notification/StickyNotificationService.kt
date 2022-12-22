@@ -13,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.repository.local.model.NotificationChannelData
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
 import kotlinx.coroutines.*
@@ -30,7 +30,9 @@ class StickyNotificationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        startForeground(notificationId, buildNotification(getPendingIntent()))
+        //TODO Create navigation to open BuyPageActivity
+
+        //  startForeground(notificationId, buildNotification(getPendingIntent()))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -76,26 +78,27 @@ class StickyNotificationService : Service() {
         super.onDestroy()
     }
 
-    private fun getPendingIntent(code: String = EMPTY): PendingIntent {
-        // TODO: variable added, to be removed -- Sukesh
-        val HAS_NOTIFICATION = "has_notification"
-        val notificationIntent = Intent(this, BuyPageActivity::class.java).apply {
-            putExtra(FLOW_FROM, "Sticky Notification")
-            putExtra(COUPON_CODE, code)
-            putExtra(HAS_NOTIFICATION, true)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-
-        return PendingIntent.getActivity(
-            this,
-            0,
-            notificationIntent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            else
-                PendingIntent.FLAG_UPDATE_CURRENT
-        )
-    }
+    //TODO Create navigation to open BuyPageActivity
+//    private fun getPendingIntent(code: String = EMPTY): PendingIntent {
+//        // TODO: variable added, to be removed -- Sukesh
+//        val HAS_NOTIFICATION = "has_notification"
+//        val notificationIntent = Intent(this, com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity::class.java).apply {
+//            putExtra(FLOW_FROM, "Sticky Notification")
+//            putExtra(COUPON_CODE, code)
+//            putExtra(HAS_NOTIFICATION, true)
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        }
+//
+//        return PendingIntent.getActivity(
+//            this,
+//            0,
+//            notificationIntent,
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+//            else
+//                PendingIntent.FLAG_UPDATE_CURRENT
+//        )
+//    }
 
     private fun buildNotification(pendingIntent: PendingIntent): Notification {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -143,22 +146,23 @@ class StickyNotificationService : Service() {
     }
 
     private fun updateNotification(title: String, body: String, coupon: String, time: Float, timeDiff: Long) {
-        if (shouldUpdate) {
-            notificationBuilder.setContentIntent(getPendingIntent(coupon))
-            notificationBuilder.contentView.setTextViewText(R.id.notification_title, title)
-            notificationBuilder.contentView.setTextViewText(R.id.notification_body, body)
-            notificationBuilder.contentView.setChronometer(
-                R.id.notification_timer,
-                SystemClock.elapsedRealtime() + timeDiff,
-                null,
-                true
-            )
-            shouldUpdate = false
-        }
-        if ((time * 100) <= 0)
-            onDestroy()
-        notificationBuilder.contentView.setProgressBar(R.id.notification_progress, 100, (100 - (time * 100)).toInt(), false)
-        NotificationManagerCompat.from(this).notify(notificationId, notificationBuilder.build())
+        //TODO uncomment this code when getPendingIntent() will work
+//        if (shouldUpdate) {
+//           // notificationBuilder.setContentIntent(getPendingIntent(coupon))
+//            notificationBuilder.contentView.setTextViewText(R.id.notification_title, title)
+//            notificationBuilder.contentView.setTextViewText(R.id.notification_body, body)
+//            notificationBuilder.contentView.setChronometer(
+//                R.id.notification_timer,
+//                SystemClock.elapsedRealtime() + timeDiff,
+//                null,
+//                true
+//            )
+//            shouldUpdate = false
+//        }
+//        if ((time * 100) <= 0)
+//            onDestroy()
+//        notificationBuilder.contentView.setProgressBar(R.id.notification_progress, 100, (100 - (time * 100)).toInt(), false)
+//        NotificationManagerCompat.from(this).notify(notificationId, notificationBuilder.build())
     }
 
     private fun updateJob(title: String, body: String, couponCode: String, endTime: Long) {

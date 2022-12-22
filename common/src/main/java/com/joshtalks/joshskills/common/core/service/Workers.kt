@@ -29,7 +29,7 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.common.repository.local.model.*
 import com.joshtalks.joshskills.common.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
@@ -363,7 +363,9 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
 
     override suspend fun doWork(): Result {
         return try {
-            buildNotification(getPendingIntent())
+            //TODO Create navigation to open BuyPageActivity
+
+            // buildNotification(getPendingIntent())
 
             val couponCode = workerParams.inputData.getString("coupon_code") ?: "ENG10"
             endTime = workerParams.inputData.getLong("expiry_time", 3600000L)
@@ -391,25 +393,26 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
             Result.failure()
         }
     }
+    //TODO Create navigation to open BuyPageActivity
 
-    private fun getPendingIntent(code: String = EMPTY): PendingIntent {
-        val notificationIntent = Intent(context, BuyPageActivity::class.java).apply {
-            putExtra(FLOW_FROM, "Sticky Notification")
-            putExtra(COUPON_CODE, code)
-            putExtra(HAS_NOTIFICATION, true)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-
-        return PendingIntent.getActivity(
-            context,
-            0,
-            notificationIntent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            else
-                PendingIntent.FLAG_UPDATE_CURRENT
-        )
-    }
+//    private fun getPendingIntent(code: String = EMPTY): PendingIntent {
+//        val notificationIntent = Intent(context, com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity::class.java).apply {
+//            putExtra(FLOW_FROM, "Sticky Notification")
+//            putExtra(COUPON_CODE, code)
+//            putExtra(HAS_NOTIFICATION, true)
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        }
+//
+//        return PendingIntent.getActivity(
+//            context,
+//            0,
+//            notificationIntent,
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+//            else
+//                PendingIntent.FLAG_UPDATE_CURRENT
+//        )
+//    }
 
     private fun buildNotification(pendingIntent: PendingIntent) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -457,22 +460,24 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
     }
 
     private fun updateNotification(title: String, body: String, coupon: String, time: Float, timeDiff: Long) {
-        if (shouldUpdate) {
-            notificationBuilder.setContentIntent(getPendingIntent(coupon))
-            notificationBuilder.contentView.setTextViewText(R.id.notification_title, title)
-            notificationBuilder.contentView.setTextViewText(R.id.notification_body, body)
-            notificationBuilder.contentView.setChronometer(
-                R.id.notification_timer,
-                SystemClock.elapsedRealtime() + timeDiff,
-                null,
-                true
-            )
-            shouldUpdate = false
-        }
-        if ((time) <= 0)
-            stopWorker()
-        notificationBuilder.contentView.setProgressBar(R.id.notification_progress, 100, (100 - (time * 100)).toInt(), false)
-        NotificationManagerCompat.from(context).notify(notificationId, notificationBuilder.build())
+        //TODO uncomment this code when getPendingIntent() will work
+
+//        if (shouldUpdate) {
+//            notificationBuilder.setContentIntent(getPendingIntent(coupon))
+//            notificationBuilder.contentView.setTextViewText(R.id.notification_title, title)
+//            notificationBuilder.contentView.setTextViewText(R.id.notification_body, body)
+//            notificationBuilder.contentView.setChronometer(
+//                R.id.notification_timer,
+//                SystemClock.elapsedRealtime() + timeDiff,
+//                null,
+//                true
+//            )
+//            shouldUpdate = false
+//        }
+//        if ((time) <= 0)
+//            stopWorker()
+//        notificationBuilder.contentView.setProgressBar(R.id.notification_progress, 100, (100 - (time * 100)).toInt(), false)
+//        NotificationManagerCompat.from(context).notify(notificationId, notificationBuilder.build())
     }
 
     private fun stopWorker() {
@@ -918,19 +923,21 @@ class FakeCallNotificationWorker(
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            if (PrefManager.getBoolValue(IS_COURSE_BOUGHT).not() &&
-                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) != 0L &&
-                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) < System.currentTimeMillis() &&
-                AppObjectController.currentActivityClass != PaymentSummaryActivity::class.java.simpleName &&
-                AppObjectController.currentActivityClass != BuyPageActivity::class.java.simpleName
-            ) {
-                try {
-                    val resp = AppObjectController.p2pNetworkService.getFakeCall()
-                    val nc = resp.toNotificationObject(null)
-                    //TODO : (IMP) Uncomment code -- Sukesh
-//                    NotificationUtils(context).sendNotification(nc)
-                }catch (ex:Exception){}
-            }
+            //TODO uncomment this code when we can access BuyPageActivity
+
+//            if (PrefManager.getBoolValue(IS_COURSE_BOUGHT).not() &&
+//                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) != 0L &&
+//                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) < System.currentTimeMillis() &&
+//                AppObjectController.currentActivityClass != PaymentSummaryActivity::class.java.simpleName &&
+//                AppObjectController.currentActivityClass != BuyPageActivity::class.java.simpleName
+//            ) {
+//                try {
+//                    val resp = AppObjectController.p2pNetworkService.getFakeCall()
+//                    val nc = resp.toNotificationObject(null)
+//                    //TODO : (IMP) Uncomment code -- Sukesh
+////                    NotificationUtils(context).sendNotification(nc)
+//                }catch (ex:Exception){}
+//            }
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }

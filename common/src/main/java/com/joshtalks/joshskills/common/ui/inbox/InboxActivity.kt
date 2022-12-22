@@ -46,8 +46,8 @@ import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
@@ -146,14 +146,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
         }
 
+        //TODO Create navigation to open BuyPageActivity
         btn_upgrade.setOnClickListener {
-            BuyPageActivity.startBuyPageActivity(
-                this,
-                AppObjectController.getFirebaseRemoteConfig().getString(
-                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),
-                "INBOX_TOOLBAR_BTN"
-            )
+//            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//                this,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                ),
+//                "INBOX_TOOLBAR_BTN"
+//            )
         }
 
         findMoreLayout = findViewById(R.id.parent_layout)
@@ -181,15 +182,16 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         find_more.setOnClickListener {
             courseExploreClick()
         }
+        //TODO Create navigation to open BuyPageActivity
         buy_english_course.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
-            BuyPageActivity.startBuyPageActivity(
-                this,
-                AppObjectController.getFirebaseRemoteConfig().getString(
-                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),
-                "INBOX_BUY_COURSE_BTN"
-            )
+//            MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
+//            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//                this,
+//                AppObjectController.getFirebaseRemoteConfig().getString(
+//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                ),
+//                "INBOX_BUY_COURSE_BTN"
+//            )
         }
     }
 
@@ -410,14 +412,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         description.text = getString(descTextId)
         if (isTryAgainVisible && !isCapsuleCourseBought) {
             tryAgain.visibility = View.VISIBLE
+            //TODO Create navigation to open BuyPageActivity
             tryAgain.setOnClickListener {
-                BuyPageActivity.startBuyPageActivity(
-                    this,
-                    AppObjectController.getFirebaseRemoteConfig().getString(
-                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                    ),
-                    "INBOX_TRY_AGAIN"
-                )
+//                com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//                    this,
+//                    AppObjectController.getFirebaseRemoteConfig().getString(
+//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                    ),
+//                    "INBOX_TRY_AGAIN"
+//                )
             }
         } else {
             tryAgain.visibility = View.GONE
@@ -478,7 +481,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     if (courseList.isNullOrEmpty().not()) {
                         val capsuleCourse = courseList[0]
                         PrefManager.put(CURRENT_COURSE_ID, capsuleCourse.courseId)
-                        PrefManager.put(PAID_COURSE_TEST_ID, capsuleCourse.paidTestId ?: FREE_TRIAL_PAYMENT_TEST_ID)
+                     //   PrefManager.put(PAID_COURSE_TEST_ID, capsuleCourse.paidTestId ?: com.joshtalks.joshskills.buypage.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID)
                     }
                 }
 

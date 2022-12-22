@@ -37,7 +37,7 @@ import com.joshtalks.joshskills.common.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenPreviousLeaderboard
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.leaderboard.search.LeaderBoardSearchActivity
-import com.joshtalks.joshskills.common.ui.payment.new_buy_page_layout.BuyPageActivity
+//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.leaderboard.constants.*
@@ -403,13 +403,14 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
 //            ),
 //            viewModel.leaderBoardData.value?.get("TODAY")?.current_mentor?.expiryDate?.time
 //        )
-        BuyPageActivity.startBuyPageActivity(
-            this,
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            ),
-            "LEADERBOARD_FT_ENDED_BTN"
-        )
+        //TODO Create navigation to open BuyPageActivity
+//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
+//            this,
+//            AppObjectController.getFirebaseRemoteConfig().getString(
+//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//            ),
+//            "LEADERBOARD_FT_ENDED_BTN"
+//        )
         // finish()
     }
 
