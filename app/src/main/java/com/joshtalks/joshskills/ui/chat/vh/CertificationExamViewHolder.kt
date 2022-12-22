@@ -1,9 +1,6 @@
 package com.joshtalks.joshskills.ui.chat.vh
 
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.view.View
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -11,11 +8,7 @@ import androidx.core.text.HtmlCompat
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.DD_MM_YYYY
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
@@ -23,7 +16,6 @@ import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailM
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
-import java.util.*
 
 class CertificationExamViewHolder(view: View, userId: String) :
     BaseViewHolder(view, userId) {
@@ -195,33 +187,4 @@ class CertificationExamViewHolder(view: View, userId: String) :
             }
         }
     }
-
-    private fun getFreshGridentDrawable(): GradientDrawable {
-        val colors = intArrayOf(
-            Color.parseColor("#FFFFFF"),
-            Color.parseColor("#AAFFF284"),
-            Color.parseColor("#CCFEEC56"),
-            Color.parseColor("#FEEC56")
-        )
-        val gd = GradientDrawable(
-            GradientDrawable.Orientation.TR_BL, colors
-        )
-        gd.cornerRadius = 10f
-        return gd
-    }
-
-    private fun getAttemptedGradientDrawable(): GradientDrawable {
-        val colors = intArrayOf(
-            Color.parseColor("#FFFFFF"),
-            Color.parseColor("#AA17C95A"),
-            Color.parseColor("#CC17C95A"),
-            Color.parseColor("#17C95A")
-        )
-        val gd = GradientDrawable(
-            GradientDrawable.Orientation.TR_BL, colors
-        )
-        gd.cornerRadius = 10f
-        return gd
-    }
-
 }
