@@ -1,16 +1,12 @@
 package com.joshtalks.joshskills.ui.points_history.viewholder
 
-import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.repository.server.points.PointsWorking
 import com.mindorks.placeholderview.annotations.Layout
-import com.mindorks.placeholderview.annotations.Position
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
