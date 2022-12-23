@@ -651,10 +651,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener, PaymentGat
     }
 
     private fun addObserver() {
-        compositeDisposable.add(com.joshtalks.joshskills.common.messaging.RxBus2.listen(GotoCourseCard::class.java).subscribe {
-            scrollToPosition(it.pos)
-        })
-
         compositeDisposable.add(com.joshtalks.joshskills.common.messaging.RxBus2.listen(TeacherDetails::class.java).subscribe {
             logMeetMeAnalyticEvent(it.name)
             TeacherDetailsFragment.newInstance(it)

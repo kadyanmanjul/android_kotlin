@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.common.core.interfaces
 
-import android.net.Uri
-import android.view.View
 import com.joshtalks.joshskills.common.core.VerificationVia
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.server.CertificateDetail
@@ -12,10 +10,6 @@ interface OnDismissDialog {
 
 interface OnDismissClaimCertificateDialog {
     fun onDismiss(certificateDetail: CertificateDetail?)
-}
-
-interface OnUrlClickSpanListener {
-    fun onClick(uri: Uri)
 }
 
 interface OnSelectVerificationMethodListener {
@@ -47,18 +41,7 @@ interface OnOpenCourseListener {
     fun onClick(inboxEntity: InboxEntity)
 }
 
-interface RecyclerViewItemClickListener {
-    fun onItemClick(view: View?, position: Int)
-    fun onItemLongClick(view: View?, position: Int)
-}
-
 interface FileDownloadCallback : OnDismissWithDialog {
     fun downloadedFile(path: String) {}
     fun webURL(path: String, localUrl: String) {}
-}
-
-interface OnClickUserProfile{
-    fun clickOnProfile(position: Int)
-    fun clickOnPhoneCall(position: Int)
-    fun clickLongPressDelete(position: Int)
 }

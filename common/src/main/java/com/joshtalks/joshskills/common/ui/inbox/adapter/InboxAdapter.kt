@@ -356,7 +356,6 @@ class InboxAdapter(
                 )
                 .push()
             openCourseListener.onClick(inboxEntity)
-            //   RxBus2.publish(OpenCourseEventBus(inboxEntity))
             MixPanelTracker.publishEvent(MixPanelEvent.OPEN_COURSE_CHAT)
                 .addParam(ParamKeys.COURSE_NAME,inboxEntity.course_name)
                 .addParam(ParamKeys.COURSE_ID,inboxEntity.courseId)

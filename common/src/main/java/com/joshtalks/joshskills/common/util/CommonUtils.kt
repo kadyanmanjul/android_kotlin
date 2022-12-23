@@ -5,6 +5,8 @@ import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 
+//TODO: Remove this full file
+
 fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean = false): Intent {
     return Intent(AppObjectController.joshApplication, InboxActivity::class.java).apply {
         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
