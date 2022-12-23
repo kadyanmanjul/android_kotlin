@@ -27,7 +27,7 @@ class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[SignUpViewModel::class.java]
     }
 
     override fun onCreateView(

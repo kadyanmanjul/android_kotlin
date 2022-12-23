@@ -21,9 +21,7 @@ class ExtendFreeTrialActivity : AppCompatActivity() {
     private lateinit var inboxEntity: InboxEntity
     lateinit var binding: ActivityExtendFreeTrialBinding
     private val viewModel by lazy {
-        ViewModelProvider(this).get(
-            ExtendFreeTrialViewModel::class.java
-        )
+        ViewModelProvider(this)[ExtendFreeTrialViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

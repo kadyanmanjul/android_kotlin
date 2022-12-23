@@ -31,7 +31,7 @@ class FaqDetailsFragment : Fragment() {
         arguments?.let {
             faq = it.getParcelable(FAQ_DETAILS)!!
         }
-        viewModel = ViewModelProvider(this).get(HelpViewModel::class.java)
+        viewModel = ViewModelProvider(this)[HelpViewModel::class.java]
         appAnalytics = AppAnalytics.create(AnalyticsEvent.FAQ_QUESTION_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()

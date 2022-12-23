@@ -32,7 +32,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
     private lateinit var adapter: RecentSearchListAdapter
     private val itemList: MutableList<RecentSearch> = ArrayList()
     lateinit var binding: ActivityLeaderboardSearchBinding
-    private val searchViewModel by lazy { ViewModelProvider(this).get(LeaderBoardSearchViewModel::class.java) }
+    private val searchViewModel by lazy { ViewModelProvider(this)[LeaderBoardSearchViewModel::class.java] }
     private var map: HashMap<String, LeaderboardResponse> = hashMapOf()
     private var isFirstTime = true
 
@@ -171,22 +171,22 @@ class LeaderBoardSearchActivity : BaseActivity() {
                     list = "LIFETIME"
                 }
             }
-            if (map.get(list)?.intervalTabText.isNullOrBlank()) {
+            if (map[list]?.intervalTabText.isNullOrBlank()) {
                 if (position == 4) {
                     tab.text = getString(R.string.my_batch)
                 } else {
                     tab.text =
-                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                        map[list]?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
                 }
             } else {
                 if (position == 4) {
                     tab.text = getString(R.string.my_batch).plus('\n')
-                        .plus(map.get(list)?.intervalTabText)
+                        .plus(map[list]?.intervalTabText)
                 } else {
                     tab.text =
-                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                        map[list]?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
                             .plus('\n')
-                            .plus(map.get(list)?.intervalTabText)
+                            .plus(map[list]?.intervalTabText)
                 }
 
             }

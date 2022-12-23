@@ -29,7 +29,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
     private var versionResponse: VersionResponse? = null
     private lateinit var activityRef: WeakReference<AppCompatActivity>
     protected val viewModel: InboxViewModel by lazy {
-        ViewModelProvider(this).get(InboxViewModel::class.java)
+        ViewModelProvider(this)[InboxViewModel::class.java]
     }
     private var isSubscriptionStarted: Boolean = false
     private var isSubscriptionEnd: Boolean = false

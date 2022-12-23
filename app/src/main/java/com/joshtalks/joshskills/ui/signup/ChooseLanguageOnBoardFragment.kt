@@ -31,7 +31,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
     private var eftActive = false
 
     val viewModel by lazy {
-        ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
+        ViewModelProvider(requireActivity())[FreeTrialOnBoardViewModel::class.java]
     }
 
     private var errorView: Stub<ErrorView>? = null

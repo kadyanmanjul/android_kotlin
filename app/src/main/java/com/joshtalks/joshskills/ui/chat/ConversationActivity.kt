@@ -259,16 +259,16 @@ class ConversationActivity :
         if (::inboxEntity.isInitialized) {
             conversationViewModel = ViewModelProvider(
                 this, ConversationViewModelFactory(this, this.application, inboxEntity)
-            ).get(ConversationViewModel::class.java)
+            )[ConversationViewModel::class.java]
             conversationBinding.viewmodel = conversationViewModel
             conversationBinding.lifecycleOwner = this
 
             utilConversationViewModel = ViewModelProvider(
                 this, ConversationViewModelFactory(this, this.application, inboxEntity)
-            ).get(UtilConversationViewModel::class.java)
+            )[UtilConversationViewModel::class.java]
             unlockClassViewModel = ViewModelProvider(
                 this, ConversationViewModelFactory(this, this.application, inboxEntity)
-            ).get(UnlockClassViewModel::class.java)
+            )[UnlockClassViewModel::class.java]
         }
 
         super.processIntent(intent)

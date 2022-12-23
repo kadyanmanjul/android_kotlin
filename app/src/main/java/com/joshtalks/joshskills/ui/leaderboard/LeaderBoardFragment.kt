@@ -55,7 +55,7 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var userPosition: Int = 0
     private var userRank: Int = Int.MAX_VALUE
-    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(LeaderBoardViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(requireActivity())[LeaderBoardViewModel::class.java] }
     private var liveUserPosition = -1
     private var listener : ViewBitmap? = null
     private var winnerAnimationListener : WinnerAnimation? = null

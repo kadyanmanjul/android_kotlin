@@ -52,7 +52,7 @@ class RecentSearchListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (itemList.get(position).keyword.isBlank()) 0 else 1
+        return if (itemList[position].keyword.isBlank()) 0 else 1
     }
 
     inner class RecentSearchViewHolder(val binding: RecentSearchItemBinding) :

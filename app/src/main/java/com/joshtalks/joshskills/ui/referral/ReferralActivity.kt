@@ -66,7 +66,7 @@ class ReferralActivity : BaseActivity() {
 
     private lateinit var activityReferralBinding: ActivityReferralBinding
     private val viewModel: ReferralViewModel by lazy {
-        ViewModelProvider(this).get(ReferralViewModel::class.java)
+        ViewModelProvider(this)[ReferralViewModel::class.java]
     }
     private var userReferralCode: String = EMPTY
 

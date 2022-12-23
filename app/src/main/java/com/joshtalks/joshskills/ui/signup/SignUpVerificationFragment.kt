@@ -1,18 +1,12 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -53,7 +47,7 @@ class SignUpVerificationFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[SignUpViewModel::class.java]
         viewModel.currentTime = System.currentTimeMillis()
     }
 

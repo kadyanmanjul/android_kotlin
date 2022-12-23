@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.base_toolbar.*
 
 class PointsInfoActivity : CoreJoshActivity() {
     private val viewModel: PointsViewModel by lazy {
-        ViewModelProvider(this).get(PointsViewModel::class.java)
+        ViewModelProvider(this)[PointsViewModel::class.java]
     }
     private lateinit var binding: ActivityPointsInfoBinding
 

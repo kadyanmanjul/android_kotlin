@@ -164,7 +164,7 @@ open class LocationStatViewHolder(
             locationStats.totalEnrolled.times(0.90).toInt()
         )
         studentsNearby.text = randomStudents.toString().plus(" students from")
-        setDefaultImageView(imageView, locationStats.imageUrls.get(index))
+        setDefaultImageView(imageView, locationStats.imageUrls[index])
         checkLocation.visibility = View.GONE
     }
 

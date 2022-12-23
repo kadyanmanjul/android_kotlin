@@ -26,7 +26,7 @@ class FaqFragment : Fragment() {
 
     private lateinit var categoryList: List<FAQCategory>
     private var selectedCategory: FAQCategory? = null
-    private val viewModel by lazy { ViewModelProvider(this).get(HelpViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(this)[HelpViewModel::class.java] }
     private val faqAdapter by lazy { FaqAdapter(ArrayList()) }
     private lateinit var appAnalytics: AppAnalytics
 

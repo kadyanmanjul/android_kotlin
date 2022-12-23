@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.ui.help.viewholder.FaqCategoryViewHolder
 class FaqCategoryFragment : Fragment() {
 
     private lateinit var faqCategoryBinding: FragmentFaqCategoryBinding
-    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(HelpViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(requireActivity())[HelpViewModel::class.java] }
 
     companion object {
         @JvmStatic

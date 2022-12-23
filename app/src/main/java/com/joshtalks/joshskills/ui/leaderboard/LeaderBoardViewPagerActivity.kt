@@ -60,7 +60,7 @@ import java.util.*
 class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
     private val TAG = "LeaderBoardViewPagerAct"
     lateinit var binding: ActivityLeaderboardViewPagerBinding
-    private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(this)[LeaderBoardViewModel::class.java] }
     var mapOfVisitedPage = HashMap<Int, Int>()
     private var compositeDisposable = CompositeDisposable()
     private var tabPosition = 0
@@ -217,7 +217,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                                 PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION, true))
                     )
                         setTabOverlay(tabPosition)
-                    mapOfVisitedPage.put(position, mapOfVisitedPage.get(position)?.plus(1) ?: 1)
+                    mapOfVisitedPage[position] = mapOfVisitedPage[position]?.plus(1) ?: 1
                     viewModel.engageLeaderBoardimpression(mapOfVisitedPage, position)
                 }
             })
@@ -319,22 +319,22 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                     list = "LIFETIME"
                 }
             }
-            if (map.get(list)?.intervalTabText.isNullOrBlank()) {
+            if (map[list]?.intervalTabText.isNullOrBlank()) {
                 if (position == 4) {
                     tab.text = getString(R.string.my_batch)
                 } else {
                     tab.text =
-                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                        map[list]?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
                 }
             } else {
                 if (position == 4) {
                     tab.text = getString(R.string.my_batch).plus('\n')
-                        .plus(map.get(list)?.intervalTabText)
+                        .plus(map[list]?.intervalTabText)
                 } else {
                     tab.text =
-                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                        map[list]?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
                             .plus('\n')
-                            .plus(map.get(list)?.intervalTabText)
+                            .plus(map[list]?.intervalTabText)
                 }
 
             }

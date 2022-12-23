@@ -34,9 +34,7 @@ class LeaderboardSearchResultFragment : Fragment() {
     private lateinit var adapter: LeaderboardSearchItemAdapter
     lateinit var itemList: MutableList<LeaderboardMentor>
     private val viewModel by lazy {
-        ViewModelProvider(requireActivity()).get(
-            LeaderBoardSearchViewModel::class.java
-        )
+        ViewModelProvider(requireActivity())[LeaderBoardSearchViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

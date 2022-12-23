@@ -52,7 +52,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             isRegistrationFirstTime =
                 it.getBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME,true)
         }
-        viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[SignUpViewModel::class.java]
     }
 
     override fun onCreateView(

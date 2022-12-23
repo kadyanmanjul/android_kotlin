@@ -25,7 +25,7 @@ import java.text.DecimalFormat
 
 class SpokenHistoryActivity : CoreJoshActivity() {
     private val viewModel: PointsViewModel by lazy {
-        ViewModelProvider(this).get(PointsViewModel::class.java)
+        ViewModelProvider(this)[PointsViewModel::class.java]
     }
     private lateinit var binding: ActivitySpokenHistoryBinding
     private var mentorId: String? = null

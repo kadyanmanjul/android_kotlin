@@ -34,7 +34,7 @@ class HelpListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = requireActivity().run {
-            ViewModelProvider(this).get(HelpViewModel::class.java)
+            ViewModelProvider(this)[HelpViewModel::class.java]
         }
     }
 
