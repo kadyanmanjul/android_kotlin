@@ -29,7 +29,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
     private var errorView: Stub<ErrorView>? = null
 
     val viewModel by lazy {
-        ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
+        ViewModelProvider(requireActivity())[FreeTrialOnBoardViewModel::class.java]
     }
 
     companion object {

@@ -518,8 +518,7 @@ class PractiseSubmitActivity :
 
     private fun addObserver() {
         practiceViewModel.requestStatusLiveData.observe(
-            this,
-            Observer {
+            this){
                 if (it) {
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(250)
@@ -533,7 +532,6 @@ class PractiseSubmitActivity :
                     binding.progressLayout.visibility = GONE
                 }
             }
-        )
     }
 
     private fun setViewUserSubmitAnswer() {

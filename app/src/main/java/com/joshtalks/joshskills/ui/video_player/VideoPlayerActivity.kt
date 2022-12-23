@@ -363,11 +363,11 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     private fun addObserver() {
-        isVideoDownloaded.observe(this, Observer {
+        isVideoDownloaded.observe(this){
             if (it) {
                 getDeepLinkAndInviteFriends()
             }
-        })
+        }
     }
 
     override fun getConversationId(): String? {

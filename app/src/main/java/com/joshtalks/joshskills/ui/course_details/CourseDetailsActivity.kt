@@ -97,7 +97,7 @@ const val TRIAL_TEST_ID = 13
 class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, PaymentGatewayListener {
 
     private lateinit var binding: ActivityCourseDetailsBinding
-    private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(this)[CourseDetailsViewModel::class.java] }
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0

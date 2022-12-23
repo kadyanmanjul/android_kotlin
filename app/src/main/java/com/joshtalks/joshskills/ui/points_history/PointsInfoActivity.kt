@@ -56,13 +56,11 @@ class PointsInfoActivity : CoreJoshActivity() {
     private fun addObserver() {
 
         viewModel.pointsInfoLiveData.observe(
-            this,
-            Observer {
+            this){
                 binding.infoText.text = it.info
                 it.pointsWorkingList?.forEachIndexed() { index, pointsWorking ->
                     binding.recyclerView.addView(PointsInfoViewHolder(pointsWorking, index))
                 }
             }
-        )
     }
 }

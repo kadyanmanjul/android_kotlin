@@ -56,7 +56,7 @@ class CExamReportFragment : Fragment() {
     private var id:Int? =null
     private lateinit var url:String
     private val viewModel: CertificationExamViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
+        ViewModelProvider(requireActivity())[CertificationExamViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

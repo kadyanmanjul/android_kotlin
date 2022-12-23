@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.animation.OvershootInterpolator
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -29,12 +28,11 @@ import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import java.util.ArrayList
 import java.util.LinkedList
 
-
 class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
 
     private var cPosition = -1
     private val viewModel: ConversationPracticeViewModel by lazy {
-        ViewModelProvider(this).get(ConversationPracticeViewModel::class.java)
+        ViewModelProvider(this)[ConversationPracticeViewModel::class.java]
     }
     private val compositeDisposable = CompositeDisposable()
     private val list: ArrayList<SubmittedConversationPractiseModel> = arrayListOf()
@@ -84,7 +82,7 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
     }
 
     private fun addObserver() {
-        viewModel.submittedPracticeLiveData.observe(this, Observer {
+        viewModel.submittedPracticeLiveData.observe(this) {
             if (list.isEmpty()) {
                 list.addAll(it.sortedByDescending { obj -> obj.created })
             }
@@ -96,7 +94,7 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
                     )
                 )
             }
-        })
+        }
     }
 
     private fun subscribeBus() {

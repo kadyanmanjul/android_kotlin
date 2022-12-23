@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 class MyGroupsFragment : BaseFragment() {
     lateinit var binding: FragmentMyGroupsBinding
     private val viewModel by lazy {
-        ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)
+        ViewModelProvider(requireActivity())[UserProfileViewModel::class.java]
     }
 
     override fun onCreateView(

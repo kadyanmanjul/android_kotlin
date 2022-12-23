@@ -35,7 +35,7 @@ class CertificateShareFragment : CoreJoshFragment() {
 
     private lateinit var binding: FragmentCertificateShareBinding
     private val viewModel by lazy {
-        ViewModelProvider(this).get(CertificationExamViewModel::class.java)
+        ViewModelProvider(this)[CertificationExamViewModel::class.java]
     }
     private lateinit var url: String
     private var packageName =  NULL

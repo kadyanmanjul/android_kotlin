@@ -34,9 +34,7 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
     private val compositeDisposable = CompositeDisposable()
 
     private val viewModel by lazy {
-        ViewModelProvider(this).get(
-            PreviousLeaderBoardViewModel::class.java
-        )
+        ViewModelProvider(this)[PreviousLeaderBoardViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

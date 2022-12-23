@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +21,6 @@ import com.joshtalks.joshskills.ui.assessment.viewholder.TestItemViewHolder
 import com.joshtalks.joshskills.ui.assessment.viewholder.TestScoreCardViewHolder
 import com.joshtalks.joshskills.ui.assessment.viewholder.TestSummaryHeaderViewHolder
 import com.joshtalks.joshskills.ui.assessment.viewmodel.AssessmentViewModel
-
 
 class TestSummaryFragment : Fragment() {
     private lateinit var binding: FragmentTestSummaryReportBinding
@@ -38,7 +36,7 @@ class TestSummaryFragment : Fragment() {
             isTestAlreadyAttempted = it.getBoolean(IS_TEST_ATTEMPTED, false)
         }
         viewModel = activity?.run {
-            ViewModelProvider(requireActivity()).get(AssessmentViewModel::class.java)
+            ViewModelProvider(requireActivity())[AssessmentViewModel::class.java]
         }!!
     }
 
@@ -80,9 +78,9 @@ class TestSummaryFragment : Fragment() {
 
     private fun subscribeObserver() {
 
-        viewModel.assessmentLiveData.observe(requireActivity(), Observer { assessmentWithRelation ->
+        viewModel.assessmentLiveData.observe(requireActivity()) { assessmentWithRelation ->
             initView(assessmentWithRelation)
-        })
+        }
     }
 
     private fun initView(assessmentWithRelation: AssessmentWithRelations?) {

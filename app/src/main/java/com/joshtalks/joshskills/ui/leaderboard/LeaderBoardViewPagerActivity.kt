@@ -23,7 +23,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
@@ -224,8 +223,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         }
 
         viewModel.apiCallStatusLiveData.observe(
-            this,
-            Observer {
+            this){
                 it?.let {
                     when (it) {
                         ApiCallStatus.SUCCESS -> {
@@ -247,7 +245,6 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                     }
                 }
             }
-        )
 
         /*viewModel.overlayLiveData.observe(this) {
             it?.let {

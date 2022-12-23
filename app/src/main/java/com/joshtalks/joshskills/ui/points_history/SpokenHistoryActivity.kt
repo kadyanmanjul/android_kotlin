@@ -70,8 +70,7 @@ class SpokenHistoryActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         viewModel.spokenHistoryLiveData.observe(
-            this,
-            Observer {
+            this){
                 binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalMinutesSpoken)
                 binding.userScoreText.text = it.totalMinutesSpokenText
                 scope.launch {
@@ -102,14 +101,11 @@ class SpokenHistoryActivity : CoreJoshActivity() {
                     }
                 }
             }
-        )
 
         viewModel.apiCallStatusLiveData.observe(
-            this,
-            Observer {
+            this){
                 hideProgressBar()
             }
-        )
     }
 
     companion object {

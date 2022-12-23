@@ -9,7 +9,6 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.service.notification.StatusBarNotification
-import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -24,7 +23,6 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -167,7 +165,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         showProgressDialog("Please Wait")
         text_message_title.text = getString(R.string.inbox_header)
         iv_reminder.visibility = GONE
-        iv_setting.visibility = View.VISIBLE
+        iv_setting.visibility = VISIBLE
 
         iv_icon_referral.setOnClickListener {
             viewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
@@ -324,7 +322,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         }
-        viewModel.paymentStatus.observe(this, Observer {
+        viewModel.paymentStatus.observe(this) {
             when (it.status) {
                 PaymentStatus.SUCCESS -> {
                     val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
@@ -332,14 +330,16 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     } else {
                         PrefManager.getStringValue(PAID_COURSE_TEST_ID)
                     }
-                    if (!PrefManager.getBoolValue(IS_PURCHASE_BRANCH_EVENT_PUSH)){
+                    if (!PrefManager.getBoolValue(IS_PURCHASE_BRANCH_EVENT_PUSH)) {
                         PrefManager.put(IS_PURCHASE_BRANCH_EVENT_PUSH, true)
-                        viewModel.saveBranchPaymentLog(it.razorpayOrderId,
-                            BigDecimal(it?.amount?:0.0),
+                        viewModel.saveBranchPaymentLog(
+                            it.razorpayOrderId,
+                            BigDecimal(it?.amount ?: 0.0),
                             testId = Integer.parseInt(freeTrialTestId),
-                            courseName = "Spoken English Course")
+                            courseName = "Spoken English Course"
+                        )
                         MarketingAnalytics.coursePurchased(
-                            BigDecimal(it?.amount?:0.0),
+                            BigDecimal(it?.amount ?: 0.0),
                             true,
                             testId = freeTrialTestId,
                             courseName = "Spoken English Course",
@@ -397,7 +397,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val dpAsPixels = (100 * scale + 0.5f).toInt()
                 inbox_nested_scroll.updatePadding(0, 0, 0, dpAsPixels)
             }
-        })
+        }
     }
 
     private fun dismissBbTip(){
@@ -442,7 +442,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         description.text = getString(descTextId)
         if (isTryAgainVisible && !isCapsuleCourseBought) {
             tryAgain.apply {
-                visibility = View.VISIBLE
+                visibility = VISIBLE
                 textColorSet(colorTintIcon)
                 backgroundTintList = ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon)
                 TextViewCompat.setCompoundDrawableTintList(this, ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon))
@@ -457,12 +457,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         } else {
-            tryAgain.visibility = View.GONE
+            tryAgain.visibility = GONE
         }
         if (isHelpLineVisible) {
             val helpLine = "+91 8634503202"
-            callText.visibility = View.VISIBLE
-            number.visibility = View.VISIBLE
+            callText.visibility = VISIBLE
+            number.visibility = VISIBLE
             callText.text = getString(R.string.failed_payment_call_text)
             number.text = helpLine
             callText.setOnClickListener {
@@ -472,8 +472,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 Utils.call(this, helpLine)
             }
         } else {
-            callText.visibility = View.GONE
-            number.visibility = View.GONE
+            callText.visibility = GONE
+            number.visibility = GONE
         }
     }
 
@@ -533,13 +533,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 PrefManager.put(IS_SUBSCRIPTION_STARTED, isSubscriptionCourseBought)
                 isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
-                    if (paymentStatusView.visibility != View.VISIBLE) {
-//                        lifecycleScope.launch {
-//                            delay(1000)
-//                            findMoreLayout.visibility = View.VISIBLE
-//                            paymentStatusView.visibility = View.GONE
-//                        }
-                    }
+                    /*if (paymentStatusView.visibility != VISIBLE) {
+                        lifecycleScope.launch {
+                            delay(1000)
+                            findMoreLayout.visibility = View.VISIBLE
+                            paymentStatusView.visibility = View.GONE
+                        }
+                    }*/
                     if (isSubscriptionCourseBought) {
                         findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = true
                         findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = false
@@ -561,15 +561,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         }
                         findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                     } else {
-                        if (paymentStatusView.visibility != View.VISIBLE) {
-                            findMoreLayout.visibility = View.GONE
-                            paymentStatusView.visibility = View.GONE
+                        if (paymentStatusView.visibility != VISIBLE) {
+                            findMoreLayout.visibility = GONE
+                            paymentStatusView.visibility = GONE
                         }
                     }
                 } else {
-                    if (paymentStatusView.visibility != View.VISIBLE) {
-                        findMoreLayout.visibility = View.GONE
-                        paymentStatusView.visibility = View.GONE
+                    if (paymentStatusView.visibility != VISIBLE) {
+                        findMoreLayout.visibility = GONE
+                        paymentStatusView.visibility = GONE
                     }
                 }
                 viewModel.checkForPendingPayments()
@@ -590,12 +590,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             INBOX_SCREEN_VISIT_COUNT,
             PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT).plus(1)
         )
-        if (findMoreLayout.visibility != View.VISIBLE &&
+        if (findMoreLayout.visibility != VISIBLE &&
             PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
         ) {
-            if (paymentStatusView.visibility != View.VISIBLE) {
+            if (paymentStatusView.visibility != VISIBLE) {
 //                findMoreLayout.visibility = View.VISIBLE
-                paymentStatusView.visibility = View.GONE
+                paymentStatusView.visibility = GONE
             }
         }
 

@@ -247,7 +247,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 PAYMENT_PENDING -> showPendingDialog()
             }
         }
-        viewModel.viewState?.observe(this, androidx.lifecycle.Observer {
+        viewModel.viewState?.observe(this){
             when (it) {
                 PaymentSummaryViewModel.ViewState.INTERNET_NOT_AVAILABLE -> {
                     binding.progressBar.visibility = View.GONE
@@ -265,7 +265,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                     binding.container.visibility = View.VISIBLE
                 }
             }
-        })
+        }
 
         viewModel.responsePaymentSummary.observe(this) { paymentSummaryResponse ->
 

@@ -51,7 +51,7 @@ class ReviewVideoViewHolder(view: View, userId: String) : BaseViewHolder(view, u
 
             if (urlList.isNullOrEmpty().not() && urlList?.size!! > 1) {
                 badge.playAnimation()
-                thumbnailImage.setImageFromUrl(urlList.get(1))
+                thumbnailImage.setImageFromUrl(urlList[1])
             }
         }
     }

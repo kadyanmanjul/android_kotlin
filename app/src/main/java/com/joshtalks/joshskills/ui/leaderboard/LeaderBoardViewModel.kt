@@ -156,7 +156,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
         mapOfVisitedPage: java.util.HashMap<Int, Int>,
         position: Int
     ) {
-        if (mapOfVisitedPage.get(position)!! > 1) {
+        if (mapOfVisitedPage[position]!! > 1) {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {

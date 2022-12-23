@@ -52,7 +52,7 @@ class CertificationBaseActivity : BaseActivity() {
 
     private var certificateExamId: Int = -1
     private val viewModel: CertificationExamViewModel by lazy {
-        ViewModelProvider(this).get(CertificationExamViewModel::class.java)
+        ViewModelProvider(this)[CertificationExamViewModel::class.java]
     }
     private var isSubmittedExamTest = false
     private var cExamStatus: CExamStatus = CExamStatus.FRESH

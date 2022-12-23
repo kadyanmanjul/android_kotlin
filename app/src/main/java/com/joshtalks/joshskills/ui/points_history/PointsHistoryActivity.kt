@@ -41,7 +41,7 @@ private const val TAG = "PointsHistoryActivity"
 
 class PointsHistoryActivity : CoreJoshActivity() {
     private val viewModel: PointsViewModel by lazy {
-        ViewModelProvider(this).get(PointsViewModel::class.java)
+        ViewModelProvider(this)[PointsViewModel::class.java]
     }
     private lateinit var binding: ActivityPointsHistoryBinding
     private var mentorId: String? = null
@@ -124,8 +124,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
         )
 
         viewModel.apiCallStatusLiveData.observe(
-            this,
-            Observer {
+            this){
                 hideProgressBar()
                 when (it) {
                     ApiCallStatus.SUCCESS -> {
@@ -137,7 +136,6 @@ class PointsHistoryActivity : CoreJoshActivity() {
                     else -> {}
                 }
             }
-        )
     }
 
     suspend fun getOverlayView() {

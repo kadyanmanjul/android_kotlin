@@ -83,7 +83,7 @@ class SignUpVerificationFragment : Fragment() {
             binding.otpView2.otp = "0000"
         }
 
-        viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
+        viewModel.signUpStatus.observe(viewLifecycleOwner){
             it?.run {
                 if (this == SignUpStepStatus.ReGeneratedOTP || this == SignUpStepStatus.WRONG_OTP) {
                     binding.otpView2.otp = EMPTY
@@ -96,8 +96,8 @@ class SignUpVerificationFragment : Fragment() {
                 }
             }
             hideProgress()
-        })
-        viewModel.verificationStatus.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.verificationStatus.observe(viewLifecycleOwner){
             it.run {
                 when {
                     this == VerificationStatus.INITIATED -> {
@@ -120,7 +120,7 @@ class SignUpVerificationFragment : Fragment() {
                 }
             }
             hideProgress()
-        })
+        }
         viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
             when (it) {
                 SignUpStepStatus.ERROR -> {

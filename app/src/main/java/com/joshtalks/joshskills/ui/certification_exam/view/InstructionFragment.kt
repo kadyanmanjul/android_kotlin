@@ -34,7 +34,7 @@ class InstructionFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[CertificationExamViewModel::class.java]
         viewModel.saveImpression(OPENED_EXAM_INSTRUCTION_FRAGMENT)
     }
 

@@ -60,7 +60,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     private val viewModel: CertificationExamViewModel by lazy {
-        ViewModelProvider(this).get(CertificationExamViewModel::class.java)
+        ViewModelProvider(this)[CertificationExamViewModel::class.java]
     }
     private var certificationQuestionModel: CertificationQuestionModel? = null
     private var countdownTimerBack: CountdownTimerBack? = null

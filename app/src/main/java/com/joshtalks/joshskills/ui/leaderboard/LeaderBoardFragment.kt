@@ -12,7 +12,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,7 +43,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 
 class LeaderBoardFragment : Fragment(), ViewInflated {
     private val TAG = "LeaderBoardFragment"
@@ -239,61 +237,50 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
         when (type) {
             "TODAY" -> {
                 viewModel.leaderBoardDataOfToday.observe(
-                    viewLifecycleOwner,
-                    Observer {
+                    viewLifecycleOwner){
                         setData(it)
                     }
-                )
             }
             "WEEK" -> {
                 viewModel.leaderBoardDataOfWeek.observe(
-                    viewLifecycleOwner,
-                    Observer {
+                    viewLifecycleOwner){
                         setData(it)
                     }
-                )
             }
             "MONTH" -> {
                 viewModel.leaderBoardDataOfMonth.observe(
-                    viewLifecycleOwner,
-                    Observer {
+                    viewLifecycleOwner){
                         setData(it)
                     }
-                )
             }
             "BATCH" -> {
                 viewModel.leaderBoardDataOfBatch.observe(
-                    viewLifecycleOwner,
-                    Observer {
+                    viewLifecycleOwner){
                         setData(it)
                     }
-                )
             }
             "LIFETIME" -> {
                 viewModel.leaderBoardDataOfLifeTime.observe(
-                    viewLifecycleOwner,
-                    Observer {
+                    viewLifecycleOwner){
                         setData(it)
                     }
-                )
             }
         }
 
         viewModel.leaderBoardDataOfPage.observe(
-            viewLifecycleOwner,
-            { data ->
-                data?.let {
-                    it.above_three_mentor_list?.forEach {
-                        binding.recyclerView.addView(
-                            LeaderBoardItemViewHolder(
-                                it,
-                                requireContext()
-                            )
+            viewLifecycleOwner
+        ) { data ->
+            data?.let {
+                it.above_three_mentor_list?.forEach {
+                    binding.recyclerView.addView(
+                        LeaderBoardItemViewHolder(
+                            it,
+                            requireContext()
                         )
-                    }
+                    )
                 }
             }
-        )
+        }
     }
 
     private fun setData(leaderboardResponse1: LeaderboardResponse) {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -42,7 +41,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     private lateinit var binding: ActivityConversationPractice2Binding
 
     private val viewModel: ConversationPracticeViewModel by lazy {
-        ViewModelProvider(this).get(ConversationPracticeViewModel::class.java)
+        ViewModelProvider(this)[ConversationPracticeViewModel::class.java]
     }
 
 
@@ -69,7 +68,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     }
 
     private fun addObserver() {
-        viewModel.apiCallStatusLiveData.observe(this, Observer {
+        viewModel.apiCallStatusLiveData.observe(this) {
             if (ApiCallStatus.START == it) {
                 FullScreenProgressDialog.showProgressBar(this)
             } else {
@@ -77,8 +76,8 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                 binding.progressBar.visibility = View.GONE
             }
 
-        })
-        viewModel.conversationPracticeLiveData.observe(this, Observer { it ->
+        }
+        viewModel.conversationPracticeLiveData.observe(this) { it ->
             it?.let { obj ->
                 openIntroScreen(obj)
                 obj.listen.sortedBy { it.sortOrder }.filter { it.name == obj.characterNameB }
@@ -89,11 +88,11 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                     PractiseViewPagerAdapter(this@ConversationPracticeActivity, obj)
                 initViewPagerTab()
             }
-        })
-        viewModel.successApiLiveData.observe(this, Observer {
+        }
+        viewModel.successApiLiveData.observe(this) {
             SubmittedPractiseActivity.startSubmittedPractiseActivity(this, practiseId)
             this.finish()
-        })
+        }
     }
 
     private fun initViewPagerTab() {

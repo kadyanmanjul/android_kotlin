@@ -39,9 +39,7 @@ class ProfileImageShowFragment : DialogFragment() {
 
     lateinit var viewPagerAdapter: ViewPagerAdapter
     private val viewModel by lazy {
-        ViewModelProvider(activity as UserProfileActivity).get(
-            UserProfileViewModel::class.java
-        )
+        ViewModelProvider(activity as UserProfileActivity)[UserProfileViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

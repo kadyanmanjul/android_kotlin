@@ -94,37 +94,34 @@ class LeaderboardSearchResultFragment : Fragment() {
         when (type) {
             LeaderboardType.TODAY -> {
                 viewModel.leaderBoardDataOfToday.observe(
-                    viewLifecycleOwner,
-                    Observer {
-                        setData(it)
-                    }
-                )
+                    viewLifecycleOwner
+                ) {
+                    setData(it)
+                }
             }
             LeaderboardType.WEEK -> {
                 viewModel.leaderBoardDataOfWeek.observe(
-                    viewLifecycleOwner,
-                    Observer {
+                    viewLifecycleOwner){
                         setData(it)
                     }
-                )
             }
             LeaderboardType.MONTH -> {
                 viewModel.leaderBoardDataOfMonth.observe(
-                    viewLifecycleOwner,
-                    Observer {
+                    viewLifecycleOwner)
+                    {
                         setData(it)
                     }
-                )
+
             }
             LeaderboardType.BATCH -> {
-                viewModel.leaderBoardDataOfBatch.observe(viewLifecycleOwner, Observer {
+                viewModel.leaderBoardDataOfBatch.observe(viewLifecycleOwner){
                     setData(it)
-                })
+                }
             }
             else -> {
-                viewModel.leaderBoardDataOfLifeTime.observe(viewLifecycleOwner, Observer {
+                viewModel.leaderBoardDataOfLifeTime.observe(viewLifecycleOwner){
                     setData(it)
-                })
+                }
             }
         }
     }

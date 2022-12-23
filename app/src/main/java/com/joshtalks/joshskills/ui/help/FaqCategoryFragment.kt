@@ -49,7 +49,7 @@ class FaqCategoryFragment : Fragment() {
     }
 
     private fun addObservable() {
-        viewModel.faqCategoryLiveData.observe(viewLifecycleOwner, Observer { list ->
+        viewModel.faqCategoryLiveData.observe(viewLifecycleOwner) { list ->
             list.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
                 faqCategoryBinding.recyclerView.addView(
                     FaqCategoryViewHolder(
@@ -59,10 +59,10 @@ class FaqCategoryFragment : Fragment() {
                     )
                 )
             }
-        })
-        viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner) {
             faqCategoryBinding.progressBar.visibility = View.GONE
-        })
+        }
     }
 
     private fun initRV() {

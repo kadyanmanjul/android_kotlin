@@ -137,20 +137,20 @@ class AssessmentActivity : CoreJoshActivity() {
 
     private fun addObservers() {
 
-        viewModel.apiCallStatusLiveData.observe(this, Observer {
+        viewModel.apiCallStatusLiveData.observe(this) {
             binding.progressBar.visibility = View.GONE
-        })
+        }
 
-        viewModel.assessmentLiveData.observe(this, Observer { assessmentWithRelations ->
+        viewModel.assessmentLiveData.observe(this) { assessmentWithRelations ->
             if (isViewBinded.not()) {
                 isViewBinded = true
                 assessmentWithRelations.questionList.sortedBy { it.question.sortOrder }
                 bindView(assessmentWithRelations)
 
             }
-        })
+        }
 
-        viewModel.assessmentStatus.observe(this, Observer { status ->
+        viewModel.assessmentStatus.observe(this) { status ->
             if ((status == AssessmentStatus.COMPLETED) && (viewModel.getAssessmentType() == null || viewModel.getAssessmentType() == AssessmentType.TEST)) {
                 viewModel.assessmentLiveData.value?.let {
                     if (it.questionList.filter { it.question.choiceType == ChoiceType.MATCH_TEXT }.size > 0) {
@@ -163,7 +163,7 @@ class AssessmentActivity : CoreJoshActivity() {
                 showTestSummaryFragment(assessmentId, true)
             }
 
-        })
+        }
     }
 
     private fun handleButtonClicks(

@@ -74,11 +74,11 @@ class FaqFragment : Fragment() {
     }
 
     private fun addObservers() {
-        viewModel.faqListLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.faqListLiveData.observe(viewLifecycleOwner) {
             faqAdapter.updateList(it.filter {
                 it.categoryId == selectedCategory?.id
             })
-        })
+        }
 
         chipGroupCategory.setOnCheckedChangeListener { group, checkedId ->
             try {

@@ -180,14 +180,14 @@ class SignUpActivity : ThemedBaseActivity() {
                 else -> return@Observer
             }
         })
-        viewModel.progressBarStatus.observe(this, Observer {
+        viewModel.progressBarStatus.observe(this){
             showProgressBar()
-        })
+        }
 
-        viewModel.fromVerificationScreen.observe(this, Observer {
+        viewModel.fromVerificationScreen.observe(this){
             if (it)
                 addRetryCountAnalytics()
-        })
+        }
         viewModel.apiStatus.observe(this) {
             when (it) {
                 ApiCallStatus.START -> showProgressBar()

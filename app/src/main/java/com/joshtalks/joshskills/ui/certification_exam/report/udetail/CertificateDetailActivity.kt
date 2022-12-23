@@ -50,7 +50,7 @@ const val EXAMINATION_CERTI = "Examination Certificate"
 class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
 
     private val viewModel: CertificationExamViewModel by lazy {
-        ViewModelProvider(this).get(CertificationExamViewModel::class.java)
+        ViewModelProvider(this)[CertificationExamViewModel::class.java]
     }
     private lateinit var binding: ActivityCertificateDetailBinding
     private var datePicker: DatePickerDialog? = null
