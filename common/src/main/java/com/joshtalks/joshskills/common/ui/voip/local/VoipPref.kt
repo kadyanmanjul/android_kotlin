@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotif
 import com.joshtalks.joshskills.common.repository.local.SkillsDatastore
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.common.ui.lesson.PurchaseDialog
+//import com.joshtalks.joshskills.lesson.PurchaseDialog
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.AutoCallActivity
@@ -348,12 +348,13 @@ object VoipPref {
                         callCount = PrefManager.getIntValue(FT_CALLS_LEFT),
                         callDuration = duration
                     )
-                resp.body()?.let {
-                    if (it.couponCode != null && it.couponExpiryTime != null)
-                        PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
-                    PurchaseDialog.newInstance(it)
-                        .show(fragmentActivity.supportFragmentManager, "PurchaseDialog")
-                }
+                //TODO Create a navigation to open PurchaseDialog
+//                resp.body()?.let {
+//                    if (it.couponCode != null && it.couponExpiryTime != null)
+//                        PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime.time)
+//                    com.joshtalks.joshskills.lesson.PurchaseDialog.newInstance(it)
+//                        .show(fragmentActivity.supportFragmentManager, "PurchaseDialog")
+//                }
             } catch (ex: Exception) {
                 Log.d("sagar", "showPurchaseDialog: ${ex.message}")
             }

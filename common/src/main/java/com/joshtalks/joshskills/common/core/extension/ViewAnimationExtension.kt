@@ -12,8 +12,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.Utils
-import com.joshtalks.joshskills.common.ui.online_test.vh.AtsOptionView
-import com.joshtalks.joshskills.common.ui.online_test.util.addViewAt
+//import com.joshtalks.joshskills.lesson.online_test.vh.AtsOptionView
+//import com.joshtalks.joshskills.lesson.online_test.util.addViewAt
 import com.nex3z.flowlayout.FlowLayout
 
 fun View.moveViewToScreenCenter(imgGroupChat: AppCompatImageView, txtUnreadCount: TextView) {
@@ -182,36 +182,37 @@ fun View.transaltionAnimation(fromLocation: IntArray, toLocation: IntArray) {
     this.startAnimation(animSet)
 }
 
-fun View.translationAnimationNew(
-    toLocation: IntArray,
-    atsOptionView: AtsOptionView,
-    optionLayout: FlowLayout? = null,
-    doOnAnimationEnd: (() -> Unit)? = null
-) {
-    this@translationAnimationNew.visibility = View.VISIBLE
-    val slideAnim = AnimatorSet()
-    slideAnim.playTogether(
-        ObjectAnimator.ofFloat(this, View.X, toLocation[0].toFloat()),
-        ObjectAnimator.ofFloat(this, View.Y, toLocation[1].toFloat())
-    )
-    val slideSet = AnimatorSet()
-    slideSet.play(slideAnim)
-    slideSet.interpolator = AccelerateDecelerateInterpolator()
-    slideSet.duration = 150
-    slideSet.addListener(object : AnimatorListenerAdapter() {
-        override fun onAnimationEnd(animation: Animator) {
-            optionLayout?.let {
-                optionLayout.addViewAt(atsOptionView, atsOptionView.choice.sortOrder - 1)
-                atsOptionView.updateView(isSelected = true)
-            }
-            if (doOnAnimationEnd != null)
-                doOnAnimationEnd()
-            this@translationAnimationNew.visibility = View.GONE
-            atsOptionView.visibility = View.VISIBLE
-        }
-    })
-    slideSet.start()
-}
+//TODO Need AtsOptionView for add view
+//fun View.translationAnimationNew(
+//    toLocation: IntArray,
+//    atsOptionView: com.joshtalks.joshskills.lesson.online_test.vh.AtsOptionView,
+//    optionLayout: FlowLayout? = null,
+//    doOnAnimationEnd: (() -> Unit)? = null
+//) {
+//    this@translationAnimationNew.visibility = View.VISIBLE
+//    val slideAnim = AnimatorSet()
+//    slideAnim.playTogether(
+//        ObjectAnimator.ofFloat(this, View.X, toLocation[0].toFloat()),
+//        ObjectAnimator.ofFloat(this, View.Y, toLocation[1].toFloat())
+//    )
+//    val slideSet = AnimatorSet()
+//    slideSet.play(slideAnim)
+//    slideSet.interpolator = AccelerateDecelerateInterpolator()
+//    slideSet.duration = 150
+//    slideSet.addListener(object : AnimatorListenerAdapter() {
+//        override fun onAnimationEnd(animation: Animator) {
+//            optionLayout?.let {
+//                optionLayout.addViewAt(atsOptionView, atsOptionView.choice.sortOrder - 1)
+//                atsOptionView.updateView(isSelected = true)
+//            }
+//            if (doOnAnimationEnd != null)
+//                doOnAnimationEnd()
+//            this@translationAnimationNew.visibility = View.GONE
+//            atsOptionView.visibility = View.VISIBLE
+//        }
+//    })
+//    slideSet.start()
+//}
 
 fun View.slideUpAnimation(context: Context) {
     val bottomUp = AnimationUtils.loadAnimation(

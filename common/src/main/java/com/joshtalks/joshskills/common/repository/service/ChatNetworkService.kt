@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.common.repository.service
 
-import com.joshtalks.joshskills.voip.base.constants.DIR
 import com.joshtalks.joshskills.common.repository.local.entity.*
 import com.joshtalks.joshskills.common.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.common.repository.local.entity.practise.PracticeEngagementV2
@@ -9,9 +8,6 @@ import com.joshtalks.joshskills.common.repository.server.assessment.*
 import com.joshtalks.joshskills.common.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.common.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.common.repository.server.introduction.DemoOnboardingData
-import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
-import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.UserRating
-import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.VideoPopupItem
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
@@ -125,9 +121,6 @@ interface ChatNetworkService {
     @GET("${DIR}/course/demo_onboarding_data/")
     suspend fun getDemoOnBoardingData(): Response<DemoOnboardingData>
 
-    @GET("${DIR}/course/introduction_data/")
-    suspend fun getIntroSpeakingVideo(): Response<VideoPopupItem>
-
     @GET("${DIR}/assessment/test_v4/")
     suspend fun getOnlineTestQuestion(@QueryMap params: Map<String, Int>): Response<OnlineTestResponse>
 
@@ -148,13 +141,6 @@ interface ChatNetworkService {
     @POST("${DIR}/impression/track_a2c1_retention_impression/")
     suspend fun saveA2C1Impression(@Body requestData: HashMap<String, String>)
 
-    @Headers("Cache-Control: public, only-if-cached,  max-stale=86400,  max-age=86400")
-    @GET("${DIR}/p2p/rating/")
-    suspend fun getUserRating(): Response<UserRating>
-
     @POST("${DIR}/voicecall/agora_call_share")
     suspend fun postCallRecordingFile(@Body request : CallRecordingRequest) : Response<Unit>
-
-    @GET("${DIR}/p2p/block_status")
-    suspend fun getUserBlockStatus(): Response<BlockStatusModel>
 }

@@ -79,8 +79,6 @@ import com.joshtalks.joshskills.common.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.common.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.common.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.common.ui.lesson.PurchaseDialog
 //import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.common.ui.special_practice.SpecialPracticeActivity
@@ -1259,9 +1257,10 @@ class ConversationActivity : BaseConversationActivity(),
             }
         }
         conversationViewModel.coursePopupData.observe(this) {
-            it?.let {
-                PurchaseDialog.newInstance(it).show(supportFragmentManager, "PurchaseDialog")
-            }
+            //TODO Create navigation for show purchase Dialog
+//            it?.let {
+//                com.joshtalks.joshskills.lesson.PurchaseDialog.newInstance(it).show(supportFragmentManager, "PurchaseDialog")
+//            }
         }
         utilConversationViewModel.isLoading.observe(this) { isLoading ->
             if (isLoading) {
@@ -1902,18 +1901,19 @@ class ConversationActivity : BaseConversationActivity(),
                                 .addParam(ParamKeys.LESSON_ID, it.lessonId)
                                 .push()
                             PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
-                            startActivityForResult(
-                                LessonActivity.getActivityIntent(
-                                    this,
-                                    it.lessonId,
-                                    conversationId = inboxEntity.conversation_id,
-                                    isLessonCompleted = it.isLessonCompleted,
-                                    testId = AppObjectController.getFirebaseRemoteConfig().getString(
-                                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                                    ).toInt(),
-                                ),
-                                LESSON_REQUEST_CODE
-                            )
+                            //TODO Create navigation for open Lesson Activity
+//                            startActivityForResult(
+//                                LessonActivity.getActivityIntent(
+//                                    this,
+//                                    it.lessonId,
+//                                    conversationId = inboxEntity.conversation_id,
+//                                    isLessonCompleted = it.isLessonCompleted,
+//                                    testId = AppObjectController.getFirebaseRemoteConfig().getString(
+//                                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+//                                    ).toInt(),
+//                                ),
+//                                LESSON_REQUEST_CODE
+//                            )
                         }
                     },
                     {

@@ -276,7 +276,7 @@
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppThemeDark" />
         <activity
-            android:name=".ui.lesson.lesson_completed.LessonCompletedActivity"
+            android:name="com.joshtalks.joshskills.lesson.lesson_completed.LessonCompletedActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"

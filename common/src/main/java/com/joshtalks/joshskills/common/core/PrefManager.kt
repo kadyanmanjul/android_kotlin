@@ -21,8 +21,8 @@ import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.AppDatabase
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
-import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.UserRating
+//import com.joshtalks.joshskills.lesson.speaking.spf_models.BlockStatusModel
+//import com.joshtalks.joshskills.lesson.speaking.UserRating
 import java.io.ByteArrayOutputStream
 
 const val USER_UNIQUE_ID = "user_unique_id"
@@ -389,17 +389,20 @@ object PrefManager {
         return gson.fromJson(json, LessonModel::class.java)
     }
 
-    fun getRatingObject(key: String): UserRating? {
-        val gson = Gson()
-        val json: String = getStringValue(key = key, defaultValue = "") as String
-        return gson.fromJson(json, UserRating::class.java)
-    }
+    //TODO UserRating Model create globally so we can call this method
 
-    fun getBlockStatusObject(key: String): BlockStatusModel? {
-        val gson = Gson()
-        val json: String = getStringValue(key = key, defaultValue = "") as String
-        return gson.fromJson(json, BlockStatusModel::class.java)
-    }
+//    fun getRatingObject(key: String): com.joshtalks.joshskills.lesson.speaking.UserRating? {
+//        val gson = Gson()
+//        val json: String = getStringValue(key = key, defaultValue = "") as String
+//        return gson.fromJson(json, com.joshtalks.joshskills.lesson.speaking.UserRating::class.java)
+//    }
+    //TODO BlockStatusModel Model create globally so we can call this method
+
+//    fun getBlockStatusObject(key: String): com.joshtalks.joshskills.lesson.speaking.spf_models.BlockStatusModel? {
+//        val gson = Gson()
+//        val json: String = getStringValue(key = key, defaultValue =  "") as String
+//        return gson.fromJson(json, com.joshtalks.joshskills.lesson.speaking.spf_models.BlockStatusModel::class.java)
+//    }
 
     fun getCallCount(): Int {
         return getIntValue(P2P_CALL_COUNT, defValue = 0)

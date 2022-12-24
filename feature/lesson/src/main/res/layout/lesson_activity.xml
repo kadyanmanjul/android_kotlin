@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewbinding"
+            type="com.joshtalks.joshskills.lesson.LessonActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar_container"
+            layout="@layout/base_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/lesson_tab_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/disabled"
+            android:gravity="center"
+            android:minHeight="0dp"
+            android:tabStripEnabled="false"
+            android:textAlignment="center"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:tabBackground="@drawable/speaking_tab_bg"
+            app:tabIconTint="@color/success"
+            app:tabIndicatorHeight="0dp"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/pure_white"
+            app:tabTextColor="@color/pure_black" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/lesson_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/buy_course_ll"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lesson_tab_layout" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/buy_course_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:padding="@dimen/_16sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_rectangle_grey"
+                android:backgroundTint="@color/warning"
+                android:paddingVertical="@dimen/_8sdp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/buy_course_banner_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:textColor="@color/text_default"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/banner_barrier"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buy_course_banner_avail_btn"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyBold16"
+                    android:textColor="@color/primary_500"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:textAllCaps="true" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/buy_course_banner_lesson_progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/text_default"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:trackColor="#4DFFFFFF"
+                    app:trackCornerRadius="@dimen/_16sdp"
+                    tools:max="2"
+                    tools:progress="1" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/buy_course_banner_lesson_progress_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                    app:layout_constraintBottom_toBottomOf="@id/buy_course_banner_lesson_progress_bar"
+                    app:layout_constraintEnd_toEndOf="@id/buy_course_banner_lesson_progress_bar"
+                    app:layout_constraintStart_toStartOf="@id/buy_course_banner_lesson_progress_bar"
+                    app:layout_constraintTop_toTopOf="@id/buy_course_banner_lesson_progress_bar"
+                    tools:text="1/2" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/banner_barrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="left"
+                    app:constraint_referenced_ids="buy_course_banner_avail_btn, buy_course_banner_lesson_progress_bar" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/buy_course_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:cardElevation="@dimen/_6sdp"
+            app:layout_anchorGravity="bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="gone">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/pure_white"
+                android:paddingVertical="@dimen/_4sdp"
+                tools:visibility="visible">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/talk_to_c"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
+                    android:backgroundTint="#C1C1C1"
+                    android:gravity="center"
+                    android:lines="2"
+                    android:onClick="@{()->viewbinding.openWhatsapp()}"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="Talk to Counsellor"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="#636363"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_76sdp"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btn_start_course"
+                    app:layout_constraintWidth_percent="0.39" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/btn_start_course"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
+                    android:backgroundTint="@color/primary_500"
+                    android:gravity="center"
+                    android:onClick="@{()->viewbinding.buyCourse()}"
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:text="@string/buy_course"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textColor="@color/pure_white"
+                    android:textSize="@dimen/_16ssp"
+                    app:cornerRadius="@dimen/_32sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/talk_to_c"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.56" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/progress_view"
+            android:layout_width="@dimen/_96sdp"
+            android:layout_height="@dimen/_96sdp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:matProg_barColor="@color/primary_500"
+            app:matProg_fillRadius="true"
+            app:matProg_linearProgress="false"
+            app:matProg_progressIndeterminate="true"
+            tools:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/overlay_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/surface_overlay"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/overlay_layout_speaking"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_black_alpha_70"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/container_reading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_black_alpha_70"
+            android:elevation="@dimen/_20sdp"
+            android:visibility="gone" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/arrow_animation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:elevation="@dimen/_7sdp"
+            android:rotation="90"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/spotlight_call_btn_text"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/leaderboard_arrow.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1"
+            tools:visibility="gone" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/spotlight_start_grammar_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:background="@drawable/blue_new_btn_grammar_selector"
+            android:elevation="@dimen/_6sdp"
+            android:enabled="true"
+            android:gravity="center"
+            android:onClick="@{()->viewbinding.startOnlineExamTest()}"
+            android:paddingVertical="@dimen/_12sdp"
+            android:text="@string/grammar_btn_text_start"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/pure_white"
+            android:visibility="gone"
+            app:cornerRadius="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="gone" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/spotlight_call_btn"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_56sdp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:backgroundTint="@color/primary_500"
+            android:elevation="@dimen/_6sdp"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:onClick="@{()->viewbinding.callPracticePartner()}"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="lottie/button11.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1"
+            app:rippleColor="@color/pure_white"
+            tools:visibility="gone" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/spotlight_call_btn_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_2sdp"
+            android:gravity="center"
+            android:text="@string/call_practice_partner"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/pure_white"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/spotlight_call_btn"
+            app:layout_constraintEnd_toEndOf="@id/spotlight_call_btn"
+            app:layout_constraintStart_toStartOf="@id/spotlight_call_btn"
+            app:layout_constraintTop_toTopOf="@id/spotlight_call_btn"
+            tools:visibility="gone" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_grammar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/capsule_selection_tab"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/grammar"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
+            android:textColor="@color/pure_white"
+            android:visibility="invisible"
+            app:autoSizeMaxTextSize="@dimen/_10ssp"
+            app:autoSizeMinTextSize="@dimen/_8ssp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:layout_constraintWidth_percent="0.2"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/pure_white"
+            app:tabTextColor="@color/text_default"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_speaking"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/speaking_tab_bg"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/speaking"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
+            android:textColor="@color/pure_white"
+            android:visibility="invisible"
+            app:autoSizeMaxTextSize="@dimen/_10ssp"
+            app:autoSizeMinTextSize="@dimen/_8ssp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/spotlight_tab_grammar"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:layout_constraintWidth_percent="0.2"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/pure_white"
+            app:tabTextColor="@color/text_default"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_vocab"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/vocabulary_tab_bg"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/vocabulary"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
+            android:textColor="@color/pure_white"
+            android:visibility="invisible"
+            app:autoSizeMaxTextSize="@dimen/_10ssp"
+            app:autoSizeMinTextSize="@dimen/_8ssp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/spotlight_tab_speaking"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:layout_constraintWidth_percent="0.2"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/pure_white"
+            app:tabTextColor="@color/text_default"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_reading"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/reading_tab_bg"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/reading"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
+            android:textColor="@color/pure_white"
+            android:visibility="invisible"
+            app:autoSizeMaxTextSize="@dimen/_10ssp"
+            app:autoSizeMinTextSize="@dimen/_8ssp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/spotlight_tab_vocab"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:layout_constraintWidth_percent="0.2"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/pure_white"
+            app:tabTextColor="@color/text_default"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_convo"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@drawable/convo_room_tab_bg"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="Conversation"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
+            android:textColor="@color/pure_white"
+            android:visibility="invisible"
+            app:autoSizeMaxTextSize="@dimen/_10ssp"
+            app:autoSizeMinTextSize="@dimen/_8ssp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/spotlight_tab_reading"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:layout_constraintWidth_percent="0.2"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/pure_white"
+            app:tabTextColor="@color/text_default"
+            tools:visibility="visible" />
+
+        <com.joshtalks.joshskills.common.ui.tooltip.JoshTooltip
+            android:id="@+id/lesson_spotlight_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            android:layout_marginVertical="@dimen/_60sdp"
+            android:elevation="@dimen/_8sdp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.76"
+            app:tooltipText="@string/label_lesson_spotlight"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/item_overlay"
+            layout="@layout/lesson_tooltip_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="@dimen/_15sdp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/tooltip_frame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_minus44sdp"
+            android:elevation="@dimen/_8sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/video_btn_tooltip"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/tooltip_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tooltip_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="@dimen/_14sdp"
+                    android:background="@drawable/round_rect_default"
+                    android:gravity="center"
+                    android:padding="@dimen/_4sdp"
+                    android:text="आपका जवाब गलत क्यूँ था और सही कैसे करें, ये जानने के लिए video देखें"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
+                    app:autoSizeMaxTextSize="@dimen/_13ssp"
+                    app:autoSizeMinTextSize="@dimen/_10ssp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/arrow"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_minus10sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tooltip_tv"
+                    app:srcCompat="@drawable/ic_down"
+                    app:tint="@color/pure_white" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/video_iv_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_2sdp"
+                    android:elevation="@dimen/_16sdp"
+                    android:tint="@color/critical"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/arrow"
+                    app:srcCompat="@drawable/ic_video_clip" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/overlay_tooltip_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/surface_overlay"
+            android:clickable="true"
+            android:elevation="@dimen/_7sdp"
+            android:focusable="true"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/video_btn_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/surface_critical"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="gone">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/text_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_26sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/flag_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_19sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:backgroundTint="@color/critical"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_flag_vector" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/video_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_19sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:elevation="@dimen/_16sdp"
+                    android:tint="@color/critical"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_video_clip" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/wrong_answer_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                    android:textColor="@color/critical"
+                    android:textSize="@dimen/_24ssp"
+                    app:layout_constraintEnd_toStartOf="@id/video_iv"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="सही जवाब:" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/wrong_answer_desc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_marginEnd="@dimen/_9sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/critical"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wrong_answer_title"
+                    app:layout_goneMarginTop="0dp"
+                    tools:text="You could have died."
+                    tools:visibility="gone" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/explanation_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                    android:textColor="@color/critical"
+                    android:textSize="@dimen/_18ssp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wrong_answer_desc"
+                    tools:text="अनुवाद: "
+                    tools:visibility="visible" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/explanation_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_marginEnd="@dimen/_9sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/critical"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/explanation_title"
+                    tools:text="You could have died."
+                    tools:visibility="visible" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/grammar_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:background="@drawable/red_btn_grammar_selector"
+                android:enabled="true"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_12sdp"
+                android:text="@string/grammar_btn_text_continue"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:textColor="@color/pure_white"
+                app:cornerRadius="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_container" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/video_popup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/surface_overlay"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imageView_close"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginTop="@dimen/_minus12sdp"
+                android:layout_marginEnd="@dimen/_minus12sdp"
+                android:elevation="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="@id/video_view"
+                app:layout_constraintTop_toTopOf="@id/video_view"
+                app:srcCompat="@drawable/ic_cancel_black" />
+
+            <com.joshtalks.joshskills.common.core.custom_ui.JoshVideoPlayer
+                android:id="@+id/video_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_24sdp"
+                android:layout_marginVertical="@dimen/_50sdp"
+                android:layout_marginTop="@dimen/_62ssp"
+                android:layout_marginBottom="@dimen/_42ssp"
+                android:background="@color/pure_black"
+                android:focusable="true"
+                app:controller_layout_id="@layout/layout_live_player_controller"
+                app:layout_constraintBottom_toTopOf="@id/video_call_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                tools:visibility="gone" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/arrow_animationn_video"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_17sdp"
+                android:elevation="@dimen/_2sdp"
+                android:rotation="90"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/video_view"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/leaderboard_arrow.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="restart"
+                app:lottie_scale="1"
+                app:lottie_speed="1"
+                tools:visibility="gone" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/video_call_btn"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_56sdp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:backgroundTint="@color/primary_500"
+                android:elevation="@dimen/_6sdp"
+                android:gravity="center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8"
+                app:lottie_autoPlay="false"
+                app:lottie_fileName="lottie/button11.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="restart"
+                app:lottie_scale="1"
+                app:lottie_speed="1"
+                app:rippleColor="@color/pure_white"
+                tools:visibility="gone" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/video_call_btn_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:elevation="@dimen/_2sdp"
+                android:gravity="center"
+                android:text="@string/call_practice_partner"
+                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                android:textColor="@color/pure_white"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/video_call_btn"
+                app:layout_constraintEnd_toEndOf="@id/video_call_btn"
+                app:layout_constraintStart_toStartOf="@id/video_call_btn"
+                app:layout_constraintTop_toTopOf="@id/video_call_btn"
+                tools:visibility="gone" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

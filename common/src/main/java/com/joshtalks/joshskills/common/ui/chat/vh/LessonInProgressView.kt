@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.IS_A2_C1_RETENTION_ENABLED
 import com.joshtalks.joshskills.common.core.PrefManager
@@ -21,7 +22,6 @@ import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.common.repository.local.eventbus.LessonItemClickEventBus
-import com.joshtalks.joshskills.common.ui.lesson.*
 
 class LessonInProgressView : FrameLayout {
     private lateinit var rootView: FrameLayout

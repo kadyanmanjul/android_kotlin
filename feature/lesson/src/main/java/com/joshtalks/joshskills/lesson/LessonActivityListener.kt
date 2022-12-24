@@ -1,0 +1,29 @@
+package com.joshtalks.joshskills.lesson
+
+import com.joshtalks.joshskills.common.repository.local.entity.QUESTION_STATUS
+
+interface LessonActivityListener {
+
+    fun onNextTabCall(currentTabNumber: Int)
+    fun showIntroVideo()
+    fun introVideoCmplt()
+
+    fun onQuestionStatusUpdate(
+        status: QUESTION_STATUS,
+        questionId: String?,
+        isVideoPercentComplete: Boolean = false,
+        quizCorrectQuestionIds: ArrayList<Int> = ArrayList()
+    )
+
+    fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean)
+
+    fun onLessonUpdate()
+    fun showVideoToolTip(
+        shouldShow: Boolean,
+        wrongAnswerHeading: String? = null,
+        wrongAnswerSubHeading: String? = null,
+        wrongAnswerText: String? = null,
+        wrongAnswerDescription: String? = null,
+        videoClickListener: (() -> Unit)? = null
+    )
+}

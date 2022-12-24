@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.voip.base.log.Feature
 import com.joshtalks.joshskills.voip.base.log.JoshLog
 import com.joshtalks.joshskills.common.core.PrefManager as CorePrefManager
 import com.joshtalks.joshskills.common.core.BLOCK_STATUS
-import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
+//import com.joshtalks.joshskills.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.common.ui.voip.repository.RepositoryConstants
@@ -348,29 +348,37 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
 
     private fun checkBlockStatusInSP(): Boolean {
-        val blockStatus = CorePrefManager.getBlockStatusObject(BLOCK_STATUS)
-        if (blockStatus?.timestamp?.toInt() == 0 && blockStatus.duration == 0)
-            return false
+        //TODO BlockStatusModel Model create globally so we can call this method
 
-        if (checkWithinBlockTimer(blockStatus)) {
-            return true
-        } else {
-            CorePrefManager.putPrefObject(BLOCK_STATUS, BlockStatusModel(0, 0, "", 0))
-            return false
-        }
-    }
+//        val blockStatus = CorePrefManager.getBlockStatusObject(BLOCK_STATUS)
+//        if (blockStatus?.timestamp?.toInt() == 0 && blockStatus.duration == 0)
+//            return false
 
-    private fun checkWithinBlockTimer(blockStatus: BlockStatusModel?): Boolean {
-        if (blockStatus != null) {
-            val durationInMillis = Duration.ofMinutes(blockStatus.duration.toLong()).toMillis()
-            val unblockTimestamp = blockStatus.timestamp + durationInMillis
-            val currentTimestamp = System.currentTimeMillis()
-            if (currentTimestamp < unblockTimestamp) {
-                return true
-            }
-        }
+        //TODO checkWithinBlockTimer() create model globally BlockStatusModel
+
+//        if (checkWithinBlockTimer(blockStatus)) {
+//            return true
+//        } else {
+//            CorePrefManager.putPrefObject(BLOCK_STATUS,
+//                com.joshtalks.joshskills.lesson.speaking.spf_models.BlockStatusModel(0, 0, "", 0)
+//            )
+//            return false
+//        }
         return false
     }
+
+    //TODO checkWithinBlockTimer() create model globally BlockStatusModel
+//    private fun checkWithinBlockTimer(blockStatus: com.joshtalks.joshskills.lesson.speaking.spf_models.BlockStatusModel?): Boolean {
+//        if (blockStatus != null) {
+//            val durationInMillis = Duration.ofMinutes(blockStatus.duration.toLong()).toMillis()
+//            val unblockTimestamp = blockStatus.timestamp + durationInMillis
+//            val currentTimestamp = System.currentTimeMillis()
+//            if (currentTimestamp < unblockTimestamp) {
+//                return true
+//            }
+//        }
+//        return false
+//    }
 
     private fun isNotRestrictedFromCall() : Boolean {
         return checkBlockStatusInSP().not() || callType == Category.EXPERT || callType == Category.FPP

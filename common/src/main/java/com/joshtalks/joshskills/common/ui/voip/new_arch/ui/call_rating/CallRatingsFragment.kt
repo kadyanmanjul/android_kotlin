@@ -36,8 +36,8 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
-import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.common.ui.lesson.lesson_completed.LessonCompletedActivity
+//import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
+//import com.joshtalks.joshskills.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.common.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.common.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.common.ui.video_player.LAST_LESSON_INTERVAL
@@ -293,14 +293,15 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
     }
 
     private fun openLessonCompleteScreen(lesson: LessonModel?) {
-        openLessonCompletedActivity.launch(
-            lesson?.let {
-                LessonCompletedActivity.getActivityIntent(
-                    requireActivity(),
-                    it
-                )
-            }
-        )
+        //TODO Create a navigation to open LessonCompletedActivity
+//        openLessonCompletedActivity.launch(
+//            lesson?.let {
+//                com.joshtalks.joshskills.lesson.lesson_completed.LessonCompletedActivity.getActivityIntent(
+//                    requireActivity(),
+//                    it
+//                )
+//            }
+//        )
     }
 
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
@@ -314,7 +315,8 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                     Intent().apply {
                         putExtra(IS_BATCH_CHANGED, false)
                         putExtra(LAST_LESSON_INTERVAL, lesson?.interval)
-                        putExtra(LessonActivity.LAST_LESSON_STATUS, true)
+                        //TODO Define this constants in global constants file
+                        //putExtra(LessonActivity.LAST_LESSON_STATUS, true)
                         putExtra(LESSON__CHAT_ID, lesson?.chatId)
                         putExtra(CHAT_ROOM_ID, lesson?.chatId)
                     }

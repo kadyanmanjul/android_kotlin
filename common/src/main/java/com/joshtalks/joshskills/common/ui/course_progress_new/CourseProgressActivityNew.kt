@@ -29,7 +29,7 @@ import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.assessment.view.Stub
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.chat.vh.PdfCourseProgressView
-import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
+//import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 //import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
@@ -257,14 +257,15 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
                     val firstName = if (nameArr != null) nameArr[0] else EMPTY
                     showToast(getFeatureLockedText(courseId.toString(), firstName))
                 } else if (lessonModel != null) {
-                    activityListener.launch(
-                        LessonActivity.getActivityIntent(
-                            this@CourseProgressActivityNew,
-                            item.lessonId,
-                            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
-                            isLessonCompleted = lessonModel.status == LESSON_STATUS.CO
-                        )
-                    )
+                    //TODO Create a navigation for open LessonActivity
+//                    activityListener.launch(
+//                        LessonActivity.getActivityIntent(
+//                            this@CourseProgressActivityNew,
+//                            item.lessonId,
+//                            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
+//                            isLessonCompleted = lessonModel.status == LESSON_STATUS.CO
+//                        )
+//                    )
                 } else {
                     if (!isFinishing) {
                         try {

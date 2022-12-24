@@ -9,14 +9,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.constants.GRAMMAR_POSITION
+import com.joshtalks.joshskills.common.constants.READING_POSITION
+import com.joshtalks.joshskills.common.constants.SPEAKING_POSITION
+import com.joshtalks.joshskills.common.constants.VOCAB_POSITION
 import com.joshtalks.joshskills.common.databinding.CourseProgressItemBinding
 import com.joshtalks.joshskills.common.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.common.repository.server.course_overview.CourseOverviewItem
-import com.joshtalks.joshskills.common.ui.lesson.GRAMMAR_POSITION
-import com.joshtalks.joshskills.common.ui.lesson.READING_POSITION
-import com.joshtalks.joshskills.common.ui.lesson.SPEAKING_POSITION
-import com.joshtalks.joshskills.common.ui.lesson.VOCAB_POSITION
 
 class CourseProgressAdapter(
     val context: Context,

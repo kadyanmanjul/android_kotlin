@@ -239,6 +239,7 @@ dependencies {
     implementation project(path: ':feature:settings')
     implementation project(path: ':feature:userprofile')
     implementation project(path: ':feature:voip')
+    implementation project(path: ':feature:lesson')
 
     implementation libs.kotlin.lib
     implementation libs.bundles.coroutine
