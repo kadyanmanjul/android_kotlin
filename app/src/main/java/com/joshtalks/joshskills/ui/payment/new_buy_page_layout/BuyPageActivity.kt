@@ -66,6 +66,7 @@ import com.joshtalks.joshskills.ui.payment.PaymentPendingFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.BookACallFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BranchLog
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList

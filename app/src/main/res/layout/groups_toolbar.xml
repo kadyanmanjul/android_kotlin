@@ -120,7 +120,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/title"
                     app:layout_constraintStart_toEndOf="@id/title"
                     app:layout_constraintTop_toTopOf="@+id/title"
-                    app:srcCompat="@drawable/ic_lock"
+                    app:srcCompat="@drawable/ic_lock_local"
                     app:tint="@color/pure_white" />
 
                 <androidx.appcompat.widget.AppCompatTextView

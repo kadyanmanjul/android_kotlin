@@ -110,6 +110,8 @@ import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentDao
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BranchLog
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BranchLogDao
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
@@ -132,9 +134,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, ScheduleNotification::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class,
+        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class,BranchLog::class
     ],
-    version = 58,
+    version = 59,
     exportSchema = true
 )
 @TypeConverters(
@@ -240,7 +242,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_54_55,
                                 MIGRATION_55_56,
                                 MIGRATION_56_57,
-                                MIGRATION_57_58
+                                MIGRATION_57_58,
+                                MIGRATION_58_59
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -721,6 +724,11 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `speaking_tooltip_text` TEXT")
             }
         }
+        private val MIGRATION_58_59: Migration = object : Migration(58, 59) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `branch_log_table` (`amount` REAL NOT NULL, `course_name` TEXT NOT NULL,`test_id` TEXT NOT NULL,`order_id` TEXT NOT NULL, `is_sync` INTEGER NOT NULL, PRIMARY KEY(`order_id`))")
+            }
+        }
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
@@ -770,6 +778,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun broadcastDao(): BroadCastDao
     abstract fun paymentDao(): PaymentDao
     abstract fun scheduleNotificationDao(): ScheduleNotificationDao
+
+    abstract fun branchLogDao() :BranchLogDao
 }
 
 class MessageTypeConverters {

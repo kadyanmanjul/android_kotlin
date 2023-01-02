@@ -125,7 +125,7 @@
                     android:background="@drawable/circle2"
                     android:backgroundTint="@color/disabled"
                     android:padding="@dimen/_5sdp"
-                    android:src="@drawable/ic_lock"
+                    android:src="@drawable/ic_lock_local"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/icon_default" />

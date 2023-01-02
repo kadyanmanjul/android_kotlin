@@ -78,7 +78,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/group_title"
                 app:layout_constraintStart_toEndOf="@id/group_title"
                 app:layout_constraintTop_toTopOf="@+id/group_title"
-                app:srcCompat="@drawable/ic_lock"
+                app:srcCompat="@drawable/ic_lock_local"
                 app:tint="@color/icon_default" />
 
             <androidx.appcompat.widget.AppCompatTextView
