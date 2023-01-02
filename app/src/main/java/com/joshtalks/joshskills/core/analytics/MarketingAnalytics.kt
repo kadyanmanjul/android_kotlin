@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.core.analytics
 
 import android.os.Bundle
+import android.util.Log
 import com.facebook.appevents.AppEventsConstants
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BranchLog
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.util.*
 import java.math.BigDecimal
@@ -200,7 +202,21 @@ object MarketingAnalytics {
             extras["course_name"] = courseName
             extras["device_id"] = Utils.getDeviceId()
             extras["guest_mentor_id"] = guestMentorId
-            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
+            val branchResponse = BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
+            //if (branchResponse) {
+            Log.e("sagar", "addLiveDataObservable4:$branchResponse" )
+               val response =  AppObjectController.appDatabase.branchLogDao().inertBranchEntry(
+                    BranchLog(
+                        amount.toDouble(),
+                        courseName,
+                        testId,
+                        juspayPaymentId,
+                        0
+                    )
+                )
+                Log.e("sagar", "coursePurchased: $response")
+            }
+            //}
         }
     }
 

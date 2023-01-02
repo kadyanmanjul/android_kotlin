@@ -9,6 +9,7 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.View.GONE
@@ -26,6 +27,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
@@ -324,9 +326,31 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         }
+        lifecycleScope.launch(Dispatchers.IO) {
+            val lastPaymentEntry = AppObjectController.appDatabase.branchLogDao().getBranchLogData()
+            if (lastPaymentEntry != null && lastPaymentEntry.isSync == 0) {
+                Log.e("sagar", "addLiveDataObservable1: $lastPaymentEntry" )
+                PrefManager.put(IS_PURCHASE_BRANCH_EVENT_PUSH, true)
+                //TODO I have to to is_sync value to 1 because when it will come next time data should be deleted or we can delete inside marekting
+                // analytics when we are pushing in db
+                MarketingAnalytics.coursePurchased(
+                    BigDecimal(lastPaymentEntry.amount),
+                    true,
+                    testId = lastPaymentEntry.testId,
+                    courseName = "Spoken English Course",
+                    juspayPaymentId = lastPaymentEntry.orderId
+                )
+            }else{
+                Log.e("sagar", "addLiveDataObservable3: $lastPaymentEntry" )
+//                if (lastPaymentEntry != null) {
+//                    AppObjectController.appDatabase.branchLogDao().deleteBranchEntry(lastPaymentEntry.orderId)
+//                }
+            }
+        }
         viewModel.paymentStatus.observe(this, Observer {
             when (it.status) {
                 PaymentStatus.SUCCESS -> {
+                    Log.e("sagar", "addLiveDataObservable: 234", )
                     val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
                         Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
                     } else {
