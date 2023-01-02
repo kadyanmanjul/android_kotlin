@@ -218,7 +218,6 @@ object MarketingAnalytics {
             }
             //}
         }
-    }
 
     fun logAchievementLevelEvent(achievementLevel: Int) {
         JoshSkillExecutors.BOUNDED.submit {
