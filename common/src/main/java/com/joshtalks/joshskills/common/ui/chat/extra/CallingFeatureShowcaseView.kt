@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
@@ -16,9 +19,6 @@ import com.joshtalks.skydoves.balloon.BalloonAnimation
 import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 import com.joshtalks.skydoves.balloon.TextForm
 import io.github.inflationx.calligraphy3.TypefaceUtils
-import kotlinx.android.synthetic.main.calling_feature_showcas_view.iv_call
-import kotlinx.android.synthetic.main.calling_feature_showcas_view.root_view
-import kotlinx.android.synthetic.main.calling_feature_showcas_view.toolbar
 
 class CallingFeatureShowcaseView : DialogFragment() {
 
@@ -55,7 +55,7 @@ class CallingFeatureShowcaseView : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.inflateMenu(R.menu.conversation_menu)
+        view.findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.conversation_menu)
         val typefaceSpan = TypefaceUtils.load(requireContext().assets, "fonts/JoshOpenSans-Regular.ttf")
         val textForm: TextForm = TextForm.Builder(requireContext())
             .setText(getString(R.string.english_practise_hint))
@@ -87,8 +87,9 @@ class CallingFeatureShowcaseView : DialogFragment() {
                 }
             })
             .build()
-        ballon.showAlignBottom(iv_call)
-        root_view.setOnClickListener {
+
+        ballon.showAlignBottom(view.findViewById<AppCompatImageView>(R.id.iv_call))
+        view.findViewById<RelativeLayout>(R.id.root_view).setOnClickListener {
             dismissAllowingStateLoss()
         }
     }

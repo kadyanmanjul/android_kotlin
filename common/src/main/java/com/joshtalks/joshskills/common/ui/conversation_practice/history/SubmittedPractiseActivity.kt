@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.animation.OvershootInterpolator
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.R
@@ -14,21 +15,19 @@ import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.common.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.common.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.common.core.custom_ui.exo_audio_player.ExoAudioPlayerView
 import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.RequestAudioPlayEventBus
 import com.joshtalks.joshskills.common.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.common.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.common.ui.conversation_practice.PRACTISE_ID
+import com.mindorks.placeholderview.PlaceHolderView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
-import kotlinx.android.synthetic.main.activity_submitted_practise.iv_back
-import kotlinx.android.synthetic.main.activity_submitted_practise.recycler_view
-import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import java.util.ArrayList
 import java.util.LinkedList
-
 
 class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
 
@@ -39,6 +38,15 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
     private val compositeDisposable = CompositeDisposable()
     private val list: ArrayList<SubmittedConversationPractiseModel> = arrayListOf()
 
+    private val audioPlayer by lazy {
+        findViewById<ExoAudioPlayerView>(R.id.audio_player)
+    }
+    private val recyclerView by lazy {
+        findViewById<PlaceHolderView>(R.id.recycler_view)
+    }
+    private val ivBack by lazy {
+        findViewById<AppCompatImageView>(R.id.iv_back)
+    }
 
     companion object {
         fun startSubmittedPractiseActivity(
@@ -74,13 +82,12 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
     }
 
     private fun setupUI() {
-        iv_back.setOnClickListener {
+        ivBack.setOnClickListener {
             this.finish()
         }
-        recycler_view.builder
-            .setHasFixedSize(true)
-        recycler_view.itemAnimator = SlideInUpAnimator(OvershootInterpolator(1f))
-        recycler_view.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(this, 8f)))
+        recyclerView.builder.setHasFixedSize(true)
+        recyclerView.itemAnimator = SlideInUpAnimator(OvershootInterpolator(1f))
+        recyclerView.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(this, 8f)))
     }
 
     private fun addObserver() {
@@ -89,7 +96,7 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
                 list.addAll(it.sortedByDescending { obj -> obj.created })
             }
             list.forEachIndexed { index, obj ->
-                recycler_view.addView(
+                recyclerView.addView(
                     SubmittedPractiseItemHolder(
                         index,
                         obj
@@ -101,7 +108,7 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
 
     private fun subscribeBus() {
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listen(RequestAudioPlayEventBus::class.java)
+            RxBus2.listen(RequestAudioPlayEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -111,7 +118,7 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
                     cPosition = it.position
 
                     list[cPosition].isPlaying = true
-                    recycler_view.refresh()
+                    recyclerView.refresh()
                     playAudioPlayer(it.url, it.duration)
                 }, {
                     it.printStackTrace()
@@ -122,8 +129,8 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
     private fun playAudioPlayer(url: String, duration: Int) {
         val list: LinkedList<AudioModel> = LinkedList()
         list.add(AudioModel(url, url.hashCode().toString(), duration))
-        audio_player.addAudios(list)
-        audio_player.onPlay()
+        audioPlayer.addAudios(list)
+        audioPlayer.onPlay()
     }
 
     override fun onResume() {
@@ -138,39 +145,30 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
 
     override fun onPlayerPause() {
         list[cPosition].isPlaying = false
-        recycler_view.refreshView(cPosition)
-
+        recyclerView.refreshView(cPosition)
     }
 
     override fun onPlayerResume() {
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
-
     }
 
     override fun onTrackChange(tag: String?) {
-
     }
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
-
     }
 
     override fun onPositionDiscontinuity(reason: Int) {
-
     }
 
     override fun onPlayerReleased() {
-
     }
 
     override fun onPlayerEmptyTrack() {
-
     }
 
     override fun complete() {
-
     }
 }
-

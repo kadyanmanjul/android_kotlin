@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.common.repository.local.typeconverter.TypeConver
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentType
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "assessments", indices = [

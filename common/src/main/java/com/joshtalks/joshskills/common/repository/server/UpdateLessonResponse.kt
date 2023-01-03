@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 data class UpdateLessonResponse(

@@ -4,7 +4,7 @@ package com.joshtalks.joshskills.common.ui.userprofile.models
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.core.EMPTY
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 

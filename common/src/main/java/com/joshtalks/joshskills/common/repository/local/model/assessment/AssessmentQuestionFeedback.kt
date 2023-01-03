@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentQuestionFeedbackResponse
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "assessment_question_feedback", foreignKeys = [

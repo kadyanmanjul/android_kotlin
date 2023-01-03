@@ -8,20 +8,32 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.daasuu.mp4compose.FillMode
 import com.daasuu.mp4compose.composer.Mp4Composer
 import com.daasuu.mp4compose.filter.GlFilter
+import com.joshtalks.joshcamerax.video_trimmer.VideoTrimmerView
 import com.joshtalks.joshcamerax.video_trimmer.interfaces.VideoTrimmingListener
-import kotlinx.android.synthetic.main.activity_trimmer.*
+import com.pnikosis.materialishprogress.ProgressWheel
 import java.io.File
-
 
 const val VIDEO_URI = "video_uri"
 const val DEST_VIDEO_FILE = "dest_video_file"
 const val SRC_VIDEO_PATH = "src_video_path"
 
 class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
+
+    private val videoTrimmerView by lazy {
+        findViewById<VideoTrimmerView>(R.id.videoTrimmerView)
+    }
+    private val progressBar by lazy {
+        findViewById<ProgressWheel>(R.id.videoTrimmerView)
+    }
+    private val trimmingProgressView by lazy {
+        findViewById<LinearLayout>(R.id.trimmingProgressView)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
         super.onCreate(savedInstanceState)
@@ -38,11 +50,9 @@ class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
         videoTrimmerView.setDestinationFile(destFile)
         videoTrimmerView.setVideoURI(inputVideoUri)
         videoTrimmerView.setVideoInformationVisibility(true)
-        progress_bar.spinSpeed = 0.25f
-        progress_bar.barColor = Color.parseColor("#128C7E")
-        progress_bar.rimColor = Color.parseColor("#33128C7E")
-
-
+        progressBar.spinSpeed = 0.25f
+        progressBar.barColor = Color.parseColor("#128C7E")
+        progressBar.rimColor = Color.parseColor("#33128C7E")
     }
 
     override fun onTrimStarting(srcPath: Uri, destPath: File, startTime: Long, endTime: Long) {
@@ -64,7 +74,7 @@ class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
                 .listener(object : Mp4Composer.Listener {
                     override fun onProgress(progress: Double) {
                         runOnUiThread {
-                            progress_bar.progress = progress.toFloat()
+                            progressBar.progress = progress.toFloat()
                             //progressWheel.setInstantProgress(float value)
                         }
 

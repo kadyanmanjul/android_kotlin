@@ -5,7 +5,7 @@ import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.core.EMPTY
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 @Entity(tableName = "favorite_caller")

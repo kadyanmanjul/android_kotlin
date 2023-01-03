@@ -7,7 +7,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.common.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.common.repository.local.entity.User
 import java.util.Date
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class InboxEntity constructor(

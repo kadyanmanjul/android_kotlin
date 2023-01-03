@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -24,7 +27,6 @@ import com.joshtalks.joshskills.certificate.CertificationExamViewModel
 import com.joshtalks.joshskills.certificate.R
 import com.joshtalks.joshskills.certificate.questionlistbottom.Callback
 import com.joshtalks.joshskills.certificate.questionlistbottom.QuestionListBottomSheet
-import kotlinx.android.synthetic.main.activity_cexam_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -68,6 +70,16 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     private var openQuestionId: Int = 0
     private var attemptSequence: Int = -1
     private val questionsList: ArrayList<CertificationQuestion> = arrayListOf()
+
+    private val questionViewPager by lazy {
+        findViewById<ViewPager2>(R.id.question_view_pager)
+    }
+    private val ivBookmark by lazy {
+        findViewById<AppCompatImageView>(R.id.iv_bookmark)
+    }
+    private val tvTimer by lazy {
+        findViewById<AppCompatTextView>(R.id.tv_timer)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,20 +129,20 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     private fun setupUI() {
-        iv_bookmark.setOnClickListener {
+        ivBookmark.setOnClickListener {
             questionsList.let { questions ->
-                if (questions.size > question_view_pager.currentItem) {
-                    questions[question_view_pager.currentItem].let {
+                if (questions.size > questionViewPager.currentItem) {
+                    questions[questionViewPager.currentItem].let {
                         it.isBookmarked = it.isBookmarked.not()
-                        updateBookmarkIV(questions, question_view_pager.currentItem)
+                        updateBookmarkIV(questions, questionViewPager.currentItem)
                     }
                 }
             }
         }
-        iv_all_question.setOnClickListener {
+        findViewById<AppCompatImageView>(R.id.iv_all_question).setOnClickListener {
             openQuestionListBottomSheet()
         }
-        iv_back.setOnClickListener {
+        findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
             onBackPressed()
         }
     }
@@ -164,61 +176,61 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                     override fun onGoToQuestion(position: Int) {
                         CoroutineScope(Dispatchers.Main).launch {
                             delay(350)
-                            if (position == question_view_pager.adapter?.itemCount) {
+                            if (position == questionViewPager.adapter?.itemCount) {
                                 if (CertificationExamView.EXAM_VIEW == examView) {
                                     openQuestionListBottomSheet()
                                 }
                             } else {
-                                question_view_pager.currentItem = position
+                                questionViewPager.currentItem = position
                             }
                         }
                     }
                 }
             )
-            question_view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            question_view_pager.offscreenPageLimit =
+            questionViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            questionViewPager.offscreenPageLimit =
                 if (questions.isNotEmpty()) questions.size else OFFSCREEN_PAGE_LIMIT_DEFAULT
-            question_view_pager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
-            question_view_pager.registerOnPageChangeCallback(object :
+            questionViewPager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
+            questionViewPager.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     updateBookmarkIV(questions, position)
                     val cPage = position + 1
-                    tv_question.text = "$cPage/${questions.size}"
+                    findViewById<AppCompatTextView>(R.id.tv_question).text = "$cPage/${questions.size}"
 
                     if (CertificationExamView.EXAM_VIEW == examView) {
                         val obj = questions.findLast { it.isAttempted.not() }
-                        if (obj == null && cPage == question_view_pager.adapter?.itemCount) {
+                        if (obj == null && cPage == questionViewPager.adapter?.itemCount) {
                             openQuestionListBottomSheet()
                         }
                     }
                 }
             })
-            question_view_pager.adapter = adapter
+            questionViewPager.adapter = adapter
             setupUIAsExamView()
         }
     }
 
     private fun setupUIAsExamView() {
         if (CertificationExamView.EXAM_VIEW == examView) {
-            bottom_bar.visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.bottom_bar).visibility = View.VISIBLE
             startExamTimer()
-            question_view_pager.currentItem =
+            questionViewPager.currentItem =
                 certificationQuestionModel?.lastQuestionOfExit ?: 0
         } else {
             questionsList.indexOfLast { it.questionId == openQuestionId }.let {
-                question_view_pager.currentItem = it
+                questionViewPager.currentItem = it
             }
-            tv_timer.visibility = View.GONE
+            tvTimer.visibility = View.GONE
         }
     }
 
     private fun updateBookmarkIV(questions: List<CertificationQuestion>, position: Int) {
         if (questions[position].isBookmarked) {
-            iv_bookmark.setColorFilter(ContextCompat.getColor(applicationContext, R.color.warning))
+            ivBookmark.setColorFilter(ContextCompat.getColor(applicationContext, R.color.warning))
         } else {
-            iv_bookmark.setColorFilter(ContextCompat.getColor(applicationContext, R.color.pure_white))
+            ivBookmark.setColorFilter(ContextCompat.getColor(applicationContext, R.color.pure_white))
         }
     }
 
@@ -226,7 +238,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
         countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
             override fun onTimerTick(millis: Long) {
                 AppObjectController.uiHandler.post {
-                    tv_timer.text = String.format(
+                    tvTimer.text = String.format(
                         "%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(millis),
                         TimeUnit.MILLISECONDS.toSeconds(millis) -
@@ -244,7 +256,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
     override fun onPauseExit() {
         certificationQuestionModel?.timerTime = countdownTimerBack?.remainTime() ?: 0
-        certificationQuestionModel?.lastQuestionOfExit = question_view_pager.currentItem
+        certificationQuestionModel?.lastQuestionOfExit = questionViewPager.currentItem
         certificationQuestionModel?.saveForLaterUse()
         val intent = Intent()
         setResult(Activity.RESULT_CANCELED, intent)
@@ -262,7 +274,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     override fun onGoToQuestion(position: Int) {
-        question_view_pager.currentItem = position
+        questionViewPager.currentItem = position
     }
 
     private fun openQuestionListBottomSheet() {
@@ -275,7 +287,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             }
             questionsList.run {
                 val bottomSheetFragment =
-                    QuestionListBottomSheet.newInstance(this, question_view_pager.currentItem)
+                    QuestionListBottomSheet.newInstance(this, questionViewPager.currentItem)
                 bottomSheetFragment.show(
                     supportFragmentManager,
                     QuestionListBottomSheet::class.java.name

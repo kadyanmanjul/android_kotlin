@@ -4,7 +4,7 @@ package com.joshtalks.joshskills.common.repository.server.certification_exam
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CertificateExamReportModel(

@@ -3,14 +3,14 @@ package com.greentoad.turtlebody.mediapicker.ui.component.folder.image_video
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.greentoad.turtlebody.mediapicker.R
-import kotlinx.android.synthetic.main.tb_media_picker_image_video.view.*
+import com.greentoad.turtlebody.mediapicker.widget.SquareImage
 import java.io.File
 
 class ImageVideoFolderAdapter: RecyclerView.Adapter<ImageVideoFolderAdapter.FolderVewHolder>() {
-
 
     private var mData: MutableList<ImageVideoFolder> = arrayListOf()
     private var mOnFolderClickListener: OnFolderClickListener? = null
@@ -56,13 +56,13 @@ class ImageVideoFolderAdapter: RecyclerView.Adapter<ImageVideoFolderAdapter.Fold
 
     inner class FolderVewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(pData: ImageVideoFolder){
-
-            itemView.item_folder_txt_folder_name.text = pData.name
-            itemView.item_folder_txt_total_items.text = "${pData.contentCount}"
+            val folderView = itemView.findViewById<AppCompatTextView>(R.id.item_folder_txt_folder_name)
+            folderView.text = pData.name
+            folderView.text = "${pData.contentCount}"
 
             Glide.with(itemView)
-                    .load(File( pData.coverImageFilePath))
-                    .into(itemView.item_image_cover_image)
+                .load(File( pData.coverImageFilePath))
+                .into(itemView.findViewById<SquareImage>(R.id.item_image_cover_image))
 
             itemView.setOnClickListener {
                 mOnFolderClickListener?.onFolderClick(pData)
@@ -70,7 +70,6 @@ class ImageVideoFolderAdapter: RecyclerView.Adapter<ImageVideoFolderAdapter.Fold
 
         }
     }
-
 
     interface OnFolderClickListener {
         fun onFolderClick(pData: ImageVideoFolder)

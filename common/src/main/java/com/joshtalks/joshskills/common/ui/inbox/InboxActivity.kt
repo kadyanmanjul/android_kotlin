@@ -19,12 +19,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
@@ -40,6 +42,7 @@ import com.joshtalks.joshskills.common.core.custom_ui.decorator.LayoutMarginDeco
 import com.joshtalks.joshskills.common.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.common.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.common.databinding.ActivityInboxBinding
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
@@ -51,9 +54,6 @@ import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -84,6 +84,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     var progressDialog: ProgressDialog? = null
     private lateinit var bbTooltip: Balloon
     private var isCapsuleCourseBought = false
+
+    private val binding by lazy<ActivityInboxBinding> {
+        DataBindingUtil.setContentView(this, R.layout.activity_inbox)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -133,11 +137,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun initView() {
         showProgressDialog("Please Wait")
-        text_message_title.text = getString(R.string.inbox_header)
-        iv_reminder.visibility = GONE
-        iv_setting.visibility = View.VISIBLE
+        findViewById<AppCompatTextView>(R.id.text_message_title).text = getString(R.string.inbox_header)
+        findViewById<AppCompatImageView>(R.id.iv_reminder).visibility = GONE
+        findViewById<AppCompatImageView>(R.id.iv_setting).visibility = View.VISIBLE
 
-        iv_icon_referral.setOnClickListener {
+        findViewById<AppCompatImageView>(R.id.iv_icon_referral).setOnClickListener {
             viewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
 
                 // TODO: Use navigator -- Sahil
@@ -146,7 +150,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
 
         //TODO Create navigation to open BuyPageActivity
-        btn_upgrade.setOnClickListener {
+        findViewById<MaterialTextView>(R.id.btn_upgrade).setOnClickListener {
 //            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
 //                this,
 //                AppObjectController.getFirebaseRemoteConfig().getString(
@@ -158,13 +162,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
         findMoreLayout = findViewById(R.id.parent_layout)
         paymentStatusView = findViewById(R.id.payment_layout)
-        recycler_view_inbox.apply {
+        binding.recyclerViewInbox.apply {
             itemAnimator = null
             layoutManager = LinearLayoutManager(applicationContext).apply {
                 isSmoothScrollbarEnabled = true
             }
         }
-        recycler_view_inbox.addItemDecoration(
+        binding.recyclerViewInbox.addItemDecoration(
             LayoutMarginDecoration(
                 Utils.dpToPx(
                     applicationContext,
@@ -172,17 +176,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 )
             )
         )
-        recycler_view_inbox.adapter = inboxAdapter
-        iv_setting.setOnClickListener {
+        binding.recyclerViewInbox.adapter = inboxAdapter
+        findViewById<AppCompatImageView>(R.id.iv_setting).setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.THREE_DOTS).push()
             openPopupMenu(it)
         }
 
-        find_more.setOnClickListener {
+        findViewById<MaterialButton>(R.id.find_more).setOnClickListener {
             courseExploreClick()
         }
         //TODO Create navigation to open BuyPageActivity
-        buy_english_course.setOnClickListener {
+        findViewById<MaterialButton>(R.id.buy_english_course).setOnClickListener {
 //            MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
 //            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
 //                this,
@@ -363,7 +367,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             if (paymentStatusView.isVisible) {
                 val scale = resources.displayMetrics.density
                 val dpAsPixels = (100 * scale + 0.5f).toInt()
-                inbox_nested_scroll.updatePadding(0, 0, 0, dpAsPixels)
+                binding.inboxNestedScroll.updatePadding(0, 0, 0, dpAsPixels)
             }
         })
     }
@@ -514,8 +518,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = true
                         try {
                             runOnUiThread {
-                                btn_upgrade.isVisible = haveFreeTrialCourse
-                                iv_icon_referral.isVisible = haveFreeTrialCourse.not()
+                                findViewById<MaterialTextView>(R.id.btn_upgrade).isVisible = haveFreeTrialCourse
+                                findViewById<AppCompatImageView>(R.id.iv_icon_referral).isVisible = haveFreeTrialCourse.not()
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -583,7 +587,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
             bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
             bbTooltip.isShowing.not().let {
-                bbTooltip.showAlignBottom(buy_english_course)
+                bbTooltip.showAlignBottom(findViewById<MaterialTextView>(R.id.buy_english_course))
             }
         } catch (_: Exception) {
         }
@@ -591,7 +595,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun showExploreBBTip(bbTipText: String) {
         try {
-            explore_courses.isVisible = true
+            binding.exploreCourses.isVisible = true
             if (this::bbTooltip.isInitialized.not()) {
                 bbTooltip = Balloon.Builder(this)
                     .setLayout(R.layout.layout_bb_tip)
@@ -609,17 +613,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text =
                 bbTipText.replace("__username__", Mentor.getInstance().getUser()?.firstName ?: "User")
             bbTooltip.isShowing.not().let {
-                bbTooltip.showAlignBottom(explore_courses)
+                bbTooltip.showAlignBottom(binding.exploreCourses)
             }
             val scale = resources.displayMetrics.density
             var dpAsPixels = (190 * scale + 0.5f).toInt()
             if (paymentStatusView.isVisible)
                 dpAsPixels = (100 * scale + 0.5f).toInt()
-            inbox_nested_scroll.updatePadding(0, 0, 0, dpAsPixels)
+            binding.inboxNestedScroll.updatePadding(0, 0, 0, dpAsPixels)
         } catch (_: Exception) {
         }
 
-        explore_courses.setOnClickListener {
+        binding.exploreCourses.setOnClickListener {
             viewModel.saveImpressionForExplorePage("CLICKED_EXPLORE_COURSE")
             courseExploreClick()
         }

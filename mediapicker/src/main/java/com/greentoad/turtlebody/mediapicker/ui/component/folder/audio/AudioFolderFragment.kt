@@ -1,12 +1,13 @@
 package com.greentoad.turtlebody.mediapicker.ui.component.folder.audio
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.FileManager
@@ -18,9 +19,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.tb_media_picker_folder_fragment.folder_fragment_recycler_view
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
-
 
 class AudioFolderFragment : FragmentBase() {
 
@@ -40,9 +38,14 @@ class AudioFolderFragment : FragmentBase() {
     private var mAudioFolderAdapter: AudioFolderAdapter = AudioFolderAdapter()
     private var mAudioFolderList: MutableList<AudioFolder> = arrayListOf()
 
+    private val frameProgress by lazy {
+        view?.findViewById<FrameLayout>(R.id.frame_progress)
+    }
+    private val folderFragmentRV by lazy {
+        view?.findViewById<RecyclerView>(R.id.folder_fragment_recycler_view)
+    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.tb_media_picker_folder_fragment, container, false)
     }
@@ -60,8 +63,8 @@ class AudioFolderFragment : FragmentBase() {
             }
         })
 
-        folder_fragment_recycler_view.layoutManager = LinearLayoutManager(context)
-        folder_fragment_recycler_view.adapter = mAudioFolderAdapter
+        folderFragmentRV?.layoutManager = LinearLayoutManager(context)
+        folderFragmentRV?.adapter = mAudioFolderAdapter
         fetchAudioFolders()
     }
 
@@ -75,17 +78,17 @@ class AudioFolderFragment : FragmentBase() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<ArrayList<AudioFolder>> {
                 override fun onSubscribe(@NonNull d: Disposable) {
-                    frame_progress.visibility = View.VISIBLE
+                    frameProgress?.visibility = View.VISIBLE
                 }
 
                 override fun onSuccess(@NonNull audioFolders: ArrayList<AudioFolder>) {
                     mAudioFolderList = audioFolders
                     mAudioFolderAdapter.setData(mAudioFolderList)
-                    frame_progress.visibility = View.GONE
+                    frameProgress?.visibility = View.GONE
                 }
 
                 override fun onError(@NonNull e: Throwable) {
-                    frame_progress.visibility = View.GONE
+                    frameProgress?.visibility = View.GONE
                     e.printStackTrace()
                 }
             })

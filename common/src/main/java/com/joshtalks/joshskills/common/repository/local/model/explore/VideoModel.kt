@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.common.repository.local.model.explore
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class VideoModel(

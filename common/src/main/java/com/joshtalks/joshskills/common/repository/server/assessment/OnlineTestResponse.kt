@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.repository.local.model.explore.VideoModel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class OnlineTestResponse(

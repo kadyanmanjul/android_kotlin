@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.common.repository.local.model.assessment.Assessm
 import com.joshtalks.joshskills.common.repository.local.typeconverter.TypeConverterAssessmentMediaType
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentMediaType
 import com.joshtalks.joshskills.common.repository.server.assessment.ReviseConceptResponse
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "assessment_revise_concept", foreignKeys = [

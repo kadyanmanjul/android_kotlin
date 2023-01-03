@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -12,10 +15,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentIntro
-import kotlinx.android.synthetic.main.intro_question_fragment.image_view
-import kotlinx.android.synthetic.main.intro_question_fragment.root_view
-import kotlinx.android.synthetic.main.intro_question_fragment.tv_description
-import kotlinx.android.synthetic.main.intro_question_fragment.tv_tile
 
 const val ASSESSMENT_DETAIL_SOURCE = "teacher_detail_source"
 
@@ -62,7 +61,7 @@ class IntroQuestionFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         assessmentIntroObj.imageUrl?.let {
-            image_view.visibility = View.VISIBLE
+            view.findViewById<AppCompatImageView>(R.id.image_view).visibility = View.VISIBLE
             Glide.with(requireContext())
                 .load(it)
                 .override(Target.SIZE_ORIGINAL)
@@ -70,20 +69,20 @@ class IntroQuestionFragment : DialogFragment() {
                     WebpDrawable::class.java,
                     WebpDrawableTransformation(CircleCrop())
                 )
-                .into(image_view)
+                .into(view.findViewById<AppCompatImageView>(R.id.image_view))
         }
+        val tvDescription = view.findViewById<AppCompatTextView>(R.id.tv_description)
         if (assessmentIntroObj.imageUrl.isNullOrEmpty()) {
-            val params: ViewGroup.MarginLayoutParams =
-                tv_description.layoutParams as ViewGroup.MarginLayoutParams
+            val params: ViewGroup.MarginLayoutParams = tvDescription.layoutParams as ViewGroup.MarginLayoutParams
             params.topMargin = 0
         }
         assessmentIntroObj.title?.run {
-            tv_tile.text = this
+            view.findViewById<AppCompatTextView>(R.id.tv_tile).text = this
         }
         assessmentIntroObj.description?.run {
-            tv_description.text = this
+            tvDescription.text = this
         }
-        root_view.setOnClickListener {
+        view.findViewById<ConstraintLayout>(R.id.root_view).setOnClickListener {
             dismissAllowingStateLoss()
         }
     }

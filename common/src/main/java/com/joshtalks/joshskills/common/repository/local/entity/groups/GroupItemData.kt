@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.core.Utils
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 const val OPENED_GROUP = "open"
 const val CLOSED_GROUP = "closed"

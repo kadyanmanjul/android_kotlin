@@ -6,7 +6,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.repository.local.ConvectorForGraph
 import com.joshtalks.joshskills.common.repository.server.engage.Graph
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(tableName = "video_watch_table")

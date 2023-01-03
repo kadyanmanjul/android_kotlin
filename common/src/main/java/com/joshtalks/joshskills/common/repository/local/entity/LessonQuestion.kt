@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.common.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.common.repository.local.entity.practise.PracticeEngagementV2
 import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "lesson_question")
 @Parcelize

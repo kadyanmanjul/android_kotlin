@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.common.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.common.util.RandomString
 import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import kotlinx.android.parcel.RawValue
 
 @Parcelize

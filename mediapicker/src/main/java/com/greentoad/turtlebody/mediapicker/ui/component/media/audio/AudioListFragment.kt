@@ -2,10 +2,14 @@ package com.greentoad.turtlebody.mediapicker.ui.component.media.audio
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.FileManager
 import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
 import com.greentoad.turtlebody.mediapicker.ui.common.MediaListFragment
@@ -16,12 +20,8 @@ import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_btn_done
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_recycler_view
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
 
 class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener {
-
 
     companion object {
 
@@ -43,6 +43,15 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
     private var mAudioModelList: MutableList<AudioModel> = arrayListOf()
     private var mSelectedAudioModelList: MutableList<AudioModel> = arrayListOf()
 
+    private val frameProgress by lazy {
+        view?.findViewById<FrameLayout>(R.id.frame_progress)
+    }
+    private val recyclerView by lazy {
+        view?.findViewById<RecyclerView>(R.id.file_fragment_recycler_view)
+    }
+    private val doneBtn by lazy {
+        view?.findViewById<Button>(R.id.file_fragment_btn_done)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -113,7 +122,7 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
                     }
                 }
                 (activity as ActivityLibMain).updateCounter(mSelectedAudioModelList.size)
-                file_fragment_btn_done.isEnabled = mSelectedAudioModelList.size > 0
+                doneBtn?.isEnabled = mSelectedAudioModelList.size > 0
             }
         } catch (ex: Exception) {
             Toast.makeText(context, "Some error occur to select file", Toast.LENGTH_SHORT).show()
@@ -126,8 +135,8 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
         mAudioAdapter.setListener(this)
         mAudioAdapter.mShowCheckBox = mMediaPickerConfig.mAllowMultiSelection
 
-        file_fragment_recycler_view.layoutManager = LinearLayoutManager(context)
-        file_fragment_recycler_view.adapter = mAudioAdapter
+        recyclerView?.layoutManager = LinearLayoutManager(context)
+        recyclerView?.adapter = mAudioAdapter
         fetchAudioFiles()
 
     }
@@ -150,16 +159,16 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Boolean> {
                 override fun onSubscribe(@NonNull d: Disposable) {
-                    frame_progress.visibility = View.VISIBLE
+                    frameProgress?.visibility = View.VISIBLE
                 }
 
                 override fun onSuccess(t: Boolean) {
                     mAudioAdapter.setData(mAudioModelList)
-                    frame_progress.visibility = View.GONE
+                    frameProgress?.visibility = View.GONE
                 }
 
                 override fun onError(@NonNull e: Throwable) {
-                    frame_progress.visibility = View.GONE
+                    frameProgress?.visibility = View.GONE
                 }
             })
     }

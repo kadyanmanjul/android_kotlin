@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.github.vipulasri.timelineview.TimelineView
+import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.setImage
 import com.joshtalks.joshskills.common.databinding.ConversationPracticeTimelineItemBinding
@@ -14,12 +17,6 @@ import com.joshtalks.joshskills.common.repository.local.model.PractiseFlowOption
 import com.joshtalks.joshskills.common.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.common.ui.conversation_practice.IMAGE_URL
 import com.joshtalks.joshskills.common.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
-import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.continue_btn
-import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.image_view
-import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.recycler_view
-import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.text_header
-import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.text_sub_header
-
 
 class ConversationPracticeIntro private constructor() : DialogFragment() {
 
@@ -34,7 +31,9 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
     }
 
     private lateinit var conversationPractiseModel: ConversationPractiseModel
-
+    private val imageView by lazy {
+        view?.findViewById<ImageView>(R.id.image_view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,16 +69,16 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
     private fun setupUI() {
         requireActivity().intent?.getStringExtra(IMAGE_URL)?.run {
             if (this.isNotEmpty()) {
-                image_view.visibility = View.VISIBLE
-                image_view.setImage(this)
+                imageView?.visibility = View.VISIBLE
+                imageView?.setImage(this)
             }
         }
 
-        text_header.text = conversationPractiseModel.title
-        text_sub_header.text = conversationPractiseModel.subTitle
-        recycler_view.adapter =
+        view?.findViewById<AppCompatTextView>(R.id.text_header)?.text = conversationPractiseModel.title
+        view?.findViewById<AppCompatTextView>(R.id.text_sub_header)?.text = conversationPractiseModel.subTitle
+        view?.findViewById<RecyclerView>(R.id.recycler_view)?.adapter =
             ConversationPracticeTimelineAdapter(PractiseFlowOptionModel.getPractiseFlowDetails())
-        continue_btn.setOnClickListener {
+        view?.findViewById<MaterialTextView>(R.id.continue_btn)?.setOnClickListener {
             dismissAllowingStateLoss()
         }
     }
