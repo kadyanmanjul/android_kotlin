@@ -134,9 +134,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, ScheduleNotification::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class,BranchLog::class
+        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class
     ],
-    version = 59,
+    version = 58,
     exportSchema = true
 )
 @TypeConverters(
@@ -242,9 +242,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_54_55,
                                 MIGRATION_55_56,
                                 MIGRATION_56_57,
-                                MIGRATION_57_58,
-                                MIGRATION_58_59
-                            )
+                                MIGRATION_57_58)
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
@@ -724,11 +722,6 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `speaking_tooltip_text` TEXT")
             }
         }
-        private val MIGRATION_58_59: Migration = object : Migration(58, 59) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `branch_log_table` (`amount` REAL NOT NULL, `course_name` TEXT NOT NULL,`test_id` TEXT NOT NULL,`order_id` TEXT NOT NULL, `is_sync` INTEGER NOT NULL, PRIMARY KEY(`order_id`))")
-            }
-        }
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
@@ -778,8 +771,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun broadcastDao(): BroadCastDao
     abstract fun paymentDao(): PaymentDao
     abstract fun scheduleNotificationDao(): ScheduleNotificationDao
-
-    abstract fun branchLogDao() :BranchLogDao
 }
 
 class MessageTypeConverters {

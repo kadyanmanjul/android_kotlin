@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.repository.local.AppDatabaseConsistents
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.model.FirestoreNewNotificationObject
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -109,6 +110,9 @@ class AppObjectController {
 
         @JvmStatic
         val appDatabase: AppDatabase by lazy { AppDatabase.getDatabase(joshApplication)!! }
+
+        @JvmStatic
+        val appDatabaseConsistents: AppDatabaseConsistents by lazy { AppDatabaseConsistents.getDatabase(joshApplication) }
 
         val gsonMapper: Gson by lazy {
             GsonBuilder()
