@@ -186,7 +186,7 @@ object MarketingAnalytics {
             bundle.putDouble(FirebaseAnalytics.Param.VALUE, amount.toDouble())
             bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, juspayPaymentId)
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
-            bundle.putString(ParamKeys.DEVICE_ID.name , Utils.getDeviceId())
+            bundle.putString(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
             FirebaseAnalytics.getInstance(AppObjectController.joshApplication)
                 .logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
@@ -203,9 +203,8 @@ object MarketingAnalytics {
             extras["device_id"] = Utils.getDeviceId()
             extras["guest_mentor_id"] = guestMentorId
             val branchResponse = BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
-            //if (branchResponse) {
-            Log.e("sagar", "addLiveDataObservable4:$branchResponse" )
-               val response =  AppObjectController.appDatabase.branchLogDao().inertBranchEntry(
+            if (!branchResponse) {
+                AppObjectController.appDatabaseConsistents.branchLogDao().inertBranchEntry(
                     BranchLog(
                         amount.toDouble(),
                         courseName,
@@ -214,10 +213,9 @@ object MarketingAnalytics {
                         0
                     )
                 )
-                Log.e("sagar", "coursePurchased: $response")
             }
-            //}
         }
+    }
 
     fun logAchievementLevelEvent(achievementLevel: Int) {
         JoshSkillExecutors.BOUNDED.submit {

@@ -27,11 +27,8 @@ interface BranchLogDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun inertBranchEntry(obj: BranchLog): Long
 
-//    @Query(value = "UPDATE branch_log_table SET is_sync = 1 where order_id= :id ")
-//    suspend fun updateBranchStatus(id: String)
-//
-//    @Query("DELETE from branch_log_table where order_id = :id")
-//    suspend fun deleteBranchEntry(id:String) : Int
+    @Query("DELETE from branch_log_table where order_id = :id")
+    suspend fun deleteBranchEntry(id:String) : Int
 
     @Query(value = "SELECT * FROM branch_log_table where is_sync = 0")
     suspend fun getBranchLogData() : BranchLog?
