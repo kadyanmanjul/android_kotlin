@@ -4,8 +4,7 @@ package com.joshtalks.joshskills.common.repository.server.assessment
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.repository.server.PurchaseDataResponse
-import com.joshtalks.joshskills.common.repository.server.course_detail.VideoModel
+import com.joshtalks.joshskills.common.repository.local.model.explore.VideoModel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -44,7 +43,7 @@ data class OnlineTestResponse(
     @SerializedName("total_answered")
     var totalAnswered: Int? = null,
 
-) : Parcelable
+    ) : Parcelable
 
 enum class OnlineTestType(val status: String) {
 

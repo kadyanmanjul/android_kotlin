@@ -53,8 +53,6 @@ import com.joshtalks.joshskills.common.repository.server.SearchLocality
 import com.joshtalks.joshskills.common.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.common.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
-import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.common.ui.extra.SignUpPermissionDialogFragment
 import com.joshtalks.joshskills.common.ui.help.HelpActivity
@@ -220,12 +218,12 @@ abstract class BaseActivity :
     fun getActivityType(act: Activity): ActivityEnum {
         return when (act) {
             is ConversationActivity -> ActivityEnum.Conversation
-            is CourseExploreActivity -> ActivityEnum.CourseExplore
+//            is CourseExploreActivity -> ActivityEnum.CourseExplore
             is HelpActivity -> ActivityEnum.Help
             is InboxActivity -> ActivityEnum.Inbox
             is LauncherActivity -> ActivityEnum.Launcher
-            is CourseDetailsActivity -> ActivityEnum.CourseDetails
-            //is com.joshtalks.joshskills.auth.freetrail.SignUpActivity -> ActivityEnum.Signup
+//            is CourseDetailsActivity -> ActivityEnum.CourseDetails
+            //is SignUpActivity -> ActivityEnum.Signup
             else -> ActivityEnum.Empty
         }
     }
@@ -537,10 +535,11 @@ abstract class BaseActivity :
                     this == getString(R.string.landing_page_dlink) -> {
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
-                            CourseDetailsActivity.startCourseDetailsActivity(
-                                this@BaseActivity, id.toInt(),
-                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                            )
+                            //TODO: Add navigator -- Sukesh
+//                            CourseDetailsActivity.startCourseDetailsActivity(
+//                                this@BaseActivity, id.toInt(),
+//                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+//                            )
                         }
                     }
                     this == getString(R.string.payment_summary_dlink) -> {
@@ -566,11 +565,14 @@ abstract class BaseActivity :
                         }
                     }
                     this == getString(R.string.course_explore_dlink) -> {
-                        CourseExploreActivity.startCourseExploreActivity(
-                            this@BaseActivity,
-                            COURSE_EXPLORER_CODE,
-                            null,
-                            state = ActivityEnum.DeepLink
+                        //TODO: added navigator, check navigator reference -- Sukesh
+                        AppObjectController.navigator.with(this@BaseActivity).navigate(
+                            object : CourseExploreContract {
+                                override val requestCode = COURSE_EXPLORER_CODE
+                                override val list = null
+                                override val state = ActivityEnum.DeepLink
+                                override val navigator = AppObjectController.navigator
+                            }
                         )
                     }
                     else -> {

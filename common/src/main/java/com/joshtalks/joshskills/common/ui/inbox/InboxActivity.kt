@@ -43,7 +43,6 @@ import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
-import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
 //import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
@@ -632,10 +631,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun openCourseExplorer() {
-        CourseExploreActivity.startCourseExploreActivity(
-            this,
-            COURSE_EXPLORER_CODE,
-            courseListSet, state = ActivityEnum.Inbox
+        navigator.with(this).navigate(
+            object : CourseExploreContract {
+                override val requestCode = COURSE_EXPLORER_CODE
+                override val list = courseListSet
+                override val state = ActivityEnum.Inbox
+                override val navigator = this@InboxActivity.navigator
+
+            }
         )
     }
 

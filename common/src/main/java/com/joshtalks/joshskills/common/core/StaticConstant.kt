@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.common.core
 
-
 enum class SignUpStepStatus {
     SignUpStepFirst, SignUpStepSecond, SignUpCompleted,
     RequestForOTP, ReGeneratedOTP, ProfileCompleted, ProfilePicUploaded, StartAfterPicUploaded, ProfilePicSkipped,
@@ -245,8 +244,8 @@ class FirebaseRemoteConfigKey {
         const val FREE_TRIAL_DIALOG_BTN_TXT = "FREE_TRIAL_DIALOG_BTN_TXT"
         const val FREE_TRIAL_DIALOG_TXT = "FREE_TRIAL_DIALOG_TXT"
         const val SHOW_LOCAL_NOTIFICATIONS = "SHOW_LOCAL_NOTIFICATIONS"
+        const val IS_MISSED_NOTIFICATION_ACTIVE = "IS_MISSED_NOTIFICATION_ACTIVE"
 
-        //
         //const val IS_CONVERSATION_ROOM_ACTIVE = "IS_CONVERSATION_ROOM_ACTIVE"
         const val GRAMMAR_START_BUTTON_TEXT = "GRAMMAR_START_BUTTON_TEXT_"
         const val GRAMMAR_CHECK_BUTTON_TEXT = "GRAMMAR_CHECK_BUTTON_TEXT_"
@@ -275,6 +274,7 @@ class FirebaseRemoteConfigKey {
         const val NOTIFICATION_API_TIME = "NOTIFICATION_API_TIME"
         const val CALL_RATING = "CALL_RATING"
         const val PURCHASE_POPUP = "PURCHASE_POPUP"
+        const val SCRATCH_POPUP = "SCRATCH_POPUP"
         const val DISCONNECT_DIALOG_TITLE = "VOIP_DISCONNECT_DIALOG_TITLE_"
         const val DISCONNECT_DIALOG_TEXT = "VOIP_DISCONNECT_DIALOG_MESSAGE_"
         const val SEARCHING_SCREEN_RULES = "VOIP_SEARCHING_SCREEN_RULE_"
@@ -318,6 +318,7 @@ class FirebaseRemoteConfigKey {
         const val COUPON_UNLOCK_LESSON_COUNT = "COUPON_UNLOCK_LESSON_COUNT"
         const val LESSON_COMPLETE_COUPON_DISCOUNT = "LESSON_COMPLETE_COUPON_DISCOUNT"
         const val AVAIL_COUPON_BANNER_TEXT = "AVAIL_COUPON_BANNER_TEXT"
+        const val TRACK_JUSPAY_LOG = "TRACK_JUSPAY_LOG"
 
         // Referral
         const val REFERRAL_SHARE_TEXT_SHARABLE_VIDEO = "REFERRAL_SHARE_TEXT_SHARABLE_VIDEO"

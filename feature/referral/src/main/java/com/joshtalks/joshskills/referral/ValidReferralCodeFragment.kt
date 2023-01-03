@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.referral
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -15,7 +14,6 @@ import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.referral.databinding.FragmentValidReferralCodeBinding
 import com.joshtalks.joshskills.common.repository.server.ReferralCouponDetailResponse
-import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -66,9 +64,10 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
                 .addBasicParam()
                 .addUserDetails()
                 .push()
-            startActivity(Intent(requireActivity(), CourseExploreActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            })
+            //TODO: Add navigator -- Sukesh
+//            startActivity(Intent(requireActivity(), CourseExploreActivity::class.java).apply {
+//                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+//            })
         }
     }
 

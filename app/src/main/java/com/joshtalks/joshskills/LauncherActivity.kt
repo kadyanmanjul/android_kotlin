@@ -31,9 +31,9 @@ import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.ui.voip.CallingServiceReceiver
 import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
-import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.util.*
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
+import com.joshtalks.joshskills.explore.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.navigator.JoshNavigator
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch

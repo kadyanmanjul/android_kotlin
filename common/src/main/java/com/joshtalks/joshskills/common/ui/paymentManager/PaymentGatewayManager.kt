@@ -160,4 +160,5 @@ interface PaymentGatewayListener {
     fun onProcessStart()
     fun onProcessStop()
     fun onPaymentProcessing(orderId: String, status:String)
+    fun onEvent(data: JSONObject?)
 }

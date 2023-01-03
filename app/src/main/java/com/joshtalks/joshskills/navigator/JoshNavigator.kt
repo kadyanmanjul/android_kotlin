@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.auth.freetrail.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.auth.freetrail.SignUpActivity
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.expertcall.CallWithExpertActivity
+import com.joshtalks.joshskills.explore.CourseExploreActivity
 import com.joshtalks.joshskills.groups.JoshGroupActivity
 import com.joshtalks.joshskills.settings.SettingsActivity
 
@@ -21,6 +22,7 @@ object JoshNavigator : Navigator {
                     is LeaderboardContract -> {}
                     is OnBoardingContract -> FreeTrialOnBoardActivity.openFreeTrialOnBoardActivity(contract, context)
                     is SignUpContract -> SignUpActivity.openSignUpActivity(contract, context)
+                    is CourseExploreContract -> CourseExploreActivity.openCourseExploreActivity(contract, context)
                 }
             }
         }

@@ -1067,6 +1067,10 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         }
     }
 
+    override fun onEvent(data: JSONObject?) {
+        // TODO: add the new code here -- Sukesh
+    }
+
     private fun showPendingDialog() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)

@@ -1,0 +1,29 @@
+package com.joshtalks.joshskills.explore.course_details.models
+
+
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class PaymentData(
+
+    @SerializedName("actual_amount")
+    val actualAmount: String,
+
+    @SerializedName("discounted_amount")
+    val discountedAmount: String,
+
+    @SerializedName("discount_text")
+    val discountText: String?,
+
+    @SerializedName("bb_tip_text")
+    val bbTipText: String?,
+
+    @SerializedName("encrypted_text")
+    val encryptedText: String?,
+
+    @SerializedName("before_discounted_amount")
+    val beforeDiscountAmt: String?
+
+) : Parcelable

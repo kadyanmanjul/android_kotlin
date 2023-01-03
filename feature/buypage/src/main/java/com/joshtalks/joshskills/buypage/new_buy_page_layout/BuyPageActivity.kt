@@ -48,8 +48,6 @@ import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotif
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.ui.assessment.view.Stub
-import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.common.ui.payment.PaymentFailedDialogNew
@@ -75,6 +73,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import org.json.JSONObject
 import java.math.BigDecimal
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
@@ -516,12 +515,13 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             binding.view9.visibility = View.GONE
         }
         binding.btnKnowMoreAboutCourse.setOnClickListener {
-            CourseDetailsActivity.startCourseDetailsActivity(
-                this,
-                testId.toInt(),
-                startedFrom = this@BuyPageActivity.javaClass.simpleName,
-                buySubscription = false
-            )
+            // TODO: Add navigator -- Sukesh
+//            CourseDetailsActivity.startCourseDetailsActivity(
+//                this,
+//                testId.toInt(),
+//                startedFrom = this@BuyPageActivity.javaClass.simpleName,
+//                buySubscription = false
+//            )
         }
     }
 
@@ -687,12 +687,15 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
 
     private fun openCourseExplorerActivity() {
         viewModel.saveImpressionForBuyPageLayout(OPEN_COURSE_EXPLORER_SCREEN)
-        CourseExploreActivity.startCourseExploreActivity(
-            this,
-            COURSE_EXPLORER_CODE,
-            null,
-            state = com.joshtalks.joshskills.common.core.BaseActivity.ActivityEnum.BuyPage,
-            isClickable = false
+        AppObjectController.navigator.with(this).navigate(
+            object : CourseExploreContract {
+                override val requestCode = COURSE_EXPLORER_CODE
+                override val list = null
+                override val state = BaseActivity.ActivityEnum.BuyPage
+                override val isClickable = false
+                override val navigator = AppObjectController.navigator
+
+            }
         )
     }
 
@@ -884,6 +887,10 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             replace(R.id.buy_page_parent_container, fragment, "Payment Processing")
             disallowAddToBackStack()
         }
+    }
+
+    override fun onEvent(data: JSONObject?) {
+        // TODO: Make according to new BuyPage -- Sukesh
     }
 
     private fun showPendingDialog() {

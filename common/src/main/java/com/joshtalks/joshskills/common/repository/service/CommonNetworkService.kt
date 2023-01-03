@@ -11,8 +11,6 @@ import com.joshtalks.joshskills.common.repository.server.certification_exam.*
 import com.joshtalks.joshskills.common.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.common.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.common.repository.server.conversation_practice.SubmittedConversationPractiseModel
-import com.joshtalks.joshskills.common.repository.server.course_detail.CourseDetailsResponseV2
-import com.joshtalks.joshskills.common.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
 import com.joshtalks.joshskills.common.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.common.repository.server.feedback.UserFeedbackRequest
 import com.joshtalks.joshskills.common.repository.server.onboarding.CourseEnrolledRequest
@@ -80,14 +78,6 @@ interface CommonNetworkService {
         @Path("id") id: String,
         @Body params: Map<String, String?>
     ): FAQ
-
-    @GET("$DIR/course/course_details/")
-    suspend fun getCourseDetails(
-        @QueryMap params: Map<String, String>
-    ): Response<CourseDetailsResponseV2>
-
-    @GET("$DIR/course/course_details_v2/")
-    suspend fun getDemoCourseDetails(): Response<DemoCourseDetailsResponse>
 
     @POST("$DIR/course/course_heading/")
     suspend fun getCourseEnrolledDetails(
@@ -240,9 +230,7 @@ interface CommonNetworkService {
     ): String
 
     @POST("$DIR/engage/user-activity/")
-    suspend fun engageUserSession(
-        @Body params: HashMap<String, List<AppUsageModel>>
-    ): Response<Void>
+    suspend fun engageUserSession(@Body params: HashMap<String, List<AppUsageModel>>): Response<Void>
 
     @POST("$DIR/engage/course-user-activity/")
     suspend fun engageCourseUsageSession(
@@ -303,6 +291,9 @@ interface CommonNetworkService {
     @POST("$DIR/impression/track_reading_practice_impression/")
     suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
 
+    @POST("$DIR/impression/track_audio_impression/")
+    suspend fun trackAudioImpression(@Body params: Map<String, String>): Response<Void>
+
     @GET("$DIR/course/show_popup/")
     suspend fun getCoursePopUpData(
         @Query("course_id") courseId: String,
@@ -334,5 +325,11 @@ interface CommonNetworkService {
 
     @POST("$DIR/micro_payment/user_wallet/")
     suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
+
+    @POST("$DIR/payment/branch_log/")
+    suspend fun savePaymentLog(@Body params: Map<String, Any>) :Response<Void>
+
+    @POST("$DIR/payment/juspay_log/")
+    suspend fun saveJuspayPaymentLog(@Body params: Map<String, Any>) :Response<Void>
 
 }

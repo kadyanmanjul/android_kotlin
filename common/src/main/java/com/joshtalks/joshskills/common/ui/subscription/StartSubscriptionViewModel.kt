@@ -24,17 +24,16 @@ class StartSubscriptionViewModel(application: Application) : AndroidViewModel(ap
 
     private suspend fun registerTestImpression(testId: String) {
         try {
-            val requestParams: HashMap<String, String> = HashMap()
-            requestParams["test_id"] = testId
-            requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
-            if (Mentor.getInstance().getId().isNotEmpty()) {
-                requestParams["mentor_id"] = Mentor.getInstance().getId()
-            }
-            val response =
-                AppObjectController.commonNetworkService.getCourseDetails(requestParams)
-            if (response.isSuccessful) {
-                return
-            }
+//            val requestParams: HashMap<String, String> = HashMap()
+//            requestParams["test_id"] = testId
+//            requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+//            if (Mentor.getInstance().getId().isNotEmpty()) {
+//                requestParams["mentor_id"] = Mentor.getInstance().getId()
+//            }
+//            val response = AppObjectController.commonNetworkService.getCourseDetails(requestParams)
+//            if (response.isSuccessful) {
+//                return
+//            }
 
         } catch (ignored: Throwable) {
             // Do Nothing

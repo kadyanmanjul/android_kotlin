@@ -11,7 +11,6 @@ import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
-import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.help.HelpActivity
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 //import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity

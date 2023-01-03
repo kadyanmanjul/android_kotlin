@@ -2,19 +2,20 @@ package com.joshtalks.joshskills.common.core
 
 import android.content.Context
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsItem
+import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import java.io.Serializable
 
 const val NAVIGATOR = "JOSH_NAVIGATOR"
 
 interface Contract {
-    val navigator : Navigator
+    val navigator: Navigator
 }
 
 interface SplashContract : Contract
 interface SettingsContract : Contract
 interface LeaderboardContract : Contract
 interface OnBoardingContract : Contract
-interface NotificationContract: Contract
+interface NotificationContract : Contract
 
 interface GroupsContract : Contract {
     val conversationId: String
@@ -40,8 +41,18 @@ interface SignUpContract : Contract {
         get() = false
 }
 
+interface CourseExploreContract : Contract {
+    val requestCode: Int
+    val list: MutableSet<InboxEntity>?
+    val clearBackStack: Boolean
+        get() = false
+    val state: BaseActivity.ActivityEnum
+    val isClickable: Boolean
+        get() = true
+}
+
 interface Navigator : Serializable {
-    fun with(context: Context) : Navigate
+    fun with(context: Context): Navigate
     interface Navigate {
         fun navigate(contract: Contract)
     }

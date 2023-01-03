@@ -12,6 +12,7 @@ include ':feature:userprofile'
 include ':feature:auth'
 include ':feature:referral'
 include ':feature:buypage'
+include ':feature:explore'
 
 include ':data:splash'
 

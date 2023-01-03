@@ -64,8 +64,8 @@ import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.common.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.common.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.common.repository.local.model.explore.VideoModel
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.common.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION

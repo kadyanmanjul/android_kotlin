@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name=".CourseExploreActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/AppNoBarTheme" />
+        <activity
+            android:name=".course_details.CourseDetailsActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".CourseExploreActivity"
+            android:theme="@style/AppNoBarTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CourseExploreActivity" />
+        </activity>
+    </application>
+</manifest>

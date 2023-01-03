@@ -21,7 +21,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.LauncherActivity
 import com.joshtalks.joshskills.auth.freetrail.FreeTrialOnBoardActivity
+import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.constants.SPEAKING_POSITION
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.COURSE_ID
@@ -37,20 +39,20 @@ import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.common.ui.chat.UPDATED_CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.common.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.common.ui.conversation_practice.PRACTISE_ID
-import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.common.ui.lesson.SPEAKING_POSITION
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.explore.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.groups.JoshGroupActivity
 import com.joshtalks.joshskills.groups.analytics.GroupAnalytics
 import com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity
+import com.joshtalks.joshskills.lesson.LessonActivity
+import com.joshtalks.joshskills.referral.ReferralActivity
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
@@ -328,12 +330,9 @@ class NotificationUtils(val context: Context) {
             NotificationAction.ACTION_OPEN_REFERRAL -> {
                 notificationChannelId = NotificationChannelData.REMINDERS.id
                 notificationChannelName = NotificationChannelData.REMINDERS.type
-
-                // TODO: Use Mavigator -- Sahil
-//                return Intent(context, com.joshtalks.joshskills.referral.ReferralActivity::class.java).apply {
-//                    flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-//                }
-                return null
+                return Intent(context, ReferralActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                }
             }
             NotificationAction.ACTION_DELETE_DATA -> {
                 if (User.getInstance().isVerified) {
@@ -396,9 +395,7 @@ class NotificationUtils(val context: Context) {
             NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
                 notificationChannelName = NotificationChannelData.MESSAGES_REQUESTS.type
-                //TODO: intent and remove null
-                return null
-                //return Intent(context, com.joshtalks.joshskills.fpp.SeeAllRequestsActivity::class.java)
+                return Intent(context, SeeAllRequestsActivity::class.java)
             }
             NotificationAction.ACTION_OPEN_FPP_LIST -> {
                 notificationChannelId = NotificationChannelData.MESSAGES_REQUESTS.id
@@ -582,8 +579,7 @@ class NotificationUtils(val context: Context) {
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
-            //TODO Here we have to use BuyPageActivity but it's in different module so inn future we will fix this
-            InboxActivity::class.java
+            BuyPageActivity::class.java
         }
     }
 

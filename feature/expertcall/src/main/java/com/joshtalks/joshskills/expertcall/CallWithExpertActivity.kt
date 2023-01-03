@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowInsetsController
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
@@ -16,6 +15,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
+import com.joshtalks.joshskills.common.base.BaseActivity
+import com.joshtalks.joshskills.common.constants.EXPERT_UPGRADE_CLICK
+import com.joshtalks.joshskills.common.constants.PAYMENT_FAILED
+import com.joshtalks.joshskills.common.constants.PAYMENT_PENDING
+import com.joshtalks.joshskills.common.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.expertcall.databinding.ActivityCallWithExpertBinding
@@ -32,9 +36,10 @@ import com.joshtalks.joshskills.common.ui.special_practice.utils.GATEWAY_INITIAL
 import com.joshtalks.joshskills.common.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import kotlinx.coroutines.sync.Mutex
+import org.json.JSONObject
 import java.math.BigDecimal
 
-class CallWithExpertActivity : com.joshtalks.joshskills.common.base.BaseActivity(), PaymentGatewayListener {
+class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
     private val backPressMutex = Mutex(false)
 
     private lateinit var binding: ActivityCallWithExpertBinding
@@ -80,13 +85,13 @@ class CallWithExpertActivity : com.joshtalks.joshskills.common.base.BaseActivity
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                com.joshtalks.joshskills.common.constants.PAYMENT_SUCCESS -> onPaymentSuccess()
-                com.joshtalks.joshskills.common.constants.PAYMENT_FAILED -> showPaymentFailedDialog()
-                com.joshtalks.joshskills.common.constants.PAYMENT_PENDING -> {
+                PAYMENT_SUCCESS -> onPaymentSuccess()
+                PAYMENT_FAILED -> showPaymentFailedDialog()
+                PAYMENT_PENDING -> {
                     navController.navigateUp()
                     navController.navigate(R.id.paymentPendingFragment)
                 }
-                com.joshtalks.joshskills.common.constants.EXPERT_UPGRADE_CLICK -> startPaymentForUpgrade(
+                EXPERT_UPGRADE_CLICK -> startPaymentForUpgrade(
                     amount = it.arg1,
                     testId = it.arg2
                 )
@@ -236,6 +241,10 @@ class CallWithExpertActivity : com.joshtalks.joshskills.common.base.BaseActivity
         val bundle = Bundle()
         bundle.putString("ORDER_ID", orderId)
         navController.navigate(R.id.paymentInProcessFragment, bundle)
+    }
+
+    override fun onEvent(data: JSONObject?) {
+        //TODO: Add new code -- Sukesh
     }
 
     companion object {

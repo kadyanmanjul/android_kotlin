@@ -17,13 +17,14 @@ import com.joshtalks.joshskills.common.core.custom_ui.exo_audio_player.AudioPlay
 import com.joshtalks.joshskills.common.repository.local.entity.AudioType
 import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.common.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.common.repository.local.model.explore.VideoModel
 import com.joshtalks.joshskills.common.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.common.repository.server.assessment.OnlineTestType
 import com.joshtalks.joshskills.common.repository.server.assessment.QuestionStatus
-import com.joshtalks.joshskills.common.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.common.ui.assessment.view.Stub
 import com.joshtalks.joshskills.common.ui.chat.vh.GrammarHeadingView
 import com.joshtalks.joshskills.lesson.LessonActivity
+import com.joshtalks.joshskills.lesson.LessonActivityListener
 import com.joshtalks.joshskills.lesson.R
 import com.joshtalks.joshskills.lesson.databinding.FragmentOnlineTestBinding
 import com.joshtalks.joshskills.lesson.online_test.vh.AtsChoiceView
@@ -55,7 +56,7 @@ class OnlineTestFragment :
     private var lessonId: Int = -1
     private var headingView: Stub<GrammarHeadingView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
-    private var lessonActivityListener: com.joshtalks.joshskills.lesson.LessonActivityListener? = null
+    private var lessonActivityListener: LessonActivityListener? = null
     private var testCompletedListener: TestCompletedListener? = null
     private var ruleAssessmentQuestionId: String? = null
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
@@ -73,7 +74,7 @@ class OnlineTestFragment :
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is com.joshtalks.joshskills.lesson.LessonActivityListener) {
+        if (context is LessonActivityListener) {
             lessonActivityListener = context
         }
         if (context is TestCompletedListener) {

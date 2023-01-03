@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/course_padding_dimen"
+        android:layout_marginVertical="@dimen/_20sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+            android:textColor="@color/text_default"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Reviews and rating" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/rating_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_8sdp"
+            app:layout_constraintTop_toBottomOf="@id/header">
+
+            <View
+                android:id="@+id/emptyView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.45" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/course_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="@dimen/_4sdp"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
+                android:textColor="@color/text_default"
+                app:drawableEndCompat="@drawable/ic_baseline_star_big"
+                app:drawableTint="@color/icon_default"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/emptyView"
+                app:layout_constraintStart_toStartOf="@+id/emptyView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.5"
+                tools:text="4.7" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/rating_rv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.55"
+                tools:itemCount="5"
+                tools:listitem="@layout/rating_item_layout" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="#F1F2F4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rating_container"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.45" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/review_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            tools:itemCount="3"
+            tools:listitem="@layout/user_review_item_layout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

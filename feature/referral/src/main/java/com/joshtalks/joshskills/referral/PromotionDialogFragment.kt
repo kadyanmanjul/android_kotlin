@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.referral.databinding.FragmentPrmotationDialogBinding
-import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -101,12 +100,13 @@ class PromotionDialogFragment : DialogFragment() {
 
     fun openPromotion() {
         courseId?.run {
-            CourseDetailsActivity.startCourseDetailsActivity(
-                activity=requireActivity(),
-                testId = this.toInt(),
-                startedFrom = "Promotion",
-                buySubscription = false
-            )
+            //TODO: Add navigator -- Sukesh
+//            CourseDetailsActivity.startCourseDetailsActivity(
+//                activity=requireActivity(),
+//                testId = this.toInt(),
+//                startedFrom = "Promotion",
+//                buySubscription = false
+//            )
             dismissAllowingStateLoss()
         }
     }

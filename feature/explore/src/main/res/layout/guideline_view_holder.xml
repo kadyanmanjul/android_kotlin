@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/course_padding_dimen"
+        android:layout_marginVertical="@dimen/_20sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+            android:textColor="@color/text_default"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Course Kaise Chalta Hai?" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:clipToPadding="false"
+            android:tabStripEnabled="false"
+            app:layout_constraintTop_toBottomOf="@+id/header"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/icon_default"
+            app:tabIndicatorFullWidth="false"
+            app:tabIndicatorHeight="@dimen/_1sdp"
+            app:tabMode="fixed"
+            app:tabPaddingEnd="0dp"
+            app:tabPaddingStart="0dp"
+            app:tabSelectedTextColor="@color/icon_default"
+            app:tabTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+            app:tabTextColor="@color/dark_grey" />
+
+        <com.joshtalks.joshskills.common.core.custom_ui.HeightWrappingViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_10sdp"
+            app:layout_constraintBottom_toTopOf="@+id/worm_dots_indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+
+        <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+            android:id="@+id/worm_dots_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dotsColor="@color/icon_default"
+            app:dotsCornerRadius="@dimen/_6sdp"
+            app:dotsSize="@dimen/_6sdp"
+            app:dotsSpacing="@dimen/_4sdp"
+            app:dotsStrokeColor="@color/icon_default"
+            app:dotsStrokeWidth="@dimen/_1sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
