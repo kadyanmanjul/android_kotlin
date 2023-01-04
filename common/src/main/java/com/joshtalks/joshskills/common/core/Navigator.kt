@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.common.core
 
 import android.content.Context
+import android.content.Intent
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsItem
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import java.io.Serializable
@@ -11,9 +12,10 @@ interface Contract {
     val navigator: Navigator
 }
 
+interface Connection
+
 interface SplashContract : Contract
 interface SettingsContract : Contract
-interface LeaderboardContract : Contract
 interface OnBoardingContract : Contract
 interface NotificationContract : Contract
 
@@ -51,9 +53,38 @@ interface CourseExploreContract : Contract {
         get() = true
 }
 
+interface CourseDetailContract : Contract {
+    val testId: Int
+    val whatsappUrl: String?
+        get() = null
+    val flowFrom: String
+    val isFromFreeTrial: Boolean
+        get() = false
+    val buySubscription: Boolean
+        get() = false
+}
+
+interface BuyPageContract : Contract {
+    val testId: String
+        get() = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+        )
+    val flowFrom: String
+    val coupon: String
+        get() = EMPTY
+}
+
+interface LeaderboardContract : Contract {
+    val courseId: String?
+    val conversationId: String
+}
+
+interface StickyServiceConnection: Connection
+
 interface Navigator : Serializable {
     fun with(context: Context): Navigate
     interface Navigate {
         fun navigate(contract: Contract)
+        fun serviceProvider(connection: Connection): Intent
     }
 }

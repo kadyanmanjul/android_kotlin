@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.explore.course_details
 
-import android.app.Activity
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -100,6 +99,7 @@ const val TRIAL_TEST_ID = 13
 class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, PaymentGatewayListener {
 
     private lateinit var binding: ActivityCourseDetailsBinding
+    private lateinit var navigator: Navigator
     private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var compositeDisposable = CompositeDisposable()
@@ -163,6 +163,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
 
+        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         if (intent.getStringExtra(STARTED_FROM) == "BuyPageActivity") {
             binding.priceContainer.visibility = GONE
             binding.txtExtraHint.visibility = GONE
@@ -488,13 +489,14 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe ({
-                    finish()
-                    startCourseDetailsActivity(
-                        this,
-                        10,
-                        startedFrom = this@CourseDetailsActivity.javaClass.simpleName,
-                        buySubscription = false
+                    AppObjectController.navigator.with(this).navigate(
+                        object : CourseDetailContract {
+                            override val testId = 10
+                            override val flowFrom = this@CourseDetailsActivity.javaClass.simpleName
+                            override val navigator = AppObjectController.navigator
+                        }
                     )
+                    finish()
                 },{
                     it.printStackTrace()
                 })
@@ -822,31 +824,25 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         const val BUY_SUBSCRIPTION = "buy_subscription"
         const val IS_COURSE_BOUGHT = "is_course_bought"
 
-        fun startCourseDetailsActivity(
-            activity: Activity,
-            testId: Int,
-            whatsappUrl: String? = null,
-            startedFrom: String = EMPTY,
-            flags: Array<Int> = arrayOf(),
-            isFromFreeTrial: Boolean = false,
-            buySubscription: Boolean = false
-        ) {
-            Intent(activity, CourseDetailsActivity::class.java).apply {
-                putExtra(KEY_TEST_ID, testId)
-                putExtra(IS_FROM_FREE_TRIAL, isFromFreeTrial)
-                putExtra(BUY_SUBSCRIPTION, buySubscription)
-                putExtra(IS_COURSE_BOUGHT, PrefManager.getBoolValue(IS_COURSE_BOUGHT))
-                if (whatsappUrl.isNullOrBlank().not()) {
-                    putExtra(WHATSAPP_URL, whatsappUrl)
+        fun openCourseDetailsActivity(contract: CourseDetailContract, context: Context) {
+            context.startActivity(
+                Intent(context, CourseDetailsActivity::class.java).apply {
+                    putExtra(KEY_TEST_ID, contract.testId)
+                    putExtra(IS_FROM_FREE_TRIAL, contract.isFromFreeTrial)
+                    putExtra(BUY_SUBSCRIPTION, contract.buySubscription)
+                    putExtra(IS_COURSE_BOUGHT, PrefManager.getBoolValue(IS_COURSE_BOUGHT))
+                    putExtra(NAVIGATOR, contract.navigator)
+                    if (contract.whatsappUrl.isNullOrBlank().not()) {
+                        putExtra(WHATSAPP_URL, contract.whatsappUrl)
+                    }
+                    if (contract.flowFrom.isNotBlank())
+                        putExtra(STARTED_FROM, contract.flowFrom)
+                    //TODO: Add flags
+//                    flags.forEach { flag ->
+//                        this.addFlags(flag)
+//                    }
                 }
-                if (startedFrom.isNotBlank())
-                    putExtra(STARTED_FROM, startedFrom)
-                flags.forEach { flag ->
-                    this.addFlags(flag)
-                }
-            }.run {
-                activity.startActivity(this)
-            }
+            )
         }
 
         fun getIntent(

@@ -748,14 +748,6 @@ class SignUpActivity : ThemedBaseActivity() {
     companion object {
         private const val START_FREE_TRIAL = "start_free_trial"
 
-        @JvmStatic
-        fun start(context: Context, flowFrom: String, shouldStartFreeTrial: Boolean = false) {
-            val starter = Intent(context, SignUpActivity::class.java)
-                .putExtra(FLOW_FROM, flowFrom)
-                .putExtra(START_FREE_TRIAL, shouldStartFreeTrial)
-            context.startActivity(starter)
-        }
-
         fun openSignUpActivity(contract: SignUpContract, context: Context) {
             context.startActivity(
                 Intent(context, SignUpActivity::class.java).apply {

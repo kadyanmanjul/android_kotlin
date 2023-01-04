@@ -17,6 +17,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <include
+                android:id="@+id/toolbar"
                 layout="@layout/inbox_toolbar"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
         </com.google.android.material.appbar.AppBarLayout>

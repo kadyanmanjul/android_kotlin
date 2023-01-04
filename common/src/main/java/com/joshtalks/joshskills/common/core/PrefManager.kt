@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.voip.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.common.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.common.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.AppDatabase
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
@@ -423,7 +422,9 @@ object PrefManager {
     fun logoutUser() {
         val appContext = AppObjectController.joshApplication
         WorkManagerAdmin.removeStickyNotificationWorker()
-        appContext.stopService(Intent(appContext, StickyNotificationService::class.java))
+        appContext.stopService(
+            AppObjectController.navigator.with(appContext).serviceProvider(object : StickyServiceConnection {})
+        )
         sendBroadcast()
         clearDatabase()
         Mentor.getInstance().resetMentor()
@@ -445,8 +446,7 @@ object PrefManager {
 
     private fun sendBroadcast() {
         val broadcastIntent = Intent().apply {
-            action =
-                CALLING_SERVICE_ACTION
+            action = CALLING_SERVICE_ACTION
             putExtra(
                 SERVICE_BROADCAST_KEY,
                 STOP_SERVICE

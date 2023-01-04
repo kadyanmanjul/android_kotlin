@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.leaderboard
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -36,8 +37,8 @@ import com.joshtalks.joshskills.common.core.videotranscoder.enforceSingleScrollD
 import com.joshtalks.joshskills.common.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenPreviousLeaderboard
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.leaderboard.search.LeaderBoardSearchActivity
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.leaderboard.constants.*
@@ -84,6 +85,16 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
             "",
             "बैच: यानी कि आपका समूह। वह सारे students जिन्होंने आपके साथ 10th April को यह कोर्स शुरू किया.",
         )
+
+        fun openLeaderboardActivity(contract: LeaderboardContract, context: Context) {
+            context.startActivity(
+                Intent(context, LeaderBoardViewPagerActivity::class.java).apply {
+                    putExtra(COURSE_ID, contract.courseId)
+                    putExtra(CONVERSATION_ID, contract.conversationId)
+                    putExtra(NAVIGATOR, contract.navigator)
+                }
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,9 +121,8 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         tooltipTextList[2] = getString(R.string.tooltip_leaderboard_sotm)
     }
 
-
     override fun getConversationId(): String? {
-        return intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     fun getCourseId(): String? {
@@ -164,7 +174,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                 LeaderBoardSearchActivity.getSearchActivityIntent(
                     this,
                     viewModel.leaderBoardData.value,
-                    intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
+                    intent.getStringExtra(CONVERSATION_ID),
                     isCourseBought,
                     currentMentor?.expiryDate?.time
                 )
@@ -391,27 +401,18 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
             this,
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             intervalType,
-            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+            conversationId = intent.getStringExtra(CONVERSATION_ID)
         )
     }
 
     fun showFreeTrialPaymentScreen() {
-//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            viewModel.leaderBoardData.value?.get("TODAY")?.current_mentor?.expiryDate?.time
-//        )
-        //TODO Create navigation to open BuyPageActivity
-//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            "LEADERBOARD_FT_ENDED_BTN"
-//        )
-        // finish()
+        AppObjectController.navigator.with(this).navigate(
+            object : BuyPageContract {
+                override val flowFrom = "LEADERBOARD_FT_ENDED_BTN"
+                override val navigator = AppObjectController.navigator
+            }
+        )
+        finish()
     }
 
     override fun onStop() {
@@ -975,7 +976,6 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         else -> ""
     }
 }
-
 
 
 data class Event(val eventType: Int, val type: String)

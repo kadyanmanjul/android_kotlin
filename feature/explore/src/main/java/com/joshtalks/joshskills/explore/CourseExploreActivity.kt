@@ -41,6 +41,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
     private val tabName: MutableList<String> = ArrayList()
+    private lateinit var navigator: Navigator
 
     companion object {
         fun openCourseExploreActivity(contract: CourseExploreContract, context: Context) {
@@ -51,6 +52,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             }
             intent.putExtra(IS_COURSES_CLICKABLE, contract.isClickable)
             intent.putExtra(PREV_ACTIVITY, contract.state.toString())
+            intent.putExtra(NAVIGATOR, contract.navigator)
             if (contract.clearBackStack) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -267,12 +269,13 @@ class CourseExploreActivity : CoreJoshActivity() {
                         ExploreCardType.NORMAL -> {
                             courseExploreModel.id?.let { testId ->
                                 saveImpressionForExplorePageLayout("VIEW_UPSELL_COURSE", testId.toString())
-                                CourseDetailsActivity.startCourseDetailsActivity(
-                                    activity = this,
-                                    testId = testId,
-                                    whatsappUrl = courseExploreModel.whatsappUrl,
-                                    startedFrom = this@CourseExploreActivity.javaClass.simpleName,
-                                    buySubscription = false
+                                AppObjectController.navigator.with(this).navigate(
+                                    object : CourseDetailContract {
+                                        override val testId = testId
+                                        override val whatsappUrl = courseExploreModel.whatsappUrl
+                                        override val flowFrom = this@CourseExploreActivity.javaClass.simpleName
+                                        override val navigator = AppObjectController.navigator
+                                    }
                                 )
                             }
                         }

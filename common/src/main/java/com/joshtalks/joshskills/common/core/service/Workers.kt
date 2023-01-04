@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.common.repository.local.model.*
 import com.joshtalks.joshskills.common.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.COUPON_CODE
 import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
@@ -63,7 +62,6 @@ val NOTIFICATION_TITLE_TEXT = arrayOf(
     "Apka aaj ka goal hai Lesson 1 complete karna"
 )
 
-private const val HAS_NOTIFICATION = "has_notification"
 private const val FCM_TOKEN = "fcmToken"
 private const val FCM_ACTIVE = "FCM_ACTIVE"
 
@@ -394,10 +392,10 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
             Result.failure()
         }
     }
-    //TODO Create navigation to open BuyPageActivity
 
+    //TODO Create navigation to open BuyPageActivity
 //    private fun getPendingIntent(code: String = EMPTY): PendingIntent {
-//        val notificationIntent = Intent(context, com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity::class.java).apply {
+//        val notificationIntent = Intent(context, BuyPageActivity::class.java).apply {
 //            putExtra(FLOW_FROM, "Sticky Notification")
 //            putExtra(COUPON_CODE, code)
 //            putExtra(HAS_NOTIFICATION, true)

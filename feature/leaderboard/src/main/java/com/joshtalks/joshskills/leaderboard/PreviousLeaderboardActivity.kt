@@ -10,17 +10,11 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.common.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.common.core.CoreJoshActivity
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.databinding.ActivityPreviousLeaderboardBinding
 import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
-//import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -36,12 +30,15 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
         ViewModelProvider(this)[PreviousLeaderBoardViewModel::class.java]
     }
 
+    private lateinit var navigator: Navigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_previous_leaderboard)
         binding.lifecycleOwner = this
         intervalType = intent.getStringExtra(INTERVAL_TYPE) ?: EMPTY
+        navigator = AppObjectController.navigator
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         addObserver()
         initRV()
         initToolbar()
@@ -219,21 +216,10 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
     }
 
     fun showFreeTrialPaymentScreen() {
-//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            viewModel.previousLeaderBoardData.value?.currentMentor?.expiryDate?.time
-//        )
-        //TODO Create navigation to open BuyPageActivity
-//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            "PREV_LEADERBOARD_FT_ENDED"
-//        )
+        navigator.with(this).navigate(object : BuyPageContract {
+            override val flowFrom = "PREV_LEADERBOARD_FT_ENDED"
+            override val navigator = this@PreviousLeaderboardActivity.navigator
+        })
         // finish()
     }
 

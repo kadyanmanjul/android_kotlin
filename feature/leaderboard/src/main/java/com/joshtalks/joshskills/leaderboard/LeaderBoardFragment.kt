@@ -27,7 +27,6 @@ import com.joshtalks.joshskills.leaderboard.constants.NEED_VIEW_BITMAP
 import com.joshtalks.joshskills.leaderboard.constants.PROFILE_ITEM_CLICKED
 import com.joshtalks.joshskills.leaderboard.constants.SCROLL_TO_TOP
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils.Companion.getOverlayItemFromView
-//import com.joshtalks.joshskills.common.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.leaderboard.databinding.FragmentLeaderboardViewPagerBinding
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.skydoves.balloon.*

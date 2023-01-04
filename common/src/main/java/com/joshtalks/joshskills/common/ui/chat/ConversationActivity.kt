@@ -40,6 +40,7 @@ import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.constants.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.voip.base.constants.STOP_SERVICE
@@ -79,7 +80,6 @@ import com.joshtalks.joshskills.common.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.common.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.common.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.common.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.common.ui.special_practice.utils.SPECIAL_ID
@@ -161,6 +161,7 @@ class ConversationActivity : BaseConversationActivity(),
     }
 
     private var buttonClicked = true
+    private lateinit var navigator: Navigator
 
     private val rotateOpenAnimation: Animation by lazy {
         AnimationUtils.loadAnimation(
@@ -246,6 +247,9 @@ class ConversationActivity : BaseConversationActivity(),
     }
 
     private fun initIntentObject() {
+        //TODO: get navigator from intent -- Sukesh
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
+        navigator = AppObjectController.navigator
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
             flowFrom = "Inbox journey"
             val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
@@ -264,8 +268,6 @@ class ConversationActivity : BaseConversationActivity(),
             }
             inboxEntity = temp
         }
-        // TODO: Variable added, to be removed -- Sukesh
-        val HAS_COURSE_REPORT = "has_course_report"
         if (intent.hasExtra(HAS_COURSE_REPORT)) {
             openCourseProgressListingScreen()
         }
@@ -470,16 +472,13 @@ class ConversationActivity : BaseConversationActivity(),
             supportFragmentManager
         )
     }
-    //TODO Create navigation to open BuyPageActivity
+
     fun showFreeTrialPaymentScreen() {
-//        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
-//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            "CONVERSATION_FT_ENDED_BTN"
-//        )
+        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
+        navigator.with(this).navigate(object : BuyPageContract {
+            override val flowFrom = "CONVERSATION_FT_ENDED_BTN"
+            override val navigator = this@ConversationActivity.navigator
+        })
     }
 
     private fun navigateToLoginActivity() {
@@ -865,16 +864,12 @@ class ConversationActivity : BaseConversationActivity(),
         }
     }
 
-    //TODO Create navigation to open BuyPageActivity
     fun moveToPaymentActivity(v: View) {
-//        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
-//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            "CONVERSATION_FT_TIMER"
-//        )
+        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
+        navigator.with(this).navigate(object : BuyPageContract {
+            override val flowFrom = "CONVERSATION_FT_TIMER"
+            override val navigator = this@ConversationActivity.navigator
+        })
     }
 
     private fun showNextTooltip() {

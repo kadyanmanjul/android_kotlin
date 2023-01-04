@@ -22,11 +22,9 @@ import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
@@ -40,7 +38,6 @@ import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.common.core.interfaces.OnOpenCourseListener
-import com.joshtalks.joshskills.common.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.databinding.ActivityInboxBinding
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
@@ -48,8 +45,7 @@ import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
+import com.joshtalks.joshskills.common.util.FileUploadService
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
@@ -92,12 +88,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
         viewModel.userOnlineStatusSync()
-        com.joshtalks.joshskills.common.util.FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
+        FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
-        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
+        //TODO: use this line and delete next line -- Sukesh
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
+        navigator = AppObjectController.navigator
         initView()
         addLiveDataObservable()
         addAfterTime()
@@ -137,7 +135,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun initView() {
         showProgressDialog("Please Wait")
-        findViewById<AppCompatTextView>(R.id.text_message_title).text = getString(R.string.inbox_header)
+        binding.toolbar.findViewById<AppCompatTextView>(R.id.text_message_title).text = getString(R.string.inbox_header)
         findViewById<AppCompatImageView>(R.id.iv_reminder).visibility = GONE
         findViewById<AppCompatImageView>(R.id.iv_setting).visibility = View.VISIBLE
 
@@ -149,15 +147,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
         }
 
-        //TODO Create navigation to open BuyPageActivity
         findViewById<MaterialTextView>(R.id.btn_upgrade).setOnClickListener {
-//            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//                this,
-//                AppObjectController.getFirebaseRemoteConfig().getString(
-//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                ),
-//                "INBOX_TOOLBAR_BTN"
-//            )
+            navigator.with(this).navigate(
+                object : BuyPageContract {
+                    override val flowFrom = "INBOX_TOOLBAR_BTN"
+                    override val navigator = this@InboxActivity.navigator
+                }
+            )
         }
 
         findMoreLayout = findViewById(R.id.parent_layout)
@@ -182,19 +178,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             openPopupMenu(it)
         }
 
-        findViewById<MaterialButton>(R.id.find_more).setOnClickListener {
+        findViewById<MaterialTextView>(R.id.find_more).setOnClickListener {
             courseExploreClick()
         }
-        //TODO Create navigation to open BuyPageActivity
-        findViewById<MaterialButton>(R.id.buy_english_course).setOnClickListener {
-//            MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
-//            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//                this,
-//                AppObjectController.getFirebaseRemoteConfig().getString(
-//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                ),
-//                "INBOX_BUY_COURSE_BTN"
-//            )
+
+        findViewById<MaterialTextView>(R.id.buy_english_course).setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
+            navigator.with(this).navigate(
+                object : BuyPageContract {
+                    override val flowFrom = "INBOX_BUY_COURSE_BTN"
+                    override val navigator = this@InboxActivity.navigator
+                }
+            )
         }
     }
 
@@ -258,7 +253,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 val offsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
                 val endTime = json.getLong("expiry_time") * 1000L
                 if (System.currentTimeMillis().plus(offsetTime) < endTime) {
-                    val serviceIntent = Intent(this, StickyNotificationService::class.java)
+                    val serviceIntent = navigator.with(this).serviceProvider(object : StickyServiceConnection {})
                     serviceIntent.putExtra("sticky_title", json.getString("sticky_title"))
                     serviceIntent.putExtra("sticky_body", json.getString("sticky_body"))
                     serviceIntent.putExtra("coupon_code", json.getString("coupon_code"))
@@ -361,7 +356,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 else -> {
                     paymentStatusView.visibility = GONE
                     findMoreLayout.visibility = VISIBLE
-
                 }
             }
             if (paymentStatusView.isVisible) {
@@ -415,15 +409,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         description.text = getString(descTextId)
         if (isTryAgainVisible && !isCapsuleCourseBought) {
             tryAgain.visibility = View.VISIBLE
-            //TODO Create navigation to open BuyPageActivity
             tryAgain.setOnClickListener {
-//                com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//                    this,
-//                    AppObjectController.getFirebaseRemoteConfig().getString(
-//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                    ),
-//                    "INBOX_TRY_AGAIN"
-//                )
+                navigator.with(this).navigate(
+                    object : BuyPageContract {
+                        override val flowFrom = "INBOX_TRY_AGAIN"
+                        override val navigator = this@InboxActivity.navigator
+                    }
+                )
             }
         } else {
             tryAgain.visibility = View.GONE

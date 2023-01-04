@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.lesson
 
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
@@ -146,6 +145,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
     private var openLessonCompletedScreen: Boolean = false
     private var isLessonPopUpFeatureOn: Boolean = false
 
+    private lateinit var navigator: Navigator
+
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -196,9 +197,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
         initToolbar()
         event.observe(this) {
             when (it.what) {
-                com.joshtalks.joshskills.common.constants.PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
-                com.joshtalks.joshskills.common.constants.OPEN_READING_SHARING_FULLSCREEN -> openReadingFullScreen()
-                com.joshtalks.joshskills.common.constants.CLOSE_FULL_READING_FRAGMENT -> closeReadingFullScreen()
+                PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
+                OPEN_READING_SHARING_FULLSCREEN -> openReadingFullScreen()
+                CLOSE_FULL_READING_FRAGMENT -> closeReadingFullScreen()
             }
         }
 
@@ -211,6 +212,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
         }
         viewModel.isFreeTrail = PrefManager.getBoolValue(IS_FREE_TRIAL)
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
+        navigator = AppObjectController.navigator
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
 
         if (intent.hasExtra(IS_LESSON_COMPLETED)) {
             isLesssonCompleted = intent.getBooleanExtra(IS_LESSON_COMPLETED, false)
@@ -284,12 +287,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                                     GoalKeys.L2_CLAIM_NOW_CLICKED.name,
                                     CampaignKeys.L2_LESSON_COMPLETE_COUPON.name
                                 )
-                                //TODO Create navigation to open BuyPageActivity
-//                                com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//                                    this@LessonActivity,
-//                                    testId.toString(),
-//                                    "offer coupon banner"
-//                                )
+                                openBuyPageActivity("OFFER_COUPON_BANNER", testId.toString())
                             }
                             if (it.not()) {
                                 buyCourseBannerLessonProgressBar.max = lessonCompletionCount
@@ -303,6 +301,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
             }
         }
 
+        //TODO: Uncomment this -- very IMP -- Sukesh
 //        if (viewModel.abTestRepository.isVariantActive(VariantKeys.OTHER_SCREENS_BANNER_ENABLED)) {
 //            lifecycleScope.launch {
 //                viewModel.getMentorCoupon(testId)?.let { coupon ->
@@ -326,17 +325,19 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
 //                                CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
 //                            )
 //                        }
-        //TODO Create navigation to open BuyPageActivity
-////                        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-////                            this@LessonActivity,
-////                            testId.toString(),
-////                            "l2 complete banner",
-////                            coupon.couponCode
-////                        )
+//                        openBuyPageActivity("l2 complete banner", testId.toString())
 //                    }
 //                }
 //            }
 //        }
+    }
+
+    private fun openBuyPageActivity(flowFrom: String, testId: String) {
+        navigator.with(this@LessonActivity).navigate(object : BuyPageContract {
+            override val flowFrom = flowFrom
+            override val testId = testId
+            override val navigator = this@LessonActivity.navigator
+        })
     }
 
     private fun initToolbar() {
@@ -348,20 +349,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
         binding.toolbarContainer.findViewById<MaterialTextView>(R.id.btn_upgrade).apply {
             isVisible = PrefManager.getBoolValue(IS_FREE_TRIAL)
             setOnClickListener {
-//                FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//                    this@LessonActivity,
-//                    AppObjectController.getFirebaseRemoteConfig().getString(
-//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                    )
-//                )
-                //TODO Create navigation to open BuyPageActivity
-//                com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//                    this@LessonActivity,
-//                    AppObjectController.getFirebaseRemoteConfig().getString(
-//                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                    ),
-//                    "LESSON_TOOLBAR_BTN"
-//                )
+                openBuyPageActivity(
+                    "LESSON_TOOLBAR_BTN", AppObjectController.getFirebaseRemoteConfig().getString(
+                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                    )
+                )
             }
         }
     }

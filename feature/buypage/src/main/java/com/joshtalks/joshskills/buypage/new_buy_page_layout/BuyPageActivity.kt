@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.buypage.new_buy_page_layout
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
@@ -43,7 +44,6 @@ import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.common.core.custom_ui.JoshRatingBar
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
-import com.joshtalks.joshskills.common.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.model.User
@@ -60,6 +60,7 @@ import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.BuyCourseFeatu
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.viewmodel.BuyPageViewModel
+import com.joshtalks.joshskills.common.constants.HAS_NOTIFICATION
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentManager
@@ -98,6 +99,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
     private var flowFrom: String = EMPTY
 
     private var countdownTimerBack: CountdownTimerBack? = null
+    private lateinit var navigator: Navigator
 
     private val binding by lazy<ActivityBuyPageBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_buy_page)
@@ -148,13 +150,12 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
 
     override fun getArguments() {
         super.getArguments()
-        // TODO: Variable added, to be removed -- Sukesh
-        val HAS_NOTIFICATION = "has_notification"
         if (intent.hasExtra(HAS_NOTIFICATION)) {
             flowFrom = "NOTIFICATION"
             if (!PrefManager.getBoolValue(IS_FREE_TRIAL))
                 finish()
         }
+        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
             Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
         } else {
@@ -515,13 +516,13 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             binding.view9.visibility = View.GONE
         }
         binding.btnKnowMoreAboutCourse.setOnClickListener {
-            // TODO: Add navigator -- Sukesh
-//            CourseDetailsActivity.startCourseDetailsActivity(
-//                this,
-//                testId.toInt(),
-//                startedFrom = this@BuyPageActivity.javaClass.simpleName,
-//                buySubscription = false
-//            )
+            navigator.with(this).navigate(
+                object : CourseDetailContract {
+                    override val testId = this@BuyPageActivity.testId.toInt()
+                    override val flowFrom = this@BuyPageActivity.javaClass.simpleName
+                    override val navigator = this@BuyPageActivity.navigator
+                }
+            )
         }
     }
 
@@ -641,20 +642,16 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
     }
 
     companion object {
-        fun startBuyPageActivity(
-            activity: Activity,
-            testId: String,
-            flowFrom: String,
-            coupon: String = EMPTY
-        ) {
-            Intent(activity, BuyPageActivity::class.java).apply {
-                putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
-                putExtra(FLOW_FROM, flowFrom)
-                putExtra(COUPON_CODE, coupon)
+        fun openBuyPageActivity(contract: BuyPageContract, context: Context) {
+            Intent(context, BuyPageActivity::class.java).apply {
+                putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, contract.testId)
+                putExtra(FLOW_FROM, contract.flowFrom)
+                putExtra(COUPON_CODE, contract.coupon)
+                putExtra(NAVIGATOR, contract.navigator)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
-                activity.startActivity(this)
-                activity.overridePendingTransition(
+                context.startActivity(this)
+                (context as? Activity)?.overridePendingTransition(
                     R.anim.slide_up_dialog,
                     R.anim.slide_out_top
                 )
@@ -937,7 +934,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             PrefManager.put(STICKY_COUPON_DATA, EMPTY)
             ClientNotificationUtils(applicationContext).removeAllScheduledNotification()
             WorkManagerAdmin.removeStickyNotificationWorker()
-            stopService(Intent(this, StickyNotificationService::class.java))
+            stopService(navigator.with(this).serviceProvider(object : StickyServiceConnection {}))
         } catch (e: Exception) {
             e.printStackTrace()
         }

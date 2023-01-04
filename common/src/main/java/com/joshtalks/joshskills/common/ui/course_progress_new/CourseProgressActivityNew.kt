@@ -29,8 +29,6 @@ import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.assessment.view.Stub
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.chat.vh.PdfCourseProgressView
-//import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +51,8 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
             lastAvailableLessonNo
         )
     }
+
+    private lateinit var navigator: Navigator
 
     var courseId: Int = -1
 
@@ -95,6 +95,8 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
         if (intent.hasExtra(COURSE_ID).not())
             finish()
 
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
+        navigator = AppObjectController.navigator
         courseId = intent.getIntExtra(COURSE_ID, 0)
         setupToolbar()
         setWhiteStatusBar()
@@ -327,31 +329,15 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
     }
 
     private fun showAlertMessage(title: String, message: String) {
-
-        com.joshtalks.joshskills.common.util.CustomDialog(
-            this,
-            title,
-            message
-        ).show()
+        CustomDialog(this, title, message).show()
     }
 
     fun showFreeTrialPaymentScreen() {
-//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            viewModel.progressLiveData.value?.expiryDate?.time
-//        )
-        //TODO Create navigation to open BuyPageActivity
-//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            "COURSE_OVERVIEW"
-//        )
-//        // finish()
+        navigator.with(this).navigate(object : BuyPageContract {
+            override val flowFrom = "COURSE_OVERVIEW"
+            override val navigator = this@CourseProgressActivityNew.navigator
+        })
+        // finish()
     }
 
     override fun onBackPressed() {

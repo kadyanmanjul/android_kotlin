@@ -36,6 +36,8 @@ import com.google.firebase.inappmessaging.model.InAppMessage
 import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.constants.HAS_NOTIFICATION
+import com.joshtalks.joshskills.common.constants.NOTIFICATION_ID
 import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.voip.base.constants.STOP_SERVICE
@@ -198,13 +200,13 @@ abstract class BaseActivity :
                 }
         )
     }
-    //TODO: fix this
+
     fun openLeaderBoard(conversationId: String, courseId: String?) {
-        /*val i = Intent(this, com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity::class.java).apply {
-            putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
-            putExtra(COURSE_ID, courseId)
-        }
-        startActivity(i)*/
+        AppObjectController.navigator.with(this).navigate(object : LeaderboardContract {
+            override val courseId = courseId
+            override val conversationId = conversationId
+            override val navigator = AppObjectController.navigator
+        })
     }
 
     fun openPointHistory(mentorId: String? = null, conversationId: String? = null) {
@@ -261,9 +263,6 @@ abstract class BaseActivity :
 
     protected fun processIntent(mIntent: Intent?) {
         try {
-            // TODO: Variables added, to be checked -- Sukesh
-            val HAS_NOTIFICATION = "has_notification"
-            val NOTIFICATION_ID = "notification_id"
             lifecycleScope.launch(Dispatchers.IO) {
                 if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) &&
                     mIntent.hasExtra(NOTIFICATION_ID) &&

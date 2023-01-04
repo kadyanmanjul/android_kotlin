@@ -45,7 +45,6 @@ import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.lesson.speaking.spf_models.BlockStatusModel
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
@@ -698,21 +697,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     fun startBuyPageActivity(v: View) {
         activity?.let { it1 ->
-//            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//                it1,
-//                AppObjectController.getFirebaseRemoteConfig().getString(
-//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                )
-//            )
-            //TODO Create navigation to open BuyPageActivity
-
-//            com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//                it1,
-//                AppObjectController.getFirebaseRemoteConfig().getString(
-//                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                ),
-//                "SPEAKING_BUY_TO_CALL"
-//            )
+            AppObjectController.navigator.with(it1).navigate(object : BuyPageContract {
+                override val flowFrom = "SPEAKING_BUY_TO_CALL"
+                override val navigator = AppObjectController.navigator
+            })
         }
     }
 
@@ -724,8 +712,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 //        }
 //        startActivity(intent)
 //        val broadcastIntent = Intent().apply {
-//            action =
-//                CALLING_SERVICE_ACTION
+//            action = CALLING_SERVICE_ACTION
 //            putExtra(
 //                SERVICE_BROADCAST_KEY,
 //                STOP_SERVICE

@@ -27,6 +27,7 @@
         android:name="android.permission.GET_ACCOUNTS"
         android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission
@@ -503,10 +504,6 @@
         <!--            android:name=".core.service.BackgroundService"-->
         <!--            android:enabled="true"-->
         <!--            android:exported="false" />-->
-        <service
-            android:name=".core.notification.StickyNotificationService"
-            android:enabled="true"
-            android:exported="false" />
     </application>
 
 </manifest>

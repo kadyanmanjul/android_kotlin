@@ -24,7 +24,6 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.databinding.ActivityPointsHistoryBinding
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.common.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.common.ui.points_history.viewmodel.PointsViewModel
@@ -40,6 +39,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
         ViewModelProvider(this)[PointsViewModel::class.java]
     }
     private lateinit var binding: ActivityPointsHistoryBinding
+    private lateinit var navigator: Navigator
     private var mentorId: String? = null
     private var isAnimationVisible = false
 
@@ -48,6 +48,9 @@ class PointsHistoryActivity : CoreJoshActivity() {
         if (intent.hasExtra(MENTOR_ID)) {
             mentorId = intent.getStringExtra(MENTOR_ID)
         }
+        //TODO: uncomment next line and delete this line
+        navigator = AppObjectController.navigator
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         binding = DataBindingUtil.setContentView(this, R.layout.activity_points_history)
         binding.lifecycleOwner = this
         binding.handler = this
@@ -259,22 +262,10 @@ class PointsHistoryActivity : CoreJoshActivity() {
     }
 
     fun showFreeTrialPaymentScreen() {
-//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            viewModel.pointsHistoryLiveData.value?.expiryDate?.time
-//        )
-        //TODO Create navigation to open BuyPageActivity
-
-//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            "POINTS_HISTORY"
-//        )
+        navigator.with(this).navigate(object : BuyPageContract {
+            override val flowFrom = "POINTS_HISTORY"
+            override val navigator = this@PointsHistoryActivity.navigator
+        })
         // finish()
     }
 

@@ -57,7 +57,6 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.AwardItemClicke
 import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.common.ui.senior_student.SeniorStudentActivity
@@ -116,10 +115,10 @@ class UserProfileActivity : CoreJoshActivity() {
     private var viewerReferral: Int? = 0
     private var helpCountControl: Boolean = false
 
+    private lateinit var navigator: Navigator
+
     private val viewModel by lazy {
-        ViewModelProvider(this).get(
-            UserProfileViewModel::class.java
-        )
+        ViewModelProvider(this).get(UserProfileViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,6 +126,8 @@ class UserProfileActivity : CoreJoshActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile)
         binding.lifecycleOwner = this
         binding.handler = this
+        navigator = AppObjectController.navigator
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         mentorId = intent.getStringExtra(KEY_MENTOR_ID) ?: EMPTY
         intervalType = intent.getStringExtra(INTERVAL_TYPE)
         previousPage = intent.getStringExtra(PREVIOUS_PAGE)
@@ -1521,21 +1522,10 @@ class UserProfileActivity : CoreJoshActivity() {
     }
 
     fun showFreeTrialPaymentScreen() {
-//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            viewModel.userData.value?.expiryDate?.time
-//        )
-        //TODO: Add navigator -- Sagar
-//        BuyPageActivity.startBuyPageActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            "USER_PROFILE"
-//        )
+        navigator.with(this).navigate(object : BuyPageContract {
+            override val flowFrom = "USER_PROFILE"
+            override val navigator = this@UserProfileActivity.navigator
+        })
         // finish()
     }
 

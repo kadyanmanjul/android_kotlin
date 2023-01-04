@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.joshtalks.joshskills">
+
     <application
         android:name="com.joshtalks.joshskills.JoshApplication"
         android:allowBackup="false"
@@ -21,56 +22,57 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
 
-    <activity
-        android:name=".LauncherActivity"
-        android:alwaysRetainTaskState="true"
-        android:exported="true"
-        android:launchMode="singleTop"
-        android:screenOrientation="portrait"
-        android:theme="@style/AppTheme.Splash"
-        tools:ignore="Instantiatable">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+        <activity
+            android:name=".LauncherActivity"
+            android:alwaysRetainTaskState="true"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Splash"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-            <data android:scheme="joshskills" />
-            <data android:scheme="joshskills://" />
-            <data
-                android:host="joshskills.test-app.link"
-                android:scheme="https" />
-            <data
-                android:host="joshskills-alternate.test-app.link"
-                android:scheme="https" />
-            <data
-                android:host="joshskills.app.link"
-                android:scheme="https" />
-            <data
-                android:host="joshskills-alternate.app.link"
-                android:scheme="https" />
-            <data
-                android:host="joshskills.app.com"
-                android:scheme="https" />
-            <data android:scheme="@string/fb_login_protocol_scheme" />
-        </intent-filter>
-        <intent-filter android:autoVerify="true">
-            <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="joshskills" />
+                <data android:scheme="joshskills://" />
+                <data
+                    android:host="joshskills.test-app.link"
+                    android:scheme="https" />
+                <data
+                    android:host="joshskills-alternate.test-app.link"
+                    android:scheme="https" />
+                <data
+                    android:host="joshskills.app.link"
+                    android:scheme="https" />
+                <data
+                    android:host="joshskills-alternate.app.link"
+                    android:scheme="https" />
+                <data
+                    android:host="joshskills.app.com"
+                    android:scheme="https" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
 
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-            <data
-                android:host="app.joshtalks.org"
-                android:pathPrefix="/sht/ag"
-                android:scheme="http" />
-        </intent-filter>
-    </activity>
+                <data
+                    android:host="app.joshtalks.org"
+                    android:pathPrefix="/sht/ag"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name=".notification.LocalNotificationAlarmReciever"
             android:enabled="true"
@@ -82,6 +84,7 @@
         <receiver
             android:name=".notification.DismissNotifEventReceiver"
             android:exported="false" />
+
         <service
             android:name=".notification.FirebaseNotificationService"
             android:directBootAware="true"
@@ -92,6 +95,10 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service
+            android:name="com.joshtalks.joshskills.notification.StickyNotificationService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

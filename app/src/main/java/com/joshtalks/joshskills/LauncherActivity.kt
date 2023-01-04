@@ -396,11 +396,12 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
 
     private fun navigateToCourseDetailsScreen() {
         try {
-            CourseDetailsActivity.startCourseDetailsActivity(
-                this,
-                testId!!.split("_")[1].toInt(),
-                this@LauncherActivity.javaClass.simpleName,
-                buySubscription = false
+            navigator.with(this).navigate(
+                object : CourseDetailContract {
+                    override val testId = this@LauncherActivity.testId!!.split("_")[1].toInt()
+                    override val flowFrom = this@LauncherActivity.javaClass.simpleName
+                    override val navigator = this@LauncherActivity.navigator
+                }
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

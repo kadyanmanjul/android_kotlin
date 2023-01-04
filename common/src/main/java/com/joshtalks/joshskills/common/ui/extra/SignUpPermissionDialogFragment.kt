@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.common.ui.extra
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.common.core.SignUpContract
 import com.joshtalks.joshskills.common.databinding.FragmentSignupPermissionDialogBinding
 
 class SignUpPermissionDialogFragment : BottomSheetDialogFragment() {
@@ -64,10 +64,12 @@ class SignUpPermissionDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun navigateToSignUpScreen() {
-//        val intent = Intent(requireActivity(), com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
-//            putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "inbox flow journey")
-//        }
-//        startActivity(intent)
-//        requireActivity().finish()
+        AppObjectController.navigator.with(requireActivity()).navigate(
+            object : SignUpContract {
+                override val flowFrom = "inbox flow journey"
+                override val navigator = AppObjectController.navigator
+            }
+        )
+        requireActivity().finish()
     }
 }

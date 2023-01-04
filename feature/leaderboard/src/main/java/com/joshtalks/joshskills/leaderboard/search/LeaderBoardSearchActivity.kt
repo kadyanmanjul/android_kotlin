@@ -11,22 +11,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
-import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.BaseActivity
-import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.track.COURSE_EXPIRY_TIME_IN_MS
 import com.joshtalks.joshskills.common.track.IS_COURSE_BOUGHT
-//import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.leaderboard.LeaderboardResponse
 import com.joshtalks.joshskills.leaderboard.R
 import com.joshtalks.joshskills.leaderboard.databinding.ActivityLeaderboardSearchBinding
 import timber.log.Timber
 import java.util.ArrayList
 import java.util.Locale
-
 
 class LeaderBoardSearchActivity : BaseActivity() {
     private lateinit var adapter: RecentSearchListAdapter
@@ -36,6 +31,8 @@ class LeaderBoardSearchActivity : BaseActivity() {
     private var map: HashMap<String, LeaderboardResponse> = hashMapOf()
     private var isFirstTime = true
 
+    private lateinit var navigator: Navigator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_leaderboard_search)
@@ -43,12 +40,13 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.handler = this
         try {
             if (intent.hasExtra("hash_map")) {
-                map =
-                    intent.getSerializableExtra("hash_map") as HashMap<String, LeaderboardResponse>
+                map = intent.getSerializableExtra("hash_map") as HashMap<String, LeaderboardResponse>
             }
         } catch (ex: Exception) {
             Timber.d(ex)
         }
+        navigator = AppObjectController.navigator
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         initViewPager()
         initRecentSearchRecyclerview()
         addObserver()
@@ -232,22 +230,10 @@ class LeaderBoardSearchActivity : BaseActivity() {
     }
 
     fun showFreeTrialPaymentScreen() {
-//        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            intent.getLongExtra(COURSE_EXPIRY_TIME_IN_MS, -1L)
-//        )
-        //TODO Create navigation to open BuyPageActivity
-//        com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity.startBuyPageActivity(
-//            this,
-//            AppObjectController.getFirebaseRemoteConfig().getString(
-//                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//            ),
-//            "SEARCH_LEADERBOARD_FT_ENDED"
-//        )
-        // finish()
+        navigator.with(this).navigate(object : BuyPageContract {
+            override val flowFrom = "SEARCH_LEADERBOARD_FT_ENDED"
+            override val navigator = this@LeaderBoardSearchActivity.navigator
+        })
     }
 
     fun clearSearchText() {
@@ -264,9 +250,9 @@ class LeaderBoardSearchActivity : BaseActivity() {
         ): Intent {
             return Intent(context, LeaderBoardSearchActivity::class.java).apply {
                 putExtra("hash_map", value)
-                putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
-                putExtra(com.joshtalks.joshskills.common.track.IS_COURSE_BOUGHT, isCourseBought)
-                putExtra(com.joshtalks.joshskills.common.track.COURSE_EXPIRY_TIME_IN_MS, expiredTime)
+                putExtra(CONVERSATION_ID, conversationId)
+                putExtra(IS_COURSE_BOUGHT, isCourseBought)
+                putExtra(COURSE_EXPIRY_TIME_IN_MS, expiredTime)
             }
         }
     }

@@ -757,7 +757,6 @@ class StatusCodeInterceptor : Interceptor {
                         WorkManagerAdmin.appInitWorker()
                         WorkManagerAdmin.appStartWorker()
                         if (AppObjectController.applicationDetails.isAppVisual()) {
-                            //TODO : Add navigator ---- Done (Sukesh)
                             AppObjectController.navigator.with(AppObjectController.joshApplication).navigate(
                                 object : SignUpContract {
                                     override val flowFrom = "StatusCodeInterceptor"

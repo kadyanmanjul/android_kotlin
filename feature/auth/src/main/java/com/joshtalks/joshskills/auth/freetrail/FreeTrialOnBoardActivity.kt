@@ -41,6 +41,7 @@ const val USER_CREATED_SUCCESSFULLY = 1002
 class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
+    private lateinit var navigator: Navigator
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this)[FreeTrialOnBoardViewModel::class.java]
     }
@@ -48,8 +49,6 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
     private var eftActive = false
     private var is100PointsActive = false
     private var increaseCoursePrice = false
-    val jsonData = JSONObject()
-    val parameters = HashMap<String, Any>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +59,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
+        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         initABTest()
         initOnboardingCourse()
         addViewModelObservers()
@@ -174,10 +174,12 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
                 .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
                 .push()
             viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER)
-            SignUpActivity.start(
-                this@FreeTrialOnBoardActivity,
-                "free trial onboarding journey",
-                shouldStartFreeTrial
+            navigator.with(this@FreeTrialOnBoardActivity).navigate(
+                object : SignUpContract {
+                    override val flowFrom = "free trial onboarding journey"
+                    override val navigator = this@FreeTrialOnBoardActivity.navigator
+                    override val shouldStartFreeTrial = shouldStartFreeTrial
+                }
             )
         }
     }
@@ -334,7 +336,6 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
     }
 
     companion object {
-        fun getIntent(context: Context) = Intent(context, FreeTrialOnBoardActivity::class.java)
         fun openFreeTrialOnBoardActivity(contract: OnBoardingContract, context: Context) {
             context.startActivity(
                 Intent(context, FreeTrialOnBoardActivity::class.java).apply {
