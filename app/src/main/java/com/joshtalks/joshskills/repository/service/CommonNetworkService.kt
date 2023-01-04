@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.callWithExpert.model.*
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
+import com.joshtalks.joshskills.ui.inbox.model.TransactionHistory
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.payment.model.VerifyPayment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.*
@@ -439,5 +440,8 @@ interface CommonNetworkService {
 
     @POST("$DIR/payment/juspay_log/")
     suspend fun saveJuspayPaymentLog(@Body params: Map<String, Any>): Response<Void>
+
+    @GET("$DIR/payment/payment_history")
+    suspend fun getTransactionHistory(): List<TransactionHistory>
 
 }

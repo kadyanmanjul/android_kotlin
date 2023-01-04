@@ -91,6 +91,7 @@
 
         <intent>
             <action android:name="android.intent.action.SEND" />
+
             <data android:mimeType="text/plain" />
         </intent>
     </queries>
@@ -453,6 +454,10 @@
         <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
         <activity android:name=".ui.invite_call.InviteFriendActivity" />
         <activity
+            android:name=".ui.inbox.TransactionActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
@@ -699,10 +704,10 @@
             android:exported="true"
             android:permission="com.joshtalks.permission.READ_WRITE_CONTENT" />
 
-        <!--        <service-->
-        <!--            android:name=".core.service.BackgroundService"-->
-        <!--            android:enabled="true"-->
-        <!--            android:exported="false" />-->
+        <!-- <service -->
+        <!-- android:name=".core.service.BackgroundService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="false" /> -->
         <service
             android:name=".core.notification.StickyNotificationService"
             android:enabled="true"
