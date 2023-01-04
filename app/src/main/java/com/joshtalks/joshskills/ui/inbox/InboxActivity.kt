@@ -237,6 +237,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         MixPanelTracker.publishEvent(MixPanelEvent.SETTINGS).push()
                         openSettingActivity()
                     }
+                    R.id.menu_transaction -> {
+                        TransactionActivity.startActivity(this@InboxActivity)
+                    }
                 }
                 return@setOnMenuItemClickListener false
             }

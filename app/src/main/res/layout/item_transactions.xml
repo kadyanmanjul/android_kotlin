@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/_23sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/_24sdp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/course_image"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:src="@drawable/josh_skill"
+            app:civ_border_color="@color/icon_disabled"
+            app:civ_border_width="@dimen/_2sdp"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/course_title"
+            style="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="Spoken English Course"
+            app:layout_constraintBottom_toBottomOf="@id/course_image"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@+id/course_image"
+            app:layout_constraintTop_toTopOf="@id/course_image" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/trans_time"
+            style="@style/TextAppearance.JoshTypography.CaptionRegular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:text="23 August 22, 05:35 PM"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/course_image" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/trans_amount"
+            style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:text="₹499"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintTop_toBottomOf="@id/course_image" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/trans_payment_id"
+            style="@style/TextAppearance.JoshTypography.TinyRegular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:text="ey452_scuahf_323_adjasd"
+            android:textColor="@color/text_subdued"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/trans_time" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_3sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@drawable/dotted_line"
+            android:backgroundTint="@color/icon_subdued"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/trans_payment_id" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/trans_status"
+            style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:text="Successful"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/view" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/trans_status_icon"
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:src="@drawable/ic_payment_small_tick"
+            app:layout_constraintStart_toEndOf="@+id/trans_status"
+            app:layout_constraintTop_toTopOf="@id/trans_status" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/trans_id"
+            style="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_15sdp"
+            android:drawableStart="@drawable/ic_content_copy"
+            android:drawablePadding="@dimen/_4sdp"
+            android:drawableTint="@color/primary_500"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            android:text="4560371"
+            android:textColor="@color/primary_500"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintTop_toBottomOf="@id/view" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_4sdp"
+            android:background="@color/surface_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -938,6 +938,7 @@
     <string name="please_select_amount_to_add" translatable="false">Please select amount to add</string>
     <string name="minimum_amount_required" translatable="false">Minimum amount required is INR 50</string>
     <string name="transaction_history" translatable="false">Transaction History</string>
+    <string name="purchase_history" translatable="false">Purchase History</string>
     <string name="recharge" translatable="false">Recharge</string>
     <string name="call_info_copied" translatable="false">call info copied</string>
     <string name="payment_logs" translatable="false">Payment Logs</string>
