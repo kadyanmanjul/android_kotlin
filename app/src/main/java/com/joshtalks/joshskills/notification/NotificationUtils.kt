@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.COURSE_ID
 import com.joshtalks.joshskills.common.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.common.core.notification.NotificationAnalytics
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.common.repository.local.entity.Question

@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.explore.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.groups.JoshGroupActivity
 import com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.lesson.LessonActivity
+import com.joshtalks.joshskills.notification.NotificationUtils
 import com.joshtalks.joshskills.notification.StickyNotificationService
 import com.joshtalks.joshskills.referral.ReferralActivity
 import com.joshtalks.joshskills.settings.SettingsActivity
@@ -34,6 +35,7 @@ object JoshNavigator : Navigator {
                     is BuyPageContract -> BuyPageActivity.openBuyPageActivity(contract, context)
                     is ReferralContract -> ReferralActivity.openReferralActivity(contract, context)
                     is LessonContract -> LessonActivity.openLessonActivity(contract, context)
+                    is NotificationContract -> NotificationUtils(context).sendNotification(contract.notificationObject)
                 }
             }
 

@@ -3,9 +3,7 @@ package com.joshtalks.joshskills.common.core.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.joshtalks.joshskills.common.core.FREE_TRIAL_TEST_ID
-import com.joshtalks.joshskills.common.core.PrefManager
-import com.joshtalks.joshskills.common.core.Utils
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.repository.local.AppDatabase
 import com.joshtalks.joshskills.common.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.common.repository.local.model.NotificationObject
@@ -46,19 +44,21 @@ class ScheduledNotificationReceiver : BroadcastReceiver() {
                 }
 
                 AppDatabase.getDatabase(context)?.scheduleNotificationDao()?.updateShown(notificationId)
-                //TODO : (IMP) uncomment code -- Sukesh
-//                NotificationUtils(it).sendNotification(NotificationObject().apply {
-//                    id = nc?.id
-//                    contentTitle = nc?.title
-//                    contentText = nc?.body
-//                    action = notificationAction
-//                    actionData = ncActionData
-//                })
-//                NotificationAnalytics().addAnalytics(
-//                    notificationId = nc?.id.toString(),
-//                    mEvent = NotificationAnalytics.Action.DISPLAYED,
-//                    channel = NotificationAnalytics.Channel.CLIENT
-//                )
+                AppObjectController.navigator.with(it).navigate(object : NotificationContract {
+                    override val navigator = AppObjectController.navigator
+                    override val notificationObject = NotificationObject().apply {
+                        id = nc?.id
+                        contentTitle = nc?.title
+                        contentText = nc?.body
+                        action = notificationAction
+                        actionData = ncActionData
+                    }
+                })
+                NotificationAnalytics().addAnalytics(
+                    notificationId = nc?.id.toString(),
+                    mEvent = NotificationAnalytics.Action.DISPLAYED,
+                    channel = NotificationAnalytics.Channel.CLIENT
+                )
             }
         }
     }

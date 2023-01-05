@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
+import com.joshtalks.joshskills.common.core.notification.NotificationAnalytics
 import com.joshtalks.joshskills.common.repository.local.AppDatabase
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.NotificationChannelData
@@ -119,15 +120,17 @@ class BackgroundService : Service() {
                         nc.contentTitle = item.title
                         nc.contentText = item.body
 
-                        //TODO: Fix the code here -- Sukesh
-//                        val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
-//                            notificationId = nc.id.toString(),
-//                            mEvent = NotificationAnalytics.Action.RECEIVED,
-//                            channel = NotificationAnalytics.Channel.API
-//                        )
-//                        if (isFirstTimeNotification) {
-//                            NotificationUtils(this@BackgroundService).sendNotification(nc)
-//                        }
+                        val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                            notificationId = nc.id.toString(),
+                            mEvent = NotificationAnalytics.Action.RECEIVED,
+                            channel = NotificationAnalytics.Channel.API
+                        )
+                        if (isFirstTimeNotification) {
+                            AppObjectController.navigator.with(this@BackgroundService).navigate(object : NotificationContract {
+                                override val navigator = AppObjectController.navigator
+                                override val notificationObject = nc
+                            })
+                        }
                     }
                 }
             } catch (e: Exception) {

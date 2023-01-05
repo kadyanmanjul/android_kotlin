@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.common.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.common.core.firestore.FirestoreNotificationDB
 import com.joshtalks.joshskills.common.core.firestore.NotificationListener
 import com.joshtalks.joshskills.common.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.common.core.notification.NotificationAnalytics
 import com.joshtalks.joshskills.common.core.service.DownloadUtils
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.core.service.video_download.DownloadTracker
@@ -40,6 +41,7 @@ import com.joshtalks.joshskills.common.repository.local.AppDatabase
 import com.joshtalks.joshskills.common.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.common.repository.local.model.FirestoreNewNotificationObject
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
+import com.joshtalks.joshskills.common.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.common.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.common.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.common.repository.service.MediaDUNetworkService
@@ -394,21 +396,22 @@ class AppObjectController {
                         NotificationListener {
                         override fun onReceived(fNotification: FirestoreNewNotificationObject) {
                             CoroutineScope(Dispatchers.IO).launch {
-                                //TODO: **uncomment this code (IMP) -- Sukesh
-//                                val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
-//                                    notificationId = fNotification.id.toString(),
-//                                    mEvent = NotificationAnalytics.Action.RECEIVED,
-//                                    channel = NotificationAnalytics.Channel.FIRESTORE
-//                                )
-//                                if (isFirstTimeNotification) {
-//                                    try {
-                                        //TODO : have to fix this part -- Sukesh
-//                                        val nc = fNotification.toNotificationObject(fNotification.id.toString())
-//                                        NotificationUtils(joshApplication).sendNotification(nc)
-//                                    } catch (ex: java.lang.Exception) {
-//                                        ex.printStackTrace()
-//                                    }
-//                                }
+                                val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                                    notificationId = fNotification.id.toString(),
+                                    mEvent = NotificationAnalytics.Action.RECEIVED,
+                                    channel = NotificationAnalytics.Channel.FIRESTORE
+                                )
+                                if (isFirstTimeNotification) {
+                                    try {
+                                        val nc = fNotification.toNotificationObject(fNotification.id.toString())
+                                        navigator.with(joshApplication).navigate(object : NotificationContract {
+                                            override val navigator = this@Companion.navigator
+                                            override val notificationObject = nc
+                                        })
+                                    } catch (ex: java.lang.Exception) {
+                                        ex.printStackTrace()
+                                    }
+                                }
                             }
                         }
                     })

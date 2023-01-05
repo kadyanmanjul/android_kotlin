@@ -24,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.*
+import com.joshtalks.joshskills.common.core.notification.NotificationAnalytics
 import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.repository.local.entity.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.common.repository.local.eventbus.DBInsertion
@@ -289,9 +290,8 @@ class BackgroundNotificationWorker(val context: Context, workerParams: WorkerPar
         return try {
             buildNotification()
             com.joshtalks.joshskills.common.util.ReminderUtil(context).setAlarmNotificationWorker()
-            //TODO: Uncomment code (IMP) -- Sukesh
-//            NotificationAnalytics().fetchMissedNotification(context)
-//            NotificationAnalytics().pushToServer()
+            NotificationAnalytics().fetchMissedNotification(context)
+            NotificationAnalytics().pushToServer()
             removeNotification()
             Result.success()
         } catch (e: Exception) {
@@ -842,8 +842,7 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
 
     override suspend fun doWork(): Result {
         try {
-            //TODO: (IMP) Uncomment code -- Sukesh
-//            NotificationAnalytics().fetchMissedNotification(context)
+            NotificationAnalytics().fetchMissedNotification(context)
             if (shouldFetchClientData()) {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
                     PrefManager.getStringValue(
@@ -878,8 +877,7 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
                     PrefManager.put(NOTIFICATION_LAST_TIME_STATUS, System.currentTimeMillis())
                 }
             }
-            //TODO: (IMP) uncomment code -- Sukesh
-            when(true/*NotificationAnalytics().pushToServer()*/) {
+            when(NotificationAnalytics().pushToServer()) {
                 true -> Result.success()
                 false -> Result.failure()
             }
@@ -922,7 +920,6 @@ class FakeCallNotificationWorker(
     override suspend fun doWork(): Result {
         try {
             //TODO uncomment this code when we can access BuyPageActivity
-
 //            if (PrefManager.getBoolValue(IS_COURSE_BOUGHT).not() &&
 //                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) != 0L &&
 //                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) < System.currentTimeMillis() &&
@@ -932,9 +929,12 @@ class FakeCallNotificationWorker(
 //                try {
 //                    val resp = AppObjectController.p2pNetworkService.getFakeCall()
 //                    val nc = resp.toNotificationObject(null)
-//                    //TODO : (IMP) Uncomment code -- Sukesh
-////                    NotificationUtils(context).sendNotification(nc)
-//                }catch (ex:Exception){}
+//                    AppObjectController.navigator.with(context).navigate(object : NotificationContract {
+//                        override val navigator = AppObjectController.navigator
+//                        override val notificationObject = nc
+//                    })
+//                } catch (ex: Exception) {
+//                }
 //            }
         } catch (ex: Throwable) {
             ex.printStackTrace()

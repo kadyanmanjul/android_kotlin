@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.common.core.notification.NotificationAnalytics
 import com.joshtalks.joshskills.common.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.NotificationObject

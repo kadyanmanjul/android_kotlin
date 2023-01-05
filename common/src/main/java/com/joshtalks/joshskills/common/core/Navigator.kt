@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsItem
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.common.repository.local.model.NotificationObject
 import java.io.Serializable
 
 const val NAVIGATOR = "JOSH_NAVIGATOR"
@@ -19,7 +20,10 @@ interface Connection
 interface SplashContract : Contract
 interface SettingsContract : Contract
 interface OnBoardingContract : Contract
-interface NotificationContract : Contract
+
+interface NotificationContract : Contract {
+    val notificationObject: NotificationObject
+}
 
 interface GroupsContract : Contract {
     val conversationId: String

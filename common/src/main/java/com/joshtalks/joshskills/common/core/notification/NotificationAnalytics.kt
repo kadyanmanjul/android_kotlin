@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.notification
+package com.joshtalks.joshskills.common.core.notification
 
 import android.content.Context
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -127,7 +127,10 @@ class NotificationAnalytics {
                         channel = Channel.API
                     )
                     if (isFirstTimeNotification)
-                        NotificationUtils(context).sendNotification(nc)
+                        AppObjectController.navigator.with(context).navigate(object : NotificationContract {
+                            override val notificationObject = nc
+                            override val navigator = AppObjectController.navigator
+                        })
                 }
             }
         } catch (e: Exception) {
