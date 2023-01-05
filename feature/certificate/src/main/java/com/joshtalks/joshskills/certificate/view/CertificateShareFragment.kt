@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.certificate.CertificationExamViewModel
 import com.joshtalks.joshskills.certificate.R
 import com.joshtalks.joshskills.certificate.databinding.FragmentCertificateShareBinding
+import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -311,11 +312,11 @@ class CertificateShareFragment : CoreJoshFragment() {
     }
 
     private fun getDeepLinkAndShare(uri: Uri?) {
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(requireContext())
+        DeepLinkUtil(requireContext())
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setSharedItem(com.joshtalks.joshskills.common.util.DeepLinkUtil.SharedItem.CERTIFICATE)
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setSharedItem(DeepLinkUtil.SharedItem.CERTIFICATE)
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     if (uri != null) {
                         shareOn(packageName, message + "\n" + deepLink, uri)

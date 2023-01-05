@@ -244,26 +244,12 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".ui.lesson.LessonActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme" />
-        <activity
             android:name=".ui.course_progress_new.CourseProgressActivityNew"
             android:alwaysRetainTaskState="true"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppThemeDark" />
-        <activity
-            android:name="com.joshtalks.joshskills.lesson.lesson_completed.LessonCompletedActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.chat.ConversationActivity"
-            android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.voip.favorite.FavoriteListActivity"
             android:exported="false"

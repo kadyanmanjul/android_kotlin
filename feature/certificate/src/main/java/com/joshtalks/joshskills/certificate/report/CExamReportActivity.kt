@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.interfaces.FileDownloadCallback
-import com.joshtalks.joshskills.common.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.DownloadFileEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.GotoCEQuestionEventBus
@@ -37,6 +36,7 @@ import com.joshtalks.joshskills.certificate.R
 import com.joshtalks.joshskills.certificate.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.certificate.examview.CExamMainActivity
 import com.joshtalks.joshskills.certificate.report.udetail.CertificateDetailActivity
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -95,7 +95,7 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
     }
 
     override fun getConversationId(): String? {
-        return intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun addObserver() {

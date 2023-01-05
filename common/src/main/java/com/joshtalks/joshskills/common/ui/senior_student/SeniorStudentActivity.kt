@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.CoreJoshActivity
+import com.joshtalks.joshskills.common.core.ReferralContract
 import com.joshtalks.joshskills.common.core.SettingsContract
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
@@ -83,8 +84,12 @@ class SeniorStudentActivity : CoreJoshActivity() {
                             )
                             .push()
 
-                        // TODO: Use navigator -- Sahil
-//                        com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(this)
+                        AppObjectController.navigator.with(this).navigate(
+                            object : ReferralContract {
+                                override val flowFrom = "SENIOR_STUDENT_MENU"
+                                override val navigator = AppObjectController.navigator
+                            }
+                        )
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_help -> {

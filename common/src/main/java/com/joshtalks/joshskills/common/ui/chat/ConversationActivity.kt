@@ -533,12 +533,12 @@ class ConversationActivity : BaseConversationActivity(),
             conversationBinding.ivIconReferral.isVisible = inboxEntity.isCourseBought
             conversationBinding.ivIconReferral.setOnClickListener {
                 conversationViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
-
-                // TODO: Use navigator -- Sahil
-//                com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(
-//                    this@ConversationActivity,
-//                    ConversationActivity::class.java.name
-//                )
+                navigator.with(this).navigate(
+                    object : ReferralContract {
+                        override val flowFrom = "CONVERSATION_TOOLBAR_ICON"
+                        override val navigator = this@ConversationActivity.navigator
+                    }
+                )
                 MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
             }
 
@@ -550,13 +550,14 @@ class ConversationActivity : BaseConversationActivity(),
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
-
                         conversationViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
                         MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
-//                        com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(
-//                            this@ConversationActivity,
-//                            ConversationActivity::class.java.name
-//                        )
+                        navigator.with(this).navigate(
+                            object : ReferralContract {
+                                override val flowFrom = "CONVERSATION_TOOLBAR_MENU"
+                                override val navigator = this@ConversationActivity.navigator
+                            }
+                        )
                     }
                     R.id.menu_clear_media -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED)
@@ -1896,19 +1897,18 @@ class ConversationActivity : BaseConversationActivity(),
                                 .addParam(ParamKeys.LESSON_ID, it.lessonId)
                                 .push()
                             PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
-                            //TODO Create navigation for open Lesson Activity
-//                            startActivityForResult(
-//                                LessonActivity.getActivityIntent(
-//                                    this,
-//                                    it.lessonId,
-//                                    conversationId = inboxEntity.conversation_id,
-//                                    isLessonCompleted = it.isLessonCompleted,
-//                                    testId = AppObjectController.getFirebaseRemoteConfig().getString(
-//                                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-//                                    ).toInt(),
-//                                ),
-//                                LESSON_REQUEST_CODE
-//                            )
+                            startActivityForResult(
+                                navigator.with(this).getIntentForActivity(object : LessonContract {
+                                    override val lessonId = it.lessonId
+                                    override val conversationId = inboxEntity.conversation_id
+                                    override val isLessonCompleted = it.isLessonCompleted
+                                    override val testId = AppObjectController.getFirebaseRemoteConfig().getString(
+                                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                                    ).toInt()
+                                    override val navigator = this@ConversationActivity.navigator
+                                }),
+                                LESSON_REQUEST_CODE
+                            )
                         }
                     },
                     {

@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.referral
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -30,7 +29,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-
 const val REFERRAL_WHATAPP_MESSAGE = "REFERRAL_WHATAPP_MESSAGE"
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
 const val REPLACE_HOLDER = "****"
@@ -41,13 +39,14 @@ const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 
 class ReferralActivity : BaseActivity() {
     companion object {
-        @JvmStatic
-        fun startReferralActivity(context: Activity, className: String = "") {
-            Intent(context, ReferralActivity::class.java).apply {
-                putExtra(FROM_CLASS, className)
-            }.run {
-                context.startActivity(this)
-            }
+        fun openReferralActivity(contract: ReferralContract, context: Context) {
+            context.startActivity(
+                Intent(context, ReferralActivity::class.java).apply {
+                    putExtra(FROM_CLASS, contract.flowFrom)
+                    putExtra(NAVIGATOR, contract.navigator)
+                    contract.flags.forEach { addFlags(it) }
+                }
+            )
         }
     }
 
@@ -74,8 +73,6 @@ class ReferralActivity : BaseActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
-
-
 
         activityReferralBinding = DataBindingUtil.setContentView(this, R.layout.activity_referral)
         activityReferralBinding.lifecycleOwner = this
@@ -190,10 +187,10 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(this)
+        DeepLinkUtil(this)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
                         packageString = packageString,

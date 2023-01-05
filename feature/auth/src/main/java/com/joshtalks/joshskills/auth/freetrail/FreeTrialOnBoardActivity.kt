@@ -340,6 +340,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
             context.startActivity(
                 Intent(context, FreeTrialOnBoardActivity::class.java).apply {
                     putExtra(NAVIGATOR, contract.navigator)
+                    contract.flags.forEach { addFlags(it) }
                 }
             )
         }

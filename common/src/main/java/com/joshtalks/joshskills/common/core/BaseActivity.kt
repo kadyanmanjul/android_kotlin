@@ -513,8 +513,12 @@ abstract class BaseActivity :
                         )
                     }
                     this == getString(R.string.referral_open_dlink) -> {
-                        // TODO: Add Navigator -- Sahil
-//                        com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(this@BaseActivity)
+                        AppObjectController.navigator.with(this@BaseActivity).navigate(
+                            object : ReferralContract {
+                                override val flowFrom = "IN_APP_MESSAGE_CLICK"
+                                override val navigator = AppObjectController.navigator
+                            }
+                        )
                     }
                     this == getString(R.string.reminder_open_dlink) -> {
                         startActivity(Intent(this@BaseActivity, ReminderActivity::class.java))

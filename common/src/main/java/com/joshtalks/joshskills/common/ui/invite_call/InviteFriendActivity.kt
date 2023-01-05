@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.core.BaseActivity
 import com.joshtalks.joshskills.common.core.PermissionUtils
 import com.joshtalks.joshskills.common.databinding.ActivityInviteFriendBinding
@@ -75,10 +76,10 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
     override fun onContactClick(contact: PhonebookContact) {
         if (isPhoneNumberValid(contact.phoneNumber).not()) return
         viewModel.isLoading.set(true)
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(this)
+        DeepLinkUtil(this)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriend(contact, deepLink)
                 }

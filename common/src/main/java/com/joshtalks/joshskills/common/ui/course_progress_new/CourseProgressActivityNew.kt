@@ -259,15 +259,16 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
                     val firstName = if (nameArr != null) nameArr[0] else EMPTY
                     showToast(getFeatureLockedText(courseId.toString(), firstName))
                 } else if (lessonModel != null) {
-                    //TODO Create a navigation for open LessonActivity
-//                    activityListener.launch(
-//                        LessonActivity.getActivityIntent(
-//                            this@CourseProgressActivityNew,
-//                            item.lessonId,
-//                            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
-//                            isLessonCompleted = lessonModel.status == LESSON_STATUS.CO
-//                        )
-//                    )
+                    activityListener.launch(
+                        navigator.with(this@CourseProgressActivityNew).getIntentForActivity(
+                            object : LessonContract {
+                                override val lessonId = item.lessonId
+                                override val conversationId = intent.getStringExtra(CONVERSATION_ID)
+                                override val isLessonCompleted = lessonModel.status == LESSON_STATUS.CO
+                                override val navigator = this@CourseProgressActivityNew.navigator
+                            }
+                        )
+                    )
                 } else {
                     if (!isFinishing) {
                         try {

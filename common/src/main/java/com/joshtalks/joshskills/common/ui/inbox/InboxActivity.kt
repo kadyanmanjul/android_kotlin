@@ -141,9 +141,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
         findViewById<AppCompatImageView>(R.id.iv_icon_referral).setOnClickListener {
             viewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
-
-                // TODO: Use navigator -- Sahil
-//            com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(this@InboxActivity)
+            navigator.with(this).navigate(
+                object : ReferralContract {
+                    override val flowFrom = "INBOX_TOOLBAR_ICON"
+                    override val navigator = this@InboxActivity.navigator
+                }
+            )
             MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
         }
 
@@ -202,9 +205,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     R.id.menu_referral -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
                         viewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
-
-                        // TODO: Use Navigator -- Sahil
-//                        com.joshtalks.joshskills.referral.ReferralActivity.startReferralActivity(this@InboxActivity)
+                        navigator.with(this).navigate(
+                            object : ReferralContract {
+                                override val flowFrom = "INBOX_TOOLBAR_MENU"
+                                override val navigator = this@InboxActivity.navigator
+                            }
+                        )
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_help -> {
@@ -223,7 +229,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun openSettingActivity() {
-        // TODO: Navigated to settings module ---- DONE (Sukesh)
         navigator.with(this).navigate(
             object : SettingsContract {
                 override val navigator = this@InboxActivity.navigator

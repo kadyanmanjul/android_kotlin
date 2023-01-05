@@ -57,6 +57,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
+            contract.flags.forEach { intent.addFlags(it) }
             (context as? Activity)?.startActivityForResult(intent, contract.requestCode)
         }
     }

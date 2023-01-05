@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <application>
+        <activity
+            android:name=".LessonActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.joshtalks.joshskills.common.ui.inbox.InboxActivity"
+            android:theme="@style/AppNoBarTheme" />
+        <activity
+            android:name=".lesson_completed.LessonCompletedActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:parentActivityName="com.joshtalks.joshskills.common.ui.chat.ConversationActivity"
+            android:theme="@style/AppNoBarTheme" />
+    </application>
 </manifest>

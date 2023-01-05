@@ -43,6 +43,7 @@ class SettingsActivity : CoreJoshActivity() {
             context.startActivity(
                 Intent(context, SettingsActivity::class.java).apply {
                     putExtra(NAVIGATOR, contract.navigator)
+                    contract.flags.forEach { addFlags(it) }
                 }
             )
         }

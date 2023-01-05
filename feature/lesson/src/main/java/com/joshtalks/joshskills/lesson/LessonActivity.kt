@@ -56,7 +56,6 @@ import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics.lessonN
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
-//import com.joshtalks.joshskills.common.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.common.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.common.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
@@ -65,6 +64,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.common.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.common.repository.local.model.explore.VideoModel
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -1528,38 +1528,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
 
     }
 
-    companion object {
-        const val LESSON_ID = "lesson_id"
-        const val IS_DEMO = "is_demo"
-        const val IS_LESSON_COMPLETED = "is_lesson_completed"
-        private const val WHATSAPP_URL = "whatsapp_url"
-        private const val TEST_ID = "test_id"
-        const val LAST_LESSON_STATUS = "last_lesson_status"
-        const val LESSON_SECTION = "lesson_section"
-        val videoEvent: MutableLiveData<Event<VideoModel>> = MutableLiveData()
-
-        fun getActivityIntent(
-            context: Context,
-            lessonId: Int,
-            isDemo: Boolean = false,
-            whatsappUrl: String? = null,
-            testId: Int? = null,
-            conversationId: String? = null,
-            isLessonCompleted: Boolean = false
-        ) = Intent(context, LessonActivity::class.java).apply {
-            // TODO: Pass Free Trail Status
-            putExtra(LESSON_ID, lessonId)
-            putExtra(IS_DEMO, isDemo)
-            putExtra(IS_LESSON_COMPLETED, isLessonCompleted)
-            putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
-            if (isDemo) {
-                putExtra(WHATSAPP_URL, whatsappUrl)
-                putExtra(TEST_ID, testId)
-            }
-            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-        }
-    }
-
     fun slideInAnimation(tooltipView: com.joshtalks.joshskills.common.ui.tooltip.JoshTooltip) {
         tooltipView.visibility = View.INVISIBLE
         val start = getScreenHeightAndWidth().second
@@ -1722,6 +1690,51 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
     private fun closeReadingFullScreen() {
         supportFragmentManager.popBackStackImmediate()
         binding.containerReading.visibility = View.GONE
+    }
+
+    companion object {
+        const val LESSON_ID = "lesson_id"
+        const val IS_DEMO = "is_demo"
+        const val IS_LESSON_COMPLETED = "is_lesson_completed"
+        private const val WHATSAPP_URL = "whatsapp_url"
+        private const val TEST_ID = "test_id"
+        const val LAST_LESSON_STATUS = "last_lesson_status"
+        const val LESSON_SECTION = "lesson_section"
+        val videoEvent: MutableLiveData<Event<VideoModel>> = MutableLiveData()
+
+        fun openLessonActivity(contract: LessonContract, context: Context) {
+            context.startActivity(
+                Intent(context, LessonActivity::class.java).apply {
+                    putExtra(LESSON_ID, contract.lessonId)
+                    putExtra(IS_DEMO, contract.isDemo)
+                    putExtra(IS_LESSON_COMPLETED, contract.isLessonCompleted)
+                    putExtra(CONVERSATION_ID, contract.conversationId)
+                    putExtra(NAVIGATOR, contract.navigator)
+                    if (contract.isDemo) {
+                        putExtra(WHATSAPP_URL, contract.whatsappUrl)
+                        putExtra(TEST_ID, contract.testId)
+                    }
+                    addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                    contract.flags.forEach { addFlags(it) }
+                }
+            )
+        }
+
+        fun getLessonIntent(contract: LessonContract, context: Context): Intent {
+            return Intent(context, LessonActivity::class.java).apply {
+                putExtra(LESSON_ID, contract.lessonId)
+                putExtra(IS_DEMO, contract.isDemo)
+                putExtra(IS_LESSON_COMPLETED, contract.isLessonCompleted)
+                putExtra(CONVERSATION_ID, contract.conversationId)
+                putExtra(NAVIGATOR, contract.navigator)
+                if (contract.isDemo) {
+                    putExtra(WHATSAPP_URL, contract.whatsappUrl)
+                    putExtra(TEST_ID, contract.testId)
+                }
+                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                contract.flags.forEach { addFlags(it) }
+            }
+        }
     }
 }
 

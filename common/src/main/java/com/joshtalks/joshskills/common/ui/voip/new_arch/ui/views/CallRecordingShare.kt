@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSIT
 import com.joshtalks.joshskills.common.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.common.ui.video_player.VIDEO_URL
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 
 
@@ -146,10 +147,10 @@ class CallRecordingShare : AppCompatActivity() {
     }
 
     fun getDeepLinkAndInviteFriends(videoPath: String) {
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(AppObjectController.joshApplication)
+        DeepLinkUtil(AppObjectController.joshApplication)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
                         packageString = WHATSAPP_PACKAGE_STRING,

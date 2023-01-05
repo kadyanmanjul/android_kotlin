@@ -45,7 +45,6 @@ import kotlin.streams.toList
 import kotlin.system.exitProcess
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
-const val CONVERSATION_ID = "conversation_id"
 const val IS_ACTIVE = "is_active"
 const val NOTIFICATION_TEXT = "notification_text"
 const val NOTIFICATION_TITLE = "notification_title"

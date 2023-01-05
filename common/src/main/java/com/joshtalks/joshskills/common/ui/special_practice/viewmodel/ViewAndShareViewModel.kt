@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.common.ui.special_practice.utils.getHeightByPixe
 import com.joshtalks.joshskills.common.ui.special_practice.utils.getVideoFilePath
 import com.joshtalks.joshskills.common.ui.special_practice.utils.getWindowWidth
 import com.joshtalks.joshskills.common.ui.special_practice.utils.saveVideoFromPracticeModelQ
+import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -114,10 +115,10 @@ class ViewAndShareViewModel : com.joshtalks.joshskills.common.base.BaseViewModel
     }
 
     fun getDeepLinkAndInviteFriends(view: View) {
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(AppObjectController.joshApplication)
+        DeepLinkUtil(AppObjectController.joshApplication)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
                         packageString = WHATSAPP_PACKAGE_STRING,

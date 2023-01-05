@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.common.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.common.core.interfaces.FileDownloadCallback
-import com.joshtalks.joshskills.common.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.common.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.certificate.CertificationExamViewModel
 import com.joshtalks.joshskills.certificate.R
@@ -31,6 +30,7 @@ import com.joshtalks.joshskills.certificate.constants.GENERATE_CERTIFICATE_FORM
 import com.joshtalks.joshskills.certificate.databinding.ActivityCertificateDetailBinding
 import com.joshtalks.joshskills.certificate.utils.DelayedTypingListener
 import com.joshtalks.joshskills.certificate.view.CertificateShareFragment
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.single

@@ -754,6 +754,7 @@ class SignUpActivity : ThemedBaseActivity() {
                     putExtra(NAVIGATOR, contract.navigator)
                     putExtra(FLOW_FROM, contract.flowFrom)
                     putExtra(START_FREE_TRIAL, contract.shouldStartFreeTrial)
+                    contract.flags.forEach { addFlags(it) }
                 }
             )
         }

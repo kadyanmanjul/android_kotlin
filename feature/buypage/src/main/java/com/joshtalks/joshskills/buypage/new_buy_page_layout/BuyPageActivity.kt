@@ -649,6 +649,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
                 putExtra(COUPON_CODE, contract.coupon)
                 putExtra(NAVIGATOR, contract.navigator)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                contract.flags.forEach { addFlags(it) }
             }.run {
                 context.startActivity(this)
                 (context as? Activity)?.overridePendingTransition(

@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.common.core.interfaces.CertificationExamListener
-import com.joshtalks.joshskills.common.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.common.repository.server.certification_exam.CertificationExamView
 import com.joshtalks.joshskills.common.repository.server.certification_exam.CertificationQuestion
 import com.joshtalks.joshskills.common.repository.server.certification_exam.CertificationQuestionModel
@@ -27,6 +26,7 @@ import com.joshtalks.joshskills.certificate.CertificationExamViewModel
 import com.joshtalks.joshskills.certificate.R
 import com.joshtalks.joshskills.certificate.questionlistbottom.Callback
 import com.joshtalks.joshskills.certificate.questionlistbottom.QuestionListBottomSheet
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

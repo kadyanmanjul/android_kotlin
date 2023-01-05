@@ -61,6 +61,7 @@ import com.joshtalks.joshskills.common.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
+import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -552,10 +553,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     fun getDeepLinkAndInviteFriends() {
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(this)
+        DeepLinkUtil(this)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(deepLink)
                 }

@@ -12,7 +12,9 @@ import com.joshtalks.joshskills.explore.CourseExploreActivity
 import com.joshtalks.joshskills.explore.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.groups.JoshGroupActivity
 import com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity
+import com.joshtalks.joshskills.lesson.LessonActivity
 import com.joshtalks.joshskills.notification.StickyNotificationService
+import com.joshtalks.joshskills.referral.ReferralActivity
 import com.joshtalks.joshskills.settings.SettingsActivity
 
 object JoshNavigator : Navigator {
@@ -30,6 +32,8 @@ object JoshNavigator : Navigator {
                     is CourseExploreContract -> CourseExploreActivity.openCourseExploreActivity(contract, context)
                     is CourseDetailContract -> CourseDetailsActivity.openCourseDetailsActivity(contract, context)
                     is BuyPageContract -> BuyPageActivity.openBuyPageActivity(contract, context)
+                    is ReferralContract -> ReferralActivity.openReferralActivity(contract, context)
+                    is LessonContract -> LessonActivity.openLessonActivity(contract, context)
                 }
             }
 
@@ -37,6 +41,14 @@ object JoshNavigator : Navigator {
                 return when (connection) {
                     is StickyServiceConnection -> Intent(context, StickyNotificationService::class.java)
                     else -> throw IllegalStateException("Invalid Connection")
+                }
+            }
+
+            //TODO: This function will be removed -- Not to be used
+            override fun getIntentForActivity(contract: Contract): Intent {
+                return when(contract) {
+                    is LessonContract -> LessonActivity.getLessonIntent(contract, context)
+                    else -> throw IllegalStateException("Invalid Contract")
                 }
             }
         }

@@ -92,6 +92,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
                     putExtra(COURSE_ID, contract.courseId)
                     putExtra(CONVERSATION_ID, contract.conversationId)
                     putExtra(NAVIGATOR, contract.navigator)
+                    contract.flags.forEach { addFlags(it) }
                 }
             )
         }

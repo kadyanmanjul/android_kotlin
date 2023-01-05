@@ -761,19 +761,9 @@ class StatusCodeInterceptor : Interceptor {
                                 object : SignUpContract {
                                     override val flowFrom = "StatusCodeInterceptor"
                                     override val navigator = AppObjectController.navigator
+                                    override val flags = arrayOf(Intent.FLAG_ACTIVITY_CLEAR_TASK, Intent.FLAG_ACTIVITY_NEW_TASK)
                                 }
                             )
-                            //TODO: Check flags, discuss -- Sukesh
-//                            val intent = Intent(
-//                                AppObjectController.joshApplication,
-//                                SignUpActivity::class.java
-//                            )
-//                            intent.apply {
-//                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                                putExtra("Flow", "StatusCodeInterceptor")
-//                            }
-//                            AppObjectController.joshApplication.startActivity(intent)
                         }
                     }
                 }

@@ -255,6 +255,7 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
                 Intent(context, CallWithExpertActivity::class.java).apply {
                     putExtra(NAVIGATOR, contract.navigator)
                     putExtra(OPEN_UPGRADE_PAGE, contract.openUpgradePage)
+                    contract.flags.forEach { addFlags(it) }
                 }
             )
         }

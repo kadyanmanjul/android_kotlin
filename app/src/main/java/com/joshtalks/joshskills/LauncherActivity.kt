@@ -33,7 +33,10 @@ import com.joshtalks.joshskills.common.ui.voip.CallingServiceReceiver
 import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.util.*
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
-import com.joshtalks.joshskills.explore.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.deeplink.DeepLinkData
+import com.joshtalks.joshskills.common.util.DeepLinkImpression
+import com.joshtalks.joshskills.deeplink.DeepLinkRedirect
+import com.joshtalks.joshskills.deeplink.DeepLinkRedirectUtil
 import com.joshtalks.joshskills.navigator.JoshNavigator
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
@@ -64,6 +67,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
             context.startActivity(
                 Intent(context, LauncherActivity::class.java).apply {
                     putExtra(NAVIGATOR, contract.navigator)
+                    contract.flags.forEach { addFlags(it) }
                 }
             )
         }
@@ -75,9 +79,6 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         setContentView(binding.root)
         AppObjectController.navigator = JoshNavigator
         navigator = JoshNavigator
-        //navigator.with(this).navigate(GroupContract)
-        //navigator.with(this).navigateTo<Group.ListScreen>()
-        //navigator.with(this).navigate(screen = Group.ListScreen, contract = )
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
         AppObjectController.configureCrashlytics()
@@ -267,29 +268,28 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         when {
             User.getInstance().isVerified.not() -> {
                 when {
-                    //TODO : Uncomment this code -- Sukesh
-//                    (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
-//                            PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
-//                        if (jsonParams != null &&
-//                            (DeepLinkRedirectUtil.getIntent(this@LauncherActivity, jsonParams!!, true))
-//                        ) {
-//                            null
-//                        } else getInboxActivityIntent()
-//                    }
-//                    PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true) ||
-//                            (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
-//                                    jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
-//                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, true)
-//                    PrefManager.hasKey(FT_COURSE_ONBOARDING, isConsistent = true) ||
-//                            (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
-//                                    jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
-//                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, false)
-//                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
-//                            jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
-//                    -> {
-//                        DeepLinkRedirectUtil.getCourseDetailsActivityIntent(this, jsonParams!!)
-//                        null
-//                    }
+                    (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
+                            PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
+                        if (jsonParams != null &&
+                            (DeepLinkRedirectUtil.getIntent(this@LauncherActivity, jsonParams!!, true))
+                        ) {
+                            null
+                        } else getInboxActivityIntent()
+                    }
+                    PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true) ||
+                            (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
+                                    jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
+                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, true)
+                    PrefManager.hasKey(FT_COURSE_ONBOARDING, isConsistent = true) ||
+                            (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
+                                    jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
+                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, false)
+                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
+                            jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
+                    -> {
+                        DeepLinkRedirectUtil.getCourseDetailsActivityIntent(this, jsonParams!!)
+                        null
+                    }
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) ->
                         Intent(this@LauncherActivity, SignUpActivity::class.java)
                     PrefManager.getBoolValue(IS_FREE_TRIAL, isConsistent = false, defValue = false) ->
@@ -299,10 +299,10 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 }
             }
             isUserProfileNotComplete() -> Intent(this@LauncherActivity, SignUpActivity::class.java)
-//            jsonParams != null ->
-//                if (DeepLinkRedirectUtil.getIntent(this@LauncherActivity, jsonParams!!, PrefManager.getBoolValue(IS_FREE_TRIAL)))
-//                    null
-//                else getInboxActivityIntent()
+            jsonParams != null ->
+                if (DeepLinkRedirectUtil.getIntent(this@LauncherActivity, jsonParams!!, PrefManager.getBoolValue(IS_FREE_TRIAL)))
+                    null
+                else getInboxActivityIntent()
             else -> getInboxActivityIntent()
         }
 

@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.userprofile.adapters.MyGroupsListAdapter
 import com.joshtalks.joshskills.common.ui.userprofile.models.*
 import com.joshtalks.joshskills.userprofile.repository.UserProfileRepo
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteCallerRepository
+import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.quality
@@ -626,10 +627,10 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(AppObjectController.joshApplication)
+        DeepLinkUtil(AppObjectController.joshApplication)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
                         packageString = packageString,

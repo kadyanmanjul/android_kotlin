@@ -506,7 +506,6 @@ class JoshGroupActivity : BaseGroupActivity() {
         private const val DM_CHAT_DATA = "DM_CHAT_DATA"
         private const val GROUP = "GROUP"
 
-
         fun openGroupsActivity(contract: GroupsContract, context: Context) {
             context.startActivity(
                 Intent(context, JoshGroupActivity::class.java).apply {
@@ -517,6 +516,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                     putExtra(AGORA_UID, contract.agoraUid)
                     putExtra(MENTOR_ID, contract.mentorId)
                     putExtra(DM_CHAT_DATA, contract.dmChatData)
+                    contract.flags.forEach { addFlags(it) }
                 }
             )
         }

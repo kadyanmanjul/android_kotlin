@@ -17,11 +17,11 @@ import com.joshtalks.joshskills.certificate.databinding.ActivityCertificationBas
 import com.joshtalks.joshskills.common.core.BaseActivity
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.common.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.certificate.examview.CExamMainActivity
 import com.joshtalks.joshskills.certificate.report.CExamReportActivity
 import com.joshtalks.joshskills.certificate.view.InstructionFragment
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 
 const val CERTIFICATION_EXAM_ID = "certification_exam_ID"

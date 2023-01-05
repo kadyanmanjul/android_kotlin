@@ -10,6 +10,8 @@ const val NAVIGATOR = "JOSH_NAVIGATOR"
 
 interface Contract {
     val navigator: Navigator
+    val flags: Array<Int>
+        get() = arrayOf()
 }
 
 interface Connection
@@ -79,12 +81,31 @@ interface LeaderboardContract : Contract {
     val conversationId: String
 }
 
-interface StickyServiceConnection: Connection
+interface ReferralContract : Contract {
+    val flowFrom: String
+}
+
+interface LessonContract : Contract {
+    val lessonId: Int
+    val isDemo: Boolean
+        get() = false
+    val whatsappUrl: String?
+        get() = null
+    val testId: Int?
+        get() = null
+    val conversationId: String?
+        get() = null
+    val isLessonCompleted: Boolean
+        get() = false
+}
+
+interface StickyServiceConnection : Connection
 
 interface Navigator : Serializable {
     fun with(context: Context): Navigate
     interface Navigate {
         fun navigate(contract: Contract)
         fun serviceProvider(connection: Connection): Intent
+        fun getIntentForActivity(contract: Contract): Intent
     }
 }

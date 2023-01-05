@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.lesson.speaking.spf_models.VideoPopupItem
 import com.joshtalks.joshskills.common.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.callbar.CallBar
+import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
 import com.joshtalks.joshskills.lesson.repo.LessonService
 import kotlinx.coroutines.Dispatchers
@@ -935,10 +936,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun shareVideoForAudio(path: String) {
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(AppObjectController.joshApplication)
+        DeepLinkUtil(AppObjectController.joshApplication)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
                         dynamicLink = deepLink,

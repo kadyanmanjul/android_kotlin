@@ -832,15 +832,11 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                     putExtra(BUY_SUBSCRIPTION, contract.buySubscription)
                     putExtra(IS_COURSE_BOUGHT, PrefManager.getBoolValue(IS_COURSE_BOUGHT))
                     putExtra(NAVIGATOR, contract.navigator)
+                    putExtra(STARTED_FROM, contract.flowFrom)
                     if (contract.whatsappUrl.isNullOrBlank().not()) {
                         putExtra(WHATSAPP_URL, contract.whatsappUrl)
                     }
-                    if (contract.flowFrom.isNotBlank())
-                        putExtra(STARTED_FROM, contract.flowFrom)
-                    //TODO: Add flags
-//                    flags.forEach { flag ->
-//                        this.addFlags(flag)
-//                    }
+                    contract.flags.forEach { addFlags(it) }
                 }
             )
         }

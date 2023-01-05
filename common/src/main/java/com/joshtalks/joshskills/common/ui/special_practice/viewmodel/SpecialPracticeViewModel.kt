@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.common.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.common.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.common.ui.special_practice.repo.SpecialPracticeRepo
 import com.joshtalks.joshskills.common.ui.special_practice.utils.*
+import com.joshtalks.joshskills.common.util.DeepLinkUtil
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.*
@@ -114,10 +115,10 @@ class SpecialPracticeViewModel : com.joshtalks.joshskills.common.base.BaseViewMo
     }
 
     fun getDeepLinkAndInviteFriends(view: View) {
-        com.joshtalks.joshskills.common.util.DeepLinkUtil(AppObjectController.joshApplication)
+        DeepLinkUtil(AppObjectController.joshApplication)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setListener(object : com.joshtalks.joshskills.common.util.DeepLinkUtil.OnDeepLinkListener {
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(deepLink)
                 }
