@@ -489,6 +489,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             it.ifBlank { getString(R.string.call_practice_partner) }
                         } ?: getString(R.string.call_practice_partner)
 
+                        if (!response.p2pBtnIcon.isNullOrBlank())
+                            binding.btnPeerToPeerCall.icon = requireActivity().getDrawable(R.drawable.ic_phone_icon)
+
                         requireActivity().findViewById<MaterialTextView>(R.id.spotlight_call_btn_text).text =
                             response.p2pBtnText?.let {
                                 it.ifBlank { getString(R.string.call_practice_partner) }
@@ -688,7 +691,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         } else {
             binding.btnCallWithExpert.isVisible = false
         }
-        initDemoViews(lessonNo)
+        lifecycleScope.launch(Dispatchers.Main){
+            delay(500)
+            initDemoViews(lessonNo)
+        }
     }
 
     private fun showToolTipOnLesson() {

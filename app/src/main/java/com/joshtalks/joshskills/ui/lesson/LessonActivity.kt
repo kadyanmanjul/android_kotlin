@@ -116,6 +116,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val SPEAKING_POSITION = 0
@@ -729,35 +730,39 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    if (introVideoControl) {
-                        if (introVideoUrl.isNullOrBlank().not()) {
-                            viewModel.saveIntroVideoFlowImpression(
-                                SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
-                            )
-                            viewModel.showHideSpeakingFragmentCallButtons(1)
-                            showIntroVideoUi()
-                        }
-                    } else if (PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) && (viewModel.lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO)) {
-                        binding.overlayLayout.visibility = View.VISIBLE
-                        binding.spotlightTabGrammar.visibility = View.INVISIBLE
-                        binding.spotlightTabSpeaking.visibility = View.INVISIBLE
-                        binding.spotlightTabVocab.visibility = View.INVISIBLE
-                        binding.spotlightTabReading.visibility = View.INVISIBLE
-                        binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                        binding.spotlightStartGrammarTest.visibility = View.GONE
-                        binding.spotlightCallBtn.visibility = View.VISIBLE
-                        binding.spotlightCallBtnText.visibility = View.VISIBLE
-                        binding.arrowAnimation.visibility = View.VISIBLE
-                        viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
-                            if (text.isBlank()) hideSpotlight()
-                            else {
-                                binding.lessonSpotlightTooltip.setTooltipText(text)
-                                binding.lessonSpotlightTooltip.post {
-                                    slideInAnimation(binding.lessonSpotlightTooltip)
-                                }
+                    lifecycleScope.launch (Dispatchers.Main){
+                        delay(500)
+                        Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
+                        if (introVideoControl) {
+                            if (introVideoUrl.isNullOrBlank().not()) {
+                                viewModel.saveIntroVideoFlowImpression(
+                                    SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
+                                )
+                                viewModel.showHideSpeakingFragmentCallButtons(1)
+                                showIntroVideoUi()
                             }
-                        } ?: run {
-                            hideSpotlight()
+                        } else if (PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) && (viewModel.lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO)) {
+                            binding.overlayLayout.visibility = View.VISIBLE
+                            binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                            binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                            binding.spotlightTabVocab.visibility = View.INVISIBLE
+                            binding.spotlightTabReading.visibility = View.INVISIBLE
+                            binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                            binding.spotlightStartGrammarTest.visibility = View.GONE
+                            binding.spotlightCallBtn.visibility = View.VISIBLE
+                            binding.spotlightCallBtnText.visibility = View.VISIBLE
+                            binding.arrowAnimation.visibility = View.VISIBLE
+                            viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
+                                if (text.isBlank()) hideSpotlight()
+                                else {
+                                    binding.lessonSpotlightTooltip.setTooltipText(text)
+                                    binding.lessonSpotlightTooltip.post {
+                                        slideInAnimation(binding.lessonSpotlightTooltip)
+                                    }
+                                }
+                            } ?: run {
+                                hideSpotlight()
+                            }
                         }
                     }
                 }
