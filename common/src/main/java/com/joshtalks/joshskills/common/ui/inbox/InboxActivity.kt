@@ -636,9 +636,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             object : CourseExploreContract {
                 override val requestCode = COURSE_EXPLORER_CODE
                 override val list = courseListSet
-                override val state = ActivityEnum.Inbox
+                override val flowFrom = ActivityEnum.Inbox.toString()
                 override val navigator = this@InboxActivity.navigator
-
             }
         )
     }
@@ -702,13 +701,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
         } else {
             ConversationActivity.startConversionActivity(this, inboxEntity)
-        }
-    }
-
-    companion object {
-        //TODO: Remove this intent -- Sukesh
-        fun getInboxIntent(context: Context) = Intent(context, InboxActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
 

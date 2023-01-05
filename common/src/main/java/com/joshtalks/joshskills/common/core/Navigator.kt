@@ -20,6 +20,8 @@ interface Connection
 interface SplashContract : Contract
 interface SettingsContract : Contract
 interface OnBoardingContract : Contract
+interface AllRequestsContract : Contract
+interface RecentCallContract : Contract
 
 interface NotificationContract : Contract {
     val notificationObject: NotificationObject
@@ -54,7 +56,7 @@ interface CourseExploreContract : Contract {
     val list: MutableSet<InboxEntity>?
     val clearBackStack: Boolean
         get() = false
-    val state: BaseActivity.ActivityEnum
+    val flowFrom: String
     val isClickable: Boolean
         get() = true
 }

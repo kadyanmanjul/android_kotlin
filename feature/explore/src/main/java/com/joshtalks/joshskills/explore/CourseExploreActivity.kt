@@ -51,7 +51,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 intent.putParcelableArrayListExtra(USER_COURSES, ArrayList(this))
             }
             intent.putExtra(IS_COURSES_CLICKABLE, contract.isClickable)
-            intent.putExtra(PREV_ACTIVITY, contract.state.toString())
+            intent.putExtra(PREV_ACTIVITY, contract.flowFrom)
             intent.putExtra(NAVIGATOR, contract.navigator)
             if (contract.clearBackStack) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -186,17 +186,13 @@ class CourseExploreActivity : CoreJoshActivity() {
                     if (data.isNullOrEmpty()) {
                         data["is_default"] = "true"
                     }
-                    response =
-                        AppObjectController.signUpNetworkService.exploreCourses(data)
+                    response = AppObjectController.signUpNetworkService.exploreCourses(data)
                 } else {
-                    response =
-                        AppObjectController.signUpNetworkService.getFreeTrialCourses()
+                    response = AppObjectController.signUpNetworkService.getFreeTrialCourses()
                 }
 
                 val languageSet: LinkedHashSet<String> = linkedSetOf()
-
-                val listIterator =
-                    response.toMutableList().listIterator()
+                val listIterator = response.toMutableList().listIterator()
                 while (listIterator.hasNext()) {
                     val courseExploreModel = listIterator.next()
                     val resp = list?.find { it.courseId == courseExploreModel.course.toString() }

@@ -4,8 +4,10 @@ import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.joshtalks.joshskills.common.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
+import com.joshtalks.joshskills.common.track.TrackFragment
 
-open class CoreJoshFragment : com.joshtalks.joshskills.common.track.TrackFragment() {
+open class CoreJoshFragment : TrackFragment() {
 
     var coreJoshActivity: CoreJoshActivity? = null
 
@@ -28,7 +30,7 @@ open class CoreJoshFragment : com.joshtalks.joshskills.common.track.TrackFragmen
     override fun getConversationId(): String? {
         try {
             if (isAdded && activity != null) {
-                return (requireActivity() as AppCompatActivity).intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+                return (requireActivity() as AppCompatActivity).intent.getStringExtra(CONVERSATION_ID)
             }
         }catch (ex: Exception) {
             ex.printStackTrace()

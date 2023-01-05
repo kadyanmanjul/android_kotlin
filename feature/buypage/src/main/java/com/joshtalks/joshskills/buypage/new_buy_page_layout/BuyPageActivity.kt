@@ -61,6 +61,7 @@ import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.common.constants.HAS_NOTIFICATION
+import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentManager
@@ -688,11 +689,10 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         AppObjectController.navigator.with(this).navigate(
             object : CourseExploreContract {
                 override val requestCode = COURSE_EXPLORER_CODE
-                override val list = null
-                override val state = BaseActivity.ActivityEnum.BuyPage
+                override val list: MutableSet<InboxEntity>? = null
+                override val flowFrom = BaseActivity.ActivityEnum.BuyPage.toString()
                 override val isClickable = false
                 override val navigator = AppObjectController.navigator
-
             }
         )
     }

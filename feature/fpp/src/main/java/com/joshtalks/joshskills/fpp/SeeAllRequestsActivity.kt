@@ -1,9 +1,12 @@
 package com.joshtalks.joshskills.fpp
 
+import android.content.Context
 import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.base.BaseActivity
+import com.joshtalks.joshskills.common.core.AllRequestsContract
+import com.joshtalks.joshskills.common.core.NAVIGATOR
 import com.joshtalks.joshskills.fpp.adapters.SeeAllRequestsAdapter
 import com.joshtalks.joshskills.fpp.constants.FAVOURITE_REQUEST
 import com.joshtalks.joshskills.fpp.constants.FPP_SEE_ALL_BACK_PRESSED
@@ -62,6 +65,17 @@ class SeeAllRequestsActivity : BaseActivity() {
             }
         }catch (ex: Exception){
             ex.printStackTrace()
+        }
+    }
+
+    companion object {
+        fun openAllRequestsActivity(contract: AllRequestsContract, context: Context) {
+            context.startActivity(
+                Intent(context, SeeAllRequestsActivity::class.java).apply {
+                    putExtra(NAVIGATOR, contract.navigator)
+                    contract.flags.forEach { addFlags(it) }
+                }
+            )
         }
     }
 }

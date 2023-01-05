@@ -10,6 +10,8 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.expertcall.CallWithExpertActivity
 import com.joshtalks.joshskills.explore.CourseExploreActivity
 import com.joshtalks.joshskills.explore.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.fpp.RecentCallActivity
+import com.joshtalks.joshskills.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.groups.JoshGroupActivity
 import com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.lesson.LessonActivity
@@ -35,6 +37,8 @@ object JoshNavigator : Navigator {
                     is BuyPageContract -> BuyPageActivity.openBuyPageActivity(contract, context)
                     is ReferralContract -> ReferralActivity.openReferralActivity(contract, context)
                     is LessonContract -> LessonActivity.openLessonActivity(contract, context)
+                    is AllRequestsContract -> SeeAllRequestsActivity.openAllRequestsActivity(contract, context)
+                    is RecentCallContract -> RecentCallActivity.openRecentCallActivity(contract, context)
                     is NotificationContract -> NotificationUtils(context).sendNotification(contract.notificationObject)
                 }
             }

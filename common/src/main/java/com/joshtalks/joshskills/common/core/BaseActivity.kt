@@ -65,7 +65,6 @@ import com.joshtalks.joshskills.common.ui.points_history.PointsHistoryActivity
 import com.joshtalks.joshskills.common.ui.points_history.SpokenHistoryActivity
 import com.joshtalks.joshskills.common.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.common.ui.termsandconditions.WebViewFragment
-//import com.joshtalks.joshskills.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
@@ -445,13 +444,9 @@ abstract class BaseActivity :
                 object : SignUpContract {
                     override val flowFrom = "UserLogout"
                     override val navigator = AppObjectController.navigator
+                    override val flags = arrayOf(Intent.FLAG_ACTIVITY_CLEAR_TASK, Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
             )
-            //TODO: add flags for the above contract
-//            intent.apply {
-//                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//            }
 
             try {
                 AppObjectController.signUpNetworkService.signoutUser(Mentor.getInstance().getId())
@@ -538,11 +533,13 @@ abstract class BaseActivity :
                     this == getString(R.string.landing_page_dlink) -> {
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
-                            //TODO: Add navigator -- Sukesh
-//                            CourseDetailsActivity.startCourseDetailsActivity(
-//                                this@BaseActivity, id.toInt(),
-//                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-//                            )
+                            //TODO: added navigator, check navigator reference -- Sukesh
+                            AppObjectController.navigator.with(this@BaseActivity).navigate(object : CourseDetailContract {
+                                override val testId = id.toInt()
+                                override val flowFrom = "IN_APP_MESSAGE_CLICK"
+                                override val navigator = AppObjectController.navigator
+                                override val flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                            })
                         }
                     }
                     this == getString(R.string.payment_summary_dlink) -> {
@@ -573,7 +570,7 @@ abstract class BaseActivity :
                             object : CourseExploreContract {
                                 override val requestCode = COURSE_EXPLORER_CODE
                                 override val list = null
-                                override val state = ActivityEnum.DeepLink
+                                override val flowFrom = ActivityEnum.DeepLink.toString()
                                 override val navigator = AppObjectController.navigator
                             }
                         )

@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.common.core.analytics.LogException
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.common.core.notification.NotificationAnalytics
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
 import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
@@ -61,12 +62,11 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         notificationChannel: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            //TODO: (IMP) uncomment code fix -- Sukesh
-//            NotificationAnalytics().addAnalytics(
-//                notificationId = notificationID,
-//                mEvent = NotificationAnalytics.Action.CLICKED,
-//                channel = notificationChannel
-//            )
+            NotificationAnalytics().addAnalytics(
+                notificationId = notificationID,
+                mEvent = NotificationAnalytics.Action.CLICKED,
+                channel = notificationChannel
+            )
         }
     }
 

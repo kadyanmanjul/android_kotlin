@@ -378,11 +378,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
         binding.imgRecentCallsHistory.setOnSingleClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
-            //TODO: navigate
-           /* com.joshtalks.joshskills.fpp.RecentCallActivity.openRecentCallActivity(
-                requireActivity(),
-                com.joshtalks.joshskills.common.track.CONVERSATION_ID
-            )*/
+            AppObjectController.navigator.with(requireActivity()).navigate(object : RecentCallContract {
+                override val navigator = AppObjectController.navigator
+            })
         }
         // redirect to buy screen
         binding.txtBuyToContinueCalls.setOnClickListener {

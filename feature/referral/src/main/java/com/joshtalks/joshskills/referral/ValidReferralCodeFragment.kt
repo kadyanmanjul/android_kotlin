@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.referral
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -8,12 +9,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.SignUpContract
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.referral.databinding.FragmentValidReferralCodeBinding
 import com.joshtalks.joshskills.common.repository.server.ReferralCouponDetailResponse
+import com.joshtalks.joshskills.common.ui.inbox.COURSE_EXPLORER_CODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -64,10 +66,13 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
                 .addBasicParam()
                 .addUserDetails()
                 .push()
-            //TODO: Add navigator -- Sukesh
-//            startActivity(Intent(requireActivity(), CourseExploreActivity::class.java).apply {
-//                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-//            })
+            AppObjectController.navigator.with(requireActivity()).navigate(object : CourseExploreContract {
+                override val requestCode = COURSE_EXPLORER_CODE
+                override val list: MutableSet<InboxEntity>? = null
+                override val flowFrom = "REFERRAL_CODE_FRAGMENT"
+                override val navigator = AppObjectController.navigator
+                override val flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            })
         }
     }
 

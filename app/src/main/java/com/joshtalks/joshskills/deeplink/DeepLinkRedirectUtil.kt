@@ -285,9 +285,9 @@ object DeepLinkRedirectUtil {
         } else getInboxActivityIntent(activity)
 
     private fun getInboxActivityIntent(activity: Activity): Intent =
-        InboxActivity.getInboxIntent(activity).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        Intent(activity, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
 
     private fun sendPendingIntentForActivityList(

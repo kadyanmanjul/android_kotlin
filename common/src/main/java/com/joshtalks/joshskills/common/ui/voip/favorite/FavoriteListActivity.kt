@@ -10,9 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.base.BaseActivity
 import com.joshtalks.joshskills.common.constants.*
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.voip.base.constants.*
-import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.databinding.FavoriteListActivityBinding
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import kotlinx.coroutines.CoroutineScope
@@ -25,9 +26,9 @@ const val FAVOURITE_LIST = "FAVOURITE_LIST"
 class FavoriteListActivity : BaseActivity() {
 
     private var conversationId1: String = EMPTY
-
     private var actionMode: ActionMode? = null
     private val scope = CoroutineScope(Dispatchers.IO)
+    private lateinit var navigator: Navigator
 
     private val binding by lazy<FavoriteListActivityBinding> {
         DataBindingUtil.setContentView(this, R.layout.favorite_list_activity)
@@ -69,7 +70,9 @@ class FavoriteListActivity : BaseActivity() {
     }
 
     fun setIntentExtras() {
-        conversationId1 = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID).toString()
+        conversationId1 = intent.getStringExtra(CONVERSATION_ID).toString()
+        navigator = AppObjectController.navigator
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
     }
 
     override fun initViewBinding() {
@@ -93,21 +96,16 @@ class FavoriteListActivity : BaseActivity() {
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
 //                TODO : To refactor to FPP
-                START_FPP_CALL->
-                {
+                START_FPP_CALL -> {
                     val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
                     callIntent.apply {
-                        putExtra(
-                            STARTING_POINT,
-                            FROM_ACTIVITY
-                        )
+                        putExtra(STARTING_POINT, FROM_ACTIVITY)
                         putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
                         putExtra(INTENT_DATA_FPP_MENTOR_ID, viewModel.selectedUser?.mentorId)
                         putExtra(INTENT_DATA_FPP_NAME, viewModel.selectedUser?.name)
                         putExtra(INTENT_DATA_FPP_IMAGE, viewModel.selectedUser?.image)
-
                     }
-                startActivity(callIntent)
+                    startActivity(callIntent)
                 }
                 SET_TEXT_ON_ENABLE_ACTION_MODE -> {
                     if (it.obj != null) {
@@ -120,8 +118,9 @@ class FavoriteListActivity : BaseActivity() {
     }
 
     private fun openRecentScreen() {
-        //TODO: navigate
-        //com.joshtalks.joshskills.fpp.RecentCallActivity.openRecentCallActivity(this, conversationId1)
+        navigator.with(this).navigate(object : RecentCallContract {
+            override val navigator = this@FavoriteListActivity.navigator
+        })
     }
 
     private fun popBackStack() {
@@ -158,22 +157,22 @@ class FavoriteListActivity : BaseActivity() {
 
     //TODO Make navigation to Open UserProfileActivity
     private fun openProfileScreen(mId: String,position:Int) {
-//        if (viewModel.deleteRecords.isEmpty()){
+        if (viewModel.deleteRecords.isEmpty()){
 //            UserProfileActivity.startUserProfileActivity(
 //                this,
 //                mentorId = mId,
 //                conversationId = conversationId1,
 //                previousPage = FAVOURITE_LIST
 //            )
-//            return
-//        }
-//        viewModel.updateListRow(position)
+            return
+        }
+        viewModel.updateListRow(position)
     }
 
     companion object {
         fun openFavoriteCallerActivity(activity: Activity, conversationId: String) {
             Intent(activity, FavoriteListActivity::class.java).apply {
-                putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
+                putExtra(CONVERSATION_ID, conversationId)
             }.also {
                 activity.startActivity(it)
             }

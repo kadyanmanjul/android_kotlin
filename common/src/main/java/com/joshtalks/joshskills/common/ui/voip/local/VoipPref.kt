@@ -217,14 +217,14 @@ object VoipPref {
     }
 
     private fun openExpertUpgradeScreen() {
-        //TODO: Replace AppObjectController and fix flags -- Sukesh
+        //TODO: Replace AppObjectController -- Sukesh
         AppObjectController.navigator.with(ActivityLifecycleCallback.currentActivity).navigate(
             object : ExpertCallContract {
                 override val navigator = AppObjectController.navigator
                 override val openUpgradePage = true
+                override val flags = arrayOf(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
         )
-//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
     }
 
     private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {

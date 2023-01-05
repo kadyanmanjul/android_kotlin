@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.fpp
 
-import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -13,10 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.common.base.BaseActivity
 import com.joshtalks.joshskills.common.core.EMPTY
+import com.joshtalks.joshskills.common.core.NAVIGATOR
+import com.joshtalks.joshskills.common.core.RecentCallContract
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.fpp.adapters.RecentCallsAdapter
 import com.joshtalks.joshskills.fpp.constants.FPP_RECENT_CALL_ON_BACK_PRESS
 import com.joshtalks.joshskills.fpp.constants.RECENT_OPEN_USER_PROFILE
@@ -41,12 +42,7 @@ class RecentCallActivity : BaseActivity() {
         ViewModelProvider(this)[RecentCallViewModel::class.java]
     }
 
-    var conversationId1 = EMPTY
     lateinit var recentCallAdapter: RecentCallsAdapter
-
-    fun setIntentExtras() {
-        conversationId1 = intent.extras?.get(CONVERSATION_ID) as String
-    }
 
     override fun initViewBinding() {
         binding.vm = viewModel
@@ -54,7 +50,6 @@ class RecentCallActivity : BaseActivity() {
     }
 
     override fun onCreated() {
-        setIntentExtras()
         viewModel.getRecentCall()
     }
 
@@ -90,12 +85,13 @@ class RecentCallActivity : BaseActivity() {
     }
 
     companion object {
-        fun openRecentCallActivity(activity: Activity, conversationId: String) {
-            Intent(activity, RecentCallActivity::class.java).apply {
-                putExtra(CONVERSATION_ID, conversationId)
-            }.also {
-                activity.startActivity(it)
-            }
+        fun openRecentCallActivity(contract: RecentCallContract, context: Context) {
+            context.startActivity(
+                Intent(context, RecentCallActivity::class.java).apply {
+                    putExtra(NAVIGATOR, contract.navigator)
+                    contract.flags.forEach { addFlags(it) }
+                }
+            )
         }
     }
 

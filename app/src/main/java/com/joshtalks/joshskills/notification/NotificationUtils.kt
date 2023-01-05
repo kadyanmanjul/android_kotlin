@@ -123,7 +123,9 @@ class NotificationUtils(val context: Context) {
                         || notificationObject.action == NotificationAction.CALL_RECORDING_NOTIFICATION
                         || notificationObject.action == NotificationAction.INITIATE_RANDOM_CALL
                     ) {
-                        val inboxIntent = InboxActivity.getInboxIntent(context)
+                        val inboxIntent = Intent(context, InboxActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
                         inboxIntent.putExtra(HAS_NOTIFICATION, true)
                         inboxIntent.putExtra(NOTIFICATION_ID, notificationObject.id)
                         arrayOf(inboxIntent, this)

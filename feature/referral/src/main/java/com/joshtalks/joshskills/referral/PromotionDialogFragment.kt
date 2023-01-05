@@ -13,6 +13,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.common.core.AppObjectController
+import com.joshtalks.joshskills.common.core.CourseDetailContract
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.referral.databinding.FragmentPrmotationDialogBinding
@@ -100,13 +101,12 @@ class PromotionDialogFragment : DialogFragment() {
 
     fun openPromotion() {
         courseId?.run {
-            //TODO: Add navigator -- Sukesh
-//            CourseDetailsActivity.startCourseDetailsActivity(
-//                activity=requireActivity(),
-//                testId = this.toInt(),
-//                startedFrom = "Promotion",
-//                buySubscription = false
-//            )
+            AppObjectController.navigator.with(requireActivity()).navigate(object : CourseDetailContract {
+                override val testId = this@run.toInt()
+                override val flowFrom = "Promotion"
+                override val buySubscription = false
+                override val navigator = AppObjectController.navigator
+            })
             dismissAllowingStateLoss()
         }
     }
