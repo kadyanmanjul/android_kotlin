@@ -555,7 +555,7 @@
     <string name="mute" translatable="false">Mute</string>
     <string name="speaker" translatable="false">Speaker</string>
     <string name="call_favorite_practice_partner" translatable="false">Call Favorite Practice Partner</string>
-    <string name="call_from_group" translatable="false">Call Practice Partner from group</string>
+    <string name="call_from_group" translatable="false">Call From Group</string>
     <string name="student" translatable="false">Student</string>
     <string name="call_engage_record_message">Can\'t record practice while on a call</string>
     <string name="call_engage_initiate_call_message">Can\'t initiate a new call while already on a call</string>

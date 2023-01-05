@@ -192,7 +192,6 @@
                         android:id="@+id/txt_how_to_speak"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_24sdp"
                         android:layout_marginBottom="@dimen/_24sdp"
                         android:clickable="true"
                         android:drawablePadding="@dimen/_4sdp"
@@ -204,8 +203,8 @@
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/progress_bar"
-                        tools:visibility="gone" />
+                        app:layout_constraintTop_toBottomOf="@id/txt_label_calls_left"
+                        tools:visibility="visible" />
 
                     <androidx.constraintlayout.widget.Group
                         android:id="@+id/bb_tooltip_group"
@@ -261,7 +260,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_14sdp"
+                        android:layout_marginTop="@dimen/_15sdp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/layout_bb_tip">
@@ -435,6 +434,9 @@
                         android:layout_marginTop="@dimen/_20sdp"
                         android:gravity="center"
                         android:insetTop="0dp"
+                        app:iconGravity="textStart"
+                        app:iconPadding="15dp"
+                        app:iconTint="@color/pure_white"
                         android:layout_marginHorizontal="@dimen/_24sdp"
                         android:text="@string/call_practice_partner"
                         android:visibility="@{!vm.blockLiveData  ? View.VISIBLE : View.GONE}"

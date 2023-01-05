@@ -136,7 +136,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class
     ],
-    version = 58,
+    version = 59,
     exportSchema = true
 )
 @TypeConverters(
@@ -242,7 +242,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_54_55,
                                 MIGRATION_55_56,
                                 MIGRATION_56_57,
-                                MIGRATION_57_58)
+                                MIGRATION_57_58,
+                                MIGRATION_58_59)
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
@@ -720,6 +721,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `speaking_tab_title` TEXT")
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `speaking_info_text` TEXT")
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `speaking_tooltip_text` TEXT")
+            }
+        }
+
+        private val MIGRATION_58_59: Migration = object : Migration(57, 58) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `p2p_button_icon` TEXT")
             }
         }
 
