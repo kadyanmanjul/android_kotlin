@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.state
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.model.Interest
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
@@ -248,6 +249,14 @@ class JoiningState(val context: CallContext) : VoipState {
                             val uiState = context.currentUiState.copy(
                                 isRemoteUserMuted = uiData.isMute(),
                                 isOnHold = uiData.isHold(),
+                            )
+                            context.updateUIState(uiState = uiState)
+                        }
+                        INTEREST -> {
+                            val uiData = event.data as Interest
+                            val uiState = context.currentUiState.copy(
+                                interestHeader = uiData.getInterestHeader(),
+                                interests = uiData.getInterests(),
                             )
                             context.updateUIState(uiState = uiState)
                         }

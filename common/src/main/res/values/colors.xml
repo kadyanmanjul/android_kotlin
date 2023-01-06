@@ -8,6 +8,7 @@
     <color name="pure_grey">#F2F2F2</color>
     <color name="pure_white_10">#1AFFFFFF</color>
     <color name="pure_white_20">#33FFFFFF</color>
+    <color name="pure_black_80">#CC000000</color>
 
     <!--    primary colours    -->
     <color name="primary_800">#003A7D</color>
@@ -32,7 +33,7 @@
 
     <!--    decorative colours    -->
     <color name="decorative_one">#FB2E7C</color>
-    <color name="decorative_two">#3ADD03</color>
+    <color name="decorative_two">#28BF60</color>
     <color name="decorative_three">#09C9DB</color>
     <color name="decorative_four">#560FBC</color>
     <color name="decorative_five">#F5F1FB</color>
@@ -54,6 +55,7 @@
     <color name="surface_tip">#F9ECBD</color>
     <color name="surface_notification">#292D30</color>
     <color name="surface_overlay">#BF173A50</color>
+    <color name="surface_background">#F6F6F6</color>
 
     <!--    external colors    -->
     <color name="external_linkedin">#0077B5</color>
@@ -69,12 +71,13 @@
     <color name="media_tv_bg">#44000000</color>
     <color name="bg_tint">#88ffffff</color>
     <color name="transparent_black_alpha_70">#B3000000</color>
-    <color name="transparent_black_alpha_80">#F2000000</color>
     <color name="transparent_black">#a34b4949</color>
-    <color name="pd_transparent_bg">#DD000000</color>
-    <color name="pd_transparent_bg_v2">#CA000000</color>
-    <color name="grammar_button_default_shadow_color">#ff3493c8</color>
     <color name="gray_color_special">#33D8D8D8</color>
     <color name="dark_text_color">#99000000</color>
     <color name="profile_request_card">#99EEEEEE</color>
+    <color name="pure_white_0_2">#33ffffff</color>
+    <color name="text_default_0_2">#33253858</color>
+    <color name="common_interest_chip_bg_color">#33F5F5F5</color>
+
+    <color name="Transparency_white40">#66ffffff</color>
 </resources>

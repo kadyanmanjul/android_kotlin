@@ -468,6 +468,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     stateChannel.send(envelope)
                 }
             }
+            is Interest -> {
+                if (isMessageForSameChannel(event.getChannel())) {
+                    val envelope = Envelope(Event.INTEREST, event)
+                    stateChannel.send(envelope)
+                }
+            }
             else -> {}
         }
     }

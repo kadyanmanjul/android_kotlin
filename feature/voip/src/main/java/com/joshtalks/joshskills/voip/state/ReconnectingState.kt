@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.state
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.model.Interest
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
@@ -262,6 +263,14 @@ class ReconnectingState(val context: CallContext) : VoipState {
                                 extra = msg
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $RECONNECTED")
+                        }
+                        INTEREST -> {
+                            val uiData = event.data as Interest
+                            val uiState = context.currentUiState.copy(
+                                interestHeader = uiData.getInterestHeader(),
+                                interests = uiData.getInterests(),
+                            )
+                            context.updateUIState(uiState = uiState)
                         }
                         else -> {
                             val msg = "In $TAG but received ${event.type} expected $RECONNECTED"

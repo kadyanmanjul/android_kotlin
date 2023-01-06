@@ -403,4 +403,9 @@
     <string name="interests_select_same_interest_users_connect">உங்கள் interests select செய்யுங்கள், அப்போதான் அதே interests உள்ள Usersடன் நாங்கள் உங்களை Connect செய்ய முடியும்</string>
     <string name="english_level">உங்கள் ஆங்கில நிலை என்ன?</string>
     <string name="label_speaking_spotlight_2">Click here. Lessonனின் முதல் பகுதி speaking practice.</string>
+    <string name="referral_point_one">உங்க Friend Invite பண்ணுங்க, ரெண்டு பேரும் %1$s Earn பண்ணுங்க</string>
+    <string name="referral_point_two">கீழே உள்ள Code Share பண்ணி, உங்கள் friends course வாங்கும்போது அதை enter பண்ண சொல்லுங்கள்.</string>
+
+    <string name="first_call_popup_title">English பேசினா தானே வரும்...</string>
+    <string name="first_call_popup_subtitle">%s, உங்கள் முதல் Call dial செய்து மற்ற Students உடன் Englishல் பேசுங்கள்</string>
 </resources>

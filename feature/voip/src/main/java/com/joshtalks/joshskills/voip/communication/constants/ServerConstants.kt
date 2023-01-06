@@ -20,5 +20,6 @@ class ServerConstants {
         val TOPIC_IMAGE_RECEIVED = 15
         val GROUP_INCOMING_CALL = 21
         val FPP_INCOMING_CALL = 22
+        val INTEREST = 27
     }
 }

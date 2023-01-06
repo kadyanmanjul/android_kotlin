@@ -27,6 +27,11 @@ sealed interface OutgoingData : Communication {
     fun getAddress(): String?
 }
 
+sealed interface InterestData : IncomingData {
+    fun getInterestHeader() : String
+    fun getInterests() : List<String>
+}
+
 sealed interface UIState : UserActionData {
     fun isHold() : Boolean
     fun isMute() : Boolean

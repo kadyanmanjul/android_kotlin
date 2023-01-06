@@ -404,5 +404,9 @@
     <string name="interests_select_same_interest_users_connect">നിങ്ങളുടെ interests  select ചെയ്യുക, അതുവഴി ഞങ്ങൾക്ക് നിങ്ങളുടെ same interests ഉള്ള users ആയി connect ചെയ്യാൻ കഴിയും</string>
     <string name="english_level">നിങ്ങളുടെ ഇംഗ്ലീഷ് ലെവൽ എന്താണ്?</string>
     <string name="label_speaking_spotlight_2">Click here. Lesson-ന്റെ ആദ്യത്തെ ഭാഗമാണ് Speaking Practice</string>
+    <string name="referral_point_one">Invite &amp; Earn, നിങ്ങൾക്കും നിങ്ങളുടെ സുഹൃത്തിനും %1$s വീതം ലഭിക്കുന്നതാണ്.</string>
+    <string name="referral_point_two">ആകെ ചെയ്യേണ്ടത്, താഴെയുള്ള കോഡ് പങ്കിടുകയും course വാങ്ങുമ്പോൾ അത് enter ചെയ്യാൻ നിങ്ങളുടെ സുഹൃത്തുക്കളോട് ആവശ്യപ്പെടുകയും ചെയ്യുക.</string>
 
+    <string name="first_call_popup_title">English സംസാരിച്ചാൽ മാത്രമേ വളരൂ..</string>
+    <string name="first_call_popup_subtitle">%s, ഇപ്പോൾ തന്നെ നിങ്ങളുടെ first call ചെയ്യൂ and talk in English with other students.</string>
 </resources>

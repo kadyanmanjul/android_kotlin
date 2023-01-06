@@ -467,7 +467,7 @@
     <string name="cexam_marks" translatable="false">%1$d%% Marks</string>
     <string name="cexam_passed_on" translatable="false">Passed on- %s</string>
     <string name="cexam_attempted_on" translatable="false">Attempted on - %s</string>
-    <string name="cexam_attempt_left" translatable="false">Attempts left - %1$d </string>
+    <string name="cexam_attempt_left" translatable="false">%1$d attempts left</string>
     <string name="cexam_reattempt" translatable="false">Reattempt</string>
     <string name="cexam_check_results" translatable="false">Check Results</string>
     <string name="completed">Completed</string>
@@ -600,6 +600,7 @@
     <string name="label_senior_student" translatable="false">%sis a Senior Student</string>
     <string name="call_new_student" translatable="false">Call New Student</string>
     <string name="free_trial_end_in" translatable="false">Free Trial ends in %s</string>
+    <string name="free_trial_ends_in" translatable="false">Free Trial ends in</string>
     <string name="feature_locked" translatable="false">%s आपका free trial खतम हो गया है. Please course में admission लें.</string>
     <string name="my_day_review_title" translatable="false">"My day in review"</string>
 
@@ -694,9 +695,9 @@
     <string name="hometown" translatable="false">Hometown:</string>
     <string name="highlights">Highlights</string>
     <string name="future_goals" translatable="false">Future goals</string>
-    <string name="favourite_josh_talk" translatable="false">Favourite Josh Talk :</string>
+    <string name="favourite_josh_talk" translatable="false">Favourite Josh Talk</string>
     <string name="youtube_link" translatable="false">https://www.youtube.com/watch?v=uetRaRuCOwU</string>
-    <string name="education_and_occupation" translatable="false">Education and Occupation</string>
+    <string name="education_and_occupation" translatable="false">Occupation and Education</string>
     <string name="occupation_heading" translatable="false">Occupation</string>
     <string name="occupation" translatable="false">Occupation</string>
     <string name="aspiring_ias_officer" translatable="false">Aspiring IAS officer</string>
@@ -717,18 +718,18 @@
     <string name="your_full_name" translatable="false">Your Full Name</string>
     <string name="time_format" translatable="false">DD/MM/YYYY</string>
     <string name="ex_aspiring_ias_officer" translatable="false">E.g. Aspiring IAS Officer</string>
-    <string name="ex_ias_officer" translatable="false">e.g. IAS Officer</string>
+    <string name="ex_ias_officer" translatable="false">e.g.- IAS Officer</string>
     <string name="paste_link_to_your_favourite_josh_talk_here" translatable="false">Paste link to your favourite josh talk here</string>
     <string name="add_education_details" translatable="false">Add Education Details</string>
-    <string name="subject_degree" translatable="false">Subject / Degree</string>
-    <string name="ex_arts_m_tech" translatable="false">Ex- Arts, M.Tech</string>
-    <string name="name_of_school_college" translatable="false">Name of School / College</string>
-    <string name="ex_dps_vit" translatable="false">Ex- DPS, VIT</string>
+    <string name="subject_degree" translatable="false">Subject/Degree</string>
+    <string name="ex_arts_m_tech" translatable="false">e.g.- Arts, M.Tech</string>
+    <string name="name_of_school_college" translatable="false">Name of School/College</string>
+    <string name="ex_dps_vit" translatable="false">e.g.- DPS, VIT</string>
     <string name="completed_expected_to_complete_by" translatable="false">Completed / Expected to Complete by</string>
     <string name="add_occupation_details" translatable="false">Add Occupation Details</string>
     <string name="ex_manager_homemaker_etc" translatable="false">Ex- Manager, Homemaker etc.</string>
-    <string name="company_business_name" translatable="false">Company / Business name</string>
-    <string name="ex_josh_talks" translatable="false">Ex- Josh Talks</string>
+    <string name="company_business_name" translatable="false">Company/Business name</string>
+    <string name="ex_josh_talks" translatable="false">e.g.- Josh Talks</string>
     <string name="enrolled_courses" translatable="false">Enrolled Courses</string>
     <string name="photo">Photo</string>
     <string name="set_as_profile_photo" translatable="false">Set as profile photo</string>
@@ -785,9 +786,9 @@
     <string name="we_will_get_new_lesson_here_everyday" translatable="false">हमें यहां हर रोज एक नया पाठ मिलेगा</string>
 
     <string name="occupation_field" translatable="false">Occupation</string>
-    <string name="occupation_filed_hint_text" translatable="false">e.g. Manager at Flipkart</string>
+    <string name="occupation_filed_hint_text" translatable="false">e.g.- Manager at Flipkart</string>
     <string name="aspiration_filed" translatable="false">Aspiration</string>
-    <string name="aspiration_filed_hint_text" translatable="false">e.g. IAS Officer </string>
+    <string name="aspiration_filed_hint_text" translatable="false">e.g.- IAS Officer </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="continue_text" translatable="false"><![CDATA[Continue >]]></string>
     <string name="course_continue_steps" translatable="false">Course continue करने से पहले हमें कुछ steps पुरे करने हैं।</string>
@@ -930,23 +931,7 @@
     <string name="zaruri_jankari" translatable="false">Zaruri jaankaari</string>
     <string name="aborted_msg" translatable="false">Oops, Looks like you have canceled the payment!</string>
 
-    <string-array name="amount_list">
-        <item>₹ 50</item>
-        <item>₹ 100</item>
-        <item>₹ 200</item>
-        <item>₹ 300</item>
-        <item>₹ 500</item>
-        <item>₹ 1000</item>
-        <item>₹ 2000</item>
-        <item>₹ 3000</item>
-        <item>₹ 4000</item>
-        <item>₹ 8000</item>
-        <item>₹ 15000</item>
-        <item>₹ 12000</item>
-        <item>₹ 50000</item>
-        <item>₹ 100000</item>
-    </string-array>
-    <string name="rup">\u20B9</string>
+    <string name="rupee" translatable="false">\u20B9</string>
     <string name="offer_for_you" translatable="false">Offer for you</string>
     <string name="default_disconnect_dialog_title" translatable="false">Are you sure you want to disconnect the call?</string>
     <string name="default_disconnect_dialog_text" translatable="false">Disconnecting calls frequently may lead to account suspension</string>
@@ -989,8 +974,8 @@
     <string name="call_waiting_title">Try doing longer calls</string>
     <string name="mrp_strike_thru" translatable="false"><strike>MRP: ₹2999.0</strike></string>
 
-
     <string name="test_chars" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ \nabcdefghijklmnopqrstuvwxyz \n1234567890</string>
+    <string name="semicolon" translatable="false">:</string>
     <string name="slash_2" formatted="false" translatable="false">%d/%d</string>
     <string name="avail_now" formatted="false" translatable="false">Avail Now</string>
     <string name="claim_now" formatted="false" translatable="false">Claim Now</string>
@@ -998,4 +983,15 @@
     <string name="lesson_popup_heading_reading" translatable="false">Reading Practice</string>
     <string name="lesson_popup_heading_vocab" translatable="false">Daily Vocabulary</string>
     <string name="lesson_popup_heading_speaking" translatable="false">Speaking Practice</string>
+    <string name="view_profile" translatable="false">View Profile</string>
+    <string name="referral_point_one">Invite and earn, You and your friend each will get %1$s</string>
+    <string name="referral_point_two">Share the code below and ask your friends to enter it when they purchase the course</string>
+    <string name="your_referral_code" translatable="false">Your Referral Code</string>
+    <string name="p2p_notifications_setting" translatable="false">Practice partner notifications</string>
+
+    <string name="first_call_popup_title">English बोलने से आती है....</string>
+    <string name="first_call_popup_subtitle">%s, अपना पहला call dial करें और दुसरे students के साथ English में बात करें।</string>
+    <string name="your_hometown" translatable="false">Your Hometown</string>
+
+    <string name="start_exam" translatable="false">Start exam</string>
 </resources>

@@ -402,4 +402,9 @@
     <string name="interests_select_same_interest_users_connect">आपले interest select करा जेणेकरून आम्ही आपणांस same interest च्या users सोबत connect करू शकू.</string>
     <string name="english_level">तुमची इंग्रजीची पातळी काय आहे?</string>
     <string name="label_speaking_spotlight_2">इथे क्लिक करा. Lesson चा पहिला भाग speaking practice आहे.</string>
+    <string name="referral_point_one">Invite करा आणि कमवा, तुम्हाला आणि तुमच्या मित्राला प्रत्येकी %1$s मिळतील</string>
+    <string name="referral_point_two">खालील कोड share करा आणि तुमच्या मित्रांनी कोर्स खरेदी केल्यावर तो purchase करण्यास सांगा</string>
+
+    <string name="first_call_popup_title">English बोलल्याने येते...</string>
+    <string name="first_call_popup_subtitle">%s, तुमचा पहिला call डायल करा आणि इतर विद्यार्थ्यांशी English मध्ये बोला</string>
 </resources>

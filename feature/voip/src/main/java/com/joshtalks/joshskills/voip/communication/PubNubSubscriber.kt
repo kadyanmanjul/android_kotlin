@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Com
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.GROUP_INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.UI_STATE_UPDATED
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.INTEREST
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.pubnub.api.PubNub
@@ -66,6 +67,7 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                     GROUP_INCOMING_CALL -> Gson().fromJson(messageJson, GroupIncomingCall::class.java)
                     FPP_INCOMING_CALL -> Gson().fromJson(messageJson, FppIncomingCall::class.java)
                     UI_STATE_UPDATED, ACK_UI_STATE_UPDATED -> Gson().fromJson(messageJson, UI::class.java)
+                    INTEREST -> Gson().fromJson(messageJson, Interest::class.java)
                     else -> Gson().fromJson(messageJson, Message::class.java)
                 }
                 messageFlow.emit(message)

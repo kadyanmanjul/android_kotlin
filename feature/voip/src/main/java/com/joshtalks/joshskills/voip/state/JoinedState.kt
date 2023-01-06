@@ -5,6 +5,7 @@ import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
+import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_DISCONNECTED
 import com.joshtalks.joshskills.voip.constant.Event.HOLD
@@ -353,7 +354,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT")
                         }
-                        RECONNECTED,RECEIVED_CHANNEL_DATA,RECONNECTING-> {
+                        RECONNECTED, RECEIVED_CHANNEL_DATA, RECONNECTING -> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
                             CallAnalytics.addAnalytics(
@@ -363,6 +364,14 @@ class JoinedState(val context: CallContext) : VoipState {
                                 extra = msg
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT")
+                        }
+                        Event.INTEREST -> {
+                            val uiData = event.data as Interest
+                            val uiState = context.currentUiState.copy(
+                                interestHeader = uiData.getInterestHeader(),
+                                interests = uiData.getInterests(),
+                            )
+                            context.updateUIState(uiState = uiState)
                         }
                         else -> {
                             val msg = "In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"

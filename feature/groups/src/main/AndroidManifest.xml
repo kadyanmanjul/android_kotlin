@@ -5,6 +5,7 @@
         <activity
             android:name=".JoshGroupActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".views.JoshVoipGroupActivity"

@@ -86,6 +86,7 @@ enum class Event {
     TOPIC_IMAGE_RECEIVED,
     GROUP_INCOMING_CALL,
     FPP_INCOMING_CALL,
+    INTEREST,
 }
 
 enum class State {
