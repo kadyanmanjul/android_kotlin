@@ -29,22 +29,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/disabled"
             android:gravity="center"
             android:minHeight="0dp"
-            android:tabStripEnabled="false"
-            android:textAlignment="center"
             app:elevation="0dp"
+            app:tabIndicator="@drawable/tab_indicator"
+            app:tabIndicatorFullWidth="false"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
-            app:tabBackground="@drawable/speaking_tab_bg"
-            app:tabIconTint="@color/success"
-            app:tabIndicatorHeight="0dp"
-            app:tabMinWidth="@dimen/_32sdp"
-            app:tabSelectedTextColor="@color/pure_white"
-            app:tabTextColor="@color/pure_black" />
+            app:tabMinWidth="@dimen/_32sdp" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_4sdp"
+            android:background="@color/disabled"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lesson_tab_layout" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/lesson_viewpager"
@@ -53,7 +55,7 @@
             app:layout_constraintBottom_toTopOf="@id/buy_course_ll"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lesson_tab_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/buy_course_banner"
@@ -79,8 +81,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/_12sdp"
-                    android:textColor="@color/text_default"
                     android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/banner_barrier"
                     app:layout_constraintStart_toStartOf="parent"

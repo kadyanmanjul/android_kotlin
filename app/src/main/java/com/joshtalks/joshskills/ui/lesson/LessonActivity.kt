@@ -9,6 +9,7 @@ import android.graphics.Outline
 import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -1403,12 +1404,35 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         tab?.let {
             if (PrefManager.getBoolValue(IS_FREE_TRIAL))
                 showBuyCourseTooltip(tab.position)
-            tab.view.findViewById<TextView>(R.id.title_tv)
-                ?.setTextColor(ContextCompat.getColor(this, R.color.pure_white))
+            val color = when (tab.position) {
+                SPEAKING_POSITION -> R.color.decorative_four
+                GRAMMAR_POSITION -> R.color.decorative_one
+                VOCAB_POSITION -> R.color.external_whatsapp
+                READING_POSITION -> R.color.primary_500
+                TRANSLATION_POSITION -> R.color.accent_800
+                else -> R.color.decorative_four
+            }
+            tab.view.findViewById<AppCompatTextView>(R.id.title_tv)
+                ?.apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        setTextAppearance(R.style.TextAppearance_JoshTypography_CaptionSemiBold)
+                    else
+                        setTextAppearance(this.context, R.style.TextAppearance_JoshTypography_CaptionSemiBold)
+                    setTextColor(
+                        ContextCompat.getColor(
+                            this@LessonActivity,
+                            color
+                        )
+                    )
+                }
+            binding.lessonTabLayout.setSelectedTabIndicatorColor(
+                ContextCompat.getColor(
+                    this,
+                    color
+                )
+            )
             when (tab.position) {
                 SPEAKING_POSITION -> {
-                    tab.view.background =
-                        ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
                     PrefManager.put(IS_SPEAKING_SCREEN_CLICKED, true)
                     viewModel.postGoal(GoalKeys.SPEAKING_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
@@ -1418,8 +1442,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         .push()
                 }
                 GRAMMAR_POSITION -> {
-                    tab.view.background =
-                        ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
                     viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
                     MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_OPENED)
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
@@ -1427,8 +1449,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         .push()
                 }
                 VOCAB_POSITION - isTranslationDisabled -> {
-                    tab.view.background =
-                        ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_VOCABULARY_SCREEN)
                     viewModel.postGoal(GoalKeys.VOCABULARY_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
                     MixPanelTracker.publishEvent(MixPanelEvent.VOCABULARY_OPENED)
@@ -1437,17 +1457,12 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         .push()
                 }
                 READING_POSITION - isTranslationDisabled -> {
-                    tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_READING_SCREEN)
                     viewModel.postGoal(GoalKeys.READING_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
                     MixPanelTracker.publishEvent(MixPanelEvent.READING_OPENED)
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
                         .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
-                }
-                TRANSLATION_POSITION -> {
-                    tab.view.background =
-                        ContextCompat.getDrawable(this, R.drawable.convo_room_tab_bg)
                 }
             }
         }
@@ -1461,10 +1476,12 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 //    }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
-        tab?.let {
-            tab.view.background = ContextCompat.getDrawable(this, R.drawable.unselected_tab_bg)
-            tab.view.findViewById<TextView>(R.id.title_tv)
-                ?.setTextColor(ContextCompat.getColor(this, R.color.text_default))
+        tab?.view?.findViewById<AppCompatTextView>(R.id.title_tv)?.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                setTextAppearance(R.style.TextAppearance_JoshTypography_CaptionRegular)
+            else
+                setTextAppearance(this@LessonActivity, R.style.TextAppearance_JoshTypography_CaptionRegular)
+            setTextColor(ContextCompat.getColor(this@LessonActivity, R.color.text_subdued))
         }
     }
 
