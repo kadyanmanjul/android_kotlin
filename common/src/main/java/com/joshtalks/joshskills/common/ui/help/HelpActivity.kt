@@ -1,36 +1,78 @@
 package com.joshtalks.joshskills.common.ui.help
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.commit
 import com.freshchat.consumer.sdk.Freshchat
+import com.freshchat.consumer.sdk.FreshchatConfig
+import com.freshchat.consumer.sdk.FreshchatNotificationConfig
+import com.freshchat.consumer.sdk.j.af
+import com.joshtalks.joshskills.common.BuildConfig
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.CoreJoshActivity
-import com.joshtalks.joshskills.common.core.FRESH_CHAT_UNREAD_MESSAGES
-import com.joshtalks.joshskills.common.core.PrefManager
-import com.joshtalks.joshskills.common.core.Utils
+import com.joshtalks.joshskills.common.base.EventLiveData
+import com.joshtalks.joshskills.common.constants.FCM_TOKEN
+import com.joshtalks.joshskills.common.core.*
+import com.joshtalks.joshskills.common.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.common.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.common.core.showToast
 import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.CategorySelectEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.HelpRequestEventBus
+import com.joshtalks.joshskills.common.repository.local.model.Mentor
+import com.joshtalks.joshskills.common.repository.local.model.User
+import com.joshtalks.joshskills.common.repository.local.model.User.Companion.getInstance
 import com.joshtalks.joshskills.common.repository.server.FAQ
 import com.joshtalks.joshskills.common.repository.server.FAQCategory
 import com.joshtalks.joshskills.common.repository.server.help.Action
+import com.joshtalks.joshskills.common.repository.server.help.Option
+import com.joshtalks.joshskills.common.ui.special_practice.utils.OPEN_CALL_SCREEN
+import com.joshtalks.joshskills.common.ui.special_practice.utils.OPEN_CATEGORY_SCREEN
+import com.joshtalks.joshskills.common.ui.special_practice.utils.OPEN_FAQ_SCREEN
+import com.joshtalks.joshskills.common.ui.special_practice.utils.OPEN_HELP_CHAT_SCREEN
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HelpActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var appAnalytics: AppAnalytics
+    private lateinit var freshChat: Freshchat
+    private var event = EventLiveData
+
+    var restoreIdReceiver: BroadcastReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val restoreId = freshChat.user.restoreId
+                        if (restoreId.isBlank().not()) {
+                            PrefManager.put(RESTORE_ID, restoreId)
+                            val requestMap = mutableMapOf<String, String?>()
+                            requestMap["restore_id"] = restoreId
+                            AppObjectController.commonNetworkService.postFreshChatRestoreIDAsync(
+                                PrefManager.getStringValue(USER_UNIQUE_ID),
+                                requestMap
+                            )
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -45,8 +87,94 @@ class HelpActivity : CoreJoshActivity() {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.HELP_INITIATED.NAME)
             .addBasicParam()
             .addUserDetails()
-
+        initialiseFreshChat()
+        AppObjectController.getLocalBroadcastManager()
+            .registerReceiver(restoreIdReceiver, IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED))
     }
+
+    fun initialiseFreshChat() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                freshChat = Freshchat.getInstance(AppObjectController.joshApplication)
+                val config = FreshchatConfig(
+                    BuildConfig.FRESH_CHAT_APP_ID,
+                    BuildConfig.FRESH_CHAT_APP_KEY
+                )
+                af.eK()?.let { Freshchat.setImageLoader(it) }
+                config.isCameraCaptureEnabled = true
+                config.isGallerySelectionEnabled = true
+                config.isResponseExpectationEnabled = true
+                config.domain = "https://msdk.in.freshchat.com"
+                freshChat.init(config)
+                var restoreId: String? = null
+                try {
+                    restoreId = if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
+                        val id = PrefManager.getStringValue(USER_UNIQUE_ID)
+                        val details =
+                            AppObjectController.commonNetworkService.getFreshChatRestoreIdAsync(id)
+                        if (details.restoreId.isNullOrBlank().not()) {
+                            details.restoreId
+                        } else null
+                    } else PrefManager.getStringValue(RESTORE_ID)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+                updateFreshchatSdkUserProperties()
+                freshChat.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), restoreId)
+                val notificationConfig = FreshchatNotificationConfig()
+                    .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
+                freshChat.setNotificationConfig(notificationConfig)
+                freshChat.setPushRegistrationToken(PrefManager.getStringValue(FCM_TOKEN))
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun updateFreshchatSdkUserProperties() {
+        val freshchatUser = freshChat.user
+        freshchatUser.firstName = getInstance().firstName
+        freshchatUser.email = getInstance().email
+        val mobileNumber = getPhoneNumber()
+        if (mobileNumber.isNotEmpty()) {
+            val length = mobileNumber.length
+            if (length > 10) {
+                freshchatUser.setPhone(mobileNumber.substring(0, length - 10), mobileNumber.substring(length - 10))
+            }
+        } else freshchatUser.setPhone("+91", "XXXXXXXXXX")
+        freshChat.user = freshchatUser
+
+        val userMeta: MutableMap<String, String?> = HashMap()
+        userMeta["Username"] = User.getInstance().firstName
+        userMeta["Email_id"] = User.getInstance().email
+        userMeta["Mobile_no"] = getPhoneNumber()
+        userMeta["Age"] =
+            AppAnalytics.getAge(User.getInstance().dateOfBirth).toString()
+        userMeta["Gender"] = User.getInstance().gender
+        if (Mentor.getInstance().hasId()) {
+            userMeta["Mentor_id"] = Mentor.getInstance().getId()
+            userMeta["Login_type"] = "yes"
+            userMeta["Subscribed_user"] = "yes"
+            try {
+                val allConversationId = appDatabase.courseDao().getAllConversationId()
+                userMeta["courses_availed"] = allConversationId.size.toString()
+                for (i in allConversationId.indices) {
+                    userMeta["courses_$i"] = appDatabase.courseDao().chooseRegisterCourseMinimal(
+                        allConversationId[i]
+                    )?.course_name
+                }
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+        }
+        //Call setUserProperties to sync the user properties with Freshchat's servers
+        try {
+            freshChat.setUserProperties(userMeta)
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun setToolbar() {
         findViewById<View>(R.id.iv_help).visibility = View.GONE
@@ -95,7 +223,32 @@ class HelpActivity : CoreJoshActivity() {
         super.onResume()
         Runtime.getRuntime().gc()
         addObserver()
-        AppObjectController.getUnreadFreshchatMessages()
+        freshChat.getUnreadCountAsync { _, unreadCount ->
+            PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, unreadCount)
+        }
+    }
+    override fun onStart() {
+        super.onStart()
+        event.observe(this) {
+            when (it.what) {
+                OPEN_FAQ_SCREEN -> {
+                    openFaqCategory()
+                }
+                OPEN_CALL_SCREEN -> {
+                    val obj = it.obj as Option
+                    if (obj.actionData != null)
+                        Utils.call(this@HelpActivity, obj.actionData)
+                }
+                OPEN_HELP_CHAT_SCREEN -> {
+                    Freshchat.showConversations(applicationContext)
+                    PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
+                }
+                OPEN_CATEGORY_SCREEN -> {
+                    val obj = it.obj as HashMap<String, Any>
+                    showFaqFragment(obj["category_data"] as FAQCategory, obj["category_list"] as ArrayList<FAQCategory> )
+                }
+            }
+        }
     }
 
     override fun onPause() {
@@ -110,23 +263,26 @@ class HelpActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listen(HelpRequestEventBus::class.java)
+            RxBus2.listen(HelpRequestEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     when {
                         Action.CALL == it.option.action -> {
-                            it.option.actionData?.run {
+                            val number = if (PrefManager.getBoolValue(IS_COURSE_BOUGHT) || PrefManager.getBoolValue(
+                                    IS_SUBSCRIPTION_STARTED)) {
+                                it.option.actionData
+                            } else {
+                                it.option.actionDataForFreeTrial
+                            }
+                            if (number != null) {
+                                appAnalytics.addParam(AnalyticsEvent.CALL_HELPLINE.NAME, number.toString())
                                 MixPanelTracker.publishEvent(MixPanelEvent.CALL_HELPLINE).push()
-                                appAnalytics.addParam(
-                                    AnalyticsEvent.CALL_HELPLINE.NAME,
-                                    it.option.actionData.toString()
-                                )
                                 AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME)
                                     .addBasicParam()
                                     .addUserDetails()
                                     .push()
-                                Utils.call(this@HelpActivity, this)
+                                Utils.call(this@HelpActivity, number)
                             }
                         }
                         Action.HELPCHAT == it.option.action -> {
@@ -162,7 +318,7 @@ class HelpActivity : CoreJoshActivity() {
 
 
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listen(CategorySelectEventBus::class.java)
+            RxBus2.listen(CategorySelectEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -170,7 +326,7 @@ class HelpActivity : CoreJoshActivity() {
                 })
 
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listen(FAQ::class.java)
+            RxBus2.listen(FAQ::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -204,4 +360,10 @@ class HelpActivity : CoreJoshActivity() {
             )
         }
     }
+
+    override fun onDestroy() {
+        AppObjectController.getLocalBroadcastManager().unregisterReceiver(restoreIdReceiver)
+        super.onDestroy()
+    }
 }
+

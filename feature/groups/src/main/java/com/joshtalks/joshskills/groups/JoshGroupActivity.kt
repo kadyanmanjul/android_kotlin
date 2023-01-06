@@ -53,6 +53,8 @@ class JoshGroupActivity : BaseGroupActivity() {
         DataBindingUtil.setContentView(this, R.layout.activity_josh_group)
     }
 
+    private lateinit var navigator: Navigator
+
     override fun initViewBinding() {
         binding.vm = vm
         binding.executePendingBindings()
@@ -423,18 +425,14 @@ class JoshGroupActivity : BaseGroupActivity() {
         return vm.conversationId
     }
 
-    //TODO Make navigation to Open UserProfileActivity
     private fun openProfileActivity(mentorId: String, isDm: Boolean = false) {
-//        UserProfileActivity.startUserProfileActivity(
-//            activity = this,
-//            mentorId = mentorId,
-//            flags = arrayOf(),
-//            intervalType =  null,
-//            previousPage = GROUP,
-//            conversationId = null
-//        )
-//        if (supportFragmentManager.backStackEntryCount < 1 && isDm)
-//            this.finish()
+        navigator.with(this).navigate(object : UserProfileContract {
+            override val mentorId = mentorId
+            override val previousPage = GROUP
+            override val navigator = this@JoshGroupActivity.navigator
+        })
+        if (supportFragmentManager.backStackEntryCount < 1 && isDm)
+            this.finish()
     }
 
     fun showRemovedAlert(groupName: String) {
@@ -488,6 +486,8 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     override fun setIntentExtras() {
         AppObjectController.initGroups()
+        navigator = AppObjectController.navigator
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
     }
 
     override fun onDestroy() {

@@ -38,7 +38,7 @@ class FaqFragment : Fragment() {
         view?.findViewById<ChipGroup>(R.id.chipGroupCategory)
     }
     private val txtCategoryName by lazy {
-        view?.findViewById<JoshTextView>(R.id.chipGroupCategory)
+        view?.findViewById<JoshTextView>(R.id.txtCategoryName)
     }
     private val faqList by lazy {
         view?.findViewById<RecyclerView>(R.id.faqList)

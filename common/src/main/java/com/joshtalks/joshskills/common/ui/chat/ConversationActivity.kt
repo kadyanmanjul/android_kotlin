@@ -1067,18 +1067,16 @@ class ConversationActivity : BaseConversationActivity(),
         }
     }
 
-    //TODO Make navigation to Open UserProfileActivity
     private fun openUserProfileActivity(id: String, previousPage: String?) {
-//        previousPage?.let {
-//            UserProfileActivity.startUserProfileActivity(
-//                this,
-//                id,
-//                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-//                null,
-//                it,
-//                conversationId = inboxEntity.conversation_id,
-//            )
-//        }
+        previousPage?.let {
+            navigator.with(this).navigate(object : UserProfileContract {
+                override val mentorId = id
+                override val previousPage = it
+                override val conversationId = inboxEntity.conversation_id
+                override val flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                override val navigator = this@ConversationActivity.navigator
+            })
+        }
     }
 
     private fun fetchMessage() {

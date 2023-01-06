@@ -12,12 +12,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.common.base.BaseActivity
-import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.core.NAVIGATOR
-import com.joshtalks.joshskills.common.core.RecentCallContract
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.fpp.adapters.RecentCallsAdapter
 import com.joshtalks.joshskills.fpp.constants.FPP_RECENT_CALL_ON_BACK_PRESS
 import com.joshtalks.joshskills.fpp.constants.RECENT_OPEN_USER_PROFILE
@@ -42,7 +41,15 @@ class RecentCallActivity : BaseActivity() {
         ViewModelProvider(this)[RecentCallViewModel::class.java]
     }
 
+    private var conversationId = EMPTY
     lateinit var recentCallAdapter: RecentCallsAdapter
+    private lateinit var navigator: Navigator
+
+    override fun getArguments() {
+        navigator = AppObjectController.navigator
+//        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
+        conversationId = intent.extras?.get(CONVERSATION_ID) as String
+    }
 
     override fun initViewBinding() {
         binding.vm = viewModel
@@ -88,6 +95,7 @@ class RecentCallActivity : BaseActivity() {
         fun openRecentCallActivity(contract: RecentCallContract, context: Context) {
             context.startActivity(
                 Intent(context, RecentCallActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, contract.conversationId)
                     putExtra(NAVIGATOR, contract.navigator)
                     contract.flags.forEach { addFlags(it) }
                 }
@@ -107,16 +115,14 @@ class RecentCallActivity : BaseActivity() {
         }
     }
 
-    //TODO Make navigation to Open UserProfileActivity
     fun openUserProfileActivity(id: String) {
-//        UserProfileActivity.startUserProfileActivity(
-//            this,
-//            id,
-//            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-//            null,
-//            RECENT_CALL,
-//            conversationId = conversationId1
-//        )
+        navigator.with(this).navigate(object : UserProfileContract {
+            override val mentorId = id
+            override val previousPage = RECENT_CALL
+            override val conversationId = this@RecentCallActivity.conversationId
+            override val flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            override val navigator = this@RecentCallActivity.navigator
+        })
     }
 
     fun onRecentCallHasRequest(recentCall: RecentCall) {

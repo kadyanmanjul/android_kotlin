@@ -330,11 +330,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (getVoipState() == State.IDLE) {
-                //TODO : Integrate Navigator -- Sukesh
-//                val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
-//                    putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, getConversationId())
-//                }
-//                startActivity(intent)
+                AppObjectController.navigator.with(requireActivity()).navigate(object : GroupVoipContract {
+                    override val conversationId = getConversationId()
+                    override val navigator = AppObjectController.navigator
+                })
                 MixPanelTracker.publishEvent(MixPanelEvent.CALL_PP_FROM_GROUP_LESSON)
                     .addParam(ParamKeys.LESSON_ID, lessonID)
                     .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
@@ -379,6 +378,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.imgRecentCallsHistory.setOnSingleClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
             AppObjectController.navigator.with(requireActivity()).navigate(object : RecentCallContract {
+                override val conversationId = getConversationId()
                 override val navigator = AppObjectController.navigator
             })
         }

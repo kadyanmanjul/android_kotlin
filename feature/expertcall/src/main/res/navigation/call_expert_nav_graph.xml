@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/walletFragment"
-        android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.WalletFragment"
+        android:name="com.joshtalks.joshskills.expertcall.fragment.WalletFragment"
         android:label="Add money to wallet"
         tools:layout="@layout/fragment_wallet">
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/expertListFragment"
-        android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertListFragment"
+        android:name="com.joshtalks.joshskills.expertcall.fragment.ExpertListFragment"
         android:label="Call With Expert"
         tools:layout="@layout/fragment_expert_list">
         <action
@@ -32,12 +32,12 @@
 <!--        android:label="Processing Payment" />-->
     <fragment
         android:id="@+id/transactions"
-        android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.TransactionsFragment"
+        android:name="com.joshtalks.joshskills.expertcall.fragment.TransactionsFragment"
         android:label="Transactions"
         tools:layout="@layout/fragment_transactions" />
     <fragment
         android:id="@+id/expertCallUpgrade"
-        android:name="com.joshtalks.joshskills.ui.callWithExpert.fragment.ExpertCallUpgradeFragment"
+        android:name="com.joshtalks.joshskills.expertcall.fragment.ExpertCallUpgradeFragment"
         tools:layout="@layout/fragment_expert_call_upgrade">
         <action
             android:id="@+id/action_upgrade_to_wallet"
@@ -46,11 +46,11 @@
     <fragment
         android:id="@+id/paymentInProcessFragment"
         tools:layout="@layout/fragment_payment_in_process"
-        android:name="com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment"
+        android:name="com.joshtalks.joshskills.common.ui.payment.PaymentInProcessFragment"
         android:label="Processing Payment" />
     <fragment
         android:id="@+id/paymentPendingFragment"
         tools:layout="@layout/fragment_payment_pending"
-        android:name="com.joshtalks.joshskills.ui.payment.PaymentPendingFragment"
+        android:name="com.joshtalks.joshskills.common.ui.payment.PaymentPendingFragment"
         android:label="Pending Payment" />
 </navigation>

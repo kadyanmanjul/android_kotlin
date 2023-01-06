@@ -5,8 +5,9 @@ import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.base.BaseActivity
-import com.joshtalks.joshskills.common.core.AllRequestsContract
-import com.joshtalks.joshskills.common.core.NAVIGATOR
+import com.joshtalks.joshskills.common.core.*
+import com.joshtalks.joshskills.common.repository.local.model.Mentor
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.fpp.adapters.SeeAllRequestsAdapter
 import com.joshtalks.joshskills.fpp.constants.FAVOURITE_REQUEST
 import com.joshtalks.joshskills.fpp.constants.FPP_SEE_ALL_BACK_PRESSED
@@ -21,9 +22,14 @@ class SeeAllRequestsActivity : BaseActivity() {
         DataBindingUtil.setContentView(this, R.layout.activity_see_all_requests)
     }
     lateinit var seeAllRequestsAdapter: SeeAllRequestsAdapter
+    private lateinit var navigator: Navigator
 
     val viewModel by lazy {
         ViewModelProvider(this)[SeeAllRequestsViewModel::class.java]
+    }
+
+    override fun getArguments() {
+        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
     }
 
     override fun initViewBinding() {
@@ -44,16 +50,13 @@ class SeeAllRequestsActivity : BaseActivity() {
         }
     }
 
-    //TODO Make navigation to Open UserProfileActivity
     private fun openUserProfile(senderMentorId: String) {
-//        UserProfileActivity.startUserProfileActivity(
-//            this,
-//            senderMentorId,
-//            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-//            null,
-//            previousPage = FAVOURITE_REQUEST,
-//            conversationId = null
-//        )
+        navigator.with(this).navigate(object : UserProfileContract {
+            override val mentorId = senderMentorId
+            override val previousPage = FAVOURITE_REQUEST
+            override val flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            override val navigator = this@SeeAllRequestsActivity.navigator
+        })
     }
 
     private fun popBackStack() {

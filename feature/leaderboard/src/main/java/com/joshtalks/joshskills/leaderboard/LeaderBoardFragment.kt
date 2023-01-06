@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.LogException
 import com.joshtalks.joshskills.common.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity.Companion.tooltipTextList
 import com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity.Companion.winnerMap
@@ -440,22 +441,21 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
         )
     }
 
-    //TODO Make navigation to Open UserProfileActivity
     private fun openUserProfileActivity(
         id: String,
         intervalType: String,
         isOnline: Boolean = false
     ) {
-//        context?.let {
-//            UserProfileActivity.startUserProfileActivity(
-//                requireActivity(),
-//                id,
-//                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-//                intervalType,
-//                USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-//                conversationId = requireActivity().intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
-//            )
-//        }
+        context?.let {
+            AppObjectController.navigator.with(requireActivity()).navigate(object : UserProfileContract {
+                override val mentorId = id
+                override val previousPage = USER_PROFILE_FLOW_FROM.LEADERBOARD.value
+                override val intervalType = intervalType
+                override val conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
+                override val flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                override val navigator = AppObjectController.navigator
+            })
+        }
     }
 
 

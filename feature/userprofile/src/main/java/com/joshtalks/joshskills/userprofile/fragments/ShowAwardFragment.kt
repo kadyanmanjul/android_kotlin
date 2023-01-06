@@ -22,11 +22,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import com.joshtalks.joshskills.common.core.AppObjectController
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.AppObjectController.Companion.getHostOfUrl
-import com.joshtalks.joshskills.common.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.common.core.setImage
-import com.joshtalks.joshskills.common.core.showToast
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.userprofile.models.Award
 import com.joshtalks.joshskills.common.repository.service.DIR
@@ -118,11 +115,12 @@ class ShowAwardFragment : DialogFragment() {
     }
 
     fun goToProfile() {
-        UserProfileActivity.startUserProfileActivity(
-            requireActivity(), Mentor.getInstance().getId(),
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            null, USER_PROFILE_FLOW_FROM.AWARD.value
-        )
+        AppObjectController.navigator.with(requireActivity()).navigate(object : UserProfileContract {
+            override val mentorId = Mentor.getInstance().getId()
+            override val previousPage = USER_PROFILE_FLOW_FROM.AWARD.value
+            override val flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            override val navigator = AppObjectController.navigator
+        })
         dismiss()
     }
 

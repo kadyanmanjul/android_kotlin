@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.common.databinding.ActivityPreviousLeaderboardBi
 import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -47,7 +48,7 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
     }
 
     override fun getConversationId(): String? {
-        return intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun initRV() {
@@ -198,21 +199,19 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
         )
     }
 
-    //TODO Make navigation to Open UserProfileActivity
-
     private fun openUserProfileActivity(
         id: String,
         intervalType: String,
         isOnline: Boolean = false
     ) {
-//        UserProfileActivity.startUserProfileActivity(
-//            this,
-//            id,
-//            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-//            intervalType,
-//            USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-//            conversationId = intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID),
-//        )
+        navigator.with(this).navigate(object : UserProfileContract {
+            override val mentorId = id
+            override val previousPage = USER_PROFILE_FLOW_FROM.LEADERBOARD.value
+            override val intervalType = intervalType
+            override val conversationId = intent.getStringExtra(CONVERSATION_ID)
+            override val flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            override val navigator = this@PreviousLeaderboardActivity.navigator
+        })
     }
 
     fun showFreeTrialPaymentScreen() {
@@ -238,7 +237,7 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
             conversationId: String? = null
         ) {
             Intent(activity, PreviousLeaderboardActivity::class.java).apply {
-                putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
+                putExtra(CONVERSATION_ID, conversationId)
                 intervalType?.let {
                     putExtra(INTERVAL_TYPE, it)
                 }

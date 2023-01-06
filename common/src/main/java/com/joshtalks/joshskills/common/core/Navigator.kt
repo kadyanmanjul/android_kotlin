@@ -21,7 +21,10 @@ interface SplashContract : Contract
 interface SettingsContract : Contract
 interface OnBoardingContract : Contract
 interface AllRequestsContract : Contract
-interface RecentCallContract : Contract
+
+interface RecentCallContract : Contract {
+    val conversationId: String?
+}
 
 interface NotificationContract : Contract {
     val notificationObject: NotificationObject
@@ -38,6 +41,10 @@ interface GroupsContract : Contract {
         get() = EMPTY
     val dmChatData: GroupsItem?
         get() = null
+}
+
+interface GroupVoipContract : Contract {
+    val conversationId: String?
 }
 
 interface ExpertCallContract : Contract {
@@ -103,6 +110,15 @@ interface LessonContract : Contract {
         get() = null
     val isLessonCompleted: Boolean
         get() = false
+}
+
+interface UserProfileContract : Contract {
+    val mentorId: String
+    val previousPage: String
+    val intervalType: String?
+        get() = null
+    val conversationId: String?
+        get() = null
 }
 
 interface StickyServiceConnection : Connection

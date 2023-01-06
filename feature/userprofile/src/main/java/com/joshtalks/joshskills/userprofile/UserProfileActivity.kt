@@ -1318,27 +1318,18 @@ class UserProfileActivity : CoreJoshActivity() {
         const val INTERVAL_TYPE = "interval_type"
         const val PREVIOUS_PAGE = "previous_page"
 
-        fun startUserProfileActivity(
-            activity: Activity,
-            mentorId: String,
-            flags: Array<Int> = arrayOf(),
-            intervalType: String? = null,
-            previousPage: String? = null,
-            conversationId: String? = null,
-            ) {
-            Intent(activity, UserProfileActivity::class.java).apply {
-                putExtra(KEY_MENTOR_ID, mentorId)
-                intervalType?.let {
-                    putExtra(INTERVAL_TYPE, it)
+        fun openUserProfileActivity(contract: UserProfileContract, context: Context) {
+            context.startActivity(
+                Intent(context, UserProfileActivity::class.java).apply {
+                    putExtra(KEY_MENTOR_ID, contract.mentorId)
+                    contract.intervalType?.let {
+                        putExtra(INTERVAL_TYPE, it)
+                    }
+                    putExtra(PREVIOUS_PAGE, contract.previousPage)
+                    putExtra(CONVERSATION_ID, contract.conversationId)
+                    contract.flags.forEach { flag -> addFlags(flag) }
                 }
-                putExtra(PREVIOUS_PAGE, previousPage)
-                putExtra(CONVERSATION_ID, conversationId)
-                flags.forEach { flag ->
-                    this.addFlags(flag)
-                }
-            }.run {
-                activity.startActivity(this)
-            }
+            )
         }
     }
 

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.groups.views
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 
@@ -8,16 +9,20 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 
 import com.afollestad.materialdialogs.MaterialDialog
+import com.joshtalks.joshskills.common.constants.*
 
 import com.joshtalks.joshskills.groups.R
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.AppObjectController
+import com.joshtalks.joshskills.common.core.GroupVoipContract
+import com.joshtalks.joshskills.common.core.NAVIGATOR
 import com.joshtalks.joshskills.common.core.PermissionUtils
 import com.joshtalks.joshskills.groups.databinding.ActivityJoshVoipGroupctivityBinding
 import com.joshtalks.joshskills.groups.*
 import com.joshtalks.joshskills.groups.analytics.GroupAnalytics
 import com.joshtalks.joshskills.groups.constants.*
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupItemData
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.groups.utils.getMemberCount
 import com.joshtalks.joshskills.groups.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
@@ -60,19 +65,19 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                com.joshtalks.joshskills.common.constants.ON_BACK_PRESSED -> popBackStack()
-                com.joshtalks.joshskills.common.constants.OPEN_GROUP -> {
+                ON_BACK_PRESSED -> popBackStack()
+                OPEN_GROUP -> {
                     if (supportFragmentManager.backStackEntryCount == 0)
                         startGroupCall(it.obj as? GroupItemData)
                     else
                         openGroupChat(it.obj as? GroupItemData)
                 }
-                com.joshtalks.joshskills.common.constants.SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
-                com.joshtalks.joshskills.common.constants.SEARCH_GROUP -> openGroupSearchFragment()
-                com.joshtalks.joshskills.common.constants.SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
-                com.joshtalks.joshskills.common.constants.DISMISS_PROGRESS_BAR -> dismissProgressDialog()
-                com.joshtalks.joshskills.common.constants.OPEN_GROUP_REQUEST -> openGroupRequestFragment()
-                com.joshtalks.joshskills.common.constants.REFRESH_GRP_LIST_HIDE_INFO -> {
+                SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
+                SEARCH_GROUP -> openGroupSearchFragment()
+                SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
+                DISMISS_PROGRESS_BAR -> dismissProgressDialog()
+                OPEN_GROUP_REQUEST -> openGroupRequestFragment()
+                REFRESH_GRP_LIST_HIDE_INFO -> {
                     vm.hasGroupData.set(it.data.getBoolean(SHOW_NEW_INFO))
                     vm.hasGroupData.notifyChange()
                     vm.setGroupsCount()
@@ -226,6 +231,18 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
             }
             replace(R.id.group_fragment_container, fragment, SEARCH_FRAGMENT)
             addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    companion object {
+        fun openVoipGroupActivity(contract: GroupVoipContract, context: Context) {
+            context.startActivity(
+                Intent(context, JoshVoipGroupActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, contract.conversationId)
+                    putExtra(NAVIGATOR, contract.navigator)
+                    contract.flags.forEach { addFlags(it) }
+                }
+            )
         }
     }
 }

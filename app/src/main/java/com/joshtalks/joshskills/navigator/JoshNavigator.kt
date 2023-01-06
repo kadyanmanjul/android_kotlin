@@ -13,12 +13,14 @@ import com.joshtalks.joshskills.explore.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.fpp.RecentCallActivity
 import com.joshtalks.joshskills.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.groups.JoshGroupActivity
+import com.joshtalks.joshskills.groups.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.lesson.LessonActivity
 import com.joshtalks.joshskills.notification.NotificationUtils
 import com.joshtalks.joshskills.notification.StickyNotificationService
 import com.joshtalks.joshskills.referral.ReferralActivity
 import com.joshtalks.joshskills.settings.SettingsActivity
+import com.joshtalks.joshskills.userprofile.UserProfileActivity
 
 object JoshNavigator : Navigator {
     override fun with(context: Context): Navigator.Navigate {
@@ -27,6 +29,7 @@ object JoshNavigator : Navigator {
                 when(contract) {
                     is SplashContract -> LauncherActivity.openLauncherActivity(contract, context)
                     is GroupsContract -> JoshGroupActivity.openGroupsActivity(contract, context)
+                    is GroupVoipContract -> JoshVoipGroupActivity.openVoipGroupActivity(contract, context)
                     is SettingsContract -> SettingsActivity.openSettingsActivity(contract, context)
                     is ExpertCallContract -> CallWithExpertActivity.openExpertActivity(contract, context)
                     is LeaderboardContract -> LeaderBoardViewPagerActivity.openLeaderboardActivity(contract, context)
@@ -39,6 +42,7 @@ object JoshNavigator : Navigator {
                     is LessonContract -> LessonActivity.openLessonActivity(contract, context)
                     is AllRequestsContract -> SeeAllRequestsActivity.openAllRequestsActivity(contract, context)
                     is RecentCallContract -> RecentCallActivity.openRecentCallActivity(contract, context)
+                    is UserProfileContract -> UserProfileActivity.openUserProfileActivity(contract, context)
                     is NotificationContract -> NotificationUtils(context).sendNotification(contract.notificationObject)
                 }
             }

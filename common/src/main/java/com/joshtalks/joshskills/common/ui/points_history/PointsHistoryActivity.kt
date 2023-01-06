@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.databinding.ActivityPointsHistoryBinding
+import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.common.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.common.ui.points_history.viewmodel.PointsViewModel
@@ -61,7 +62,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
     }
 
     override fun getConversationId(): String? {
-        return intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun initToolbar() {
@@ -253,10 +254,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
         MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_EARN_POINTS).push()
         startActivity(
             Intent(this, PointsInfoActivity::class.java).apply {
-                putExtra(
-                    com.joshtalks.joshskills.common.track.CONVERSATION_ID, intent.getStringExtra(
-                        com.joshtalks.joshskills.common.track.CONVERSATION_ID
-                    ))
+                putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
             }
         )
     }
@@ -276,7 +274,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
             conversationId: String? = null
         ) {
             val intent = Intent(context, PointsHistoryActivity::class.java)
-            intent.putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
+            intent.putExtra(CONVERSATION_ID, conversationId)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             mentorId?.run {
                 intent.putExtra(MENTOR_ID, mentorId.toString())

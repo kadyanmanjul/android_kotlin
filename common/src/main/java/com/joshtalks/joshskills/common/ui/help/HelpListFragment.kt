@@ -1,31 +1,34 @@
 package com.joshtalks.joshskills.common.ui.help
 
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.FRESH_CHAT_UNREAD_MESSAGES
-import com.joshtalks.joshskills.common.core.PrefManager
+import com.joshtalks.joshskills.common.base.EventLiveData
+import com.joshtalks.joshskills.common.core.showToast
 import com.joshtalks.joshskills.common.databinding.FragmentHelpListBinding
 import com.joshtalks.joshskills.common.repository.server.help.Action
 import com.joshtalks.joshskills.common.repository.server.help.HelpCenterOptions
-import com.joshtalks.joshskills.common.ui.help.viewholder.HelpViewHolder
-
+import com.joshtalks.joshskills.common.repository.server.help.HelpCenterOptionsModel
+import com.joshtalks.joshskills.common.ui.help.adapter.HelpListAdapter
+import com.joshtalks.joshskills.common.ui.special_practice.utils.OPEN_CALL_SCREEN
+import com.joshtalks.joshskills.common.ui.special_practice.utils.OPEN_FAQ_SCREEN
+import com.joshtalks.joshskills.common.ui.special_practice.utils.OPEN_HELP_CHAT_SCREEN
 
 class HelpListFragment : Fragment() {
     private lateinit var viewModel: HelpViewModel
     private lateinit var helpListBinding: FragmentHelpListBinding
+    private val helpListAdapter = HelpListAdapter()
+    private var message = Message()
 
+    private var singleLiveEvent = EventLiveData
     companion object {
         @JvmStatic
         fun newInstance() = HelpListFragment().apply {}
@@ -41,7 +44,7 @@ class HelpListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         helpListBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_help_list, container, false)
@@ -52,49 +55,46 @@ class HelpListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRV()
         HelpCenterOptions.getHelpOptionsModelObject()?.let { helpCenterOptionsModel ->
-            val titleView =
-                requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
+            val titleView = requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
             titleView?.text = helpCenterOptionsModel.title
-            helpCenterOptionsModel.options.forEach {
-                if (it.action == Action.HELPCHAT)
-                    helpListBinding.recyclerView.addView(
-                        HelpViewHolder(
-                            it, PrefManager.getIntValue(
-                                FRESH_CHAT_UNREAD_MESSAGES
-                            )
-                        )
-                    )
-                else helpListBinding.recyclerView.addView(
-                    HelpViewHolder(
-                        it,
-                        0
-                    )
-                )
+            helpListAdapter.addListOfHelp(helpCenterOptionsModel.options)
+            initRV(helpCenterOptionsModel)
+        }
 
-            }
-            helpCenterOptionsModel.supportMessage?.run {
-                helpListBinding.infoSupport.visibility = View.VISIBLE
-                helpListBinding.infoSupport.text = this
+        helpListAdapter.setOnClickListener { option, position ->
+            when {
+                Action.CALL == option.action -> {
+                    message.what = OPEN_CALL_SCREEN
+                    message.obj = option
+                    singleLiveEvent.value = message
+                }
+                Action.HELPCHAT == option.action -> {
+                    message.what = OPEN_HELP_CHAT_SCREEN
+                    message.obj = option
+                    singleLiveEvent.value = message
+                }
+                Action.FAQ == option.action -> {
+                    message.what = OPEN_FAQ_SCREEN
+                    message.obj = option
+                    singleLiveEvent.value = message
+                }
+                else -> {
+                    showToast(getString(R.string.something_went_wrong))
+                }
             }
         }
     }
 
-    private fun initRV() {
+    private fun initRV(helpCenterOptionsModel: HelpCenterOptionsModel) {
         val linearLayoutManager = LinearLayoutManager(activity)
         linearLayoutManager.isSmoothScrollbarEnabled = true
+        helpListBinding.recyclerView.adapter = helpListAdapter
         helpListBinding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
-        val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        divider.setDrawable(
-            ColorDrawable(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.seek_bar_background
-                )
-            )
-        )
-        helpListBinding.recyclerView.addItemDecoration(divider)
+        helpCenterOptionsModel.supportMessage?.run {
+            helpListBinding.infoSupport.visibility = View.VISIBLE
+            helpListBinding.infoSupport.text = this
+        }
     }
 }

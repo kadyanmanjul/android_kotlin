@@ -119,6 +119,7 @@ class FavoriteListActivity : BaseActivity() {
 
     private fun openRecentScreen() {
         navigator.with(this).navigate(object : RecentCallContract {
+            override val conversationId = conversationId1
             override val navigator = this@FavoriteListActivity.navigator
         })
     }
@@ -155,15 +156,14 @@ class FavoriteListActivity : BaseActivity() {
         actionMode?.invalidate()
     }
 
-    //TODO Make navigation to Open UserProfileActivity
     private fun openProfileScreen(mId: String,position:Int) {
         if (viewModel.deleteRecords.isEmpty()){
-//            UserProfileActivity.startUserProfileActivity(
-//                this,
-//                mentorId = mId,
-//                conversationId = conversationId1,
-//                previousPage = FAVOURITE_LIST
-//            )
+            navigator.with(this).navigate(object : UserProfileContract {
+                override val mentorId = mId
+                override val previousPage = FAVOURITE_LIST
+                override val conversationId = conversationId1
+                override val navigator = this@FavoriteListActivity.navigator
+            })
             return
         }
         viewModel.updateListRow(position)
