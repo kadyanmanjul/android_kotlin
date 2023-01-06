@@ -599,7 +599,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     )
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
                 }
                 LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
@@ -617,7 +616,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     )
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
                 }
                 LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1 -> {
@@ -635,7 +633,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     )
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
                 }
                 LessonSpotlightState.VOCAB_SPOTLIGHT_PART1 -> {
@@ -653,7 +650,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     )
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
                 }
                 LessonSpotlightState.VOCAB_SPOTLIGHT_PART2 -> {
@@ -671,7 +667,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     )
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
                 }
                 LessonSpotlightState.VOCAB_SPOTLIGHT_PART3 -> {
@@ -689,7 +684,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     )
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
                 }
                 LessonSpotlightState.READING_SPOTLIGHT -> {
@@ -707,7 +701,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     )
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
                 }
                 LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART2 -> {
@@ -725,13 +718,12 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     )
                     binding.spotlightStartGrammarTest.visibility = View.VISIBLE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.VISIBLE
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
                     lifecycleScope.launch (Dispatchers.Main){
-                        delay(500)
+                        delay(100)
                         Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
                         if (introVideoControl) {
                             if (introVideoUrl.isNullOrBlank().not()) {
@@ -741,29 +733,33 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                 viewModel.showHideSpeakingFragmentCallButtons(1)
                                 showIntroVideoUi()
                             }
-                        } else if (PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) && (viewModel.lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO)) {
-                            binding.overlayLayout.visibility = View.VISIBLE
-                            binding.spotlightTabGrammar.visibility = View.INVISIBLE
-                            binding.spotlightTabSpeaking.visibility = View.INVISIBLE
-                            binding.spotlightTabVocab.visibility = View.INVISIBLE
-                            binding.spotlightTabReading.visibility = View.INVISIBLE
-                            binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                            binding.spotlightStartGrammarTest.visibility = View.GONE
-                            binding.spotlightCallBtn.visibility = View.VISIBLE
-                            binding.spotlightCallBtnText.visibility = View.VISIBLE
-                            binding.arrowAnimation.visibility = View.VISIBLE
-                            viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
-                                if (text.isBlank()) hideSpotlight()
-                                else {
-                                    binding.lessonSpotlightTooltip.setTooltipText(text)
-                                    binding.lessonSpotlightTooltip.post {
-                                        slideInAnimation(binding.lessonSpotlightTooltip)
-                                    }
-                                }
-                            } ?: run {
-                                hideSpotlight()
-                            }
                         }
+//                        } else if (PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) && (viewModel.lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO)) {
+//                            binding.overlayLayout.visibility = View.VISIBLE
+//                            binding.spotlightTabGrammar.visibility = View.INVISIBLE
+//                            binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+//                            binding.spotlightTabVocab.visibility = View.INVISIBLE
+//                            binding.spotlightTabReading.visibility = View.INVISIBLE
+//                          //  binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+//                            binding.spotlightStartGrammarTest.visibility = View.GONE
+//                            binding.spotlightCallBtn.visibility = View.VISIBLE
+//                            //binding.arrowAnimation.visibility = View.VISIBLE
+//                            viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
+//                                if (text.isBlank()) hideSpotlight()
+//                                else {
+//                                    showTooltipInSpeaking(text)
+//                                    binding.overlayLayout.setOnClickListener {
+//                                        hideSpotlight()
+//                                    }
+////                                    binding.lessonSpotlightTooltip.setTooltipText(text)
+////                                    binding.lessonSpotlightTooltip.post {
+////                                        slideInAnimation(binding.lessonSpotlightTooltip)
+////                                    }
+//                                }
+//                            } ?: run {
+//                                hideSpotlight()
+//                            }
+//                        }
                     }
                 }
                 else -> {
@@ -777,7 +773,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     binding.lessonSpotlightTooltip.visibility = View.GONE
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.GONE
                 }
             }
@@ -809,7 +804,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     spotlightTabVocab.visibility = View.INVISIBLE
                     spotlightTabReading.visibility = View.INVISIBLE
                     spotlightCallBtn.visibility = View.GONE
-                    spotlightCallBtnText.visibility = View.GONE
                     viewModel.showHideSpeakingFragmentCallButtons(1)
                     videoPopup.visibility = View.VISIBLE
                     videoPopup.startAnimation(
@@ -1165,9 +1159,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             tab.setCustomView(R.layout.capsule_tab_layout_view)
             when (position) {
                 SPEAKING_POSITION -> {
-                    if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT).not()) {
-                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-                    }
+//                    if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT).not()) {
+//                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+//                    }
                     setSelectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
@@ -1707,7 +1701,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private fun closeVideoPopUpUi() {
         binding.videoPopup.visibility = View.GONE
         binding.spotlightCallBtn.visibility = View.GONE
-        binding.spotlightCallBtnText.visibility = View.GONE
         binding.videoCallBtn.visibility = View.INVISIBLE
         binding.videoCallBtnText.visibility = View.INVISIBLE
         viewModel.showHideSpeakingFragmentCallButtons(2)
@@ -1773,6 +1766,31 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private fun closeReadingFullScreen() {
         supportFragmentManager.popBackStackImmediate()
         container_reading.visibility = View.GONE
+    }
+
+    private fun showTooltipInSpeaking(text:String){
+        try {
+            val balloon = Balloon.Builder(this)
+                .setLayout(R.layout.layout_speaking_button_tooltip)
+                .setHeight(BalloonSizeSpec.WRAP)
+                .setIsVisibleArrow(true)
+                .setBackgroundColorResource(R.color.surface_tip)
+                .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
+                .setWidthRatio(0.75f)
+                .setDismissWhenTouchOutside(true)
+                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                .setLifecycleOwner(this)
+                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                .build()
+            val textViewTitle = balloon.getContentView().findViewById<MaterialTextView>(R.id.title)
+            textViewTitle.text = text
+            val textViewSubHeadingText = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+            textViewSubHeadingText.text = text
+
+            balloon.showAlignTop(binding.spotlightCallBtn)
+        } catch (ex: Exception) {
+            Log.d(TAG, "showBuyCourseTooltip: ${ex.message}")
+        }
     }
 }
 

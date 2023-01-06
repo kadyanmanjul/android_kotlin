@@ -72,6 +72,9 @@ data class SpeakingTopic(
     @ColumnInfo(name = "p2p_button_icon")
     val p2pBtnIcon: String? = null,
 
+    @SerializedName("is_speaking_tooltip_enabled")
+    val isSpeakingTooltipEnabled : Boolean = false
+
 ) : Parcelable
 
 @Dao

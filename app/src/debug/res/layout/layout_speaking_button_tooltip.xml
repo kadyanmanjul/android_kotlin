@@ -4,10 +4,10 @@
     android:id="@+id/balloon_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_yellow_with_stroke"
+    android:background="@drawable/bg_yellow_stroke"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/_16sdp"
-    android:paddingVertical="@dimen/_8sdp">
+    android:paddingVertical="@dimen/_10sdp">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title"

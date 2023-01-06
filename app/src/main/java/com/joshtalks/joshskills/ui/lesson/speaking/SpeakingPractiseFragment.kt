@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -13,6 +14,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.ImageView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -46,10 +50,10 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
+import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.callWithExpert.CallWithExpertActivity
-import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.setOnShortSingleClickListener
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
@@ -60,6 +64,7 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
@@ -68,6 +73,10 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.skydoves.balloon.ArrowPositionRules
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
+import com.skydoves.balloon.BalloonSizeSpec
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
@@ -110,6 +119,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var isBlockedFT = false
     private var countdownTimerBack: CountdownTimerBack? = null
     private val event = EventLiveData
+    private lateinit var toolTipTopicContainer: Balloon
+    private lateinit var toolTipButton: Balloon
+
     private val getBlockStatus = fun() {
     }
 
@@ -465,7 +477,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                     binding.tvTodayTopic.text = response.topicName
 
-                    showToolTipOnLesson()
+                    showToolTipOnLesson(response)
 
                     if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
                         PrefManager.put(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
@@ -492,7 +504,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         if (!response.p2pBtnIcon.isNullOrBlank())
                             binding.btnPeerToPeerCall.icon = requireActivity().getDrawable(R.drawable.ic_phone_icon)
 
-                        requireActivity().findViewById<MaterialTextView>(R.id.spotlight_call_btn_text).text =
+                        requireActivity().findViewById<MaterialTextView>(R.id.spotlight_call_btn).text =
                             response.p2pBtnText?.let {
                                 it.ifBlank { getString(R.string.call_practice_partner) }
                             } ?: getString(R.string.call_practice_partner)
@@ -564,6 +576,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     ex.printStackTrace()
                 }
                 binding.groupTwo.visibility = VISIBLE
+                binding.spTitle.visibility = VISIBLE
                 if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
                     binding.progressBar.visibility = View.INVISIBLE
                     binding.tvPractiseTime.visibility = GONE
@@ -692,20 +705,43 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             binding.btnCallWithExpert.isVisible = false
         }
         lifecycleScope.launch(Dispatchers.Main){
-            delay(500)
+            delay(100)
             initDemoViews(lessonNo)
         }
     }
 
-    private fun showToolTipOnLesson() {
+    private fun showToolTipOnLesson(response: SpeakingTopic) {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
-        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT) && PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP)) {
             viewModel.lessonSpotlightStateLiveData.postValue(null)
         } else {
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(100)
-                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-                PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+            if (response.isSpeakingTooltipEnabled) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+                        //This code is for show balloon tooltip and highlight topic container
+
+                        showTooltipTopic(
+                            "Today’s topic and goals",
+                            response.speakingToolTipText ?: EMPTY)
+
+                        setOverlayAnimationOnTopicContainer()
+                        PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+                    } else {
+                        //This code is for show balloon tooltip and highlight peer to peer button
+                        showTooltipButton(
+                            "Start Speaking Practice Now",
+                            response.speakingToolTipText ?: EMPTY)
+
+                        setOverlayAnimationOnSpeakingButton()
+                        PrefManager.put(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP, true)
+                    }
+                }
+            } else {
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(100)
+                    viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+                    PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+                }
             }
         }
     }
@@ -1000,4 +1036,167 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         super.onDestroy()
         countdownTimerBack?.stop()
     }
+
+    private suspend fun setOverlayAnimationOnTopicContainer() {
+        withContext(Dispatchers.Main) {
+            val STATUS_BAR_HEIGHT = getStatusBarHeight()
+            binding.welcomeContainer.visibility = VISIBLE
+            val overlayImageView = binding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
+            val overlayItem = TooltipUtils.getOverlayItemFromView(binding.tooltipContainer)
+
+            val layoutP : ViewGroup.MarginLayoutParams = overlayImageView.layoutParams as  ViewGroup.MarginLayoutParams
+            layoutP.setMargins(resources.getDimension(R.dimen._10sdp).toInt(), 0, resources.getDimension(R.dimen._10sdp).toInt(), 0)
+            overlayImageView.setBackgroundDrawable(AppCompatResources.getDrawable(requireContext(),R.drawable.round_rect_default_8))
+            binding.tooltipContainer.requestLayout()
+
+            binding.welcomeContainer.setOnClickListener {
+                binding.welcomeContainer.visibility = GONE
+                dismissTooltipTopicContainer()
+                //This code is for show balloon tooltip and highlight peer to peer button
+                showTooltipButton(
+                    "Start Speaking Practice Now",
+                    "Start Speaking Practice Now")
+                CoroutineScope(Dispatchers.Main).launch {
+                    setOverlayAnimationOnSpeakingButton()
+                }
+                PrefManager.put(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP, true)
+            }
+
+            overlayItem?.let {
+                overlayImageView.setImageBitmap(it.viewBitmap)
+                overlayImageView.x = it.x.toFloat()
+                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp) - resources.getDimension(R.dimen._30sdp)
+                overlayImageView.requestLayout()
+            }
+        }
+    }
+
+    private suspend fun setOverlayAnimationOnSpeakingButton() {
+        withContext(Dispatchers.Main) {
+            val STATUS_BAR_HEIGHT = getStatusBarHeight()
+            binding.welcomeContainer.visibility = VISIBLE
+            val overlayImageView = binding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
+            val overlayItem = TooltipUtils.getOverlayItemFromView(binding.btnPeerToPeerCall)
+
+            overlayImageView.setBackgroundDrawable(AppCompatResources.getDrawable(requireContext(),R.drawable.rounded_blue_rectangle_with_border))
+            binding.btnPeerToPeerCall.requestLayout()
+
+            binding.welcomeContainer.setOnClickListener {
+                binding.welcomeContainer.visibility = GONE
+                dismissTooltipButton()
+            }
+            overlayImageView.setOnClickListener {
+                binding.welcomeContainer.visibility = GONE
+                dismissTooltipButton()
+                val state = getVoipState()
+                Log.d(TAG, " Start Call Button - Voip State $state")
+                if (state == State.IDLE) {
+                    if (checkPstnState() == PSTNState.Idle) {
+                        if (Utils.isInternetAvailable().not()) {
+                            showToast("Seems like you have no internet")
+                        }
+                        startPractise()
+                    } else {
+                        showToast("Cannot make this call while on another call")
+                    }
+                } else
+                    showToast("Wait for last call to get disconnected")
+            }
+
+            overlayItem?.let {
+                overlayImageView.setImageBitmap(it.viewBitmap)
+                overlayImageView.x = it.x.toFloat()
+                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp) - resources.getDimension(R.dimen._47sdp)
+                overlayImageView.requestLayout()
+            }
+        }
+    }
+
+    fun getStatusBarHeight(): Int {
+        val rectangle = Rect()
+        requireActivity().window.getDecorView().getWindowVisibleDisplayFrame(rectangle)
+        val statusBarHeight = rectangle.top
+        val contentViewTop: Int = requireActivity().window.findViewById<View>(Window.ID_ANDROID_CONTENT).getTop()
+        val titleBarHeight = contentViewTop - statusBarHeight
+        Log.d("sagar", "getStatusBarHeight: $titleBarHeight")
+        return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
+    }
+
+    private fun showTooltipTopic(testHeader: String, testBody:String) {
+        try {
+            if (this::toolTipTopicContainer.isInitialized.not()) {
+                toolTipTopicContainer = Balloon.Builder(requireContext())
+                    .setLayout(R.layout.layout_speaking_button_tooltip)
+                    .setHeight(BalloonSizeSpec.WRAP)
+                    .setIsVisibleArrow(true)
+                    .setBackgroundColorResource(R.color.surface_tip)
+                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
+                    .setWidthRatio(0.75f)
+                    .setArrowPosition(0.2f)
+                    .setDismissWhenTouchOutside(false)
+                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                    .setLifecycleOwner(this)
+                    .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                    .build()
+                val textViewTitle = toolTipTopicContainer.getContentView().findViewById<MaterialTextView>(R.id.title)
+                textViewTitle.text = testHeader
+                val textViewSubHeadingText = toolTipTopicContainer.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+                textViewSubHeadingText.text = testBody
+
+                toolTipTopicContainer.showAlignTop(binding.tooltipContainer)
+            }
+
+        } catch (ex: Exception) {
+            Log.d(TAG, "showBuyCourseTooltip: ${ex.message}")
+        }
+    }
+    private fun dismissTooltipTopicContainer(){
+        if (this::toolTipTopicContainer.isInitialized && toolTipTopicContainer.isShowing){
+            toolTipTopicContainer.dismiss()
+        }
+    }
+
+    private fun showTooltipButton(testHeader: String, testBody:String) {
+        try {
+            if (this::toolTipButton.isInitialized.not()) {
+                toolTipButton = Balloon.Builder(requireContext())
+                    .setLayout(R.layout.layout_speaking_button_tooltip)
+                    .setHeight(BalloonSizeSpec.WRAP)
+                    .setIsVisibleArrow(true)
+                    .setBackgroundColorResource(R.color.surface_tip)
+                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
+                    .setWidthRatio(0.75f)
+                    .setArrowPosition(0.2f)
+                    .setDismissWhenTouchOutside(false)
+                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                    .setLifecycleOwner(this)
+                    .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                    .build()
+                val textViewTitle = toolTipButton.getContentView().findViewById<MaterialTextView>(R.id.title)
+                textViewTitle.text = testHeader
+                val textViewSubHeadingText = toolTipButton.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+                textViewSubHeadingText.text = testBody
+
+                toolTipButton.showAlignTop(binding.btnPeerToPeerCall)
+            }
+
+        } catch (ex: Exception) {
+            Log.d(TAG, "showBuyCourseTooltip: ${ex.message}")
+        }
+    }
+
+    private fun dismissTooltipButton(){
+        if (this::toolTipButton.isInitialized && toolTipButton.isShowing){
+            toolTipButton.dismiss()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        dismissTooltipTopicContainer()
+        binding.welcomeContainer.visibility = GONE
+        dismissTooltipButton()
+        Log.e("sagar", "onPause: ")
+    }
+
 }
