@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.certificate
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -21,6 +22,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.certificate.examview.CExamMainActivity
 import com.joshtalks.joshskills.certificate.report.CExamReportActivity
 import com.joshtalks.joshskills.certificate.view.InstructionFragment
+import com.joshtalks.joshskills.common.core.CertificateContract
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
 
@@ -33,20 +35,25 @@ const val EXAM_LESSON_INTERVAL = "exam_lesson_interval"
 class CertificationBaseActivity : BaseActivity() {
 
     companion object {
-        fun certificationExamIntent(
-            activity: Activity,
-            conversationId: String,
-            chatMessageId: String,
-            certificationId: Int,
-            cExamStatus: CExamStatus = CExamStatus.FRESH,
-            lessonInterval: Int? = -1
-        ): Intent {
-            return Intent(activity, CertificationBaseActivity::class.java).apply {
-                putExtra(CONVERSATION_ID, conversationId)
-                putExtra(CHAT_ROOM_ID, chatMessageId)
-                putExtra(CERTIFICATION_EXAM_ID, certificationId)
-                putExtra(EXAM_STATUS, cExamStatus)
-                putExtra(EXAM_LESSON_INTERVAL, lessonInterval)
+        fun openCertificateBaseActivity(contract: CertificateContract, context: Context) {
+            context.startActivity(
+                Intent(context, CertificationBaseActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, contract.conversationId)
+                    putExtra(CHAT_ROOM_ID, contract.chatMessageId)
+                    putExtra(CERTIFICATION_EXAM_ID, contract.certificationId)
+                    putExtra(EXAM_STATUS, contract.cExamStatus)
+                    putExtra(EXAM_LESSON_INTERVAL, contract.lessonInterval?:-1)
+                }
+            )
+        }
+
+        fun getIntentForCertificate(contract: CertificateContract, context: Context): Intent {
+            return Intent(context, CertificationBaseActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, contract.conversationId)
+                putExtra(CHAT_ROOM_ID, contract.chatMessageId)
+                putExtra(CERTIFICATION_EXAM_ID, contract.certificationId)
+                putExtra(EXAM_STATUS, contract.cExamStatus)
+                putExtra(EXAM_LESSON_INTERVAL, contract.lessonInterval?:-1)
             }
         }
     }

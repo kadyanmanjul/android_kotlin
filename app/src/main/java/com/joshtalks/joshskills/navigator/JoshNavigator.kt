@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.LauncherActivity
 import com.joshtalks.joshskills.auth.freetrail.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.auth.freetrail.SignUpActivity
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
+import com.joshtalks.joshskills.certificate.CertificationBaseActivity
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.expertcall.CallWithExpertActivity
 import com.joshtalks.joshskills.explore.CourseExploreActivity
@@ -44,6 +45,7 @@ object JoshNavigator : Navigator {
                     is RecentCallContract -> RecentCallActivity.openRecentCallActivity(contract, context)
                     is UserProfileContract -> UserProfileActivity.openUserProfileActivity(contract, context)
                     is NotificationContract -> NotificationUtils(context).sendNotification(contract.notificationObject)
+                    is CertificateContract -> CertificationBaseActivity.openCertificateBaseActivity(contract, context)
                 }
             }
 
@@ -58,6 +60,7 @@ object JoshNavigator : Navigator {
             override fun getIntentForActivity(contract: Contract): Intent {
                 return when(contract) {
                     is LessonContract -> LessonActivity.getLessonIntent(contract, context)
+                    is CertificateContract -> CertificationBaseActivity.getIntentForCertificate(contract,context)
                     else -> throw IllegalStateException("Invalid Contract")
                 }
             }

@@ -82,7 +82,7 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
             conversationId: String,
             courseId: Int
         ) = Intent(context, CourseProgressActivityNew::class.java).apply {
-            putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
+            putExtra(CONVERSATION_ID, conversationId)
             putExtra(COURSE_ID, courseId)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
@@ -233,7 +233,7 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
     }
 
     override fun getConversationId(): String? {
-        return intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun setupUi() {
@@ -314,16 +314,13 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
                         )
                     }
                 } else {
-                    //TODO: navigate
-                    /*activityListener.launch(
-                        com.joshtalks.joshskills.certificate.CertificationBaseActivity.certificationExamIntent(
-                            this@CourseProgressActivityNew,
-                            conversationId = conversationId,
-                            chatMessageId = chatMessageId,
-                            certificationId = certificationId,
-                            cExamStatus = cExamStatus
-                        )
-                    )*/
+                    navigator.with(this@CourseProgressActivityNew).navigate(object : CertificateContract{
+                        override val conversationId = conversationId
+                        override val chatMessageId = chatMessageId
+                        override val certificationId = certificationId
+                        override val cExamStatus =  cExamStatus
+                        override val navigator = this@CourseProgressActivityNew.navigator
+                    })
                 }
             }
         }

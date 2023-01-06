@@ -1613,17 +1613,18 @@ class ConversationActivity : BaseConversationActivity(),
                 .subscribe(
                     {
                     //TODO: navigation
-                        /*startActivityForResult(
-                            com.joshtalks.joshskills.certificate.CertificationBaseActivity.certificationExamIntent(
-                                this,
-                                conversationId = it.conversationId,
-                                chatMessageId = it.messageId,
-                                certificationId = it.certificationExamId,
-                                cExamStatus = it.examStatus,
-                                lessonInterval = it.lessonInterval
-                            ),
+                        startActivityForResult(
+                            AppObjectController.navigator.with(this).getIntentForActivity(object: CertificateContract{
+                                override val conversationId = it.conversationId
+                                override val chatMessageId = it.messageId
+                                override val certificationId = it.certificationExamId
+                                override val cExamStatus = it.examStatus
+                                override val navigator = this@ConversationActivity.navigator
+                                override val lessonInterval = it.lessonInterval
+
+                            }),
                             CERTIFICATION_REQUEST_CODE
-                        )*/
+                        )
                     },
                     {
                         it.printStackTrace()

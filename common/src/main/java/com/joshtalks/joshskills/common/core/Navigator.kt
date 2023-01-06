@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.common.core
 
 import android.content.Context
 import android.content.Intent
+import com.joshtalks.joshskills.common.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsItem
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.NotificationObject
@@ -128,6 +129,15 @@ interface UserProfileContract : Contract {
 }
 
 interface StickyServiceConnection : Connection
+
+interface CertificateContract : Contract{
+    val conversationId: String
+    val chatMessageId: String
+    val certificationId: Int
+    val cExamStatus: CExamStatus
+    val lessonInterval : Int?
+    get() = -1
+}
 
 interface Navigator : Serializable {
     fun with(context: Context): Navigate
