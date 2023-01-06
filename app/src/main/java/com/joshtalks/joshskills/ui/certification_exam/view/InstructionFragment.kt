@@ -104,36 +104,13 @@ class InstructionFragment : Fragment() {
         layoutManager.flexDirection = FlexDirection.ROW
         layoutManager.justifyContent = JustifyContent.SPACE_AROUND
         layoutManager.flexWrap = FlexWrap.NOWRAP
-        binding.recyclerView.builder
-            .setHasFixedSize(true)
-            .setLayoutManager(layoutManager)
-        binding.recyclerView.addView(
-            InstructionTopViewHolder(
-                obj.totalQuestion,
-                getString(R.string.questions),
-                "ic_ce_question",
-                "#EBE3EE",
-                "#9467A6"
-            )
-        )
-        binding.recyclerView.addView(
-            InstructionTopViewHolder(
-                obj.totalMinutes,
-                getString(R.string.minutes),
-                "ic_ce_minute",
-                "#E7F0F5",
-                "#629EC2"
-            )
-        )
-        binding.recyclerView.addView(
-            InstructionTopViewHolder(
-                obj.totalMarks,
-                getString(R.string.marks),
-                "ic_ce_mark",
-                "#FAE8E8",
-                "#F15D5D"
-            )
-        )
+        binding.recyclerView.layoutManager = layoutManager
+        val valueArray = arrayListOf(obj.totalQuestion,obj.totalMinutes,obj.totalMarks)
+        val labelArray = arrayListOf(getString(R.string.questions),getString(R.string.minutes),getString(R.string.marks))
+        val imageArray = arrayListOf("ic_ce_question","ic_ce_minute","ic_ce_mark")
+        val bgcolorArray = arrayListOf("#EBE3EE","#E7F0F5","#FAE8E8")
+        val textcolorArray = arrayListOf("#9467A6","#629EC2","#F15D5D")
+        binding.recyclerView.adapter = InstructionTopAdapter(valueArray,labelArray,imageArray,bgcolorArray,textcolorArray)
 
     }
 

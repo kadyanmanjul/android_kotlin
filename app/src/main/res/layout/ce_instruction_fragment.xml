@@ -14,18 +14,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.mindorks.placeholderview.PlaceHolderView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_16sdp"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:itemCount="2"
-            tools:listitem="@layout/instruction_top_view_holder"
-            tools:orientation="horizontal" />
+            tools:listitem="@layout/instruction_top_view_holder" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/header_tv"
