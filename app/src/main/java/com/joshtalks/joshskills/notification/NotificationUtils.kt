@@ -504,11 +504,8 @@ class NotificationUtils(val context: Context) {
             NotificationAction.INITIATE_RANDOM_CALL -> {
                 val intent = Intent(context, VoiceCallActivity::class.java).apply {
                     putExtra(INTENT_DATA_COURSE_ID, "151")
-                    putExtra(INTENT_DATA_TOPIC_ID, "10")
-                    putExtra(
-                        STARTING_POINT,
-                        FROM_ACTIVITY
-                    )
+                    putExtra(INTENT_DATA_TOPIC_ID, "5")
+                    putExtra(STARTING_POINT, FROM_ACTIVITY)
                     putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
                 }
                 return intent

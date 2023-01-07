@@ -1,34 +1,41 @@
 package com.joshtalks.joshskills.common.ui.inbox
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.common.base.BaseViewModel
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.common.core.analytics.LogException
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
+import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxRecommendedAdapter
+import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
+import com.joshtalks.joshskills.common.ui.special_practice.utils.CLICK_ON_RECOMMENDED_COURSE
 import com.joshtalks.joshskills.common.ui.userprofile.models.UserProfileResponse
+import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.math.BigDecimal
+import java.util.HashMap
 
-class InboxViewModel(application: Application) : AndroidViewModel(application) {
+class InboxViewModel : BaseViewModel() {
 
-    var context: Application = getApplication()
     var appDatabase = AppObjectController.appDatabase
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
     val paymentStatus: MutableLiveData<Payment> = MutableLiveData()
+    val paymentNotInitiated: MutableLiveData<Boolean> = MutableLiveData()
 
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
@@ -39,6 +46,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         get() = _registerCourseLocalData
 
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
+    val recommendedAdapter = InboxRecommendedAdapter()
+    val isRecommendedVisible = ObservableField(false)
 
     fun getA2C1CampaignData(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -292,6 +301,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                     }
+                } else {
+                    paymentNotInitiated.postValue(true)
                 }
             } catch (ex: Exception) {
 
@@ -317,28 +328,70 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun saveImpressionForExplorePage(eventName: String) {
+    fun getRecommendedCourse(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val requestData = hashMapOf(
-                    Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("event_name", eventName)
-                )
-                AppObjectController.commonNetworkService.saveImpressionForExplore(requestData)
-            } catch (ex: Exception) {
-                Timber.e(ex)
-            }
-        }
-    }
-
-    fun saveBranchPaymentLog(orderInfoId:String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val resp = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+                val resp = AppObjectController.commonNetworkService.getCourseRecommendations()
+                withContext(Dispatchers.Main) {
+                    isRecommendedVisible.set(true)
+                    recommendedAdapter.addRecommendedCourseList(resp.body())
+                }
             } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }
         }
     }
 
+    val onItemClick: (InboxRecommendedCourse, Int, Int) -> Unit = { it, type, position ->
+        try {
+            when (type) {
+                CLICK_ON_RECOMMENDED_COURSE -> {
+                    savePaymentImpressionForCourseExplorePage("CLICKED_COURSE_INBOX", it.id.toString())
+                    message.what = CLICK_ON_RECOMMENDED_COURSE
+                    message.obj = it
+                    message.arg1 = position
+                    singleLiveEvent.value = message
+                }
+            }
+        } catch (ex: Exception) {
+            Log.d("BuyPageViewModel.kt", "SAGAR => :145 ${ex.message}")
+        }
+    }
+
+    fun savePaymentImpressionForCourseExplorePage(event: String, eventData: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.commonNetworkService.saveImpressionForExplore(
+                    mapOf(
+                        "event_name" to event,
+                        "event_data" to eventData
+                    )
+                )
+            } catch (ex: java.lang.Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun saveBranchPaymentLog(orderInfoId:String,
+                             amount: BigDecimal?,
+                             testId: Int = 0,
+                             courseName: String = EMPTY) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val extras: HashMap<String, Any> = HashMap()
+                extras["test_id"] = testId
+                extras["orderinfo_id"] = orderInfoId
+                extras["currency"] = CurrencyType.INR.name
+                extras["amount"] = amount ?: 0.0
+                extras["course_name"] = courseName
+                extras["device_id"] = Utils.getDeviceId()
+                extras["guest_mentor_id"] = Mentor.getInstance().getId()
+                extras["payment_done_from"] = "Inbox Screen"
+                val resp = AppObjectController.commonNetworkService.savePaymentLog(extras)
+            } catch (ex: Exception) {
+                Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
 }

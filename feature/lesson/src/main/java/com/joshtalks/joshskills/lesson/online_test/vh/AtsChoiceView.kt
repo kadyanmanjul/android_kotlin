@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isNotEmpty
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.Utils
+import com.joshtalks.joshskills.common.repository.local.model.AtsOptionView
 import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.common.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.common.repository.server.assessment.ChoiceColumn

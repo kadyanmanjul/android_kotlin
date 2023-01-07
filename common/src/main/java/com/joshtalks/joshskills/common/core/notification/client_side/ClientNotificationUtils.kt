@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.common.core.notification.client_side
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -28,6 +29,7 @@ class ClientNotificationUtils(val context: Context) {
 
                 else -> updateNotificationDb(NotificationCategory.AFTER_LOGIN)
             }
+            updateNotificationDb(NotificationCategory.EVENT_INDEPENDENT)
             if (categoryMap.containsKey(NotificationCategory.PAYMENT_INITIATED.category))
                 updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
             else if (categoryMap.containsKey(NotificationCategory.AFTER_BUY_PAGE.category))
@@ -110,5 +112,10 @@ class ClientNotificationUtils(val context: Context) {
                 ex.printStackTrace()
             }
         }
+    }
+
+    fun removeAllNotifications() {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
     }
 }

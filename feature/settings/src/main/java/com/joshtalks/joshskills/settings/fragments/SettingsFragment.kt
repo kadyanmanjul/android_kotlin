@@ -29,6 +29,8 @@ import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.settings.model.LanguageItem
 import com.joshtalks.joshskills.common.ui.extra.AUTO_START_SETTINGS_POPUP
 import com.joshtalks.joshskills.settings.SettingsActivity
+import com.joshtalks.joshskills.settings.adapter.SettingsAdapter
+import com.joshtalks.joshskills.settings.model.Setting
 import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
 
 class SettingsFragment : Fragment() {
@@ -54,84 +56,12 @@ class SettingsFragment : Fragment() {
         binding.handler = this
 
         sheetBehaviour = BottomSheetBehavior.from(binding.clarDownloadsBottomSheet)
-
-        val selectedLanguage = PrefManager.getStringValue(USER_LOCALE)
-        var selectedQuality = PrefManager.getStringValue(SELECTED_QUALITY)
-        if (selectedQuality.isEmpty()) {
-            selectedQuality = resources.getStringArray(R.array.resolutions).get(2) ?: "Low"
-        }
-        val languageList: List<LanguageItem> = LanguageItem.getLanguageList()
-        languageList.forEach {
-            if (it.code == selectedLanguage) {
-                binding.languageTv.text = it.name
-                return@forEach
-            }
-        }
-
-        binding.downloadQualityTv.text = selectedQuality
-
-        if (User.getInstance().isVerified.not()) {
-            binding.signOutTv.visibility = View.GONE
-        }
-
-        sheetBehaviour.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED)
-                    binding.blackShadowIv.visibility = View.GONE
-                else
-                    binding.blackShadowIv.visibility = View.VISIBLE
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-        })
-
-        if ((requireActivity() as BaseActivity).isNotificationEnabled()) {
-            binding.notificationStatusTv.setText(R.string.off)
-            binding.notificationDescription.text = AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_DISABLED)
-            binding.notificationStatusTv.background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.rounded_grey_bg_2dp)
-        } else {
-            binding.notificationRightIv.visibility = View.GONE
-            binding.notificationStatusTv.setText(R.string.on)
-            binding.notificationDescription.text = AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_ENABLED)
-            binding.notificationStatusTv.background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.rounded_primary_bg_2dp)
-        }
-
-        if (PowerManagers.getIntentForOEM(requireContext() as BaseActivity) == null)
-            binding.autoStartRl.visibility = View.GONE
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.p2pSetting.isChecked = PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE)
-        binding.p2pSetting.setOnCheckedChangeListener { buttonView, isChecked ->
-            PrefManager.put(CALL_RINGTONE_NOT_MUTE, isChecked)
-            MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_PARTNER_NOTIFICATION)
-                .addParam(ParamKeys.IS_CHECKED,isChecked)
-                .push()
-        }
-        binding.p2pProximity.setOnCheckedChangeListener { buttonView, isChecked ->
-            Log.d("ProximityHelper", "onViewCreated: ")
-            VoipPrefManager.updateProximitySettings(isChecked)
-        }
-
-        if (VoipPrefManager.isPrefManagerInitialize().not()) {
-            VoipPrefManager.initServicePref(AppObjectController.joshApplication)
-            binding.p2pProximity.isChecked = VoipPrefManager.isProximitySensorOn()
-        } else {
-            binding.p2pProximity.isChecked = VoipPrefManager.isProximitySensorOn()
-        }
-
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL,false,false) && User.getInstance().isVerified.not()){
-            binding.personalInfoTv.isEnabled = false
-            binding.personalInfoTv.isClickable = false
-            binding.personalInfoTv.alpha = ALPHA_MIN
-        }
+        binding.settingsRecyclerView.adapter = SettingsAdapter(getSettingsList())
     }
 
     override fun onResume() {
@@ -281,7 +211,7 @@ class SettingsFragment : Fragment() {
                         Uri.parse("http://play.google.com/store/apps/details?id=${AppObjectController.joshApplication.packageName}")
                     )
                 )
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 showToast("No application found that can handle this link")
             }
         }
@@ -323,6 +253,103 @@ class SettingsFragment : Fragment() {
             .addBasicParam()
             .addUserDetails()
             .push()
+    }
+
+    private fun getSettingsList(): List<Setting> {
+        val list = mutableListOf<Setting>(
+            Setting(
+                icon = R.drawable.ic_person,
+                title = getString(R.string.personal_information),
+                onClick = { openPersonalInfoFragment() },
+                isDisabled = PrefManager.getBoolValue(
+                    IS_FREE_TRIAL,
+                    false,
+                    false
+                ) && User.getInstance().isVerified.not()
+            ),
+            Setting(
+                icon = R.drawable.ic_language,
+                title = getString(R.string.language),
+                subheading = LanguageItem.getSelectedLanguage(),
+                onClick = { openSelectLanguageFragment() }
+            ),
+            Setting(
+                icon = R.drawable.ic_notifications,
+                title = getString(R.string.notifications),
+                subheading = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_ENABLED),
+                onClick = {
+                    showNotificationSettingPopup()
+                },
+                isDisabled = !(requireActivity() as BaseActivity).isNotificationEnabled()
+            ),
+            Setting(
+                icon = R.drawable.ic_autostart,
+                title = getString(R.string.autostart),
+                subheading = getString(R.string.auto_start_prompt_message),
+                onClick = { showAutoStartPermissionPopup() },
+                isVisible = PowerManagers.getIntentForOEM(requireContext() as BaseActivity) != null
+            ),
+            Setting(
+                icon = R.drawable.ic_delete,
+                title = getString(R.string.clear_all_downloads),
+                onClick = { showClearDownloadsView() }
+            ),
+            Setting(
+                icon = R.drawable.ic_download_quality,
+                title = getString(R.string.download_quality),
+                subheading = PrefManager.getStringValue(SELECTED_QUALITY),
+                onClick = { openSelectQualityFragment() }
+            ),
+            Setting(
+                icon = R.drawable.ic_call_setting,
+                title = getString(R.string.p2p_notifications_setting),
+                showSwitch = true,
+                onSwitch = { isChecked ->
+                    PrefManager.put(CALL_RINGTONE_NOT_MUTE, isChecked)
+                    MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_PARTNER_NOTIFICATION)
+                        .addParam(ParamKeys.IS_CHECKED, isChecked)
+                        .push()
+                },
+                isSwitchChecked = PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE)
+            ),
+            Setting(
+                icon = R.drawable.proximity,
+                title = getString(R.string.p2p_proximity_setting),
+                onSwitch = { isChecked ->
+                    VoipPrefManager.updateProximitySettings(isChecked)
+                },
+                showSwitch = true,
+                isSwitchChecked = VoipPrefManager.isProximitySensorOn()
+            ),
+            Setting(
+                icon = R.drawable.ic_rate_us,
+                title = getString(R.string.rate_us),
+                onClick = { onRateUsClicked() }
+            ),
+            Setting(
+                icon = R.drawable.ic_privacy_policy,
+                title = getString(R.string.privacy_policy),
+                onClick = { onPrivacyPolicyClicked() },
+            ),
+            Setting(
+                icon = R.drawable.ic_terms_condition,
+                title = getString(R.string.terms_conditions),
+                onClick = { onTermsClicked() }
+            ),
+            Setting(
+                icon = R.drawable.ic_comm_guide,
+                title = getString(R.string.community_guidelines),
+                onClick = { onGuidelinesClicked() }
+            ),
+            Setting(
+                icon = R.drawable.ic_signout,
+                title = getString(R.string.sign_out),
+                onClick = { showSignoutBottomView() }
+            )
+        )
+        list.removeIf { !it.isVisible }
+        return list.toList()
     }
 
     enum class PopupActions {

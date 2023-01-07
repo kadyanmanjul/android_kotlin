@@ -15,7 +15,8 @@ class AlarmUtil(val context: Context) {
             AlarmFrequency.ONCE -> setExactAlarm(pendingIntent, System.currentTimeMillis() + executeAfter)
 
             AlarmFrequency.HOURLY, AlarmFrequency.TWO_HOUR, AlarmFrequency.THREE_HOUR,
-            AlarmFrequency.FOUR_HOUR, AlarmFrequency.SIX_HOUR, AlarmFrequency.DAILY ->
+            AlarmFrequency.FOUR_HOUR, AlarmFrequency.SIX_HOUR, AlarmFrequency.DAILY,
+            AlarmFrequency.TWO_DAY, AlarmFrequency.THREE_DAY ->
                 setRepeatingAlarm(
                     pendingIntent, System.currentTimeMillis() + executeAfter, frequency
                 )
@@ -62,6 +63,8 @@ class AlarmUtil(val context: Context) {
             AlarmFrequency.FOUR_HOUR -> getMillisFromHours(4)
             AlarmFrequency.SIX_HOUR -> getMillisFromHours(6)
             AlarmFrequency.DAILY -> getMillisFromHours(24)
+            AlarmFrequency.TWO_DAY -> getMillisFromHours(24 * 2)
+            AlarmFrequency.THREE_DAY -> getMillisFromHours(24 * 3)
             AlarmFrequency.DAILY_AT -> getMillisFromHours(24)
             AlarmFrequency.TWO_DAY_AT -> getMillisFromHours(24 * 2)
             AlarmFrequency.THREE_DAY_AT -> getMillisFromHours(24 * 3)

@@ -6,81 +6,18 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.*
-import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
 import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.core.Utils
-//import com.joshtalks.joshskills.lesson.online_test.vh.AtsOptionView
-//import com.joshtalks.joshskills.lesson.online_test.util.addViewAt
+import com.joshtalks.joshskills.common.repository.local.model.AtsOptionView
+import com.joshtalks.joshskills.common.repository.local.model.addViewAt
 import com.nex3z.flowlayout.FlowLayout
 
-fun View.moveViewToScreenCenter(imgGroupChat: AppCompatImageView, txtUnreadCount: TextView) {
-    val animSet = AnimationSet(false)
-    animSet.fillAfter = false
-    animSet.duration = 700
-    //animSet.interpolator = LinearInterpolator()
-    val translate = TranslateAnimation(
-        Animation.ABSOLUTE,  //from xType
-        0f,
-        Animation.ABSOLUTE,  //to xType
-        0f,
-        Animation.ABSOLUTE,  //from yType
-        0f,
-        Animation.ABSOLUTE,  //to yType
-        -this.height.times(2).toFloat()
-    )
-
-    val fade = AlphaAnimation(1f, 0f)
-    val scaleAnimation = ScaleAnimation(
-        1f,
-        0f,
-        1f,
-        0f,
-        Animation.RELATIVE_TO_SELF,
-        1f,
-        Animation.RELATIVE_TO_SELF,
-        1f
-    )
-    animSet.setAnimationListener(object : Animation.AnimationListener {
-        override fun onAnimationEnd(p0: Animation?) {
-            this@moveViewToScreenCenter.visibility = View.GONE
-            imgGroupChat.shiftGroupChatIconUp(txtUnreadCount)
-        }
-
-        override fun onAnimationStart(p0: Animation?) {
-
-        }
-
-        override fun onAnimationRepeat(p0: Animation?) {
-        }
-    })
-    translate.interpolator = LinearInterpolator()
-    scaleAnimation.interpolator = LinearInterpolator()
-    animSet.addAnimation(scaleAnimation)
-    animSet.addAnimation(translate)
-    animSet.addAnimation(fade)
-    this.startAnimation(animSet)
-}
-
-fun View.slideOutAnimation(imgGroupChat: AppCompatImageView, txtUnreadCount: TextView) {
+fun View.slideOutAnimation() {
     val animSet = AnimationSet(false)
     animSet.fillAfter = false
     animSet.duration = 700
     animSet.interpolator = LinearInterpolator()
-    val translate = TranslateAnimation(
-        Animation.ABSOLUTE,  //from xType
-        0f,
-        Animation.ABSOLUTE,  //to xType
-        0f,
-        Animation.ABSOLUTE,  //from yType
-        0f,
-        Animation.ABSOLUTE,  //to yType
-        -this.height.times(2).toFloat()
-    )
 
-    val fade = AlphaAnimation(1f, 0f)
     val scaleAnimation = ScaleAnimation(
         1f,
         0f,
@@ -94,21 +31,14 @@ fun View.slideOutAnimation(imgGroupChat: AppCompatImageView, txtUnreadCount: Tex
     animSet.setAnimationListener(object : Animation.AnimationListener {
         override fun onAnimationEnd(p0: Animation?) {
             this@slideOutAnimation.visibility = View.GONE
-            imgGroupChat.shiftGroupChatIconUp(txtUnreadCount)
         }
 
-        override fun onAnimationStart(p0: Animation?) {
+        override fun onAnimationStart(p0: Animation?) {}
 
-        }
-
-        override fun onAnimationRepeat(p0: Animation?) {
-        }
+        override fun onAnimationRepeat(p0: Animation?) {}
     })
-    //translate.interpolator = LinearInterpolator()
     scaleAnimation.interpolator = LinearInterpolator()
     animSet.addAnimation(scaleAnimation)
-    //animSet.addAnimation(translate)
-    //animSet.addAnimation(fade)
     this.startAnimation(animSet)
 }
 
@@ -183,36 +113,36 @@ fun View.transaltionAnimation(fromLocation: IntArray, toLocation: IntArray) {
 }
 
 //TODO Need AtsOptionView for add view
-//fun View.translationAnimationNew(
-//    toLocation: IntArray,
-//    atsOptionView: com.joshtalks.joshskills.lesson.online_test.vh.AtsOptionView,
-//    optionLayout: FlowLayout? = null,
-//    doOnAnimationEnd: (() -> Unit)? = null
-//) {
-//    this@translationAnimationNew.visibility = View.VISIBLE
-//    val slideAnim = AnimatorSet()
-//    slideAnim.playTogether(
-//        ObjectAnimator.ofFloat(this, View.X, toLocation[0].toFloat()),
-//        ObjectAnimator.ofFloat(this, View.Y, toLocation[1].toFloat())
-//    )
-//    val slideSet = AnimatorSet()
-//    slideSet.play(slideAnim)
-//    slideSet.interpolator = AccelerateDecelerateInterpolator()
-//    slideSet.duration = 150
-//    slideSet.addListener(object : AnimatorListenerAdapter() {
-//        override fun onAnimationEnd(animation: Animator) {
-//            optionLayout?.let {
-//                optionLayout.addViewAt(atsOptionView, atsOptionView.choice.sortOrder - 1)
-//                atsOptionView.updateView(isSelected = true)
-//            }
-//            if (doOnAnimationEnd != null)
-//                doOnAnimationEnd()
-//            this@translationAnimationNew.visibility = View.GONE
-//            atsOptionView.visibility = View.VISIBLE
-//        }
-//    })
-//    slideSet.start()
-//}
+fun View.translationAnimationNew(
+    toLocation: IntArray,
+    atsOptionView: AtsOptionView,
+    optionLayout: FlowLayout? = null,
+    doOnAnimationEnd: (() -> Unit)? = null
+) {
+    this@translationAnimationNew.visibility = View.VISIBLE
+    val slideAnim = AnimatorSet()
+    slideAnim.playTogether(
+        ObjectAnimator.ofFloat(this, View.X, toLocation[0].toFloat()),
+        ObjectAnimator.ofFloat(this, View.Y, toLocation[1].toFloat())
+    )
+    val slideSet = AnimatorSet()
+    slideSet.play(slideAnim)
+    slideSet.interpolator = AccelerateDecelerateInterpolator()
+    slideSet.duration = 150
+    slideSet.addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+            optionLayout?.let {
+                optionLayout.addViewAt(atsOptionView, atsOptionView.choice.sortOrder - 1)
+                atsOptionView.updateView(isSelected = true)
+            }
+            if (doOnAnimationEnd != null)
+                doOnAnimationEnd()
+            this@translationAnimationNew.visibility = View.GONE
+            atsOptionView.visibility = View.VISIBLE
+        }
+    })
+    slideSet.start()
+}
 
 fun View.slideUpAnimation(context: Context) {
     val bottomUp = AnimationUtils.loadAnimation(
@@ -222,25 +152,4 @@ fun View.slideUpAnimation(context: Context) {
 
     this.startAnimation(bottomUp)
     this.setVisibility(View.VISIBLE)
-}
-
-fun AppCompatImageView.shiftGroupChatIconUp(txtUnreadCount: TextView) {
-    val paramsChat: ViewGroup.MarginLayoutParams = this.layoutParams as ViewGroup.MarginLayoutParams
-    paramsChat.topMargin = Utils.dpToPx(20)
-    this.layoutParams = paramsChat
-    val paramsBadge: ViewGroup.MarginLayoutParams =
-        txtUnreadCount.layoutParams as ViewGroup.MarginLayoutParams
-    paramsBadge.topMargin = Utils.dpToPx(16)
-    txtUnreadCount.layoutParams = paramsBadge
-}
-
-
-fun AppCompatImageView.shiftGroupChatIconDown(txtUnreadCount: TextView) {
-    val paramsChat: ViewGroup.MarginLayoutParams = this.layoutParams as ViewGroup.MarginLayoutParams
-    paramsChat.topMargin = Utils.dpToPx(72)
-    this.layoutParams = paramsChat
-    val paramsBadge: ViewGroup.MarginLayoutParams =
-        txtUnreadCount.layoutParams as ViewGroup.MarginLayoutParams
-    paramsBadge.topMargin = Utils.dpToPx(64)
-    txtUnreadCount.layoutParams = paramsBadge
 }

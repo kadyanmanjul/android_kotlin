@@ -315,21 +315,24 @@ interface CommonNetworkService {
     suspend fun getButtonExpertVisibility(): Response<ButtonVisibilityResponse>
 
     @POST("$DIR/support/sales_support/")
-    suspend fun saveSalesSupportReason(@Body params: Map<String, String>) : Response<Any>
+    suspend fun saveSalesSupportReason(@Body params: Map<String, String>): Response<Any>
 
     @POST("$DIR/impression/track_explore_course_impression/")
     suspend fun saveImpressionForExplore(@Body params: Map<String, String>): Response<Void>
 
-    @GET("$DIR/payment/branch_log/")
-    suspend fun savePaymentLog(@Query("orderinfo_id") orderInfoId:String) :Response<Any>
+    @GET("$DIR/course/get_popup_names/")
+    suspend fun getPopupType(): Response<HashMap<String, Boolean>>
+
+    @GET("$DIR/course/course_recommendations/")
+    suspend fun getCourseRecommendations(): Response<ArrayList<InboxRecommendedCourse>>
+
+    @POST("$DIR/payment/branch_log/")
+    suspend fun savePaymentLog(@Body params: Map<String, Any>): Response<Void>
+
+    @POST("$DIR/payment/juspay_log/")
+    suspend fun saveJuspayPaymentLog(@Body params: Map<String, Any>): Response<Void>
 
     @POST("$DIR/micro_payment/user_wallet/")
     suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
-
-    @POST("$DIR/payment/branch_log/")
-    suspend fun savePaymentLog(@Body params: Map<String, Any>) :Response<Void>
-
-    @POST("$DIR/payment/juspay_log/")
-    suspend fun saveJuspayPaymentLog(@Body params: Map<String, Any>) :Response<Void>
 
 }

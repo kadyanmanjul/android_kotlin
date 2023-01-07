@@ -42,6 +42,7 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -114,6 +115,8 @@ val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
 val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
 
 const val IMPRESSION_OPEN_FREE_TRIAL_SCREEN = "OPEN_FREE_TRIAL_SCREEN"
+const val IMPRESSION_OPEN_FREE_TRIAL_SCREEN_CLICK = "OPEN_FREE_TRIAL_SCREEN_FROM_CLICKS"
+const val IMPRESSION_OPEN_FREE_TRIAL_SCREEN_WORKER = "OPEN_FREE_TRIAL_SCREEN_FROM_WORKER"
 const val IMPRESSION_START_FREE_TRIAL = "START_FREE_TRIAL"
 const val IMPRESSION_REGISTER_FREE_TRIAL = "REGISTER_FREE_TRIAL"
 const val IMPRESSION_START_TRIAL_YES = "START_TRIAL_YES"
@@ -168,6 +171,7 @@ const val IMPRESSION_SUCCESS_RESTART_90LESSONS = "SUCCESS_RESTART_90LESSONS"
 const val IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED = "CALL_MY_FRIEND_BTN_CLICKED"
 const val IMPRESSION_CONTACT_PERM_DENIED = "CONTACT_PERM_DENIED"
 const val IMPRESSION_CONTACT_PERM_ACCEPTED = "CONTACT_PERM_ACCEPTED"
+const val VOICE_NOTE_PLAYED = "VOICE_NOTE_PLAYED"
 
 const val FREE_TRIAL_TEST_ID = "FREE_TRIAL_TEST_ID"
 const val FREE_TRIAL_DEFAULT_TEST_ID = "784"
@@ -187,14 +191,23 @@ const val REASON_SCREEN_OPENED = "REASON_SCREEN_OPENED"
 const val REASON_GOVT_EXAM_CLICKED = "REASON_GOVT_EXAM_CLICKED"
 const val REASON_OTHERS_CLICKED = "REASON_OTHERS_CLICKED"
 
-const val OPEN_EXPERT = "OPEN_EXPERT"
 const val SPEAKING_PAGE = "SPEAKING_PAGE"
-const val FT_EXPIRED_PAGE= "FT_EXPIRED_PAGE"
+const val FT_EXPIRED_PAGE = "FT_EXPIRED_PAGE"
+const val UPGRADE_PAGE = "UPGRADE_PAGE"
+const val MENU_TOOLBAR = "MENU_TOOLBAR"
+const val CALL_DISCONNECTED = "CALL_DISCONNECTED"
+const val BOTTOM_SHEET = "BOTTOM_SHEET"
+const val WALLET_SCREEN = "WALLET_SCREEN"
+
+const val OPEN_EXPERT = "OPEN_EXPERT"
 const val OPEN_WALLET = "OPEN_WALLET"
+const val OPEN_TRANSACTIONS = "OPEN_TRANSACTIONS"
 const val CLICKED_PROCEED = "CLICKED_PROCEED"
 const val CLICKED_CONTINUE_TO_CALL = "CLICKED_CONTINUE_TO_CALL"
-const val CLICKED_CALL_BUTTON = "CLICKED_CALL_BUTTON"
-const val IS_CALL_WITH_EXPERT_ENABLED = "IS_CALL_WITH_EXPERT_ENABLED"
+const val CLICKED_CALL_EXPERT = "CLICKED_CALL_EXPERT"
+const val CLICK_UPGRADE_BUTTON = "CLICK_UPGRADE_BUTTON"
+const val EXPERT_CALL_CONNECTING = "EXPERT_CALL_CONNECTING"
+const val UPGRADE_PAGE_OPENED = "UPGRADE_PAGE_OPENED"
 
 const val INTEREST_FORM_SKIP_PRESSED = "INTEREST_FORM_SKIP_PRESSED"
 const val INTEREST_FORM_BACKPRESSED = "INTEREST_FORM_BACKPRESSED"
@@ -203,7 +216,7 @@ const val INTEREST_FORM_LEVEL_SAVED = "INTEREST_FORM_LEVEL_SAVED"
 const val INTEREST_FORM_OPEN_MENU_EDIT = "INTEREST_FORM_OPEN_MENU_EDIT"
 const val INTEREST_FORM_LEVEL_SCREEN_OPEN = "INTEREST_FORM_LEVEL_SCREEN_SHOWN"
 const val INTEREST_FORM_INTEREST_SCREEN_OPEN = "INTEREST_FORM_INTEREST_SCREEN_SHOWN"
-const val OTP_SUBMITTED  = "OTP_SUBMITTED"
+const val OTP_SUBMITTED = "OTP_SUBMITTED"
 const val PHONE_NUMBER_SUBMITTED = "PHONE_NUMBER_SUBMITTED"
 const val NAME_SUBMITTED = "NAME_SUBMITTED"
 
@@ -245,28 +258,28 @@ object Utils {
         return "0"
     }
 
-    fun getLangCodeFromlangTestId(testId : String) : String {
-        return when(testId) {
-            "1880"-> "bn"
-            "1882"-> "pa"
-            "1881"-> "mr"
-            "1889"-> "ml"
-            "1891"-> "ta"
-            "1897"-> "te"
-            "784"-> "hi"
+    fun getLangCodeFromlangTestId(testId: String): String {
+        return when (testId) {
+            "1880" -> "bn"
+            "1882" -> "pa"
+            "1881" -> "mr"
+            "1889" -> "ml"
+            "1891" -> "ta"
+            "1897" -> "te"
+            "784" -> "hi"
             else -> "en"
         }
     }
 
-    fun getLangCodeFromCourseId(courseId : String) : String {
-        return when(courseId) {
-            "1203"-> "bn"
-            "1206"-> "pa"
-            "1207"-> "mr"
-            "1209"-> "ml"
-            "1210"-> "ta"
-            "1211"-> "te"
-            "151"-> "hi"
+    fun getLangCodeFromCourseId(courseId: String): String {
+        return when (courseId) {
+            "1203" -> "bn"
+            "1206" -> "pa"
+            "1207" -> "mr"
+            "1209" -> "ml"
+            "1210" -> "ta"
+            "1211" -> "te"
+            "151" -> "hi"
             else -> "en"
         }
     }
@@ -314,7 +327,7 @@ object Utils {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 
-    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
+    fun getMessageTime(epoch: Long, timeNeeded: Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
@@ -467,7 +480,7 @@ object Utils {
             }
             intent.data = Uri.parse("tel:$phoneNumber")
             context.startActivity(intent)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             showToast("No application found that can handle this link")
         }
     }
@@ -855,7 +868,7 @@ object Utils {
         return outputFormat.format(date)
     }
 
-    fun getDrawableFromUrl(context: Context,url: String?): Drawable? {
+    fun getDrawableFromUrl(context: Context, url: String?): Drawable? {
         try {
             if (isInternetAvailable()) {
                 val bitmap: Bitmap
@@ -867,7 +880,7 @@ object Utils {
             }
         } catch (e: Exception) {
             Timber.e(e)
-            return AppCompatResources.getDrawable(context,R.drawable.ic_file_error)
+            return AppCompatResources.getDrawable(context, R.drawable.ic_file_error)
         }
         return null
     }
@@ -1029,9 +1042,9 @@ fun loadJSONFromAsset(fileName: String): String? {
     }
 }
 
-fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
-    val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
-        .error(R.drawable.ic_call_placeholder)
+fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication, @DrawableRes placeHolder: Int = R.drawable.ic_call_placeholder) {
+    val requestOptions = RequestOptions().placeholder(placeHolder)
+        .error(placeHolder)
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     if (isValidContextForGlide(context)) {
@@ -1085,14 +1098,14 @@ fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectC
 
 fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Drawable?>? {
     return object : RequestListener<Drawable?> {
-        override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable?>?, isFirstResource: Boolean): Boolean {
+        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable?>?, isFirstResource: Boolean): Boolean {
             return false
         }
 
         override fun onResourceReady(
             resource: Drawable?,
             model: Any?,
-            target: com.bumptech.glide.request.target.Target<Drawable?>?,
+            target: Target<Drawable?>?,
             dataSource: DataSource?,
             isFirstResource: Boolean
         ): Boolean {
@@ -1126,7 +1139,7 @@ fun ImageView.setUserInitial(
             )
         this.background = drawable
         this.setImageDrawable(drawable)
-    }catch (ex:Exception){
+    } catch (ex: Exception) {
         ex.printStackTrace()
     }
 }
@@ -1155,7 +1168,7 @@ fun ImageView.setUserInitial(
             )
         this.background = drawable
         this.setImageDrawable(drawable)
-    }catch (ex:Exception){
+    } catch (ex: Exception) {
         ex.printStackTrace()
     }
 }
@@ -1186,7 +1199,7 @@ fun ImageView.setUserInitialInRect(
             )
         this.background = drawable
         this.setImageDrawable(drawable)
-    }catch (ex:Exception){
+    } catch (ex: Exception) {
         ex.printStackTrace()
     }
 }
@@ -1232,7 +1245,7 @@ fun ImageView.setUserImageOrInitialsWithWhiteBackground(
     txtColor: Int = R.color.primary_500
 ) {
     if (url.isNullOrEmpty()) {
-        setUserInitial(userName, dpToPx,background = bgColor, txtColor = txtColor)
+        setUserInitial(userName, dpToPx, background = bgColor, txtColor = txtColor)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
@@ -1547,7 +1560,7 @@ fun String.urlToBitmap(
     height: Int = 80,
     context: Context = AppObjectController.joshApplication
 ): Bitmap? {
-    var bitmap : Bitmap? = null
+    var bitmap: Bitmap? = null
     try {
         val requestOptions =
             RequestOptions()
@@ -1569,7 +1582,7 @@ fun String.urlToBitmap(
                 WebpDrawableTransformation(CircleCrop())
             ).submit().get(1500, TimeUnit.MILLISECONDS)
         return bitmap
-    } catch (e : Exception) {
+    } catch (e: Exception) {
         return bitmap
     }
 }
@@ -1626,13 +1639,13 @@ fun getDefaultCountryIso(context: Context): String {
     return if (simState == 5) telephoneManager.simCountryIso.uppercase(Locale.ROOT) else Locale.getDefault().country
 }
 
- fun checkPstnState(): PSTNState {
-     Log.d(TAG, "checkPstnState: ${PstnObserver.getCurrentPstnState()}")
-   return PstnObserver.getCurrentPstnState()
-  }
+fun checkPstnState(): PSTNState {
+    Log.d(TAG, "checkPstnState: ${PstnObserver.getCurrentPstnState()}")
+    return PstnObserver.getCurrentPstnState()
+}
 
-fun getFeatureLockedText(courseId: String, name: String = EMPTY) = "$name ${
-    AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"
+fun getFeatureLockedText(courseId: String, name: String = EMPTY) =
+    "$name ${AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"
 
 fun isValidContextForGlide(context: Context?): Boolean {
     if (context == null) {
@@ -1645,4 +1658,15 @@ fun isValidContextForGlide(context: Context?): Boolean {
         }
     }
     return true
+}
+
+fun Int.pxToDP(context: Context): Int {
+    return (this / context.resources.displayMetrics.density).toInt()
+}
+
+fun ImageView.paintColor(colorString: String) {
+    val paint = Paint()
+    val colorFilter = PorterDuffColorFilter(Color.parseColor(colorString), PorterDuff.Mode.SRC_ATOP)
+    paint.colorFilter = colorFilter
+    setLayerPaint(paint)
 }

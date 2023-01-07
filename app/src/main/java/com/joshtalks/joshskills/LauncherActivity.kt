@@ -8,10 +8,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.os.Message
 import android.provider.Settings
-import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -19,10 +18,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.auth.freetrail.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.auth.freetrail.SignUpActivity
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.voip.base.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.Utils
-import com.joshtalks.joshskills.common.core.analytics.LogException
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.notification.HAS_LOCAL_NOTIFICATION
@@ -31,30 +30,23 @@ import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.ui.voip.CallingServiceReceiver
 import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
-import com.joshtalks.joshskills.common.util.*
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
-import com.joshtalks.joshskills.deeplink.DeepLinkData
-import com.joshtalks.joshskills.common.util.DeepLinkImpression
-import com.joshtalks.joshskills.deeplink.DeepLinkRedirect
-import com.joshtalks.joshskills.deeplink.DeepLinkRedirectUtil
+import com.joshtalks.joshskills.deeplink.RedirectAction
 import com.joshtalks.joshskills.navigator.JoshNavigator
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener {
-    private lateinit var navigator: Navigator
-    var APP_PACKAGE_COUNT = 2
-    private var testId: String? = null
-    private val viewModel: LauncherViewModel by lazy {
-        ViewModelProvider(this).get(LauncherViewModel::class.java)
-    }
-    private var jsonParams: JSONObject? = null
+const val APP_PACKAGE_COUNT = 2
 
+class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitListener {
+    private lateinit var navigator: Navigator
+    private val viewModel by lazy {
+        ViewModelProvider(this)[LauncherViewModel::class.java]
+    }
     private val binding by lazy {
         ActivityLauncherBinding.inflate(layoutInflater)
     }
@@ -111,15 +103,43 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         viewModel.apiCallStatus.observe(this) {
             when (it) {
                 ApiCallStatus.START -> binding.progressBar.visibility = View.VISIBLE
-                ApiCallStatus.SUCCESS -> {
-                    binding.progressBar.visibility = View.GONE
-                    startNextActivity()
-                }
+                ApiCallStatus.SUCCESS -> binding.progressBar.visibility = View.GONE
                 ApiCallStatus.FAILED -> {
                     binding.retry.visibility = View.VISIBLE
                     binding.progressBar.visibility = View.GONE
                 }
                 else -> binding.progressBar.visibility = View.GONE
+            }
+        }
+
+        viewModel.event.observe(this) {
+            when (it.what) {
+                FETCH_GAID -> viewModel.getGaid()
+                UPDATE_GAID -> viewModel.updateGaid()
+                FETCH_MENTOR -> viewModel.getGuestMentor()
+                ANALYZE_APP_REQUIREMENT -> analyzeAppRequirement()
+                START_ACTIVITY -> startNextActivity()
+                else -> {}
+            }
+        }
+
+        viewModel.redirectEvent.observe(this) {
+            val intent = when (it) {
+                RedirectAction.SIGN_UP -> Intent(this, SignUpActivity::class.java)
+                RedirectAction.INBOX -> getInboxActivityIntent()
+                RedirectAction.COURSE_ONBOARDING -> Intent(this, FreeTrialOnBoardActivity::class.java)
+                else -> null
+            }
+            if (PrefManager.getIntValue(LAUNCHER_SCREEN_VISIT_COUNT) < 5) {
+                PrefManager.put(
+                    LAUNCHER_SCREEN_VISIT_COUNT,
+                    PrefManager.getIntValue(LAUNCHER_SCREEN_VISIT_COUNT).plus(1)
+                )
+                WorkManagerAdmin.logNextActivity(intent?.component?.className)
+            }
+            if (intent != null) {
+                startActivity(intent)
+                finish()
             }
         }
     }
@@ -131,7 +151,10 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         backgroundColorAnimator.duration = 300
         backgroundColorAnimator.start()
         binding.retry.setOnClickListener {
-            if (Utils.isInternetAvailable().not()) {
+            if (Utils.isInternetAvailable()) {
+                viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
+                binding.retry.visibility = View.INVISIBLE
+            } else {
                 Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
                     .setAction(getString(R.string.settings)) {
                         startActivity(
@@ -143,29 +166,9 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                             )
                         )
                     }.show()
-            } else {
-                analyzeAppRequirement()
-                binding.retry.visibility = View.INVISIBLE
             }
         }
     }
-
-    private fun analyzeAppRequirement() {
-        when {
-            viewModel.hasUniqueId().not() -> {
-                // TODO: Why we are checking intent data
-                if (intent.data == null)
-                    viewModel.initGaid(testId)
-            }
-            hasMentorId() -> startNextActivity()
-            else -> viewModel.getMentorForUser(
-                PrefManager.getStringValue(USER_UNIQUE_ID),
-                testId
-            )
-        }
-    }
-
-    private fun hasMentorId() = Mentor.getInstance().hasId()
 
     private fun handleIntent() {
         if (intent.hasExtra(HAS_LOCAL_NOTIFICATION) &&
@@ -211,10 +214,52 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
                 .withData(this.intent?.data)
                 .init()
         } else {
-            lifecycleScope.launch {
-                delay(700)
-                analyzeAppRequirement()
+            viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
+        }
+    }
+
+    override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
+        if (error != null) {
+            viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
+            return
+        }
+        viewModel.jsonParams = referringParams ?: (Branch.getInstance().firstReferringParams
+            ?: Branch.getInstance().latestReferringParams)
+        viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
+    }
+
+    private fun analyzeAppRequirement() {
+        viewModel.event.postValue(Message().apply {
+            what = when {
+                PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> FETCH_GAID
+                PrefManager.getIntValue(SERVER_GID_ID, defValue = -1) == -1 -> UPDATE_GAID
+                Mentor.getInstance().hasId().not() -> FETCH_MENTOR
+                else -> START_ACTIVITY
             }
+        })
+    }
+
+    private fun startNextActivity() {
+        if (viewModel.canRunApplication()) {
+            WorkManagerAdmin.appStartWorker()
+            viewModel.addAnalytics()
+            lifecycleScope.launch {
+                viewModel.updateABTestCampaigns()
+                viewModel.initDeepLinkData()
+                AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                viewModel.redirectToActivity(this@LauncherActivity, isUserProfileNotComplete())
+                finish()
+            }
+        } else {
+            AlertDialog.Builder(this)
+                .setTitle("Alert!!!")
+                .setMessage("App will not run on VM Environment")
+                .setPositiveButton(
+                    "OK"
+                ) { _, _ -> finishAndRemoveTask() }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false)
+                .show()
         }
     }
 
@@ -233,202 +278,5 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         super.onBackPressed()
         this@LauncherActivity.finishAndRemoveTask()
-    }
-
-    private fun startNextActivity() {
-        if(canRunApplication()) {
-            WorkManagerAdmin.appStartWorker()
-            lifecycleScope.launch {
-                viewModel.addAnalytics()
-                viewModel.updateABTestCampaigns()
-                AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                if (testId.isNullOrEmpty().not()) {
-                    navigateToCourseDetailsScreen()
-                } else {
-                    getIntentForNextActivity()?.let {
-                        it.putExtra(NAVIGATOR, navigator)
-                        startActivity(it)
-                    }
-                    finish()
-                }
-            }
-        } else {
-            AlertDialog.Builder(this)
-                .setTitle("Alert!!!")
-                .setMessage("App will not run on VM Environment")
-                .setPositiveButton("OK"
-                ) { p0, p1 -> finishAndRemoveTask() }
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setCancelable(false)
-                .show()
-        }
-    }
-
-    suspend fun getIntentForNextActivity() =
-        when {
-            User.getInstance().isVerified.not() -> {
-                when {
-                    (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
-                            PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
-                        if (jsonParams != null &&
-                            (DeepLinkRedirectUtil.getIntent(this@LauncherActivity, jsonParams!!, true))
-                        ) {
-                            null
-                        } else getInboxActivityIntent()
-                    }
-                    PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true) ||
-                            (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
-                                    jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
-                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, true)
-                    PrefManager.hasKey(FT_COURSE_ONBOARDING, isConsistent = true) ||
-                            (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
-                                    jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.FT_COURSE.key)
-                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams, false)
-                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key) &&
-                            jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
-                    -> {
-                        DeepLinkRedirectUtil.getCourseDetailsActivityIntent(this, jsonParams!!)
-                        null
-                    }
-                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false) ->
-                        Intent(this@LauncherActivity, SignUpActivity::class.java)
-                    PrefManager.getBoolValue(IS_FREE_TRIAL, isConsistent = false, defValue = false) ->
-                        Intent(this@LauncherActivity, FreeTrialOnBoardActivity::class.java)
-                    else ->
-                        Intent(this@LauncherActivity, SignUpActivity::class.java)
-                }
-            }
-            isUserProfileNotComplete() -> Intent(this@LauncherActivity, SignUpActivity::class.java)
-            jsonParams != null ->
-                if (DeepLinkRedirectUtil.getIntent(this@LauncherActivity, jsonParams!!, PrefManager.getBoolValue(IS_FREE_TRIAL)))
-                    null
-                else getInboxActivityIntent()
-            else -> getInboxActivityIntent()
-        }
-
-    private fun initAfterBranch(
-        exploreType: String? = null
-    ) {
-        when {
-            testId != null -> viewModel.initGaid(testId, exploreType)
-            PrefManager.hasKey(SERVER_GID_ID) ->
-                if (PrefManager.hasKey(API_TOKEN)) {
-                    startNextActivity()
-                } else {
-                    viewModel.getMentorForUser(PrefManager.getStringValue(USER_UNIQUE_ID), testId)
-                }
-            Mentor.getInstance().hasId() -> startNextActivity()
-            else -> viewModel.initGaid(testId)
-        }
-    }
-
-    override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
-        if (error != null) {
-            analyzeAppRequirement()
-            return
-        }
-        try {
-            var referralContentType: String? = null
-            (referringParams ?: (Branch.getInstance().firstReferringParams
-                ?: Branch.getInstance().latestReferringParams))?.let { jsonParams ->
-                Log.d("LauncherActivity.kt", "YASH => onInitFinished: jsonParams: $jsonParams")
-                AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                if (jsonParams.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
-                    testId =
-                        jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                } else if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
-                    referralContentType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
-                        jsonParams.getString(Defines.Jsonkey.ContentType.key)
-                    } else null
-                }
-                if (jsonParams.has(DeepLinkData.NOTIFICATION_ID.key) &&
-                    jsonParams.has(DeepLinkData.NOTIFICATION_CHANNEL.key)
-                ) {
-                    viewModel.addDeepLinkNotificationAnalytics(
-                        jsonParams.getString((DeepLinkData.NOTIFICATION_ID.key)),
-                        jsonParams.getString(DeepLinkData.NOTIFICATION_CHANNEL.key)
-                    )
-                }
-                if (jsonParams.has(Defines.Jsonkey.UTMMedium.key) &&
-                    jsonParams.getString(Defines.Jsonkey.UTMMedium.key) == "referral"
-                ) {
-                    viewModel.saveDeepLinkImpression(
-                        deepLink = (
-                                if (jsonParams.has(DeepLinkData.REFERRING_LINK.key))
-                                    jsonParams.getString(DeepLinkData.REFERRING_LINK.key)
-                                else ""
-                                ),
-                        action = DeepLinkImpression.REFERRAL.name
-                    )
-                    viewModel.updateReferralModel(jsonParams)
-                    viewModel.initReferral(testId = testId, referralContentType = referralContentType, jsonParams)
-                }
-                if (jsonParams.has(DeepLinkData.REDIRECT_TO.key)) {
-                    this.jsonParams = jsonParams
-                    if(jsonParams.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.LOGIN.key){
-                        PrefManager.put(LOGIN_ONBOARDING, true)
-                    }
-                    viewModel.saveDeepLinkImpression(
-                        deepLink = (
-                                if (jsonParams.has(DeepLinkData.REFERRING_LINK.key))
-                                    jsonParams.getString(DeepLinkData.REFERRING_LINK.key)
-                                else ""
-                                ),
-                        action = "${DeepLinkImpression.REDIRECT_}${
-                            jsonParams.getString(DeepLinkData.REDIRECT_TO.key).uppercase()
-                        }${
-                            if (jsonParams.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
-                                "_${jsonParams.getString(DeepLinkData.COURSE_ID.key)}"
-                            else if (jsonParams.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
-                                "_${jsonParams.getString(DeepLinkData.TEST_ID.key)}"
-                            else ""
-                        }"
-                    )
-                }
-                initAfterBranch(exploreType = referralContentType)
-            }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-            startNextActivity()
-            LogException.catchException(ex)
-        }
-    }
-
-    private fun navigateToCourseDetailsScreen() {
-        try {
-            navigator.with(this).navigate(
-                object : CourseDetailContract {
-                    override val testId = this@LauncherActivity.testId!!.split("_")[1].toInt()
-                    override val flowFrom = this@LauncherActivity.javaClass.simpleName
-                    override val navigator = this@LauncherActivity.navigator
-                }
-            )
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        this@LauncherActivity.finish()
-    }
-
-    private fun canRunApplication() : Boolean {
-        val path = this.filesDir.absolutePath
-        val count = getDotCount(path)
-        return count <= APP_PACKAGE_COUNT
-    }
-
-    private fun getDotCount(path: String): Int {
-        var count = 0
-        for (i in 0 until path.length) {
-            if (count > APP_PACKAGE_COUNT) {
-                break
-            }
-            if (path[i] == '.') {
-                count++
-            }
-        }
-        return count
-    }
-
-    private fun showDialog() {
-
     }
 }

@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.common.ui.inbox.adapter
 
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -26,6 +28,27 @@ object InboxBindingAdapter {
     fun favoriteCallerImage(imageView: ImageView, caller: FavoriteCaller?) {
         caller?.let {
             imageView.setUserImageOrInitials(it.image, it.name, isRound = true)
+        } ?: imageView.setImageResource(R.drawable.ic_call_placeholder)
+    }
+
+    @BindingAdapter("recommendedCourseListAdapter", "onCourseItemClick")
+    @JvmStatic
+    fun recommendedCourseListAdapter(
+        view: RecyclerView,
+        adapter: InboxRecommendedAdapter,
+        function: ((InboxRecommendedCourse, Int, Int) -> Unit)?
+    ) {
+        view.visibility = View.VISIBLE
+        view.setHasFixedSize(false)
+        view.adapter = adapter
+        adapter.setListener(function)
+    }
+
+    @BindingAdapter(value = ["recommendedImage"], requireAll = false)
+    @JvmStatic
+    fun recommendedImage(imageView: ImageView, caller: InboxRecommendedCourse?) {
+        caller?.let {
+            imageView.setUserImageOrInitials(it.courseIcon, it.courseName, isRound = true)
         } ?: imageView.setImageResource(R.drawable.ic_call_placeholder)
     }
 }

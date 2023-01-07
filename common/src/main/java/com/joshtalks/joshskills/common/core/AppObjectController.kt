@@ -96,7 +96,11 @@ private val IGNORE_UNAUTHORISED = setOf(
     "$DIR/voicecall/agora_call_feedback_submit/",
     "$DIR/voicecall/call_rating/",
     "$DIR/fpp/block/",
-    "$DIR/ab_test/track_conversion/"
+    "$DIR/ab_test/track_conversion/",
+    "$DIR/impression/tcflow_track_impressions/",
+    "$DIR/notification/client_side/",
+    "$DIR/impression/track_impressions/",
+    "$DIR/impression/launcher_screen/"
 )
 
 private const val TAG = "AppObjectController"
@@ -172,7 +176,33 @@ class AppObjectController {
                 builder.addInterceptor(getOkhhtpToolInterceptor())
                 getDebugLogsInterceptor()?.let { builder.addInterceptor(it) }
                 val logging = HttpLoggingInterceptor { message ->
-                    Timber.tag("OkHttp").d(message)
+                    Timber.tag("OkHttp_Builder").d(message)
+                }.apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+                builder.addInterceptor(logging)
+                builder.addNetworkInterceptor(getStethoInterceptor())
+                builder.eventListener(PrintingEventListener())
+            }
+            builder
+        }
+
+        val p2pBuilder: OkHttpClient.Builder by lazy {
+            val builder = OkHttpClient().newBuilder()
+                .connectTimeout(5L, TimeUnit.SECONDS)
+                .writeTimeout(5L, TimeUnit.SECONDS)
+                .readTimeout(5L, TimeUnit.SECONDS)
+                .callTimeout(5L, TimeUnit.SECONDS)
+                .followSslRedirects(true)
+                .addInterceptor(StatusCodeInterceptor())
+                .addInterceptor(HeaderInterceptor())
+                .hostnameVerifier { _, _ -> true }
+                .cache(cache())
+
+            if (BuildConfig.DEBUG) {
+                builder.addInterceptor(getOkhhtpToolInterceptor())
+                val logging = HttpLoggingInterceptor { message ->
+                    Timber.tag("OkHttp_P2P_Builder").d(message)
                 }.apply {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
@@ -223,16 +253,11 @@ class AppObjectController {
         val p2pNetworkService: P2PNetworkService by lazy {
             Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
-                .client(
-                    builder.connectTimeout(5L, TimeUnit.SECONDS)
-                        .writeTimeout(5L, TimeUnit.SECONDS)
-                        .readTimeout(5L, TimeUnit.SECONDS)
-                        .callTimeout(5L, TimeUnit.SECONDS)
-                        .build()
-                )
+                .client(p2pBuilder.build())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gsonMapper))
-                .build().create(P2PNetworkService::class.java)
+                .build()
+                .create(P2PNetworkService::class.java)
         }
 
         val mediaDUNetworkService: MediaDUNetworkService by lazy {
@@ -289,10 +314,6 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        var freshChat: Freshchat? = null
-            private set
-
-        @JvmStatic
         var currentActivityClass: String? = null
 
         @JvmStatic
@@ -338,57 +359,9 @@ class AppObjectController {
                     intentFilter.addAction(Intent.ACTION_USER_UNLOCKED)
                 }
 //        registerReceiver(ServiceStartReceiver(), intentFilter)
-
-                JoshSkillExecutors.BOUNDED.submit {
-                    if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
-                        val intentFilterRestoreID =
-                            IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED)
-                        getLocalBroadcastManager().registerReceiver(
-                            restoreIdReceiver,
-                            intentFilterRestoreID
-                        )
-                    }
-                }
-                JoshSkillExecutors.BOUNDED.submit {
-                    val intentFilterUnreadMessages =
-                        IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
-                    getLocalBroadcastManager().registerReceiver(
-                        unreadCountChangeReceiver,
-                        intentFilterUnreadMessages
-                    )
-                }
                 isListeningBroadCast = true
             }
         }
-
-        var unreadCountChangeReceiver: BroadcastReceiver =
-            object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    getUnreadFreshchatMessages()
-                }
-            }
-
-        var restoreIdReceiver: BroadcastReceiver =
-            object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val restoreId = freshChat?.user?.restoreId ?: EMPTY
-                            if (restoreId.isBlank().not()) {
-                                PrefManager.put(RESTORE_ID, restoreId)
-                                val requestMap = mutableMapOf<String, String?>()
-                                requestMap["restore_id"] = restoreId
-                                commonNetworkService.postFreshChatRestoreIDAsync(
-                                    PrefManager.getStringValue(USER_UNIQUE_ID),
-                                    requestMap
-                                )
-                            }
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
-                    }
-                }
-            }
 
         fun getLocalBroadcastManager(): LocalBroadcastManager {
             return LocalBroadcastManager.getInstance(joshApplication)
@@ -450,8 +423,8 @@ class AppObjectController {
                         PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                         PrefManager.put(SPEED_TEST_FILE_SIZE, resp.testFileSize ?: 100)
                         PrefManager.put(IS_GAME_ON, resp.isGameOn ?: 1)
-                        PrefManager.put(IS_LEVEL_DETAILS_ENABLED, resp.isLevelFormOn?:0)
-                        PrefManager.put(IS_INTEREST_FORM_ENABLED, resp.isLevelFormOn?:0)
+                        PrefManager.put(IS_LEVEL_DETAILS_ENABLED, resp.isLevelFormOn ?: 0)
+                        PrefManager.put(IS_INTEREST_FORM_ENABLED, resp.isInterestFormOn ?: 0)
                         com.joshtalks.joshskills.voip.data.local.PrefManager.setBeepTimerStatus(resp.isBeepTimerEnabled ?: 0)
                     } catch (ex: Exception) {
                         when (ex) {
@@ -554,49 +527,6 @@ class AppObjectController {
             }
         }
 
-        fun initialiseFreshChat() {
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val config = FreshchatConfig(
-                        BuildConfig.FRESH_CHAT_APP_ID,
-                        BuildConfig.FRESH_CHAT_APP_KEY
-                    )
-                    af.eK()?.let {
-                        Freshchat.setImageLoader(
-                            it
-                        )
-                    }
-
-                    config.isCameraCaptureEnabled = true
-                    config.isGallerySelectionEnabled = true
-                    config.isResponseExpectationEnabled = true
-                    config.domain = "https://msdk.in.freshchat.com"
-                    freshChat = Freshchat.getInstance(joshApplication)
-                    freshChat?.init(config)
-                    val notificationConfig = FreshchatNotificationConfig()
-                        .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
-                    freshChat?.setNotificationConfig(notificationConfig)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }
-
-        fun restoreUser(restoreId: String?) {
-            if (restoreId.isNullOrBlank()) {
-                freshChat?.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), null)
-            } else if (PrefManager.getBoolValue(FRESH_CHAT_ID_RESTORED).not()) {
-                PrefManager.put(FRESH_CHAT_ID_RESTORED, true)
-                freshChat?.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), restoreId)
-            }
-        }
-
-        fun getUnreadFreshchatMessages() {
-            freshChat?.getUnreadCountAsync { _, unreadCount ->
-                PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, unreadCount)
-            }
-        }
-
         fun clearDownloadMangerCallback() {
             try {
                 DownloadUtils.objectFetchListener.forEach { (key, value) ->
@@ -696,7 +626,6 @@ class AppObjectController {
 
         fun releaseInstance() {
             fetch = null
-            freshChat = null
             FirestoreNotificationDB.unsubscribe()
         }
     }
@@ -742,7 +671,7 @@ inline fun Request.safeCall(block: (Request) -> Response): Response {
                 .protocol(Protocol.HTTP_1_1)
                 .code(999)
                 .message(msg)
-                .body("{${e}}".toResponseBody(null)).build()
+                .body("JoshSafeCallException: {${e}}".toResponseBody(null)).build()
         }
         throw e
     }
@@ -753,17 +682,11 @@ class StatusCodeInterceptor : Interceptor {
         return chain.request().safeCall {
             val response = chain.proceed(it)
             if (response.code in 401..403) {
-                if (Utils.isAppRunning(
-                        AppObjectController.joshApplication,
-                        AppObjectController.joshApplication.packageName
-                    )
-                ) {
-//                  if (!IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
-                    IGNORE_UNAUTHORISED.firstOrNull { path -> chain.request().url.toString().contains(path) }?.let {
+                if (Utils.isAppRunning(AppObjectController.joshApplication, AppObjectController.joshApplication.packageName)) {
+                    if (IGNORE_UNAUTHORISED.none { path -> chain.request().url.toString().contains(path) }) {
+                        WorkManagerAdmin.logNextActivity(chain.request().url.toString())
                         PrefManager.logoutUser()
                         LastSyncPrefManager.clear()
-                        WorkManagerAdmin.appInitWorker()
-                        WorkManagerAdmin.appStartWorker()
                         if (AppObjectController.applicationDetails.isAppVisual()) {
                             AppObjectController.navigator.with(AppObjectController.joshApplication).navigate(
                                 object : SignUpContract {

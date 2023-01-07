@@ -494,6 +494,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
                             override val testId = 10
                             override val flowFrom = this@CourseDetailsActivity.javaClass.simpleName
                             override val navigator = AppObjectController.navigator
+                            override val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
                         }
                     )
                     finish()

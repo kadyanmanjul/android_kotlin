@@ -15,7 +15,6 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
                     OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
                 )
             ).enqueue()
@@ -23,7 +22,6 @@ object WorkManagerAdmin {
 
     fun appStartWorker() {
         val workerList = mutableListOf(
-            OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
             OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
             OneTimeWorkRequestBuilder<UpdateServerTimeWorker>().build()
         )
@@ -36,8 +34,23 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<DeleteUnlockTypeQuestion>().build()
                 )
             )
-            .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
             .enqueue()
+    }
+
+    fun logNextActivity(className: String?) {
+        val data = workDataOf(
+            "className" to className
+        )
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(
+            OneTimeWorkRequestBuilder<LogNextActivityWorker>()
+                .setInputData(data)
+                .build()
+        )
+    }
+    fun logImpressionFromWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(
+            OneTimeWorkRequestBuilder<LogImpressionWorker>().build()
+        )
     }
 
     fun requiredTaskAfterLoginComplete() {
@@ -75,13 +88,6 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<SyncEngageVideo>().build())
             .then(OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build()).enqueue()
-    }
-
-    fun deviceIdGenerateWorker() {
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
-            "Unique_id_generate",
-            ExistingWorkPolicy.KEEP, (OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
-        )
     }
 
     fun regenerateFCMWorker() {

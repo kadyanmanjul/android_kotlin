@@ -78,8 +78,8 @@ import com.joshtalks.joshskills.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.lesson.online_test.GrammarAnimation
 import com.joshtalks.joshskills.lesson.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.lesson.online_test.util.A2C1Impressions
-import com.joshtalks.joshskills.lesson.online_test.util.AnimateAtsOptionViewEvent
-import com.joshtalks.joshskills.lesson.online_test.vh.AtsOptionView
+import com.joshtalks.joshskills.common.repository.local.model.AnimateAtsOptionViewEvent
+import com.joshtalks.joshskills.common.repository.local.model.AtsOptionView
 import com.joshtalks.joshskills.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.lesson.reading.ReadingFullScreenFragment
 import com.joshtalks.joshskills.lesson.speaking.SpeakingPractiseFragment

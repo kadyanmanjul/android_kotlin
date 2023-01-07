@@ -1,5 +1,6 @@
-package com.joshtalks.joshskills.lesson.online_test.vh
+package com.joshtalks.joshskills.common.repository.local.model
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.view.MotionEvent
@@ -12,9 +13,6 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.lesson.online_test.util.AnimateAtsOptionViewEvent
-import com.joshtalks.joshskills.lesson.online_test.util.addViewAt
-import com.joshtalks.joshskills.lesson.online_test.util.removeView
 import com.nex3z.flowlayout.FlowLayout
 
 class AtsOptionView : AppCompatTextView {
@@ -57,7 +55,7 @@ class AtsOptionView : AppCompatTextView {
                 }
             }
             this.visibility = View.INVISIBLE
-            com.joshtalks.joshskills.common.messaging.RxBus2.publish(AnimateAtsOptionViewEvent(fromLocation, this.height, this.width, this))
+            RxBus2.publish(AnimateAtsOptionViewEvent(fromLocation, this.height, this.width, this))
         } else {
             /**
              * Answer Unselected
@@ -72,7 +70,7 @@ class AtsOptionView : AppCompatTextView {
                 this.isSelectedByUser = false
             }
             this.visibility = View.VISIBLE
-            com.joshtalks.joshskills.common.messaging.RxBus2.publish(
+            RxBus2.publish(
                 AnimateAtsOptionViewEvent(
                     fromLocation,
                     this.height,
@@ -179,8 +177,46 @@ class AtsOptionView : AppCompatTextView {
             }
             false
         }
-        background =
-            ContextCompat.getDrawable(getContext(), R.drawable.rounded_rectangle_with_grey_border)
+        background = ContextCompat.getDrawable(getContext(), R.drawable.rounded_rectangle_with_grey_border)
         setTextColor(ContextCompat.getColor(context, R.color.text_default))
+    }
+}
+
+class AnimateAtsOptionViewEvent(
+    val fromLocation: IntArray,
+    val height: Int,
+    val width: Int,
+    val atsOptionView: AtsOptionView,
+    val optionLayout: FlowLayout? = null,
+)
+
+@SuppressLint("ClickableViewAccessibility")
+fun FlowLayout.removeView(view: View, choice: Choice) {
+    val atsOptionView = AtsOptionView(context, choice)
+    atsOptionView.setPadding(
+        AtsOptionView.mPaddingLeft,
+        AtsOptionView.mPaddingTop,
+        AtsOptionView.mPaddingRight,
+        AtsOptionView.mPaddingBottom
+    )
+    invalidate()
+    atsOptionView.background =
+        ContextCompat.getDrawable(context, R.drawable.rounded_rectangle_grey)
+    atsOptionView.setTextColor(ContextCompat.getColor(context, R.color.disabled))
+    atsOptionView.setOnTouchListener(null)
+    atsOptionView.setOnClickListener(null)
+    removeView(view)
+    addView(atsOptionView, choice.sortOrder - 1)
+}
+
+fun FlowLayout.addViewAt(view: View, index: Int) {
+    if (getChildAt(index) != null) {
+        removeViewAt(index)
+        if (view.parent != null) {
+            (view.parent as ViewGroup).removeView(view)
+        }
+        addView(view, index)
+    } else {
+        addView(view, childCount)
     }
 }

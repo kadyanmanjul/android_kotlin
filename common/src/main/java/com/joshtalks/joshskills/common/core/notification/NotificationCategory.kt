@@ -6,5 +6,6 @@ enum class NotificationCategory(val category: String) {
     AFTER_FIRST_CALL("AFC"),
     AFTER_FIVE_MIN_CALL("AF5MC"),
     PAYMENT_INITIATED("PI"),
-    AFTER_BUY_PAGE("ABP")
+    AFTER_BUY_PAGE("ABP"),
+    EVENT_INDEPENDENT("EI")
 }

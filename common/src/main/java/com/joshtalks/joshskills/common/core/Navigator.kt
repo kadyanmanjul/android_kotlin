@@ -77,6 +77,8 @@ interface CourseDetailContract : Contract {
         get() = false
     val buySubscription: Boolean
         get() = false
+    val isCourseBought: Boolean
+        get() = false
 }
 
 interface BuyPageContract : Contract {

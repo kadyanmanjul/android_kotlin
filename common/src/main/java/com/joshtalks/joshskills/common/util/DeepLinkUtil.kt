@@ -125,4 +125,5 @@ class DeepLinkUtil(private val context: Context) {
 enum class DeepLinkImpression {
     REFERRAL,
     REDIRECT_,
+    OTHER
 }

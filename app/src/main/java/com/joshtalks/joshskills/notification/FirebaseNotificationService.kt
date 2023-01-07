@@ -44,9 +44,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             e.printStackTrace()
         }
         PrefManager.put(FCM_TOKEN, token)
-        if (AppObjectController.freshChat != null) {
-            AppObjectController.freshChat?.setPushRegistrationToken(token)
-        }
         CoroutineScope(
             SupervisorJob() +
                     Dispatchers.IO +

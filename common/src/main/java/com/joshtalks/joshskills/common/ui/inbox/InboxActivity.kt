@@ -12,6 +12,7 @@ import android.service.notification.StatusBarNotification
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
@@ -19,14 +20,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.base.EventLiveData
 import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.voip.base.constants.START_SERVICE
@@ -36,7 +40,6 @@ import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.BU
 import com.joshtalks.joshskills.common.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.common.core.abTest.VariantKeys
 import com.joshtalks.joshskills.common.core.analytics.*
-import com.joshtalks.joshskills.common.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.common.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.databinding.ActivityInboxBinding
@@ -44,11 +47,11 @@ import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntit
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxAdapter
+import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
+import com.joshtalks.joshskills.common.ui.special_practice.utils.CLICK_ON_RECOMMENDED_COURSE
 import com.joshtalks.joshskills.common.util.FileUploadService
-import com.skydoves.balloon.Balloon
-import com.skydoves.balloon.BalloonAnimation
-import com.skydoves.balloon.BalloonSizeSpec
+import com.joshtalks.joshskills.common.util.visible
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -78,8 +81,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
 
     var progressDialog: ProgressDialog? = null
-    private lateinit var bbTooltip: Balloon
     private var isCapsuleCourseBought = false
+    var event = EventLiveData
 
     private val binding by lazy<ActivityInboxBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_inbox)
@@ -93,6 +96,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
+        binding.vm = viewModel
+        binding.executePendingBindings()
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL))
+            binding.content.setBackgroundColor(this.resources.getColor(R.color.pure_white))
         //TODO: use this line and delete next line -- Sukesh
 //        navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         navigator = AppObjectController.navigator
@@ -103,6 +110,20 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         viewModel.handleBroadCastEvents()
         MarketingAnalytics.openInboxPage()
         watchTimeEvent()
+        event.observe(this) {
+            when(it.what){
+                CLICK_ON_RECOMMENDED_COURSE -> {
+                    val data = it.obj as InboxRecommendedCourse
+                    navigator.with(this).navigate(object : CourseDetailContract {
+                        override val testId = data.id
+                        override val flowFrom = this@InboxActivity.javaClass.simpleName
+                        override val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
+                        override val buySubscription = false
+                        override val navigator = this@InboxActivity.navigator
+                    })
+                }
+            }
+        }
     }
 
     fun watchTimeEvent() {
@@ -167,14 +188,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 isSmoothScrollbarEnabled = true
             }
         }
-        binding.recyclerViewInbox.addItemDecoration(
-            LayoutMarginDecoration(
-                Utils.dpToPx(
-                    applicationContext,
-                    6f
-                )
-            )
-        )
         binding.recyclerViewInbox.adapter = inboxAdapter
         findViewById<AppCompatImageView>(R.id.iv_setting).setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.THREE_DOTS).push()
@@ -198,7 +211,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun openPopupMenu(view: View) {
         if (popupMenu == null) {
-            popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+            popupMenu = PopupMenu(this, view)
             popupMenu?.inflate(R.menu.more_options_menu)
             popupMenu?.setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -246,6 +259,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun checkCouponNotification() {
         try {
+            if (PrefManager.getStringValue(STICKY_COUPON_DATA).isEmpty()) {
+                stopService(navigator.with(this).serviceProvider(object : StickyServiceConnection {}))
+                return
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 val notifications: Array<StatusBarNotification> = mNotificationManager.activeNotifications
@@ -302,6 +319,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         }
+        viewModel.paymentNotInitiated.observe(this) { paymentNotInitiated ->
+            if (paymentNotInitiated) {
+                if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
+                    findMoreLayout.visible()
+                }
+            }
+        }
         viewModel.paymentStatus.observe(this, Observer {
             when (it.status) {
                 PaymentStatus.SUCCESS -> {
@@ -310,14 +334,20 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     } else {
                         PrefManager.getStringValue(PAID_COURSE_TEST_ID)
                     }
-                    viewModel.saveBranchPaymentLog(it.razorpayOrderId)
-                    MarketingAnalytics.coursePurchased(
-                        BigDecimal(it?.amount?:0.0),
-                        true,
-                        testId = freeTrialTestId,
-                        courseName = "Spoken English Course",
-                        juspayPaymentId = it.razorpayOrderId
-                    )
+                    if (!PrefManager.getBoolValue(IS_PURCHASE_BRANCH_EVENT_PUSH)){
+                        PrefManager.put(IS_PURCHASE_BRANCH_EVENT_PUSH, true)
+                        viewModel.saveBranchPaymentLog(it.razorpayOrderId,
+                            BigDecimal(it?.amount?:0.0),
+                            testId = Integer.parseInt(freeTrialTestId),
+                            courseName = "Spoken English Course")
+                        MarketingAnalytics.coursePurchased(
+                            BigDecimal(it?.amount?:0.0),
+                            true,
+                            testId = freeTrialTestId,
+                            courseName = "Spoken English Course",
+                            juspayPaymentId = it.razorpayOrderId
+                        )
+                    }
                     dismissBbTip()
                     PrefManager.put(IS_APP_RESTARTED, false)
                     initPaymentStatusView(
@@ -349,7 +379,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     dismissBbTip()
                     initPaymentStatusView(
                         R.drawable.yellow_rectangle_with_orange_stroke,
-                        R.drawable.ic_payment_exclamation,
+                        R.drawable.alert_processing,
                         R.color.accent_600,
                         R.color.accent_600,
                         R.string.processing_payment_text,
@@ -372,9 +402,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun dismissBbTip(){
-        if (this::bbTooltip.isInitialized && bbTooltip.isShowing){
-            bbTooltip.dismiss()
-        }
+        binding.viewArrow.visibility = GONE
+        binding.bbTipLayout.visibility = GONE
     }
 
     private fun initPaymentStatusView(
@@ -390,7 +419,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         val icon = paymentStatusView.findViewById<AppCompatImageView>(R.id.info_icon)
         val title = paymentStatusView.findViewById<AppCompatTextView>(R.id.title)
         val description = paymentStatusView.findViewById<AppCompatTextView>(R.id.description)
-        val tryAgain = paymentStatusView.findViewById<AppCompatTextView>(R.id.try_again)
+        val tryAgain = paymentStatusView.findViewById<TextView>(R.id.try_again)
         val callText = paymentStatusView.findViewById<AppCompatTextView>(R.id.call)
         val number = paymentStatusView.findViewById<AppCompatTextView>(R.id.number)
 
@@ -413,14 +442,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         title.text = getString(titleTextID)
         description.text = getString(descTextId)
         if (isTryAgainVisible && !isCapsuleCourseBought) {
-            tryAgain.visibility = View.VISIBLE
-            tryAgain.setOnClickListener {
-                navigator.with(this).navigate(
-                    object : BuyPageContract {
+            tryAgain.apply {
+                visibility = View.VISIBLE
+                textColorSet(colorTintIcon)
+                backgroundTintList = ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon)
+                TextViewCompat.setCompoundDrawableTintList(this, ContextCompat.getColorStateList(this@InboxActivity, colorTintIcon))
+                setOnClickListener {
+                    navigator.with(this@InboxActivity).navigate(object : BuyPageContract {
                         override val flowFrom = "INBOX_TRY_AGAIN"
                         override val navigator = this@InboxActivity.navigator
-                    }
-                )
+                    })
+                }
             }
         } else {
             tryAgain.visibility = View.GONE
@@ -459,23 +491,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         if (isServiceStarted.not()) {
                             isServiceStarted = true
                             val broadcastIntent = Intent().apply {
-                                action =
-                                    CALLING_SERVICE_ACTION
-                                putExtra(
-                                    SERVICE_BROADCAST_KEY,
-                                    START_SERVICE
-                                )
+                                action = CALLING_SERVICE_ACTION
+                                putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
                             }
                             LocalBroadcastManager.getInstance(this@InboxActivity).sendBroadcast(broadcastIntent)
+                        }
+                        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+                            PrefManager.put(IS_COURSE_BOUGHT, true)
                         }
                         if (inboxEntity.isCourseBought.not()) {
                             haveFreeTrialCourse = true
                             PrefManager.put(IS_FREE_TRIAL, true)
                         }
-                        if (inboxEntity.bbTipText?.isNotBlank() == true)
-                            runOnUiThread {
-                                showExploreBBTip(inboxEntity.bbTipText)
-                            }
                     }
                     temp.addAll(courseList)
                     if (courseList.isNullOrEmpty().not()) {
@@ -500,19 +527,22 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 inboxAdapter.addItems(temp)
                 val capsuleCourse = temp.firstOrNull { it.isCapsuleCourse }
                 val isSubscriptionCourseBought = temp.firstOrNull { it.courseId == SUBSCRIPTION_COURSE_ID } != null
+                PrefManager.put(IS_SUBSCRIPTION_STARTED, isSubscriptionCourseBought)
                 isCapsuleCourseBought = capsuleCourse != null && capsuleCourse.isCourseBought
                 if (PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 1) {
                     if (paymentStatusView.visibility != View.VISIBLE) {
-                        findMoreLayout.visibility = View.VISIBLE
-                        paymentStatusView.visibility = View.GONE
+//                        lifecycleScope.launch {
+//                            delay(1000)
+//                            findMoreLayout.visibility = View.VISIBLE
+//                            paymentStatusView.visibility = View.GONE
+//                        }
                     }
                     if (isSubscriptionCourseBought) {
-                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = true
-                        findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = false
-                        findMoreLayout.findViewById<View>(R.id.top_line).isVisible = true
-                        findMoreLayout.findViewById<View>(R.id.below_line).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = false
                     } else if (isCapsuleCourseBought.not()) {
-                        findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = true
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                         try {
                             runOnUiThread {
                                 findViewById<MaterialTextView>(R.id.btn_upgrade).isVisible = haveFreeTrialCourse
@@ -521,10 +551,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
-                        findMoreLayout.findViewById<View>(R.id.top_line).isVisible = false
-                        findMoreLayout.findViewById<View>(R.id.below_line).isVisible = false
-                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).isVisible = false
+                        viewModel.paymentNotInitiated.observe(this@InboxActivity) {
+                            if (it) {
+                                showBuyCourseTooltip(capsuleCourse?.courseId ?: DEFAULT_COURSE_ID)
+                            }
+                        }
+                        findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                     } else {
                         if (paymentStatusView.visibility != View.VISIBLE) {
                             findMoreLayout.visibility = View.GONE
@@ -538,6 +570,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     }
                 }
                 viewModel.checkForPendingPayments()
+                if (capsuleCourse?.bbTipText?.isNotBlank() == true) {
+                    viewModel.getRecommendedCourse()
+                    binding.textExploreCourse.setOnClickListener {
+                        viewModel.savePaymentImpressionForCourseExplorePage("CLICKED_EXPLORE_COURSE", EMPTY)
+                        openCourseExplorer()
+                    }
+                }
             }
         }
     }
@@ -552,7 +591,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT) >= 2
         ) {
             if (paymentStatusView.visibility != View.VISIBLE) {
-                findMoreLayout.visibility = View.VISIBLE
+//                findMoreLayout.visibility = View.VISIBLE
                 paymentStatusView.visibility = View.GONE
             }
         }
@@ -568,61 +607,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 BUY_COURSE_INBOX_TOOLTIP + courseId
             )
             if (text.isBlank()) return
-            if (this::bbTooltip.isInitialized.not()) {
-                bbTooltip = Balloon.Builder(this)
-                    .setLayout(R.layout.layout_bb_tip)
-                    .setHeight(BalloonSizeSpec.WRAP)
-                    .setIsVisibleArrow(true)
-                    .setBackgroundColorResource(R.color.surface_tip)
-                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
-                    .setWidthRatio(0.85f)
-                    .setDismissWhenTouchOutside(false)
-                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                    .setLifecycleOwner(this)
-                    .setDismissWhenClicked(false)
-                    .build()
-            }
-            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text = text
-            bbTooltip.isShowing.not().let {
-                bbTooltip.showAlignBottom(findViewById<MaterialTextView>(R.id.buy_english_course))
-            }
+            binding.bbTipLayout.visibility = VISIBLE
+            binding.viewArrow.visibility = VISIBLE
+            binding.bbTipLayout.findViewById<MaterialTextView>(R.id.balloon_text).text = text
         } catch (_: Exception) {
-        }
-    }
-
-    private fun showExploreBBTip(bbTipText: String) {
-        try {
-            binding.exploreCourses.isVisible = true
-            if (this::bbTooltip.isInitialized.not()) {
-                bbTooltip = Balloon.Builder(this)
-                    .setLayout(R.layout.layout_bb_tip)
-                    .setHeight(BalloonSizeSpec.WRAP)
-                    .setIsVisibleArrow(true)
-                    .setBackgroundColorResource(R.color.surface_tip)
-                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
-                    .setWidthRatio(0.85f)
-                    .setDismissWhenTouchOutside(false)
-                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                    .setLifecycleOwner(this)
-                    .setDismissWhenClicked(false)
-                    .build()
-            }
-            bbTooltip.getContentView().findViewById<MaterialTextView>(R.id.balloon_text).text =
-                bbTipText.replace("__username__", Mentor.getInstance().getUser()?.firstName ?: "User")
-            bbTooltip.isShowing.not().let {
-                bbTooltip.showAlignBottom(binding.exploreCourses)
-            }
-            val scale = resources.displayMetrics.density
-            var dpAsPixels = (190 * scale + 0.5f).toInt()
-            if (paymentStatusView.isVisible)
-                dpAsPixels = (100 * scale + 0.5f).toInt()
-            binding.inboxNestedScroll.updatePadding(0, 0, 0, dpAsPixels)
-        } catch (_: Exception) {
-        }
-
-        binding.exploreCourses.setOnClickListener {
-            viewModel.saveImpressionForExplorePage("CLICKED_EXPLORE_COURSE")
-            courseExploreClick()
         }
     }
 
@@ -704,6 +692,23 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
     }
 
+    override fun onStartTrialTimer(startTimeInMilliSeconds: Long) {
+        trialTimerView.visible()
+        trialTimerDivider.visible()
+        trialTimerView.startTimer(startTimeInMilliSeconds)
+    }
+
+    override fun onStopTrialTimer() {
+        trialTimerDivider.gone()
+        trialTimerView.removeTimer()
+    }
+
+    override fun onFreeTrialEnded() {
+        trialTimerView.visible()
+        trialTimerDivider.visible()
+        trialTimerView.endFreeTrial()
+    }
+
     override fun onBackPressed() {
         applicationClosed()
         super.onBackPressed()
@@ -715,5 +720,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(broadcastIntent)
+    }
+
+    companion object {
+        fun openInboxActivity(context: Context) {
+            //TODO: define function here -- Sukesh
+        }
     }
 }

@@ -23,6 +23,7 @@ import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
+import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.IS_MISSED_NOTIFICATION_ACTIVE
 import com.joshtalks.joshskills.common.core.analytics.*
 import com.joshtalks.joshskills.common.core.notification.NotificationAnalytics
 import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
@@ -65,31 +66,6 @@ val NOTIFICATION_TITLE_TEXT = arrayOf(
 private const val FCM_TOKEN = "fcmToken"
 private const val FCM_ACTIVE = "FCM_ACTIVE"
 
-class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            if (PrefManager.getStringValue(USER_UNIQUE_ID).isBlank()) {
-                delay(200)
-            }
-            if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                val response =
-                    AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
-                if (response.isSuccessful && response.body() != null) {
-                    PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
-                    Branch.getInstance().setIdentity(response.body()!!.gaID)
-                } else {
-                    return Result.failure()
-                }
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-            return Result.failure()
-        }
-        return Result.success()
-    }
-}
-
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -126,7 +102,6 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
         }
         PrefManager.put(P2P_LAST_CALL, false)
-        AppObjectController.initialiseFreshChat()
         Log.i("Workers", "doWork: referrer")
         InstallReferralUtil.installReferrer(context)
         return Result.success()
@@ -566,26 +541,6 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     }
 }
 
-class GenerateRestoreIdWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
-                val id = PrefManager.getStringValue(USER_UNIQUE_ID)
-                val details =
-                    AppObjectController.commonNetworkService.getFreshChatRestoreIdAsync(id)
-                if (details.restoreId.isNullOrBlank().not()) {
-                    PrefManager.put(RESTORE_ID, details.restoreId!!)
-                    AppObjectController.restoreUser(details.restoreId!!)
-                } else AppObjectController.restoreUser(null)
-            } else AppObjectController.restoreUser(PrefManager.getStringValue(RESTORE_ID))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-}
-
 class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -842,7 +797,8 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
 
     override suspend fun doWork(): Result {
         try {
-            NotificationAnalytics().fetchMissedNotification(context)
+            if (AppObjectController.getFirebaseRemoteConfig().getBoolean(IS_MISSED_NOTIFICATION_ACTIVE))
+                NotificationAnalytics().fetchMissedNotification(context)
             if (shouldFetchClientData()) {
                 val response = AppObjectController.utilsAPIService.getFTScheduledNotifications(
                     PrefManager.getStringValue(
@@ -966,6 +922,42 @@ class UpdateServerTimeWorker(context: Context, workerParams: WorkerParameters) :
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+class LogNextActivityWorker(context: Context, private var workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val className = workerParams.inputData.getString("className") ?: "EMPTY"
+            val request = mapOf(
+                Pair("gaid", PrefManager.getStringValue(USER_UNIQUE_ID)),
+                Pair("event_name", className)
+            )
+            AppObjectController.retrofit.create(LauncherScreenImpressionService::class.java)
+                .saveImpression(request)
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
+class LogImpressionWorker(context: Context, private var workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val requestData = hashMapOf(
+                Pair("mentor_id", Mentor.getInstance().getId()),
+                Pair("event_name", IMPRESSION_OPEN_FREE_TRIAL_SCREEN_WORKER)
+            )
+            AppObjectController.commonNetworkService.saveImpression(requestData)
+        } catch (ex: Exception) {
+            Timber.e(ex)
+            LogException.catchException(ex)
         }
         return Result.success()
     }

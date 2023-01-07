@@ -170,6 +170,7 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     fun getCoursePrice(): Double {
         return courseDetailsLiveData.value?.paymentData?.discountedAmount?.substring(1)?.toDouble() ?: 0.0
     }
+
     fun saveBranchPaymentLog(orderInfoId:String,
                              amount: BigDecimal?,
                              testId: Int = 0,
