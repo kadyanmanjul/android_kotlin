@@ -398,6 +398,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             startBuyPageActivity(it)
         }
 
+        viewModel.speakingTooltipLiveData.observe(viewLifecycleOwner){ response ->
+            showToolTipOnLesson(response)
+        }
+
         viewModel.speakingTopicLiveData.observe(viewLifecycleOwner) { response ->
             binding.progressView.visibility = GONE
             viewModel.isNewStudentActive.set(response?.isNewStudentCallsActivated)
@@ -476,8 +480,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
 
                     binding.tvTodayTopic.text = response.topicName
-
-                    showToolTipOnLesson(response)
 
                     if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
                         PrefManager.put(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
@@ -711,36 +713,30 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun showToolTipOnLesson(response: SpeakingTopic) {
+        Log.e("sagar", "showToolTipOnLesson: " )
         viewModel.lessonSpotlightStateLiveData.postValue(null)
-        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT) && PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP)) {
+        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW) && PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT) && PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP)) {
             viewModel.lessonSpotlightStateLiveData.postValue(null)
         } else {
-            if (response.isSpeakingTooltipEnabled) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
-                        //This code is for show balloon tooltip and highlight topic container
+            CoroutineScope(Dispatchers.Main).launch {
+                if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+                    //This code is for show balloon tooltip and highlight topic container
+                    Log.e("sagar", "showToolTipOnLesson: 2", )
+                    showTooltipTopic(
+                        "Today’s topic and goals",
+                        response.speakingToolTipText ?: EMPTY
+                    )
 
-                        showTooltipTopic(
-                            "Today’s topic and goals",
-                            response.speakingToolTipText ?: EMPTY)
+                    setOverlayAnimationOnTopicContainer()
+                } else {
+                    Log.e("sagar", "showToolTipOnLesson: 3", )
+                    //This code is for show balloon tooltip and highlight peer to peer button
+                    showTooltipButton(
+                        "Start Speaking Practice Now",
+                        response.speakingToolTipText ?: EMPTY
+                    )
 
-                        setOverlayAnimationOnTopicContainer()
-                        PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
-                    } else {
-                        //This code is for show balloon tooltip and highlight peer to peer button
-                        showTooltipButton(
-                            "Start Speaking Practice Now",
-                            response.speakingToolTipText ?: EMPTY)
-
-                        setOverlayAnimationOnSpeakingButton()
-                        PrefManager.put(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP, true)
-                    }
-                }
-            } else {
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(100)
-                    viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-                    PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+                    setOverlayAnimationOnSpeakingButton()
                 }
             }
         }
@@ -1049,7 +1045,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             overlayImageView.setBackgroundDrawable(AppCompatResources.getDrawable(requireContext(),R.drawable.round_rect_default_8))
             binding.tooltipContainer.requestLayout()
 
+            PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
             binding.welcomeContainer.setOnClickListener {
+                Log.e("sagar", "showToolTipOnLesson: 4", )
                 binding.welcomeContainer.visibility = GONE
                 dismissTooltipTopicContainer()
                 //This code is for show balloon tooltip and highlight peer to peer button
@@ -1059,7 +1057,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 CoroutineScope(Dispatchers.Main).launch {
                     setOverlayAnimationOnSpeakingButton()
                 }
-                PrefManager.put(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP, true)
             }
 
             overlayItem?.let {
@@ -1079,12 +1076,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             val overlayItem = TooltipUtils.getOverlayItemFromView(binding.btnPeerToPeerCall)
 
             overlayImageView.setBackgroundDrawable(AppCompatResources.getDrawable(requireContext(),R.drawable.rounded_blue_rectangle_with_border))
+            binding.btnPeerToPeerCall.visibility = INVISIBLE
             binding.btnPeerToPeerCall.requestLayout()
 
             binding.welcomeContainer.setOnClickListener {
                 binding.welcomeContainer.visibility = GONE
+                binding.btnPeerToPeerCall.visibility = VISIBLE
                 dismissTooltipButton()
             }
+
             overlayImageView.setOnClickListener {
                 binding.welcomeContainer.visibility = GONE
                 dismissTooltipButton()
@@ -1109,6 +1109,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp) - resources.getDimension(R.dimen._47sdp)
                 overlayImageView.requestLayout()
             }
+            PrefManager.put(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP, true)
         }
     }
 
@@ -1196,6 +1197,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         dismissTooltipTopicContainer()
         binding.welcomeContainer.visibility = GONE
         dismissTooltipButton()
+        binding.btnPeerToPeerCall.visibility = VISIBLE
         Log.e("sagar", "onPause: ")
     }
 

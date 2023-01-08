@@ -57,6 +57,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
+        <LinearLayout
+            android:id="@+id/welcome_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="#BF173A50"
+            android:elevation="@dimen/_10sdp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/buy_course_ll"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            android:visibility="gone">
+        </LinearLayout>
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/buy_course_banner"
             android:layout_width="match_parent"
