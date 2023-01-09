@@ -89,6 +89,8 @@ interface BuyPageContract : Contract {
     val flowFrom: String
     val coupon: String
         get() = EMPTY
+    val shouldAutoApplyCoupon: Boolean
+        get() = false
 }
 
 interface LeaderboardContract : Contract {
@@ -111,6 +113,8 @@ interface LessonContract : Contract {
     val conversationId: String?
         get() = null
     val isLessonCompleted: Boolean
+        get() = false
+    val shouldStartCall: Boolean
         get() = false
 }
 

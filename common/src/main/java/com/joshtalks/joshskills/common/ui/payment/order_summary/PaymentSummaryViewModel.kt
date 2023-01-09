@@ -27,12 +27,15 @@ import com.joshtalks.joshskills.common.repository.server.onboarding.VersionRespo
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
+import io.branch.referral.util.CurrencyType
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import retrofit2.HttpException
 import timber.log.Timber
+import java.math.BigDecimal
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
     var context: Application = getApplication()
@@ -434,6 +437,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
                 ClientNotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 ClientNotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+                ClientNotificationUtils(context).updateNotificationDb(NotificationCategory.EVENT_INDEPENDENT)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -455,12 +459,44 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun saveBranchPaymentLog(orderInfoId:String){
-        viewModelScope.launch(Dispatchers.IO){
+    fun saveBranchPaymentLog(
+        orderInfoId: String,
+        amount: BigDecimal?,
+        testId: Int = 0,
+        courseName: String = EMPTY
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp =  AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
-            }catch (ex:Exception){
+                val extras: HashMap<String, Any> = HashMap()
+                extras["test_id"] = testId
+                extras["orderinfo_id"] = orderInfoId
+                extras["currency"] = CurrencyType.INR.name
+                extras["amount"] = amount ?: 0.0
+                extras["course_name"] = courseName
+                extras["device_id"] = Utils.getDeviceId()
+                extras["guest_mentor_id"] = Mentor.getInstance().getId()
+                extras["payment_done_from"] = "Payment Summary"
+                val resp = AppObjectController.commonNetworkService.savePaymentLog(extras)
+            } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
+    fun logPaymentEvent(data: JSONObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.TRACK_JUSPAY_LOG)
+                )
+                    AppObjectController.commonNetworkService.saveJuspayPaymentLog(
+                        mapOf(
+                            "mentor_id" to Mentor.getInstance().getId(),
+                            "json" to data
+                        )
+                    )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

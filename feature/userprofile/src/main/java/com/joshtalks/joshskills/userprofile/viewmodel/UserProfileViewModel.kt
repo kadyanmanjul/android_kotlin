@@ -88,6 +88,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val helpCountAbTestliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }
     var count = ObservableField(0)
+
     fun getHelpCountCampaignData(
         campaign: String,
         mentorId: String,
@@ -137,9 +138,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    private fun uploadCompressedMedia(
-        mediaPath: String
-    ) {
+    private fun uploadCompressedMedia(mediaPath: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val obj = mapOf("media_path" to File(mediaPath).name)
@@ -402,7 +401,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun getProfileData(mentorId: String, intervalType: String?, previousPage: String?) {
-        this.mentorId = mentorId
+        this.mentorId = mentorId.ifEmpty { Mentor.getInstance().getUserId() }
         this.intervalType = intervalType
         this.previousPage = previousPage
         apiCallStatusLiveData.postValue(ApiCallStatus.START)

@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.common.core.*
+import com.joshtalks.joshskills.common.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.common.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
@@ -32,6 +33,7 @@ import com.joshtalks.joshskills.common.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.common.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.common.repository.server.assessment.RuleIdsList
+import com.joshtalks.joshskills.common.repository.server.buypage.Coupon
 import com.joshtalks.joshskills.common.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.common.repository.server.engage.Graph
 import com.joshtalks.joshskills.common.repository.server.introduction.DemoOnboardingData
@@ -110,10 +112,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val isNewStudentActive = ObservableField(false)
     val completedLessonCount: MutableLiveData<Int?> = MutableLiveData(null)
 
-    //TODO Coupon model moved in buy page module so we have create such a way so we can use that module here also
-
-    //val mentorCoupon: MutableLiveData<com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon> = MutableLiveData(null)
-    val isFreeTrialUser : MutableLiveData<Boolean> = MutableLiveData(false)
+    val mentorCoupon: MutableLiveData<Coupon> = MutableLiveData(null)
+    val isFreeTrialUser: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)
@@ -127,7 +127,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     val isExpertBtnEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
-    var lessonCompletePopUpClick : MutableLiveData<Int> = MutableLiveData()
+    var lessonCompletePopUpClick: MutableLiveData<Int> = MutableLiveData()
+    var lessonActivityScreen: String = "LESSON_ACTIVITY"
 
     init {
         getRating()
@@ -1108,6 +1109,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         singleLiveEvent.value = message
     }
 
+    private fun showScratchCard() {
+        message.what = SHOW_SCRATCH_CARD
+        singleLiveEvent.value = message
+    }
+
     fun updatePracticeEngagement(requestEngage: RequestEngage) {
         viewModelScope.launch {
             val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
@@ -1162,24 +1168,47 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getCompletedLessonCount(courseId: String) {
         viewModelScope.launch {
-            completedLessonCount.value = AppObjectController.appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+            completedLessonCount.value = getCompletedLessonCountSuspend(courseId)
         }
     }
 
-    //TODO Coupon model moved in buy page module so we have create such a way so we can use that module here also
-//    suspend fun getMentorCoupon(testId: Int): com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon? {
-//        try {
-//            val response = AppObjectController.commonNetworkService.getValidCoupon(testId)
-//            if (response.isSuccessful) {
-//                response.body()?.let { body ->
-//                    body.listOfCoupon?.firstOrNull { it.isMentorSpecificCoupon == true }?.let { coupon ->
-//                        return coupon
-//                    }
-//                }
-//            }
-//        } catch (ex: Exception) {
-//            Timber.e(ex)
-//        }
-//        return null
-//    }
+    suspend fun getCompletedLessonCountSuspend(courseId: String = PrefManager.getStringValue(CURRENT_COURSE_ID)) =
+        appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+
+    suspend fun getMentorCoupon(testId: Int): Coupon? {
+        try {
+            val response = AppObjectController.commonNetworkService.getValidCoupon(
+                testId = testId,
+                screenName = lessonActivityScreen,
+                lessonsCompleted = getCompletedLessonCountSuspend()
+            )
+            if (response.isSuccessful) {
+                response.body()?.let { body ->
+                    body.listOfCoupon?.firstOrNull {
+                        it.isMentorSpecificCoupon == true && (it.validDuration != null && it.validDuration.time.minus(
+                            System.currentTimeMillis()
+                        ) > 0L)
+                    }?.let { coupon ->
+                        return coupon
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
+        }
+        return null
+    }
+
+    fun checkPopupDisplay() {
+        viewModelScope.launch {
+            try {
+                val resp = AppObjectController.commonNetworkService.getPopupType()
+                if ((resp.body()?.get("show_scratch_card") == true))
+                    showScratchCard()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                e.showAppropriateMsg()
+            }
+        }
+    }
 }

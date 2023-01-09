@@ -31,7 +31,9 @@ data class CourseDetailsList(
     @SerializedName("teacher_name")
     val teacherName: String? = null,
     @SerializedName("per_day")
-    var perDayPrice: String? = null
+    var perDayPrice: String? = null,
+    @SerializedName("sub_text")
+    var subText: List<String>? = null
 )
 
 data class PriceParameterModel(
@@ -42,5 +44,5 @@ data class PriceParameterModel(
     @SerializedName("code")
     val code: String? = null,
     @SerializedName("is_mentor_coupon")
-    val isSpecificMentorCoupon: Boolean?= null
+    val isSpecificMentorCoupon: Boolean? = null
 )

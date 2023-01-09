@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.abTest.GoalKeys
 import com.joshtalks.joshskills.common.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.common.core.analytics.LogException
 import com.joshtalks.joshskills.common.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.common.core.notification.NotificationCategory
 import com.joshtalks.joshskills.common.core.notification.client_side.ClientNotificationUtils
@@ -56,6 +57,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 AppObjectController.commonNetworkService.saveImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
+                LogException.catchException(ex)
             }
         }
     }
@@ -70,6 +72,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
+                LogException.catchException(ex)
             }
         }
     }
@@ -226,5 +229,9 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         viewModelScope.launch {
             abTestRepository.postGoal(goal.NAME)
         }
+    }
+
+    fun logImpressionFromWorker() {
+        WorkManagerAdmin.logImpressionFromWorker()
     }
 }

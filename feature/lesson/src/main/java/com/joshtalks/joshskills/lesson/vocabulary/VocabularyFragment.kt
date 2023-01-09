@@ -475,8 +475,14 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     private fun initBottomMargin() {
-        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
-            binding.bannerMargin.layoutParams.height = (requireActivity() as LessonActivity).getBottomBannerHeight()
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+                    binding.bannerMargin.layoutParams.height =
+                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+                }
+            }
         }
     }
 

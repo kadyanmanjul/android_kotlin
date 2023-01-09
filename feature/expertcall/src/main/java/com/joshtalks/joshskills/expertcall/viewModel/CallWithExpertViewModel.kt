@@ -8,20 +8,22 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.common.base.BaseViewModel
 import com.joshtalks.joshskills.common.constants.EXPERT_UPGRADE_CLICK
 import com.joshtalks.joshskills.common.constants.GET_UPGRADE_DETAILS
-import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.EMPTY
-import com.joshtalks.joshskills.common.core.showToast
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.repository.local.SkillsDatastore
+import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.expertcall.model.Amount
 import com.joshtalks.joshskills.expertcall.repository.ExpertListRepo
 import com.joshtalks.joshskills.expertcall.repository.FirstTimeAmount
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
-import com.joshtalks.joshskills.expertcall.repository.ExpertNetwork
+import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import timber.log.Timber
+import java.math.BigDecimal
+import java.util.HashMap
 
 class CallWithExpertViewModel : BaseViewModel() {
 
@@ -96,14 +98,14 @@ class CallWithExpertViewModel : BaseViewModel() {
 
     fun saveMicroPaymentImpression(
         eventName: String,
-        eventId: String = EMPTY,
+        expert_id: String = EMPTY,
         previousPage: String = EMPTY
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
                     Pair("event_name", eventName),
-                    Pair("expert_id", eventId),
+                    Pair("expert_id", expert_id),
                     Pair("previous_page", previousPage)
                 )
                 AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
@@ -114,8 +116,9 @@ class CallWithExpertViewModel : BaseViewModel() {
     }
 
     fun upgradeExpertCall(view: View) {
+        saveMicroPaymentImpression(eventName = CLICK_UPGRADE_BUTTON, previousPage = UPGRADE_PAGE)
         if (orderAmount != -1 && orderTestId != -1) {
-            message.what = com.joshtalks.joshskills.common.constants.EXPERT_UPGRADE_CLICK
+            message.what = EXPERT_UPGRADE_CLICK
             message.arg1 = orderAmount
             message.arg2 = orderTestId
             singleLiveEvent.value = message
@@ -133,7 +136,7 @@ class CallWithExpertViewModel : BaseViewModel() {
                     orderTestId =  res.body()?.testId ?: -1
 
                     withContext(Dispatchers.Main) {
-                        message.what = com.joshtalks.joshskills.common.constants.GET_UPGRADE_DETAILS
+                        message.what = GET_UPGRADE_DETAILS
                         message.obj = res.body()
                         singleLiveEvent.value = message
                     }
@@ -167,10 +170,43 @@ class CallWithExpertViewModel : BaseViewModel() {
             AppObjectController.appDatabase.paymentDao().deletePaymentEntry(razorpayOrderId)
         }
     }
-    fun saveBranchPaymentLog(orderInfoId:String) {
+
+    fun logPaymentEvent(data: JSONObject) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+                if (AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.TRACK_JUSPAY_LOG)
+                )
+                    AppObjectController.commonNetworkService.saveJuspayPaymentLog(
+                        mapOf(
+                            "mentor_id" to Mentor.getInstance().getId(),
+                            "json" to data
+                        )
+                    )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun saveBranchPaymentLog(
+        orderInfoId: String,
+        amount: BigDecimal?,
+        testId: Int = 0,
+        courseName: String = EMPTY
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val extras: HashMap<String, Any> = HashMap()
+                extras["test_id"] = testId
+                extras["orderinfo_id"] = orderInfoId
+                extras["currency"] = CurrencyType.INR.name
+                extras["amount"] = amount ?: 0.0
+                extras["course_name"] = courseName
+                extras["device_id"] = Utils.getDeviceId()
+                extras["guest_mentor_id"] = Mentor.getInstance().getId()
+                extras["payment_done_from"] = "Expert Screen"
+                val resp = AppObjectController.commonNetworkService.savePaymentLog(extras)
             } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }

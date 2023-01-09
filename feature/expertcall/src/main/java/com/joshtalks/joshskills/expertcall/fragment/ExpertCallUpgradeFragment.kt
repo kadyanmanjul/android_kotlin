@@ -12,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.joshtalks.joshskills.expertcall.R
 import com.joshtalks.joshskills.common.base.BaseFragment
 import com.joshtalks.joshskills.common.constants.GET_UPGRADE_DETAILS
+import com.joshtalks.joshskills.common.core.OPEN_WALLET
+import com.joshtalks.joshskills.common.core.UPGRADE_PAGE
 import com.joshtalks.joshskills.expertcall.databinding.FragmentExpertCallUpgradeBinding
 import com.joshtalks.joshskills.expertcall.model.ExpertUpgradeDetails
 import com.joshtalks.joshskills.expertcall.viewModel.CallWithExpertViewModel
@@ -27,6 +29,7 @@ class ExpertCallUpgradeFragment : BaseFragment() {
     override fun initViewBinding() {
         binding.rechargeToTalkBtn.setOnClickListener {
             findNavController().navigate(R.id.action_upgrade_to_wallet)
+            viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = UPGRADE_PAGE)
         }
     }
 
@@ -53,13 +56,6 @@ class ExpertCallUpgradeFragment : BaseFragment() {
         viewModel.getExpertUpgradeDetails()
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        requireActivity().findViewById<TextView>(R.id.iv_earn).setOnClickListener {
-            findNavController().navigate(R.id.action_upgrade_to_wallet)
-        }
     }
 
     private fun setUIData(data: ExpertUpgradeDetails) {

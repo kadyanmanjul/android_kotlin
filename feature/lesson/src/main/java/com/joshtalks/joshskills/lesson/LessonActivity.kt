@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -44,6 +45,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.constants.*
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.ApiCallStatus.*
+import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AVAIL_COUPON_BANNER_TEXT
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_LESSON_TEXT
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.COUPON_UNLOCK_LESSON_COUNT
@@ -58,6 +60,7 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.common.core.videotranscoder.recyclerView
+import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.common.repository.local.entity.QUESTION_STATUS
@@ -80,11 +83,18 @@ import com.joshtalks.joshskills.lesson.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.lesson.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.common.repository.local.model.AnimateAtsOptionViewEvent
 import com.joshtalks.joshskills.common.repository.local.model.AtsOptionView
+import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
+import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.lesson.reading.ReadingFullScreenFragment
 import com.joshtalks.joshskills.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.lesson.vocabulary.VocabularyFragment
+import com.joshtalks.joshskills.voip.base.constants.*
+import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -200,6 +210,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                 PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
                 OPEN_READING_SHARING_FULLSCREEN -> openReadingFullScreen()
                 CLOSE_FULL_READING_FRAGMENT -> closeReadingFullScreen()
+                CLOSE_INTEREST_ACTIVITY -> viewModel.checkPopupDisplay()
+                SHOW_SCRATCH_CARD -> VoipPref.showScratchCard(this, VoipPref.getLastCallDurationInSec() * 1000L)
             }
         }
 
@@ -223,6 +235,19 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
 
         if (intent.hasExtra(LESSON_SECTION)) {
             defaultSection = intent.getIntExtra(LESSON_SECTION, 0)
+        }
+
+        if (intent.hasExtra(SHOULD_START_CALL)) {
+            PrefManager.increaseCallCount()
+            val callIntent = Intent(this, VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(INTENT_DATA_COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+                putExtra(INTENT_DATA_TOPIC_ID, "5")
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            }
+            VoipPref.resetAutoCallCount()
+            startActivity(callIntent)
         }
 
         whatsappUrl =
@@ -266,7 +291,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                 count?.let {
                     val lessonCompletionCount =
                         AppObjectController.getFirebaseRemoteConfig().getLong(COUPON_UNLOCK_LESSON_COUNT).toInt()
-                    (count == lessonCompletionCount).let {
+                    (count >= lessonCompletionCount).let {
                         with(binding) {
                             buyCourseBannerTv.text = (if (it)
                                 AppObjectController.getFirebaseRemoteConfig()
@@ -283,11 +308,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                             buyCourseBannerAvailBtn.isVisible = it
                             buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
                             binding.buyCourseBannerAvailBtn.setOnClickListener {
-                                viewModel.postGoal(
-                                    GoalKeys.L2_CLAIM_NOW_CLICKED.name,
-                                    CampaignKeys.L2_LESSON_COMPLETE_COUPON.name
-                                )
-                                openBuyPageActivity("OFFER_COUPON_BANNER", testId.toString())
+                                viewModel.saveImpression(CampaignKeys.L2_LESSON_COMPLETE_COUPON.name)
+                                openBuyPageActivity("OFFER_COUPON_BANNER", testId.toString(), true)
                             }
                             if (it.not()) {
                                 buyCourseBannerLessonProgressBar.max = lessonCompletionCount
@@ -301,41 +323,42 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
             }
         }
 
-        //TODO: Uncomment this -- very IMP -- Sukesh
-//        if (viewModel.abTestRepository.isVariantActive(VariantKeys.OTHER_SCREENS_BANNER_ENABLED)) {
-//            lifecycleScope.launch {
-//                viewModel.getMentorCoupon(testId)?.let { coupon ->
-//                    binding.buyCourseBanner.visibility = View.VISIBLE
-//                    binding.buyCourseBannerTv.text =
-//                        AppObjectController.getFirebaseRemoteConfig().getString(AVAIL_COUPON_BANNER_TEXT)
-//                            .replace("\$DISCOUNT\$", coupon.amountPercent.toString())
-//                            .replace("\$CODE\$", coupon.couponCode)
-//                    binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
-//                    binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
-//                    binding.buyCourseBannerAvailBtn.setOnClickListener {
-//                        when (binding.lessonViewpager.currentItem) {
-//                            SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
-//                            GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
-//                            VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
-//                            READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
-//                            else -> null
-//                        }?.name?.let {
-//                            viewModel.postGoal(
-//                                it,
-//                                CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
-//                            )
-//                        }
-//                        openBuyPageActivity("l2 complete banner", testId.toString())
-//                    }
-//                }
-//            }
-//        }
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.OTHER_SCREENS_BANNER_ENABLED)) {
+            lifecycleScope.launch {
+                viewModel.getMentorCoupon(testId)?.let { coupon ->
+                    binding.buyCourseBanner.visibility = View.VISIBLE
+                    binding.buyCourseBannerTv.text =
+                        AppObjectController.getFirebaseRemoteConfig().getString(AVAIL_COUPON_BANNER_TEXT)
+                            .replace("\$DISCOUNT\$", coupon.title)
+                            .replace("\$CODE\$", coupon.couponCode)
+                    binding.buyCourseBannerAvailBtn.visibility = View.VISIBLE
+                    binding.buyCourseBannerAvailBtn.text = getString(R.string.avail_now)
+                    binding.buyCourseBannerAvailBtn.setOnClickListener {
+                        when (binding.lessonViewpager.currentItem) {
+                            SPEAKING_POSITION -> GoalKeys.SPEAKING_SEC_BANNER_CLICKED
+                            GRAMMAR_POSITION -> GoalKeys.GRAMMAR_SEC_BANNER_CLICKED
+                            VOCAB_POSITION - isTranslationDisabled -> GoalKeys.VOCAB_SEC_BANNER_CLICKED
+                            READING_POSITION - isTranslationDisabled -> GoalKeys.READING_SEC_BANNER_CLICKED
+                            else -> null
+                        }?.name?.let {
+                            viewModel.postGoal(
+                                it,
+                                CampaignKeys.OFFER_BANNER_OTHER_SCREENS.name
+                            )
+                            viewModel.saveImpression(it)
+                        }
+                        openBuyPageActivity("l2 complete banner", testId.toString())
+                    }
+                }
+            }
+        }
     }
 
-    private fun openBuyPageActivity(flowFrom: String, testId: String) {
+    private fun openBuyPageActivity(flowFrom: String, testId: String, applyCoupon: Boolean = false) {
         navigator.with(this@LessonActivity).navigate(object : BuyPageContract {
             override val flowFrom = flowFrom
             override val testId = testId
+            override val shouldAutoApplyCoupon = applyCoupon
             override val navigator = this@LessonActivity.navigator
         })
     }
@@ -359,7 +382,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
     }
 
     private fun requestStoragePermission(requestCode: Int) {
-        PermissionUtils.storageReadAndWritePermissionReading(
+        PermissionUtils.storageReadAndWritePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
@@ -396,7 +419,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
 
     private fun subscribeRxBus() {
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listenWithoutDelay(AnimateAtsOptionViewEvent::class.java)
+            RxBus2.listenWithoutDelay(AnimateAtsOptionViewEvent::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { event ->
@@ -430,7 +453,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
     }
 
     override fun getConversationId(): String? {
-        return intent.getStringExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID)
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun setObservers() {
@@ -458,9 +481,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                 }
             }
         }
-        viewModel.lessonQuestionsLiveData.observe(
-            this
-        ) {
+        viewModel.lessonQuestionsLiveData.observe(this) {
             viewModel.lessonLiveData.value?.let {
                 titleView.text = getString(R.string.lesson_no, it.lessonNo)
                 lessonNumber = it.lessonNo
@@ -512,9 +533,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
             }
         }
 
-        viewModel.updatedLessonResponseLiveData.observe(
-            this
-        ) {
+        viewModel.updatedLessonResponseLiveData.observe(this) {
             if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
@@ -529,9 +548,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
             }
         }
 
-        viewModel.pointsSnackBarText.observe(
-            this
-        ) {
+        viewModel.pointsSnackBarText.observe(this) {
             if (it.pointsList.isNullOrEmpty().not()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!![0])
                 PrefManager.put(
@@ -706,18 +723,22 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                         binding.spotlightTabVocab.visibility = View.INVISIBLE
                         binding.spotlightTabReading.visibility = View.INVISIBLE
                         binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                        binding.lessonSpotlightTooltip.setTooltipText(
-                            resources.getText(R.string.label_speaking_spotlight_2).toString()
-                        )
-                        binding.lessonSpotlightTooltip.post {
-                            slideInAnimation(binding.lessonSpotlightTooltip)
-                        }
                         binding.spotlightStartGrammarTest.visibility = View.GONE
                         binding.spotlightCallBtn.visibility = View.VISIBLE
                         binding.spotlightCallBtnText.visibility = View.VISIBLE
                         binding.arrowAnimation.visibility = View.VISIBLE
+                        viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
+                            if (text.isBlank()) hideSpotlight()
+                            else {
+                                binding.lessonSpotlightTooltip.setTooltipText(text)
+                                binding.lessonSpotlightTooltip.post {
+                                    slideInAnimation(binding.lessonSpotlightTooltip)
+                                }
+                            }
+                        } ?: run {
+                            hideSpotlight()
+                        }
                     }
-
                 }
                 else -> {
                     // Hide lesson Spotlight
@@ -827,7 +848,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
         }
         viewModel.coursePopupData.observe(this) {
             if (it != null) {
-                com.joshtalks.joshskills.lesson.PurchaseDialog
+                PurchaseDialog
                     .newInstance(it)
                     .apply {
                         if (openLessonCompletedScreen) {
@@ -837,7 +858,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                                 )
                             }
                         }
-                        show(supportFragmentManager, com.joshtalks.joshskills.lesson.PurchaseDialog::class.simpleName)
+                        show(supportFragmentManager, PurchaseDialog::class.simpleName)
                     }
                 if (it.couponCode != null && it.couponExpiryTime != null)
                     PrefManager.put(COUPON_EXPIRY_TIME, it.couponExpiryTime!!.time)
@@ -1413,12 +1434,12 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
         }
     }
 
-    private fun showSpeakingSpotlight() {
-        if (lessonNumber == 1) {
-            viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-            PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
-        }
-    }
+//    private fun showSpeakingSpotlight() {
+//        if (lessonNumber == 1) {
+//            viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+//            PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+//        }
+//    }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
         tab?.let {
@@ -1490,20 +1511,22 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
             binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
             binding.containerReading.isVisible -> {
-                Log.e("Ayaaz", "OnBackPressedddddd")
-//                videoView.stopPlayback()
-//                supportFragmentManager.remove(yourfragment).commit()
-
                 supportFragmentManager.beginTransaction().remove(ReadingFullScreenFragment()).commit()
-//                merged_video.stopPlayback()
                 viewModel.closeVideoView()
                 closeReadingFullScreen()
                 viewModel.showVideoView()
             }
 
+            VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) && PrefManager.getBoolValue(IS_FREE_TRIAL) -> {
+                if (getVoipState() == State.IDLE &&
+                    PrefManager.getIntValue(FT_CALLS_LEFT) == 15 &&
+                    PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()
+                )
+                    FirstCallBottomSheet.showDialog(supportFragmentManager)
+            }
             isLesssonCompleted.not() && PrefManager.getBoolValue(IS_FREE_TRIAL) && isLessonPopUpFeatureOn -> {
                 // if lesson is not completed and FT user presses back, we want to show a prompt
-                CompleteLessonBottomSheetFragment.newInstance(viewModel)
+                CompleteLessonBottomSheetFragment.newInstance()
                     .show(supportFragmentManager, "LessonCompleteDialog")
             }
             else -> {
@@ -1700,6 +1723,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
         const val LESSON_SECTION = "lesson_section"
+        const val SHOULD_START_CALL = "should_start_call"
         val videoEvent: MutableLiveData<Event<VideoModel>> = MutableLiveData()
 
         fun openLessonActivity(contract: LessonContract, context: Context) {
@@ -1710,6 +1734,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                     putExtra(IS_LESSON_COMPLETED, contract.isLessonCompleted)
                     putExtra(CONVERSATION_ID, contract.conversationId)
                     putExtra(NAVIGATOR, contract.navigator)
+                    if (contract.shouldStartCall)
+                        putExtra(SHOULD_START_CALL, true)
                     if (contract.isDemo) {
                         putExtra(WHATSAPP_URL, contract.whatsappUrl)
                         putExtra(TEST_ID, contract.testId)

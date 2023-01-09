@@ -10,7 +10,6 @@ import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.CourseDetailsL
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon
 import kotlinx.coroutines.flow.MutableStateFlow
 
-
 @BindingAdapter("featureListAdapter")
 fun featureListAdapter(
     view: RecyclerView,
@@ -62,7 +61,6 @@ fun offersListAdapter(
 ) {
     view.setHasFixedSize(false)
     view.adapter = adapter
-
     adapter.scroll { view.scrollToFirst() }
     adapter.setListener(function)
 }

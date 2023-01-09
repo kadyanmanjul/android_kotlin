@@ -30,8 +30,11 @@ import com.joshtalks.joshskills.lesson.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.lesson.online_test.util.TestCompletedListener
 import com.joshtalks.joshskills.common.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.lesson.LessonActivity
+import com.joshtalks.joshskills.lesson.LessonActivityListener
+import com.joshtalks.joshskills.lesson.LessonViewModel
 import com.joshtalks.joshskills.lesson.R
 import com.joshtalks.joshskills.lesson.databinding.FragmentGrammarOnlineTestBinding
+import com.joshtalks.joshskills.lesson.popup.PurchaseDialog
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -40,10 +43,10 @@ import kotlinx.coroutines.*
 
 class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
-    private var lessonActivityListener: com.joshtalks.joshskills.lesson.LessonActivityListener? = null
+    private var lessonActivityListener: LessonActivityListener? = null
 
-    private val viewModel: com.joshtalks.joshskills.lesson.LessonViewModel by lazy {
-        ViewModelProvider(requireActivity())[com.joshtalks.joshskills.lesson.LessonViewModel::class.java]
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity())[LessonViewModel::class.java]
     }
     private val viewModelOnlineTest: OnlineTestViewModel by lazy {
         ViewModelProvider(requireActivity())[OnlineTestViewModel::class.java]
@@ -261,7 +264,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
 
         viewModelOnlineTest.coursePopupData.observe(viewLifecycleOwner) {
             it?.let {
-                com.joshtalks.joshskills.lesson.PurchaseDialog.newInstance(it)
+                PurchaseDialog.newInstance(it)
                     .show(requireActivity().supportFragmentManager, "PurchaseDialog")
             }
         }
@@ -479,15 +482,20 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     }
 
     private fun initBottomMargin() {
-        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
-            binding.linearLayout.addView(
-                View(requireContext()).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+                    binding.linearLayout.addView(
+                        View(requireContext()).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                (requireActivity() as LessonActivity).getBottomBannerHeight()
+                            )
+                        }
                     )
                 }
-            )
+            }
         }
     }
 

@@ -205,7 +205,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                     cityUser.emit(ERROR)
                 }
             } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
+                cityUser.emit(ERROR)
                 ex.printStackTrace()
             }
         }

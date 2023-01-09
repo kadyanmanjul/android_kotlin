@@ -544,17 +544,16 @@ class ConversationViewModel(
         }
     }
 
-    fun saveMicroPaymentImpression(eventName: String, eventId: String = EMPTY, previousPage: String = EMPTY) {
+    fun saveAudioImpression(eventName: String, messageId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
                     Pair("event_name", eventName),
-                    Pair("expert_id", eventId),
-                    Pair("previous_page", previousPage)
+                    Pair("message_id", messageId)
                 )
-                AppObjectController.commonNetworkService.saveMicroPaymentImpression(requestData)
-            } catch (ex: Exception) {
-                Timber.e(ex)
+                AppObjectController.commonNetworkService.trackAudioImpression(requestData)
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }

@@ -112,9 +112,24 @@ class BookACallFragment : BaseFragment() {
     }
 
     fun submitReason() {
-        if (binding.phoneNumberEt.text.isNullOrEmpty() || isValidFullNumber("+91", binding.phoneNumberEt.text.toString()).not()
+        if (binding.phoneNumberEt.text.isNullOrEmpty() ||
+            isValidFullNumber("+91", binding.phoneNumberEt.text.toString()).not() ||
+            binding.phoneNumberEt.text.toString().length < 10
         ) {
             showToast(getString(R.string.please_enter_valid_number))
+            return
+        }
+
+        if (binding.nameEditText.text.toString().isEmpty()){
+            showToast("Please fill name")
+            return
+        }
+        if (binding.phoneNumberEt.text.toString().isEmpty()){
+            showToast("Please fill phone number")
+            return
+        }
+        if (binding.autoCompleteTextViewFirst.text.toString().isNotEmpty() && (binding.autoCompleteTextViewFirst.text.toString() =="Reason for Call")){
+            showToast("Please select any reason")
             return
         }
         val param = HashMap<String, String>()

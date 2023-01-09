@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.CLICKED_PROCEED
+import com.joshtalks.joshskills.common.core.WALLET_SCREEN
 import com.joshtalks.joshskills.common.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.common.core.showToast
 import com.joshtalks.joshskills.expertcall.databinding.FragmentWalletBinding
@@ -47,11 +48,8 @@ class WalletFragment : Fragment() {
 
         with(binding) {
             amountList.addItemDecoration(GridSpacingItemDecoration(2, 20, false))
-
         }
-
         attachObservers()
-
     }
 
     private fun attachObservers() {
@@ -76,7 +74,7 @@ class WalletFragment : Fragment() {
                     WalletRechargePaymentManager.selectedExpertForCall = null
                     callWithExpertViewModel.isPaymentInitiated = true
                     callWithExpertViewModel.updateAmount(Amount(viewModel.addedAmount.value!!.removeRupees().toInt(), viewModel.getAmountId()))
-                    callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED)
+                    callWithExpertViewModel.saveMicroPaymentImpression(CLICKED_PROCEED, previousPage = WALLET_SCREEN)
                     callWithExpertViewModel.proceedPayment()
                 }
             }

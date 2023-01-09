@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.track.COURSE_EXPIRY_TIME_IN_MS
-import com.joshtalks.joshskills.common.track.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.leaderboard.LeaderboardResponse
 import com.joshtalks.joshskills.leaderboard.R
 import com.joshtalks.joshskills.leaderboard.databinding.ActivityLeaderboardSearchBinding

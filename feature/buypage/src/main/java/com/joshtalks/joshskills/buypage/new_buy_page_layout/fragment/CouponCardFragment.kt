@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.buypage.databinding.FragmentCoupanCardBinding
+import com.joshtalks.joshskills.buypage.new_buy_page_layout.COUPON_APPLY_POP_UP_SHOW_AND_BACK
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.common.base.BaseFragment
 import com.joshtalks.joshskills.common.ui.special_practice.utils.*
@@ -45,7 +46,7 @@ class CouponCardFragment : BaseFragment() {
         }
 
         binding.proceedBtn.setOnClickListener {
-            vm.applyEnteredCoupon(binding.enteredAmountTv.text.toString(), 0)
+            vm.applyEnteredCoupon(binding.enteredAmountTv.text.toString(), COUPON_APPLY_POP_UP_SHOW_AND_BACK, 1)
         }
     }
 

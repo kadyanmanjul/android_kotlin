@@ -609,6 +609,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 AppObjectController.appDatabase.scheduleNotificationDao().insertAllNotifications(response)
                 ClientNotificationUtils(context).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 ClientNotificationUtils(context).updateNotificationDb(NotificationCategory.AFTER_LOGIN)
+                ClientNotificationUtils(context).updateNotificationDb(NotificationCategory.EVENT_INDEPENDENT)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

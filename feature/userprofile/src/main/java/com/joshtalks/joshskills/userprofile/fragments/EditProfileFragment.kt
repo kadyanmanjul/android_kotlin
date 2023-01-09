@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.common.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
+import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.common.ui.userprofile.models.UpdateProfilePayload
 import com.joshtalks.joshskills.common.ui.userprofile.models.UserProfileResponse
@@ -37,9 +38,6 @@ class EditProfileFragment : DialogFragment(){
     private var userDateOfBirth: String? = null
     private var compositeDisposable = CompositeDisposable()
     lateinit var binding: FragmentEditProfileBinding
-    private var isBasicDetailsExpanded=false
-    private var isEducationDetailsExpanded=false
-    private var isOccupationDetailsExpanded=false
     private var clickedFrom:String= EMPTY
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(
@@ -56,6 +54,11 @@ class EditProfileFragment : DialogFragment(){
         }
         setStyle(STYLE_NORMAL, R.style.BaseBottomSheetDialogBlank)
         changeDialogConfiguration()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideKeyboard(requireActivity())
     }
 
     private fun changeDialogConfiguration() {
@@ -100,7 +103,7 @@ class EditProfileFragment : DialogFragment(){
         super.onPause()
         compositeDisposable.clear()
     }
-     fun createDialogWithoutDateField() {
+    fun createDialogWithoutDateField() {
         val alertDialog: AlertDialog?
         val builder = AlertDialog.Builder(activity, R.style.YearPickerAlertDialogStyle)
         val inflater = requireActivity().layoutInflater
@@ -113,8 +116,7 @@ class EditProfileFragment : DialogFragment(){
         val btnOk = dialog.findViewById(R.id.btn_ok_dialog) as AppCompatTextView
         val btnCancel = dialog.findViewById(R.id.btn_cancel) as AppCompatTextView
 
-
-         builder.setView(dialog)
+        builder.setView(dialog)
         alertDialog = builder.create()
 
         monthPicker.minValue = 1
@@ -125,23 +127,24 @@ class EditProfileFragment : DialogFragment(){
         yearPicker.minValue = 1900
         yearPicker.maxValue = 3500
         yearPicker.value = year
-         var value= EMPTY
+        var value = EMPTY
 
-         btnOk.setOnClickListener {
-             binding.editTxtCompletionDate.setText(yearPicker.value.toString())
-             alertDialog?.dismiss()
-         }
+        btnOk.setOnClickListener {
+            binding.editTxtCompletionDate.setText(yearPicker.value.toString())
+            alertDialog?.dismiss()
+        }
 
-         btnCancel.setOnClickListener {
-             alertDialog?.dismiss()
-         }
+        btnCancel.setOnClickListener {
+            alertDialog?.dismiss()
+        }
 
         alertDialog.setCancelable(true)
         alertDialog.show()
     }
+
     private fun subscribeObserver() {
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
+            RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong)) }
@@ -184,9 +187,7 @@ class EditProfileFragment : DialogFragment(){
     }
 
     private fun addObservers() {
-        viewModel.userData.observe(
-            this
-        ) {
+        viewModel.userData.observe(this) {
             initView(it)
         }
         viewModel.userProfileUrl.observe(this) {
@@ -214,57 +215,6 @@ class EditProfileFragment : DialogFragment(){
                 .push()
             openChooser()
         }
-        binding.basicDetailsLayout.setOnClickListener {view->
-            if (isBasicDetailsExpanded) {
-                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_COLLAPSE)
-                    .addParam(ParamKeys.CARD_NAME,"Basic Details")
-                    .push()
-                isBasicDetailsExpanded = false
-                binding.arrowDownImg.setImageDrawable(drawableDown)
-                binding.basicDetailsContainer.visibility = View.GONE
-            }else{
-                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_EXPAND)
-                    .addParam(ParamKeys.CARD_NAME,"Basic Details")
-                    .push()
-                isBasicDetailsExpanded = true
-                binding.arrowDownImg.setImageDrawable(drawableUp)
-                binding.basicDetailsContainer.visibility = View.VISIBLE
-            }
-        }
-        binding.educationDetailsLayout.setOnClickListener {view->
-            if (isEducationDetailsExpanded) {
-                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_COLLAPSE)
-                    .addParam(ParamKeys.CARD_NAME,"Education Details")
-                    .push()
-                isEducationDetailsExpanded = false
-                binding.educationDownImg.setImageDrawable(drawableDown)
-                binding.educationDetailsContainer.visibility = View.GONE
-            }else{
-                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_EXPAND)
-                    .addParam(ParamKeys.CARD_NAME,"Education Details")
-                    .push()
-                isEducationDetailsExpanded = true
-                binding.educationDownImg.setImageDrawable(drawableUp)
-                binding.educationDetailsContainer.visibility = View.VISIBLE
-            }
-        }
-        binding.occupationDetailsLayout.setOnClickListener {view->
-            if (isOccupationDetailsExpanded) {
-                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_COLLAPSE)
-                    .addParam(ParamKeys.CARD_NAME,"Occupation Details")
-                    .push()
-                isOccupationDetailsExpanded = false
-                binding.occupationDownImg.setImageDrawable(drawableDown)
-                binding.occupationDetailsContainer.visibility = View.GONE
-            }else{
-                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_EXPAND)
-                    .addParam(ParamKeys.CARD_NAME,"Occupation Details")
-                    .push()
-                isOccupationDetailsExpanded = true
-                binding.occupationDownImg.setImageDrawable(drawableUp)
-                binding.occupationDetailsContainer.visibility = View.VISIBLE
-            }
-        }
 
         binding.ivSave.setOnClickListener {
             saveData()
@@ -275,87 +225,27 @@ class EditProfileFragment : DialogFragment(){
     private fun saveData() {
         val newName = binding.editTxtName.text?.trim()?.toString()
         if (newName.isNullOrBlank() || !isFieldValid(newName)) {
-            binding.seperator1.setBackgroundColor(resources.getColor(R.color.critical))
             binding.editTxtName.setHintTextColor(resources.getColor(R.color.critical))
-            binding.basicDetailsContainer.visibility = View.VISIBLE
-            isBasicDetailsExpanded = true
-            binding.arrowDownImg.setImageDrawable(drawableUp)
             binding.editTxtName.error = getString(R.string.name_error_message)
-            return
-        }
-        val educationText=binding.txtEducationName
-        val collegeName=binding.editTxtCollegeName
-
-        if(educationText.text.isNullOrBlank() || !isFieldValid(educationText.text.toString())){
-            binding.txtEducationNameSeperator.setBackgroundColor(resources.getColor(R.color.critical))
-            educationText.setHintTextColor(resources.getColor(R.color.critical))
-            binding.educationDetailsContainer.visibility = View.VISIBLE
-            isEducationDetailsExpanded = true
-            binding.arrowDownImg.setImageDrawable(drawableUp)
-            binding.educationDownImg.setImageDrawable(drawableUp)
-            educationText.error = getString(R.string.degree_error_message)
-            return
-        }
-        if(collegeName.text.isNullOrBlank() || !isFieldValid(collegeName.text.toString())){
-            binding.editTxtCollegeNameSeperator.setBackgroundColor(resources.getColor(R.color.critical))
-            isEducationDetailsExpanded = true
-            binding.arrowDownImg.setImageDrawable(drawableUp)
-            binding.educationDownImg.setImageDrawable(drawableUp)
-            binding.educationDetailsContainer.visibility = View.VISIBLE
-            collegeName.setHintTextColor(resources.getColor(R.color.critical))
-            collegeName.error = getString(R.string.college_error_message)
-            return
-        }
-
-        if(binding.txtOccupationName.text.isNullOrBlank() || !isFieldValid(binding.txtOccupationName.text.toString())){
-            binding.txtoccupationNameSeperator.setBackgroundColor(resources.getColor(R.color.critical))
-            binding.txtOccupationName.setHintTextColor(resources.getColor(R.color.critical))
-            binding.occupationDetailsContainer.visibility = View.VISIBLE
-            isOccupationDetailsExpanded = true
-            binding.arrowDownImg.setImageDrawable(drawableUp)
-            binding.occupationDownImg.setImageDrawable(drawableUp)
-            binding.txtOccupationName.error = getString(R.string.degree_error_message)
-            return
-        }
-        if(binding.editTxtOccupationPlace.text.isNullOrBlank() || !isFieldValid(binding.editTxtOccupationPlace.text.toString())){
-            binding.editTxtOccupationPlaceSeperator.setBackgroundColor(resources.getColor(R.color.critical))
-            isOccupationDetailsExpanded = true
-            binding.arrowDownImg.setImageDrawable(drawableUp)
-            binding.occupationDownImg.setImageDrawable(drawableUp)
-            binding.occupationDetailsContainer.visibility = View.VISIBLE
-            binding.editTxtOccupationPlace.setHintTextColor(resources.getColor(R.color.critical))
-            binding.editTxtOccupationPlace.error = getString(R.string.college_error_message)
             return
         }
 
         if (userDateOfBirth.isNullOrBlank()) {
-            binding.seperator2.setBackgroundColor(resources.getColor(R.color.critical))
             binding.editTxtDob.setHintTextColor(resources.getColor(R.color.critical))
-            binding.basicDetailsContainer.visibility = View.VISIBLE
-            isBasicDetailsExpanded = true
-            binding.arrowDownImg.setImageDrawable(drawableUp)
             binding.editTxtDob.error = getString(R.string.dob_error_message)
             return
         }
 
         val homeTownTxt = binding.editTxtHometown
         if (homeTownTxt.text.isNullOrBlank() || !isFieldValid(homeTownTxt.text.toString())) {
-            binding.seperator3.setBackgroundColor(resources.getColor(R.color.critical))
             homeTownTxt.setHintTextColor(resources.getColor(R.color.critical))
-            binding.basicDetailsContainer.visibility = View.VISIBLE
-            isBasicDetailsExpanded = true
-            binding.arrowDownImg.setImageDrawable(drawableUp)
             homeTownTxt.error = getString(R.string.hometown_error_message)
             return
         }
-        if (binding.editTxtJoshTalk.text.toString() != EMPTY){
-            if(!isYoutubeUrl(binding.editTxtJoshTalk.text.toString()) || !(binding.editTxtJoshTalk.text.toString()).startsWith("https") || !(binding.editTxtJoshTalk.text.toString()).startsWith("https")){
-                binding.seperator5.setBackgroundColor(resources.getColor(R.color.critical))
-                binding.editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.critical))
-                binding.basicDetailsContainer.visibility = View.VISIBLE
-                isBasicDetailsExpanded = true
-                binding.arrowDownImg.setImageDrawable(drawableUp)
-                binding.editTxtJoshTalk.error = getString(R.string.invalid_url_message)
+
+        if (editTxtJoshTalk.text.toString() != EMPTY){
+            if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https") || !(editTxtJoshTalk.text.toString()).startsWith("https")){
+                binding.favouriteJtInputLayout.error = getString(R.string.invalid_url_message)
                 return
             }
         }
@@ -392,20 +282,10 @@ class EditProfileFragment : DialogFragment(){
     }
 
     private fun initView(userData: UserProfileResponse) {
-        when(clickedFrom){
-            FOR_BASIC_DETAILS->{
-                binding.basicDetailsContainer.visibility = View.VISIBLE
-                isBasicDetailsExpanded=true
-            }
-            FOR_REST->{
-                binding.educationDetailsContainer.visibility=View.VISIBLE
-                binding.occupationDetailsContainer.visibility=View.VISIBLE
-                isEducationDetailsExpanded=true
-                isOccupationDetailsExpanded=true
-            }
-            FOR_EDIT_SCREEN->{
-
-            }
+        when (clickedFrom) {
+            FOR_BASIC_DETAILS -> {}
+            FOR_REST -> {}
+            FOR_EDIT_SCREEN -> {}
         }
         val resp = StringBuilder()
         userData.name?.split(" ")?.forEachIndexed { index, string ->

@@ -47,6 +47,7 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
+import com.joshtalks.joshskills.common.base.EventLiveData
 import com.joshtalks.joshskills.voip.base.getAndroidDownloadFolder
 import com.joshtalks.joshskills.voip.base.getVideoFilePath
 import com.joshtalks.joshskills.voip.base.saveVideoQ
@@ -60,6 +61,7 @@ import com.joshtalks.joshskills.common.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.core.service.DownloadUtils
 import com.joshtalks.joshskills.common.core.videotranscoder.enforceSingleScrollDirection
+import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.*
 import com.joshtalks.joshskills.common.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.SnackBarEvent
@@ -70,8 +72,11 @@ import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.common.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.common.util.ExoAudioPlayer
 import com.joshtalks.joshskills.common.util.ExoAudioPlayer.ProgressUpdateListener
 import com.joshtalks.joshskills.lesson.LessonActivity
+import com.joshtalks.joshskills.lesson.LessonActivityListener
+import com.joshtalks.joshskills.lesson.LessonViewModel
 import com.joshtalks.joshskills.lesson.R
 import com.joshtalks.joshskills.lesson.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.karumi.dexter.MultiplePermissionsReport
@@ -118,7 +123,7 @@ class ReadingFragmentWithoutFeedback :
     private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: ReadingPracticeFragmentWithoutFeedbackBinding
-    private val events = com.joshtalks.joshskills.common.base.EventLiveData
+    private val events = EventLiveData
     private var mUserIsSeeking = false
     private var isAudioRecordDone = false
     private var scaleAnimation: Animation? = null
@@ -126,9 +131,9 @@ class ReadingFragmentWithoutFeedback :
     private var totalTimeSpend: Long = 0
     private var filePath: String? = null
     private var appAnalytics: AppAnalytics? = null
-    private var audioManager: com.joshtalks.joshskills.common.util.ExoAudioPlayer? = null
+    private var audioManager: ExoAudioPlayer? = null
     private var currentLessonQuestion: LessonQuestion? = null
-    var lessonActivityListener: com.joshtalks.joshskills.lesson.LessonActivityListener? = null
+    var lessonActivityListener: LessonActivityListener? = null
     private var video: String? = null
     private var videoDownPath: String? = null
     private var outputFile: String = EMPTY
@@ -193,8 +198,8 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    private val viewModel: com.joshtalks.joshskills.lesson.LessonViewModel by lazy {
-        ViewModelProvider(requireActivity())[com.joshtalks.joshskills.lesson.LessonViewModel::class.java]
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity())[LessonViewModel::class.java]
     }
 
     private val progressAnimator by lazy {
@@ -257,7 +262,7 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is com.joshtalks.joshskills.lesson.LessonActivityListener)
+        if (context is LessonActivityListener)
             lessonActivityListener = context
     }
 
@@ -291,31 +296,26 @@ class ReadingFragmentWithoutFeedback :
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
         initBottomMargin()
-        if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
-                HAS_SEEN_READING_PLAY_ANIMATION
-            ).not()
+        if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() ||
+            PrefManager.getBoolValue(HAS_SEEN_READING_PLAY_ANIMATION).not()
         ) {
             binding.playInfoHint.visibility = VISIBLE
         }
         events.observe(viewLifecycleOwner) {
             when (it.what) {
-                com.joshtalks.joshskills.common.constants.PERMISSION_FROM_READING_GRANTED -> download()
-                com.joshtalks.joshskills.common.constants.SHARE_VIDEO -> inviteFriends(it.obj as Intent)
-                com.joshtalks.joshskills.common.constants.SUBMIT_BUTTON_CLICK -> submitPractise()
-                com.joshtalks.joshskills.common.constants.CANCEL_BUTTON_CLICK -> closeRecordedView()
-                com.joshtalks.joshskills.common.constants.SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
-                com.joshtalks.joshskills.common.constants.VIDEO_AUDIO_MERGED_PATH -> {
+                PERMISSION_FROM_READING_GRANTED -> download()
+                SHARE_VIDEO -> inviteFriends(it.obj as Intent)
+                SUBMIT_BUTTON_CLICK -> submitPractise()
+                CANCEL_BUTTON_CLICK -> closeRecordedView()
+                SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
+                VIDEO_AUDIO_MERGED_PATH -> {
                     binding.progressDialog.visibility = GONE
                     outputFile = it.obj as String
                     viewModel.sendOutputToFullScreen(outputFile)
                     setVideoPlayerWuthUrl(outputFile)
                 }
-                com.joshtalks.joshskills.common.constants.INCREASE_AUDIO_VOLUME -> {
-
-                }
-                com.joshtalks.joshskills.common.constants.VIDEO_AUDIO_MUX_FAILED -> {
-                    muxVideoOldMethod(filePath!!)
-                }
+                INCREASE_AUDIO_VOLUME -> {}
+                VIDEO_AUDIO_MUX_FAILED -> muxVideoOldMethod(filePath!!)
             }
         }
         binding.videoLayout.clipToOutline = true
@@ -328,11 +328,6 @@ class ReadingFragmentWithoutFeedback :
         if (PrefManager.hasKey(HAS_SEEN_READING_SCREEN).not()) {
             PrefManager.put(HAS_SEEN_READING_SCREEN, true)
         }
-        /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }*/
         try {
             if (isVisible) {
                 // binding.videoPlayer.onResume()
@@ -413,12 +408,9 @@ class ReadingFragmentWithoutFeedback :
 
 
     private fun showRecordHintAnimation() {
-        if (PrefManager.getBoolValue(
-                HAS_SEEN_READING_PLAY_ANIMATION
-            ) && (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP)
-                .not() || PrefManager.getBoolValue(
-                HAS_SEEN_READING_HAND_TOOLTIP
-            ).not())
+        if (PrefManager.getBoolValue(HAS_SEEN_READING_PLAY_ANIMATION) &&
+            (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() ||
+                    PrefManager.getBoolValue(HAS_SEEN_READING_HAND_TOOLTIP).not())
         ) {
             binding.blackFrameContainer.visibility = VISIBLE
             binding.practiseInfoContainer.setBackgroundColor(Color.parseColor("#88000000"))
@@ -445,7 +437,6 @@ class ReadingFragmentWithoutFeedback :
                 override fun onAnimationRepeat(animation: Animator) {
                     isChildAnimationStared = false
                 }
-
             })
             binding.readingHoldHint.cancelAnimation()
             binding.readingHoldHint.playAnimation()
@@ -457,9 +448,8 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun hideRecordHindAnimation() {
-        if (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
-                HAS_SEEN_READING_HAND_TOOLTIP
-            ).not()
+        if (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() ||
+            PrefManager.getBoolValue(HAS_SEEN_READING_HAND_TOOLTIP).not()
         ) {
             PrefManager.put(HAS_SEEN_READING_HAND_TOOLTIP, value = true)
             binding.blackFrameContainer.visibility = GONE
@@ -581,7 +571,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun showImproveButton() {
-
         // binding.feedbackLayout.visibility = VISIBLE
         // binding.improveAnswerBtn.visibility = VISIBLE
         binding.continueBtn.visibility = VISIBLE
@@ -605,7 +594,7 @@ class ReadingFragmentWithoutFeedback :
 
     private fun subscribeRXBus() {
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listen(RemovePracticeAudioEventBus::class.java)
+            RxBus2.listen(RemovePracticeAudioEventBus::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe(
                     {
@@ -642,7 +631,7 @@ class ReadingFragmentWithoutFeedback :
         )
 
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
+            RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe(
                     {
@@ -801,9 +790,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun addObserver() {
-        viewModel.lessonQuestionsLiveData.observe(
-            viewLifecycleOwner
-        ) {
+        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner) {
             currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
             lifecycleScope.launch {
@@ -857,14 +844,9 @@ class ReadingFragmentWithoutFeedback :
                             }
                         }
                         binding.btnWhatsapp.setOnClickListener {
-                            viewModel.saveReadingPracticeImpression(
-                                REEL_SHARED_RP,
-                                lessonID.toString()
-                            )
+                            viewModel.saveReadingPracticeImpression(REEL_SHARED_RP, lessonID.toString())
                             scope.launch {
-                                if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
-                                        .not()
-                                ) {
+                                if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty().not()) {
                                     viewModel.shareVideoForAudio(
                                         currentLessonQuestion?.practiceEngagement?.get(
                                             0
@@ -885,10 +867,7 @@ class ReadingFragmentWithoutFeedback :
                     // binding.improveAnswerBtn.visibility = VISIBLE
                     binding.continueBtn.visibility = VISIBLE
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                    appAnalytics?.addParam(
-                        AnalyticsEvent.PRACTICE_STATUS.NAME,
-                        "Already Submitted"
-                    )
+                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
                     setViewUserSubmitAnswer()
                 }
             }
@@ -896,9 +875,7 @@ class ReadingFragmentWithoutFeedback :
             setPracticeInfoView()
         }
 
-        viewModel.practiceFeedback2LiveData.observe(
-            viewLifecycleOwner
-        ) {
+        viewModel.practiceFeedback2LiveData.observe(viewLifecycleOwner) {
             setFeedBackLayout(it)
             hideCancelButtonInRV()
             binding.feedbackLayout.setCardBackgroundColor(
@@ -915,9 +892,7 @@ class ReadingFragmentWithoutFeedback :
             binding.continueBtn.visibility = VISIBLE
         }
 
-        viewModel.practiceEngagementData.observe(
-            viewLifecycleOwner
-        ) {
+        viewModel.practiceEngagementData.observe(viewLifecycleOwner) {
             updatePracticeFeedback(it)
             if (it.pointsList.isNullOrEmpty().not()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
@@ -932,9 +907,7 @@ class ReadingFragmentWithoutFeedback :
             showNextTooltip()
         }
 
-        viewModel.lessonId.observe(
-            viewLifecycleOwner
-        ) {
+        viewModel.lessonId.observe(viewLifecycleOwner) {
             lessonID = it
         }
     }
@@ -986,8 +959,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private var downloadListener = object : FetchListener {
-        override fun onAdded(download: Download) {
-        }
+        override fun onAdded(download: Download) {}
 
         override fun onCancelled(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
@@ -1010,8 +982,7 @@ class ReadingFragmentWithoutFeedback :
             }
         }
 
-        override fun onDeleted(download: Download) {
-        }
+        override fun onDeleted(download: Download) {}
 
         override fun onDownloadBlockUpdated(
             download: Download,
@@ -1037,14 +1008,11 @@ class ReadingFragmentWithoutFeedback :
         ) {
         }
 
-        override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-        }
+        override fun onQueued(download: Download, waitingOnNetwork: Boolean) {}
 
-        override fun onRemoved(download: Download) {
-        }
+        override fun onRemoved(download: Download) {}
 
-        override fun onResumed(download: Download) {
-        }
+        override fun onResumed(download: Download) {}
 
         override fun onStarted(
             download: Download,
@@ -1054,8 +1022,7 @@ class ReadingFragmentWithoutFeedback :
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
         }
 
-        override fun onWaitingNetwork(download: Download) {
-        }
+        override fun onWaitingNetwork(download: Download) {}
     }
 
     private fun unlockDownloadLock() {
@@ -1075,10 +1042,7 @@ class ReadingFragmentWithoutFeedback :
         // binding.feedbackResultProgressLl.visibility = VISIBLE
         binding.rootView.postDelayed(
             {
-                binding.rootView.smoothScrollTo(
-                    0,
-                    binding.rootView.height
-                )
+                binding.rootView.smoothScrollTo(0, binding.rootView.height)
             },
             100
         )
@@ -1086,10 +1050,7 @@ class ReadingFragmentWithoutFeedback :
         binding.feedbackResultLinearLl.visibility = GONE
         hideCancelButtonInRV()
         binding.feedbackLayout.setCardBackgroundColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.pure_white
-            )
+            ContextCompat.getColor(requireContext(), R.color.pure_white)
         )
         binding.feedbackResultProgressLl.visibility = GONE
         binding.feedbackResultLinearLl.visibility = VISIBLE
@@ -1190,10 +1151,7 @@ class ReadingFragmentWithoutFeedback :
             val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
             divider.setDrawable(
                 ColorDrawable(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.seek_bar_background
-                    )
+                    ContextCompat.getColor(requireContext(), R.color.seek_bar_background)
                 )
             )
             linearLayoutManager?.isSmoothScrollbarEnabled = true
@@ -1379,9 +1337,6 @@ class ReadingFragmentWithoutFeedback :
                         if (Utils.isInternetAvailable()) {
                             viewModel.recordFile?.let {
                                 isAudioRecordDone = true
-//                            Log.e("Ayaaz","${currentLessonQuestion?.videoList?.get(0)?.video_url}")
-//                            if(!currentLessonQuestion?.videoList?.get(0)?.video_url.isNullOrEmpty())
-//                            viewModel.showVideoOnFullScreen()
 
                                 filePath = AppDirectory.getAudioSentFile(null).absolutePath
                                 AppDirectory.copy(it.absolutePath, filePath!!)
@@ -2086,15 +2041,20 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun initBottomMargin() {
-        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
-            binding.linearLayout.addView(
-                View(requireContext()).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+                    binding.linearLayout.addView(
+                        View(requireContext()).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                (requireActivity() as LessonActivity).getBottomBannerHeight()
+                            )
+                        }
                     )
                 }
-            )
+            }
         }
     }
 

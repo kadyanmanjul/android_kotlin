@@ -52,6 +52,7 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.core.io.AppDirectory
+import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.groups.GroupsItem
 import com.joshtalks.joshskills.common.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.DeleteProfilePicEventBus
@@ -63,6 +64,7 @@ import com.joshtalks.joshskills.common.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.common.ui.userprofile.models.*
 import com.joshtalks.joshskills.common.ui.view_holders.ROUND_CORNER
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.common.util.gone
 import com.joshtalks.joshskills.userprofile.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.userprofile.fragments.*
 import com.joshtalks.joshskills.userprofile.utils.COURSE
@@ -138,6 +140,11 @@ class UserProfileActivity : CoreJoshActivity() {
         getProfileData(intervalType, previousPage)
         initABTest(mentorId, intervalType, previousPage)
         setOnClickListeners()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        hideKeyboard(this)
     }
 
     private fun initABTest(mentorId: String, intervalType: String?, previousPage: String?) {
@@ -433,9 +440,8 @@ class UserProfileActivity : CoreJoshActivity() {
                 .push()
             onBackPressed()
         }
-        findViewById<View>(R.id.iv_help).visibility = View.GONE
+//        findViewById<View>(R.id.iv_help).visibility = View.GONE
 
-        findViewById<View>(R.id.iv_edit).visibility = View.VISIBLE
         if (mentorId == Mentor.getInstance().getId()) {
             findViewById<View>(R.id.iv_edit).visibility = View.VISIBLE
             findViewById<View>(R.id.iv_edit).setOnClickListener {
@@ -721,7 +727,7 @@ class UserProfileActivity : CoreJoshActivity() {
             }
         }
         compositeDisposable.add(
-            com.joshtalks.joshskills.common.messaging.RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
+            RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -1075,6 +1081,11 @@ class UserProfileActivity : CoreJoshActivity() {
         if (haveAchievedAwards.not() && (mentorId == Mentor.getInstance().getId()).not()) {
             return null
         }
+        val titleTv = view.findViewById(R.id.title_award1) as AppCompatTextView
+        val dateTv = view.findViewById(R.id.date_award1) as AppCompatTextView
+        title.gone()
+        titleTv.gone()
+        dateTv.gone()
         return view
     }
 
@@ -1159,7 +1170,6 @@ class UserProfileActivity : CoreJoshActivity() {
             0 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award1)
                 v.visibility = View.VISIBLE
-
                 setViewToLayout(
                     award,
                     view.findViewById(R.id.image_award1),
@@ -1209,21 +1219,13 @@ class UserProfileActivity : CoreJoshActivity() {
         count: AppCompatTextView
     ) {
         title.text = award.awardText
-        if (award.dateText.isNullOrBlank()) {
-            date.visibility = View.INVISIBLE
-        } else {
-            date.visibility = View.VISIBLE
-            date.text = award.dateText
-        }
         award.imageUrl?.let {
-            image.setImage(it, this)
+            image.setImage(it, this, placeHolder = R.drawable.grey_rounded_bg)
         }
-        if (award.count > 1) {
-            count.visibility = View.VISIBLE
-            count.text = award.count.toString()
-        } else {
-            count.visibility = View.GONE
-        }
+
+        title.gone()
+        date.gone()
+        count.gone()
     }
 
     private fun getProfileData(intervalType: String?, previousPage: String?) {

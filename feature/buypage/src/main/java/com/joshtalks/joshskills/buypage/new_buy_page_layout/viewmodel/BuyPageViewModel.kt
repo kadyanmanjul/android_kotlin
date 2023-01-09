@@ -24,9 +24,13 @@ import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.PriceParameterModel
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.repo.BuyPageRepo
+import com.joshtalks.joshskills.common.core.analytics.LogException
 import com.joshtalks.joshskills.common.ui.special_practice.utils.*
+import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.*
+import org.json.JSONObject
 import timber.log.Timber
+import java.math.BigDecimal
 import java.util.*
 
 class BuyPageViewModel : BaseViewModel() {
@@ -91,7 +95,7 @@ class BuyPageViewModel : BaseViewModel() {
                         message.what = BUY_COURSE_LAYOUT_DATA
                         message.obj = response.body()!!
                         singleLiveEvent.value = message
-                        if (isKnowMoreCourse==null && isVideoAbTestEnable == null && isNewFreeTrialEnable == null) {
+                        if (isKnowMoreCourse == null && isVideoAbTestEnable == null && isNewFreeTrialEnable == null) {
                             delay(5200)
                             message.what = SCROLL_TO_BOTTOM
                             singleLiveEvent.value = message
@@ -106,17 +110,17 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     //This method is for set coupon and offer list on basis of type coupon or offer
-    fun getValidCouponList(methodCallType: String, testId:Int, isCouponApplyOrRemove: String = EMPTY) {
+    fun getValidCouponList(methodCallType: String, testId: Int, isCouponApplyOrRemove: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 isCouponApiCall.set(true)
-                val response = buyPageRepo.getCouponList(testId)
+                val response = buyPageRepo.getCouponList(testId, getCompletedLessonCount())
                 if (response.isSuccessful && response.body() != null) {
                     isCouponApiCall.set(false)
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     withContext(mainDispatcher) {
                         if (methodCallType == COUPON) {
-                            couponListAdapter.addOffersList(response.body()!!.listOfCoupon)
+                            response.body()!!.listOfCoupon?.let { couponListAdapter.addOffersList(it) }
                         } else {
                             response.body()!!.listOfCoupon?.let { offersListAdapter.addOffersList(it) }
 
@@ -134,6 +138,8 @@ class BuyPageViewModel : BaseViewModel() {
                             if (isCouponApplyOrRemove.isEmpty()) {
                                 message.what = APPLY_COUPON_FROM_INTENT
                                 singleLiveEvent.value = message
+                            } else {
+
                             }
                         }
                     }
@@ -152,7 +158,7 @@ class BuyPageViewModel : BaseViewModel() {
     }
 
     //this method is get price and if pass coupon code then it will return discount price
-    fun getCoursePriceList(code: String?, isSpecificMentorCoupon:Boolean?, validDuration:Date?) {
+    fun getCoursePriceList(code: String?, isSpecificMentorCoupon: Boolean?, validDuration: Date?, couponType: String?) {
         try {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
@@ -169,7 +175,12 @@ class BuyPageViewModel : BaseViewModel() {
                         apiStatus.postValue(ApiCallStatus.SUCCESS)
                         isPriceApiCall.set(false)
                         withContext(mainDispatcher) {
-                            priceListAdapter.addPriceList(response.body()?.courseDetails, validDuration, isSpecificMentorCoupon)
+                            priceListAdapter.addPriceList(
+                                response.body()?.courseDetails,
+                                validDuration,
+                                isSpecificMentorCoupon,
+                                couponType
+                            )
                         }
                     } else {
                         isPriceApiCall.set(true)
@@ -190,7 +201,7 @@ class BuyPageViewModel : BaseViewModel() {
             when (type) {
                 CLICK_ON_OFFER_CARD -> {
                     if (couponType == APPLY) {
-                        if (couponAppliedCode.get() != it.couponCode){
+                        if (couponAppliedCode.get() != it.couponCode) {
                             saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, it.couponCode)
                             isCouponApplied.set(true)
                             if (it.couponCode != manualCoupon.get())
@@ -198,28 +209,28 @@ class BuyPageViewModel : BaseViewModel() {
                             else
                                 couponAppliedCode.set(manualCoupon.get())
                             try {
-                                getCoursePriceList(it.couponCode, it.isMentorSpecificCoupon, it.validDuration)
+                                getCoursePriceList(it.couponCode, it.isMentorSpecificCoupon, it.validDuration, it.couponType)
                                 isDiscount = true
                             } catch (ex: Exception) {
                                 Log.d("BuyPageViewModel.kt", "SAGAR => :139 ${ex.message}")
                             }
-                            if (position!=1) {
+                            if (position != 1) {
                                 message.what = APPLY_COUPON_FROM_BUY_PAGE
                                 message.obj = it
                                 singleLiveEvent.value = message
                             }
-                        }else{
-                            if (it.isMentorSpecificCoupon!=null)
+                        } else {
+                            if (it.isMentorSpecificCoupon != null && couponAppliedCode.get().isNullOrEmpty())
                                 showToast("Coupon already applied")
                         }
                     } else {
-                        if (it.isMentorSpecificCoupon == null){
+                        if (it.isMentorSpecificCoupon == null) {
                             getValidCouponList(OFFERS, Integer.parseInt(testId), isCouponApplyOrRemove = REMOVE)
                         }
                         couponAppliedCode.set(EMPTY)
                         saveImpressionForBuyPageLayout(COUPON_CODE_REMOVED, it.couponCode)
                         isCouponApplied.set(false)
-                        getCoursePriceList(null, null,null)
+                        getCoursePriceList(null, null, null, null)
                     }
                 }
             }
@@ -258,12 +269,15 @@ class BuyPageViewModel : BaseViewModel() {
                         message.arg1 = position
                         singleLiveEvent.value = message
                     }
-                }else{
+                } else {
                     showToast("Coupon already applied")
                 }
             }
         }
     }
+
+    suspend fun getCompletedLessonCount(courseId: String = PrefManager.getStringValue(CURRENT_COURSE_ID)) =
+        AppObjectController.appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
 
     fun openCouponListScreen() {
         message.what = OPEN_COUPON_LIST_SCREEN
@@ -294,6 +308,7 @@ class BuyPageViewModel : BaseViewModel() {
                 )
                 AppObjectController.commonNetworkService.saveImpression(requestData)
             } catch (ex: Exception) {
+                LogException.catchException(ex)
                 Timber.e(ex)
             }
         }
@@ -310,13 +325,15 @@ class BuyPageViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun applyEnteredCoupon(code: String, isFromLink: Int) {
+    //isApplyFrom = 1 => Coupon Fragment
+    //isApplyFrom = 0 => Null Apply from Anywhere
+    fun applyEnteredCoupon(code: String, isFromLink: Int, isApplyFrom: Int = 0) {
         saveImpressionForBuyPageLayout(COUPON_CODE_APPLIED, code)
         if (code.isNotBlank()) {
             manualCoupon.set(code)
             viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val response = buyPageRepo.getCouponFromCode(code)
+                    val response = buyPageRepo.getCouponFromCode(code, Integer.parseInt(testId), getCompletedLessonCount())
                     val data = response.body()
                     if (response.isSuccessful && data != null && data.couponCode != null) {
                         viewModelScope.launch(Dispatchers.Main) {
@@ -324,6 +341,7 @@ class BuyPageViewModel : BaseViewModel() {
                             message.what = COUPON_APPLIED
                             message.obj = data
                             message.arg1 = isFromLink
+                            message.arg2 = isApplyFrom
                             singleLiveEvent.value = message
                         }
                     } else {
@@ -346,16 +364,14 @@ class BuyPageViewModel : BaseViewModel() {
                         "event_data" to eventData
                     )
                 )
-            } catch (ex: java.lang.Exception) {
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
                 ex.printStackTrace()
             }
         }
     }
 
-    fun showRecordedVideoUi(
-        view: JoshVideoPlayer,
-        videoUrl: String
-    ) {
+    fun showRecordedVideoUi(view: JoshVideoPlayer, videoUrl: String) {
         try {
             view.seekToStart()
             view.setUrl(videoUrl)
@@ -382,8 +398,8 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    fun setSupportReason(map : HashMap<String,String>){
-        viewModelScope.launch(Dispatchers.IO){
+    fun setSupportReason(map: HashMap<String, String>) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val resp = buyPageRepo.postSupportReason(map)
                 if (resp.code() == 500)
@@ -398,17 +414,17 @@ class BuyPageViewModel : BaseViewModel() {
                         }
                     }
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
 
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }
         }
     }
 
-    fun getSupportReason(){
-        viewModelScope.launch(Dispatchers.IO){
+    fun getSupportReason() {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp =  buyPageRepo.getReasonList()
+                val resp = buyPageRepo.getReasonList()
                 viewModelScope.launch(Dispatchers.Main) {
                     alreadyReasonSelected = resp.body()?.reasonSelected
                     userPhoneNumber = resp.body()?.phoneNumber
@@ -416,18 +432,49 @@ class BuyPageViewModel : BaseViewModel() {
                     message.obj = resp.body()?.reasonsList
                     singleLiveEvent.value = message
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
             }
         }
     }
 
-    fun saveBranchPaymentLog(orderInfoId:String){
-        viewModelScope.launch(Dispatchers.IO){
+    fun saveBranchPaymentLog(
+        orderInfoId: String,
+        amount: BigDecimal?,
+        testId: Int = 0,
+        courseName: String = EMPTY
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp =  buyPageRepo.saveBranchLog(orderInfoId)
-            }catch (ex:Exception){
+                val extras: HashMap<String, Any> = HashMap()
+                extras["test_id"] = testId
+                extras["orderinfo_id"] = orderInfoId
+                extras["currency"] = CurrencyType.INR.name
+                extras["amount"] = amount ?: 0.0
+                extras["course_name"] = courseName
+                extras["device_id"] = Utils.getDeviceId()
+                extras["guest_mentor_id"] = Mentor.getInstance().getId()
+                extras["payment_done_from"] = "Buy Page"
+                val resp = buyPageRepo.saveBranchLog(extras)
+            } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
+    fun logPaymentEvent(data: JSONObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.TRACK_JUSPAY_LOG))
+                    buyPageRepo.logPaymentEvent(
+                        mapOf(
+                            "mentor_id" to Mentor.getInstance().getId(),
+                            "json" to data
+                        )
+                    )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                LogException.catchException(ex)
             }
         }
     }

@@ -14,9 +14,10 @@ class BuyPageRepo {
     }
 
     //it's need test id
-    suspend fun getFeatureList(testId:Int) = buyPageNetworkService.getCourseFeatureDetails(testId)
+    suspend fun getFeatureList(testId: Int) = buyPageNetworkService.getCourseFeatureDetails(testId)
 
-    suspend fun getCouponList(testId: Int) = buyPageNetworkService.getValidCoupon(testId)
+    suspend fun getCouponList(testId: Int, lessonsCompleted: Int? = null) =
+        AppObjectController.commonNetworkService.getValidCoupon(testId = testId, lessonsCompleted = lessonsCompleted)
 
     suspend fun getPriceList(params: PriceParameterModel) = buyPageNetworkService.getCoursePriceList(params)
 
@@ -28,7 +29,12 @@ class BuyPageRepo {
             )
         }
 
-    suspend fun getCouponFromCode(code: String) = buyPageNetworkService.getCouponFromCode(code)
+    suspend fun getCouponFromCode(code: String, testId: Int, lessonsCompleted: Int? = null) =
+        buyPageNetworkService.getCouponFromCode(
+            code = code,
+            testId = testId,
+            lessonsCompleted = lessonsCompleted
+        )
 
     suspend fun saveBuyPageImpression(map: Map<String, String>) =
         AppObjectController.commonNetworkService.saveNewBuyPageLayoutImpression(map)
@@ -38,6 +44,10 @@ class BuyPageRepo {
 
     suspend fun getReasonList() = buyPageNetworkService.getSalesSupportReason()
 
-    suspend fun saveBranchLog(orderInfoId:String) = AppObjectController.commonNetworkService.savePaymentLog(orderInfoId)
+    suspend fun logPaymentEvent(map: Map<String, Any>) =
+        AppObjectController.commonNetworkService.saveJuspayPaymentLog(map)
+
+    suspend fun saveBranchLog(params: Map<String, Any>) =
+        AppObjectController.commonNetworkService.savePaymentLog(params)
 
 }

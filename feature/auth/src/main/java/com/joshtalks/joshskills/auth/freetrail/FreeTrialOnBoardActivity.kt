@@ -59,6 +59,8 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
+        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
+        viewModel.logImpressionFromWorker()
         navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
         initABTest()
         initOnboardingCourse()
@@ -68,15 +70,18 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
                 text = if (isLogin) "Sign In" else
                     "Start Now"
                 setOnClickListener {
+                    viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN_CLICK)
                     if (isLogin)
                         signUp(it)
                     else {
                         viewModel.postGoal(GoalKeys.START_NOW_BUTTON_CLICKED)
+                        viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
                         startTrial(it)
                     }
                 }
             }
             layout.txtLogin.setOnClickListener {
+                viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN_CLICK)
                 if (isLogin) startTrial(it)
                 else signUp(it)
             }
@@ -114,7 +119,6 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
             }
         }
         initTrueCallerUI()
-        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
     }
 
     override fun onPause() {

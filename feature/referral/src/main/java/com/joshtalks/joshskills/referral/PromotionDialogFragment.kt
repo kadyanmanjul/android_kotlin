@@ -12,9 +12,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
-import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.CourseDetailContract
-import com.joshtalks.joshskills.common.core.Utils
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.referral.databinding.FragmentPrmotationDialogBinding
 import com.joshtalks.joshskills.common.ui.view_holders.ROUND_CORNER
@@ -105,6 +103,7 @@ class PromotionDialogFragment : DialogFragment() {
                 override val testId = this@run.toInt()
                 override val flowFrom = "Promotion"
                 override val buySubscription = false
+                override val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
                 override val navigator = AppObjectController.navigator
             })
             dismissAllowingStateLoss()

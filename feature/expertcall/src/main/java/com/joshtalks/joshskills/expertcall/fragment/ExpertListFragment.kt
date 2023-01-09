@@ -22,10 +22,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.common.constants.CAN_BE_CALL
+import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.expertcall.R
 import com.joshtalks.joshskills.voip.base.constants.*
-import com.joshtalks.joshskills.common.core.AppObjectController
-import com.joshtalks.joshskills.common.core.CLICKED_CALL_BUTTON
 import com.joshtalks.joshskills.expertcall.databinding.FragmentExpertListBinding
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.expertcall.viewModel.CallWithExpertViewModel
@@ -64,7 +63,8 @@ class ExpertListFragment : com.joshtalks.joshskills.common.base.BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().findViewById<TextView>(R.id.iv_earn).setOnClickListener {
-            findNavController().navigate(R.id.action_expertListFragment_to_walletFragment)
+            findNavController().navigate(ExpertListFragmentDirections.actionExpertListFragmentToWalletFragment())
+            viewModel.saveMicroPaymentImpression(OPEN_WALLET, previousPage = MENU_TOOLBAR)
         }
     }
 
@@ -151,14 +151,13 @@ class ExpertListFragment : com.joshtalks.joshskills.common.base.BaseFragment() {
     override fun setArguments() {}
 
     private fun startExpertCall() {
-        if ((viewModel.walletAmount.value?: 0) >= (expertListViewModel.selectedUser?.expertPricePerMinute ?: 0)) {
-            viewModel.saveMicroPaymentImpression(eventName = CLICKED_CALL_BUTTON)
+        if (((viewModel.walletAmount.value ?: 0) >= (expertListViewModel.selectedUser?.expertPricePerMinute ?: 0)) ||
+            (viewModel.creditCount.value ?: -1) > 0
+        ) {
+            viewModel.saveMicroPaymentImpression(eventName = EXPERT_CALL_CONNECTING)
             val callIntent = Intent(AppObjectController.joshApplication, VoiceCallActivity::class.java)
             callIntent.apply {
-                putExtra(
-                    STARTING_POINT,
-                    FROM_ACTIVITY
-                )
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(IS_EXPERT_CALLING, "true")
                 putExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN, expertListViewModel.selectedUser?.expertPricePerMinute.toString())
                 putExtra(INTENT_DATA_TOTAL_AMOUNT, viewModel.walletAmount.value?.toString())

@@ -145,4 +145,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-inappmessaging-ktx:20.2.0'
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.2.0'
+
+    // TODO: Only used for currency type in BuyPageViewModel -- Sukesh
+    implementation 'io.branch.sdk.android:library:5.1.2'
 }

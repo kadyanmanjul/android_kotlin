@@ -106,4 +106,6 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation libs.bundles.room
 
+    // TODO: Only used for currency type in BuyPageViewModel -- Sukesh
+    implementation 'io.branch.sdk.android:library:5.1.2'
 }

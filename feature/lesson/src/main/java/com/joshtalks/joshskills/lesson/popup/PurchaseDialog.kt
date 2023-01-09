@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.lesson
+package com.joshtalks.joshskills.lesson.popup
 
 import android.content.res.Resources
 import android.graphics.Color
@@ -11,13 +11,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.common.R
+import com.joshtalks.joshskills.common.base.BaseDialogFragment
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.common.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.lesson.databinding.PurchaseCourseDialogBinding
 import kotlinx.coroutines.*
 
-class PurchaseDialog : com.joshtalks.joshskills.common.base.BaseDialogFragment() {
+class PurchaseDialog : BaseDialogFragment() {
 
     private lateinit var binding: PurchaseCourseDialogBinding
     private var countdownTimerBack: CountdownTimerBack? = null
@@ -168,7 +169,7 @@ class PurchaseDialog : com.joshtalks.joshskills.common.base.BaseDialogFragment()
         }
     }
 
-    fun savePopupImpression(eventName: String) {
+    private fun savePopupImpression(eventName: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 AppObjectController.commonNetworkService.savePopupImpression(

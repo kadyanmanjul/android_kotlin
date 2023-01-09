@@ -30,12 +30,6 @@ class UserProfileRepo {
     suspend fun updateUserProfileV2(updateProfilePayload: UpdateProfilePayload) =
         signupNetwork.updateUserProfileV2(Mentor.getInstance().getId(), updateProfilePayload)
 
-    suspend fun getUserProfileDataV3(
-        mentorId: String,
-        intervalType: String?,
-        previousPage: String?
-    ) = commService.getUserProfileDataV3(mentorId, intervalType, previousPage)
-
     suspend fun engageUserProfileTime(impressionId: String, startTime: Long) =
         commService.engageUserProfileTime(
             impressionId,

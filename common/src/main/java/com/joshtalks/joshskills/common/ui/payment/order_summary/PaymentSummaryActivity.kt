@@ -32,6 +32,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -60,6 +61,9 @@ import com.joshtalks.joshskills.common.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.common.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.common.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.voip.base.constants.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.voip.base.constants.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.voip.base.constants.STOP_SERVICE
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -500,7 +504,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     private fun openPromoCodeBottomSheet() {
-
         // TODO: Use Navigator -- Sahil
 //        val bottomSheetFragment = com.joshtalks.joshskills.referral.EnterReferralCodeFragment.newInstance(true)
 //        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
@@ -965,22 +968,18 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     private fun navigateToLoginActivity() {
+        //TODO: Add navigation here -- Sukesh
 //        val intent = Intent(this, com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
 //            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 //            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //            putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
 //        }
 //        startActivity(intent)
-//        val broadcastIntent = Intent().apply {
-//            action =
-//                CALLING_SERVICE_ACTION
-//            putExtra(
-//                SERVICE_BROADCAST_KEY,
-//                STOP_SERVICE
-//            )
-//        }
-//        LocalBroadcastManager.getInstance(this@PaymentSummaryActivity)
-//            .sendBroadcast(broadcastIntent)
+        val broadcastIntent = Intent().apply {
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        }
+        LocalBroadcastManager.getInstance(this@PaymentSummaryActivity).sendBroadcast(broadcastIntent)
         this.finish()
     }
 
@@ -1012,16 +1011,12 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                 PAYMENT_MOBILE_NUMBER,
                 prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
             )
-//        if (isEcommereceEventFire && (paymentManager.getAmount() > 0) && paymentManager.getJustPayOrderId()
-//                .isNotEmpty() && viewModel.getPaymentTestId()
-//                .isNotEmpty()
-//        ) {
-//            isEcommereceEventFire = false
-//            if (viewModel.getCourseDiscountedAmount() <= 0) {
-//                return
-//            }
-//        }
-        viewModel.saveBranchPaymentLog(paymentManager.getJustPayOrderId())
+        viewModel.saveBranchPaymentLog(
+            paymentManager.getJustPayOrderId(),
+            BigDecimal(paymentManager.getAmount()),
+            testId = Integer.parseInt(freeTrialTestId),
+            courseName = "English Course"
+        )
         MarketingAnalytics.coursePurchased(
             BigDecimal(paymentManager.getAmount()),
             true,
@@ -1032,7 +1027,6 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
         uiHandler.post {
             PrefManager.put(IS_PAYMENT_DONE, true)
-//            showPaymentProcessingFragment()
         }
 
         uiHandler.postDelayed({
@@ -1068,7 +1062,9 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
     }
 
     override fun onEvent(data: JSONObject?) {
-        // TODO: add the new code here -- Sukesh
+        data?.let {
+            viewModel.logPaymentEvent(data)
+        }
     }
 
     private fun showPendingDialog() {

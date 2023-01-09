@@ -8,90 +8,69 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.buypage.R
-import com.joshtalks.joshskills.buypage.databinding.ItemCouponCardBinding
+import com.joshtalks.joshskills.buypage.databinding.ItemCouponCardNewBinding
 import com.joshtalks.joshskills.common.core.AppObjectController
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.common.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.common.ui.special_practice.utils.CLICK_ON_COUPON_APPLY
-import com.joshtalks.joshskills.common.ui.special_practice.utils.REMOVE
 
-class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
+class CouponListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     RecyclerView.Adapter<CouponListAdapter.CouponViewHolder>() {
     var itemClick: ((Coupon, Int, Int, String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CouponViewHolder {
-        val binding = ItemCouponCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemCouponCardNewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CouponViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: CouponViewHolder, position: Int) {
-        holder.setData(offersList?.get(position), position)
-        if ((offersList?.get(position)?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0) < 0L) {
-            holder.changeTextColors(holder.binding, offersList?.get(position), position)
+
+        holder.setUpUI(position, offersList[position], offersList[position].isCouponSelected)
+
+        holder.binding.btnApply.setOnSingleClickListener {
+            offersList[position].isCouponSelected = 1
+            itemClick?.invoke(offersList[position], CLICK_ON_COUPON_APPLY, position, APPLY)
         }
     }
 
-    override fun getItemCount(): Int = offersList?.size ?: 0
+    override fun getItemCount(): Int = offersList.size
 
-    fun addOffersList(members: List<Coupon>?) {
-        offersList = members
+    fun addOffersList(members: MutableList<Coupon>) {
+        if (offersList.isEmpty()) {
+            offersList.addAll(members)
+        }
         notifyDataSetChanged()
+    }
+
+    private fun shouldDisableCoupon(coupon: Coupon): Boolean {
+        return coupon.isEnable == false
     }
 
     fun setListener(function: ((Coupon, Int, Int, String) -> Unit)?) {
         itemClick = function
     }
 
-    inner class CouponViewHolder(val binding: ItemCouponCardBinding) :
+    inner class CouponViewHolder(val binding: ItemCouponCardNewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         var countdownTimerBack: CountDownTimer? = null
 
-        fun setData(members: Coupon?, position: Int) {
-            if (members?.couponDesc != null)
-                binding.txtCouponExpireTime.text = members.couponDesc
-            else if (members?.validDuration?.time?.minus(System.currentTimeMillis())!! > 0L)
-                startFreeTrialTimer(
-                    members?.validDuration?.time?.minus(System.currentTimeMillis()) ?: 0,
-                    members,
-                    position
-                )
-            else
-                binding.txtCouponExpireTime.text = "Coupon expired"
-            with(binding) {
-                this.txtCouponCode.text = members?.couponCode
-                this.couponDesc.text =
-                    "Use code " + "${members?.couponCode} " + "and get ${members?.amountPercent.toString()}% off on you purchase."
-                this.saveMoney.text = "Save upto ₹" + members?.maxDiscountAmount.toString() + " with this code"
-
-                this.btnApply.setOnSingleClickListener {
-                    if (members != null) {
-                        members.isCouponSelected = 1
-                        itemClick?.invoke(members, CLICK_ON_COUPON_APPLY, position, APPLY)
-                    }
-                }
-            }
-        }
-
-        fun startFreeTrialTimer(endTimeInMilliSeconds: Long, coupon: Coupon?, position: Int) {
+        private fun startFreeTrialTimer(endTimeInMilliSeconds: Long, coupon: Coupon?, position: Int) {
             try {
                 if (countdownTimerBack != null)
                     countdownTimerBack?.cancel()
 
                 countdownTimerBack = object : CountDownTimer(endTimeInMilliSeconds, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
-                        if (countdownTimerBack != null) {
-                            AppObjectController.uiHandler.post {
-                                binding.txtCouponExpireTime.text =
-                                    "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
-                            }
+                        AppObjectController.uiHandler.post {
+                            binding.txtCouponExpireTime.text =
+                                "Coupon will expire in " + UtilTime.timeFormatted(millisUntilFinished)
                         }
                     }
 
                     override fun onFinish() {
                         AppObjectController.uiHandler.post {
-                            changeTextColors(binding, coupon, position)
-                            countdownTimerBack?.cancel()
+                            setUpUI(position, offersList[position], offersList[position].isCouponSelected)
                         }
                     }
                 }
@@ -101,21 +80,65 @@ class CouponListAdapter(var offersList: List<Coupon>? = listOf()) :
             }
         }
 
-        fun changeTextColors(binding: ItemCouponCardBinding, coupon: Coupon?, position: Int) {
-            Log.e("sagar", "changeTextColors: ")
-            if (coupon?.isCouponSelected == 1)
-                coupon.let { itemClick?.invoke(it, CLICK_ON_COUPON_APPLY, position, REMOVE) }
-            val grayColor = ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.dark_grey)
+        fun setUpUI(position: Int, coupon: Coupon, isCouponSelected: Int) {
+            val state = validateCoupon(position)
+            coupon.setUI(position, state)
+        }
+
+        private fun validateCoupon(
+            position: Int,
+        ): CouponEnum {
+            return if (shouldDisableCoupon(offersList[position])) {
+                disableCoupon()
+                CouponEnum.DISABLE
+            } else {
+                CouponEnum.ENABLE
+            }
+        }
+
+        private fun Coupon.setUI(
+            position: Int,
+            condition: CouponEnum
+        ) {
+            val coupon = this
+            binding.txtCouponCode.text = coupon.couponCode
+            val title = coupon.title
+            binding.couponDesc.text = "Use the coupon and $title"
+            binding.saveMoney.text = "Save upto ₹" + coupon?.maxDiscountAmount.toString() + " with this code"
+            binding.couponPercent.text = coupon.couponCode
+            when (offersList[position].couponType) {
+                CONDITIONAL -> {
+                    binding.txtCouponExpireTime.text = coupon.couponDesc
+                    countdownTimerBack?.cancel()
+                    countdownTimerBack = null
+                }
+                EXPIRABLE -> {
+                    if (condition == CouponEnum.ENABLE && coupon.validDuration?.time?.minus(System.currentTimeMillis())!! > 0) {
+                        startFreeTrialTimer(coupon.validDuration.time.minus(System.currentTimeMillis()), coupon, position)
+                    } else {
+                        disableCoupon()
+                        countdownTimerBack?.cancel()
+                        countdownTimerBack = null
+                        binding.txtCouponExpireTime.text = "Coupon Expired"
+                    }
+                }
+                NON_EXPIRABLE -> {
+                    binding.txtCouponExpireTime.text = coupon.couponDesc
+                    countdownTimerBack?.cancel()
+                    countdownTimerBack = null
+                }
+            }
+        }
+
+        private fun disableCoupon() {
             binding.rootCard.isEnabled = false
-            binding.txtCouponCode.setTextColor(grayColor)
-            binding.txtCouponExpireTime.text = coupon?.couponDesc ?: "Coupon expired"
-            binding.txtCouponExpireTime.setTextColor(grayColor)
-            binding.couponDesc.setTextColor(grayColor)
-            binding.saveMoney.setTextColor(grayColor)
-            binding.rootContainer.background =
-                ContextCompat.getDrawable(binding.rootContainer.context, R.drawable.gray_rectangle_without_solid)
             binding.btnApply.isEnabled = false
-            binding.btnApply.setTextColor(grayColor)
+            val grayColor = ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.text_subdued)
+            binding.saveMoney.setTextColor(grayColor)
+            binding.btnApply.text = "APPLY"
+            binding.btnApply.alpha = 0.8f
+            binding.btnApply.setTextColor(ContextCompat.getColor(binding.txtCouponExpireTime.context, R.color.disabled))
+            binding.viewSide.setImageResource(R.drawable.disable_coupon_side_bar)
         }
     }
 }

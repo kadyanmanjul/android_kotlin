@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.buypage.new_buy_page_layout.repo
 
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.*
+import com.joshtalks.joshskills.common.repository.server.buypage.Coupon
 import com.joshtalks.joshskills.common.repository.service.DIR
 import retrofit2.Response
 import retrofit2.http.Body
@@ -9,13 +10,6 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface BuyPageService {
-
-    @GET("$DIR/course/get_user_coupons/")
-    suspend fun getValidCoupon(
-        @Query("test_id") testId: Int,
-        @Query("screen_name") screenName: String? = null,
-        @Query("lessons_completed") lessonsCompleted: Int? = null
-    ): Response<CouponListModel>
 
     @GET("$DIR/course/get_coupon_code/")
     suspend fun getCouponFromCode(

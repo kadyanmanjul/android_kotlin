@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.common.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.common.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.common.repository.local.model.WalletBalance
 import com.joshtalks.joshskills.common.repository.server.*
+import com.joshtalks.joshskills.common.repository.server.buypage.CouponListModel
 import com.joshtalks.joshskills.common.repository.server.certification_exam.*
 import com.joshtalks.joshskills.common.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.common.repository.server.conversation_practice.SubmitConversationPractiseRequest
@@ -23,6 +24,7 @@ import com.joshtalks.joshskills.common.repository.server.reminder.ReminderReques
 import com.joshtalks.joshskills.common.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.common.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.common.track.CourseUsageSync
+import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.common.ui.payment.model.VerifyPayment
 import com.joshtalks.joshskills.common.ui.senior_student.model.SeniorStudentModel
@@ -334,5 +336,12 @@ interface CommonNetworkService {
 
     @POST("$DIR/micro_payment/user_wallet/")
     suspend fun deductAmountAfterCall(@Body params: Map<String, String>): Response<WalletBalance>
+
+    @GET("$DIR/course/get_user_coupons/")
+    suspend fun getValidCoupon(
+        @Query("test_id") testId: Int,
+        @Query("screen_name") screenName: String? = null,
+        @Query("lessons_completed") lessonsCompleted: Int? = null
+    ): Response<CouponListModel>
 
 }

@@ -20,6 +20,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.google.android.material.textview.MaterialTextView
@@ -42,13 +43,14 @@ import com.joshtalks.joshskills.common.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.common.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.common.ui.extra.setOnShortSingleClickListener
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.common.ui.voip.local.VoipPref
 import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.lesson.LessonActivity
+import com.joshtalks.joshskills.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.lesson.R
 import com.joshtalks.joshskills.lesson.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.voip.constant.Category
@@ -149,20 +151,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         if (topicId.isNullOrBlank().not()) {
             viewModel.getTopicDetail(topicId!!)
         }
-        viewModel.lessonSpotlightStateLiveData.postValue(null)
-        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
-            viewModel.lessonSpotlightStateLiveData.postValue(null)
-        } else {
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(100)
-                viewModel.lessonSpotlightStateLiveData.postValue(com.joshtalks.joshskills.lesson.LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-                PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
-            }
-        }
         viewModel.isFavoriteCallerExist()
         subscribeRXBus()
         //checkForVoipState()
-
     }
 
     private fun getVoipState(): State {
@@ -409,9 +400,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     if (response.alreadyTalked >= twentyMinutes)
                         viewModel.postGoal(GoalKeys.CALL_20MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
 
-                    if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
-                            IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-                        )
+                    if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null &&
+                        topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(IS_FREE_TRIAL_CAMPAIGN_ACTIVE)
                     ) {
                         viewModel.postGoal(
                             GoalKeys.EFT_GT_2MIN.name,
@@ -420,12 +410,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                     }
 
-                    if (!PrefManager.getBoolValue(
-                            IS_FIRST_TIME_SPEAKING_SCREEN,
-                            defValue = false
-                        ) && PrefManager.getBoolValue(
-                            IS_FREE_TRIAL
-                        )
+                    if (!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) &&
+                        PrefManager.getBoolValue(IS_FREE_TRIAL)
                     ) {
                         binding.imgRecentCallsHistory.visibility = INVISIBLE
                         PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN, true)
@@ -443,10 +429,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             }
                         }
                         SHOW_WARNING_POPUP -> {
-                            if (PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                                    HAS_SEEN_WARNING_POPUP_FT
-                                )
-                                    .not()
+                            if (PrefManager.getBoolValue(IS_FREE_TRIAL) &&
+                                PrefManager.getBoolValue(HAS_SEEN_WARNING_POPUP_FT).not()
                             ) {
                                 // dialog for warning about shorter calls
                                 binding.containerReachedFtLimit.visibility = GONE
@@ -471,10 +455,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                     binding.tvTodayTopic.text = response.topicName
 
+                    showToolTipOnLesson()
+
                     if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
-                        PrefManager.put(
-                            REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true
-                        )
+                        PrefManager.put(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
                         binding.tvPractiseTime.text =
                             response.alreadyTalked.toString().plus("/")
                                 .plus(response.duration.toString())
@@ -483,11 +467,22 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.progressBar.progressMax = response.duration.toFloat()
 
                         binding.infoContainer.findViewById<AppCompatTextView>(R.id.info_text_subheading).text =
-                            if (response.duration >= 10) {
-                                getString(R.string.pp_messages, response.duration.toString())
-                            } else {
-                                getString(R.string.pp_message, response.duration.toString())
-                            }
+                            response.speakingInfoText?.let {
+                                it.ifBlank { getInfoTipText(response.duration) }
+                            } ?: getInfoTipText(response.duration)
+
+                        binding.spTitle.text = response.speakingTabTitle?.let {
+                            it.ifBlank { getString(R.string.speak_practise_title) }
+                        } ?: getString(R.string.speak_practise_title)
+
+                        binding.btnPeerToPeerCall.text = response.p2pBtnText?.let {
+                            it.ifBlank { getString(R.string.call_practice_partner) }
+                        } ?: getString(R.string.call_practice_partner)
+
+                        requireActivity().findViewById<MaterialTextView>(R.id.spotlight_call_btn_text).text =
+                            response.p2pBtnText?.let {
+                                it.ifBlank { getString(R.string.call_practice_partner) }
+                            } ?: getString(R.string.call_practice_partner)
                     } else {
                         if (binding.txtHowToSpeak.visibility == VISIBLE) {
                             val layoutParams: ConstraintLayout.LayoutParams =
@@ -647,7 +642,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 showToast("Wait for last call to get disconnected")
         }
 
-        binding.btnCallWithExpert.setOnClickListener {
+        binding.btnCallWithExpert.setOnShortSingleClickListener {
             viewModel.saveMicroPaymentImpression(OPEN_EXPERT, previousPage = SPEAKING_PAGE)
             if (User.getInstance().isVerified) {
                 //TODO: Replace AppObjectController with intent navigator -- Sukesh
@@ -659,10 +654,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             } else {
                 navigateToLoginActivity()
             }
-        }
-
-        binding.btnNextStep.setOnClickListener {
-            showNextTooltip()
         }
 
         viewModel.lessonLiveData.observe(viewLifecycleOwner) {
@@ -693,6 +684,27 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         initDemoViews(lessonNo)
     }
 
+    private fun showToolTipOnLesson() {
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+        if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+            viewModel.lessonSpotlightStateLiveData.postValue(null)
+        } else {
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(100)
+                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+                PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+            }
+        }
+    }
+
+    fun getInfoTipText(duration: Int): String {
+        return if (duration >= 10) {
+            getString(R.string.pp_messages, duration.toString())
+        } else {
+            getString(R.string.pp_message, duration.toString())
+        }
+    }
+
     fun startBuyPageActivity(v: View) {
         activity?.let { it1 ->
             AppObjectController.navigator.with(it1).navigate(object : BuyPageContract {
@@ -703,20 +715,18 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun navigateToLoginActivity() {
+        // TODO: Add navigator here -- Sukesh
 //        val intent = Intent(requireActivity(), com.joshtalks.joshskills.auth.freetrail.SignUpActivity::class.java).apply {
 //            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 //            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //            putExtra(com.joshtalks.joshskills.auth.freetrail.FLOW_FROM, "payment journey")
 //        }
 //        startActivity(intent)
-//        val broadcastIntent = Intent().apply {
-//            action = CALLING_SERVICE_ACTION
-//            putExtra(
-//                SERVICE_BROADCAST_KEY,
-//                STOP_SERVICE
-//            )
-//        }
-//        LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(broadcastIntent)
+        val broadcastIntent = Intent().apply {
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        }
+        LocalBroadcastManager.getInstance(requireActivity()).sendBroadcast(broadcastIntent)
     }
 
     private fun postSpeakingScreenSeenGoal() {
@@ -791,50 +801,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun speakingSectionComplete() {
         binding.btnContinue.visibility = VISIBLE
-//        binding.btnStart.pauseAnimation()
-//        binding.btnContinue.playAnimation()
         lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.AT,
             questionId
         )
         lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
-    }
-
-    private fun showTooltip() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_TOOLTIP, defValue = false)) {
-                withContext(Dispatchers.Main) {
-                    binding.lessonTooltipLayout.visibility = GONE
-                }
-            } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
-                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
-                    withContext(Dispatchers.Main) {
-                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                        binding.txtTooltipIndex.text =
-                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-                        binding.lessonTooltipLayout.visibility = VISIBLE
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showNextTooltip() {
-        if (currentTooltipIndex < lessonTooltipList.size - 1) {
-            currentTooltipIndex++
-            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-            binding.txtTooltipIndex.text =
-                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-        } else {
-            binding.lessonTooltipLayout.visibility = GONE
-            PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
-        }
-    }
-
-    fun hideTooltip() {
-        binding.lessonTooltipLayout.visibility = GONE
-        PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
     private fun startPractise(
@@ -951,10 +922,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             callIntent.apply {
                 putExtra(INTENT_DATA_COURSE_ID, courseId)
                 putExtra(INTENT_DATA_TOPIC_ID, topicId)
-                putExtra(
-                    STARTING_POINT,
-                    FROM_ACTIVITY
-                )
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             }
             VoipPref.resetAutoCallCount()
@@ -987,15 +955,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun initBottomMargin() {
-        if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
-            binding.linearLayout.addView(
-                View(requireContext()).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        (requireActivity() as LessonActivity).getBottomBannerHeight()
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                if (isAdded && activity is LessonActivity && (requireActivity() as LessonActivity).getBottomBannerHeight() > 0) {
+                    binding.linearLayout.addView(
+                        View(requireContext()).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                (requireActivity() as LessonActivity).getBottomBannerHeight()
+                            )
+                        }
                     )
                 }
-            )
+            }
         }
     }
 

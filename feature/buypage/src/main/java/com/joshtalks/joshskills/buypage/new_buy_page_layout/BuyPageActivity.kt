@@ -61,14 +61,17 @@ import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.buypage.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.common.constants.HAS_NOTIFICATION
+import com.joshtalks.joshskills.common.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.common.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.common.ui.special_practice.utils.*
+import com.joshtalks.joshskills.common.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.common.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
+import com.joshtalks.joshskills.common.util.visible
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
 import de.hdodenhof.circleimageview.CircleImageView
@@ -82,7 +85,10 @@ const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val SUBSCRIPTION_TEST_ID = "10"
 const val IS_FAKE_CALL = "is_fake_call"
 
-class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), PaymentGatewayListener {
+const val COUPON_APPLY_POP_UP_SHOW_AND_BACK = 1000
+const val NORMAL_BACK_PRESS = 1111
+
+class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCourseListener {
 
     var englishCourseCard: View? = null
     var otherCourseCard: View? = null
@@ -95,11 +101,14 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
     var isPaymentInitiated = false
     var certificateCard: View? = null
     var couponCodeFromIntent: String? = null
+    var shouldAutoApplyCoupon: Boolean = false
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var expiredTime: Long = -1
     private var flowFrom: String = EMPTY
+    var paymentButtonValue = 0
 
     private var countdownTimerBack: CountdownTimerBack? = null
+    private var openCourseListener: OnOpenCourseListener? = null
     private lateinit var navigator: Navigator
 
     private val binding by lazy<ActivityBuyPageBinding> {
@@ -153,7 +162,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         super.getArguments()
         if (intent.hasExtra(HAS_NOTIFICATION)) {
             flowFrom = "NOTIFICATION"
-            if (!PrefManager.getBoolValue(IS_FREE_TRIAL))
+            if (!PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getBoolValue(IS_COURSE_BOUGHT))
                 finish()
         }
         navigator = intent.getSerializableExtra(NAVIGATOR) as Navigator
@@ -164,6 +173,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         }
         flowFrom = intent.getStringExtra(FLOW_FROM) ?: EMPTY
         couponCodeFromIntent = intent.getStringExtra(COUPON_CODE)
+        shouldAutoApplyCoupon = intent.getBooleanExtra(SHOULD_AUTO_APPLY_COUPON_ARG, false)
         if (intent.hasExtra(IS_FAKE_CALL)) {
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
@@ -182,9 +192,10 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
 
         errorView = Stub(findViewById(R.id.error_view))
         addObserver()
+        openCourseListener = this
         if (Utils.isInternetAvailable()) {
             viewModel.getCourseContent()
-            viewModel.getCoursePriceList(null, null, null)
+            viewModel.getCoursePriceList(null, null, null, null)
             viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
@@ -208,7 +219,8 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
                 }
                 BUY_COURSE_LAYOUT_DATA -> {
                     try {
-                        paymentButton()
+                        paymentButtonValue = (it.obj as BuyCourseFeatureModel).paymentButtonText
+                        paymentButton(it.obj as BuyCourseFeatureModel)
                         dynamicCardCreation(it.obj as BuyCourseFeatureModel)
                         clickRatingOpen?.setOnClickListener {
                             openRatingAndReviewScreen()
@@ -227,22 +239,27 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
                 CLICK_ON_COUPON_APPLY -> {
                     val coupon = it.obj as Coupon
                     updateListItem(coupon)
-                    couponApplied(coupon, it.arg1)
+                    couponApplied(coupon, COUPON_APPLY_POP_UP_SHOW_AND_BACK, 0)
                 }
                 APPLY_COUPON_FROM_BUY_PAGE -> {
                     val coupon = it.obj as Coupon
                     onCouponApply(coupon)
                 }
                 APPLY_COUPON_FROM_INTENT -> {
+                    if (shouldAutoApplyCoupon) {
+                        viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply == true }?.let { coupon ->
+                            viewModel.applyEnteredCoupon(coupon.couponCode, NORMAL_BACK_PRESS, 0)
+                        }
+                    }
                     if (couponCodeFromIntent.isNullOrEmpty().not())
-                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!, 1)
+                        viewModel.applyEnteredCoupon(couponCodeFromIntent!!, NORMAL_BACK_PRESS, 0)
                 }
                 CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
                 MAKE_PHONE_CALL -> openSalesReasonScreenOrMakeCall()
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
-                COUPON_APPLIED -> couponApplied(it.obj as Coupon,it.arg1)
+                COUPON_APPLIED -> couponApplied(it.obj as Coupon, it.arg1, it.arg2)
                 SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
                     binding.scrollView.smoothScrollTo(
                         binding.buyPageParentContainer.width,
@@ -289,51 +306,36 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         )
     }
 
-    fun couponApplied(coupon: Coupon, isFromLink: Int) {
+    private fun couponApplied(coupon: Coupon, isFromLink: Int?, isApplyFrom: Int) {
         showToast("Coupon applied")
-        if (isFromLink == 0) {
-            onBackPressed()
-            onCouponApply(coupon)
-        }else{
-            binding.btnCallUs.post {
-                binding.scrollView.smoothScrollTo(
-                    binding.buyPageParentContainer.width,
-                    binding.buyPageParentContainer.height
-                )
+        Log.e("sagar", "couponApplied: $isFromLink")
+        when (isFromLink) {
+            COUPON_APPLY_POP_UP_SHOW_AND_BACK -> {
+                onBackPressed()
+                if (isApplyFrom == 0)
+                    onCouponApply(coupon)
+            }
+            null -> {
+                onBackPressed()
+            }
+            else -> {
+                binding.btnCallUs.post {
+                    binding.scrollView.smoothScrollTo(
+                        binding.buyPageParentContainer.width,
+                        binding.buyPageParentContainer.height
+                    )
+                }
             }
         }
     }
 
     private fun setFreeTrialTimer(buyCourseFeatureModel: BuyCourseFeatureModel) {
-        if (buyCourseFeatureModel.expiryTime != null) {
-            if (buyCourseFeatureModel.expiryTime?.time ?: 0 >= System.currentTimeMillis()) {
-                if (buyCourseFeatureModel.expiryTime?.time ?: 0 > (System.currentTimeMillis() + 24 * 60 * 60 * 1000)) {
-                    binding.freeTrialTimer.visibility = View.GONE
-                } else {
-                    startTimer(
-                        (buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis(),
-                        buyCourseFeatureModel
-                    )
-                }
-            } else {
-                if (buyCourseFeatureModel.timerBannerText != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
-                    } else {
-                        binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
-                    }
-                    binding.freeTrialTimerNewUi.visibility = View.VISIBLE
-                    binding.timeText.visibility = View.GONE
-                    binding.timerText.text = getString(R.string.free_trial_ended)
-                    binding.timerText.gravity = Gravity.CENTER_HORIZONTAL
-                } else {
-                    binding.freeTrialTimer.visibility = View.VISIBLE
-                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
-                }
-                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
-            }
+        if ((buyCourseFeatureModel.expiryTime?.time ?: 0) >= System.currentTimeMillis()) {
+            startTimer((buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis())
         } else {
-            binding.freeTrialTimer.visibility = View.GONE
+            PrefManager.put(IS_FREE_TRIAL_ENDED, true)
+            openCourseListener?.onFreeTrialEnded() // correct
+            countdownTimerBack?.stop()
         }
     }
 
@@ -349,13 +351,13 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         } else if (isCallUsButtonActive == 2) {
             try {
                 openReasonScreen()
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 Log.e("sagar", "openSalesReasonScreenOrMakeCall:${ex.message} ")
             }
         }
     }
 
-    fun openReasonScreen(){
+    fun openReasonScreen() {
         try {
             viewModel.saveImpression("TALK_TO_COUNSELOR")
             supportFragmentManager.commit {
@@ -363,8 +365,8 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
                 replace(R.id.buy_page_parent_container, BookACallFragment(), "BookACallFragment")
                 addToBackStack("BookACallFragment")
             }
-        }catch (ex:Exception){
-            Log.e("sagar", "openReasonScreen: ${ex.message}", )
+        } catch (ex: Exception) {
+            Log.e("sagar", "openReasonScreen: ${ex.message}")
         }
     }
 
@@ -377,7 +379,9 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         Log.e("sagar", "setCoursePrices: ${list.discountedPrice}")
         priceForPaymentProceed = list
         proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text =
-            "Pay ${priceForPaymentProceed?.discountedPrice ?: "Pay ₹499"}"
+            if (paymentButtonValue == 0)
+                "Pay ${priceForPaymentProceed?.discountedPrice ?: "Pay ₹499"}"
+            else "Proceed to Payment"
     }
 
     private fun openCouponList() {
@@ -521,6 +525,8 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
                 object : CourseDetailContract {
                     override val testId = this@BuyPageActivity.testId.toInt()
                     override val flowFrom = this@BuyPageActivity.javaClass.simpleName
+                    override val buySubscription = false
+                    override val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
                     override val navigator = this@BuyPageActivity.navigator
                 }
             )
@@ -563,7 +569,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         ratingInText?.text = buyCourseFeatureModel.rating.toString() + " out of 5"
     }
 
-    private fun paymentButton() {
+    private fun paymentButton(buyCourseFeatureModel: BuyCourseFeatureModel) {
         val paymentInflate: LayoutInflater =
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         proceedButtonCard = paymentInflate.inflate(R.layout.payment_button_card, null, true)
@@ -615,18 +621,17 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             setReorderingAllowed(true)
             replace(
                 R.id.buy_page_parent_container,
-                PaymentFailedDialogNew.newInstance(paymentManager) {
-                    onBackPressed()
-                },
+                PaymentFailedDialogNew.newInstance(paymentManager),
                 "Payment Failed"
             )
             disallowAddToBackStack()
         }
+        isPaymentInitiated = false
     }
 
     private fun navigateToStartCourseActivity() {
         try {
-            com.joshtalks.joshskills.common.ui.startcourse.StartCourseActivity.openStartCourseActivity(
+            StartCourseActivity.openStartCourseActivity(
                 this,
                 priceForPaymentProceed?.courseName ?: EMPTY,
                 priceForPaymentProceed?.teacherName ?: EMPTY,
@@ -637,7 +642,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             )
             this.finish()
         } catch (ex: Exception) {
-            com.joshtalks.joshskills.common.core.showToast(getString(R.string.something_went_wrong))
+            showToast(getString(R.string.something_went_wrong))
             ex.printStackTrace()
         }
     }
@@ -648,6 +653,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
                 putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, contract.testId)
                 putExtra(FLOW_FROM, contract.flowFrom)
                 putExtra(COUPON_CODE, contract.coupon)
+                putExtra(SHOULD_AUTO_APPLY_COUPON_ARG, contract.shouldAutoApplyCoupon)
                 putExtra(NAVIGATOR, contract.navigator)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 contract.flags.forEach { addFlags(it) }
@@ -733,6 +739,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         val dialogView = showCustomDialog(R.layout.coupon_applied_alert_dialog)
         val btnGotIt = dialogView.findViewById<AppCompatTextView>(R.id.got_it_button)
         val couponAppleLottie = dialogView.findViewById<LottieAnimationView>(R.id.card_confetti)
+        dialogView.setCancelable(true)
         couponAppleLottie.visibility = View.VISIBLE
         couponAppleLottie.playAnimation()
         dialogView.findViewById<TextView>(R.id.coupon_name_text).text =
@@ -757,53 +764,18 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
         return dialogView
     }
 
-    private fun startTimer(startTimeInMilliSeconds: Long, buyCourseFeatureModel: BuyCourseFeatureModel) {
+    private fun startTimer(startTimeInMilliSeconds: Long) {
+        countdownTimerBack?.stop()
+        countdownTimerBack = null
         countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
             override fun onTimerTick(millis: Long) {
-                AppObjectController.uiHandler.post {
-                    val freeTrailTime = UtilTime.timeFormatted(millis).split(":")
-                    if (buyCourseFeatureModel.timerBannerText != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_timer_banner)
-                        } else {
-                            binding.freeTrialTimerNewUi.background = getDrawable(R.drawable.ic_transparent_color_img)
-                        }
-                        binding.freeTrialTimerNewUi.visibility = View.VISIBLE
-                        binding.timerText.text = buyCourseFeatureModel.timerBannerText
-                        binding.txtHours.text = freeTrailTime[0]
-                        if (freeTrailTime.getOrNull(1) != null)
-                            binding.txtMinute.text = freeTrailTime[1]
-                        else {
-                            binding.txtHours.text = "00"
-                            binding.txtMinute.text = "00"
-                            binding.txtSecond.text = freeTrailTime[0]
-                        }
-                        if (freeTrailTime.getOrNull(2) != null) {
-                            binding.txtSecond.text = freeTrailTime[2]
-                        } else {
-                            binding.txtHours.text = "00"
-                            binding.txtMinute.text = freeTrailTime[0]
-                            binding.txtSecond.text = freeTrailTime[1]
-                        }
-                    } else {
-                        binding.freeTrialTimer.visibility = View.VISIBLE
-                        binding.freeTrialTimer.text = getString(
-                            R.string.free_trial_end_in,
-                            UtilTime.timeFormatted(millis)
-                        )
-                    }
-                }
+                openCourseListener?.onStartTrialTimer(millis)
             }
 
             override fun onTimerFinish() {
-                if (buyCourseFeatureModel.timerBannerText != null) {
-                    binding.timeText.visibility = View.GONE
-                    binding.timerText.text = getString(R.string.free_trial_ended)
-                } else {
-                    binding.freeTrialTimer.visibility = View.VISIBLE
-                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
-                }
-                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
+                PrefManager.put(IS_FREE_TRIAL, true)
+                openCourseListener?.onFreeTrialEnded()
+                countdownTimerBack?.stop()
             }
         }
         countdownTimerBack?.startTimer()
@@ -836,7 +808,7 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
                 override fun onRetryButtonClicked() {
                     if (Utils.isInternetAvailable()) {
                         viewModel.getCourseContent()
-                        viewModel.getCoursePriceList(null, null, null)
+                        viewModel.getCoursePriceList(null, null, null, null)
                         viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
                     } else {
                         errorView?.get()?.enableRetryBtn()
@@ -888,11 +860,14 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
     }
 
     override fun onEvent(data: JSONObject?) {
-        // TODO: Make according to new BuyPage -- Sukesh
+        data?.let {
+            viewModel.logPaymentEvent(data)
+        }
     }
 
     private fun showPendingDialog() {
         PrefManager.put(STICKY_COUPON_DATA, EMPTY)
+        stopService(navigator.with(this).serviceProvider(object : StickyServiceConnection {}))
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val fragment = PaymentPendingFragment()
@@ -923,7 +898,12 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
         }
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
-        viewModel.saveBranchPaymentLog(paymentManager.getJustPayOrderId())
+        viewModel.saveBranchPaymentLog(
+            paymentManager.getJustPayOrderId(),
+            BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
+            testId = Integer.parseInt(freeTrialTestId),
+            courseName = priceForPaymentProceed?.courseName ?: EMPTY,
+        )
         MarketingAnalytics.coursePurchased(
             BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
             true,
@@ -938,6 +918,8 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
             stopService(navigator.with(this).serviceProvider(object : StickyServiceConnection {}))
         } catch (e: Exception) {
             e.printStackTrace()
+        } finally {
+            ClientNotificationUtils(applicationContext).removeAllNotifications()
         }
 
         AppObjectController.uiHandler.postDelayed({
@@ -960,5 +942,24 @@ class BuyPageActivity : com.joshtalks.joshskills.common.base.BaseActivity(), Pay
                 }
             }
         }
+    }
+
+    override fun onClick(inboxEntity: InboxEntity) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onStartTrialTimer(startTimeInMilliSeconds: Long) {
+        binding.freeTrialTimerNewUi.visible()
+        binding.freeTrialTimerNewUi.startTimer(startTimeInMilliSeconds)
+    }
+
+    override fun onStopTrialTimer() {
+        binding.freeTrialTimerNewUi.removeTimer()
+    }
+
+    override fun onFreeTrialEnded() {
+        Log.d("sagar", "onFreeTrialEnded() called")
+        binding.freeTrialTimerNewUi.visible()
+        binding.freeTrialTimerNewUi.endFreeTrial()
     }
 }

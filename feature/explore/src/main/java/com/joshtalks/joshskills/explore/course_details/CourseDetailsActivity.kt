@@ -823,7 +823,6 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         const val WHATSAPP_URL = "whatsapp-url"
         const val IS_FROM_FREE_TRIAL = "is_from_free_trial"
         const val BUY_SUBSCRIPTION = "buy_subscription"
-        const val IS_COURSE_BOUGHT = "is_course_bought"
 
         fun openCourseDetailsActivity(contract: CourseDetailContract, context: Context) {
             context.startActivity(
