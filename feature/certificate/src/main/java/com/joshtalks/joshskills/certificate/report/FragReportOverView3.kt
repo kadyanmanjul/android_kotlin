@@ -1,95 +1,83 @@
-package com.joshtalks.joshskills.certificate.report.vh
+package com.joshtalks.joshskills.certificate.report
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatTextView
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.mikephil.charting.animation.Easing.EaseInOutQuad
-import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.joshtalks.joshskills.common.R
-import com.joshtalks.joshskills.common.core.AppObjectController
+import com.joshtalks.joshskills.certificate.R
+import com.joshtalks.joshskills.certificate.databinding.FragmentFragReportOverView3Binding
+import com.joshtalks.joshskills.certificate.report.vh.ReportQuestionListAdapter
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.core.Utils
 import com.joshtalks.joshskills.common.core.custom_ui.decorator.GridSpacingQuestionsDecoration
+import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.common.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.common.repository.server.certification_exam.CertificationQuestion
 import com.joshtalks.joshskills.common.repository.server.certification_exam.QuestionReportType
 import com.joshtalks.joshskills.common.repository.server.certification_exam.UserSelectedAnswer
-import com.mindorks.placeholderview.annotations.Resolve
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@SuppressLint("NonConstantResourceId")
-class ReportOverviewView3(
-    private val certificateExamReport: CertificateExamReportModel,
-    private val totalQuestions: List<CertificationQuestion>,
-    private val reportType: QuestionReportType
-) {
-    
-    lateinit var chart: PieChart
+class FragReportOverView3(private val certificateExamReport: CertificateExamReportModel,
+                          private val totalQuestions: List<CertificationQuestion>,
+                          private val reportType: QuestionReportType
+) : Fragment() {
 
-    
-    lateinit var questionRecyclerView: RecyclerView
+    private lateinit var binding: FragmentFragReportOverView3Binding
 
-    
-    lateinit var tvCorrect: AppCompatTextView
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_frag_report_over_view3,container,false)
+        return binding.root
+    }
 
-    
-    lateinit var tvIncorrect: AppCompatTextView
-
-    
-    lateinit var tvUnanswered: AppCompatTextView
-
-    
-    lateinit var llUnAnswered: LinearLayout
-
-    
-    lateinit var llIncorrect: LinearLayout
-
-    
-    lateinit var llcorrect: LinearLayout
-
-    private val context: Context = AppObjectController.joshApplication
-
-    @Resolve
-    fun onViewInflated() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         certificateExamReport.run {
-            tvCorrect.text = correct.toString()
-            tvIncorrect.text = wrong.toString()
-            tvUnanswered.text = unanswered.toString()
+            binding.tvCorrect.text = correct.toString()
+            binding.tvIncorrect.text = wrong.toString()
+            binding.tvUnanswered.text = unanswered.toString()
             when (reportType) {
                 QuestionReportType.RIGHT -> {
-                    llcorrect.visibility = View.VISIBLE
+                    binding.llCorrect.visibility = View.VISIBLE
                 }
                 QuestionReportType.WRONG -> {
-                    llIncorrect.visibility = View.VISIBLE
+                    binding.llIncorrect.visibility = View.VISIBLE
                 }
                 QuestionReportType.UNANSWERED -> {
-                    llUnAnswered.visibility = View.VISIBLE
+                    binding.llUnanswerd.visibility = View.VISIBLE
                 }
                 else -> {}
             }
             setChart()
             setQuestionRV()
         }
+
+        binding.rootView.setOnClickListener {
+            RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNKNOWN))
+        }
     }
 
     private fun setQuestionRV() {
-        if (questionRecyclerView.adapter == null) {
+        if ( binding.recyclerView.adapter == null) {
             val answersList = ArrayList<UserSelectedAnswer>()
             totalQuestions.sortedBy { it.sortOrder }.forEach {
                 val status = getAnswerStatus(it)
@@ -102,7 +90,7 @@ class ReportOverviewView3(
                     )
                 )
             }
-            questionRecyclerView.apply {
+            binding.recyclerView.apply {
                 addItemDecoration(GridSpacingQuestionsDecoration(6, Utils.dpToPx(context, 6f), true))
                 setHasFixedSize(true)
                 layoutManager = GridLayoutManager(context, 6, RecyclerView.HORIZONTAL, false)
@@ -117,25 +105,28 @@ class ReportOverviewView3(
 
     private fun setChart() {
         CoroutineScope(Dispatchers.Main).launch {
-            chart.setCenterTextTypeface(
-                Typeface.createFromAsset(
-                    context.assets,
-                    "fonts/JoshOpenSans-SemiBold.ttf"
+            with(binding.chart){
+                setCenterTextTypeface(
+                    Typeface.createFromAsset(
+                        requireContext().assets,
+                        "fonts/JoshOpenSans-SemiBold.ttf"
+                    )
                 )
-            )
-            chart.setCenterTextSize(12F)
-            chart.setExtraOffsets(0F, 0F, 0F, -15F)
-            chart.holeRadius = 58f
-            chart.transparentCircleRadius = 58F
-            chart.isDrawHoleEnabled = true
-            chart.setHoleColor(Color.TRANSPARENT)
-            chart.setTransparentCircleColor(Color.TRANSPARENT)
-            chart.animateY(0, EaseInOutQuad)
-            chart.isRotationEnabled = true
-            chart.isHighlightPerTapEnabled = true
-            chart.setDrawEntryLabels(false)
-            chart.description.isEnabled = false
-            val legend: Legend = chart.legend
+                setCenterTextSize(12F)
+                setExtraOffsets(0F, 0F, 0F, -15F)
+                holeRadius = 58f
+                transparentCircleRadius = 58F
+                isDrawHoleEnabled = true
+                setHoleColor(Color.TRANSPARENT)
+                setTransparentCircleColor(Color.TRANSPARENT)
+                animateY(0, Easing.EaseInOutQuad)
+                isRotationEnabled = true
+                isHighlightPerTapEnabled = true
+                setDrawEntryLabels(false)
+                description.isEnabled = false
+            }
+
+            val legend: Legend =  binding.chart.legend
             legend.formSize = 0F
 
             val percentData = arrayListOf<PieEntry>()
@@ -148,9 +139,9 @@ class ReportOverviewView3(
                 percentData.add(PieEntry(certificateExamReport.unanswered.toFloat(), 0))
             }
             val dataSet = PieDataSet(percentData, "")
-            var colorCorrect: Int = ContextCompat.getColor(context, R.color.transparent)
-            var colorInCorrect: Int = ContextCompat.getColor(context, R.color.transparent)
-            var colorInUnAnswered: Int = ContextCompat.getColor(context, R.color.transparent)
+            var colorCorrect: Int = ContextCompat.getColor(requireContext(), R.color.transparent)
+            var colorInCorrect: Int = ContextCompat.getColor(requireContext(), R.color.transparent)
+            var colorInUnAnswered: Int = ContextCompat.getColor(requireContext(), R.color.transparent)
 
             val textColor: Int
             val percentText: String
@@ -161,7 +152,7 @@ class ReportOverviewView3(
                     percentText = EMPTY + getPercent(certificateExamReport.wrong).plus(" Incorrect")
                 }
                 QuestionReportType.UNANSWERED == reportType -> {
-                    colorInUnAnswered = ContextCompat.getColor(context, R.color.disabled)
+                    colorInUnAnswered = ContextCompat.getColor(requireContext(), R.color.disabled)
                     textColor = colorInUnAnswered
                     percentText =
                         EMPTY + getPercent(certificateExamReport.unanswered).plus(" Unanswered")
@@ -173,18 +164,18 @@ class ReportOverviewView3(
                     percentText = EMPTY + getPercent(certificateExamReport.correct).plus(" Correct")
                 }
             }
-            chart.setCenterTextColor(textColor)
+            binding.chart.setCenterTextColor(textColor)
             dataSet.colors = mutableListOf(colorCorrect, colorInCorrect, colorInUnAnswered)
             if (certificateExamReport.correct == 0 && certificateExamReport.wrong == 0) {
-                dataSet.color = ContextCompat.getColor(context, R.color.disabled)
+                dataSet.color = ContextCompat.getColor(requireContext(), R.color.disabled)
             }
-            chart.centerText = generateCenterSpannableText(percentText)
+            binding.chart.centerText = generateCenterSpannableText(percentText)
 
             dataSet.setDrawValues(false)
             dataSet.sliceSpace = 0f
 
             val data = PieData(dataSet)
-            chart.data = data
+            binding.chart.data = data
             data.setDrawValues(false)
             //chart.highlightValue(0f, 0, false)
         }
@@ -201,11 +192,6 @@ class ReportOverviewView3(
         val percent =
             (per.toFloat() * 100) / (certificateExamReport.correct + certificateExamReport.wrong + certificateExamReport.unanswered)
         return String.format("%.02f", percent).plus("%")
-    }
-
-    
-    fun onClickRootView() {
-        com.joshtalks.joshskills.common.messaging.RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNKNOWN))
     }
 
 }

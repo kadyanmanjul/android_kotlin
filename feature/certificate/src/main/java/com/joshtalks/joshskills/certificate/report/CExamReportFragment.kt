@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.certificate.report
 
-import android.annotation.SuppressLint
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +8,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.joshtalks.joshskills.certificate.CERTIFICATION_EXAM_QUESTION
+import com.joshtalks.joshskills.certificate.CertificationExamViewModel
+import com.joshtalks.joshskills.certificate.R
+import com.joshtalks.joshskills.certificate.constants.CHECK_EXAM_DETAILS
+import com.joshtalks.joshskills.certificate.databinding.FragmentCexamReportBinding
 import com.joshtalks.joshskills.common.core.EMPTY
 import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.EmptyEventBus
@@ -16,14 +21,6 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.OpenReportQType
 import com.joshtalks.joshskills.common.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.common.repository.server.certification_exam.CertificationQuestion
 import com.joshtalks.joshskills.common.repository.server.certification_exam.QuestionReportType
-import com.joshtalks.joshskills.certificate.CERTIFICATION_EXAM_QUESTION
-import com.joshtalks.joshskills.certificate.CertificationExamViewModel
-import com.joshtalks.joshskills.certificate.R
-import com.joshtalks.joshskills.certificate.constants.CHECK_EXAM_DETAILS
-import com.joshtalks.joshskills.certificate.databinding.FragmentCexamReportBinding
-import com.joshtalks.joshskills.certificate.report.vh.ReportOverviewView1
-import com.joshtalks.joshskills.certificate.report.vh.ReportOverviewView2
-import com.joshtalks.joshskills.certificate.report.vh.ReportOverviewView3
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -56,7 +53,7 @@ class CExamReportFragment : Fragment() {
     private var id:Int? =null
     private lateinit var url:String
     private val viewModel: CertificationExamViewModel by lazy {
-        ViewModelProvider(requireActivity())[CertificationExamViewModel::class.java]
+        ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,24 +82,11 @@ class CExamReportFragment : Fragment() {
         id = certificateExamReport?.reportId
         url = certificateExamReport?.certificateURL?:EMPTY
         certificateExamReport?.run {
-            binding.chatRv.addView(ReportOverviewView1(this, viewModel.examType.value))
-            binding.chatRv.addView(ReportOverviewView2(this, questionList))
-            updateRvScrolling(true)
+            val adapter = ReportOverviewAdapter(this@CExamReportFragment, this,viewModel.examType.value,questionList)
+            binding.chatRv.adapter = adapter
+            updateRvScrolling(false)
         }
     }
-
-    /*override fun onStart() {
-        super.onStart()
-        if(PrefManager.getBoolValue(IS_FIRST_TIME_FLOW_CERTI, defValue = false)){
-            certificateExamReport?.run {
-                binding.chatRv.invalidate()
-                binding.chatRv.addView(ReportOverviewView1(this, viewModel.examType.value))
-                binding.chatRv.addView(ReportOverviewView2(this, questionList))
-                binding.chatRv.refresh()
-                updateRvScrolling(true)
-            }
-        }
-    }*/
 
     override fun onResume() {
         super.onResume()
@@ -130,9 +114,9 @@ class CExamReportFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    updateRvScrolling(false)
+                    updateRvScrolling(true)
                     viewModel.saveImpression(CHECK_EXAM_DETAILS)
-                    binding.chatRv.smoothScrollToPosition(1)
+                    binding.chatRv.setCurrentItem(1,true)
                 }, {
                     it.printStackTrace()
                 })
@@ -145,7 +129,6 @@ class CExamReportFragment : Fragment() {
                     if (QuestionReportType.UNKNOWN == it.type) {
                         viewModel.isSAnswerUiShow = false
                         binding.tempFl.visibility = View.GONE
-                        binding.tempRv.removeAllViews()
                         return@subscribe
                     }
                     binding.tempFl.visibility = View.VISIBLE
@@ -160,21 +143,20 @@ class CExamReportFragment : Fragment() {
                 .subscribe({
                     viewModel.isSAnswerUiShow = false
                     binding.tempFl.visibility = View.GONE
-                    binding.tempRv.removeAllViews()
                 }, {
                     it.printStackTrace()
                 })
         )
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun updateRvScrolling(flag: Boolean) {
-        binding.chatRv.suppressLayout(flag)
+        binding.chatRv.isUserInputEnabled = flag
     }
 
     private fun showViewOnHint(type: QuestionReportType) {
         certificateExamReport?.run {
-            binding.tempRv.addView(ReportOverviewView3(this, questionList, type))
+            val adapter = ReportOverView3Adapter(this@CExamReportFragment,this,questionList,type)
+            binding.tempRv.adapter = adapter
             viewModel.isSAnswerUiShow = true
         }
         binding.tempRv.setOnClickListener {

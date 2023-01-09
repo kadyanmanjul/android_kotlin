@@ -13,10 +13,11 @@
         android:layout_height="match_parent"
         android:background="#44E5E5E5">
 
-        <com.mindorks.placeholderview.PlaceHolderView
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/chatRv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:clipToPadding="true"
             android:scrollbars="vertical" />
 
@@ -27,7 +28,7 @@
             android:layout_height="match_parent"
             android:visibility="gone">
 
-            <com.mindorks.placeholderview.PlaceHolderView
+            <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/temp_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
