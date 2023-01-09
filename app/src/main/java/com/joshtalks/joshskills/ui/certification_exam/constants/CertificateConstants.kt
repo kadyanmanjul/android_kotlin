@@ -39,3 +39,5 @@ const val PKG_AFTER_COM_FACEBOOK ="facebook.android"
 const val PKG_AFTER_COM_LINKEDIN ="linkedin.android"
 const val PKG_AFTER_COM_INSTA ="instagram.android"
 const val NULL ="null"
+
+const val BTN_CHANGED_TEXT = "Show Certificate"
