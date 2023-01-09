@@ -102,23 +102,24 @@ class Mentor {
 
         @JvmStatic
         fun deleteUserCredentials(showNotification: Boolean = false) {
-            PrefManager.logoutUser()
             logoutAndShowLoginScreen(showNotification)
+            PrefManager.logoutUser()
         }
 
         private fun logoutAndShowLoginScreen(showNotification: Boolean) {
+            val mentorId = getInstance().getId()
             CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
-                delay(1000)
-                MixPanelTracker.publishEvent(MixPanelEvent.USER_LOGGED_OUT).push()
-                AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
-                    .addUserDetails()
-                    .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
                 try {
                     NotificationManagerCompat.from(joshApplication).cancelAll()
-                    AppObjectController.signUpNetworkService.signoutUser(getInstance().getId())
+                    AppObjectController.signUpNetworkService.signoutUser(mentorId)
                 } catch (ex:Exception){
                     LogException.catchException(ex)
                 }
+                MixPanelTracker.publishEvent(MixPanelEvent.USER_LOGGED_OUT).push()
+                AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                    .addUserDetails()
+                    .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true)
+                    .push()
                 if (joshApplication.isAppVisible()) {
                     val intent = Intent(joshApplication, SignUpActivity::class.java)
                     intent.apply {
