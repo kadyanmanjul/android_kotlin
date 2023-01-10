@@ -1499,14 +1499,13 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                             lifecycleScope.launch (Dispatchers.Main){
                                 delay(100)
                                 Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
-                                if (introVideoControl) {
-                                    if (introVideoUrl.isNullOrBlank().not()) {
-                                        viewModel.saveIntroVideoFlowImpression(
-                                            SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
-                                        )
-                                        viewModel.showHideSpeakingFragmentCallButtons(1)
-                                        showIntroVideoUi()
-                                    }
+                                if (introVideoControl && introVideoUrl.isNullOrBlank().not() && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_VIDEO)) {
+                                    PrefManager.put(HAS_SEEN_SPEAKING_VIDEO, true)
+                                    viewModel.saveIntroVideoFlowImpression(
+                                        SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
+                                    )
+                                    viewModel.showHideSpeakingFragmentCallButtons(1)
+                                    showIntroVideoUi()
                                 }
                             }
                         }
