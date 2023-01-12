@@ -337,7 +337,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     BigDecimal(lastPaymentEntry.amount),
                     true,
                     testId = lastPaymentEntry.testId,
-                    courseName = "Spoken English Course",
+                    courseName = lastPaymentEntry.courseName,
                     juspayPaymentId = lastPaymentEntry.orderId
                 )
             }

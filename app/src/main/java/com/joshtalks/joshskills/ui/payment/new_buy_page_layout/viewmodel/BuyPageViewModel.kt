@@ -476,26 +476,5 @@ class BuyPageViewModel : BaseViewModel() {
             }
         }
     }
-    fun saveBranchPaymentLogInLocalDb(orderInfoId:String,
-                             amount: BigDecimal?,
-                             testId: Int = 0,
-                             courseName: String = EMPTY){
-        viewModelScope.launch(Dispatchers.IO){
-            try {
-                val extras: HashMap<String, Any> = HashMap()
-                extras["test_id"] = testId
-                extras["orderinfo_id"] = orderInfoId
-                extras["currency"] = CurrencyType.INR.name
-                extras["amount"] = amount ?: 0.0
-                extras["course_name"] = courseName
-                extras["device_id"] = Utils.getDeviceId()
-                extras["guest_mentor_id"] = Mentor.getInstance().getId()
-                extras["payment_done_from"] = "Buy Page"
-                val resp = buyPageRepo.saveBranchLog(extras)
-            }catch (ex:Exception){
-                Log.e("sagar", "setSupportReason: ${ex.message}")
-            }
-        }
-    }
 
 }
