@@ -387,11 +387,22 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .push()
         }
         binding.imgRecentCallsHistory.setOnSingleClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
-            RecentCallActivity.openRecentCallActivity(
-                requireActivity(),
-                CONVERSATION_ID
-            )
+            if (binding.imgRecentCallsHistory.text == "How to speak"){
+                lessonActivityListener?.introVideoCmplt()
+                viewModel.isHowToSpeakClicked(true)
+                binding.btnCallDemo.visibility = View.VISIBLE
+                viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
+                MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_SPEAK)
+                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                    .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
+                    .push()
+            }else{
+                MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
+                RecentCallActivity.openRecentCallActivity(
+                    requireActivity(),
+                    CONVERSATION_ID
+                )
+            }
         }
         // redirect to buy screen
         binding.txtBuyToContinueCalls.setOnClickListener {
@@ -432,13 +443,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             CampaignKeys.EXTEND_FREE_TRIAL.name
                         )
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
-                    }
-
-                    if (!PrefManager.getBoolValue(IS_FIRST_TIME_SPEAKING_SCREEN, defValue = false) &&
-                        PrefManager.getBoolValue(IS_FREE_TRIAL)
-                    ) {
-                        binding.imgRecentCallsHistory.visibility = INVISIBLE
-                        PrefManager.put(IS_FIRST_TIME_SPEAKING_SCREEN, true)
                     }
 
                     when (response.isFtCallerBlocked) {
@@ -511,19 +515,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 it.ifBlank { getString(R.string.call_practice_partner) }
                             } ?: getString(R.string.call_practice_partner)
                     } else {
-                        if (binding.txtHowToSpeak.visibility == VISIBLE) {
-                            val layoutParams: ConstraintLayout.LayoutParams =
-                                binding.txtHowToSpeak.layoutParams as ConstraintLayout.LayoutParams
-                            layoutParams.topToBottom = binding.ftuTwentyMinStatus.id
-                        }
-
-                        val layoutParams: ConstraintLayout.LayoutParams =
-                            binding.infoContainer.layoutParams as ConstraintLayout.LayoutParams
-                        if (binding.txtHowToSpeak.visibility == VISIBLE) layoutParams.topToBottom =
-                            binding.txtHowToSpeak.id
-                        else {
-                            layoutParams.topToBottom = binding.ftuTwentyMinStatus.id
-                        }
 
                         binding.ftuTwentyMinStatus.visibility = VISIBLE
 //                        binding.twentyMinFtuText.visibility = VISIBLE
@@ -722,14 +713,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
                     //This code is for show balloon tooltip and highlight topic container
                     Log.e("sagar", "showToolTipOnLesson: 2", )
+
+                    setOverlayAnimationOnTopicContainer()
                     showTooltipTopic(
                         "Today’s topic and goals",
                         response.speakingToolTipText ?: EMPTY
                     )
-
-                    setOverlayAnimationOnTopicContainer()
                 } else {
-                    Log.e("sagar", "showToolTipOnLesson: 3", )
+                    Log.e("sagar", "showToolTipOnLesson: 3" )
                     //This code is for show balloon tooltip and highlight peer to peer button
                     showTooltipButton(
                         "Start Speaking Practice Now",
@@ -804,16 +795,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             lessonActivityListener?.showIntroVideo()
             lessonNo = it
             binding.btnCallDemo.visibility = View.GONE
-            binding.txtHowToSpeak.visibility = View.VISIBLE
-            binding.txtHowToSpeak.setOnClickListener {
-                lessonActivityListener?.introVideoCmplt()
-                viewModel.isHowToSpeakClicked(true)
-                binding.btnCallDemo.visibility = View.VISIBLE
-                viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
-                MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_SPEAK)
-                    .addParam(ParamKeys.LESSON_ID, lessonID)
-                    .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
-                    .push()
+
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL) && lessonNo == 1) {
+                binding.imgRecentCallsHistory.visibility = VISIBLE
+                binding.imgRecentCallsHistory.text = "How to speak"
+                binding.imgRecentCallsHistory.icon = requireActivity().getDrawable(R.drawable.info_iv)
+            }else if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
+                binding.imgRecentCallsHistory.visibility = VISIBLE
             }
 
             try {
@@ -1061,7 +1049,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
             overlayItem?.let {
                 overlayImageView.setImageBitmap(it.viewBitmap)
-                overlayImageView.x = it.x.toFloat()
+                overlayImageView.x = 0F
                 overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp) - resources.getDimension(R.dimen._30sdp)
                 overlayImageView.requestLayout()
             }

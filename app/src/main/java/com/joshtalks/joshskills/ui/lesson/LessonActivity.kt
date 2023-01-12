@@ -1456,68 +1456,70 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             }
         }
 
-        try {
-            viewModel.speakingTopicLiveData.observe(this){ response ->
-                Log.e("sagar", "setSelectedColor: 3${PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW)} ${PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)}" )
-                if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW) && (tab?.position == 0 || tab?.position == -1)) {
-                    Log.e("sagar", "setSelectedColor: " )
-                    if (response == null) {
-                        showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
-                    }else{
-                        if (response.isSpeakingTooltipEnabled) {
-                            PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW,true)
-                            Log.e("sagar", "setSelectedColor: 1" )
-                            binding.welcomeContainer.visibility = View.VISIBLE
-                            toolTipBalloon = Balloon.Builder(this)
-                                .setLayout(R.layout.layout_speaking_button_tooltip)
-                                .setHeight(BalloonSizeSpec.WRAP)
-                                .setIsVisibleArrow(true)
-                                .setBackgroundColorResource(R.color.surface_tip)
-                                .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
-                                .setWidthRatio(0.85f)
-                                .setDismissWhenTouchOutside(false)
-                                .setArrowPosition(0.2f)
-                                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                                .setLifecycleOwner(this)
-                                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR).build()
-                            val textViewTitle = toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.title)
-                            textViewTitle.text = "Welcome to Speaking section"
-                            val textViewSubHeadingText = toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
-                            textViewSubHeadingText.text = "Here you can practice English speaking with other students"
-                            tab.view.let { toolTipBalloon.showAlignBottom(it) }
-
-                            binding.welcomeContainer.setOnClickListener {
-                                Log.e("sagar", "setSelectedColor: 99", )
-                                binding.welcomeContainer.visibility = View.GONE
-                                dismissTooltipButton()
-                                PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW,true)
-                                viewModel.speakingTooltipLiveData.postValue(response)
-                            }
+        if (lessonNumber == 1){
+            try {
+                viewModel.speakingTopicLiveData.observe(this){ response ->
+                    Log.e("sagar", "setSelectedColor: 3${PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW)} ${PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)}" )
+                    if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW) && (tab?.position == 0 || tab?.position == -1)) {
+                        Log.e("sagar", "setSelectedColor: " )
+                        if (response == null) {
+                            showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
                         }else{
-                            Log.e("sagar", "setSelectedColor: 2" )
-                            //TODO here we have to add one more condition if we have to show by default tooltip
-                            lifecycleScope.launch (Dispatchers.Main){
-                                delay(100)
-                                Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
-                                if (introVideoControl && introVideoUrl.isNullOrBlank().not() && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_VIDEO)) {
-                                    PrefManager.put(HAS_SEEN_SPEAKING_VIDEO, true)
-                                    viewModel.saveIntroVideoFlowImpression(
-                                        SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
-                                    )
-                                    viewModel.showHideSpeakingFragmentCallButtons(1)
-                                    showIntroVideoUi()
+                            if (response.isSpeakingTooltipEnabled) {
+                                PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW,true)
+                                Log.e("sagar", "setSelectedColor: 1" )
+                                binding.welcomeContainer.visibility = View.VISIBLE
+                                toolTipBalloon = Balloon.Builder(this)
+                                    .setLayout(R.layout.layout_speaking_button_tooltip)
+                                    .setHeight(BalloonSizeSpec.WRAP)
+                                    .setIsVisibleArrow(true)
+                                    .setBackgroundColorResource(R.color.surface_tip)
+                                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
+                                    .setWidthRatio(0.85f)
+                                    .setDismissWhenTouchOutside(false)
+                                    .setArrowPosition(0.2f)
+                                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                                    .setLifecycleOwner(this)
+                                    .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR).build()
+                                val textViewTitle = toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.title)
+                                textViewTitle.text = "Welcome to Speaking section"
+                                val textViewSubHeadingText = toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+                                textViewSubHeadingText.text = "Here you can practice English speaking with other students"
+                                tab.view.let { toolTipBalloon.showAlignBottom(it) }
+
+                                binding.welcomeContainer.setOnClickListener {
+                                    Log.e("sagar", "setSelectedColor: 99", )
+                                    binding.welcomeContainer.visibility = View.GONE
+                                    dismissTooltipButton()
+                                    PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW,true)
+                                    viewModel.speakingTooltipLiveData.postValue(response)
+                                }
+                            }else{
+                                Log.e("sagar", "setSelectedColor: 2" )
+                                //TODO here we have to add one more condition if we have to show by default tooltip
+                                lifecycleScope.launch (Dispatchers.Main){
+                                    delay(100)
+                                    Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
+                                    if (introVideoControl && introVideoUrl.isNullOrBlank().not() && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_VIDEO)) {
+                                        PrefManager.put(HAS_SEEN_SPEAKING_VIDEO, true)
+                                        viewModel.saveIntroVideoFlowImpression(
+                                            SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
+                                        )
+                                        viewModel.showHideSpeakingFragmentCallButtons(1)
+                                        showIntroVideoUi()
+                                    }
                                 }
                             }
                         }
+                        // TODO else if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW) && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT) && (tab?.position == 0 || tab?.position == -1)){
+                    }else if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT) && (tab?.position == 0 || tab?.position == -1)){
+                        Log.e("sagar", "setSelectedColor: 3" )
+                        viewModel.speakingTooltipLiveData.postValue(response)
                     }
-                    // TODO else if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW) && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT) && (tab?.position == 0 || tab?.position == -1)){
-                }else if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT) && (tab?.position == 0 || tab?.position == -1)){
-                    Log.e("sagar", "setSelectedColor: 3" )
-                    viewModel.speakingTooltipLiveData.postValue(response)
                 }
+            } catch (ex: Exception) {
+                Log.d("sagar", "showBuyCourseTooltip: ${ex.message}")
             }
-        } catch (ex: Exception) {
-            Log.d("sagar", "showBuyCourseTooltip: ${ex.message}")
         }
     }
 

@@ -62,14 +62,15 @@
                         android:layout_marginTop="@dimen/_16sdp"
                         android:layout_marginEnd="@dimen/_12sdp"
                         android:backgroundTint="@color/surface_information"
-                        android:drawableLeft="@drawable/ic_recent_calls"
+                        app:icon="@drawable/ic_recent_calls"
+                        app:iconTint="@color/primary_500"
                         android:elevation="0dp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         android:text="@string/recent_calls"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group_smaller"
                         android:textColor="@color/primary_500"
-                        android:visibility="visible"
+                        android:visibility="invisible"
                         app:cornerRadius="@dimen/_20sdp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -218,24 +219,6 @@
                             app:layout_constraintTop_toTopOf="@id/progress_bar"
                             tools:text="5 / 10 \n min" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txt_how_to_speak"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/_24sdp"
-                            android:clickable="true"
-                            android:drawablePadding="@dimen/_4sdp"
-                            android:gravity="center"
-                            android:text="@string/how_to_speak"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/primary_500"
-                            android:textSize="16.90sp"
-                            android:visibility="gone"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/txt_label_calls_left"
-                            tools:visibility="visible" />
-
                         <androidx.constraintlayout.widget.Group
                             android:id="@+id/bb_tooltip_group"
                             android:layout_width="wrap_content"
@@ -279,9 +262,9 @@
                             android:id="@+id/iv_arrow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:layout_constraintEnd_toEndOf="@id/txt_how_to_speak"
-                            app:layout_constraintStart_toStartOf="@id/txt_how_to_speak"
-                            app:layout_constraintTop_toBottomOf="@id/txt_how_to_speak"
+                            app:layout_constraintEnd_toEndOf="@id/txt_label_calls_left"
+                            app:layout_constraintStart_toStartOf="@id/txt_label_calls_left"
+                            app:layout_constraintTop_toBottomOf="@id/txt_label_calls_left"
                             app:srcCompat="@drawable/ic_arrow_yellow_stroke" />
 
                         <include
