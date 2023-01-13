@@ -34,6 +34,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SPEAKING_BB_TIP_BUTTON_CONTENT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SPEAKING_BB_TIP_BUTTON_HEADER
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SPEAKING_BB_TIP_TOPIC_HEADER
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -716,15 +719,21 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                     setOverlayAnimationOnTopicContainer()
                     showTooltipTopic(
-                        "Today’s topic and goals",
-                        response.speakingToolTipText ?: EMPTY
+                        AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_TOPIC_HEADER),
+                        AppObjectController.getFirebaseRemoteConfig().getString(
+                            FirebaseRemoteConfigKey.SPEAKING_BB_TIP_TOPIC_CONTENT.plus(
+                                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
+                            )
+                        )
                     )
                 } else {
                     Log.e("sagar", "showToolTipOnLesson: 3" )
                     //This code is for show balloon tooltip and highlight peer to peer button
                     showTooltipButton(
-                        "Start Speaking Practice Now",
-                        response.speakingToolTipText ?: EMPTY
+                        AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_HEADER),
+                        AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_CONTENT).plus(
+                            PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
+                        )
                     )
 
                     setOverlayAnimationOnSpeakingButton()
@@ -1040,8 +1049,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 dismissTooltipTopicContainer()
                 //This code is for show balloon tooltip and highlight peer to peer button
                 showTooltipButton(
-                    "Start Speaking Practice Now",
-                    "Start Speaking Practice Now")
+                    AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_HEADER),
+                    AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_CONTENT).plus(
+                        PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
+                    )
+                )
                 CoroutineScope(Dispatchers.Main).launch {
                     setOverlayAnimationOnSpeakingButton()
                 }

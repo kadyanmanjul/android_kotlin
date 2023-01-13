@@ -259,6 +259,7 @@ class SignUpActivity : ThemedBaseActivity() {
 
     fun onLanguageSelected(testId: String) {
         PrefManager.put(FREE_TRIAL_TEST_ID, testId)
+        viewModel.saveImpression(LANGUAGE_SELECTED)
         viewModel.postGoal(GoalKeys.LANGUAGE_SELECTED)
         if (testId == HINDI_TO_ENGLISH_TEST_ID && isVariantActive(VariantKeys.ENGLISH_FOR_GOVT_EXAM_ENABLED)) {
             openChooseGoalFragment()

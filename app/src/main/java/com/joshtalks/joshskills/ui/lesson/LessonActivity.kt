@@ -54,6 +54,8 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURS
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_LESSON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.COUPON_UNLOCK_LESSON_COUNT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.LESSON_COMPLETE_COUPON_DISCOUNT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.LESSON_SPEAKING_BB_TIP_CONTENT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.LESSON_SPEAKING_BB_TIP_HEADER
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -1482,9 +1484,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                     .setLifecycleOwner(this)
                                     .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR).build()
                                 val textViewTitle = toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.title)
-                                textViewTitle.text = "Welcome to Speaking section"
+                                textViewTitle.text = AppObjectController.getFirebaseRemoteConfig().getString(LESSON_SPEAKING_BB_TIP_HEADER)
                                 val textViewSubHeadingText = toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
-                                textViewSubHeadingText.text = "Here you can practice English speaking with other students"
+                                textViewSubHeadingText.text = AppObjectController.getFirebaseRemoteConfig().getString(LESSON_SPEAKING_BB_TIP_CONTENT.plus(courseId))
                                 tab.view.let { toolTipBalloon.showAlignBottom(it) }
 
                                 binding.welcomeContainer.setOnClickListener {

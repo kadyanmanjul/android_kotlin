@@ -2085,4 +2085,126 @@
         <key>IS_MISSED_NOTIFICATION_ACTIVE</key>
         <value>false</value>
     </entry>
+
+    <entry>
+        <key>LESSON_SPEAKING_BB_TIP_HEADER</key>
+        <value>Welcome to Speaking Section</value>
+    </entry>
+
+    <entry>
+        <key>LESSON_SPEAKING_BB_TIP_CONTENT_1203</key>
+        <value>বিনা দ্বিধায় অন্যান্য শিক্ষার্থীদের সাথে ইংরেজি কথা বলার অনুশীলন করুন</value>
+    </entry>
+
+    <entry>
+        <key>LESSON_SPEAKING_BB_TIP_CONTENT_1206</key>
+        <value>English Speaking ਦੀ Practice ਕਰੋ ਵਧੇਰੇ students ਨਾਲ ਬਿਨਾ ਕਿਸੇ hesitation</value>
+    </entry>
+
+    <entry>
+        <key>LESSON_SPEAKING_BB_TIP_CONTENT_1207</key>
+        <value>संकोच न बाळगता इतर विद्यार्थ्यांसोबत English मध्ये बोलण्याचा सराव करा</value>
+    </entry>
+
+    <entry>
+        <key>LESSON_SPEAKING_BB_TIP_CONTENT_1209</key>
+        <value>മടികൂടാതെ മറ്റ് വിദ്യാർത്ഥികളുമായി English സംസാരിക്കുന്നത് പരിശീലിക്കാം</value>
+    </entry>
+
+    <entry>
+        <key>LESSON_SPEAKING_BB_TIP_CONTENT_1210</key>
+        <value>மற்ற students கூட தயக்கமின்றி English பேச பழகுங்கள்</value>
+    </entry>
+
+    <entry>
+        <key>LESSON_SPEAKING_BB_TIP_CONTENT_1211</key>
+        <value>సంకోచం లేకుండా ఇతర విద్యార్థులతో English Speaking practice చేయండి.</value>
+    </entry>
+
+    <entry>
+        <key>LESSON_SPEAKING_BB_TIP_CONTENT_151</key>
+        <value>English speaking की प्रैक्टिस करें दुसरे students के साथ बिना hesitation के।</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_TOPIC_HEADER</key>
+        <value>Today's topic and goals</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_TOPIC_CONTENT_1203</key>
+        <value>কল চলাকালীন কথা বলার বিষয়গুলি খুঁজুন এবং পাঠের জন্য আপনার লক্ষ্য সম্পূর্ণ করুন</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_TOPIC_CONTENT_1206</key>
+        <value>Find ਕਰੋ topics Call ਤੇ ਗੱਲ ਕਰਨ ਦੇ ਲਈ ਤੇ ਪੂਰਾ ਕਰੋ ਆਪਣੇ lesson ਦਾ goal</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_TOPIC_CONTENT_1207</key>
+        <value>Call दरम्यान बोलण्यासाठी विषय शोधा आणि lesson साठी तुमचे ध्येय प्राप्त करा</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_TOPIC_CONTENT_1209</key>
+        <value>കോളിനിടയിൽ സംസാരിക്കാനുള്ള വിഷയങ്ങൾ കണ്ടെത്തി പാഠത്തിനായുള്ള നിങ്ങളുടെ Goal പൂർത്തിയാക്കുക</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_TOPIC_CONTENT_1210</key>
+        <value>Callன் போது பேச வேண்டிய Topics கண்டறிந்து, lessonன் Goalயை முடிக்கவும்.</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_TOPIC_CONTENT_1211</key>
+        <value>Call లో మాట్లాడటానికి topics కనుగొనండి lesson లోని మీ లక్ష్యాన్ని పూర్తి చేయండి</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_TOPIC_CONTENT_151</key>
+        <value>Call पे बात करने के लिए topic पाएं और lesson का goal complete करें।</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_BUTTON_HEADER</key>
+        <value>Start Speaking Practice Now</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_BUTTON_HEADER_1203</key>
+        <value>শিক্ষার্থীদের অনলাইনে কল করতে এবং আপনার নম্বর শেয়ার না করে ইংরেজি অনুশীলন করতে এখানে ক্লিক করুন</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_BUTTON_HEADER_1206</key>
+        <value>ਇੱਥੇ Click ਕਰੋ students ਨੂੰ online Call ਕਰਨ ਦੇ ਲਈ ਤੇ practice ਕਰੋ speaking ਬਿਨਾਂ ਆਪਣਾ number share ਕਿੱਤੇ</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_BUTTON_HEADER_1207</key>
+        <value>विद्यार्थ्यांना online call करण्यासाठी येथे क्लिक करा आणि तुमचा नंबर share न करता बोलण्याचा सराव करा</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_BUTTON_HEADER_1209</key>
+        <value>വിദ്യാർത്ഥികളെ ഓൺലൈനിൽ വിളിക്കാനും നിങ്ങളുടെ number പങ്കിടാതെ സംസാരിക്കാനും ഇവിടെ click ചെയ്യുക</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_BUTTON_HEADER_1210</key>
+        <value>Students online அழைக்கவும், உங்கள் எண்ணைப் பகிராமல் பேசவும் click here</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_BUTTON_HEADER_1211</key>
+        <value>ఆన్‌లైన్‌లో విద్యార్థులకు call చేయడానికి మరియు మీ నంబర్‌ను షేర్ చేయకుండా speaking practice చేయడానికి ఇక్కడ క్లిక్ చేయండి</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_BB_TIP_BUTTON_HEADER_151</key>
+        <value>Online छात्रों के साथ speaking practice करें बिना number share करे।  </value>
+    </entry>
+
+
 </defaults>
