@@ -43,7 +43,7 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.local.model.User
-import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.conversation.ConversationActivity
 import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
 //import com.joshtalks.joshskills.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.common.util.showAppropriateMsg
@@ -734,7 +734,7 @@ class SignUpActivity : ThemedBaseActivity() {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 },
-                ConversationActivity.getConversationActivityIntent(this, inboxEntity)
+                com.joshtalks.joshskills.conversation.ConversationActivity.getConversationActivityIntent(this, inboxEntity)
             ),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT

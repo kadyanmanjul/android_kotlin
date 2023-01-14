@@ -22,7 +22,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.certificate.examview.CExamMainActivity
 import com.joshtalks.joshskills.certificate.report.CExamReportActivity
 import com.joshtalks.joshskills.certificate.view.InstructionFragment
-import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.conversation.CHAT_ROOM_ID
 
 const val CERTIFICATION_EXAM_ID = "certification_exam_ID"
 const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
@@ -43,7 +43,7 @@ class CertificationBaseActivity : BaseActivity() {
         ): Intent {
             return Intent(activity, CertificationBaseActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
-                putExtra(CHAT_ROOM_ID, chatMessageId)
+                putExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID, chatMessageId)
                 putExtra(CERTIFICATION_EXAM_ID, certificationId)
                 putExtra(EXAM_STATUS, cExamStatus)
                 putExtra(EXAM_LESSON_INTERVAL, lessonInterval)
@@ -186,7 +186,7 @@ class CertificationBaseActivity : BaseActivity() {
     override fun onBackPressed() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         val resultIntent = Intent().apply {
-            putExtra(CHAT_ROOM_ID, intent.getStringExtra(CHAT_ROOM_ID))
+            putExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID, intent.getStringExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID))
             putExtra(EXAM_LESSON_INTERVAL, intent.getIntExtra(EXAM_LESSON_INTERVAL, -1))
         }
         setResult(RESULT_OK, resultIntent)

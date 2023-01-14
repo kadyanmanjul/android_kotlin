@@ -35,7 +35,7 @@ import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.common.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.conversation.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.common.ui.practise.PracticeViewModel
@@ -316,7 +316,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                         putExtra(LAST_LESSON_INTERVAL, lesson?.interval)
                         putExtra(LessonActivity.LAST_LESSON_STATUS, true)
                         putExtra(LESSON__CHAT_ID, lesson?.chatId)
-                        putExtra(CHAT_ROOM_ID, lesson?.chatId)
+                        putExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID, lesson?.chatId)
                     }
                 )
                 requireActivity().finish()

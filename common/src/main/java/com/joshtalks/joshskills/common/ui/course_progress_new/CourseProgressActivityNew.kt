@@ -27,11 +27,10 @@ import com.joshtalks.joshskills.common.repository.server.course_overview.CourseO
 import com.joshtalks.joshskills.common.repository.server.course_overview.CourseOverviewResponse
 import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.assessment.view.Stub
-import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
-import com.joshtalks.joshskills.common.ui.chat.vh.PdfCourseProgressView
+import com.joshtalks.joshskills.conversation.CHAT_ROOM_ID
+import com.joshtalks.joshskills.conversation.vh.PdfCourseProgressView
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 //import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
-import com.joshtalks.joshskills.common.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +39,7 @@ import kotlinx.coroutines.withContext
 const val COURSE_ID = "course_id"
 
 class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListener,ThemedBaseActivity() {
-    private var pdfViewStub: Stub<PdfCourseProgressView>? = null
+    private var pdfViewStub: Stub<com.joshtalks.joshskills.conversation.vh.PdfCourseProgressView>? = null
     private var courseOverviewResponse: List<CourseOverviewResponse>? = null
 
     private var lastAvailableLessonNo: Int? = null
@@ -62,7 +61,9 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let { intent ->
-                    if (intent.hasExtra(CHAT_ROOM_ID) && intent.getStringExtra(CHAT_ROOM_ID)
+                    if (intent.hasExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID) && intent.getStringExtra(
+                            com.joshtalks.joshskills.conversation.CHAT_ROOM_ID
+                        )
                             .isNullOrBlank().not()
                     ) {
                         //binding.progressLayout.visibility=View.VISIBLE
@@ -172,7 +173,7 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
                             courseId.toString(),
                             getConversationId() ?: EMPTY
                         )
-                        view.get().addCallback(object : PdfCourseProgressView.Callback {
+                        view.get().addCallback(object : com.joshtalks.joshskills.conversation.vh.PdfCourseProgressView.Callback {
                             override fun showDialog(idString: Int) {
                                 when (idString) {
                                     -1 -> {

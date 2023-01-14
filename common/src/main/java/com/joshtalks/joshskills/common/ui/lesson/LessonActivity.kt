@@ -34,7 +34,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -45,7 +44,6 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.common.R
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.core.ApiCallStatus.*
-import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.AVAIL_COUPON_BANNER_TEXT
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_COUPON_UNLOCKED_TEXT
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_BANNER_LESSON_TEXT
 import com.joshtalks.joshskills.common.core.FirebaseRemoteConfigKey.Companion.COUPON_UNLOCK_LESSON_COUNT
@@ -68,7 +66,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.common.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.repository.server.course_detail.VideoModel
-import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.conversation.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.common.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.common.ui.lesson.reading.ReadingFragmentWithoutFeedback
@@ -182,7 +180,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
                         putExtra(LAST_LESSON_INTERVAL, lesson?.interval)
                         putExtra(LAST_LESSON_STATUS, true)
                         putExtra(LESSON__CHAT_ID, lesson?.chatId)
-                        putExtra(CHAT_ROOM_ID, lesson?.chatId)
+                        putExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID, lesson?.chatId)
                     }
                 )
                 finish()
@@ -1521,7 +1519,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener,
             else -> {
                 val resultIntent = Intent()
                 viewModel.lessonLiveData.value?.let {
-                    resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
+                    resultIntent.putExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID, it.chatId)
                     resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
                     resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
                     resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)

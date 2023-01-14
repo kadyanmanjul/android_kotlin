@@ -25,15 +25,13 @@ import com.joshtalks.joshskills.common.repository.server.assessment.OnlineTestTy
 import com.joshtalks.joshskills.common.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.common.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.common.ui.assessment.view.Stub
-import com.joshtalks.joshskills.common.ui.chat.vh.GrammarHeadingView
+import com.joshtalks.joshskills.conversation.vh.GrammarHeadingView
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivityListener
-import com.joshtalks.joshskills.common.ui.online_test.util.*
 import com.joshtalks.joshskills.common.ui.online_test.vh.AtsChoiceView
 import com.joshtalks.joshskills.common.ui.online_test.vh.GrammarButtonView
 import com.joshtalks.joshskills.common.ui.online_test.vh.McqChoiceView
 import com.joshtalks.joshskills.common.ui.online_test.vh.SubjectiveChoiceView
-import com.joshtalks.joshskills.common.util.ExoAudioPlayer2
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -56,7 +54,7 @@ class OnlineTestFragment :
     }
     private var lessonNumber: Int = -1
     private var lessonId: Int = -1
-    private var headingView: Stub<GrammarHeadingView>? = null
+    private var headingView: Stub<com.joshtalks.joshskills.conversation.vh.GrammarHeadingView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
     private var lessonActivityListener: LessonActivityListener? = null
     private var testCompletedListener: TestCompletedListener? = null

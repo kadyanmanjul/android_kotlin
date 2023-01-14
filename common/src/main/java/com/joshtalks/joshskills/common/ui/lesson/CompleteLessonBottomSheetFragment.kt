@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.common.core.*
 import com.joshtalks.joshskills.common.databinding.CompleteLessonDialogBinding
-import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.conversation.CHAT_ROOM_ID
 import com.joshtalks.joshskills.common.ui.video_player.LAST_LESSON_INTERVAL
 
 class CompleteLessonBottomSheetFragment(val viewModel: LessonViewModel) : BottomSheetDialogFragment() {
@@ -32,7 +32,7 @@ class CompleteLessonBottomSheetFragment(val viewModel: LessonViewModel) : Bottom
             viewModel.saveImpression(Lesson_pop_up_cancelled)
             val resultIntent = Intent()
             viewModel.lessonLiveData.value?.let {
-                resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
+                resultIntent.putExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID, it.chatId)
                 resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
                 resultIntent.putExtra(LessonActivity.LAST_LESSON_STATUS, it.status?.name)
                 resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)

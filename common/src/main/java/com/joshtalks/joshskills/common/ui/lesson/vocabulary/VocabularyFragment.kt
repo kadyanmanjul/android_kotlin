@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.common.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.common.databinding.FragmentVocabularyBinding
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.*
 import com.joshtalks.joshskills.common.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
@@ -29,7 +28,7 @@ import com.joshtalks.joshskills.common.repository.local.model.assessment.Assessm
 import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.repository.server.RequestEngage
-import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.common.ui.lesson.LessonViewModel
@@ -120,7 +119,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     binding.lessonTooltipLayout.visibility = View.GONE
                 }
             } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                delay(com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS)
                 if (viewModel.lessonLiveData.value?.lessonNo == 1) {
                     withContext(Dispatchers.Main) {
                         binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]

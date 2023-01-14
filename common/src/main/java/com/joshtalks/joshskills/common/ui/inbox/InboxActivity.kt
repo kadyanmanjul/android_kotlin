@@ -21,7 +21,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,7 +41,7 @@ import com.joshtalks.joshskills.common.core.notification.StickyNotificationServi
 import com.joshtalks.joshskills.common.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
-import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.conversation.ConversationActivity
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.common.ui.inbox.payment_verify.PaymentStatus
@@ -697,7 +696,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
         } else {
-            ConversationActivity.startConversionActivity(this, inboxEntity)
+            com.joshtalks.joshskills.conversation.ConversationActivity.startConversionActivity(this, inboxEntity)
         }
     }
 

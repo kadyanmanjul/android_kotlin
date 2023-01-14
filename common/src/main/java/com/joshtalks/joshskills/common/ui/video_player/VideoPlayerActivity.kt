@@ -57,7 +57,7 @@ import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.engage.Graph
 import com.joshtalks.joshskills.common.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.common.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat
-import com.joshtalks.joshskills.common.ui.chat.VIDEO_OPEN_REQUEST_CODE
+import com.joshtalks.joshskills.conversation.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.common.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -105,7 +105,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             intent.putExtra(COURSE_NAME, videoTitle)
             intent.putExtra(DURATION, duration)
             intent.putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
-            activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
+            activity.startActivityForResult(intent,
+                com.joshtalks.joshskills.conversation.VIDEO_OPEN_REQUEST_CODE
+            )
         }
 
         fun startVideoActivity(

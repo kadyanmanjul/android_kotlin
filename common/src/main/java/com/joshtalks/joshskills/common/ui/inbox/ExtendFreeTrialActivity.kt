@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.databinding.ActivityExtendFreeTrialBinding
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.conversation.ConversationActivity
 
 class ExtendFreeTrialActivity : AppCompatActivity() {
     private lateinit var inboxEntity: InboxEntity
@@ -61,7 +61,7 @@ class ExtendFreeTrialActivity : AppCompatActivity() {
     }
 
     fun openConversationActivity(inboxEntity: InboxEntity){
-        ConversationActivity.startConversionActivity(this, inboxEntity)
+        com.joshtalks.joshskills.conversation.ConversationActivity.startConversionActivity(this, inboxEntity)
         this.finish()
     }
     

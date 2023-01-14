@@ -11,11 +11,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.common.ui.chat.ConversationActivity" />
+            type="com.joshtalks.joshskills.conversation.ConversationActivity" />
 
         <variable
             name="viewmodel"
-            type="com.joshtalks.joshskills.common.ui.chat.ConversationViewModel" />
+            type="com.joshtalks.joshskills.conversation.ConversationViewModel" />
 
     </data>
 

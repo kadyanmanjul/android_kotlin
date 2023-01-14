@@ -29,7 +29,6 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.MediaProgressEv
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity;
 import com.joshtalks.joshskills.common.repository.local.model.NotificationChannelData;
 import com.joshtalks.joshskills.common.ui.chat.ConversationActivity;
-import com.joshtalks.joshskills.common.ui.chat.ConversationActivityKt;
 
 import org.jetbrains.annotations.NotNull;
 

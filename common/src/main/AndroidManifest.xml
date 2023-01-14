@@ -152,7 +152,7 @@
             android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
         <activity
-            android:name=".ui.chat.ConversationActivity"
+            android:name="com.joshtalks.joshskills.conversation.ConversationActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:exported="false"
             android:launchMode="singleTop"
@@ -280,7 +280,7 @@
             android:alwaysRetainTaskState="true"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.chat.ConversationActivity"
+            android:parentActivityName="com.joshtalks.joshskills.conversation.ConversationActivity"
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.voip.favorite.FavoriteListActivity"
@@ -449,7 +449,7 @@
             android:exported="true"
             tools:ignore="ExportedService" />
         <service
-            android:name=".ui.chat.service.DownloadMediaService"
+            android:name="com.joshtalks.joshskills.conversation.service.DownloadMediaService"
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />

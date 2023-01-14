@@ -52,7 +52,7 @@ import com.joshtalks.joshskills.common.repository.server.ProfileResponse
 import com.joshtalks.joshskills.common.repository.server.SearchLocality
 import com.joshtalks.joshskills.common.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.common.ui.assessment.AssessmentActivity
-import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.conversation.ConversationActivity
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.common.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.common.ui.extra.CustomPermissionDialogFragment
@@ -219,7 +219,7 @@ abstract class BaseActivity :
 
     fun getActivityType(act: Activity): ActivityEnum {
         return when (act) {
-            is ConversationActivity -> ActivityEnum.Conversation
+            is com.joshtalks.joshskills.conversation.ConversationActivity -> ActivityEnum.Conversation
             is CourseExploreActivity -> ActivityEnum.CourseExplore
             is HelpActivity -> ActivityEnum.Help
             is InboxActivity -> ActivityEnum.Inbox
@@ -504,7 +504,7 @@ abstract class BaseActivity :
                         val courseId = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         AppObjectController.appDatabase.courseDao().getCourseFromId(courseId)
                             ?.let {
-                                ConversationActivity.startConversionActivity(this@BaseActivity, it)
+                                com.joshtalks.joshskills.conversation.ConversationActivity.startConversionActivity(this@BaseActivity, it)
                             }
                     }
                     this == getString(R.string.setting_dlink) -> {

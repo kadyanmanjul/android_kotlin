@@ -25,21 +25,19 @@ import com.joshtalks.joshskills.common.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.common.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.databinding.ActivityAssessmentBinding
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.eventbus.*
 import com.joshtalks.joshskills.common.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.common.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.common.repository.local.model.assessment.ReviseConcept
 import com.joshtalks.joshskills.common.repository.server.assessment.*
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
 import com.joshtalks.joshskills.common.ui.assessment.adapter.AssessmentQuestionAdapter
 import com.joshtalks.joshskills.common.ui.assessment.extra.AssessmentQuestionViewType
 import com.joshtalks.joshskills.common.ui.assessment.fragment.QuizSuccessFragment
 import com.joshtalks.joshskills.common.ui.assessment.fragment.ReviseConceptFragment
 import com.joshtalks.joshskills.common.ui.assessment.fragment.TestSummaryFragment
 import com.joshtalks.joshskills.common.ui.assessment.viewmodel.AssessmentViewModel
-import com.joshtalks.joshskills.common.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.conversation.CHAT_ROOM_ID
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -309,7 +307,10 @@ class AssessmentActivity : CoreJoshActivity() {
 
                     AssessmentStatus.COMPLETED -> {
                         val resultIntent = Intent().apply {
-                            putExtra(CHAT_ROOM_ID, intent.getStringExtra(CHAT_ROOM_ID))
+                            putExtra(
+                                com.joshtalks.joshskills.conversation.CHAT_ROOM_ID, intent.getStringExtra(
+                                    com.joshtalks.joshskills.conversation.CHAT_ROOM_ID
+                                ))
                         }
                         setResult(RESULT_OK, resultIntent)
                         finish()
@@ -504,7 +505,7 @@ class AssessmentActivity : CoreJoshActivity() {
         ) {
             Intent(activity, AssessmentActivity::class.java).apply {
                 putExtra(KEY_ASSESSMENT_ID, assessmentId)
-                putExtra(CHAT_ROOM_ID, chatRoomId)
+                putExtra(com.joshtalks.joshskills.conversation.CHAT_ROOM_ID, chatRoomId)
                 putExtra(com.joshtalks.joshskills.common.track.CONVERSATION_ID, conversationId)
                 if (startedFrom.isNotBlank())
                     putExtra(STARTED_FROM, startedFrom)

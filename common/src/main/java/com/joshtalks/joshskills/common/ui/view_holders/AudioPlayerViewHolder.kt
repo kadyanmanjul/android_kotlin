@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.common.core.custom_ui.PlayerUtil
 import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.core.playback.PlaybackInfoListener
 import com.joshtalks.joshskills.common.core.service.DownloadUtils
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.AudioType
 import com.joshtalks.joshskills.common.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.common.repository.local.entity.ChatModel
@@ -33,7 +32,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.common.repository.local.eventbus.AudioPlayEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.DownloadCompletedEventBus
 import com.joshtalks.joshskills.common.repository.local.eventbus.InternalSeekBarProgressEventBus
-import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.conversation.ConversationActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -276,7 +275,7 @@ class AudioPlayerViewHolder(
             try {
 
                 if (this.chatId == message.chatId) {
-                    val ref = activityRef.get() as ConversationActivity
+                    val ref = activityRef.get() as com.joshtalks.joshskills.conversation.ConversationActivity
                     if (ref.isAudioPlaying()) {
                         btnPauseImageView.visibility = android.view.View.VISIBLE
                         btnPlayImageView.visibility = android.view.View.GONE

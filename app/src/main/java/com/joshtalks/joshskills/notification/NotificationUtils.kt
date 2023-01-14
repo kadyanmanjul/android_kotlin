@@ -33,8 +33,8 @@ import com.joshtalks.joshskills.common.repository.local.entity.Question
 import com.joshtalks.joshskills.common.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.common.repository.local.model.*
 import com.joshtalks.joshskills.common.ui.assessment.AssessmentActivity
-import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
-import com.joshtalks.joshskills.common.ui.chat.UPDATED_CHAT_ROOM_OBJECT
+import com.joshtalks.joshskills.conversation.ConversationActivity
+import com.joshtalks.joshskills.conversation.UPDATED_CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.common.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.common.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
@@ -573,7 +573,7 @@ class NotificationUtils(val context: Context) {
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
-            ConversationActivity::class.java
+            com.joshtalks.joshskills.conversation.ConversationActivity::class.java
         }
     }
 
@@ -652,7 +652,7 @@ class NotificationUtils(val context: Context) {
             .chooseRegisterCourseMinimal(actionData!!) ?: return null
 
         val rIntnet = Intent(context.applicationContext, isNotificationCrash()).apply {
-            putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
+            putExtra(com.joshtalks.joshskills.conversation.UPDATED_CHAT_ROOM_OBJECT, obj)
             putExtra(ShareConstants.ACTION_TYPE, action)
             putExtra(QUESTION_ID, actionData)
             // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

@@ -25,7 +25,7 @@ import com.joshtalks.joshskills.common.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.common.core.analytics.ParamKeys
 import com.joshtalks.joshskills.common.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.lesson.*
 import com.joshtalks.joshskills.common.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.common.ui.online_test.util.TestCompletedListener
@@ -278,7 +278,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                     binding.lessonTooltipLayout.visibility = View.GONE
                 }
             } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                delay(com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS)
                 if (lessonNumber == 1) {
                     withContext(Dispatchers.Main) {
                         binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]

@@ -1,28 +1,6 @@
 package com.joshtalks.joshskills.common.util
 
-import android.app.Activity
-import android.app.PendingIntent
-import android.content.Intent
-import android.os.Build
-import com.joshtalks.joshskills.voip.base.constants.*
-import com.joshtalks.joshskills.common.core.*
-import com.joshtalks.joshskills.common.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.common.repository.local.model.User
-import com.joshtalks.joshskills.common.repository.server.onboarding.SpecificOnboardingCourseData
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
-import com.joshtalks.joshskills.common.ui.chat.ConversationActivity
-import com.joshtalks.joshskills.common.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.common.ui.help.HelpActivity
-import com.joshtalks.joshskills.common.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.common.ui.lesson.SPEAKING_POSITION
 //import com.joshtalks.joshskills.buypage.new_buy_page_layout.BuyPageActivity
-import com.joshtalks.joshskills.common.ui.special_practice.utils.COUPON_CODE
-import com.joshtalks.joshskills.common.ui.special_practice.utils.FLOW_FROM
-import com.joshtalks.joshskills.common.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.common.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
-import org.json.JSONObject
 
 //object DeepLinkRedirectUtil {
 //

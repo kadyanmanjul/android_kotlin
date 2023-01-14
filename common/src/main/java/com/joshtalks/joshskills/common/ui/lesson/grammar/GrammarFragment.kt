@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.common.ui.lesson.grammar
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -33,7 +32,6 @@ import com.joshtalks.joshskills.common.core.io.AppDirectory
 import com.joshtalks.joshskills.common.core.service.DownloadUtils
 import com.joshtalks.joshskills.common.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.common.databinding.FragmentGrammarLayoutBinding
-import com.joshtalks.joshskills.common.messaging.RxBus2
 import com.joshtalks.joshskills.common.repository.local.entity.*
 import com.joshtalks.joshskills.common.repository.local.eventbus.DownloadMediaEventBusForLessonQuestion
 import com.joshtalks.joshskills.common.repository.local.eventbus.MediaProgressEventBus
@@ -43,9 +41,8 @@ import com.joshtalks.joshskills.common.repository.local.model.assessment.Assessm
 import com.joshtalks.joshskills.common.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.repository.server.assessment.QuestionStatus
-import com.joshtalks.joshskills.common.track.CONVERSATION_ID
-import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
-import com.joshtalks.joshskills.common.ui.chat.service.DownloadMediaService
+import com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.conversation.service.DownloadMediaService
 import com.joshtalks.joshskills.common.ui.lesson.GRAMMAR_POSITION
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivityListener
@@ -168,7 +165,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                     binding.lessonTooltipLayout.visibility = View.GONE
                 }
             } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                delay(com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS)
                 if (viewModel.lessonLiveData.value?.lessonNo == 1) {
                     withContext(Dispatchers.Main) {
                         binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
@@ -215,7 +212,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                             // conversationViewModel.refreshMessageObject(it.id)
                         }
                         DOWNLOAD_STATUS.DOWNLOADING -> {
-                            DownloadMediaService.addDownload(it.lessonQuestion, it.url)
+                            com.joshtalks.joshskills.conversation.service.DownloadMediaService.addDownload(it.lessonQuestion, it.url)
                         }
                         DOWNLOAD_STATUS.REQUEST_DOWNLOADING -> {
                             PermissionUtils.storageReadAndWritePermission(
@@ -235,7 +232,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                                                 // conversationAdapter.updateItem(it)
                                             }
                                             if (it.type == LessonMaterialType.PD || it.type == LessonMaterialType.AU) {
-                                                DownloadMediaService.addDownload(
+                                                com.joshtalks.joshskills.conversation.service.DownloadMediaService.addDownload(
                                                     it.lessonQuestion,
                                                     it.url
                                                 )

@@ -68,7 +68,7 @@ import com.joshtalks.joshskills.common.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.common.repository.local.model.Mentor
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.common.repository.server.RequestEngage
-import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.common.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.common.ui.lesson.LessonViewModel
@@ -527,7 +527,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.lessonTooltipLayout.visibility = GONE
                 }
             } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                delay(com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS)
                 if (viewModel.lessonLiveData.value?.lessonNo == 1) {
                     withContext(Dispatchers.Main) {
                         binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]

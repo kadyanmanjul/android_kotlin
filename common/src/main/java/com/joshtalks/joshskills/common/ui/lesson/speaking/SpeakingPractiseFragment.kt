@@ -43,7 +43,7 @@ import com.joshtalks.joshskills.common.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.common.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.common.repository.local.model.User
 import com.joshtalks.joshskills.common.repository.server.PurchasePopupType
-import com.joshtalks.joshskills.common.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.common.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.common.ui.lesson.*
 import com.joshtalks.joshskills.common.ui.lesson.speaking.spf_models.BlockStatusModel
@@ -821,7 +821,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.lessonTooltipLayout.visibility = GONE
                 }
             } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                delay(com.joshtalks.joshskills.conversation.DEFAULT_TOOLTIP_DELAY_IN_MS)
                 if (viewModel.lessonLiveData.value?.lessonNo == 1) {
                     withContext(Dispatchers.Main) {
                         binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
