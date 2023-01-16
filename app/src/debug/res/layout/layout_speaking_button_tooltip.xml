@@ -17,7 +17,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:text="Bade Bhaiya Tip 💡"
-        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+        android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
         />
 
     <LinearLayout
@@ -27,7 +27,8 @@
         android:layout_below="@id/title"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/_5sdp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/balloon_icon"
@@ -45,7 +46,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textColor="@color/icon_default"
-            android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
             tools:text="@string/loremIpsumShort" />
     </LinearLayout>
 </RelativeLayout>

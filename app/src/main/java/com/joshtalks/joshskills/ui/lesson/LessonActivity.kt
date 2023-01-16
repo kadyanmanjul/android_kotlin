@@ -288,6 +288,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         }
         viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
         binding.imageViewClose.setOnClickListener {
+            viewModel.saveImpression(SIV_VIDEO_CANCELED)
             closeVideoPopUpUi()
         }
         viewModel.lessonId.postValue(getLessonId)
@@ -1469,6 +1470,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                         }else{
                             if (response.isSpeakingTooltipEnabled) {
                                 PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW,true)
+                                viewModel.saveImpression(SPEAKING_TOOLTIP1)
                                 Log.e("sagar", "setSelectedColor: 1" )
                                 binding.welcomeContainer.visibility = View.VISIBLE
                                 toolTipBalloon = Balloon.Builder(this)
@@ -1507,6 +1509,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                         viewModel.saveIntroVideoFlowImpression(
                                             SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
                                         )
+                                        viewModel.saveIntroVideoFlowImpression(SIV_AUTOPLAYEDD)
                                         viewModel.showHideSpeakingFragmentCallButtons(1)
                                         showIntroVideoUi()
                                     }
@@ -1829,6 +1832,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                             viewModel.isD2pIntroVideoComplete(true)
                         }
                         if (videoPercent != 0 && videoPercent >= 80 && !isIntroVideoCmpleted) {
+                            viewModel.saveIntroVideoFlowImpression(SIV_VIDEO_COMPLETED)
                             MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_VIDEO_COMPLETE)
                                 .addParam(ParamKeys.LESSON_ID, getLessonId)
                                 .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
@@ -1846,31 +1850,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     private fun closeReadingFullScreen() {
         supportFragmentManager.popBackStackImmediate()
         container_reading.visibility = View.GONE
-    }
-
-    private fun showTooltipInSpeaking(text:String){
-        try {
-            val balloon = Balloon.Builder(this)
-                .setLayout(R.layout.layout_speaking_button_tooltip)
-                .setHeight(BalloonSizeSpec.WRAP)
-                .setIsVisibleArrow(true)
-                .setBackgroundColorResource(R.color.surface_tip)
-                .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
-                .setWidthRatio(0.75f)
-                .setDismissWhenTouchOutside(true)
-                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-                .setLifecycleOwner(this)
-                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-                .build()
-            val textViewTitle = balloon.getContentView().findViewById<MaterialTextView>(R.id.title)
-            textViewTitle.text = text
-            val textViewSubHeadingText = balloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
-            textViewSubHeadingText.text = text
-
-            balloon.showAlignTop(binding.spotlightCallBtn)
-        } catch (ex: Exception) {
-            Log.d(TAG, "showBuyCourseTooltip: ${ex.message}")
-        }
     }
 }
 

@@ -731,11 +731,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     //This code is for show balloon tooltip and highlight peer to peer button
                     showTooltipButton(
                         AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_HEADER),
-                        AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_CONTENT).plus(
-                            PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
+                        AppObjectController.getFirebaseRemoteConfig().getString(
+                            SPEAKING_BB_TIP_BUTTON_CONTENT.plus(
+                                PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
+                            )
                         )
                     )
-
+                    binding.tapAnywhereToContinue.visibility = GONE
                     setOverlayAnimationOnSpeakingButton()
                 }
             }
@@ -1043,6 +1045,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             binding.tooltipContainer.requestLayout()
 
             PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+            viewModel.saveImpression(SPEAKING_TOOLTIP2)
+
             binding.welcomeContainer.setOnClickListener {
                 Log.e("sagar", "showToolTipOnLesson: 4", )
                 binding.welcomeContainer.visibility = GONE
@@ -1050,10 +1054,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 //This code is for show balloon tooltip and highlight peer to peer button
                 showTooltipButton(
                     AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_HEADER),
-                    AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_CONTENT).plus(
-                        PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
+                    AppObjectController.getFirebaseRemoteConfig().getString(
+                        SPEAKING_BB_TIP_BUTTON_CONTENT.plus(
+                            PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID }
+                        )
                     )
                 )
+                binding.tapAnywhereToContinue.visibility = GONE
                 CoroutineScope(Dispatchers.Main).launch {
                     setOverlayAnimationOnSpeakingButton()
                 }
@@ -1110,6 +1117,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 overlayImageView.requestLayout()
             }
             PrefManager.put(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP, true)
+            viewModel.saveImpression(SPEAKING_TOOLTIP3)
+
         }
     }
 
@@ -1167,7 +1176,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     .setBackgroundColorResource(R.color.surface_tip)
                     .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
                     .setWidthRatio(0.75f)
-                    .setArrowPosition(0.2f)
+                    .setArrowPosition(0.5f)
                     .setDismissWhenTouchOutside(false)
                     .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
                     .setLifecycleOwner(this)
@@ -1194,6 +1203,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     override fun onPause() {
         super.onPause()
+        if (this::toolTipTopicContainer.isInitialized && toolTipTopicContainer.isShowing || this::toolTipButton.isInitialized && toolTipButton.isShowing) {
+            viewModel.saveImpression(SPEAKING_BACK_PRESS)
+        }
+
         dismissTooltipTopicContainer()
         binding.welcomeContainer.visibility = GONE
         dismissTooltipButton()

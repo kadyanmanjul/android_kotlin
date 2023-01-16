@@ -57,7 +57,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/welcome_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -69,7 +69,17 @@
             app:layout_constraintBottom_toTopOf="@id/buy_course_ll"
             app:layout_constraintTop_toBottomOf="@+id/divider"
             android:visibility="gone">
-        </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_30sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/tap_anywhere_to_continue"
+                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24" />
+        </RelativeLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/buy_course_banner"

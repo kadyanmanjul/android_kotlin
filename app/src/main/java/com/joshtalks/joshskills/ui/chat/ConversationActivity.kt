@@ -2200,7 +2200,7 @@ class ConversationActivity :
     }
 
     private suspend fun setOverlayAnimation() {
-        delay(2000)
+        delay(1500)
         withContext(Dispatchers.Main) {
             var i = 0
             while (true) {

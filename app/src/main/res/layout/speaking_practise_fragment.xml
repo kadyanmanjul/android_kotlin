@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/welcome_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -34,7 +34,20 @@
                 android:id="@+id/welcome_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tap_anywhere_to_continue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_30sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/tap_anywhere_to_continue"
+                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24">
+
+            </androidx.appcompat.widget.AppCompatTextView>
+        </RelativeLayout>
 
 
         <ScrollView
