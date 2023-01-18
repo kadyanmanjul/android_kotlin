@@ -728,8 +728,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
                     lifecycleScope.launch (Dispatchers.Main){
-                        delay(100)
-                        Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
+                        Log.e("sagar", "setObservers1234: $introVideoControl $introVideoUrl")
                         if (introVideoControl) {
                             if (introVideoUrl.isNullOrBlank().not()) {
                                 viewModel.saveIntroVideoFlowImpression(
@@ -759,6 +758,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         }
 
         viewModel.introVideoLiveDataForSpeakingSection.observe(this) {
+            Log.e("sagar", "setObservers111: ${it.videoLink}" )
             introVideoUrl = it.videoLink
             if (introVideoUrl.isNullOrBlank()) {
                 showToast("Something went wrong")
@@ -794,7 +794,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                     videoView.seekToStart()
                     videoView.apply {
                         setUrl(it.video_url)
-                        setVideoId(it.id)
+                        //setVideoId(it.id)
                         if (it.video_height != 0 && it.video_width != 0) {
                             (layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
                                 (it.video_width / it.video_height).toString()
@@ -1018,6 +1018,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     }
 
     override fun showIntroVideo() {
+        Log.e("sagar", "showIntroVideo: ", )
         introVideoControl = true
         setUpVideoProgressListener()
         viewModel.getVideoData()
@@ -1459,19 +1460,19 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             }
         }
 
-        if (lessonNumber == 1){
+        if (lessonNumber == 1 && PrefManager.getBoolValue(IS_FREE_TRIAL)){
             try {
                 viewModel.speakingTopicLiveData.observe(this){ response ->
-                    Log.e("sagar", "setSelectedColor: 3${PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW)} ${PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)}" )
+                    Log.e("sagar", "setSelectedColor: 3${viewModel.abTestRepository.isVariantActive(VariantKeys.SPEAKING_TOOLTIP_V2_ENABLED)} ${introVideoControl}" )
                     if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW) && (tab?.position == 0 || tab?.position == -1)) {
                         Log.e("sagar", "setSelectedColor: " )
                         if (response == null) {
                             showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
-                        }else{
-                            if (response.isSpeakingTooltipEnabled) {
-                                PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW,true)
+                        }else {
+                            if (viewModel.abTestRepository.isVariantActive(VariantKeys.SPEAKING_TOOLTIP_V2_ENABLED)) {
+                                PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW, true)
                                 viewModel.saveImpression(SPEAKING_TOOLTIP1)
-                                Log.e("sagar", "setSelectedColor: 1" )
+                                Log.e("sagar", "setSelectedColor: 1")
                                 binding.welcomeContainer.visibility = View.VISIBLE
                                 toolTipBalloon = Balloon.Builder(this)
                                     .setLayout(R.layout.layout_speaking_button_tooltip)
@@ -1486,32 +1487,61 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                     .setLifecycleOwner(this)
                                     .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR).build()
                                 val textViewTitle = toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.title)
-                                textViewTitle.text = AppObjectController.getFirebaseRemoteConfig().getString(LESSON_SPEAKING_BB_TIP_HEADER)
-                                val textViewSubHeadingText = toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
-                                textViewSubHeadingText.text = AppObjectController.getFirebaseRemoteConfig().getString(LESSON_SPEAKING_BB_TIP_CONTENT.plus(courseId))
+                                textViewTitle.text =
+                                    AppObjectController.getFirebaseRemoteConfig().getString(LESSON_SPEAKING_BB_TIP_HEADER)
+                                val textViewSubHeadingText =
+                                    toolTipBalloon.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+                                textViewSubHeadingText.text = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(LESSON_SPEAKING_BB_TIP_CONTENT.plus(courseId))
                                 tab.view.let { toolTipBalloon.showAlignBottom(it) }
 
                                 binding.welcomeContainer.setOnClickListener {
-                                    Log.e("sagar", "setSelectedColor: 99", )
+                                    Log.e("sagar", "setSelectedColor: 99",)
                                     binding.welcomeContainer.visibility = View.GONE
                                     dismissTooltipButton()
-                                    PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW,true)
+                                    PrefManager.put(HAS_SEEN_SPEAKING_BB_TIP_SHOW, true)
                                     viewModel.speakingTooltipLiveData.postValue(response)
                                 }
-                            }else{
-                                Log.e("sagar", "setSelectedColor: 2" )
+                            } else {
+                                Log.e("sagar", "setSelectedColor: 2")
                                 //TODO here we have to add one more condition if we have to show by default tooltip
-                                lifecycleScope.launch (Dispatchers.Main){
-                                    delay(100)
-                                    Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
-                                    if (introVideoControl && introVideoUrl.isNullOrBlank().not() && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_VIDEO)) {
-                                        PrefManager.put(HAS_SEEN_SPEAKING_VIDEO, true)
-                                        viewModel.saveIntroVideoFlowImpression(
-                                            SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
-                                        )
-                                        viewModel.saveIntroVideoFlowImpression(SIV_AUTOPLAYEDD)
-                                        viewModel.showHideSpeakingFragmentCallButtons(1)
-                                        showIntroVideoUi()
+                                if (introVideoControl && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_VIDEO) && courseId == "151"){
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        delay(200)
+                                        if (introVideoUrl.isNullOrBlank().not()) {
+                                            Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
+                                            PrefManager.put(HAS_SEEN_SPEAKING_VIDEO, true)
+                                            viewModel.saveIntroVideoFlowImpression(
+                                                SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
+                                            )
+                                            viewModel.saveIntroVideoFlowImpression(SIV_AUTOPLAYEDD)
+                                            viewModel.showHideSpeakingFragmentCallButtons(1)
+                                            showIntroVideoUi()
+                                        }
+                                    }
+                                } else {
+                                    if (!PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) && (viewModel.lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO)) {
+                                        PrefManager.put(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
+                                        binding.overlayLayout.visibility = View.VISIBLE
+                                        binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                                        binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                                        binding.spotlightTabVocab.visibility = View.INVISIBLE
+                                        binding.spotlightTabReading.visibility = View.INVISIBLE
+                                        binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                                        binding.spotlightStartGrammarTest.visibility = View.GONE
+                                        binding.spotlightCallBtn.visibility = View.VISIBLE
+                                        binding.arrowAnimation.visibility = View.VISIBLE
+                                        viewModel.speakingTopicLiveData.value?.speakingToolTipText?.let { text ->
+                                            if (text.isBlank()) hideSpotlight()
+                                            else {
+                                                binding.lessonSpotlightTooltip.setTooltipText(text)
+                                                binding.lessonSpotlightTooltip.post {
+                                                    slideInAnimation(binding.lessonSpotlightTooltip)
+                                                }
+                                            }
+                                        } ?: run {
+                                            hideSpotlight()
+                                        }
                                     }
                                 }
                             }

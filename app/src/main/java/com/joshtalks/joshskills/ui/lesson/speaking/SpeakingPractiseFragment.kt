@@ -489,7 +489,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.tvTodayTopic.text = response.topicName
 
                     if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
-                        PrefManager.put(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
+                      //  PrefManager.put(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
                         binding.tvPractiseTime.text =
                             response.alreadyTalked.toString().plus("/")
                                 .plus(response.duration.toString())
@@ -701,7 +701,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             binding.btnCallWithExpert.isVisible = false
         }
         lifecycleScope.launch(Dispatchers.Main){
-            delay(100)
             initDemoViews(lessonNo)
         }
     }
@@ -836,6 +835,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             } catch (ex: Exception) {
             }
         } else {
+            if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
+                binding.imgRecentCallsHistory.visibility = VISIBLE
+            }
             binding.btnCallDemo.visibility = View.GONE
         }
 
