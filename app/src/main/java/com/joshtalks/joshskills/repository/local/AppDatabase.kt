@@ -724,7 +724,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_58_59: Migration = object : Migration(57, 58) {
+        private val MIGRATION_58_59: Migration = object : Migration(58, 59) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `p2p_button_icon` TEXT")
             }

@@ -1520,7 +1520,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                         }
                                     }
                                 } else {
-                                    if (!PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) && (viewModel.lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO)) {
+                                    if (!PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) && (viewModel.lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO) && !introVideoControl) {
                                         PrefManager.put(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
                                         binding.overlayLayout.visibility = View.VISIBLE
                                         binding.spotlightTabGrammar.visibility = View.INVISIBLE

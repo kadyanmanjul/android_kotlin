@@ -211,6 +211,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         } else {
             showErrorView()
         }
+        viewModel.saveImpressionForBuyPageLayout(OPEN_BUY_PAGE_LAYOUT, flowFrom)
 
         NotificationUtils(this).updateNotificationDb(NotificationCategory.AFTER_BUY_PAGE)
         MarketingAnalytics.openPreCheckoutPage()
@@ -969,10 +970,5 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         Log.d("sagar", "onFreeTrialEnded() called")
         binding.freeTrialTimerNewUi.visible()
         binding.freeTrialTimerNewUi.endFreeTrial()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.saveImpressionForBuyPageLayout(OPEN_BUY_PAGE_LAYOUT, flowFrom)
     }
 }
