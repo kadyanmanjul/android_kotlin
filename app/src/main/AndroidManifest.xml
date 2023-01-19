@@ -115,6 +115,9 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
+            android:name=".ErrorActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.voip.new_arch.ui.views.UserInterestActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -702,9 +705,7 @@
             android:authorities="com.joshtalks.joshskills.contentprovider"
             android:enabled="true"
             android:exported="true"
-            android:permission="com.joshtalks.permission.READ_WRITE_CONTENT" />
-
-        <!-- <service -->
+            android:permission="com.joshtalks.permission.READ_WRITE_CONTENT" /> <!-- <service -->
         <!-- android:name=".core.service.BackgroundService" -->
         <!-- android:enabled="true" -->
         <!-- android:exported="false" /> -->
