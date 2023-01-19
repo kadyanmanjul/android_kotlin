@@ -56,6 +56,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.ui.errorState.ErrorActivity
 import com.joshtalks.joshskills.ui.errorState.ErrorStateDialog
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -140,6 +141,22 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
 
+        lifecycleScope.launch {
+            delay(3000)
+            ErrorActivity.showErrorScreen(
+                icon = R.drawable.freshchat_no_internet,
+                errorTitle = "No Internet Connection",
+                errorSubtitle = "hjhjkahjkjkhjksa kjahjkshhhjkas",
+                errorCode = "404"
+            )
+//            ErrorStateDialog.showBelowToolbar(
+//                icon = R.drawable.freshchat_no_internet,
+//                errorTitle = "No Internet Connection",
+//                errorSubtitle = "hjhjkahjkjkhjksa kjahjkshhhjkas",
+//                fragmentManager = supportFragmentManager,
+//                container = R.id.viewRoot
+//            )
+        }
     }
 
     fun watchTimeEvent() {
