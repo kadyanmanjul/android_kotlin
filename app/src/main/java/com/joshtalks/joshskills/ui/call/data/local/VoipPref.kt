@@ -232,7 +232,7 @@ object VoipPref {
                                 SkillsDatastore.updateWalletAmount(response.body()?.amount ?: 0)
                                 SkillsDatastore.updateExpertCredits(response.body()?.credits ?: -1)
                                 if (response.body()?.credits == -1) {
-                                    openExpertUpgradeScreen()
+                                    //openExpertUpgradeScreen()
                                 }
                             }
                             406 -> { }

@@ -7,13 +7,16 @@ data class ExpertListResponse(
     val bbTipText: String,
 
     @SerializedName("expert_list")
-    var arrayList: ArrayList<ExpertListModel>
+    var arrayList: ArrayList<ExpertListModel>,
+
+    @SerializedName("clickable")
+    var isIvEarnIconVisible: Boolean
 )
 
 data class ExpertListModel(
     @SerializedName("full_name") val expertName: String,
     @SerializedName("photo_url") val expertImage: String,
-    @SerializedName("spoken_languages") val expertLanguageSpeak: String,
+    @SerializedName("spoken_languages") val expertLanguageSpeak: String?=null,
     @SerializedName("experience") val expertExperience: Int,
     @SerializedName("price") val expertPricePerMinute: Int,
     @SerializedName("bio") val expertBio: String,

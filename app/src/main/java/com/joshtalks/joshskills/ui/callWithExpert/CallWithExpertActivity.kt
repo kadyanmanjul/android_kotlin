@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -30,12 +31,14 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.WalletRechargePaymentMan
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel
+import com.joshtalks.joshskills.ui.callWithExpert.viewModel.ExpertListViewModel
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.sync.Mutex
 import java.math.BigDecimal
 import org.json.JSONObject
@@ -55,6 +58,10 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
 
     private val viewModel by lazy {
         ViewModelProvider(this)[CallWithExpertViewModel::class.java]
+    }
+
+    private val erpertListViewModel by lazy {
+        ViewModelProvider(this)[ExpertListViewModel::class.java]
     }
 
     private lateinit var navController: NavController
@@ -130,6 +137,16 @@ class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
                     isGifted = true,
                     type = "FirstTime"
                 )
+            }
+        }
+
+        lifecycleScope.launchWhenStarted {
+            erpertListViewModel.ivEranIcon.collectLatest {
+                if (!it) {
+                    binding.toolbarContainer.ivEarn.isClickable = false
+                    binding.toolbarContainer.ivEarn.isEnabled = false
+                }
+
             }
         }
     }

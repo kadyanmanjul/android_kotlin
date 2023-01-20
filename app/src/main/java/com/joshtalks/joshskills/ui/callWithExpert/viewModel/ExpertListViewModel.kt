@@ -34,6 +34,7 @@ class ExpertListViewModel : BaseViewModel() {
     val bbTipText = MutableSharedFlow<String>()
     lateinit var clickedSpeakerName: String
     var neededAmount: Int = 0
+    var ivEranIcon = MutableSharedFlow<Boolean>()
 
     init {
         getListOfExpert()
@@ -47,6 +48,7 @@ class ExpertListViewModel : BaseViewModel() {
                     withContext(mainDispatcher) {
                         adapter.addExpertToList(response.body()?.arrayList!!)
                         bbTipText.emit(response.body()?.bbTipText ?: EMPTY)
+                        ivEranIcon.emit(response.body()?.isIvEarnIconVisible?:false)
                     }
                 }
 

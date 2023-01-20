@@ -22,7 +22,11 @@ class ExpertListAdapter(var items: List<ExpertListModel> = listOf()) :
                 itemExpertListBinding.item = item
                 expertCallButton.setOnSingleClickListener {
                     if (item.mentorId != Mentor.getInstance().getId()) {
-                        itemClickFunction?.invoke(item, FAV_CLICK_ON_CALL, bindingAdapterPosition)
+                        if (item.expertLanguageSpeak == null) {
+                           showToast("Expert is not available at this moment. Please try again later.")
+                        }else {
+                            itemClickFunction?.invoke(item, FAV_CLICK_ON_CALL, bindingAdapterPosition)
+                        }
                     } else {
                         showToast("You are an expert")
                     }
