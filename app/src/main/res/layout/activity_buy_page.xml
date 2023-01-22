@@ -80,10 +80,10 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:visibility="gone"
-                        tools:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/shimmer1">
+                        app:layout_constraintTop_toBottomOf="@id/shimmer1"
+                        tools:visibility="visible">
 
                         <com.joshtalks.joshskills.util.TrialTimerView
                             android:id="@+id/free_trial_timer_new_ui"
@@ -96,30 +96,6 @@
                             app:layout_constraintTop_toTopOf="parent"
                             tools:visibility="visible" />
 
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/video_card"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginHorizontal="@dimen/_16sdp"
-                            android:layout_marginTop="@dimen/_16sdp"
-                            android:background="@drawable/round_rect_default"
-                            android:visibility="visible"
-                            app:cardCornerRadius="@dimen/_8sdp">
-
-                            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-                                android:id="@+id/video_player"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_154sdp"
-                                android:layout_gravity="center"
-                                android:background="#000"
-                                android:focusable="true"
-                                app:controller_layout_id="@layout/layout_live_player_controller"
-                                app:layout_constraintDimensionRatio="1.78"
-                                tools:visibility="visible" />
-                        </com.google.android.material.card.MaterialCardView>
-
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/course_type_container"
                             android:layout_width="match_parent"
@@ -128,38 +104,6 @@
                             android:orientation="vertical"
                             android:visibility="visible" />
 
-                        <View
-                            android:id="@+id/view1"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_2sdp"
-                            android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled"
-                            android:visibility="@{vm.isGovernmentCourse ? View.VISIBLE : View.GONE}"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/course_type_container" />
-
-                        <androidx.appcompat.widget.LinearLayoutCompat
-                            android:id="@+id/teacher_details"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:orientation="vertical"
-                            android:visibility="visible" />
-
-                        <View
-                            android:id="@+id/view2"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_2sdp"
-                            android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled"
-                            android:visibility="@{vm.isGovernmentCourse ? View.VISIBLE : View.GONE}"
-                            app:layout_constraintEnd_toEndOf="parent" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <com.facebook.shimmer.ShimmerFrameLayout
@@ -224,24 +168,6 @@
                             android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:visibility="visible" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/btnKnowMoreAboutCourse"
-                            android:layout_width="@dimen/_195sdp"
-                            android:layout_height="@dimen/_28sdp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/_28sdp"
-                            android:gravity="center_horizontal"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            android:paddingTop="@dimen/_5sdp"
-                            android:stateListAnimator="@null"
-                            android:textAlignment="center"
-                            android:textAllCaps="false"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
-                            android:textColor="@color/primary_500"
-                            android:visibility="gone"
-                            app:rippleColor="@color/pure_white" />
 
                         <View
                             android:id="@+id/view3"
@@ -438,9 +364,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_13sdp"
                             android:layout_marginTop="@dimen/_12sdp"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                             android:onClick="@{()-> vm.openCourseExplore()}"
                             android:text="See list of courses in unlimited access >>"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                             android:textColor="@color/primary_500"
                             android:visibility="@{vm.isSeeAllButtonShow ? View.VISIBLE : View.GONE}" />
 
@@ -484,9 +410,9 @@
                         android:text="Call us"
                         android:textAllCaps="false"
                         android:textColor="@color/primary_500"
-                        app:backgroundTint="@color/surface_information"
                         android:textStyle="bold"
                         android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
+                        app:backgroundTint="@color/surface_information"
                         app:cornerRadius="@dimen/_15sdp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout" />
@@ -542,54 +468,6 @@
                     wheel:matProg_rimWidth="@dimen/_2sdp" />
 
             </RelativeLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/video_popup"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:background="@color/surface_overlay"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:onClick="@{vm.closeIntroVideoPopUpUi}"
-                android:orientation="vertical"
-                android:visibility="@{vm.isVideoPopUpShow ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/imageView_close"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
-                    android:layout_marginTop="@dimen/_minus12sdp"
-                    android:layout_marginEnd="@dimen/_minus12sdp"
-                    android:elevation="@dimen/_10sdp"
-                    app:layout_constraintEnd_toEndOf="@id/video_view"
-                    app:layout_constraintTop_toTopOf="@id/video_view"
-                    app:srcCompat="@drawable/ic_cancel_black" />
-
-                <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-                    android:id="@+id/video_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="@dimen/_24sdp"
-                    android:layout_marginVertical="@dimen/_50sdp"
-                    android:layout_marginTop="@dimen/_62ssp"
-                    android:layout_marginBottom="@dimen/_42ssp"
-                    android:background="@color/pure_black"
-                    android:focusable="true"
-                    app:controller_layout_id="@layout/layout_live_player_controller"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0"
-                    tools:visibility="visible" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

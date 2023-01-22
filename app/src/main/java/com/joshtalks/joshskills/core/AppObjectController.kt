@@ -114,6 +114,8 @@ class AppObjectController {
         @JvmStatic
         val appDatabaseConsistents: AppDatabaseConsistents by lazy { AppDatabaseConsistents.getDatabase(joshApplication) }
 
+        val applicationLevelScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+
         val gsonMapper: Gson by lazy {
             GsonBuilder()
                 .enableComplexMapKeySerialization()

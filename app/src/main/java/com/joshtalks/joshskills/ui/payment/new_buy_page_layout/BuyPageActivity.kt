@@ -4,9 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -15,17 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updateMargins
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +32,6 @@ import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.DIGITAL_CARD_TEXT
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
@@ -56,7 +46,6 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
-import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
@@ -66,31 +55,23 @@ import com.joshtalks.joshskills.ui.payment.PaymentPendingFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.BookACallFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BranchLog
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModelNew
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
 import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
-import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
-import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
-import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
-import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.activity_gif.view.*
-import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import java.math.BigDecimal
 import org.json.JSONObject
+import java.math.BigDecimal
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val SUBSCRIPTION_TEST_ID = "10"
@@ -101,19 +82,15 @@ const val NORMAL_BACK_PRESS = 1111
 class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCourseListener {
 
     var englishCourseCard: View? = null
-    var otherCourseCard: View? = null
-    var teacherDetailsCard: View? = null
     var teacherRatingAndReviewCard: View? = null
     var proceedButtonCard: View? = null
     var clickRatingOpen: ImageView? = null
     var courseDescListCard: View? = null
     var priceForPaymentProceed: CourseDetailsList? = null
     var isPaymentInitiated = false
-    var certificateCard: View? = null
     var couponCodeFromIntent: String? = null
     var shouldAutoApplyCoupon: Boolean = false
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
-    var expiredTime: Long = -1
     private var flowFrom: String = EMPTY
     var paymentButtonValue = 0
 
@@ -138,33 +115,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         )
     }
 
-    var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.getLongExtra(
-                CURRENT_VIDEO_PROGRESS_POSITION,
-                0
-            )?.let { progress ->
-                binding.videoView.progress = progress
-                binding.videoView.onResume()
-            }
-        }
-    }
-
-    var openRecordVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.getLongExtra(
-                CURRENT_VIDEO_PROGRESS_POSITION,
-                0
-            )?.let { progress ->
-                binding.videoPlayer.progress = progress
-                binding.videoPlayer.onResume()
-            }
-        }
-    }
 
     override fun getArguments() {
         super.getArguments()
@@ -201,7 +151,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         addObserver()
         openCourseListener = this
         if (Utils.isInternetAvailable()) {
-            viewModel.getCourseContent()
+            viewModel.getBuyPageFeature()
             viewModel.getCoursePriceList(null, null, null,null)
             viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
             errorView?.resolved()?.let {
@@ -226,19 +176,16 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 }
                 BUY_COURSE_LAYOUT_DATA -> {
                     try {
-                        paymentButtonValue = (it.obj as BuyCourseFeatureModel).paymentButtonText
-                        paymentButton(it.obj as BuyCourseFeatureModel)
-                        dynamicCardCreation(it.obj as BuyCourseFeatureModel)
+                        paymentButtonValue = (it.obj as BuyCourseFeatureModelNew).paymentButtonText
+                        paymentButton(it.obj as BuyCourseFeatureModelNew)
+                        dynamicCardCreation(it.obj as BuyCourseFeatureModelNew)
                         clickRatingOpen?.setOnClickListener {
                             openRatingAndReviewScreen()
                         }
-                        setFreeTrialTimer(it.obj as BuyCourseFeatureModel)
+                        setFreeTrialTimer(it.obj as BuyCourseFeatureModelNew)
                     } catch (ex: Exception) {
 
                     }
-                }
-                AB_TEST_VIDEO -> {
-                    playRecordedVideo(it.obj as String)
                 }
                 CLICK_ON_PRICE_CARD -> {
                     setCoursePrices(it.obj as CourseDetailsList, it.arg1)
@@ -263,7 +210,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     if (couponCodeFromIntent.isNullOrEmpty().not())
                         viewModel.applyEnteredCoupon(couponCodeFromIntent!!, NORMAL_BACK_PRESS, 0)
                 }
-                CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
                 OPEN_COURSE_EXPLORE -> openCourseExplorerActivity()
                 MAKE_PHONE_CALL -> openSalesReasonScreenOrMakeCall()
                 BUY_PAGE_BACK_PRESS -> popBackStack()
@@ -296,25 +242,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        binding.videoPlayer.onPause()
-    }
-
-    fun playRecordedVideo(videoUrl: String) {
-        val currentVideoProgressPosition = binding.videoPlayer.progress
-        openRecordVideoPlayerActivity.launch(
-            VideoPlayerActivity.getActivityIntent(
-                this,
-                EMPTY,
-                null,
-                videoUrl,
-                currentVideoProgressPosition,
-                conversationId = getConversationId()
-            )
-        )
-    }
-
     private fun couponApplied(coupon: Coupon, isFromLink: Int?, isApplyFrom:Int) {
         showToast("Coupon applied")
         Log.e("sagar", "couponApplied: $isFromLink", )
@@ -338,7 +265,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         }
     }
 
-    private fun setFreeTrialTimer(buyCourseFeatureModel: BuyCourseFeatureModel) {
+    private fun setFreeTrialTimer(buyCourseFeatureModel: BuyCourseFeatureModelNew) {
         if ((buyCourseFeatureModel.expiryTime?.time ?: 0) >= System.currentTimeMillis()) {
             startTimer((buyCourseFeatureModel.expiryTime?.time ?: 0) - System.currentTimeMillis())
         } else {
@@ -349,7 +276,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     }
 
     private fun openSalesReasonScreenOrMakeCall() {
-        binding.videoPlayer.onPause()
         viewModel.saveImpressionForBuyPageLayout(BUY_PAGE_CALL_CLICKED)
         if (isCallUsButtonActive == 1) {
             Utils.call(
@@ -394,7 +320,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     }
 
     private fun openCouponList() {
-        binding.videoPlayer.onPause()
         viewModel.saveImpressionForBuyPageLayout(OPEN_COUPON_PAGE)
         supportFragmentManager.commit {
             setReorderingAllowed(true)
@@ -404,7 +329,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     }
 
     private fun openRatingAndReviewScreen() {
-        binding.videoPlayer.onPause()
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace(
@@ -416,7 +340,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         }
     }
 
-    private fun dynamicCardCreation(buyCourseFeatureModel: BuyCourseFeatureModel) {
+    private fun dynamicCardCreation(buyCourseFeatureModel: BuyCourseFeatureModelNew) {
         isCallUsButtonActive = buyCourseFeatureModel.isCallUsActive ?: 0
         binding.shimmer1.visibility = View.GONE
         binding.shimmer1.stopShimmer()
@@ -426,118 +350,27 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         binding.shimmer2Layout.visibility = View.VISIBLE
         val courseDetailsInflate: LayoutInflater =
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        if (buyCourseFeatureModel.teacherName == null && buyCourseFeatureModel.teacherImage == null && buyCourseFeatureModel.video == null && buyCourseFeatureModel.youtubeChannel == null) {
-            englishCourseCard =
-                courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
-            binding.courseTypeContainer.removeAllViews()
-            if (buyCourseFeatureModel.isVideo != null) {
-                binding.videoPlayer.visibility = View.VISIBLE
-                binding.videoCard.visibility = View.VISIBLE
-                viewModel.showRecordedVideoUi(binding.videoPlayer, buyCourseFeatureModel.abTestVideoUrl ?: EMPTY)
-            } else {
-                binding.videoPlayer.visibility = View.GONE
-                binding.videoCard.visibility = View.GONE
-                val image = englishCourseCard?.findViewById<ImageView>(R.id.img_skill_logo)
-                if (buyCourseFeatureModel.otherCourseImage != null)
-                    image?.setImage(buyCourseFeatureModel.otherCourseImage ?: EMPTY)
-                else
-                    image?.visibility = View.GONE
-                val text = englishCourseCard?.findViewById<TextView>(R.id.sample_text)
-                text?.text = buyCourseFeatureModel.courseName
-                binding.courseTypeContainer.addView(englishCourseCard)
-                viewModel.isGovernmentCourse.set(false)
-            }
-        } else {
-            binding.videoPlayer.visibility = View.GONE
-            binding.videoCard.visibility = View.GONE
-            viewModel.isGovernmentCourse.set(true)
-            otherCourseCard = courseDetailsInflate.inflate(R.layout.other_course_card, null, true)
-            binding.courseTypeContainer.removeAllViews()
-            binding.courseTypeContainer.addView(otherCourseCard)
-            val teacherVideoButton =
-                otherCourseCard?.findViewById<RelativeLayout>(R.id.play_video_button)
-            teacherVideoButton?.setOnClickListener {
-                viewModel.saveImpressionForBuyPageLayout(PLAY_SAMPLE_VIDEO)
-                playSampleVideo(buyCourseFeatureModel.video ?: EMPTY)
-            }
+        englishCourseCard =
+            courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
+        binding.courseTypeContainer.removeAllViews()
 
-            teacherDetailsCard =
-                courseDetailsInflate.inflate(R.layout.teacher_details_card, null, true)
-            binding.teacherDetails.removeAllViews()
-            binding.teacherDetails.addView(teacherDetailsCard)
+        val image = englishCourseCard?.findViewById<ImageView>(R.id.img_skill_logo)
+        image?.setImage(buyCourseFeatureModel.otherCourseImage ?: EMPTY)
 
-            val name = teacherDetailsCard?.findViewById<TextView>(R.id.teacher_name)
-            name?.text = buyCourseFeatureModel.teacherName
+        val text = englishCourseCard?.findViewById<TextView>(R.id.sample_text)
+        text?.text = buyCourseFeatureModel.courseName
+        binding.courseTypeContainer.addView(englishCourseCard)
 
-            val image = teacherDetailsCard?.findViewById<CircleImageView>(R.id.teacher_image)
-            image?.setUserImageOrInitials(
-                buyCourseFeatureModel.sumanProfile,
-                buyCourseFeatureModel.teacherName ?: EMPTY,
-                isRound = true
-            )
-
-            val teacherDesc = teacherDetailsCard?.findViewById<TextView>(R.id.desc_about_teacher)
-            teacherDesc?.text = buyCourseFeatureModel.teacherDesc
-
-            val youtubeLink = teacherDetailsCard?.findViewById<TextView>(R.id.youtube_link)
-            youtubeLink?.text = buyCourseFeatureModel.youtubeChannel
-            youtubeLink?.paintFlags = youtubeLink?.paintFlags?.or(Paint.UNDERLINE_TEXT_FLAG)!!
-
-
-            youtubeLink.setOnClickListener {
-                try {
-                    viewModel.saveImpressionForBuyPageLayout(YOUTUBE_LINK_CLICK)
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(buyCourseFeatureModel.youtubeLink)
-                    intent.setPackage("com.google.android.youtube")
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    showToast("You don't have youtube")
-                }
-            }
-        }
 
         setRating(buyCourseFeatureModel)
-        val certificateDescInflate: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        certificateCard = certificateDescInflate.inflate(R.layout.certificate_card, null, true)
-        val certificateTitle = certificateCard?.findViewById<AppCompatTextView>(R.id.digital_course_certificate)
-        val certificateTextView = certificateCard?.findViewById<AppCompatTextView>(R.id.desc_about_certificate)
-        val certificateImage = certificateCard?.findViewById<AppCompatImageView>(R.id.certificate_img)
 
-        if (buyCourseFeatureModel.certificateText != null && buyCourseFeatureModel.certificateUrl != null) {
-            certificateTextView?.text = buyCourseFeatureModel.certificateText
-            uiHandler.postDelayed({
-                certificateImage?.setImage(buyCourseFeatureModel.certificateUrl ?: EMPTY)
-                certificateImage?.visibility = View.VISIBLE
-            }, 1000)
-            certificateTitle?.text = AppObjectController.getFirebaseRemoteConfig().getString(DIGITAL_CARD_TEXT)
-            binding.courseDescList.removeAllViews()
-            binding.courseDescList.addView(certificateCard)
-        } else {
-            buyCourseFeatureModel.information?.forEach { it ->
-                val view = getCourseDescriptionList(it)
-                if (view != null) {
-                    binding.courseDescList.addView(view)
-                }
+        buyCourseFeatureModel.information?.forEach { it ->
+            val view = getCourseDescriptionList(it)
+            if (view != null) {
+                binding.courseDescList.addView(view)
             }
         }
 
-        if (buyCourseFeatureModel.knowMore != null) {
-            binding.btnKnowMoreAboutCourse.text = buyCourseFeatureModel.knowMore + " >>"
-            binding.btnKnowMoreAboutCourse.visibility = View.VISIBLE
-            binding.view9.visibility = View.VISIBLE
-        } else {
-            binding.view9.visibility = View.GONE
-        }
-        binding.btnKnowMoreAboutCourse.setOnClickListener {
-            CourseDetailsActivity.startCourseDetailsActivity(
-                this,
-                testId.toInt(),
-                startedFrom = this@BuyPageActivity.javaClass.simpleName,
-                buySubscription = false,
-                isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
-            )
-        }
     }
 
     private fun getCourseDescriptionList(buyCourseFeatureModel: String): View? {
@@ -551,7 +384,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         return courseDescListCard
     }
 
-    private fun setRating(buyCourseFeatureModel: BuyCourseFeatureModel) {
+    private fun setRating(buyCourseFeatureModel: BuyCourseFeatureModelNew) {
         binding.shimmer3.visibility = View.GONE
         binding.shimmer3.stopShimmer()
         binding.shimmer3Layout.visibility = View.VISIBLE
@@ -576,7 +409,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         ratingInText?.text = buyCourseFeatureModel.rating.toString() + " out of 5"
     }
 
-    private fun paymentButton(buyCourseFeatureModel: BuyCourseFeatureModel) {
+    private fun paymentButton(buyCourseFeatureModel: BuyCourseFeatureModelNew) {
         val paymentInflate: LayoutInflater =
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         proceedButtonCard = paymentInflate.inflate(R.layout.payment_button_card, null, true)
@@ -584,7 +417,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         binding.paymentProceedBtnCard.removeAllViews()
         binding.paymentProceedBtnCard.addView(proceedButtonCard)
         paymentButton?.setOnSingleClickListener {
-            binding.videoPlayer.onPause()
             isPaymentInitiated = true
             viewModel.saveImpressionForBuyPageLayout(PROCEED_PAYMENT_CLICK, testId)
             startPayment()
@@ -595,7 +427,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             }
     }
 
-    fun startPayment() {
+    private fun startPayment() {
         if (Utils.isInternetAvailable().not()) {
             showToast(getString(R.string.internet_not_available_msz))
             return
@@ -678,25 +510,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         }
     }
 
-    fun playSampleVideo(videoUrl: String) {
-        val currentVideoProgressPosition = binding.videoView.progress
-        openVideoPlayerActivity.launch(
-            VideoPlayerActivity.getActivityIntent(
-                this,
-                EMPTY,
-                null,
-                videoUrl,
-                currentVideoProgressPosition,
-                conversationId = getConversationId()
-            )
-        )
-    }
-
-    private fun closeIntroVideoPopUpUi() {
-        viewModel.isVideoPopUpShow.set(false)
-        binding.videoView.onStop()
-    }
-
     fun getConversationId(): String? {
         return null
     }
@@ -743,7 +556,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         }
     }
 
-    fun onCouponApply(coupon: Coupon) {
+    private fun onCouponApply(coupon: Coupon) {
         Log.e("sagar", "onCouponApply:")
         val dialogView = showCustomDialog(R.layout.coupon_applied_alert_dialog)
         val btnGotIt = dialogView.findViewById<AppCompatTextView>(R.id.got_it_button)
@@ -795,7 +608,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         showWebViewDialog(url)
     }
 
-    fun showWebViewDialog(webUrl: String) {
+    private fun showWebViewDialog(webUrl: String) {
         WebViewFragment.showDialog(supportFragmentManager, webUrl)
     }
 
@@ -816,7 +629,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
                 override fun onRetryButtonClicked() {
                     if (Utils.isInternetAvailable()) {
-                        viewModel.getCourseContent()
+                        viewModel.getBuyPageFeature()
                         viewModel.getCoursePriceList(null, null, null,null)
                         viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
                     } else {

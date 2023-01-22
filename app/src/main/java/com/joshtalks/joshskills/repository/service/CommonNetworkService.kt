@@ -388,8 +388,8 @@ interface CommonNetworkService {
         @Query("call_duration") callDuration: Long = 0
     ): Response<PurchaseDataResponse>
 
-    @GET("$DIR/course/buy_course_feature/")
-    suspend fun getCourseFeatureDetails(@Query("test_id") testId: Int): Response<BuyCourseFeatureModel>
+    @GET("$DIR/course/buy_course_page/")
+    suspend fun getCourseFeatureDetailsV2(): Response<BuyCourseFeatureModelNew>
 
     @GET("$DIR/course/get_user_coupons/")
     suspend fun getValidCoupon(
