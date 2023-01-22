@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -26,8 +28,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import timber.log.Timber
 import java.math.BigDecimal
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.HashMap
 
 class InboxViewModel : BaseViewModel(){
@@ -391,6 +396,35 @@ class InboxViewModel : BaseViewModel(){
                 val resp = AppObjectController.commonNetworkService.savePaymentLog(extras)
             } catch (ex: Exception) {
                 Log.e("sagar", "setSupportReason: ${ex.message}")
+            }
+        }
+    }
+
+    fun getBuyPageFeature(){
+        AppObjectController.applicationLevelScope.launch(Dispatchers.IO){
+            if (AppObjectController.appDatabase.getCourseFeatureDataDao().getBuyCourseFeatureData()==null){
+                try {
+                    val response = AppObjectController.commonNetworkService.getCourseFeatureDetailsV2()
+                    if (response.isSuccessful){
+                        AppObjectController.appDatabase.getCourseFeatureDataDao().insertBuyCourseFeatureData(response.body())
+                    }
+                }catch (ex:Exception){
+                    when (ex) {
+                        is HttpException -> {
+                            showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                        }
+                        is SocketTimeoutException, is UnknownHostException -> {
+                            showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                        }
+                        else -> {
+                            try {
+                                FirebaseCrashlytics.getInstance().recordException(ex)
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -3,13 +3,15 @@ package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModelNew
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.PriceParameterModel
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.utils.ReviewPagingSource
 
 class BuyPageRepo {
-
-    //it's need test id
-    suspend fun getFeatureList(testId: Int) = AppObjectController.commonNetworkService.getCourseFeatureDetails(testId)
+    suspend fun getBuyPageFeatureData() :BuyCourseFeatureModelNew? {
+        return AppObjectController.appDatabase.getCourseFeatureDataDao().getBuyCourseFeatureData()
+            ?: AppObjectController.commonNetworkService.getCourseFeatureDetailsV2().body()
+    }
 
     suspend fun getCouponList(testId: Int, lessonsCompleted: Int? = null) =
         AppObjectController.commonNetworkService.getValidCoupon(testId = testId, lessonsCompleted = lessonsCompleted)

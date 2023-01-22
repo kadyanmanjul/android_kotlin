@@ -110,8 +110,8 @@ import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentDao
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BranchLog
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BranchLogDao
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureDao
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModelNew
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
@@ -134,9 +134,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, ScheduleNotification::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class
+        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class, BuyCourseFeatureModelNew::class
     ],
-    version = 59,
+    version = 60,
     exportSchema = true
 )
 @TypeConverters(
@@ -243,7 +243,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_55_56,
                                 MIGRATION_56_57,
                                 MIGRATION_57_58,
-                                MIGRATION_58_59)
+                                MIGRATION_58_59,
+                                MIGRATION_59_60)
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
@@ -730,6 +731,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_59_60: Migration = object : Migration(59, 60) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `buy_course_feature` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `features` TEXT NOT NULL, `information` TEXT NOT NULL,`rating` REAL NOT NULL,`ratings_count` INTEGER NOT NULL, `expire_time` INTEGER NOT NULL, `call_us_text` TEXT NOT NULL,`course_name` TEXT NOT NULL , `image_name` TEXT NOT NULL,  `bp_text` TEXT NOT NULL, `is_call_us_active` INTEGER NOT NULL, `payment_button_text` INTEGER NOT NULL)")
+            }
+        }
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
@@ -778,6 +785,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun broadcastDao(): BroadCastDao
     abstract fun paymentDao(): PaymentDao
     abstract fun scheduleNotificationDao(): ScheduleNotificationDao
+    abstract fun getCourseFeatureDataDao() : BuyCourseFeatureDao
 }
 
 class MessageTypeConverters {

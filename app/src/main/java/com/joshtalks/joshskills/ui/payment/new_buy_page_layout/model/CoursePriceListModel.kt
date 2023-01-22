@@ -13,25 +13,25 @@ data class CourseDetailsList(
     @SerializedName("discount")
     val discountedPrice: String? = null,
     @SerializedName("savings")
-    val savingInCourse: String? = null,
+    val savingInCourse: String? = null, //Not needed will calculate on frontend
     @SerializedName("course_type")
-    val courseType: String? = null,
+    val courseType: String? = null, //Not needed
     @SerializedName("button_text")
     val courseName: String? = null,
     @SerializedName("encrypted_text")
-    val encryptedText: String? = null,
+    val encryptedText: String? = null,//Not needed
     @SerializedName("test_id")
-    val testId: String? = null,
+    val testId: String? = null, //Not needed
     @SerializedName("coupon_text")
-    val couponText: String? = null,
+    val couponText: String? = null,//Not needed
     @SerializedName("is_recommended")
     val isRecommended: Boolean? = false,
     @SerializedName("image_url")
-    val imageUrl: String? = null,
+    val imageUrl: String? = null,//Not needed get from config
     @SerializedName("teacher_name")
-    val teacherName: String? = null,
+    val teacherName: String? = null, //Not needed get from config
     @SerializedName("per_day")
-    var perDayPrice: String? = null,
+    var perDayPrice: String? = null, //Not needed will calculate on frontend
     @SerializedName("sub_text")
     var subText: List<String>? = null
 )

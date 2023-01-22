@@ -1,21 +1,16 @@
 package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentCoupanCardBinding
-import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.COUPON_APPLY_POP_UP_SHOW_AND_BACK
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModel
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel
-import com.joshtalks.joshskills.ui.special_practice.utils.*
+import com.joshtalks.joshskills.ui.special_practice.utils.COUPON
+import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
 
 class CouponCardFragment : BaseFragment() {
 

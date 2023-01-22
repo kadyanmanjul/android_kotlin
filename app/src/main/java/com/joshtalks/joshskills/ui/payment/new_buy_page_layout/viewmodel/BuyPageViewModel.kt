@@ -42,13 +42,8 @@ class BuyPageViewModel : BaseViewModel() {
     var priceListAdapter = PriceListAdapter()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
-    var informations = ObservableField(EMPTY)
     var testId: String = FREE_TRIAL_PAYMENT_TEST_ID
-    var isGovernmentCourse = ObservableBoolean(false)
     var manualCoupon = ObservableField(EMPTY)
-
-    var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
-    val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
 
     var isDiscount = false
 
@@ -57,17 +52,13 @@ class BuyPageViewModel : BaseViewModel() {
     var isOfferOrInsertCodeVisible = ObservableBoolean(false)
     var offerForYouText = ObservableField("Offer for you")
 
-    val isVideoPopUpShow = ObservableBoolean(false)
     var couponList: List<Coupon>? = null
 
     var callUsText = ObservableField(EMPTY)
 
     var isCouponApiCall = ObservableBoolean(true)
     var isPriceApiCall = ObservableBoolean(true)
-    var isKnowMoreCourse:String?=null
     var priceText = ObservableField(EMPTY)
-    var isVideoAbTestEnable:Boolean? = null
-    var isNewFreeTrialEnable:String?=null
     var alreadyReasonSelected: String? = null
     var userPhoneNumber: String? = null
     val abTestRepository by lazy { ABTestRepository() }
@@ -76,31 +67,54 @@ class BuyPageViewModel : BaseViewModel() {
         return PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
     }
 
-    fun getCourseContent() {
+//    fun getCourseContent() {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                val response = buyPageRepo.getFeatureList(Integer.parseInt(testId))
+//                if (response.isSuccessful && response.body() != null) {
+//                    apiStatus.postValue(ApiCallStatus.SUCCESS)
+//                    withContext(mainDispatcher) {
+//                        featureAdapter.addFeatureList(response.body()?.features)
+//                        callUsText.set(response.body()?.callUsText)
+//                        isVideoAbTestEnable = response.body()?.isVideo
+//                        isNewFreeTrialEnable = response.body()?.timerBannerText
+//                        isKnowMoreCourse = if (response.body()?.knowMore != null)
+//                            response.body()?.knowMore
+//                        else
+//                            null
+//                        priceText.set(response.body()?.priceEnglishText)
+//                        message.what = BUY_COURSE_LAYOUT_DATA
+//                        message.obj = response.body()!!
+//                        singleLiveEvent.value = message
+//                        if (isKnowMoreCourse==null && isVideoAbTestEnable == null && isNewFreeTrialEnable == null) {
+//                            delay(5200)
+//                            message.what = SCROLL_TO_BOTTOM
+//                            singleLiveEvent.value = message
+//                        }
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//
+//        }
+//    }
+
+    fun getBuyPageFeature() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = buyPageRepo.getFeatureList(Integer.parseInt(testId))
-                if (response.isSuccessful && response.body() != null) {
-                    apiStatus.postValue(ApiCallStatus.SUCCESS)
-                    withContext(mainDispatcher) {
-                        featureAdapter.addFeatureList(response.body()?.features)
-                        callUsText.set(response.body()?.callUsText)
-                        isVideoAbTestEnable = response.body()?.isVideo
-                        isNewFreeTrialEnable = response.body()?.timerBannerText
-                        isKnowMoreCourse = if (response.body()?.knowMore != null)
-                            response.body()?.knowMore
-                        else
-                            null
-                        priceText.set(response.body()?.priceEnglishText)
-                        message.what = BUY_COURSE_LAYOUT_DATA
-                        message.obj = response.body()!!
-                        singleLiveEvent.value = message
-                        if (isKnowMoreCourse==null && isVideoAbTestEnable == null && isNewFreeTrialEnable == null) {
-                            delay(5200)
-                            message.what = SCROLL_TO_BOTTOM
-                            singleLiveEvent.value = message
-                        }
-                    }
+                val response = buyPageRepo.getBuyPageFeatureData()
+                apiStatus.postValue(ApiCallStatus.SUCCESS)
+                withContext(mainDispatcher) {
+                    featureAdapter.addFeatureList(response?.features)
+                    callUsText.set(response?.callUsText)
+                    priceText.set(response?.priceEnglishText)
+                    message.what = BUY_COURSE_LAYOUT_DATA
+                    message.obj = response
+                    singleLiveEvent.value = message
+                    delay(5200)
+                    message.what = SCROLL_TO_BOTTOM
+                    singleLiveEvent.value = message
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -234,11 +248,6 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    fun closeIntroVideoPopUpUi(view: View) {
-        message.what = CLOSE_SAMPLE_VIDEO
-        singleLiveEvent.value = message
-    }
-
     val onItemPriceClick: (CourseDetailsList, Int, Int, String) -> Unit =
         { it, type, position, cardType ->
             when (type) {
@@ -363,36 +372,6 @@ class BuyPageViewModel : BaseViewModel() {
                 ex.printStackTrace()
                 LogException.catchException(ex)
             }
-        }
-    }
-
-    fun showRecordedVideoUi(
-        view: JoshVideoPlayer,
-        videoUrl: String
-    ) {
-        try {
-            view.seekToStart()
-            view.setUrl(videoUrl)
-            view.onStart()
-            view.fitToScreen()
-            view.setFullScreenListener {
-                message.what = AB_TEST_VIDEO
-                message.obj = videoUrl
-                singleLiveEvent.value = message
-            }
-
-            viewModelScope.launch {
-                view.downloadStreamPlay()
-            }
-
-            view.outlineProvider = object : ViewOutlineProvider() {
-                override fun getOutline(view: View, outline: Outline) {
-                    outline.setRoundRect(0, 0, view.width, view.height, 15f)
-                }
-            }
-            view.clipToOutline = true
-        } catch (ex: Exception) {
-            Timber.d(ex)
         }
     }
 
