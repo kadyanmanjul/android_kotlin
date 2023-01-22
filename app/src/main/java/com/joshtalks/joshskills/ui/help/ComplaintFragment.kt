@@ -3,11 +3,9 @@ package com.joshtalks.joshskills.ui.help
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.database.Cursor
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
+import android.os.Environment
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -23,17 +21,22 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.muddzdev.styleabletoast.StyleableToast
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import timber.log.Timber
+import java.io.File
 
 
 const val COMPLAINT_OBJECT = "complaint_object"
@@ -78,7 +81,7 @@ class ComplaintFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val titleView = activity?.findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView?.text = "Sagar jain"
-        viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.apiCallStatusLiveDataComplaint.observe(viewLifecycleOwner, Observer {
             if (it == ApiCallStatus.SUCCESS) {
                 progressDialog.dismissAllowingStateLoss()
                 MaterialDialog(requireActivity()).show {
@@ -98,14 +101,11 @@ class ComplaintFragment : Fragment() {
 
 
     fun attachMedia() {
-        val pickPhoto = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        )
-        pickPhoto.type = "image/*"
-        val mimeTypes = arrayOf("image/jpeg", "image/png")
-        pickPhoto.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-        startActivityForResult(pickPhoto, 1)
+        ImagePicker.with(this)
+            .crop()          //Crop image(Optional), Check Customization for more option
+            .galleryOnly()
+            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ImagePicker"))
+            .start(ImagePicker.REQUEST_CODE)
     }
 
     fun removeAttachMedia() {
@@ -118,26 +118,15 @@ class ComplaintFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         try {
             super.onActivityResult(requestCode, resultCode, data)
-            if (resultCode == Activity.RESULT_OK && requestCode == 1) {
-                val selectedImage: Uri = data?.data!!
-                val filePathColumn =
-                    arrayOf(MediaStore.Images.Media.DATA)
-                val cursor: Cursor =
-                    activity?.contentResolver?.query(
-                        selectedImage,
-                        filePathColumn,
-                        null,
-                        null,
-                        null
-                    )!!
-                cursor.moveToFirst()
-                val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
-                attachmentPath = cursor.getString(columnIndex)
-                cursor.close()
-                attachmentPath?.run {
-                    setAttachmentThumbnail(this)
+            if (resultCode == Activity.RESULT_OK) {
+                val url = data?.data?.path ?: EMPTY
+                if (url.isNotBlank()) {
+                    addUserImageInView(url)
                 }
-
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                Timber.e(ImagePicker.getError(data))
+            } else {
+                Timber.e("Task Cancelled")
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -145,27 +134,18 @@ class ComplaintFragment : Fragment() {
 
     }
 
+    private fun addUserImageInView(imagePath: String) {
+        val imageUpdatedPath = AppDirectory.getImageSentFilePath()
+        AppDirectory.copy(imagePath, imageUpdatedPath)
+        setAttachmentThumbnail(imagePath)
+        attachmentPath = imageUpdatedPath
+    }
+
     private fun setAttachmentThumbnail(path: String) {
         try {
-            val cursor =
-                MediaStore.Images.Thumbnails.queryMiniThumbnails(
-                    activity?.contentResolver, Uri.parse(path),
-                    MediaStore.Images.Thumbnails.MINI_KIND,
-                    null
-                )
-            if (cursor != null && cursor.count > 0) {
-                cursor.moveToFirst()
-                val uri = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA))
-                setImageInImageView(uri)
-                //  lodgeComplaintBinding.ivThumbnail.setImageURI(Uri.parse(uri))
-                lodgeComplaintBinding.imageContainer.visibility = View.VISIBLE
-                lodgeComplaintBinding.ivAttach.visibility = View.GONE
-            } else {
-                setImageInImageView(path)
-                //  lodgeComplaintBinding.ivThumbnail.setImageURI(Uri.parse(path))
-                lodgeComplaintBinding.imageContainer.visibility = View.VISIBLE
-                lodgeComplaintBinding.ivAttach.visibility = View.GONE
-            }
+            setImageInImageView(path)
+            lodgeComplaintBinding.imageContainer.visibility = View.VISIBLE
+            lodgeComplaintBinding.ivAttach.visibility = View.GONE
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

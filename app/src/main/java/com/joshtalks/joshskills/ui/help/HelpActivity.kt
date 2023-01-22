@@ -271,16 +271,9 @@ class HelpActivity : CoreJoshActivity() {
                             PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
                         }
                         Action.FAQ == it.option.action -> {
-//                            appAnalytics.addParam(
-//                                AnalyticsEvent.FAQ_SLECTED.NAME,
-//                                it.option.action.toString()
-//                            )
-//                            MixPanelTracker.publishEvent(MixPanelEvent.FAQ).push()
-//                            AppAnalytics.create(AnalyticsEvent.FAQ_SLECTED.NAME)
-//                                .addBasicParam()
-//                                .addUserDetails()
-//                                .push()
-//                            openFaqCategory()
+                            openFaqCategory()
+                        }
+                        Action.COMPLAINT == it.option.action -> {
                             compliantScreen()
                         }
                         else -> {

@@ -41,7 +41,7 @@ data class Option(
 
 
 enum class Action {
-    CALL, HELPCHAT, FAQ, OTHER
+    CALL, HELPCHAT, FAQ, COMPLAINT, OTHER
 }
 
 
