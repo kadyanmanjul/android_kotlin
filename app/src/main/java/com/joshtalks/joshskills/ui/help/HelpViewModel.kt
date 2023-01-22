@@ -34,6 +34,8 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
     val faqListLiveData: MutableLiveData<List<FAQ>> = MutableLiveData()
     private val jobs = arrayListOf<Job>()
     lateinit var complaintResponse: ComplaintResponse
+    val apiCallStatusLiveDataComplaint: MutableLiveData<ApiCallStatus> = MutableLiveData()
+
 
     fun getAllHelpCategory() {
         jobs += viewModelScope.launch(Dispatchers.IO) {
@@ -85,7 +87,7 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
             if (requestComplaint.imageUrl.isNullOrEmpty().not()) {
                 val resp = uploadAttachmentMedia(requestComplaint.imageUrl!!)
                 if (resp == null) {
-                    apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                    apiCallStatusLiveDataComplaint.postValue(ApiCallStatus.FAILED)
                     return@launch
                 } else {
                     requestComplaint.imageUrl = resp as String
@@ -93,11 +95,13 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
 
             }
             try {
-                complaintResponse =
-                    AppObjectController.commonNetworkService.submitComplaint(requestComplaint)
-                apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                val response = AppObjectController.commonNetworkService.submitComplaint(requestComplaint)
+                if (response.isSuccessful){
+                    complaintResponse = response.body()!!
+                    apiCallStatusLiveDataComplaint.postValue(ApiCallStatus.SUCCESS)
+                }
             } catch (e: Exception) {
-                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                apiCallStatusLiveDataComplaint.postValue(ApiCallStatus.FAILED)
 
                 e.printStackTrace()
             }

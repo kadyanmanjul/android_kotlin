@@ -445,7 +445,7 @@ interface CommonNetworkService {
     suspend fun getTransactionHistory(): List<TransactionHistory>
 
     @POST("$DIR/support/complaint/")
-    suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
+    suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): Response<ComplaintResponse>
 
 
 }
