@@ -223,7 +223,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 withContext(mainDispatcher) {
                     sendErrorMessage(ex.message.toString(), PrefManager.getStringValue(USER_UNIQUE_ID), USER_CREATE_USER)
                 }
-                event.value = Message().apply { what = USER_CREATE_USER }
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 LogException.catchException(ex)
             }
