@@ -79,6 +79,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
+import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -534,7 +535,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                                 action = CALLING_SERVICE_ACTION
                                 putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
                             }
-                            LocalBroadcastManager.getInstance(this@InboxActivity).sendBroadcast(broadcastIntent)
+                            if(VoipPrefManager.getVoipServiceStatus())
+                                LocalBroadcastManager.getInstance(this@InboxActivity).sendBroadcast(broadcastIntent)
                         }
                         if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
                             PrefManager.put(IS_COURSE_BOUGHT, true)

@@ -46,6 +46,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
+import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -262,7 +263,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     action = CALLING_SERVICE_ACTION
                     putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
                 }
-                LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent)
+                if(VoipPrefManager.getVoipServiceStatus())
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent)
             }
         }
     }
