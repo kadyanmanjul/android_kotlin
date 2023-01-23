@@ -20,6 +20,9 @@ import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.signup.LastLoginType
+import com.joshtalks.joshskills.ui.errorState.MENTOR_DEVICE_GAID_ID
+import com.joshtalks.joshskills.ui.errorState.MENTOR_GAID
+import com.joshtalks.joshskills.ui.errorState.USER_CREATE_USER
 import com.joshtalks.joshskills.util.DeepLinkData
 import com.joshtalks.joshskills.util.DeepLinkRedirect
 import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
@@ -125,9 +128,11 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                     event.value = Message().apply { what = UPDATE_GAID }
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                 } else {
+                    event.value = Message().apply { what = MENTOR_DEVICE_GAID_ID }
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Exception) {
+                event.value = Message().apply { what = MENTOR_DEVICE_GAID_ID }
                 LogException.catchException(ex)
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 return@launch
@@ -174,6 +179,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 PrefManager.put(EXPLORE_TYPE, exploreType ?: ExploreCardType.NORMAL.name, false)
                 event.value = Message().apply { what = FETCH_MENTOR }
             } catch (ex: Exception) {
+                event.value = Message().apply { what = MENTOR_GAID }
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
                 LogException.catchException(ex)
@@ -198,6 +204,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 event.value = Message().apply { what = START_ACTIVITY }
                 apiCallStatus.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Exception) {
+                event.value = Message().apply { what = USER_CREATE_USER }
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 LogException.catchException(ex)
             }

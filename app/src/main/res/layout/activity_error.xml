@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.errorState.ErrorActivity" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -26,7 +34,6 @@
                 android:contentInsetLeft="0dp"
                 android:contentInsetEnd="0dp"
                 android:contentInsetRight="0dp"
-                android:elevation="@dimen/_4sdp"
                 android:minHeight="?attr/actionBarSize"
                 app:contentInsetEnd="0dp"
                 app:contentInsetEndWithActions="0dp"
@@ -54,6 +61,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center_vertical|start"
+                        android:onClick="@{() -> handler.backPress()}"
                         android:paddingTop="@dimen/_6sdp"
                         android:paddingBottom="@dimen/_6sdp"
                         android:tint="@color/icon_default"
@@ -72,7 +80,7 @@
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="start|center"
                         android:singleLine="true"
-                        android:text="@string/recent_calls"
+                        android:text="Error Screen"
                         android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                         android:textColor="@color/text_default" />
                 </RelativeLayout>
@@ -124,24 +132,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_23sdp"
-                    android:text="Error code - ER401"
+                    android:text="@{`Error code -  ER ` + handler.errorCode}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:textColor="@color/text_subdued"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/errorImg" />
+                    app:layout_constraintTop_toBottomOf="@+id/errorImg"
+                    tools:text="Error code - ER401" />
 
                 <TextView
                     android:id="@+id/errorTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_70sdp"
-                    android:text="We are sorry!"
+                    android:text="@{handler.errorTitle}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/errorImg" />
+                    app:layout_constraintTop_toBottomOf="@+id/errorImg"
+                    tools:text="We are sorry" />
 
                 <TextView
                     android:id="@+id/errorSubTitle"
@@ -149,12 +159,29 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:gravity="center"
-                    android:text="We are working on solving the problem. Sorry for the inconvenience"
+                    android:text="@{handler.errorSubtitle}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
                     android:textColor="@color/text_subdued"
                     app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
                     app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-                    app:layout_constraintTop_toBottomOf="@+id/errorTitle" />
+                    app:layout_constraintTop_toBottomOf="@+id/errorTitle"
+                    tools:text="@string/error_message_screen" />
+
+                <TextView
+                    android:id="@+id/support_phone_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:gravity="center"
+                    android:linksClickable="true"
+                    android:onClick="@{() -> handler.makeCall()}"
+                    android:text="@{handler.isFreeTrial ? `+910000000000` : `+91111111111` }"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
+                    android:textColor="@color/primary_500"
+                    app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+                    app:layout_constraintStart_toStartOf="@+id/errorSubTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/errorSubTitle"
+                    tools:text="+910000000000" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/actionButton"
@@ -162,6 +189,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_52sdp"
+                    android:onClick="@{() -> handler.backPress()}"
                     android:paddingHorizontal="@dimen/_24sdp"
                     android:text="@string/try_again"
                     app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
