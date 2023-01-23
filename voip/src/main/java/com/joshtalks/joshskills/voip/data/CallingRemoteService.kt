@@ -80,6 +80,8 @@ class CallingRemoteService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "StartService --- OnStartCommand")
+        if(intent != null && intent.action != SERVICE_ACTION_STOP_SERVICE)
+            PrefManager.voipServiceUsed()
         when(intent?.action) {
             // TODO: have to change
             SERVICE_ACTION_INCOMING_CALL -> {
@@ -227,6 +229,7 @@ class CallingRemoteService : Service() {
 
     override fun onBind(intent: Intent?): IBinder {
         Log.d(TAG, "onBind: ")
+        PrefManager.voipServiceUsed()
         return binder
     }
 

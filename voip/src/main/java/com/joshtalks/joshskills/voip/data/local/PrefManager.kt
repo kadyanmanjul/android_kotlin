@@ -31,6 +31,7 @@ const val EXPERT_CALL_DURATION = "EXPERT_CALL_DURATION"
 const val PROXIMITY_ON = "is_josh_proximity_on"
 const val IS_BEEP_TIMER_ENABLED = "IS_BEEP_TIMER_ENABLED"
 const val IS_EXPERT_PREMIUM_USER = "is_expert_premium_user"
+const val IS_VOIP_SERVICE_USED = "is_voip_service_used"
 
 private const val TAG = "PrefManager"
 
@@ -218,6 +219,20 @@ class PrefManager {
             if(::preferenceManager.isInitialized.not())
                 Utils.context?.let { initServicePref(it) }
             return preferenceManager.getBoolean(IS_EXPERT_PREMIUM_USER, false)
+        }
+
+        fun voipServiceUsed() {
+            if(getVoipServiceStatus().not()) {
+                val editor = preferenceManager.edit()
+                editor.putBoolean(IS_VOIP_SERVICE_USED, true)
+                editor.commit()
+            }
+        }
+
+        fun getVoipServiceStatus(): Boolean {
+            if(::preferenceManager.isInitialized.not())
+                Utils.context?.let { initServicePref(it) }
+            return preferenceManager.getBoolean(IS_VOIP_SERVICE_USED, false)
         }
     }
 }
