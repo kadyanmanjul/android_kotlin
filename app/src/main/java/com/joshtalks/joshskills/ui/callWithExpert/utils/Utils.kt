@@ -16,6 +16,10 @@ fun String.removeRupees() = this.removePrefix("₹ ")
 
 fun String.removeNegative() = this.removePrefix("-")
 
+fun String.replaceRupees() = this.replace("₹","")
+
+fun String.toRupeesWithoutSpace() = "₹$this"
+
 fun View.visible(){
     this.visibility = View.VISIBLE
 }

@@ -2206,5 +2206,76 @@
         <value>Online छात्रों के साथ speaking practice करें बिना number share किये।</value>
     </entry>
 
+    <entry>
+        <key>TEACHER_IMAGE_URL_1203</key>
+        <value>https://d2e30xf6nqusz5.cloudfront.net/course_overview/course/Saurav_Ch_icon.webp</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_NAME_1203</key>
+        <value>Sourav Choudhury</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_IMAGE_URL_1206</key>
+        <value>https://d2e30xf6nqusz5.cloudfront.net/course_overview/course/fd4e6e0c50de40d69c960472a3e5a2aa.webp</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_NAME_1206</key>
+        <value>null</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_IMAGE_URL_1207</key>
+        <value>https://d2e30xf6nqusz5.cloudfront.net/course_overview/course/Devangi_icon.webp</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_NAME_1207</key>
+        <value>Devangi Vishwasrao</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_IMAGE_URL_1209</key>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/malayalam/new+course+profile+picture+for+tamil+and+malayalam/course+profile+picture/kerala+pretty+face.jpg</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_NAME_1209</key>
+        <value>Krishnanjaly Mohan</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_IMAGE_URL_1210</key>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/malayalam/new+course+profile+picture+for+tamil+and+malayalam/course+profile+picture/Face+of+Tamilnadu.png</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_NAME_1210</key>
+        <value>Shanmugga Shiva</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_IMAGE_URL_1211</key>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/TELUGU/PICTURES/pro+pic.jpg</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_NAME_1211</key>
+        <value>Sai Shashank Polasi</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_IMAGE_URL_151</key>
+        <value>https://d2e30xf6nqusz5.cloudfront.net/course_overview/course/Vedant_M_icon.webp</value>
+    </entry>
+
+    <entry>
+        <key>TEACHER_NAME_151</key>
+        <value>वेदान्त माहेश्वरी</value>
+    </entry>
+
+
 
 </defaults>

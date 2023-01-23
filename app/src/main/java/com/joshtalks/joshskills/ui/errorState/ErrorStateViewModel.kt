@@ -9,15 +9,17 @@ import kotlinx.coroutines.launch
 
 class ErrorStateViewModel : ViewModel(){
 
-    fun saveApiFail(eventName:String){
+    fun saveApiFail(eventName:String, payload:String,exception: String){
         viewModelScope.launch (Dispatchers.IO){
-            val requestData = hashMapOf(
-                Pair("mentor_id", Mentor.getInstance().getId()),
-                Pair("event_name", eventName)
+            val response = AppObjectController.commonNetworkService.pushApiLogging(
+                ErrorScreen(
+                    apiErrorCode = eventName,
+                    payload = payload,
+                    exception = exception
+                )
             )
-           val response =  AppObjectController.commonNetworkService.saveImpression(requestData)
             if (!response.isSuccessful){
-                AppObjectController.appDatabaseConsistents.errorScreenDao().insetErrorCode(ErrorScreen(eventName))
+               // AppObjectController.appDatabaseConsistents.errorScreenDao().insetErrorCode(ErrorScreen(errorCode = eventName))
             }
         }
     }

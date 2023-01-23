@@ -787,7 +787,6 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             isPaymentInitiated = true
             dismissBbTip()
             paymentManager.createOrder(
-                testId.toString(),
                 Mentor.getInstance().getUser()?.phoneNumber ?: "+919999999999",
                 viewModel.getEncryptedText()
             )
@@ -1125,7 +1124,6 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             if (hasOrderId)
                 paymentManager.getJoshTalksId()
             else 0,
-            testId.toString(),
             viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount.toString()
         )
         this@CourseDetailsActivity.finish()

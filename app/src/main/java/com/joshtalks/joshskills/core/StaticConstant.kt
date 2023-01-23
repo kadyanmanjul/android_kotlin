@@ -331,6 +331,9 @@ class FirebaseRemoteConfigKey {
         const val SPEAKING_BB_TIP_BUTTON_HEADER = "SPEAKING_BB_TIP_BUTTON_HEADER"
         const val SPEAKING_BB_TIP_BUTTON_CONTENT = "SPEAKING_BB_TIP_BUTTON_CONTENT_"
 
+        const val TEACHER_IMAGE_URL = "TEACHER_IMAGE_URL_"
+        const val TEACHER_NAME = "TEACHER_NAME_"
+
     }
 }
 

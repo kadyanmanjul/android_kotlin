@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.callWithExpert.model.*
+import com.joshtalks.joshskills.ui.errorState.ErrorScreen
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.ui.inbox.model.TransactionHistory
 import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
@@ -405,8 +406,8 @@ interface CommonNetworkService {
         @Query("lessons_completed") lessonsCompleted: Int? = null
     ): Response<Coupon>
 
-    @POST("$DIR/course/course_price_details/")
-    suspend fun getCoursePriceList(@Body params: PriceParameterModel): Response<CoursePriceListModel>
+    @GET("$DIR/course/buy_page_pricing/")
+    suspend fun getCoursePriceList(@Query("code") code: String?): Response<CoursePriceListModel>
 
     @GET("$DIR/course/list_reviews/")
     suspend fun getReviews(@Query("page") pageNo: Int, @Query("test_id") testId: Int): ReviewsListResponse
@@ -446,6 +447,9 @@ interface CommonNetworkService {
 
     @POST("$DIR/support/complaint/")
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): Response<ComplaintResponse>
+
+    @POST("$DIR/analytics/error_log/")
+    suspend fun pushApiLogging(@Body errorScreen: ErrorScreen) : Response<Void>
 
 
 }

@@ -1,22 +1,23 @@
 package com.joshtalks.joshskills.ui.paymentManager
 
+import android.os.Message
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseData
 import com.joshtalks.joshskills.repository.server.JuspayPayLoad
 import com.joshtalks.joshskills.ui.callWithExpert.model.Amount
+import com.joshtalks.joshskills.ui.errorState.CREATE_ORDER_V3_ERROR
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import retrofit2.HttpException
 import retrofit2.Response
 import java.net.SocketTimeoutException
@@ -29,17 +30,28 @@ class PaymentManager(
 ) {
 
     private lateinit var paymentGatewayManager: PaymentGatewayManager
+    var message = Message()
+
+    var singleLiveEvent = EventLiveData
+    val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
+    var data = mutableMapOf<String,String>()
+
 
     fun initializePaymentGateway() {
         paymentGatewayManager = PaymentGatewayManager(context, paymentGatewayListener)
         paymentGatewayManager.initPaymentGateway()
     }
 
-    fun createOrder(testId: String, mobileNumber: String, encryptedText: String) {
+    fun createOrder(mobileNumber: String, encryptedText: String) {
+        val testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
+            Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+        } else {
+            PrefManager.getStringValue(PAID_COURSE_TEST_ID, defaultValue = FREE_TRIAL_PAYMENT_TEST_ID)
+        }
         coroutineScope.launch(Dispatchers.IO) {
             paymentGatewayListener?.onProcessStart()
             try {
-                val data = mutableMapOf(
+                data = mutableMapOf(
                     "encrypted_text" to encryptedText,
                     "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
                     "mobile" to mobileNumber,
@@ -57,9 +69,15 @@ class PaymentManager(
                         paymentGatewayManager.openPaymentGateway(response)
                     }
                 } else {
+                    withContext(mainDispatcher) {
+                        sendErrorMessage(orderDetailsResponse.code().toString())
+                    }
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
             } catch (ex: Exception) {
+                withContext(mainDispatcher) {
+                    sendErrorMessage(ex.message.toString())
+                }
                 when (ex) {
                     is HttpException -> {
                         showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
@@ -77,6 +95,16 @@ class PaymentManager(
                 }
             }
         }
+    }
+
+    private fun sendErrorMessage(exception:String){
+        Log.e("sagar", "sendErrorMessage: ", )
+        val map = HashMap<String,String>()
+        map["exception"] = exception
+        map["payload"] = data.toString()
+        message.what = CREATE_ORDER_V3_ERROR
+        message.obj = map
+        singleLiveEvent.value = message
     }
 
     fun createOrderForExpert(testId: String, amount: Int) {

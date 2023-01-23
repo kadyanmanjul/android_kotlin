@@ -46,6 +46,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
+import com.joshtalks.joshskills.ui.errorState.*
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
@@ -152,7 +153,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         openCourseListener = this
         if (Utils.isInternetAvailable()) {
             viewModel.getBuyPageFeature()
-            viewModel.getCoursePriceList(null, null, null,null)
+            viewModel.getCoursePriceList(null, null,null)
             viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
@@ -225,6 +226,23 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 PAYMENT_SUCCESS -> onPaymentSuccess()
                 PAYMENT_FAILED -> showPaymentFailedDialog()
                 PAYMENT_PENDING -> showPendingDialog()
+                BUY_COURSE_FEATURE_ERROR -> {
+                    val map = it.obj as HashMap<*, *>
+                    openErrorScreen(errorCode = BUY_COURSE_FEATURE_ERROR.toString(), map)
+                }
+                GET_COUPON_LIST_API_ERROR ->{
+                val map = it.obj as HashMap<*, *>
+                    openErrorScreen(errorCode = GET_COUPON_LIST_API_ERROR.toString(), map)
+                }
+                COURSE_PRICE_LIST_ERROR -> {
+                    val map = it.obj as HashMap<*, *>
+                    openErrorScreen(errorCode = COURSE_PRICE_LIST.toString(), map)
+                }
+                CREATE_ORDER_V3_ERROR -> {
+                    Log.e("sagar", "CREATE_ORDER_V3_ERROR: ", )
+                    val map = it.obj as HashMap<*, *>
+                    openErrorScreen(errorCode = CREATE_ORDER_V3_ERROR.toString(), map)
+                }
             }
         }
     }
@@ -311,11 +329,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     }
 
     private fun setCoursePrices(list: CourseDetailsList, position: Int) {
-        Log.e("sagar", "setCoursePrices: ${list.discountedPrice}")
         priceForPaymentProceed = list
         proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text =
             if (paymentButtonValue == 0)
-                "Pay ${priceForPaymentProceed?.discountedPrice ?: "Pay ₹499"}"
+                "Pay ${priceForPaymentProceed?.discountedPrice.toString() ?: "Pay ₹499"}"
             else "Proceed to Payment"
     }
 
@@ -441,7 +458,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         NotificationUtils(applicationContext).updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
         try {
             paymentManager.createOrder(
-                priceForPaymentProceed?.testId ?: EMPTY,
                 phoneNumber,
                 priceForPaymentProceed?.encryptedText ?: EMPTY
             )
@@ -473,11 +489,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             StartCourseActivity.openStartCourseActivity(
                 this,
                 priceForPaymentProceed?.courseName ?: EMPTY,
-                priceForPaymentProceed?.teacherName ?: EMPTY,
-                priceForPaymentProceed?.imageUrl ?: EMPTY,
+                AppObjectController.getFirebaseRemoteConfig().getString(FirebaseRemoteConfigKey.TEACHER_NAME),
+                AppObjectController.getFirebaseRemoteConfig().getString(FirebaseRemoteConfigKey.TEACHER_IMAGE_URL),
                 paymentManager.getJoshTalksId(),
-                priceForPaymentProceed?.testId ?: EMPTY,
-                priceForPaymentProceed?.discountedPrice ?: EMPTY
+                priceForPaymentProceed?.discountedPrice.toString()
             )
             this.finish()
         } catch (ex: Exception) {
@@ -630,7 +645,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 override fun onRetryButtonClicked() {
                     if (Utils.isInternetAvailable()) {
                         viewModel.getBuyPageFeature()
-                        viewModel.getCoursePriceList(null, null, null,null)
+                        viewModel.getCoursePriceList(null, null,null)
                         viewModel.getValidCouponList(OFFERS, Integer.parseInt(testId))
                     } else {
                         errorView?.get()?.enableRetryBtn()
@@ -722,12 +737,12 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         viewModel.removeEntryFromPaymentTable(paymentManager.getJustPayOrderId())
         viewModel.saveBranchPaymentLog(
             paymentManager.getJustPayOrderId(),
-            BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
+            BigDecimal(priceForPaymentProceed?.discountedPrice?.toString()),
             testId = Integer.parseInt(freeTrialTestId),
             courseName = priceForPaymentProceed?.courseName ?: EMPTY,
         )
         MarketingAnalytics.coursePurchased(
-            BigDecimal(priceForPaymentProceed?.discountedPrice?.replace("₹", "").toString()),
+            BigDecimal(priceForPaymentProceed?.discountedPrice?.toString()),
             true,
             testId = freeTrialTestId,
             courseName = priceForPaymentProceed?.courseName ?: EMPTY,
@@ -783,5 +798,16 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         Log.d("sagar", "onFreeTrialEnded() called")
         binding.freeTrialTimerNewUi.visible()
         binding.freeTrialTimerNewUi.endFreeTrial()
+    }
+
+    private fun openErrorScreen(errorCode:String, map:HashMap<*, *>){
+        ErrorActivity.showErrorScreen(
+            errorTitle = "Something went wrong",
+            errorSubtitle = getString(R.string.error_message_screen),
+            errorCode = errorCode,
+            activity = this@BuyPageActivity,
+            payload = map["payload"].toString(),
+            exception = map["exception"].toString()
+        )
     }
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -33,7 +34,7 @@ class ErrorActivity : BaseActivity() {
 
     override fun onCreated() {
         lifecycleScope.launch (Dispatchers.IO){
-            vm.saveApiFail(errorCode)
+            vm.saveApiFail(errorCode, payload, exception)
         }
     }
 
@@ -56,16 +57,22 @@ class ErrorActivity : BaseActivity() {
         lateinit var errorTitle: String
         lateinit var errorSubtitle: String
         private var activity: Activity? = null
+        lateinit var payload : String
+        lateinit var exception :String
         fun showErrorScreen(
             errorCode: String,
             errorTitle: String,
             errorSubtitle: String,
-            activity: Activity
+            activity: Activity,
+            payload:String = EMPTY,
+            exception: String = EMPTY
         ) {
             this.errorCode = errorCode
             this.errorTitle = errorTitle
             this.errorSubtitle = errorSubtitle
             this.activity = activity
+            this.payload = payload
+            this.exception = exception
             val intent = Intent(activity, ErrorActivity::class.java)
             activity.startActivity(intent)
             activity.finish()

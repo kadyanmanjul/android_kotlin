@@ -38,7 +38,6 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 const val TEACHER_NAME = "teacher_name"
 const val IMAGE_URL = "image_url"
 const val COURSE_PRICE = "course_price"
-const val TEST_ID = "test_id"
 
 class StartCourseActivity : CoreJoshActivity() {
 
@@ -47,7 +46,6 @@ class StartCourseActivity : CoreJoshActivity() {
     var teacherName: String = EMPTY
     var imageUrl: String = EMPTY
     var transactionId: String = EMPTY
-    var testId: String = EMPTY
     var coursePrice: String = EMPTY
     private lateinit var binding: ActivityStartCourseBinding
 
@@ -113,7 +111,6 @@ class StartCourseActivity : CoreJoshActivity() {
         teacherName = dataFromIntent(TEACHER_NAME)
         imageUrl = dataFromIntent(IMAGE_URL)
         transactionId = dataFromIntent(TRANSACTION_ID)
-        testId = dataFromIntent(TEST_ID)
         coursePrice = dataFromIntent(COURSE_PRICE)
     }
 
@@ -134,7 +131,6 @@ class StartCourseActivity : CoreJoshActivity() {
             teacherName: String,
             imageUrl: String,
             transactionId: Int,
-            testId: String,
             coursePrice: String
         ) {
             Intent(context, StartCourseActivity::class.java).apply {
@@ -143,7 +139,6 @@ class StartCourseActivity : CoreJoshActivity() {
                 putExtra(IMAGE_URL, imageUrl)
                 putExtra(TRANSACTION_ID, transactionId.toString())
                 putExtra(COURSE_PRICE,coursePrice)
-                putExtra(TEST_ID,testId)
             }.run {
                 context.startActivity(this)
             }
@@ -153,12 +148,6 @@ class StartCourseActivity : CoreJoshActivity() {
     private fun setListeners() {
         binding.materialButton.setOnClickListener {
             if (isUserRegistered) {
-                MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_START_MY_COURSE)
-                    .addParam(ParamKeys.TEST_ID,testId)
-                    .addParam(ParamKeys.COURSE_NAME,courseName)
-                    .addParam(ParamKeys.COURSE_PRICE,coursePrice)
-                    .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-                    .push()
 
                 AppAnalytics.create(AnalyticsEvent.COURSE_START_CLCIKED.NAME)
                     .addUserDetails()
@@ -183,12 +172,6 @@ class StartCourseActivity : CoreJoshActivity() {
                     this.finish()
                 }
             } else {
-                MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_REGISTER_NOW)
-                    .addParam(ParamKeys.TEST_ID,testId)
-                    .addParam(ParamKeys.COURSE_NAME,courseName)
-                    .addParam(ParamKeys.COURSE_PRICE,coursePrice)
-                    .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-                    .push()
                 AppAnalytics.create(AnalyticsEvent.REGISTER_NOW_CLICKED.NAME)
                     .addUserDetails()
                     .addBasicParam()

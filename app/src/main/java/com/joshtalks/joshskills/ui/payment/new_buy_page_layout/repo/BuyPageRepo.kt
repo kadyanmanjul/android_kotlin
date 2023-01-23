@@ -16,8 +16,8 @@ class BuyPageRepo {
     suspend fun getCouponList(testId: Int, lessonsCompleted: Int? = null) =
         AppObjectController.commonNetworkService.getValidCoupon(testId = testId, lessonsCompleted = lessonsCompleted)
 
-    suspend fun getPriceList(params: PriceParameterModel) =
-        AppObjectController.commonNetworkService.getCoursePriceList(params)
+    suspend fun getPriceList(code:String?) =
+        AppObjectController.commonNetworkService.getCoursePriceList(code)
 
     fun getReviewResult(testId: Int) =
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {

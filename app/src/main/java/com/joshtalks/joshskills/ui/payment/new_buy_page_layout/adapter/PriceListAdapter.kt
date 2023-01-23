@@ -16,19 +16,17 @@ import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ItemNewPriceCardBinding
+import com.joshtalks.joshskills.ui.callWithExpert.utils.toRupeesWithoutSpace
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_PRICE_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
-import kotlinx.coroutines.*
-import timber.log.Timber
-import java.util.Date
+import java.util.*
 
 class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
     RecyclerView.Adapter<PriceListAdapter.PriceListViewHolder>() {
     var itemClick: ((CourseDetailsList, Int, Int, String) -> Unit)? = null
     var prevHolder: PriceListViewHolder? = null
     var expireAt: Date?=null
-    var isMentorSpecificCoupon: Boolean? =null
     var couponType: String? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PriceListViewHolder {
@@ -78,11 +76,10 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
 
     override fun getItemCount(): Int = priceList?.size ?: 0
 
-    fun addPriceList(members: List<CourseDetailsList>?, validDuration:Date?, isSpecificMentorCoupon:Boolean?, type:String?) {
+    fun addPriceList(members: List<CourseDetailsList>?, validDuration:Date?, type:String?) {
         Log.d("PriceListAdapter.kt", "SAGAR => addPriceList:60 ")
         priceList = members
         expireAt = validDuration
-        isMentorSpecificCoupon = isSpecificMentorCoupon
         couponType = type
         notifyDataSetChanged()
     }
@@ -98,11 +95,20 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
 
         fun setData(priceList: CourseDetailsList?) {
             binding.itemData = priceList
-            binding.discountPrice.text = "MRP: ${priceList?.actualAmount} "
+            binding.discountPrice.text = "MRP: ${priceList?.actualAmount.toString().toRupeesWithoutSpace()} "
             binding.discountPrice.paintFlags = binding.discountPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
-            binding.originalPrice.text = priceList?.discountedPrice
-            binding.pricePerDay.text = priceList?.perDayPrice +" "
-            if (priceList?.subText!=null) {
+            binding.originalPrice.text = priceList?.discountedPrice.toString().toRupeesWithoutSpace()
+            if (priceList?.perDayPrice != null)
+                binding.pricePerDay.text = priceList.perDayPrice + " "
+
+            val savings = (priceList?.actualAmount)?.minus((priceList.discountedPrice) ?: 0)
+
+            if (savings != null) {
+                val percent = (savings / ((priceList.actualAmount).toDouble()) * 100).toInt()
+                binding.couponSavePercent.text = "Save $percent%"
+            }
+
+            if (priceList?.subText != null) {
                 binding.priceDescList.visibility = View.VISIBLE
                 binding.priceDescList.removeAllViews()
                 priceList.subText?.forEach { it ->

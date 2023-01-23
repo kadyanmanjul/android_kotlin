@@ -28,10 +28,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
-import com.joshtalks.joshskills.ui.errorState.ErrorActivity
-import com.joshtalks.joshskills.ui.errorState.MENTOR_DEVICE_GAID_ID
-import com.joshtalks.joshskills.ui.errorState.MENTOR_GAID
-import com.joshtalks.joshskills.ui.errorState.USER_CREATE_USER
+import com.joshtalks.joshskills.ui.errorState.*
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.util.RedirectAction.*
@@ -108,9 +105,18 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 FETCH_MENTOR -> viewModel.getGuestMentor()
                 ANALYZE_APP_REQUIREMENT -> analyzeAppRequirement()
                 START_ACTIVITY -> startNextActivity()
-                MENTOR_DEVICE_GAID_ID -> openErrorScreen(MENTOR_DEVICE_GAID_ID.toString())
-                MENTOR_GAID -> openErrorScreen(MENTOR_GAID.toString())
-                USER_CREATE_USER -> openErrorScreen(USER_CREATE_USER.toString())
+                MENTOR_DEVICE_GAID_ID -> {
+                    val map = it.obj as HashMap<*, *>
+                    openErrorScreen(errorCode = MENTOR_DEVICE_GAID_ID.toString(), map)
+                }
+                MENTOR_GAID ->{
+                    val map = it.obj as HashMap<*, *>
+                    openErrorScreen(errorCode = MENTOR_GAID.toString(), map)
+                }
+                USER_CREATE_USER -> {
+                    val map = it.obj as HashMap<*, *>
+                    openErrorScreen(errorCode = USER_CREATE_USER.toString(),map)
+                }
                 else -> {}
             }
         }
@@ -135,12 +141,14 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
         }
     }
 
-    private fun openErrorScreen(errorCode:String){
+    private fun openErrorScreen(errorCode:String, map:HashMap<*, *>){
         ErrorActivity.showErrorScreen(
             errorTitle = "Something went wrong",
             errorSubtitle = getString(R.string.error_message_screen),
             errorCode = errorCode,
-            activity = this@LauncherActivity
+            activity = this@LauncherActivity,
+            payload = map["payload"].toString(),
+            exception = map["exception"].toString()
         )
     }
 

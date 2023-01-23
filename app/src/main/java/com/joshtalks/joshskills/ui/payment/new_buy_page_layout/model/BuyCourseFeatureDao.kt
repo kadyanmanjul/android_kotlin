@@ -8,7 +8,7 @@ import androidx.room.Query
 @Dao
 interface BuyCourseFeatureDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBuyCourseFeatureData(readingVideo: BuyCourseFeatureModelNew?)
 
     @Query(value = "SELECT * FROM buy_course_feature")

@@ -400,28 +400,26 @@ class InboxViewModel : BaseViewModel(){
         }
     }
 
-    fun getBuyPageFeature(){
-        AppObjectController.applicationLevelScope.launch(Dispatchers.IO){
-            if (AppObjectController.appDatabase.getCourseFeatureDataDao().getBuyCourseFeatureData()==null){
-                try {
-                    val response = AppObjectController.commonNetworkService.getCourseFeatureDetailsV2()
-                    if (response.isSuccessful){
-                        AppObjectController.appDatabase.getCourseFeatureDataDao().insertBuyCourseFeatureData(response.body())
+    fun getBuyPageFeature() {
+        AppObjectController.applicationLevelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.commonNetworkService.getCourseFeatureDetailsV2()
+                if (response.isSuccessful) {
+                    AppObjectController.appDatabase.getCourseFeatureDataDao().insertBuyCourseFeatureData(response.body())
+                }
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                        showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                     }
-                }catch (ex:Exception){
-                    when (ex) {
-                        is HttpException -> {
-                            showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                        }
-                        is SocketTimeoutException, is UnknownHostException -> {
-                            showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
-                        }
-                        else -> {
-                            try {
-                                FirebaseCrashlytics.getInstance().recordException(ex)
-                            } catch (ex: Exception) {
-                                ex.printStackTrace()
-                            }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
                         }
                     }
                 }

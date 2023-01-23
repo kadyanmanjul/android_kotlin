@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.signup.LastLoginType
+import com.joshtalks.joshskills.ui.errorState.BUY_COURSE_FEATURE_ERROR
 import com.joshtalks.joshskills.ui.errorState.MENTOR_DEVICE_GAID_ID
 import com.joshtalks.joshskills.ui.errorState.MENTOR_GAID
 import com.joshtalks.joshskills.ui.errorState.USER_CREATE_USER
@@ -29,13 +30,11 @@ import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
 import com.joshtalks.joshskills.util.RedirectAction
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlinx.coroutines.delay
 
 
 const val FETCH_GAID = 1001
@@ -50,6 +49,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     val abTestRepository by lazy { ABTestRepository() }
     var testId: String? = null
     var exploreType: String? = null
+    val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val deepLinkRedirectUtil by lazy { DeepLinkRedirectUtil(jsonParams) }
     private val launcherScreenImpressionService by lazy {
         AppObjectController.retrofit.create(LauncherScreenImpressionService::class.java)
@@ -128,15 +128,29 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                     event.value = Message().apply { what = UPDATE_GAID }
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                 } else {
-                    event.value = Message().apply { what = MENTOR_DEVICE_GAID_ID }
+                    withContext(mainDispatcher) {
+                        sendErrorMessage(response.code().toString(), Utils.getDeviceId(), MENTOR_DEVICE_GAID_ID)
+                    }
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Exception) {
-                event.value = Message().apply { what = MENTOR_DEVICE_GAID_ID }
+                withContext(mainDispatcher) {
+                    sendErrorMessage(ex.message.toString(), Utils.getDeviceId(), MENTOR_DEVICE_GAID_ID)
+                }
                 LogException.catchException(ex)
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 return@launch
             }
+        }
+    }
+
+    private fun sendErrorMessage(exception: String?, payload: String?, apiErrorCode: Int) {
+        val map = HashMap<String, String?>()
+        map["exception"] = exception
+        map["payload"] = payload
+        event.value = Message().apply {
+            what = apiErrorCode
+            obj = map
         }
     }
 
@@ -179,7 +193,9 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 PrefManager.put(EXPLORE_TYPE, exploreType ?: ExploreCardType.NORMAL.name, false)
                 event.value = Message().apply { what = FETCH_MENTOR }
             } catch (ex: Exception) {
-                event.value = Message().apply { what = MENTOR_GAID }
+                withContext(mainDispatcher) {
+                    sendErrorMessage(ex.message.toString(), requestRegisterGAId.toString(), MENTOR_GAID)
+                }
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
                 LogException.catchException(ex)
@@ -204,6 +220,9 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 event.value = Message().apply { what = START_ACTIVITY }
                 apiCallStatus.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Exception) {
+                withContext(mainDispatcher) {
+                    sendErrorMessage(ex.message.toString(), PrefManager.getStringValue(USER_UNIQUE_ID), USER_CREATE_USER)
+                }
                 event.value = Message().apply { what = USER_CREATE_USER }
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 LogException.catchException(ex)

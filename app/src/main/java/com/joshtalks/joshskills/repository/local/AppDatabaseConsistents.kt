@@ -47,7 +47,7 @@ abstract class AppDatabaseConsistents : RoomDatabase() {
 
         private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `error_screen` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `error_code` TEXT NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `error_screen` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `error_code` TEXT NOT NULL, `payload` TEXT, `exception` TEXT)")
             }
         }
     }
