@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.NotificationManagerCompat
@@ -33,8 +32,8 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.User.Companion.getInstance
 import com.joshtalks.joshskills.repository.server.FAQ
 import com.joshtalks.joshskills.repository.server.FAQCategory
-import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.joshtalks.joshskills.repository.server.help.Action
+import com.joshtalks.joshskills.repository.server.help.Option
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -274,7 +273,7 @@ class HelpActivity : CoreJoshActivity() {
                             openFaqCategory()
                         }
                         Action.COMPLAINT == it.option.action -> {
-                            compliantScreen()
+                            compliantScreen(it.option)
                         }
                         else -> {
                             showToast(getString(R.string.something_went_wrong))
@@ -288,8 +287,7 @@ class HelpActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    compliantScreen()
-                   // showFaqFragment(it.selectedCategory, it.categoryList)
+                    showFaqFragment(it.selectedCategory, it.categoryList)
                 })
 
         compositeDisposable.add(
@@ -297,8 +295,7 @@ class HelpActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    compliantScreen()
-                    //showFaqDetailsFragment(it)
+                    showFaqDetailsFragment(it)
                 })
     }
 
@@ -334,12 +331,12 @@ class HelpActivity : CoreJoshActivity() {
         super.onDestroy()
     }
 
-    private fun compliantScreen() {
+    private fun compliantScreen(option: Option) {
         supportFragmentManager.commit(true) {
             addToBackStack(ComplaintFragment::class.java.name)
             replace(
                 R.id.container,
-                ComplaintFragment.newInstance(),
+                ComplaintFragment.newInstance(option.id, option.name),
                 ComplaintFragment::class.java.name
             )
         }

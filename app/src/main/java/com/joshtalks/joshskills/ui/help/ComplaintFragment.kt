@@ -16,22 +16,18 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
 import com.joshtalks.joshskills.repository.server.RequestComplaint
-import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.muddzdev.styleabletoast.StyleableToast
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -39,14 +35,18 @@ import timber.log.Timber
 import java.io.File
 
 
-const val COMPLAINT_OBJECT = "complaint_object"
+const val COMPLAINT_ID = "complaint_id"
+const val COMPLAINT_CATEGORY = "complaint_category"
 
 class ComplaintFragment : Fragment() {
 
     private lateinit var lodgeComplaintBinding: FragmentLodgeComplaintBinding
-    private lateinit var typeOfHelpModel: TypeOfHelpModel
     private var attachmentPath: String? = null
-    private lateinit var viewModel: HelpViewModel
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity())[HelpViewModel::class.java]
+    }
+    private var complaintID : Int = 0
+    private var complaintCategory: String = "Report Complaint"
 
 
     private lateinit var progressDialog: FlipProgressDialog
@@ -59,10 +59,8 @@ class ComplaintFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // typeOfHelpModel = arguments?.getSerializable(COMPLAINT_OBJECT) as TypeOfHelpModel
-        viewModel = activity?.run { ViewModelProviders.of(this)[HelpViewModel::class.java] }
-            ?: throw Exception("Invalid Activity")
-
+        complaintID = arguments?.getInt(COMPLAINT_ID) as Int
+        complaintCategory = arguments?.getString(COMPLAINT_CATEGORY) as String
     }
 
     override fun onCreateView(
@@ -80,7 +78,7 @@ class ComplaintFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val titleView = activity?.findViewById<AppCompatTextView>(R.id.text_message_title)
-        titleView?.text = "Sagar jain"
+        titleView?.text = complaintCategory
         viewModel.apiCallStatusLiveDataComplaint.observe(viewLifecycleOwner, Observer {
             if (it == ApiCallStatus.SUCCESS) {
                 progressDialog.dismissAllowingStateLoss()
@@ -173,8 +171,12 @@ class ComplaintFragment : Fragment() {
             return
         }
 
-        if (lodgeComplaintBinding.etNumber.text.toString().isEmpty()) {
-            showToast("Please enter valid phone number")
+        if (lodgeComplaintBinding.etNumber.text.isNullOrEmpty() || isValidFullNumber(
+                "+91",
+                lodgeComplaintBinding.etNumber.text.toString()
+            ).not()
+        ) {
+            showToast(getString(R.string.please_enter_valid_number))
             return
         }
 
@@ -201,13 +203,13 @@ class ComplaintFragment : Fragment() {
 
         progressDialog.show(requireFragmentManager(), "ProgressDialog")
         val requestComplaint = RequestComplaint(
-            3,
+            complaintID,
             lodgeComplaintBinding.etEmail.text.toString(),
             attachmentPath,
             lodgeComplaintBinding.etNumber.text.toString(),
             lodgeComplaintBinding.etName.text.toString(),
             lodgeComplaintBinding.etComplaint.text.toString(),
-            "6260268380"
+            lodgeComplaintBinding.etNumber.text.toString()
         )
         viewModel.requestComplaint(requestComplaint)
     }
@@ -221,16 +223,12 @@ class ComplaintFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = ComplaintFragment().apply {
+        fun newInstance(id: Int, category: String) = ComplaintFragment().apply {
             arguments = Bundle().apply {
-                //putSerializable(COMPLAINT_OBJECT, typeOfHelpModel)
+                putInt(COMPLAINT_ID, id)
+                putString(COMPLAINT_CATEGORY, category)
             }
 
         }
     }
-
-//    private fun validPhoneNumber(number: String): Boolean {
-//        return PHONE_NUMBER_REGEX.containsMatchIn(input = number)
-//    }
-
 }
