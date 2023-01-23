@@ -995,4 +995,5 @@
     <string name="your_hometown" translatable="false">Your Hometown</string>
 
     <string name="start_exam" translatable="false">Start exam</string>
+    <string name="error_message_screen" translatable="false">We are working on solving the problem. Sorry for the inconvenience. you can call below to the number</string>
 </resources>
