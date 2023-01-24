@@ -407,6 +407,7 @@
     <string name="invalid_coupon_code">Invalid Coupon Code. Try Again</string>
     <string name="speaking">Speaking</string>
     <string name="grammar">Grammar</string>
+    <string name="grammar_test" translatable="false">Grammar Test</string>
     <string name="vocabulary">Vocabulary</string>
     <string name="reading">Reading</string>
     <string name="lesson_name">Lesson %1$d: %2$s</string>
@@ -583,8 +584,9 @@
     <string name="free_trial_dialog_desc" translatable="false">यह एक 90 दिनों का कोर्स है\\nऔर try करने के बाद अगर आप चाहें तो इसे ₹499 में खरीद सकते हैं\\n  \\nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
     <string name="free_trial_dialog_btn_no" translatable="false">जी नहीं</string>
     <string name="free_trial_dialog_btn_yes" translatable="false">जी हाँ</string>
-    <string name="test_completed" translatable="false">Test Completed</string>
+    <string name="test_completed" translatable="false">Test Completed!</string>
     <string name="test_score" translatable="false">%1$d%% Marks</string>
+    <string name="test_level" translatable="false">Level:%s</string>
     <string name="enter_name_label" translatable="false">आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</string>
     <!--    Lesson Spotlight-->
     <string name="label_lesson_spotlight" translatable="false">हर Lesson में चार भाग होते है</string>

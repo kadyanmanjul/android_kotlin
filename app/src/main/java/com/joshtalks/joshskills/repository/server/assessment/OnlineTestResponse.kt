@@ -35,6 +35,9 @@ data class OnlineTestResponse(
     @SerializedName("score_text")
     var scoreText: Int?,
 
+    @SerializedName("level")
+    var level: String?,
+
     @SerializedName("points_list")
     val pointsList: List<String>?,
 

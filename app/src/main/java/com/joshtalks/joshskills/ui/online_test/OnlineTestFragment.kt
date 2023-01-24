@@ -73,6 +73,7 @@ class OnlineTestFragment :
     private var reviseVideoObject: VideoModel? = null
     private var isTestCompleted: Boolean = false
     private var scoreText: Int? = 0
+    private var scoreLevel: String? = null
     private var pointsList: String? = null
     private var previousId: Int = -1
     private var isAttempted: Boolean = false
@@ -171,10 +172,10 @@ class OnlineTestFragment :
                     addNewRuleCompleted(onlineTestResponse.ruleAssessmentId)
                 }
                 isTestCompleted = onlineTestResponse.completed
-                onlineTestResponse.scoreText?.let {
-                    scoreText = it
+                onlineTestResponse.level?.let {
+                    scoreLevel = it
                     PrefManager.put(
-                        FREE_TRIAL_TEST_SCORE, it, false
+                        FREE_TRIAL_TEST_LEVEL, it, false
                     )
                 }
                 onlineTestResponse.pointsList?.let { pointsListRes ->
@@ -216,10 +217,6 @@ class OnlineTestFragment :
                     binding.progressContainer.visibility = View.GONE
                     toggleLoading(false)
                 }
-                ApiCallStatus.SUCCESS -> {
-                    toggleLoading(false)
-                    binding.progressContainer.visibility = View.GONE
-                }
                 else -> {
                     toggleLoading(false)
                     binding.progressContainer.visibility = View.GONE
@@ -258,7 +255,7 @@ class OnlineTestFragment :
     fun showGrammarCompleteFragment() {
         activity?.supportFragmentManager?.beginTransaction()?.replace(
             R.id.parent_Container,
-            GrammarOnlineTestFragment.getInstance(lessonNumber, scoreText, pointsList, true),
+            GrammarOnlineTestFragment.getInstance(lessonNumber, scoreLevel, pointsList, true),
             GrammarOnlineTestFragment.TAG
         )?.addToBackStack(GrammarOnlineTestFragment.TAG)?.commitAllowingStateLoss()
         testCompletedListener?.onTestCompleted()

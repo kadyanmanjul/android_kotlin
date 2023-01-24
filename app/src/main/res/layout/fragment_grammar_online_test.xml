@@ -127,7 +127,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Grammar Lesson"
+                            android:text="@string/grammar_test"
                             android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                             android:textColor="@color/text_default" />
@@ -220,9 +220,9 @@
                     android:paddingHorizontal="@dimen/_22sdp"
                     android:text="@string/test_completed"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
                     android:textColor="@color/text_default"
-                    app:layout_constraintBottom_toTopOf="@+id/your_score_text"
+                    app:layout_constraintBottom_toTopOf="@+id/score"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -230,38 +230,56 @@
                     app:layout_constraintVertical_chainStyle="packed" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/your_score_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_18sdp"
-                    android:gravity="center"
-                    android:paddingHorizontal="@dimen/_16sdp"
-                    android:text="@{handler.getTestCompletedDescription()}"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
-                    android:textColor="@color/text_default"
-                    app:layout_constraintBottom_toTopOf="@+id/score"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/score_title" />
-
-                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.XLargeSemiBold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                     android:textColor="#000000"
-                    android:visibility="invisible"
+                    android:visibility="visible"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:layout_constraintBottom_toTopOf="@+id/lottieAnimationViewNew"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/score_title"
+                    tools:text="Level : Begineer" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottieAnimationViewNew"
+                    android:layout_width="@dimen/_196sdp"
+                    android:layout_height="@dimen/_196sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:elevation="5dp"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="lottie/achievement_badge.json"
+                    app:lottie_loop="false"
+                    tools:visibility="visible"
+                    app:layout_constraintBottom_toTopOf="@+id/your_score_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/score" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/your_score_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:text="@{handler.getTestCompletedDescription()}"
+                    tools:text="@string/loremIpsumShort"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                    android:textColor="@color/text_default"
                     app:layout_constraintBottom_toTopOf="@+id/score_start_btn"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/your_score_text"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    tools:text="70% Marks" />
+                    app:layout_constraintTop_toBottomOf="@+id/lottieAnimationViewNew" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/score_start_btn"

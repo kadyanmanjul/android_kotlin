@@ -37,6 +37,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
+import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -1108,7 +1109,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             arrayFragment.add(TRANSLATION_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
             A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_CLICKED)
             isTranslationDisabled = 0
-        } else if (lessonIsNewGrammar) {
+        } else if (true) {
             arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
         } else {
             arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())

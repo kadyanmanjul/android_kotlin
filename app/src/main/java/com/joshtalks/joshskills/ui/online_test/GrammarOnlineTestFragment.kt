@@ -51,7 +51,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     }
     private var lessonNumber: Int = -1
     private var lessonId: Int = -1
-    private var scoreText: Int = -1
+    private var scoreLevel: String? = null
     private var pointsList: String? = null
     private var hasCompletedTest: Boolean = false
     private var timerPopText = EMPTY
@@ -125,7 +125,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     ): View {
         arguments?.let {
             lessonNumber = it.getInt(CURRENT_LESSON_NUMBER, -1)
-            scoreText = it.getInt(SCORE_TEXT, -1)
+            scoreLevel = it.getString(SCORE_LEVEL)
             pointsList = it.getString(POINTS_LIST)
             hasCompletedTest = it.getBoolean(HAS_COMPLETED_TEST)
         }
@@ -175,23 +175,27 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                 ONLINE_TEST_LAST_LESSON_COMPLETED
             ) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
-                if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                        IS_FREE_TRIAL,
-                        isConsistent = false,
-                        defValue = false
-                    ) || PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID
-                ) {
+                if (true) {
                     binding.testScoreContainer.visibility = View.VISIBLE
                     binding.testCompletedContainer.visibility = View.GONE
-                    if (scoreText != -1) {
-                        binding.score.text = getString(R.string.test_score, scoreText)
-
-                    } else {
-                        binding.score.text = getString(
-                            R.string.test_score, PrefManager.getIntValue(
-                                FREE_TRIAL_TEST_SCORE, false, 0
+                    when {
+                        scoreLevel?.isNotBlank() == true -> {
+                            binding.score.text = getString(R.string.test_level, scoreLevel)
+                            binding.score.visibility = View.VISIBLE
+                        }
+                        PrefManager.getStringValue(
+                            FREE_TRIAL_TEST_LEVEL, false
+                        ).isNotBlank() -> {
+                            binding.score.text = getString(
+                                R.string.test_level, PrefManager.getStringValue(
+                                    FREE_TRIAL_TEST_LEVEL, false
+                                )
                             )
-                        )
+                            binding.score.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            binding.score.visibility = View.INVISIBLE
+                        }
                     }
                     if (pointsList.isNullOrBlank().not()) {
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
@@ -413,23 +417,26 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     private fun showGrammarCompleteLayout() {
         binding.parentContainer.visibility = View.GONE
         binding.startTestContainer.visibility = View.GONE
-        if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                IS_FREE_TRIAL,
-                isConsistent = false,
-                defValue = false
-            )
-        ) {
+        if (true) {
             binding.testScoreContainer.visibility = View.VISIBLE
-            if (scoreText != -1) {
-                binding.score.text = getString(R.string.test_score, scoreText)
-
-            } else {
-                binding.score.text = getString(
-                    R.string.test_score, PrefManager.getIntValue(
-                        FREE_TRIAL_TEST_SCORE, false, 0
+            when {
+                scoreLevel?.isNotBlank() == true -> {
+                    binding.score.text = getString(R.string.test_level, scoreLevel)
+                    binding.score.visibility = View.VISIBLE
+                }
+                PrefManager.getStringValue(
+                    FREE_TRIAL_TEST_LEVEL, false
+                ).isNotBlank() -> {
+                    binding.score.text = getString(
+                        R.string.test_level, PrefManager.getStringValue(
+                            FREE_TRIAL_TEST_LEVEL, false
+                        )
                     )
-                )
-
+                    binding.score.visibility = View.VISIBLE
+                }
+                else -> {
+                    binding.score.visibility = View.INVISIBLE
+                }
             }
             if (pointsList.isNullOrBlank().not()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
@@ -476,22 +483,22 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         const val TAG = "GrammarOnlineTestFragment"
         const val CURRENT_LESSON_NUMBER = "current_lesson_number"
         const val POINTS_LIST = "points_list"
-        const val SCORE_TEXT = "score_text"
+        const val SCORE_LEVEL = "score_level"
         const val HAS_COMPLETED_TEST = "has_completed_test"
         private var animationJob: Job? = null
 
         @JvmStatic
         fun getInstance(
             lessonNumber: Int,
-            scoreText: Int? = null,
+            scoreLevel: String? = null,
             pointsList: String? = null,
             hasCompletedTest:Boolean = false
         ): GrammarOnlineTestFragment {
             val args = Bundle()
             args.putInt(CURRENT_LESSON_NUMBER, lessonNumber)
             args.putString(POINTS_LIST, pointsList)
-            scoreText?.let {
-                args.putInt(SCORE_TEXT, scoreText)
+            scoreLevel?.let {
+                args.putString(SCORE_LEVEL, scoreLevel)
             }
             args.putBoolean(HAS_COMPLETED_TEST, hasCompletedTest)
             val fragment = GrammarOnlineTestFragment()
