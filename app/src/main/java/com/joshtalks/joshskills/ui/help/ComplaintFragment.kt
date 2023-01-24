@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
+import com.joshtalks.joshskills.util.DeviceInfoUtils
 import com.muddzdev.styleabletoast.StyleableToast
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import timber.log.Timber
@@ -209,7 +210,7 @@ class ComplaintFragment : Fragment() {
             lodgeComplaintBinding.etNumber.text.toString(),
             lodgeComplaintBinding.etName.text.toString(),
             lodgeComplaintBinding.etComplaint.text.toString(),
-            lodgeComplaintBinding.etNumber.text.toString()
+            DeviceInfoUtils.getDetails()
         )
         viewModel.requestComplaint(requestComplaint)
     }
