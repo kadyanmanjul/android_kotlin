@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ItemCouponCardNewBinding
@@ -14,6 +13,7 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.APPLY
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_COUPON_APPLY
+import com.joshtalks.joshskills.util.UtilTime
 
 class CouponListAdapter(val offersList: MutableList<Coupon> = mutableListOf()) :
     RecyclerView.Adapter<CouponListAdapter.CouponViewHolder>() {

@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.*
@@ -17,6 +16,7 @@ import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.PurchaseCourseDialogBinding
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
+import com.joshtalks.joshskills.util.UtilTime
 import kotlinx.coroutines.*
 
 class PurchaseDialog : BaseDialogFragment() {

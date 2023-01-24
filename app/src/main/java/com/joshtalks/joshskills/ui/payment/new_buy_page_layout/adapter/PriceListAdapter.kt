@@ -12,13 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ItemNewPriceCardBinding
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_PRICE_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
+import com.joshtalks.joshskills.util.UtilTime
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.Date

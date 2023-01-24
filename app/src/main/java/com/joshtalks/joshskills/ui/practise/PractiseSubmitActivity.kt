@@ -45,8 +45,6 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.greentoad.turtlebody.mediapicker.MediaPicker
-import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -448,7 +446,7 @@ class PractiseSubmitActivity :
 
     private fun setViewAccordingExpectedAnswer() {
         chatModel.question?.run {
-            binding.practiseInputLayout.visibility = VISIBLE
+            /*binding.practiseInputLayout.visibility = VISIBLE
             this.expectedEngageType?.let {
                 if ((it == EXPECTED_ENGAGE_TYPE.TX).not()) {
                     binding.uploadPractiseView.visibility = VISIBLE
@@ -512,7 +510,7 @@ class PractiseSubmitActivity :
                         binding.uploadFileView.visibility = GONE
                     }
                 }
-            }
+            }*/
         }
     }
 
@@ -788,7 +786,7 @@ class PractiseSubmitActivity :
 
     @SuppressLint("CheckResult")
     private fun selectVideoFromStorage() {
-        val pickerConfig = MediaPickerConfig()
+        /*val pickerConfig = MediaPickerConfig()
             .setUriPermanentAccess(true)
             .setAllowMultiSelection(false)
             .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -813,12 +811,12 @@ class PractiseSubmitActivity :
                 {
                     it.printStackTrace()
                 }
-            )
+            )*/
     }
 
     @SuppressLint("CheckResult")
     private fun selectAudioFromStorage() {
-        val pickerConfig = MediaPickerConfig()
+        /*val pickerConfig = MediaPickerConfig()
             .setUriPermanentAccess(true)
             .setAllowMultiSelection(false)
             .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -844,7 +842,7 @@ class PractiseSubmitActivity :
                 {
                     it.printStackTrace()
                 }
-            )
+            )*/
     }
 
     private fun audioAttachmentInit() {

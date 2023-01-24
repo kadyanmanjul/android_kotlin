@@ -221,10 +221,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation project(path: ':recordview')
     implementation project(path: ':joshlibrary')
-    implementation(project(path: ':mediapicker'), {
-        exclude group: 'com.bumptech.glide'
-    })
-    implementation project(path: ':joshcamerax')
     implementation project(path: ':voip')
     implementation project(path: ':base')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
