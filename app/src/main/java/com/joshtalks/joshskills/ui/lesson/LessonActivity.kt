@@ -1109,7 +1109,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             arrayFragment.add(TRANSLATION_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
             A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_CLICKED)
             isTranslationDisabled = 0
-        } else if (true) {
+        } else if (lessonIsNewGrammar) {
             arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
         } else {
             arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
