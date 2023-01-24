@@ -99,7 +99,7 @@
             android:layout_height="0dp"
             android:layout_marginBottom="4dp"
             android:rotation="180"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintBottom_toTopOf="@+id/group_chat_send_msg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
@@ -117,7 +117,7 @@
             android:padding="@dimen/_2sdp"
             android:visibility="gone"
             app:elevation="@dimen/_4sdp"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintBottom_toTopOf="@+id/group_chat_send_msg"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_arrow_down"
             tools:visibility="visible" />
@@ -132,47 +132,28 @@
             app:layout_constraintStart_toStartOf="@+id/scroll_to_end_button"
             app:layout_constraintTop_toTopOf="@+id/scroll_to_end_button" />
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/group_chat_send_msg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_5sdp"
-            android:background="@drawable/rect_round_16"
-            android:paddingEnd="@dimen/_10sdp"
+            android:background="@drawable/rect_round"
+            android:cursorVisible="true"
+            android:drawableStart="@drawable/ic_chat_emoji"
+            android:drawablePadding="@dimen/_6sdp"
+            android:hint="@string/type_message_hint"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="4"
+            android:minHeight="@dimen/_34sdp"
+            android:paddingStart="@dimen/_6sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/pure_black"
+            android:textColorHint="@color/dark_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/chat_emoji_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:foreground="?attr/actionBarItemBackground"
-                android:onClick="@{() -> vm.openEmojiKeyboard(false)}"
-                android:paddingStart="@dimen/_6sdp"
-                android:paddingEnd="@dimen/_6sdp"
-                app:srcCompat="@drawable/ic_chat_emoji" />
-
-            <com.vanniktech.emoji.EmojiEditText
-                android:id="@+id/group_chat_send_msg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:cursorVisible="true"
-                android:hint="@string/type_message_hint"
-                android:inputType="textCapSentences|textMultiLine"
-                android:maxLength="1800"
-                android:maxLines="4"
-                android:minHeight="@dimen/_34sdp"
-                android:onClick="@{() -> vm.openEmojiKeyboard(true)}"
-                android:paddingVertical="@dimen/_2sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
-                android:textColor="@color/pure_black"
-                android:textColorHint="@color/dark_grey" />
-        </LinearLayout>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/floatingActionButton"

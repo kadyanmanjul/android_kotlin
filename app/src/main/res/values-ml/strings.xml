@@ -63,7 +63,6 @@
     <string name="today_practise">Today\'s Practice</string>
 
     <string name="hold_to_record_msz">ഉത്തരം record ചെയ്യുന്നതിനായി Press and hold അമർത്തു</string>
-    <string name="upload_file_msz">ഒരു ഫയൽ അപ്‌ലോഡ് ചെയ്യുക</string>
     <string name="your_answer">നിങ്ങളുടെ റെക്കോർഡിംഗ്</string>
     <string name="attempt_reading_practice">ഇതാണ് ഇന്നത്തെ റീഡിങ് പ്രാക്ടീസ്  , ഇത് റെക്കോർഡുചെയ്‌ത്  സബ്മിറ്റ് ചെയ്യുക </string>
     <string name="your_feedback">നിങ്ങളുടെ ഫീഡ്ബാക്ക്</string>
@@ -78,7 +77,6 @@
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
     <string name="answer_not_submitted">ഉത്തരങ്ങൾ സമർപ്പിച്ചിട്ടില്ല</string>
-    <string name="answer_submitted">പ്രാക്ടീസ് വിജയകരമായി സമർപ്പിച്ചു</string>
     <string name="use_tip">ടിപ്പ്  ഉപയോഗിക്കുക</string>
     <string name="type_answer_label">നിങ്ങളുടെ ഉത്തരം ടൈപ്പ് ചെയ്യുക</string>
     <string name="upload_answer_label">നിങ്ങളുടെ ഉത്തരം അപ്‌ലോഡ് ചെയ്യുക</string>

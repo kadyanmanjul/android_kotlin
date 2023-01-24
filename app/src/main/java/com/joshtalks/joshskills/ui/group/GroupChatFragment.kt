@@ -26,7 +26,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 
-import com.vanniktech.emoji.EmojiPopup
+//import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.*
 
 import kotlinx.coroutines.flow.collectLatest
@@ -36,7 +36,7 @@ private const val TAG = "GroupChatFragment"
 
 class GroupChatFragment : BaseFragment() {
     lateinit var binding: GroupChatFragmentBinding
-    lateinit var emojiPopup: EmojiPopup
+    //lateinit var emojiPopup: EmojiPopup
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[GroupChatViewModel::class.java]
@@ -98,7 +98,7 @@ class GroupChatFragment : BaseFragment() {
     override fun initViewState() {
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
-                OPEN_EMOJI_KEYBOARD -> openEmojiKeyboard(it.data)
+                //OPEN_EMOJI_KEYBOARD -> openEmojiKeyboard(it.data)
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
                 SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString().trim())
                 OPEN_GROUP_INFO -> hideKeyboard(requireContext())
@@ -155,8 +155,8 @@ class GroupChatFragment : BaseFragment() {
 
     private fun init() {
         val rootView = binding.rootContainer
-        val emojiIconEditText = binding.groupChatSendMsg
-        emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(emojiIconEditText)
+        //val emojiIconEditText = binding.groupChatSendMsg
+        //emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(emojiIconEditText)
 
         binding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
@@ -173,14 +173,14 @@ class GroupChatFragment : BaseFragment() {
     }
 
     private fun openEmojiKeyboard(data: Bundle) {
-        val emojiButton = binding.chatEmojiBtn
+        /*val emojiButton = binding.chatEmojiBtn
         if (emojiPopup.isShowing || data.getBoolean(IS_FROM_KEYBOARD)) {
             emojiPopup.dismiss()
             emojiButton.setImageResource(R.drawable.ic_chat_emoji)
         } else {
             emojiPopup.toggle()
             emojiButton.setImageResource(R.drawable.ic_keyboard)
-        }
+        }*/
     }
 
     private fun openRemoveMenu() {

@@ -64,7 +64,6 @@
     <string name="today_practise">Today\'s Practice</string>
 
     <string name="hold_to_record_msz">उत्तर record करण्यासाठी Press आणि hold करा</string>
-    <string name="upload_file_msz">फाइल अपलोड करा</string>
     <string name="your_answer">तुमचे रेकॉर्डिंग</string>
     <string name="attempt_reading_practice">ही आजची रेड़ीन्ग प्रॅक्टिस आहे, ती रेकॉर्ड करा आणि सबमिट करा</string>
     <string name="your_feedback">आपला अभिप्राय</string>
@@ -79,7 +78,6 @@
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
     <string name="answer_not_submitted">उत्तरे सबमिट केले नाहीत</string>
-    <string name="answer_submitted">सराव यशस्वीरित्या सबमिट केला</string>
     <string name="use_tip">टीप वापरा</string>
     <string name="type_answer_label">तुमचे उत्तर टाइप करा</string>
     <string name="upload_answer_label">तुमचे उत्तर अपलोड करा</string>

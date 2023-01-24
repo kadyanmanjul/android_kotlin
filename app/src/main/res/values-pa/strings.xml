@@ -65,7 +65,6 @@
     <string name="today_practise">Today\'s Practice</string>
 
     <string name="hold_to_record_msz">ਆਪਣਾ Answer Record ਕਰਨ ਦੇ ਲਈ Hold ਕਰੋ ਤੇ Press ਕਰੋ</string>
-    <string name="upload_file_msz">ਇੱਕ ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ</string>
     <string name="your_answer">ਤੁਹਾਡੀ ਰਿਕਾਰਡਿੰਗ</string>
     <string name="attempt_reading_practice">ਇਹ ਅੱਜ ਦਾ ਪਾਠ ਅਭਿਆਸ ਹੈ, ਇਸਨੂੰ ਰਿਕਾਰਡ ਕਰੋ ਅਤੇ ਜਮ੍ਹਾਂ ਕਰੋ</string>
     <string name="your_feedback">ਤੁਹਾਡਾ ਫੀਡਬੈਕ</string>
@@ -80,7 +79,6 @@
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
     <string name="answer_not_submitted">ਜਵਾਬ ਦਾਖਲ ਨਹੀਂ ਕੀਤੇ ਗਏ</string>
-    <string name="answer_submitted">ਅਭਿਆਸ ਸਫਲਤਾਪੂਰਵਕ ਸਪੁਰਦ ਕੀਤਾ ਗਿਆ</string>
     <string name="use_tip">ਟਿਪ ਦੀ ਵਰਤੋਂ ਕਰੋ</string>
     <string name="type_answer_label">ਆਪਣਾ ਜਵਾਬ ਟਾਈਪ ਕਰੋ</string>
     <string name="upload_answer_label">ਆਪਣਾ ਜਵਾਬ ਅੱਪਲੋਡ ਕਰੋ</string>

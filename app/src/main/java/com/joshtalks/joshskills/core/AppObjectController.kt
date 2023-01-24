@@ -53,8 +53,8 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.userexperior.UserExperior
-import com.vanniktech.emoji.EmojiManager
-import com.vanniktech.emoji.ios.IosEmojiProvider
+/*import com.vanniktech.emoji.EmojiManager
+import com.vanniktech.emoji.ios.IosEmojiProvider*/
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
@@ -399,7 +399,7 @@ class AppObjectController {
 
         fun initGroups() {
             if (isGroupInitialize.not()) {
-                EmojiManager.install(IosEmojiProvider())
+                //EmojiManager.install(IosEmojiProvider())
                 isGroupInitialize = true
             }
         }

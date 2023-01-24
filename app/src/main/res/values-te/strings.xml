@@ -63,7 +63,6 @@
     <string name="today_practise">Today\'s Practice</string>
 
     <string name="hold_to_record_msz">సమాధానాన్ని రికార్డ్ చేయడానికి Press and hold చేయండి</string>
-    <string name="upload_file_msz">ఫైల్‌ను అప్‌లోడ్ చేయండి</string>
     <string name="your_answer">మీ రికార్డింగ్</string>
     <string name="attempt_reading_practice">ఇది నేటి పఠన అభ్యాసం, దీన్ని రికార్డ్ చేసి సబ్మిట్ చేయండి </string>
     <string name="your_feedback">మీ అభిప్రాయం</string>
@@ -78,7 +77,6 @@
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
     <string name="answer_not_submitted">సమాధానాలు సమర్పించబడలేదు</string>
-    <string name="answer_submitted">ప్రాక్టీస్ విజయవంతంగా సమర్పించబడింది</string>
     <string name="use_tip">టిప్  ఉపయోగించండి</string>
     <string name="type_answer_label">మీ సమాధానాన్ని టైప్ చేయండి</string>
     <string name="upload_answer_label">మీ సమాధానాన్ని అప్‌లోడ్ చేయండి</string>
