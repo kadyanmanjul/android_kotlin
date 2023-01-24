@@ -64,7 +64,6 @@
     <string name="today_practise">Today\'s Practice</string>
 
     <string name="hold_to_record_msz">Answerஐ பதிவு செய்ய Recordயை Press and hold செய்யவும்.</string>
-    <string name="upload_file_msz">ஒரு கோப்பை பதிவேற்றவும்</string>
     <string name="your_answer">உங்கள் பதிவு</string>
     <string name="attempt_reading_practice">இது இன்றைய வாசிப்பு பயிற்சி, பதிவு செய்து சமர்ப்பிக்கவும்</string>
     <string name="your_feedback">உங்கள் கருத்து</string>
@@ -79,7 +78,6 @@
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
     <string name="answer_not_submitted">பதில்கள் சமர்ப்பிக்கப்படவில்லை</string>
-    <string name="answer_submitted">பயிற்சி வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது</string>
     <string name="use_tip">குறிப்பு பயன்படுத்த</string>
     <string name="type_answer_label">உங்கள் பதிலை தட்டச்சு செய்யவும்</string>
     <string name="upload_answer_label">உங்கள் பதிலை பதிவேற்றவும்</string>

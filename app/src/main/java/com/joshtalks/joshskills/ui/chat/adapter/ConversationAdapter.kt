@@ -282,12 +282,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view.tag = CERTIFICATION_EXAM_MESSAGE
                 CertificationExamViewHolder(view, userId)
             }
-            PRACTICE_MESSAGE -> {
-                view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.cell_practice_message, parent, false)
-                view.tag = PRACTICE_MESSAGE
-                PracticeOldViewHolder(view, userId)
-            }
             ASSESSMENT_MESSAGE -> {
                 view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.assessment_item_layout, parent, false)

@@ -297,11 +297,11 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun openEmojiKeyboard(isFromKeyboard: Boolean) {
-        message.what = OPEN_EMOJI_KEYBOARD
+        /*message.what = OPEN_EMOJI_KEYBOARD
         message.data = Bundle().apply {
             putBoolean(IS_FROM_KEYBOARD, isFromKeyboard)
         }
-        singleLiveEvent.value = message
+        singleLiveEvent.value = message*/
     }
 
     fun openGroupInfo() {

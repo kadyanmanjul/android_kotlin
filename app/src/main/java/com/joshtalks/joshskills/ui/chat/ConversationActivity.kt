@@ -90,8 +90,6 @@ import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
-import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
-import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
@@ -133,10 +131,8 @@ const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
 const val CHAT_ROOM_ID = "chat_room_id"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 const val VISIBLE_ITEM_PERCENT = 75
-const val PRACTISE_SUBMIT_REQUEST_CODE = 1100
 const val COURSE_PROGRESS_REQUEST_CODE = 1101
 const val VIDEO_OPEN_REQUEST_CODE = 1102
-const val CONVERSATION_PRACTISE_REQUEST_CODE = 1105
 const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
 const val CERTIFICATION_REQUEST_CODE = 1108
@@ -1140,27 +1136,7 @@ class ConversationActivity :
     }
 
     private fun bottomAudioAttachment() {
-        /*addAttachmentUIUpdate()
-        val pickerConfig = MediaPickerConfig()
-            .setUriPermanentAccess(true)
-            .setAllowMultiSelection(false)
-            .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-        MediaPicker.with(this, MediaPicker.MediaTypes.AUDIO)
-            .setConfig(pickerConfig)
-            .onResult()
-            .subscribeOn(Schedulers.io())
-            .subscribe(
-                {
-                    it?.getOrNull(0)?.path?.let { path ->
-                        if (path.isNotBlank()) {
-                            AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
-                            addAudioFromBottomBar(Utils.getPathFromUri(path))
-                        }
-                    }
-                },
-                {
-                }
-            )*/
+        showToast("This feature isn't available right now !")
     }
 
     override fun onRestart() {
@@ -1517,36 +1493,6 @@ class ConversationActivity :
                 }
         )
         compositeDisposable.add(
-            RxBus2.listen(PractiseSubmitEventBus::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        AppAnalytics.create(AnalyticsEvent.PRACTICE_OPENED.NAME)
-                            .addBasicParam()
-                            .addUserDetails()
-                            .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
-                            .addParam(
-                                AnalyticsEvent.PRACTICE_SOLVED.NAME,
-                                (it.chatModel.question != null) && (
-                                        it.chatModel.question!!.practiceEngagement.isNullOrEmpty()
-                                            .not()
-                                        )
-                            )
-                            .addParam("chatId", it.chatModel.chatId)
-                            .push()
-                        PractiseSubmitActivity.startPractiseSubmissionActivity(
-                            activityRef.get()!!,
-                            PRACTISE_SUBMIT_REQUEST_CODE,
-                            it.chatModel
-                        )
-                    },
-                    {
-                        it.printStackTrace()
-                    }
-                )
-        )
-        compositeDisposable.add(
             RxBus2.listen(GotoChatEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -1780,11 +1726,6 @@ class ConversationActivity :
 
                 if (url.isNotBlank()) {
                     addImageMessage(url)
-                }
-            } else if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE && resultCode == RESULT_OK) {
-                showToast(getString(R.string.answer_submitted))
-                (data?.getParcelableExtra(PRACTISE_OBJECT) as ChatModel?)?.let {
-                    conversationViewModel.refreshMessageObject(it.chatId)
                 }
             } else if (requestCode == COURSE_PROGRESS_REQUEST_CODE && data != null) {
                 data.getStringExtra(FOCUS_ON_CHAT_ID)?.let {
