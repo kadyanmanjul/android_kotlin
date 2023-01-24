@@ -80,7 +80,6 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
-import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
@@ -1591,25 +1590,6 @@ class ConversationActivity :
                         conversationBinding.refreshLayout.isRefreshing = true
                         unlockClassViewModel.updateBatchChangeRequest()
                         logUnlockCardEvent()
-                    },
-                    {
-                        it.printStackTrace()
-                    }
-                )
-        )
-
-        compositeDisposable.add(
-            RxBus2.listen(ConversationPractiseEventBus::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        ConversationPracticeActivity.startConversationPracticeActivity(
-                            this,
-                            CONVERSATION_PRACTISE_REQUEST_CODE,
-                            it.id,
-                            it.pImage
-                        )
                     },
                     {
                         it.printStackTrace()
