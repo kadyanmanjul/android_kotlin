@@ -37,8 +37,6 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.chat.UPDATED_CHAT_ROOM_OBJECT
-import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
-import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
@@ -614,15 +612,6 @@ class NotificationUtils(val context: Context) {
                 question.type == BASE_MESSAGE_TYPE.QUIZ || question.type == BASE_MESSAGE_TYPE.TEST -> {
                     return Intent(context.applicationContext, AssessmentActivity::class.java).apply {
                         putExtra(AssessmentActivity.KEY_ASSESSMENT_ID, question.assessmentId)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                }
-                question.type == BASE_MESSAGE_TYPE.CP -> {
-                    return Intent(
-                        context.applicationContext,
-                        ConversationPracticeActivity::class.java
-                    ).apply {
-                        putExtra(PRACTISE_ID, question.conversationPracticeId)
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                 }

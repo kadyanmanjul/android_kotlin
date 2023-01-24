@@ -6,9 +6,6 @@ import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.certification_exam.*
-import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
-import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
-import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
@@ -20,7 +17,6 @@ import com.joshtalks.joshskills.repository.server.points.PointsInfoResponse
 import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryResponse
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
-import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.track.CourseUsageSync
@@ -97,19 +93,6 @@ interface CommonNetworkService {
     suspend fun getCourseEnrolledDetails(
         @Body params: CourseEnrolledRequest
     ): Response<CourseEnrolledResponse>
-
-    @GET("$DIR/conversation-practice/{id}/")
-    suspend fun getConversationPractise(
-        @Path("id") id: String
-    ): Response<ConversationPractiseModel>
-
-    @POST("$DIR/conversation-practice/submit/")
-    suspend fun submitConversationPractice(
-        @Body request: SubmitConversationPractiseRequest
-    ): Response<SuccessResponse>
-
-    @GET("$DIR/conversation-practice/mentor/")
-    suspend fun getSubmittedConversationPractise(@Query("conversationpractice_id") eventName: String): Response<List<SubmittedConversationPractiseModel>>
 
     @POST("$DIR/mentor/reminders/")
     suspend fun setReminder(@Body requestSetReminderRequest: ReminderRequest): Response<BaseResponse<Int>>
@@ -224,19 +207,12 @@ interface CommonNetworkService {
         @Body params: HashMap<String, List<Int>>
     ): Response<PointsInfoResponse>
 
-    @Headers(
-        "Accept: application/json",
-        "Content-type:application/json",
-        "Cache-Control: public, only-if-cached,  max-stale=640000,  max-age=640000"
-    )
-    @GET("$DIR/question/word-detail/")
-    suspend fun getWordDetail(@Query("word") word: String): WordDetailsResponse
 
     @PATCH("$DIR/impression/user_profile_impression/{user_profile_impression_id}/")
     suspend fun engageUserProfileTime(
         @Path("user_profile_impression_id") userProfileImpressionId: String,
         @Body params: Map<String, Long>
-    ): WordDetailsResponse
+    ): Any
 
     @POST("$DIR/impression/user_profile_section_impression/")
     suspend fun userProfileSectionImpression(@Body params: Map<String, String>): UserProfileSectionResponse

@@ -8,7 +8,6 @@
     <color name="pure_black">#000000</color>
     <color name="pure_grey">#F2F2F2</color>
     <color name="pure_white_10">#1AFFFFFF</color>
-    <color name="pure_white_20">#33FFFFFF</color>
 
     <!--    primary colours    -->
     <color name="primary_800">#003A7D</color>
@@ -54,7 +53,6 @@
 
     <!--grey-->
     <color name="md_grey_50">#fafafa</color>
-    <color name="md_grey_500">#9e9e9e</color>
     <color name="md_grey_600">#757575</color>
     <color name="md_grey_800">#424242</color>
     <color name="md_black_1000_10">#1a000000</color>

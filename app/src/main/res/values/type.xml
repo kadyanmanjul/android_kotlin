@@ -1,24 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TextAppearance.JoshTypography.XLargeRegular" parent="TextAppearance.MaterialComponents.Headline3">
-        <item name="fontPath">fonts/JoshOpenSans-Regular.ttf</item>
-        <item name="lineHeight">@dimen/_32ssp</item>
-        <item name="android:textSize">@dimen/_24ssp</item>
-        <item name="android:textColor">@color/text_default</item>
-    </style>
-
     <style name="TextAppearance.JoshTypography.XLargeSemiBold" parent="Base.TextAppearance.AppCompat.Title">
         <item name="fontPath">fonts/JoshOpenSans-SemiBold.ttf</item>
         <item name="lineHeight">@dimen/_32ssp</item>
         <item name="android:textSize">@dimen/_24ssp</item>
-        <item name="android:textColor">@color/text_default</item>
-    </style>
-
-    <style name="TextAppearance.JoshTypography.LargeRegular" parent="TextAppearance.MaterialComponents.Headline3">
-        <item name="fontPath">fonts/JoshOpenSans-Regular.ttf</item>
-        <item name="lineHeight">@dimen/_28ssp</item>
-        <item name="android:textSize">@dimen/_20ssp</item>
         <item name="android:textColor">@color/text_default</item>
     </style>
 

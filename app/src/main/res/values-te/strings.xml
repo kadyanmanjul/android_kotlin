@@ -5,7 +5,6 @@
     <string name="finish">Finish</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="downloading_certificate">మీ సర్టిఫికేట్ డౌన్‌లోడ్ చేయబడుతోంది</string>
     <string name="downloading_complete">డౌన్‌లోడ్ పూర్తయింది</string>
     <string name="not_now">Not Now</string>
     <string name="not_now_underline"><u>Not Now</u></string>
@@ -27,8 +26,6 @@
     <string name="message_size_limit">మెసేజ్ పరిమాణ పరిమితి మించిపోయింది</string>
     <string name="pdf_desc">pdf</string>
     <string name="restart">Restart</string>
-    <string name="logout_message">మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా?</string>
-    <string name="logout">లాగ్ అవుట్</string>
     <string name="update_message">ఇప్పుడే అప్డేట్ ను డౌన్‌లోడ్ చేసారు.</string>
     <string name="update_download_success_message">ఇప్పుడే అప్డేట్ ను డౌన్‌లోడ్ చేసారు.</string>
     <string name="slide_to_cancel">రద్దు చేయడానికి స్లయిడ్ చేయండి</string>
@@ -44,9 +41,6 @@
     <string name="plz_wait_feedback">దయచేసి ఫీడ్‌బ్యాక్ రూపొందించబడుతున్నప్పుడు\n వేచి ఉండండి</string>
     <string name="your_mobile_number">మీ మొబైల్ నెంబర్ </string>
     <string name="please_enter_otp">దయచేసి otpని నమోదు చేయండి</string>
-    <string name="please_enter_name">దయచేసి పేరు నమోదు చేయండి</string>
-    <string name="please_enter_email">దయచేసి సరైన ఇమెయిల్ ఐడిని నమోదు చేయండి</string>
-    <string name="join_social_text">మీ సోషల్  ఎకౌంట్  ద్వారా కనెక్ట్ అవ్వండి</string>
     <string name="confirm_number">మీ నంబర్‌ని నిర్ధారించండి</string>
     <string name="send_otp">OTP పంపండి</string>
     <string name="or">OR</string>
@@ -60,7 +54,6 @@
     <string name="time_ago_full_days">%1$d రోజుల క్రితం</string>
     <string name="time_ago_full_month">%1$d నెలల క్రితం</string>
     <string name="time_ago_full_months">%1$d నెలల క్రితం</string>
-    <string name="email_address">ఇమెయిల్ </string>
     <string name="attach_image">ఫోటోను అప్‌లోడ్ చేయండి</string>
 
     <string name="practice">సాధన</string>
@@ -72,7 +65,6 @@
     <string name="hold_to_record_msz">సమాధానాన్ని రికార్డ్ చేయడానికి Press and hold చేయండి</string>
     <string name="upload_file_msz">ఫైల్‌ను అప్‌లోడ్ చేయండి</string>
     <string name="your_answer">మీ రికార్డింగ్</string>
-    <string name="record_your_answer">మీ సమాధానాన్ని రికార్డ్ చేయండి</string>
     <string name="attempt_reading_practice">ఇది నేటి పఠన అభ్యాసం, దీన్ని రికార్డ్ చేసి సబ్మిట్ చేయండి </string>
     <string name="your_feedback">మీ అభిప్రాయం</string>
     <string name="your_submitted_answer">మీరు సబ్మిట్ చేసిన సమాధానం</string>
@@ -81,7 +73,6 @@
     <string name="login_signup">Login\/Signup</string>
     <string name="wrong_otp">నమోదు చేసిన OTP తప్పు. దయచేసి సరైన OTPని నమోదు చేయండి లేదా మళ్లీ OTPని సృష్టించండి</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
-    <string name="paise_kamao">Paise Kamao</string>
     <string name="copy_code">రెఫరల్ కోడ్ క్లిప్‌బోర్డ్‌కి కాపీ చేయబడింది</string>
     <string name="complete_payment">పేమెంట్ను పూర్తి చేయండి</string>
     <string name="bill_detail_header">Bill Details</string>
@@ -99,22 +90,7 @@
     <string name="share_more_text"><b>Share Knowledge, Earn Love</b></string>
     <string name="go_to_course">Go To Course</string>
     <string name="video_url_not_exist">వీడియో అందుబాటులో లేదు</string>
-    <string name="course_progress_detail">మీరు %s కోర్సును పూర్తి చేసారు</string>
-    <string name="course_duration_day">%s %వ రోజు</string>
-    <string name="unlock_progress_header">సర్టిఫికేట్‌ను అన్‌లాక్ చేయడానికి మరియు డౌన్‌లోడ్ చేయడానికి, మీరు తప్పనిసరిగా కనీసం %s కోర్సును పూర్తి చేసి ఉండాలి</string>
-    <string name="sample_certificate">View Sample Certificate</string>
-    <string name="certificate_progress_h">Certificate Progress</string>
-    <string name="claim_certificate_h">Claim Certificate</string>
-    <string name="performance_h">Performance</string>
-    <string name="your_performance_so_far">ఇప్పటి వరకు మీ పెర్ఫార్మన్స్  </string>
     <string name="download_certificate">డిజిటల్ కాపీని డౌన్‌లోడ్ చేయండి</string>
-    <string name="certificate_unmodify_msz">దయచేసి జాగ్రత్తగా పూరించండి, తర్వాత ఏదీ చేయలేము</string>
-    <string name="certificate_generate_message">మీ సర్టిఫికేట్ మీకు మెయిల్ ద్వారా పంపబడుతుంది. ధన్యవాదాలు!</string>
-    <string name="details_not_change_message">సమాచారాన్ని మళ్లీ మార్చలేరు</string>
-    <string name="practice_submitted">ప్రాక్టీస్ సమర్పించబడింది</string>
-    <string name="feedback_sub_practise">దయచేసి ఈ అభ్యాసాన్ని రేట్ చేయండి</string>
-    <string name="feedback_sub_video">దయచేసి ఈ వీడియోను రేట్ చేయండి</string>
-    <string name="feedback_hint">దయచేసి మీ అభిప్రాయాన్ని పంచుకోండి</string>
     <string name="cancel_button">రద్దు చేయి బటన్</string>
     <string name="permission_dialog_description"><![CDATA[Miru course gurinci tivraṅga uṇṭe mariyu <b>lessons </b>remindernu kōlpōkūḍadanukuṇṭē mariyu bhāgasvāmi kāl‌lanu <b>practice</b> ceyandi:<br><br><b>Settinglaku</b> velli <b>Auto Startni ON</b> ceyandi]]></string>
     <string name="serious_student_ho">నీవు పట్టుదల ఉన్న విద్యార్థివా?</string>
@@ -143,14 +119,9 @@
     <string name="processing">మేము మీ పేమెంట్ ను ప్రాసెస్ చేస్తున్నాము. కొంత సమయం పట్టవచ్చు</string>
     <string name="bilkul_nahi">లేదు</string>
     <string name="otp_verify_label">మీ OTPని ధృవీకరించండి</string>
-    <string name="otp_received_message">%sలో అందుకున్న OTPని నమోదు చేయండి</string>
-    <string name="edit_number">సంఖ్యను సవరించు</string>
     <string name="register">రిజిస్టర్</string>
-    <string name="your_name">నీ పేరు </string>
-    <string name="phone_number">ఫోను నంబరు </string>
     <string name="date_of_birth">Date Of Birth</string>
     <string name="otp_wait_message">ఆగండి. ఈ సమయానికి ముందే మీకు OTP వస్తుంది.</string>
-    <string name="did_not_received_message">OTP అందలేదా?</string>
     <string name="select_gender">దయచేసి లింగాన్ని ఎంచుకోండి</string>
     <string name="dob_error_toast">దయచేసి పుట్టిన తేదీని నమోదు చేయండి</string>
     <string name="name_error_toast">పేరును ఖాళీగా ఉంచడం సాధ్యం కాదు!</string>
@@ -163,7 +134,6 @@
     <string name="wait_for_second">%s సెకన్లు వేచి ఉండండి</string>
     <string name="retry_miss_call_verify">మళ్లీ మిస్డ్ కాల్ వెరిఫికేషన్ చేయండి</string>
     <string name="flash_call_verify_permission_message">మీ నంబర్‌ని ధృవీకరించడానికి, JoshSkillsకి కాల్ మరియు కాల్ అనుమతి అవసరం. సెట్టింగ్‌లు &amp;gt; అనుమతులు, మరియు కాల్ లాగ్‌ని నొక్కండి.</string>
-    <string name="registration">నమోదు</string>
     <string name="verification_failed">Verification Failed</string>
     <string name="gender">Gender</string>
     <string name="female">Female</string>
@@ -176,13 +146,8 @@
     <string name="close">ఆపండి </string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">కూపన్ వర్తింపజేయబడింది! మీరు ఈ కోర్సును ఉచితంగా పొందారు. ఇప్పుడు నమోదు చేసుకోండి</string>
-    <string name="select_courses">కోర్సును ఎంచుకోండి</string>
-    <string name="start_learning">నేర్చుకోవడం ప్రారంభించండి</string>
-    <string name="upgrade">Upgrade</string>
     <string name="apply_coupon">కూపన్ అప్లై  చేయండి </string>
     <string name="enter_promo_code">ప్రోమో కోడ్‌ని నమోదు చేయండి</string>
-    <string name="select_course">కోర్సును ఎంచుకోండి</string>
-    <string name="selected">ఎంచుకున్నారు</string>
     <string name="start_quiz">క్విజ్ ప్రారంభించు</string>
     <string name="conversational_practise">సంభాషణ అభ్యాసం</string>
     <string name="tap_to_continue">కొనసాగించడానికి ఇక్కడ నొక్కండి</string>
@@ -206,12 +171,9 @@
     <string name="see_answer">సరైన సమాధానం చూడండి</string>
     <string name="see_your_answer">మీ సమాధానాలు చూడండి</string>
     <string name="reset">రీసెట్ చేయండి</string>
-    <string name="submitted_recording">సమర్పించబడిన రికార్డింగ్</string>
     <string name="submit_record_msz">మీరు ఈ రికార్డింగ్‌ని సమర్పించాలనుకుంటున్నారా?</string>
-    <string name="select_character">ముందుగా మీ పాత్రను ఎంచుకోండి</string>
     <string name="unlock_class_text">తదుపరి తరగతిని అన్‌లాక్ చేయండి</string>
     <string name="start_now">ఇప్పుడే మొదలు పెట్టండి  </string>
-    <string name="get_started">ప్రారంభించు</string>
     <string name="subscription_feature_3">మీకు నచ్చితే, 7 రోజుల తర్వాత కేవలం 599కి అప్‌గ్రేడ్ చేసుకోవచ్చు!</string>
     <string name="subscription_feature_2">మీరు 7 రోజుల పాటు యాప్‌లోని అన్ని కోర్సులకు అపరిమిత ప్రాప్యతను పొందవచ్చు</string>
     <string name="subscription_feature_1">ఈ పాస్ మీకు 7 రోజుల పాటు అన్ని కోర్సులకు యాక్సెస్ పూర్తి ఉచితంగా ఇస్తుంది </string>
@@ -219,7 +181,6 @@
     <string name="subscription_heading">సబ్స్క్రిప్షన్ తో భారతదేశం యొక్క మొదటిది</string>
     <string name="start_7_day_trial">7 రోజుల ఉచిత ట్రయల్ ప్రారంభించండి</string>
     <string name="start_free_course">ఇప్పుడే ఉచిత కోర్సు ప్రారంభించండి</string>
-    <string name="trial_ended">మీ 2 రోజుల ట్రయల్ ముగిసింది! మీరు ఆనందించారా? \nఈ కోర్సును ఇప్పుడే యాక్సెస్ చేయండి.</string>
     <string name="get_one_year_pass">అన్ని కోర్సులకు యాక్సెస్ పాస్ పొందండి</string>
     <string name="free_trial_ended">ఉచిత ట్రయల్ ముగిసింది</string>
     <string name="me">నేను</string>
@@ -239,10 +200,7 @@
     <string name="dismiss">రద్దు చేయండి </string>
     <string name="class_reminder">తరగతి రిమైండర్</string>
     <string name="alarms_deleted">అలారం తొలగించబడింది</string>
-    <string name="resend">మరల పంపు</string>
-    <string name="total_interests_selected">ఎంచుకున్న మొత్తం ఆసక్తి</string>
     <string name="click_to_start_the_course">కోర్సును ప్రారంభించడానికి క్లిక్ చేయండి</string>
-    <string name="select_interest">ఇంటరెస్ట్ని ఎంచుకోండి</string>
     <string name="practice_with_partner">పార్టనర్ తో ప్రాక్టీస్ చేయండి</string>
     <string name="time_ago_full_seconds">%1$d సెకన్ల క్రితం</string>
     <string name="inbox_header">Josh Skills</string>
@@ -275,15 +233,12 @@
     <string name="hi_i_am">హలో! I</string>
     <string name="about_teacher_title">గురువు గురించి</string>
     <string name="joined">Joined</string>
-    <string name="conversation_practice">సంభాషణ అభ్యాసం</string>
     <string name="usb_connected_message">మీ మొబైల్ PCకి కనెక్ట్ చేయబడింది. దయచేసి వీడియోను ప్లే చేయడానికి USB డేటా కనెక్షన్‌ని డిస్‌కనెక్ట్ చేయండి</string>
     <string name="select_your_character">ముందు మీ పాత్రను ఎంచుకోండి</string>
     <string name="ok_got_it_lbl">సరే అర్థమయ్యింది</string>
     <string name="start_practise">ప్రాక్టీస్ ప్రారంభించండి</string>
     <string name="practise_intro_sub">ఈ వ్యాయామాన్ని ఎలా పూర్తి చేయాలి?</string>
     <string name="hint_name_field">మీ పేరు?</string>
-    <string name="hint_email_field">ఉదాహరణ abc@xyz.com</string>
-    <string name="hint_date_field">ఉదాహరణ 01 జనవరి 1990</string>
     <string name="select_language">భాష ఎంపిక</string>
     <string name="personal_information">వ్యక్తిగత సమాచారం</string>
     <string name="app_settings">యాప్ సెట్టింగ్‌లు</string>
@@ -292,13 +247,8 @@
     <string name="notifications">నోటిఫికేషన్లు</string>
     <string name="autostart">ఆటో స్టార్ట్ అనుమతించబడింది</string>
     <string name="language">భాష  </string>
-    <string name="english">ఆంగ్ల  </string>
-    <string name="low">తక్కువ</string>
     <string name="login_type">లాగిన్ రకం</string>
-    <string name="on">ఆన్ </string>
-    <string name="off">ఆఫ్</string>
     <string name="auto_start_prompt_message">యాప్ నేపథ్యంలో ఉన్నప్పుడు నోటిఫికేషన్‌లను స్వీకరించడానికి దయచేసి ఆటోస్టార్ట్‌ను ప్రారంభించండి</string>
-    <string name="hint_text_btn">&lt;u&gt;అన్ని కోర్సు యాక్సెస్ పాస్‌ను కొనుగోలు చేయండి&lt;/u&gt;<u>सभी कोर्स एक्सेस पास खरीदें </u></string>
     <string name="rate_us">మాకు రేట్ చేయండి</string>
     <string name="short_seconds">సెకన్లు</string>
     <string name="time_ago_yesterday_at">నిన్న %1$s</string>
@@ -319,10 +269,6 @@
     <string name="video">వీడియో</string>
     <string name="conversation">Video %1$s</string>
     <string name="unlock_class_demo">ప్రస్తుతానికి క్లాస్‌రూమ్ డెమోని అన్‌లాక్ చేయండి</string>
-    <string name="refferal_desc1">&lt;![CDATA[\&lt;br/&gt; ప్రతి స్నేహితుని కోసం&lt;br/&gt; కోర్సులో చేరిన వారు మీ ఖాతాలో &lt;u&gt;₹%1$s&lt;/u&gt; సంపాదించండి]]&amp;gt;</string>
-    <string name="referral_desc2"><![CDATA[\Your friend also gets <br/> <strong>₹%1$s OFF</strong> on their first course\]]></string>
-    <string name="earn_upto">₹10,000 వరకు సంపాదించండి</string>
-    <string name="no_conditions_apply">ఎటువంటి షరతులు వర్తించవు</string>
     <string name="ex_referralcode">eg. L3ARN</string>
 
     <string name="c_practise_tab_1">వినండి</string>
@@ -403,7 +349,6 @@
     <string name="practice_call_experience">Practice call యొక్క experience ని బాగుపరుచుకోండి</string>
     <string name="interests_select_same_interest_users_connect">మీ interests select చేసుకోండి ఎందుకంటే మీ లాంటి same interest ఉన్న users తో connect చేయగలుగుతాము</string>
     <string name="english_level">మీ ఇంగ్లీష్ స్థాయి ఏమిటి</string>
-    <string name="label_speaking_spotlight_2">Click here. Lesson యొక్క మొదటి భాగమే speaking practice</string>
     <string name="referral_point_one">ఆహ్వానించి సంపాదించండి, మీరు మరియు మీ స్నేహితుడు ఒక్కొక్కరు %1$s పొందుతారు</string>
     <string name="referral_point_two">కింద ఉన్న Code share చేయండి మరియు మీ స్నేహితులు course ను కొనుగోలు చేసినప్పుడు దాన్ని నమోదు చేయమని అడగండి.</string>
 

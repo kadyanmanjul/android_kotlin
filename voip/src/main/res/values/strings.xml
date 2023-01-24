@@ -16,7 +16,6 @@
     <string name="hang_up">Hang Up</string>
     <string name="decline">Decline</string>
     <string name="answer">Answer</string>
-    <string name="call_back">CALL BACK</string>
 
     <!-- Voip Preference-->
     <string name="voip_service_shared_pref_file_name">com.joshtalks.joshskills.new_arch_voip_service_shared_pref_file</string>
