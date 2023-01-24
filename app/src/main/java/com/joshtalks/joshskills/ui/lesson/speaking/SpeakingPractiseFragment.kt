@@ -28,7 +28,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.google.android.material.textview.MaterialTextView
-import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
@@ -70,6 +69,7 @@ import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.util.UtilTime
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport

@@ -16,8 +16,8 @@ import android.provider.MediaStore
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.camera.video.VideoRecordEvent
-import com.greentoad.turtlebody.mediapicker.util.UtilsFile
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.base.UtilsFile
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel

@@ -584,6 +584,10 @@
         <item name="android:windowBackground">@drawable/splash_drawable</item>
     </style>
 
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:color">@color/pure_white</item>
+    </style>
+
     <style name="CustomCardViewStyleNoBottomCorner" parent="@style/Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_top_corners</item>
     </style>

@@ -21,6 +21,10 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetai
 import com.joshtalks.joshskills.ui.special_practice.utils.CLICK_ON_PRICE_CARD
 import com.joshtalks.joshskills.ui.special_practice.utils.REMOVE
 import java.util.*
+import com.joshtalks.joshskills.util.UtilTime
+import kotlinx.coroutines.*
+import timber.log.Timber
+import java.util.Date
 
 class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
     RecyclerView.Adapter<PriceListAdapter.PriceListViewHolder>() {

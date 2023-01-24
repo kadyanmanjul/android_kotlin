@@ -41,7 +41,7 @@
                 android:layout_height="@dimen/_61sdp"
                 android:layout_margin="@dimen/_24sdp"
                 android:background="@drawable/ic_camera_start_bg"
-                android:padding="@dimen/medium_margin"
+                android:padding="@dimen/_24sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

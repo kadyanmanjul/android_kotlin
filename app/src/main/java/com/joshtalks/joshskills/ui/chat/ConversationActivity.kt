@@ -33,9 +33,6 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
 import com.google.android.material.button.MaterialButton
-import com.greentoad.turtlebody.mediapicker.MediaPicker
-import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
-import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
@@ -110,6 +107,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.UserInterestActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
+import com.joshtalks.joshskills.util.UtilTime
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
@@ -1142,7 +1140,7 @@ class ConversationActivity :
     }
 
     private fun bottomAudioAttachment() {
-        addAttachmentUIUpdate()
+        /*addAttachmentUIUpdate()
         val pickerConfig = MediaPickerConfig()
             .setUriPermanentAccess(true)
             .setAllowMultiSelection(false)
@@ -1162,7 +1160,7 @@ class ConversationActivity :
                 },
                 {
                 }
-            )
+            )*/
     }
 
     override fun onRestart() {

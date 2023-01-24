@@ -16,8 +16,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
-import com.joshtalks.joshcamerax.utils.onPageSelected
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -487,6 +487,16 @@ class AssessmentActivity : CoreJoshActivity() {
             }
         }
         return true
+    }
+
+
+    fun ViewPager2.onPageSelected(action: (Int) -> Unit) {
+        registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                action(position)
+            }
+        })
     }
 
     companion object {
