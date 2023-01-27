@@ -788,7 +788,8 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             dismissBbTip()
             paymentManager.createOrder(
                 Mentor.getInstance().getUser()?.phoneNumber ?: "+919999999999",
-                viewModel.getEncryptedText()
+                viewModel.getEncryptedText(),
+                testId.toString()
             )
             return
         } else if (buySubscription) {

@@ -230,13 +230,13 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     val map = it.obj as HashMap<*, *>
                     openErrorScreen(errorCode = BUY_COURSE_FEATURE_ERROR.toString(), map)
                 }
-                GET_COUPON_LIST_API_ERROR ->{
+                GET_USER_COUPONS_API_ERROR ->{
                 val map = it.obj as HashMap<*, *>
-                    openErrorScreen(errorCode = GET_COUPON_LIST_API_ERROR.toString(), map)
+                    openErrorScreen(errorCode = GET_USER_COUPONS_API_ERROR.toString(), map)
                 }
                 COURSE_PRICE_LIST_ERROR -> {
                     val map = it.obj as HashMap<*, *>
-                    openErrorScreen(errorCode = COURSE_PRICE_LIST.toString(), map)
+                    openErrorScreen(errorCode = COURSE_PRICE_LIST_ERROR.toString(), map)
                 }
                 CREATE_ORDER_V3_ERROR -> {
                     Log.e("sagar", "CREATE_ORDER_V3_ERROR: ", )
@@ -459,7 +459,8 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         try {
             paymentManager.createOrder(
                 phoneNumber,
-                priceForPaymentProceed?.encryptedText ?: EMPTY
+                priceForPaymentProceed?.encryptedText ?: EMPTY,
+                testId
             )
         } catch (ex: Exception) {
             ex.showAppropriateMsg()
@@ -489,8 +490,14 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             StartCourseActivity.openStartCourseActivity(
                 this,
                 priceForPaymentProceed?.courseName ?: EMPTY,
-                AppObjectController.getFirebaseRemoteConfig().getString(FirebaseRemoteConfigKey.TEACHER_NAME),
-                AppObjectController.getFirebaseRemoteConfig().getString(FirebaseRemoteConfigKey.TEACHER_IMAGE_URL),
+                AppObjectController.getFirebaseRemoteConfig().getString(
+                    FirebaseRemoteConfigKey.TEACHER_NAME.plus(
+                        PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+                ),
+                AppObjectController.getFirebaseRemoteConfig().getString(
+                    FirebaseRemoteConfigKey.TEACHER_IMAGE_URL.plus(
+                        PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
+                ),
                 paymentManager.getJoshTalksId(),
                 priceForPaymentProceed?.discountedPrice.toString()
             )

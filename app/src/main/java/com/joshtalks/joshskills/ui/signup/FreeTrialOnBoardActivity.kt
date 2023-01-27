@@ -121,7 +121,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
             when (it.what) {
                 IS_USER_EXIST -> moveToInboxScreen()
                 USER_CREATED_SUCCESSFULLY -> openSignUpNameFragment()
-                COURSE_LANGUAGE -> openErrorScreen(COURSE_LANGUAGE.toString())
+                //COURSE_LANGUAGE -> openErrorScreen(COURSE_LANGUAGE.toString())
             }
         }
         initTrueCallerUI()

@@ -13,9 +13,8 @@ import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.errorState.BUY_COURSE_FEATURE_ERROR
-import com.joshtalks.joshskills.ui.errorState.GET_COUPON_LIST_API_ERROR
+import com.joshtalks.joshskills.ui.errorState.GET_USER_COUPONS_API_ERROR
 import com.joshtalks.joshskills.ui.errorState.COURSE_PRICE_LIST_ERROR
-import com.joshtalks.joshskills.ui.errorState.GET_COUPON_API_ERROR
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.CouponListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.FeatureListAdapter
@@ -129,13 +128,13 @@ class BuyPageViewModel : BaseViewModel() {
                 } else {
                     isCouponApiCall.set(true)
                     withContext(mainDispatcher) {
-                        sendErrorMessage(response.code().toString(), testId.toString() + getCompletedLessonCount().toString(), GET_COUPON_LIST_API_ERROR)
+                        sendErrorMessage(response.code().toString(), testId.toString() + " ," + getCompletedLessonCount().toString(), GET_USER_COUPONS_API_ERROR)
                     }
                 }
             } catch (e: Exception) {
                 isCouponApiCall.set(true)
                 withContext(mainDispatcher) {
-                    sendErrorMessage(e.message.toString(), testId.toString() + getCompletedLessonCount().toString(), GET_COUPON_LIST_API_ERROR)
+                    sendErrorMessage(e.message.toString(), testId.toString() + " ," + getCompletedLessonCount().toString(), GET_USER_COUPONS_API_ERROR)
                 }
                 e.printStackTrace()
             }
@@ -333,15 +332,9 @@ class BuyPageViewModel : BaseViewModel() {
                             singleLiveEvent.value = message
                         }
                     } else {
-                        withContext(mainDispatcher) {
-                            sendErrorMessage(exception = response.code().toString(), payload = code + testId + getCompletedLessonCount().toString(), apiErrorCode = GET_COUPON_API_ERROR)
-                        }
                         showToast("Coupon code is not valid or expired")
                     }
                 } catch (e: Exception) {
-                    withContext(mainDispatcher) {
-                        sendErrorMessage(exception = e.message.toString(), payload = code + testId + getCompletedLessonCount().toString(), apiErrorCode = GET_COUPON_API_ERROR)
-                    }
                     showToast("Oops Something went wrong")
                     e.printStackTrace()
                 }

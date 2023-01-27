@@ -42,12 +42,7 @@ class PaymentManager(
         paymentGatewayManager.initPaymentGateway()
     }
 
-    fun createOrder(mobileNumber: String, encryptedText: String) {
-        val testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-            Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
-        } else {
-            PrefManager.getStringValue(PAID_COURSE_TEST_ID, defaultValue = FREE_TRIAL_PAYMENT_TEST_ID)
-        }
+    fun createOrder(mobileNumber: String, encryptedText: String, testId: String) {
         coroutineScope.launch(Dispatchers.IO) {
             paymentGatewayListener?.onProcessStart()
             try {

@@ -42,7 +42,7 @@ class ErrorActivity : BaseActivity() {
 
     }
 
-    fun backPress() {
+    fun backPressCall() {
         val intent = Intent(this, activity!!::class.java)
         startActivity(intent)
         this.finish()
@@ -77,10 +77,5 @@ class ErrorActivity : BaseActivity() {
             activity.startActivity(intent)
             activity.finish()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        activity = null
     }
 }

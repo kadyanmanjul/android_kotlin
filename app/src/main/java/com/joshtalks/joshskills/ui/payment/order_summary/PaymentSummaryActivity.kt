@@ -781,7 +781,8 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                     prefix == "+91" && viewModel.getCourseDiscountedAmount() >= 1 ->
                         paymentManager.createOrder(
                             binding.mobileEt.text.toString(),
-                            viewModel.getEncryptedText()
+                            viewModel.getEncryptedText(),
+                            testId
                         )
                     else ->
                         uiHandler.post {
@@ -801,7 +802,8 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
             )
             else -> paymentManager.createOrder(
                 getPhoneNumber(),
-                viewModel.getEncryptedText()
+                viewModel.getEncryptedText(),
+                testId
             )
         }
 

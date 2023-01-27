@@ -200,11 +200,11 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     availableLanguages.value = response.body()
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                 } else {
-                    liveEvent.postValue(Message().apply { what = COURSE_LANGUAGE })
+                   // liveEvent.postValue(Message().apply { what = COURSE_LANGUAGE })
                     apiStatus.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Throwable) {
-                liveEvent.postValue(Message().apply { what = COURSE_LANGUAGE })
+                //liveEvent.postValue(Message().apply { what = COURSE_LANGUAGE })
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.showAppropriateMsg()
             }

@@ -210,7 +210,7 @@ class ComplaintFragment : Fragment() {
             lodgeComplaintBinding.etNumber.text.toString(),
             lodgeComplaintBinding.etName.text.toString(),
             lodgeComplaintBinding.etComplaint.text.toString(),
-            DeviceInfoUtils.getDetails()
+            DeviceInfoUtils.getMobileDetails()
         )
         viewModel.requestComplaint(requestComplaint)
     }

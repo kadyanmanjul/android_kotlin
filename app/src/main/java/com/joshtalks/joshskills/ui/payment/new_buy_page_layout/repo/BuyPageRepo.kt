@@ -8,9 +8,13 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.PriceParame
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.utils.ReviewPagingSource
 
 class BuyPageRepo {
-    suspend fun getBuyPageFeatureData() :BuyCourseFeatureModelNew? {
-        return AppObjectController.appDatabase.getCourseFeatureDataDao().getBuyCourseFeatureData()
-            ?: AppObjectController.commonNetworkService.getCourseFeatureDetailsV2().body()
+    suspend fun getBuyPageFeatureData(): BuyCourseFeatureModelNew? {
+        return if (AppObjectController.appDatabase.getCourseFeatureDataDao()
+                .getBuyCourseFeatureData() == null
+        )
+            AppObjectController.commonNetworkService.getCourseFeatureDetailsV2().body()
+        else
+            AppObjectController.appDatabase.getCourseFeatureDataDao().getBuyCourseFeatureData()
     }
 
     suspend fun getCouponList(testId: Int, lessonsCompleted: Int? = null) =
