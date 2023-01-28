@@ -56,6 +56,7 @@ import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.ui.errorState.BUY_COURSE_FEATURE_ERROR
 import com.joshtalks.joshskills.ui.errorState.ErrorActivity
 import com.joshtalks.joshskills.ui.errorState.ErrorStateDialog
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -138,10 +139,24 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         buySubscription = false
                     )
                 }
+                BUY_COURSE_FEATURE_ERROR -> {
+                    val map = it.obj as HashMap<*, *>
+                    openErrorScreen(errorCode = BUY_COURSE_FEATURE_ERROR.toString(), map)
+                }
             }
         }
     }
 
+    private fun openErrorScreen(errorCode:String, map:HashMap<*, *>){
+        ErrorActivity.showErrorScreen(
+            errorTitle = "Something went wrong",
+            errorSubtitle = getString(R.string.error_message_screen),
+            errorCode = errorCode,
+            activity = this@InboxActivity,
+            payload = map["payload"].toString(),
+            exception = map["exception"].toString()
+        )
+    }
     fun watchTimeEvent() {
         try {
             lifecycleScope.launch {

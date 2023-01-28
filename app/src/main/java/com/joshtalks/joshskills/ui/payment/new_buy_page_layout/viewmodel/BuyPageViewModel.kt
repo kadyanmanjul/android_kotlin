@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.OFFER_FOR
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.errorState.BUY_COURSE_FEATURE_ERROR
 import com.joshtalks.joshskills.ui.errorState.GET_USER_COUPONS_API_ERROR
 import com.joshtalks.joshskills.ui.errorState.COURSE_PRICE_LIST_ERROR
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
@@ -82,9 +81,6 @@ class BuyPageViewModel : BaseViewModel() {
                     singleLiveEvent.value = message
                 }
             } catch (e: Exception) {
-                withContext(mainDispatcher) {
-                    sendErrorMessage(e.message.toString(), null, BUY_COURSE_FEATURE_ERROR)
-                }
                 e.printStackTrace()
             }
 

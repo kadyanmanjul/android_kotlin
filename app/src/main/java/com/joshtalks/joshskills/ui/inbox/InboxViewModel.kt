@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.errorState.BUY_COURSE_FEATURE_ERROR
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedAdapter
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
@@ -148,16 +149,7 @@ class InboxViewModel : BaseViewModel(){
                                 PrefManager.put(MY_COLOR_CODE, it, false)
                             }
                         }
-//                        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-//                        MixPanelTracker.mixPanel.people.identify(
-//                            PrefManager.getStringValue(
-//                                USER_UNIQUE_ID
-//                            )
-//                        )
-//                        val prop = JSONObject()
-//                        prop.put("total points", response.body()?.points)
-//                        prop.put("total min spoken", response.body()?.minutesSpoken)
-//                        MixPanelTracker.mixPanel.people.set(prop)
+
                         userData.postValue(response.body()!!)
                         PrefManager.put(
                             IS_PROFILE_FEATURE_ACTIVE,
@@ -406,8 +398,15 @@ class InboxViewModel : BaseViewModel(){
                 val response = AppObjectController.commonNetworkService.getCourseFeatureDetailsV2()
                 if (response.isSuccessful) {
                     AppObjectController.appDatabase.getCourseFeatureDataDao().insertBuyCourseFeatureData(response.body())
+                }else{
+                    withContext(Dispatchers.Main) {
+                        sendErrorMessage(response.code().toString(), null, BUY_COURSE_FEATURE_ERROR)
+                    }
                 }
             } catch (ex: Exception) {
+                withContext(Dispatchers.Main) {
+                    sendErrorMessage(ex.message.toString(), null, BUY_COURSE_FEATURE_ERROR)
+                }
                 when (ex) {
                     is HttpException -> {
                         showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
@@ -425,6 +424,14 @@ class InboxViewModel : BaseViewModel(){
                 }
             }
         }
+    }
+    private fun sendErrorMessage(exception: String?, payload: String?, apiErrorCode: Int) {
+        val map = HashMap<String, String?>()
+        map["exception"] = exception
+        map["payload"] = payload
+        message.what = apiErrorCode
+        message.obj = map
+        singleLiveEvent.value = message
     }
 
 }

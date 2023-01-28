@@ -226,10 +226,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 PAYMENT_SUCCESS -> onPaymentSuccess()
                 PAYMENT_FAILED -> showPaymentFailedDialog()
                 PAYMENT_PENDING -> showPendingDialog()
-                BUY_COURSE_FEATURE_ERROR -> {
-                    val map = it.obj as HashMap<*, *>
-                    openErrorScreen(errorCode = BUY_COURSE_FEATURE_ERROR.toString(), map)
-                }
                 GET_USER_COUPONS_API_ERROR ->{
                 val map = it.obj as HashMap<*, *>
                     openErrorScreen(errorCode = GET_USER_COUPONS_API_ERROR.toString(), map)
