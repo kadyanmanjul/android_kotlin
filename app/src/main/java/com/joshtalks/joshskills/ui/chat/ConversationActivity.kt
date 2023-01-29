@@ -1933,7 +1933,7 @@ class ConversationActivity :
             }
         }
         Log.e("sagar", "onResume: ${PrefManager.getBoolValue(IS_FREE_TRIAL)} ${!PrefManager.getBoolValue(IS_COURSE_BOUGHT)}", )
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL) || !PrefManager.getBoolValue(IS_COURSE_BOUGHT))
+        if (inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought.not())
             conversationViewModel.getBuyPageFeature()
     }
 
