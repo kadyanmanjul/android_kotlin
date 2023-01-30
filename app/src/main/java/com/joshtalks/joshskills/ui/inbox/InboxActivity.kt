@@ -581,10 +581,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 //                            paymentStatusView.visibility = View.GONE
 //                        }
                     }
-                    if (isSubscriptionCourseBought) {
+                    Log.e("sagar", "addCourseInRecyclerView: ${isSubscriptionCourseBought }  ${capsuleCourse?.isCapsuleCourse == false} ${capsuleCourse?.isCapsuleCourse}", )
+                    if (isSubscriptionCourseBought || (capsuleCourse?.isCapsuleCourse == null || !capsuleCourse.isCapsuleCourse)) {
+                        Log.e("sagar", "addCourseInRecyclerView: ${capsuleCourse?.isCapsuleCourse == false}")
                         findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = true
                         findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = false
-                    } else if (isCapsuleCourseBought.not()) {
+                    } else if (capsuleCourse?.isCapsuleCourse == true && isCapsuleCourseBought.not()) {
                         findMoreLayout.findViewById<MaterialButton>(R.id.buy_english_course).isVisible = true
                         findMoreLayout.findViewById<MaterialButton>(R.id.find_more).isVisible = false
                         try {
