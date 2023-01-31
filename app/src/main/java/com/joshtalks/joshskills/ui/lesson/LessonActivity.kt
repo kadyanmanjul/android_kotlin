@@ -1642,6 +1642,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             binding.overlayTooltipLayout.isVisible -> showVideoToolTip(false)
             binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
+            viewModel.isSpeakingButtonTooltipShown.get() == true ->{
+                viewModel.speakingLiveData.postValue(true)
+                viewModel.isSpeakingButtonTooltipShown.set(false)
+            }
             binding.containerReading.isVisible -> {
                 supportFragmentManager.beginTransaction().remove(ReadingFullScreenFragment()).commit()
                 viewModel.closeVideoView()

@@ -116,6 +116,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val completedLessonCount: MutableLiveData<Int?> = MutableLiveData(null)
     val mentorCoupon: MutableLiveData<Coupon> = MutableLiveData(null)
     val isFreeTrialUser: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isSpeakingButtonTooltipShown = ObservableField<Boolean>()
+    val speakingLiveData : MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)

@@ -55,9 +55,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tooolll">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp">
+                    android:layout_height="0dp"
+                    android:orientation="vertical">
 
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmer1"
@@ -66,9 +67,6 @@
                         android:layout_marginHorizontal="@dimen/_15sdp"
                         android:layout_marginVertical="@dimen/_13sdp"
                         android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         tools:visibility="gone">
 
                         <include layout="@layout/shimmer_layout_for_course_data" />
@@ -80,9 +78,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/shimmer1"
                         tools:visibility="visible">
 
                         <com.joshtalks.joshskills.util.TrialTimerView
@@ -92,8 +87,6 @@
                             android:layout_marginHorizontal="@dimen/_16sdp"
                             android:layout_marginTop="@dimen/_16sdp"
                             android:visibility="gone"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
                             tools:visibility="visible" />
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -102,7 +95,25 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:orientation="vertical"
-                            android:visibility="visible" />
+                            android:visibility="gone" />
+
+                        <androidx.viewpager.widget.ViewPager
+                            android:id="@+id/slider_view_pager"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_160sdp"
+                            android:visibility="gone"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginVertical="@dimen/_13sdp" />
+
+                        <LinearLayout
+                            android:id="@+id/indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_10sdp"
+                            android:visibility="gone"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:orientation="horizontal" />
+
+
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -113,9 +124,6 @@
                         android:layout_marginHorizontal="@dimen/_15sdp"
                         android:layout_marginVertical="@dimen/_13sdp"
                         android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer1_layout"
                         tools:visibility="gone">
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -137,10 +145,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer2">
+                        android:visibility="gone">
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/amountList"
@@ -175,22 +180,18 @@
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_19sdp"
-                            android:background="@drawable/dotted_line"
-                            android:backgroundTint="@color/disabled" />
+                            android:background="@drawable/dotted_line" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
                     <com.facebook.shimmer.ShimmerFrameLayout
-                        android:id="@+id/shimmer3"
+                        android:id="@+id/shimmer_for_testimonials1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_15sdp"
                         android:layout_marginVertical="@dimen/_12sdp"
                         android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer2_layout"
                         tools:visibility="gone">
 
                         <include layout="@layout/shimmer_layout_for_rating" />
@@ -198,14 +199,11 @@
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/shimmer3_layout"
+                        android:id="@+id/shimmer_layout_for_testimonials1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer3">
+                        android:visibility="gone">
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/teacher_rating_and_review"
@@ -215,6 +213,20 @@
                             android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:visibility="visible" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/testimonials"
+                            onVideoItemClick="@{vm.openTestimonialVideo}"
+                            testimonialsListAdapter="@{vm.testiMonialsListAdapter}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:visibility="visible"
+                            android:paddingTop="@dimen/_10sdp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_offfers_card" />
 
                         <View
                             android:id="@+id/view4"
@@ -231,10 +243,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_15sdp"
                         android:layout_marginVertical="@dimen/_12sdp"
-                        android:visibility="@{vm.isCouponApiCall ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer3_layout">
+                        android:visibility="@{vm.isCouponApiCall ? View.VISIBLE : View.GONE}">
 
                         <include layout="@layout/shimmer_layout_for_offer" />
 
@@ -246,11 +255,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:orientation="vertical"
-                        android:visibility="@{vm.isCouponApiCall ? View.GONE : View.VISIBLE}"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer4">
+                        android:visibility="@{vm.isCouponApiCall ? View.GONE : View.VISIBLE}">
 
                         <RelativeLayout
                             android:id="@+id/offer_ll"
@@ -311,10 +316,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_15sdp"
                         android:layout_marginVertical="@dimen/_12sdp"
-                        android:visibility="@{vm.isPriceApiCall ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer4_layout">
+                        android:visibility="@{vm.isPriceApiCall ? View.VISIBLE : View.GONE}">
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
@@ -333,10 +335,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="@{vm.isPriceApiCall ? View.GONE: View.VISIBLE}"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer5">
+                        android:visibility="@{vm.isPriceApiCall ? View.GONE: View.VISIBLE}">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
@@ -381,43 +380,107 @@
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/call_us_text"
-                        android:layout_width="0dp"
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer_for_testimonials2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_15sdp"
+                        android:layout_marginVertical="@dimen/_12sdp"
+                        android:visibility="visible"
+                        tools:visibility="gone">
+
+                        <include layout="@layout/shimmer_layout_for_rating" />
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/shimmer_layout_for_testimonials2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <View
+                            android:id="@+id/testimonials1_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_15sdp"
+                            android:background="@drawable/dotted_line"
+                            android:visibility="visible" />
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/teacher_rating_and_review1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:orientation="vertical"
+                            android:visibility="visible" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/testimonials1"
+                            onVideoItemClick="@{vm.openTestimonialVideo}"
+                            testimonialsListAdapter="@{vm.testiMonialsListAdapter}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:orientation="horizontal"
+                            android:visibility="visible"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_testimonal_video" />
+
+                        <View
+                            android:id="@+id/view4_testimonials1"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:background="@drawable/dotted_line"
+                            android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_12sdp"
-                        android:lines="2"
-                        android:text="@{vm.callUsText}"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
-                        android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_call_us"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout"
-                        app:textAllCaps="false" />
+                        android:layout_marginTop="@dimen/_12sdp">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_call_us"
-                        android:layout_width="@dimen/_80sdp"
-                        android:layout_height="@dimen/_25sdp"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_14sdp"
-                        android:elevation="@dimen/_3sdp"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:onClick="@{()-> vm.makePhoneCall()}"
-                        android:text="Call us"
-                        android:textAllCaps="false"
-                        android:textColor="@color/primary_500"
-                        android:textStyle="bold"
-                        android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
-                        app:backgroundTint="@color/surface_information"
-                        app:cornerRadius="@dimen/_15sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/shimmer5_layout" />
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/call_us_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:lines="2"
+                            android:text="@{vm.callUsText}"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                            android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
+                            app:textAllCaps="false"
+                            tools:text="Sagar jain kvnfjvbfjvbjf"
+                            tools:visibility="visible" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_call_us"
+                            android:layout_width="@dimen/_80sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_alignParentEnd="true"
+                            android:elevation="@dimen/_3sdp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:onClick="@{()-> vm.makePhoneCall()}"
+                            android:text="Call us"
+                            android:textAllCaps="false"
+                            android:textColor="@color/primary_500"
+                            android:textStyle="bold"
+                            android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
+                            app:backgroundTint="@color/surface_information"
+                            app:cornerRadius="@dimen/_15sdp" />
+
+                    </RelativeLayout>
+                </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
 

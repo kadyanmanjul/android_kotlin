@@ -64,6 +64,8 @@
             android:background="#BF173A50"
             android:elevation="@dimen/_10sdp"
             android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/buy_course_ll"

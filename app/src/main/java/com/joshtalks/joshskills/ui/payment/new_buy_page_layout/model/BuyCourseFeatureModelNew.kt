@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.ListConverters
+import com.joshtalks.joshskills.repository.local.SliderImageConverter
+import com.joshtalks.joshskills.repository.local.TestimonialosVideoConverter
 import java.util.*
 
 @Entity(tableName = "buy_course_feature")
@@ -51,5 +53,31 @@ data class BuyCourseFeatureModelNew(
     @SerializedName("is_call_us_active") var isCallUsActive: Int,
 
     @ColumnInfo(name = "payment_button_text")
-    @SerializedName("payment_button_text") var paymentButtonText: Int = 0
+    @SerializedName("payment_button_text") var paymentButtonText: Int = 0,
+
+    @ColumnInfo(name = "slider_image")
+    @TypeConverters(SliderImageConverter::class)
+    @SerializedName("images") var images: List<SliderImage>,
+
+    @ColumnInfo(name = "testimonials_video")
+    @TypeConverters(TestimonialosVideoConverter::class)
+    @SerializedName("videos") var videos: List<TestimonialVideo>
+
+)
+
+data class SliderImage(
+    @SerializedName("url")
+    val imageUrl: String
+)
+
+data class TestimonialVideo(
+
+    @SerializedName("id")
+    var id: Int = 0,
+
+    @SerializedName("url")
+    var video_url: String? = "",
+
+    @SerializedName("thumbnail_link")
+    val thumbnailUrl: String?,
 )

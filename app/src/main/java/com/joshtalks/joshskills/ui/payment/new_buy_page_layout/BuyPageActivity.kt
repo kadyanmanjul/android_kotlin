@@ -13,15 +13,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
@@ -32,6 +35,7 @@ import com.joshtalks.joshskills.constants.PAYMENT_PENDING
 import com.joshtalks.joshskills.constants.PAYMENT_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_PAGE_SUPPORT_PHONE_NUMBER
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
@@ -53,12 +57,14 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment
 import com.joshtalks.joshskills.ui.payment.PaymentPendingFragment
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.BuyPageViewPager
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.BookACallFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModelNew
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.TestimonialVideo
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.paymentManager.PaymentGatewayListener
@@ -66,6 +72,7 @@ import com.joshtalks.joshskills.ui.paymentManager.PaymentManager
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import kotlinx.coroutines.Dispatchers
@@ -73,6 +80,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import org.json.JSONObject
 import java.math.BigDecimal
+import java.util.*
+
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val SUBSCRIPTION_TEST_ID = "10"
@@ -107,7 +116,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     }
     private val backPressMutex = Mutex(false)
     var isCallUsButtonActive = 0
-
+    val adapter  = BuyPageViewPager()
     private val paymentManager: PaymentManager by lazy {
         PaymentManager(
             this,
@@ -116,6 +125,8 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         )
     }
 
+    private var dotsCount = 0
+    private lateinit var dots: Array<ImageView?>
 
     override fun getArguments() {
         super.getArguments()
@@ -198,7 +209,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     couponApplied(coupon, COUPON_APPLY_POP_UP_SHOW_AND_BACK, 0)
                 }
                 APPLY_COUPON_FROM_BUY_PAGE -> {
-                    Log.e("sagar", "initViewState: 3", )
+                    Log.e("sagar", "initViewState: 3")
                     val coupon = it.obj as Coupon
                     onCouponApply(coupon)
                 }
@@ -216,12 +227,16 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 BUY_PAGE_BACK_PRESS -> popBackStack()
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
                 COUPON_APPLIED -> couponApplied(it.obj as Coupon, it.arg1, it.arg2)
-                SCROLL_TO_BOTTOM -> binding.btnCallUs.post {
-                    binding.scrollView.smoothScrollTo(
-                        binding.buyPageParentContainer.width,
-                        binding.buyPageParentContainer.height,
-                        2000
-                    )
+                SCROLL_TO_BOTTOM -> {
+                    if (!viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V1_ENABLED) || !viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V2_ENABLED)){
+                        binding.btnCallUs.post {
+                            binding.scrollView.smoothScrollTo(
+                                binding.buyPageParentContainer.width,
+                                binding.buyPageParentContainer.height,
+                                2000
+                            )
+                        }
+                    }
                 }
                 PAYMENT_SUCCESS -> onPaymentSuccess()
                 PAYMENT_FAILED -> showPaymentFailedDialog()
@@ -238,6 +253,16 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     Log.e("sagar", "CREATE_ORDER_V3_ERROR: ", )
                     val map = it.obj as HashMap<*, *>
                     openErrorScreen(errorCode = CREATE_ORDER_V3_ERROR.toString(), map)
+                }
+                CLICK_ON_TESTIMONIALS_VIDEO ->{
+                    Log.e("sagar", "initViewState: ${CLICK_ON_TESTIMONIALS_VIDEO}", )
+                    val obj = it.obj as TestimonialVideo
+                    VideoPlayerActivity.startVideoActivity(
+                        context = this,
+                        videoTitle = null,
+                        videoId = obj.id.toString(),
+                        videoUrl = obj.video_url
+                    )
                 }
             }
         }
@@ -258,7 +283,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
     private fun couponApplied(coupon: Coupon, isFromLink: Int?, isApplyFrom:Int) {
         showToast("Coupon applied")
-        Log.e("sagar", "couponApplied: $isFromLink", )
+        Log.e("sagar", "couponApplied: $isFromLink")
         when (isFromLink) {
             COUPON_APPLY_POP_UP_SHOW_AND_BACK -> {
                 onBackPressed()
@@ -360,7 +385,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         binding.shimmer1Layout.visibility = View.VISIBLE
         binding.shimmer2.visibility = View.GONE
         binding.shimmer2.stopShimmer()
-        binding.shimmer2Layout.visibility = View.VISIBLE
         val courseDetailsInflate: LayoutInflater =
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         englishCourseCard =
@@ -383,7 +407,51 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 binding.courseDescList.addView(view)
             }
         }
+    }
 
+    private fun setSlider(buyCourseFeatureModel:BuyCourseFeatureModelNew){
+        adapter.addListOfImages(buyCourseFeatureModel.images)
+        binding.sliderViewPager.adapter = adapter
+
+        dotsCount = (binding.sliderViewPager.adapter as BuyPageViewPager).count
+        dots = arrayOfNulls(dotsCount)
+
+        for (i in 0 until dotsCount) {
+            dots[i] = ImageView(this)
+            dots[i]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.non_active_dot))
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            params.setMargins(8, 0, 8, 0)
+            binding.indicator.addView(dots[i], params)
+        }
+
+        dots[0]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.active_dot))
+
+        binding.sliderViewPager.addOnPageChangeListener(object : OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageSelected(position: Int) {
+                for (i in 0 until dotsCount) {
+                    dots[i]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.non_active_dot))
+                }
+                dots[position]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.active_dot))
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {}
+        })
+
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    var i = binding.sliderViewPager.currentItem
+                    if (i == buyCourseFeatureModel.images.size - 1){
+                        i=0
+                        binding.sliderViewPager.setCurrentItem(i,true)
+                    }else{
+                        i++
+                        binding.sliderViewPager.setCurrentItem(i,true)
+                    }
+                }
+            }
+        }, 2000,2000)
     }
 
     private fun getCourseDescriptionList(buyCourseFeatureModel: String): View? {
@@ -398,16 +466,55 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     }
 
     private fun setRating(buyCourseFeatureModel: BuyCourseFeatureModelNew) {
-        binding.shimmer3.visibility = View.GONE
-        binding.shimmer3.stopShimmer()
-        binding.shimmer3Layout.visibility = View.VISIBLE
         val ratingInflate: LayoutInflater =
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         teacherRatingAndReviewCard =
-            ratingInflate.inflate(R.layout.teacher_rating_and_review_card, null, true)
-        binding.teacherRatingAndReview.removeAllViews()
-        binding.teacherRatingAndReview.addView(teacherRatingAndReviewCard)
+            ratingInflate.inflate(R.layout.teacher_rating_and_review_card, null, false)
+
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V1_ENABLED)){
+            showShimmerTestimonials1(true)
+            showShimmerTestimonials2(false)
+
+            binding.teacherRatingAndReview.removeAllViews()
+            binding.teacherRatingAndReview.addView(teacherRatingAndReviewCard)
+
+            binding.sliderViewPager.visibility = View.VISIBLE
+            binding.indicator.visibility = View.VISIBLE
+            binding.courseTypeContainer.visibility = View.GONE
+
+            binding.shimmer2Layout.visibility = View.GONE
+            setSlider(buyCourseFeatureModel)
+
+        }else if (viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V2_ENABLED)){
+
+            showShimmerTestimonials1(false)
+            showShimmerTestimonials2(true)
+
+            binding.teacherRatingAndReview1.removeAllViews()
+            binding.teacherRatingAndReview1.addView(teacherRatingAndReviewCard)
+
+            binding.sliderViewPager.visibility = View.VISIBLE
+            binding.indicator.visibility = View.VISIBLE
+            binding.courseTypeContainer.visibility = View.GONE
+
+            binding.shimmer2Layout.visibility = View.GONE
+            setSlider(buyCourseFeatureModel)
+
+        }else{
+            showShimmerTestimonials1(true)
+            showShimmerTestimonials2(false)
+
+            binding.teacherRatingAndReview.removeAllViews()
+            binding.teacherRatingAndReview.addView(teacherRatingAndReviewCard)
+
+            binding.sliderViewPager.visibility = View.GONE
+            binding.indicator.visibility = View.GONE
+            binding.courseTypeContainer.visibility = View.VISIBLE
+
+            binding.shimmer2Layout.visibility = View.VISIBLE
+
+        }
 
         val ratingCount = teacherRatingAndReviewCard?.findViewById<TextView>(R.id.rating_count)
         ratingCount?.text = buyCourseFeatureModel.ratingCount.toString() + " Reviews"
@@ -420,6 +527,22 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
         val ratingInText = teacherRatingAndReviewCard?.findViewById<TextView>(R.id.rating_in_text)
         ratingInText?.text = buyCourseFeatureModel.rating.toString() + " out of 5"
+    }
+
+    private fun showShimmerTestimonials1(isLayoutVisible:Boolean){
+        if (isLayoutVisible)
+            binding.shimmerLayoutForTestimonials1.visibility = View.VISIBLE
+
+        binding.shimmerForTestimonials1.visibility = View.GONE
+        binding.shimmerForTestimonials1.stopShimmer()
+    }
+
+    private fun showShimmerTestimonials2(isLayoutVisible:Boolean){
+        if (isLayoutVisible)
+            binding.shimmerLayoutForTestimonials2.visibility = View.VISIBLE
+
+        binding.shimmerForTestimonials2.visibility = View.GONE
+        binding.shimmerForTestimonials2.stopShimmer()
     }
 
     private fun paymentButton(buyCourseFeatureModel: BuyCourseFeatureModelNew) {

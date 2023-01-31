@@ -210,6 +210,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             lessonID = it
         }
 
+        viewModel.speakingLiveData.observe(viewLifecycleOwner) {
+            binding.welcomeContainer.visibility = GONE
+            binding.btnPeerToPeerCall.visibility = VISIBLE
+            dismissTooltipButton()
+        }
+
         viewModel.blockLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 true -> {
@@ -1081,6 +1087,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         withContext(Dispatchers.Main) {
             val STATUS_BAR_HEIGHT = getStatusBarHeight()
             binding.welcomeContainer.visibility = VISIBLE
+            viewModel.isSpeakingButtonTooltipShown.set(true)
             val overlayImageView = binding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
             val overlayItem = TooltipUtils.getOverlayItemFromView(binding.btnPeerToPeerCall)
 
@@ -1089,9 +1096,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             binding.btnPeerToPeerCall.requestLayout()
 
             binding.welcomeContainer.setOnClickListener {
-                binding.welcomeContainer.visibility = GONE
-                binding.btnPeerToPeerCall.visibility = VISIBLE
-                dismissTooltipButton()
+//                binding.welcomeContainer.visibility = GONE
+//                binding.btnPeerToPeerCall.visibility = VISIBLE
+//                dismissTooltipButton()
             }
 
             overlayImageView.setOnClickListener {

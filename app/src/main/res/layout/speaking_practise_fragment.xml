@@ -27,6 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#BF173A50"
+            android:focusable="true"
+            android:clickable="true"
             android:elevation="@dimen/_10sdp"
             android:visibility="gone">
 

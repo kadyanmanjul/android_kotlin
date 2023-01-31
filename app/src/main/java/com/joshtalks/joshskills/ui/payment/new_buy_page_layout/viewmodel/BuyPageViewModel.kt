@@ -15,12 +15,10 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.errorState.GET_USER_COUPONS_API_ERROR
 import com.joshtalks.joshskills.ui.errorState.COURSE_PRICE_LIST_ERROR
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.CouponListAdapter
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.FeatureListAdapter
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.OffersListAdapter
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.PriceListAdapter
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.*
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.TestimonialVideo
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.repo.BuyPageRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import io.branch.referral.util.CurrencyType
@@ -29,6 +27,7 @@ import org.json.JSONObject
 import timber.log.Timber
 import java.math.BigDecimal
 import java.util.*
+import kotlin.collections.ArrayList
 
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }
@@ -38,6 +37,7 @@ class BuyPageViewModel : BaseViewModel() {
     var offersListAdapter = OffersListAdapter()
     var priceListAdapter = PriceListAdapter()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val testiMonialsListAdapter = TestiMonialsListAdapter()
 
     var testId: String = FREE_TRIAL_PAYMENT_TEST_ID
     var manualCoupon = ObservableField(EMPTY)
@@ -71,6 +71,7 @@ class BuyPageViewModel : BaseViewModel() {
                 apiStatus.postValue(ApiCallStatus.SUCCESS)
                 withContext(mainDispatcher) {
                     featureAdapter.addFeatureList(response?.features)
+                    testiMonialsListAdapter.addVideoList(response?.videos)
                     callUsText.set(response?.callUsText)
                     priceText.set(response?.priceEnglishText)
                     message.what = BUY_COURSE_LAYOUT_DATA
@@ -157,7 +158,7 @@ class BuyPageViewModel : BaseViewModel() {
                     } else {
                         isPriceApiCall.set(true)
                         withContext(mainDispatcher) {
-                            sendErrorMessage(exception = code.toString(), payload = code.toString(), apiErrorCode = COURSE_PRICE_LIST_ERROR)
+                            sendErrorMessage(exception = response.code().toString() + response.message(), payload = code.toString(), apiErrorCode = COURSE_PRICE_LIST_ERROR)
                         }
                     }
                 } catch (e: Exception) {
@@ -258,6 +259,18 @@ class BuyPageViewModel : BaseViewModel() {
                 }else{
                     showToast("Coupon already applied")
                 }
+            }
+        }
+    }
+
+    val openTestimonialVideo: (TestimonialVideo, Int, Int) -> Unit = { it, type, position->
+        when (type){
+            CLICK_ON_TESTIMONIALS_VIDEO -> {
+                Log.e("sagar", "openTestimonialVideo: ${CLICK_ON_TESTIMONIALS_VIDEO}", )
+                message.what = CLICK_ON_TESTIMONIALS_VIDEO
+                message.obj = it
+                message.arg1 = position
+                singleLiveEvent.value = message
             }
         }
     }

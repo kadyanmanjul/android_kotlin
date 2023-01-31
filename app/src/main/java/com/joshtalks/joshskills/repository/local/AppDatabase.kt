@@ -112,6 +112,8 @@ import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentDao
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureDao
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModelNew
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.SliderImage
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.TestimonialVideo
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
@@ -136,7 +138,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class, BuyCourseFeatureModelNew::class
     ],
-    version = 60,
+    version = 61,
     exportSchema = true
 )
 @TypeConverters(
@@ -170,7 +172,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     BigDecimalConverters::class,
     VariableMapConverters::class,
     PaymentStatusConverters::class,
-    FrequencyConverter::class
+    FrequencyConverter::class,
+    SliderImageConverter::class,
+    TestimonialosVideoConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -244,7 +248,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_56_57,
                                 MIGRATION_57_58,
                                 MIGRATION_58_59,
-                                MIGRATION_59_60)
+                                MIGRATION_59_60,
+                                MIGRATION_60_61)
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
@@ -734,6 +739,13 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_59_60: Migration = object : Migration(59, 60) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `buy_course_feature` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `features` TEXT NOT NULL, `information` TEXT NOT NULL,`rating` REAL NOT NULL,`ratings_count` INTEGER NOT NULL, `expire_time` INTEGER NOT NULL, `call_us_text` TEXT NOT NULL,`course_name` TEXT NOT NULL , `image_name` TEXT NOT NULL,  `bp_text` TEXT NOT NULL, `is_call_us_active` INTEGER NOT NULL, `payment_button_text` INTEGER NOT NULL)")
+            }
+        }
+
+        private val MIGRATION_60_61: Migration = object : Migration(60, 61) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `slider_image` TEXT")
+                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `testimonials_video` TEXT")
             }
         }
 
@@ -1231,5 +1243,39 @@ class FrequencyConverter {
             return AppObjectController.gsonMapper.toJson(enumVal)
         }
         return AppObjectController.gsonMapper.toJson(AlarmFrequency.ONCE)
+    }
+}
+
+class SliderImageConverter {
+    @TypeConverter
+    fun fromSliderImage(value: List<SliderImage>?): String {
+        val type = object : TypeToken<List<SliderImage>>() {}.type
+        return AppObjectController.gsonMapper.toJson(value, type)
+    }
+
+    @TypeConverter
+    fun toSliderImage(value: String?): List<SliderImage> {
+        if (value == null) {
+            return Collections.emptyList()
+        }
+        val type = object : TypeToken<List<SliderImage>>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+}
+
+class TestimonialosVideoConverter {
+    @TypeConverter
+    fun fromSliderImage(value: List<TestimonialVideo>?): String {
+        val type = object : TypeToken<List<TestimonialVideo>>() {}.type
+        return AppObjectController.gsonMapper.toJson(value, type)
+    }
+
+    @TypeConverter
+    fun toSliderImage(value: String?): List<TestimonialVideo> {
+        if (value == null) {
+            return Collections.emptyList()
+        }
+        val type = object : TypeToken<List<TestimonialVideo>>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }

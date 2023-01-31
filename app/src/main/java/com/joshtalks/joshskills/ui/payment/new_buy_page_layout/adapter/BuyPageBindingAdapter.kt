@@ -3,11 +3,11 @@ package com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.CourseDetailsList
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.TestimonialVideo
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
@@ -73,6 +73,18 @@ fun priceListAdapter(
     view: RecyclerView,
     adapter: PriceListAdapter,
     function: ((CourseDetailsList, Int, Int,String) -> Unit)?
+) {
+    view.setHasFixedSize(false)
+    view.adapter = adapter
+
+    adapter.setListener(function)
+}
+
+@BindingAdapter("testimonialsListAdapter", "onVideoItemClick")
+fun testimonialsListAdapter(
+    view: RecyclerView,
+    adapter: TestiMonialsListAdapter,
+    function: ((TestimonialVideo, Int, Int) -> Unit)?
 ) {
     view.setHasFixedSize(false)
     view.adapter = adapter
