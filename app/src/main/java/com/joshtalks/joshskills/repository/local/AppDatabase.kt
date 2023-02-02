@@ -744,9 +744,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_60_61: Migration = object : Migration(60, 61) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `slider_image` TEXT NOT NULL")
-                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `testimonials_video` TEXT NOT NULL")
-                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `live_messages` TEXT NOT NULL")
+                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `slider_image` TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `testimonials_video` TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `live_messages` TEXT NOT NULL DEFAULT ''")
             }
         }
 
@@ -1249,13 +1249,13 @@ class FrequencyConverter {
 
 class SliderImageConverter {
     @TypeConverter
-    fun fromSliderImage(value: List<SliderImage>?): String {
+    fun fromSliderImage(value: List<SliderImage>?): String? {
         val type = object : TypeToken<List<SliderImage>>() {}.type
         return AppObjectController.gsonMapper.toJson(value, type)
     }
 
     @TypeConverter
-    fun toSliderImage(value: String?): List<SliderImage> {
+    fun toSliderImage(value: String?): List<SliderImage>? {
         if (value == null) {
             return Collections.emptyList()
         }

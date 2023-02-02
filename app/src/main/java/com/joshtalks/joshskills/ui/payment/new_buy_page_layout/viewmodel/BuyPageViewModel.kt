@@ -48,7 +48,6 @@ class BuyPageViewModel : BaseViewModel() {
     var isCouponApplied = ObservableBoolean(true)
     var isOfferOrInsertCodeVisible = ObservableBoolean(false)
     var offerForYouText = ObservableField("Offer for you")
-    var liveMessageText = ObservableField(EMPTY)
 
     var couponList: List<Coupon>? = null
 
@@ -73,7 +72,6 @@ class BuyPageViewModel : BaseViewModel() {
                 withContext(mainDispatcher) {
                     featureAdapter.addFeatureList(response?.features)
                     testiMonialsListAdapter.addVideoList(response?.videos)
-                    liveMessageText.set(getRandomString(response?.liveMessages) + " just bought this course 🎉💯")
                     callUsText.set(response?.callUsText)
                     priceText.set(response?.priceEnglishText)
                     message.what = BUY_COURSE_LAYOUT_DATA

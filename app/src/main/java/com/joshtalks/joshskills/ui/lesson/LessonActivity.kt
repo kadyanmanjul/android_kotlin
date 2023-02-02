@@ -97,6 +97,8 @@ import com.joshtalks.joshskills.ui.online_test.vh.AtsOptionView
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
+import com.joshtalks.joshskills.ui.special_practice.utils.L2_CLAIM_NOW_CLICKED
+import com.joshtalks.joshskills.ui.special_practice.utils.L2_COUPON_UNLOCKED
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
@@ -300,6 +302,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     private fun showBottomCouponBanner() {
         if (viewModel.abTestRepository.isVariantActive(VariantKeys.L2_LESSON_COMPLETE_ENABLED)) {
+            viewModel.saveImpression(L2_COUPON_UNLOCKED)
             binding.buyCourseBanner.visibility = View.VISIBLE
             viewModel.getCompletedLessonCount(courseId)
             viewModel.completedLessonCount.observe(this) { count ->
@@ -323,7 +326,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                             buyCourseBannerAvailBtn.isVisible = it
                             buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
                             binding.buyCourseBannerAvailBtn.setOnClickListener {
-                                viewModel.saveImpression(CampaignKeys.L2_LESSON_COMPLETE_COUPON.name)
+                                viewModel.saveImpression(L2_CLAIM_NOW_CLICKED)
                                 BuyPageActivity.startBuyPageActivity(
                                     this@LessonActivity,
                                     testId.toString(),

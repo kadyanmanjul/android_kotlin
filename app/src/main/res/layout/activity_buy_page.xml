@@ -113,22 +113,6 @@
                             android:gravity="center_vertical|center_horizontal"
                             android:orientation="horizontal" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/live_message_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/warning"
-                            android:text="@{vm.liveMessageText}"
-                            android:textColor="@color/pure_black"
-                            android:textAlignment="center"
-                            android:gravity="center"
-                            android:visibility="gone"
-                            android:paddingVertical="@dimen/_6sdp"
-                            android:layout_marginTop="@dimen/_13sdp"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
-                            tools:text="Someone just bought this course 🎉💯"
-                            />
-
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <com.facebook.shimmer.ShimmerFrameLayout
@@ -245,7 +229,7 @@
                             android:clipToPadding="false"
                             android:orientation="horizontal"
                             android:paddingHorizontal="@dimen/_10sdp"
-                            android:visibility="visible"
+                            android:visibility="gone"
                             android:paddingTop="@dimen/_10sdp"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_offfers_card" />
@@ -422,14 +406,6 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:id="@+id/testimonials1_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_2sdp"
-                            android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_15sdp"
-                            android:background="@drawable/dotted_line"
-                            android:visibility="visible" />
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/teacher_rating_and_review1"
@@ -482,6 +458,8 @@
                             android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                             app:textAllCaps="false"
                             tools:text="Sagar jain kvnfjvbfjvbjf"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toLeftOf="@+id/btn_call_us"
                             tools:visibility="visible" />
 
                         <com.google.android.material.button.MaterialButton

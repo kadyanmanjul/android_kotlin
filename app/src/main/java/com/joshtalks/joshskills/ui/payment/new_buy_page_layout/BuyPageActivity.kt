@@ -216,6 +216,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 APPLY_COUPON_FROM_INTENT -> {
                     if (shouldAutoApplyCoupon) {
                         viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply == true }?.let { coupon ->
+                            viewModel.saveImpression(L2_COUPON_AUTO_APPLIED)
                             viewModel.applyEnteredCoupon(coupon.couponCode, NORMAL_BACK_PRESS, 0)
                         }
                     }
@@ -451,7 +452,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     }
                 }
             }
-        }, 2000,2000)
+        }, 4000,4000)
     }
 
     private fun getCourseDescriptionList(buyCourseFeatureModel: String): View? {
@@ -479,9 +480,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             binding.teacherRatingAndReview.removeAllViews()
             binding.teacherRatingAndReview.addView(teacherRatingAndReviewCard)
 
+            binding.testimonials.visibility = View.VISIBLE
+            binding.view13.visibility = View.VISIBLE
             binding.sliderViewPager.visibility = View.VISIBLE
             binding.indicator.visibility = View.VISIBLE
-            binding.liveMessageText.visibility = View.VISIBLE
             binding.courseTypeContainer.visibility = View.GONE
 
             binding.shimmer2Layout.visibility = View.GONE
@@ -497,7 +499,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
             binding.sliderViewPager.visibility = View.VISIBLE
             binding.indicator.visibility = View.VISIBLE
-            binding.liveMessageText.visibility = View.VISIBLE
             binding.courseTypeContainer.visibility = View.GONE
 
             binding.shimmer2Layout.visibility = View.GONE
@@ -552,6 +553,11 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         proceedButtonCard = paymentInflate.inflate(R.layout.payment_button_card, null, true)
         val paymentButton = proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)
+        val paymentButtonLiveMessage = proceedButtonCard?.findViewById<TextView>(R.id.live_message_text)
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V1_ENABLED) || viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V2_ENABLED)){
+            paymentButtonLiveMessage?.visibility = View.VISIBLE
+            paymentButtonLiveMessage?.text = getRandomString(buyCourseFeatureModel.liveMessages)
+        }
         binding.paymentProceedBtnCard.removeAllViews()
         binding.paymentProceedBtnCard.addView(proceedButtonCard)
         paymentButton?.setOnSingleClickListener {
@@ -563,6 +569,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             ?.setOnSingleClickListener {
                 showPrivacyPolicyDialog()
             }
+    }
+
+    private fun getRandomString(list: List<String>?):String{
+        return list?.get(Random().nextInt(list.size)) ?: "Mukesh"
     }
 
     private fun startPayment() {
@@ -581,7 +591,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             paymentManager.createOrder(
                 phoneNumber,
                 priceForPaymentProceed?.encryptedText ?: EMPTY,
-                testId
+                priceForPaymentProceed?.testId ?: EMPTY
             )
         } catch (ex: Exception) {
             ex.showAppropriateMsg()

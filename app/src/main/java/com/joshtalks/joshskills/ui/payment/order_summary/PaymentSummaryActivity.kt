@@ -782,7 +782,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
                         paymentManager.createOrder(
                             binding.mobileEt.text.toString(),
                             viewModel.getEncryptedText(),
-                            testId
+                            viewModel.getPaymentTestId()
                         )
                     else ->
                         uiHandler.post {
@@ -803,7 +803,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
             else -> paymentManager.createOrder(
                 getPhoneNumber(),
                 viewModel.getEncryptedText(),
-                testId
+                viewModel.getPaymentTestId()
             )
         }
 
