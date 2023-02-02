@@ -746,6 +746,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `slider_image` TEXT NOT NULL DEFAULT ''")
                 database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `testimonials_video` TEXT NOT NULL DEFAULT ''")
                 database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `live_messages` TEXT NOT NULL DEFAULT ''")
+                database.execSQL("DROP TABLE `special_table`")
             }
         }
 
