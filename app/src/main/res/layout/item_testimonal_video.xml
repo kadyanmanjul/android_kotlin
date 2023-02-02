@@ -9,25 +9,28 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
-        android:layout_width="@dimen/_81sdp"
-        android:layout_height="@dimen/_94sdp"
-        app:cardElevation="@dimen/_10sdp"
+        android:layout_width="@dimen/_87sdp"
+        android:layout_height="@dimen/_100sdp"
+        app:cardElevation="@dimen/_4sdp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
         android:layout_marginEnd="@dimen/_12sdp"
         app:cardCornerRadius="@dimen/_8sdp">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/backgroundFade"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/transparent_black"
-            android:visibility="gone"
+            android:visibility="visible"
             tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:elevation="@dimen/_9sdp" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/playIcon"
@@ -36,6 +39,7 @@
             android:layout_gravity="center"
             android:clickable="false"
             android:padding="@dimen/_12sdp"
+            android:elevation="@dimen/_10sdp"
             android:visibility="visible"
             app:srcCompat="@drawable/ic_play_24dp"
             app:tint="@color/pure_white"

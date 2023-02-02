@@ -228,7 +228,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                 APPLY_COUPON_BUTTON_SHOW -> showApplyButton()
                 COUPON_APPLIED -> couponApplied(it.obj as Coupon, it.arg1, it.arg2)
                 SCROLL_TO_BOTTOM -> {
-                    if (!viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V1_ENABLED) || !viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V2_ENABLED)){
+                    if (!viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V1_ENABLED) && !viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V2_ENABLED)){
                         binding.btnCallUs.post {
                             binding.scrollView.smoothScrollTo(
                                 binding.buyPageParentContainer.width,
@@ -481,6 +481,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
             binding.sliderViewPager.visibility = View.VISIBLE
             binding.indicator.visibility = View.VISIBLE
+            binding.liveMessageText.visibility = View.VISIBLE
             binding.courseTypeContainer.visibility = View.GONE
 
             binding.shimmer2Layout.visibility = View.GONE
@@ -496,6 +497,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
             binding.sliderViewPager.visibility = View.VISIBLE
             binding.indicator.visibility = View.VISIBLE
+            binding.liveMessageText.visibility = View.VISIBLE
             binding.courseTypeContainer.visibility = View.GONE
 
             binding.shimmer2Layout.visibility = View.GONE

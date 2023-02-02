@@ -70,7 +70,6 @@ class TestiMonialsListAdapter(var videoList: List<TestimonialVideo>? = listOf())
 
             Glide.with(AppObjectController.joshApplication)
                 .load(url)
-                .override(Target.SIZE_ORIGINAL)
                 .optionalTransform(
                     WebpDrawable::class.java,
                     WebpDrawableTransformation(CircleCrop())

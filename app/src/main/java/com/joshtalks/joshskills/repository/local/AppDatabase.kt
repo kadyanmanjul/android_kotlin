@@ -744,8 +744,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_60_61: Migration = object : Migration(60, 61) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `slider_image` TEXT")
-                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `testimonials_video` TEXT")
+                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `slider_image` TEXT NOT NULL")
+                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `testimonials_video` TEXT NOT NULL")
+                database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `live_messages` TEXT NOT NULL")
             }
         }
 

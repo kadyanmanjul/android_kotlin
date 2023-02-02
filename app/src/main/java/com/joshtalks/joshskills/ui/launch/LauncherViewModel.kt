@@ -127,29 +127,13 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                     event.value = Message().apply { what = UPDATE_GAID }
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                 } else {
-//                    withContext(mainDispatcher) {
-//                        sendErrorMessage(response.code().toString(), Utils.getDeviceId(), MENTOR_DEVICE_GAID_ID)
-//                    }
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Exception) {
-//                withContext(mainDispatcher) {
-//                    sendErrorMessage(ex.message.toString(), Utils.getDeviceId(), MENTOR_DEVICE_GAID_ID)
-//                }
                 LogException.catchException(ex)
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 return@launch
             }
-        }
-    }
-
-    private fun sendErrorMessage(exception: String?, payload: String?, apiErrorCode: Int) {
-        val map = HashMap<String, String?>()
-        map["exception"] = exception
-        map["payload"] = payload
-        event.value = Message().apply {
-            what = apiErrorCode
-            obj = map
         }
     }
 
@@ -192,9 +176,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 PrefManager.put(EXPLORE_TYPE, exploreType ?: ExploreCardType.NORMAL.name, false)
                 event.value = Message().apply { what = FETCH_MENTOR }
             } catch (ex: Exception) {
-//                withContext(mainDispatcher) {
-//                    sendErrorMessage(ex.message.toString(), requestRegisterGAId.toString(), MENTOR_GAID)
-//                }
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
                 LogException.catchException(ex)
@@ -219,9 +200,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 event.value = Message().apply { what = START_ACTIVITY }
                 apiCallStatus.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Exception) {
-//                withContext(mainDispatcher) {
-//                    sendErrorMessage(ex.message.toString(), PrefManager.getStringValue(USER_UNIQUE_ID), USER_CREATE_USER)
-//                }
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
                 LogException.catchException(ex)
             }

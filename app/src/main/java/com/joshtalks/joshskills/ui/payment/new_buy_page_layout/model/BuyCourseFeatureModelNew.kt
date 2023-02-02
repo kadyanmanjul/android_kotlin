@@ -55,13 +55,19 @@ data class BuyCourseFeatureModelNew(
     @ColumnInfo(name = "payment_button_text")
     @SerializedName("payment_button_text") var paymentButtonText: Int = 0,
 
-    @ColumnInfo(name = "slider_image")
     @TypeConverters(SliderImageConverter::class)
-    @SerializedName("images") var images: List<SliderImage>,
+    @ColumnInfo(name = "slider_image")
+    @SerializedName("images") var images: List<SliderImage> = arrayListOf(),
 
-    @ColumnInfo(name = "testimonials_video")
     @TypeConverters(TestimonialosVideoConverter::class)
-    @SerializedName("videos") var videos: List<TestimonialVideo>
+    @ColumnInfo(name = "testimonials_video")
+    @SerializedName("videos") var videos: List<TestimonialVideo> = arrayListOf(),
+
+    @TypeConverters(
+        ListConverters::class
+    )
+    @ColumnInfo(name = "live_messages")
+    @SerializedName("live_messages") var liveMessages: List<String> = arrayListOf(),
 
 )
 

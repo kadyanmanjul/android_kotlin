@@ -30,8 +30,6 @@ import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.onboarding.OnboardingCourseData
 import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.repository.server.signup.LastLoginType
-import com.joshtalks.joshskills.ui.errorState.COURSE_LANGUAGE
-import com.joshtalks.joshskills.ui.errorState.ErrorActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.truecaller.android.sdk.*
 import kotlinx.coroutines.Dispatchers
@@ -121,19 +119,9 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
             when (it.what) {
                 IS_USER_EXIST -> moveToInboxScreen()
                 USER_CREATED_SUCCESSFULLY -> openSignUpNameFragment()
-                //COURSE_LANGUAGE -> openErrorScreen(COURSE_LANGUAGE.toString())
             }
         }
         initTrueCallerUI()
-    }
-
-    private fun openErrorScreen(errorCode:String){
-        ErrorActivity.showErrorScreen(
-            errorTitle = "Something went wrong",
-            errorSubtitle = getString(R.string.error_message_screen),
-            errorCode = errorCode,
-            activity = this@FreeTrialOnBoardActivity
-        )
     }
 
     override fun onPause() {

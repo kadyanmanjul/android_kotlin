@@ -48,6 +48,7 @@ class BuyPageViewModel : BaseViewModel() {
     var isCouponApplied = ObservableBoolean(true)
     var isOfferOrInsertCodeVisible = ObservableBoolean(false)
     var offerForYouText = ObservableField("Offer for you")
+    var liveMessageText = ObservableField(EMPTY)
 
     var couponList: List<Coupon>? = null
 
@@ -72,6 +73,7 @@ class BuyPageViewModel : BaseViewModel() {
                 withContext(mainDispatcher) {
                     featureAdapter.addFeatureList(response?.features)
                     testiMonialsListAdapter.addVideoList(response?.videos)
+                    liveMessageText.set(getRandomString(response?.liveMessages) + " just bought this course 🎉💯")
                     callUsText.set(response?.callUsText)
                     priceText.set(response?.priceEnglishText)
                     message.what = BUY_COURSE_LAYOUT_DATA
@@ -88,6 +90,9 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
+    private fun getRandomString(list: List<String>?):String{
+        return list?.get(Random().nextInt(list.size)) ?: "Mukesh"
+    }
     //This method is for set coupon and offer list on basis of type coupon or offer
     fun getValidCouponList(methodCallType: String, testId:Int, isCouponApplyOrRemove: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -125,13 +130,21 @@ class BuyPageViewModel : BaseViewModel() {
                 } else {
                     isCouponApiCall.set(true)
                     withContext(mainDispatcher) {
-                        sendErrorMessage(response.code().toString(), testId.toString() + " ," + getCompletedLessonCount().toString(), GET_USER_COUPONS_API_ERROR)
+                        if(getCompletedLessonCount() != 0){
+                            sendErrorMessage(response.code().toString(), testId.toString() + " ," + getCompletedLessonCount().toString(), GET_USER_COUPONS_API_ERROR)
+                        }else{
+                            sendErrorMessage(response.code().toString(), "$testId ,0", GET_USER_COUPONS_API_ERROR)
+                        }
                     }
                 }
             } catch (e: Exception) {
                 isCouponApiCall.set(true)
                 withContext(mainDispatcher) {
-                    sendErrorMessage(e.message.toString(), testId.toString() + " ," + getCompletedLessonCount().toString(), GET_USER_COUPONS_API_ERROR)
+                    if(getCompletedLessonCount() != 0){
+                        sendErrorMessage(e.message.toString(), testId.toString() + " ," + getCompletedLessonCount().toString(), GET_USER_COUPONS_API_ERROR)
+                    }else{
+                        sendErrorMessage(e.message.toString(), "$testId ,0", GET_USER_COUPONS_API_ERROR)
+                    }
                 }
                 e.printStackTrace()
             }
@@ -240,8 +253,13 @@ class BuyPageViewModel : BaseViewModel() {
             }
         }
 
-    suspend fun getCompletedLessonCount(courseId: String = PrefManager.getStringValue(CURRENT_COURSE_ID)) =
-        AppObjectController.appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+    suspend fun getCompletedLessonCount(courseId: String = PrefManager.getStringValue(CURRENT_COURSE_ID)) :Int{
+        return try {
+            AppObjectController.appDatabase.lessonDao().getCompletedLessonCount(courseId.toInt())
+        } catch (ex: java.lang.Exception) {
+            0
+        }
+    }
 
     //I am making position means come from Insert coupon flow
     // position = 1 come from insert flow

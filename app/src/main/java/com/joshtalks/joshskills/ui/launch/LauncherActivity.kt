@@ -106,18 +106,6 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 FETCH_MENTOR -> viewModel.getGuestMentor()
                 ANALYZE_APP_REQUIREMENT -> analyzeAppRequirement()
                 START_ACTIVITY -> startNextActivity()
-//                MENTOR_DEVICE_GAID_ID -> {
-//                    val map = it.obj as HashMap<*, *>
-//                    openErrorScreen(errorCode = MENTOR_DEVICE_GAID_ID.toString(), map)
-//                }
-//                MENTOR_GAID ->{
-//                    val map = it.obj as HashMap<*, *>
-//                    openErrorScreen(errorCode = MENTOR_GAID.toString(), map)
-//                }
-//                USER_CREATE_USER -> {
-//                    val map = it.obj as HashMap<*, *>
-//                    openErrorScreen(errorCode = USER_CREATE_USER.toString(),map)
-//                }
                 else -> {}
             }
         }
@@ -140,17 +128,6 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 finish()
             }
         }
-    }
-
-    private fun openErrorScreen(errorCode:String, map:HashMap<*, *>){
-        ErrorActivity.showErrorScreen(
-            errorTitle = "Something went wrong",
-            errorSubtitle = getString(R.string.error_message_screen),
-            errorCode = errorCode,
-            activity = this@LauncherActivity,
-            payload = map["payload"].toString(),
-            exception = map["exception"].toString()
-        )
     }
 
     private fun animatedProgressBar() {

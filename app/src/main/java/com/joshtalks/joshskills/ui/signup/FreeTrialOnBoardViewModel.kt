@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
-import com.joshtalks.joshskills.ui.errorState.COURSE_LANGUAGE
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
@@ -200,11 +199,9 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     availableLanguages.value = response.body()
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                 } else {
-                   // liveEvent.postValue(Message().apply { what = COURSE_LANGUAGE })
                     apiStatus.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Throwable) {
-                //liveEvent.postValue(Message().apply { what = COURSE_LANGUAGE })
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.showAppropriateMsg()
             }

@@ -100,7 +100,7 @@
                         <androidx.viewpager.widget.ViewPager
                             android:id="@+id/slider_view_pager"
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/_160sdp"
+                            android:layout_height="@dimen/_150sdp"
                             android:visibility="gone"
                             android:layout_marginHorizontal="@dimen/_15sdp"
                             android:layout_marginVertical="@dimen/_13sdp" />
@@ -113,7 +113,21 @@
                             android:gravity="center_vertical|center_horizontal"
                             android:orientation="horizontal" />
 
-
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/live_message_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/warning"
+                            android:text="@{vm.liveMessageText}"
+                            android:textColor="@color/pure_black"
+                            android:textAlignment="center"
+                            android:gravity="center"
+                            android:visibility="gone"
+                            android:paddingVertical="@dimen/_6sdp"
+                            android:layout_marginTop="@dimen/_13sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                            tools:text="Someone just bought this course 🎉💯"
+                            />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -204,6 +218,14 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:visibility="gone">
+
+                        <View
+                            android:id="@+id/view13"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_19sdp"
+                            android:background="@drawable/dotted_line" />
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/teacher_rating_and_review"
