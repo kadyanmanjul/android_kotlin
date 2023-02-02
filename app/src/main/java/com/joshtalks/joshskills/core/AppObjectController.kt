@@ -52,7 +52,6 @@ import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
-import com.userexperior.UserExperior
 /*import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider*/
 import io.branch.referral.Branch
@@ -343,7 +342,6 @@ class AppObjectController {
         fun init() {
             CoroutineScope(Dispatchers.IO).launch {
                 ActivityLifecycleCallback.register(joshApplication)
-                initUserExperionCam()
                 initFacebookService(joshApplication)
                 observeFirestore()
             }
@@ -538,14 +536,6 @@ class AppObjectController {
 
         fun getFirebaseRemoteConfig(): FirebaseRemoteConfig {
             return FirebaseRemoteConfig.getInstance()
-        }
-
-        private fun initUserExperionCam() {
-            UserExperior.startRecording(
-                joshApplication,
-                "942a0473-e1ca-40e5-af83-034cb7f57ee9"
-            )
-            UserExperior.setUserIdentifier(Mentor.getInstance().getId())
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {

@@ -78,7 +78,7 @@
     <color name="text_default_0_2">#33253858</color>
     <color name="common_interest_chip_bg_color">#33F5F5F5</color>
     <color name="Transparency_white40">#66ffffff</color>
-
+    <color name="quantum_yellow">#ffeb3b</color>
     <color name="font_color">#373737</color>
 
 </resources>

@@ -91,7 +91,6 @@ import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
-import com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
@@ -1574,24 +1573,6 @@ class ConversationActivity :
                                 id,
                                 USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value
                             )
-                        }
-                    },
-                    {
-                        it.printStackTrace()
-                    }
-                )
-        )
-
-        compositeDisposable.add(
-            RxBus2.listenWithoutDelay(SpecialPracticeEventBus::class.java)
-                .subscribeOn(Schedulers.computation())
-                .subscribe(
-                    {
-                        Intent(this, SpecialPracticeActivity::class.java).apply {
-                            putExtra(SPECIAL_ID, it.specialId)
-                            putExtra(CONVERSATION_ID, inboxEntity.conversation_id)
-                        }.run {
-                            startActivity(this)
                         }
                     },
                     {

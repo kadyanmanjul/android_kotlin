@@ -113,7 +113,7 @@ import java.lang.Runnable
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
-private const val TAG = "ReadingFragmentWithoutFeedback"
+private const val TAG = "RFWithoutFeedback"
 
 class ReadingFragmentWithoutFeedback :
     CoreJoshFragment(),
@@ -798,7 +798,7 @@ class ReadingFragmentWithoutFeedback :
 
             heading.isVisible = true
             heading.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
+                .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
             subHeading.text = requireActivity().getString(R.string.attempt_reading_practice)
 
             binding.recordingView.setImageResource(R.drawable.recv_ic_mic_white)

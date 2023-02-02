@@ -98,7 +98,10 @@ class BackgroundService : Service() {
             .addInterceptor(StatusCodeInterceptor())
             .addInterceptor(HeaderInterceptor())
             .hostnameVerifier { _, _ -> true }
-            .addNetworkInterceptor(getStethoInterceptor())
+
+        if (BuildConfig.DEBUG) {
+            builder.addNetworkInterceptor(getStethoInterceptor())
+        }
 
         apiService = Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)

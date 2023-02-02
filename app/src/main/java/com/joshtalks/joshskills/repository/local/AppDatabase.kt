@@ -114,8 +114,6 @@ import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFe
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.BuyCourseFeatureModelNew
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.SliderImage
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.TestimonialVideo
-import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
-import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
@@ -135,7 +133,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, ScheduleNotification::class,
-        ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
+        ABTestCampaignData::class, GroupMember::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class, BuyCourseFeatureModelNew::class
     ],
     version = 61,
@@ -747,6 +745,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `slider_image` TEXT NOT NULL DEFAULT ''")
                 database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `testimonials_video` TEXT NOT NULL DEFAULT ''")
                 database.execSQL("ALTER TABLE `buy_course_feature` ADD COLUMN `live_messages` TEXT NOT NULL DEFAULT ''")
+                database.execSQL("DROP TABLE `special_table`")
             }
         }
 
@@ -790,7 +789,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun groupListDao(): GroupListDao
     abstract fun timeTokenDao(): TimeTokenDao
     abstract fun groupChatDao(): GroupChatDao
-    abstract fun specialDao(): SpecialDao
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao
     abstract fun phonebookDao(): PhonebookDao

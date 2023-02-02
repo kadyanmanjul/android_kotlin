@@ -27,7 +27,6 @@ import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
-import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -131,7 +130,6 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 .setUserId(loginResponse.userId)
                 .update()
             Mentor.getInstance().updateUser(user)
-            UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
             NotificationUtils(AppObjectController.joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)

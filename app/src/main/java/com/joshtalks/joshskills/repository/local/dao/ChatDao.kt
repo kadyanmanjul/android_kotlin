@@ -7,7 +7,6 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
-import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import java.util.*
 
 @Dao
@@ -371,8 +370,6 @@ interface ChatDao {
 
             chatModel.lesson = getLesson(chatModel) // Add Lesson
 
-            chatModel.specialPractice = getSpecialPractice(chatModel) // Add Special
-
             chatModel.question = getQuestion(chatModel) // Add Question
         }
         return listOfChat
@@ -385,8 +382,6 @@ interface ChatDao {
             chatModel.awardMentorModel = getAwardMentor(chatModel)
 
             chatModel.lesson = getLesson(chatModel) // Add Lesson
-
-            chatModel.specialPractice = getSpecialPractice(chatModel) // Add Special practice
 
             chatModel.question = getQuestion(chatModel) // Add Question
         } catch (ex: Throwable) {
@@ -408,13 +403,6 @@ interface ChatDao {
             //  val courseId=getCourseId(chatModel.conversationId)
             return AppObjectController.appDatabase.lessonDao()
                 .getLessonFromChatId(chatModel.chatId)
-        }
-        return null
-    }
-
-    private fun getSpecialPractice(chatModel: ChatModel): SpecialPractice? {
-        if (chatModel.type == BASE_MESSAGE_TYPE.SPECIAL_PRACTICE) {
-            return AppObjectController.appDatabase.specialDao().getSpecialPractice(chatModel.chatId)
         }
         return null
     }

@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.core.Utils.dateHeaderDateFormat
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.vh.*
-import com.joshtalks.joshskills.ui.view_holders.SpecialPracticeClassViewHolder
 import com.joshtalks.joshskills.util.StickyHeaderAdapter
 import com.joshtalks.joshskills.util.Utils
 import timber.log.Timber
@@ -324,12 +323,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view.tag = UNLOCK_CLASS_MESSAGE
                 UnlockNextClassViewHolder(view, userId)
             }
-            SPECIAL_PRACTICE -> {
-                view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.special_item_layout, parent, false)
-                view.tag = SPECIAL_PRACTICE
-                SpecialPracticeClassViewHolder(view, userId)
-            }
 
             // LessonViewHolder
 
@@ -426,9 +419,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 return FIRST_WEEK_ACHIEVEMENT
             BASE_MESSAGE_TYPE.NEW_CLASS -> {
                 return NEW_CLASS_MESSAGE
-            }
-            BASE_MESSAGE_TYPE.SPECIAL_PRACTICE -> {
-                return SPECIAL_PRACTICE
             }
             else -> {
                 return -1
@@ -540,8 +530,5 @@ private const val FIRST_DAY_ACHIEVEMENT = 43
 private const val NEW_CLASS_MESSAGE = 40
 private const val UNLOCK_CLASS_MESSAGE = 41
 private const val FIRST_WEEK_ACHIEVEMENT = 44
-
-private const val SPECIAL_PRACTICE = 45
-
 
 private const val TEMP = 0

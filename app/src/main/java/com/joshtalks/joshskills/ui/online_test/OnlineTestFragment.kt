@@ -39,7 +39,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
-import com.userexperior.utilities.SecureViewBucket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -454,7 +453,6 @@ class OnlineTestFragment :
             }
             ChoiceType.INPUT_TEXT -> subjectiveChoiceView?.get()?.also {
                 it.visibility = View.VISIBLE
-                SecureViewBucket.removeFromSecureViewBucket(it)
                 atsChoiceView?.get()?.visibility = View.GONE
                 mcqChoiceView?.get()?.visibility = View.GONE
             }

@@ -12,8 +12,6 @@ import com.joshtalks.joshskills.ui.course_details.extra.GuidelineAdapter
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
-import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
-
 
 @Layout(R.layout.guideline_view_holder)
 class GuidelineViewHolder(
@@ -32,16 +30,12 @@ class GuidelineViewHolder(
     @View(R.id.view_pager)
     lateinit var viewPager: HeightWrappingViewPager
 
-    @View(R.id.worm_dots_indicator)
-    lateinit var wormDotsIndicator: WormDotsIndicator
-
 
     @Resolve
     fun onResolved() {
         headerTV.text = guidelines.title
         viewPager.adapter =
             GuidelineAdapter(fragmentManager, guidelines.guidelines.sortedBy { it.sortOrder })
-        wormDotsIndicator.setViewPager(viewPager)
         tabLayout.setupWithViewPager(viewPager)
         viewPager.measure(
             LinearLayout.LayoutParams.MATCH_PARENT,

@@ -12,7 +12,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.slf4j.event.LoggingEvent
 
 class AudioRouteListener(val coroutineScope: CoroutineScope, val applicationContext: Context) :
     IAudioRouteListener {

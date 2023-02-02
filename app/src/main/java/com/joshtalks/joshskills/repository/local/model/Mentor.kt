@@ -29,7 +29,6 @@ import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.userexperior.UserExperior
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -85,7 +84,6 @@ class Mentor {
                     .update()
                 AppAnalytics.updateUser()
                 NotificationUtils(joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
-                UserExperior.setUserIdentifier(getInstance().getId())
             }
         }
 

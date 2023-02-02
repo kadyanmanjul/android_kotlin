@@ -169,9 +169,6 @@
             android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.voip.new_arch.ui.views.CallRecordingShare"
-            android:exported="false" />
         <activity android:name=".ui.points_history.PointsInfoActivity" />
         <activity android:name=".ui.points_history.PointsHistoryActivity" />
         <activity android:name=".ui.points_history.SpokenHistoryActivity" />
@@ -293,13 +290,6 @@
             android:name=".ui.explore.CourseExploreActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme" />
-        <activity
-            android:name=".ui.practise.PractiseSubmitActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
@@ -439,7 +429,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
-        <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
         <activity android:name=".ui.invite_call.InviteFriendActivity" />
         <activity
             android:name=".ui.inbox.TransactionActivity"

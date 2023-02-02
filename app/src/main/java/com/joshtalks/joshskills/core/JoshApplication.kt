@@ -18,8 +18,6 @@ import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.di.ApplicationComponent
-import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.ProximityHelper
@@ -37,10 +35,6 @@ class JoshApplication :
     LifecycleEventObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
     private var isAudioReset = false
-
-    val applicationGraph: ApplicationComponent by lazy {
-        DaggerApplicationComponent.create()
-    }
 
     companion object {
         @Volatile

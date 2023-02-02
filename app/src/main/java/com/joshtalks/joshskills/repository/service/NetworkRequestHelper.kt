@@ -158,12 +158,6 @@ object NetworkRequestHelper {
                     it.chatId = chatModel.chatId
                     AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
                 }
-
-                chatModel.specialPractice?.let {
-                    it.chatId = chatModel.chatId
-                    it.recordedVideo = EMPTY
-                    AppObjectController.appDatabase.specialDao().insertSingleItem(it)
-                }
             }
             if (resp.chatModelList.isEmpty()) {
                 RxBus2.publish(DBInsertion("ChatIEmpty"))
@@ -282,12 +276,6 @@ object NetworkRequestHelper {
                 chatModel.lesson?.let {
                     it.chatId = chatModel.chatId
                     AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
-                }
-
-                chatModel.specialPractice?.let {
-                    it.chatId = chatModel.chatId
-                    it.recordedVideo = EMPTY
-                    AppObjectController.appDatabase.specialDao().insertSingleItem(it)
                 }
             }
 

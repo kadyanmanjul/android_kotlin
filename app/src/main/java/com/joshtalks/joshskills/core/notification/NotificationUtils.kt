@@ -53,7 +53,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
@@ -121,7 +120,6 @@ class NotificationUtils(val context: Context) {
                         || notificationObject.action == NotificationAction.ACTION_OPEN_SPEAKING_SECTION
                         || notificationObject.action == NotificationAction.ACTION_OPEN_LESSON
                         || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
-                        || notificationObject.action == NotificationAction.CALL_RECORDING_NOTIFICATION
                         || notificationObject.action == NotificationAction.INITIATE_RANDOM_CALL
                     ) {
                         val inboxIntent = InboxActivity.getInboxIntent(context)
@@ -489,14 +487,6 @@ class NotificationUtils(val context: Context) {
                     e.printStackTrace()
                 }
                 return null
-            }
-            NotificationAction.CALL_RECORDING_NOTIFICATION -> {
-                if (notificationObject.extraData.isNullOrBlank()) {
-                    return null
-                } else return CallRecordingShare.getActivityIntentForSharableCallRecording(
-                    context = context,
-                    videoUrl = notificationObject.extraData,
-                )
             }
             NotificationAction.INITIATE_RANDOM_CALL -> {
                 val intent = Intent(context, VoiceCallActivity::class.java).apply {

@@ -152,7 +152,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             adjustRecordingSignalVolume(400)
             setAudioProfile(Constants.AUDIO_PROFILE_DEFAULT, Constants.AUDIO_SCENARIO_DEFAULT)
 //            TODO:SOUND PROBLEM
-            enableDeepLearningDenoise(false)
         }
         return agoraEngine?.joinChannel(
             request.getToken(),

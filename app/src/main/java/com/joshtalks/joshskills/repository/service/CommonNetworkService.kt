@@ -28,8 +28,6 @@ import com.joshtalks.joshskills.ui.inbox.payment_verify.VerifyPaymentStatus
 import com.joshtalks.joshskills.ui.payment.model.VerifyPayment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.*
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
-import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
-import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.userprofile.models.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -302,12 +300,6 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/restart_course_track_impressions/")
     suspend fun restartCourseImpression(@Body params: Map<String, String>): Response<Void>
-
-    @POST("$DIR/question/special_practice_details/")
-    suspend fun getSpecialPracticeDetails(@Body params: Map<String, String>): Response<SpecialPracticeModel>
-
-    @POST("$DIR/question/special_practice_submit/")
-    suspend fun saveVideoOnServer(@Body params: SaveVideoModel): Response<SuccessResponse>
 
     @POST("$DIR/voicecall/invite/call_invite/")
     suspend fun inviteFriend(@Body params: HashMap<String, String>): Response<Any>
