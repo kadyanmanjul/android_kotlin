@@ -11,7 +11,7 @@
 
         <variable
             name="purchaseData"
-            type="com.joshtalks.joshskills.repository.server.PurchaseDataResponse" />
+            type="com.joshtalks.joshskills.premium.repository.server.PurchaseDataResponse" />
 
     </data>
 

@@ -7,7 +7,7 @@
 
         <variable
             name="fragment"
-            type="com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment" />
+            type="com.joshtalks.joshskills.premium.ui.termsandconditions.WebViewFragment" />
 
     </data>
 

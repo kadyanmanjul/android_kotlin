@@ -7,11 +7,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.signup.SignUpActivity" />
+            type="com.joshtalks.joshskills.premium.ui.signup.SignUpActivity" />
 
         <variable
             name="viewmodel"
-            type="com.joshtalks.joshskills.ui.signup.SignUpViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.signup.SignUpViewModel" />
     </data>
 
     <RelativeLayout

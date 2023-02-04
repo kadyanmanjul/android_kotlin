@@ -8,7 +8,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.errorState.ErrorActivity" />
+            type="com.joshtalks.joshskills.premium.ui.errorState.ErrorActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

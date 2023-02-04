@@ -7,11 +7,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment" />
+            type="com.joshtalks.joshskills.premium.ui.payment.PaymentInProcessFragment" />
 
         <variable
             name="viewModel"
-            type="com.joshtalks.joshskills.ui.payment.viewModel.PaymentInProcessViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.payment.viewModel.PaymentInProcessViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

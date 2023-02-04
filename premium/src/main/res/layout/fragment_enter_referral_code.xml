@@ -9,7 +9,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment" />
+            type="com.joshtalks.joshskills.premium.ui.referral.EnterReferralCodeFragment" />
 
     </data>
 

@@ -2,11 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.joshtalks.joshskills.ui.chat.extra.FirstCallBottomSheet">
+    tools:context="com.joshtalks.joshskills.premium.ui.chat.extra.FirstCallBottomSheet">
 
     <data>
 
-        <import type="com.joshtalks.joshskills.repository.local.model.Mentor" />
+        <import type="com.joshtalks.joshskills.premium.repository.local.model.Mentor" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

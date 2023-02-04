@@ -8,7 +8,7 @@
 
         <variable
             name="fragment"
-            type="com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment" />
+            type="com.joshtalks.joshskills.premium.ui.extra.SignUpPermissionDialogFragment" />
 
     </data>
 

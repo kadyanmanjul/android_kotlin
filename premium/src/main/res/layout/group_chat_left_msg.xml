@@ -7,7 +7,7 @@
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.group.model.ChatItem" />
+            type="com.joshtalks.joshskills.premium.ui.group.model.ChatItem" />
     </data>
 
     <FrameLayout
@@ -27,7 +27,7 @@
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_8sdp">
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.joshtalks.joshskills.premium.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/text_title"
                 textColor="@{itemData.colorFromId}"
                 android:layout_width="wrap_content"

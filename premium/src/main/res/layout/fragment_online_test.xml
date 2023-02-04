@@ -9,11 +9,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.online_test.OnlineTestFragment" />
+            type="com.joshtalks.joshskills.premium.ui.online_test.OnlineTestFragment" />
 
         <variable
             name="viewModel"
-            type="com.joshtalks.joshskills.ui.online_test.OnlineTestViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.online_test.OnlineTestViewModel" />
     </data>
 
 

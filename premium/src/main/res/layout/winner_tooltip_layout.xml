@@ -165,7 +165,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+    <com.joshtalks.joshskills.premium.ui.tooltip.JoshTooltip
         android:id="@+id/batch_tooltip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -177,7 +177,7 @@
         android:layout_marginBottom="@dimen/_16sdp"
         app:tooltipText="" />
 
-    <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+    <com.joshtalks.joshskills.premium.ui.tooltip.JoshTooltip
         android:id="@+id/tooltip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.joshtalks.joshskills.ui.group.model.DefaultImage" />
+        <import type="com.joshtalks.joshskills.premium.ui.group.model.DefaultImage" />
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.group.model.GroupMemberRequest" />
+            type="com.joshtalks.joshskills.premium.ui.group.model.GroupMemberRequest" />
 
     </data>
 

@@ -7,11 +7,11 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.ui.group.model.DefaultImage" />
+        <import type="com.joshtalks.joshskills.premium.ui.group.model.DefaultImage" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -50,7 +50,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+            <com.joshtalks.joshskills.premium.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
                 groupHeader="@{vm.isFromGroupInfo ? `Edit Group` : `New group`}"
                 groupSubHeader="@{vm.isFromGroupInfo ? `` : `Add group name`}"

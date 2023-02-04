@@ -4,10 +4,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <import type="com.joshtalks.joshskills.R"/>
+        <import type="com.joshtalks.joshskills.premium.R"/>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -16,7 +16,7 @@
         android:orientation="vertical"
         tools:context=".ui.group.JoshGroupActivity">
 
-        <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+        <com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.callbar.util.CallBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/call_bar_layout"/>

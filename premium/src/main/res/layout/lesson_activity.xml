@@ -7,7 +7,7 @@
 
         <variable
             name="viewbinding"
-            type="com.joshtalks.joshskills.ui.lesson.LessonActivity" />
+            type="com.joshtalks.joshskills.premium.ui.lesson.LessonActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -474,7 +474,7 @@
             app:tabTextColor="@color/text_default"
             tools:visibility="visible" />
 
-        <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+        <com.joshtalks.joshskills.premium.ui.tooltip.JoshTooltip
             android:id="@+id/lesson_spotlight_tooltip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -751,7 +751,7 @@
                 app:layout_constraintTop_toTopOf="@id/video_view"
                 app:srcCompat="@drawable/ic_cancel_black" />
 
-            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+            <com.joshtalks.joshskills.premium.core.custom_ui.JoshVideoPlayer
                 android:id="@+id/video_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

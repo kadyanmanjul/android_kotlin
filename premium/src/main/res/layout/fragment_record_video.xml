@@ -7,11 +7,11 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.premium.R" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.special_practice.viewmodel.SpecialPracticeViewModel" />
 
     </data>
 

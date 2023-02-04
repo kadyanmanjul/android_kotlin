@@ -7,7 +7,7 @@
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
         android:layout_marginVertical="@dimen/_20sdp">
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+    <com.joshtalks.joshskills.premium.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txt_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

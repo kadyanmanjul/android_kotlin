@@ -6,7 +6,7 @@
 
         <variable
             name="amount"
-            type="com.joshtalks.joshskills.ui.callWithExpert.model.Amount" />
+            type="com.joshtalks.joshskills.premium.ui.callWithExpert.model.Amount" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

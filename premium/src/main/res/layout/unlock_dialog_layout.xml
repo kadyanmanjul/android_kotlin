@@ -5,7 +5,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.course_progress_new.ExamUnlockDialogFragment" />
+            type="com.joshtalks.joshskills.premium.ui.course_progress_new.ExamUnlockDialogFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

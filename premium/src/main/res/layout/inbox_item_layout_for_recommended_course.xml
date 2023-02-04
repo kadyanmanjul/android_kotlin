@@ -7,7 +7,7 @@
 
         <variable
             name="obj"
-            type="com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse" />
+            type="com.joshtalks.joshskills.premium.ui.inbox.adapter.InboxRecommendedCourse" />
 
     </data>
 

@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.callWithExpert.viewModel.CallWithExpertViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.callWithExpert.viewModel.CallWithExpertViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView

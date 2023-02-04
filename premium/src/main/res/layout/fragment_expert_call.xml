@@ -12,7 +12,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
 
     </data>
 

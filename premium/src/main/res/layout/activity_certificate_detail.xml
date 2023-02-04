@@ -8,11 +8,11 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.certification_exam.report.udetail.CertificateDetailActivity" />
+            type="com.joshtalks.joshskills.premium.ui.certification_exam.report.udetail.CertificateDetailActivity" />
 
         <variable
             name="obj"
-            type="com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail" />
+            type="com.joshtalks.joshskills.premium.repository.server.certification_exam.CertificationUserDetail" />
 
     </data>
 
@@ -184,7 +184,7 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
                         android:textColor="@color/text_subdued" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.PrefixEditText
+                    <com.joshtalks.joshskills.premium.core.custom_ui.PrefixEditText
                         android:id="@+id/et_mobile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

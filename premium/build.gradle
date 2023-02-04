@@ -16,6 +16,7 @@ def minorVersion = 5
 def patchVersion = 12
 
 android {
+    namespace 'com.joshtalks.joshskills.premium'
     compileSdkVersion 33
     defaultConfig {
         applicationId "com.joshtalks.joshskills"

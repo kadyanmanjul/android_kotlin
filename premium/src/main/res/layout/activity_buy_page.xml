@@ -8,11 +8,11 @@
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.premium.R" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.payment.new_buy_page_layout.viewmodel.BuyPageViewModel" />
 
     </data>
 
@@ -80,7 +80,7 @@
                         android:visibility="gone"
                         tools:visibility="visible">
 
-                        <com.joshtalks.joshskills.util.TrialTimerView
+                        <com.joshtalks.joshskills.premium.util.TrialTimerView
                             android:id="@+id/free_trial_timer_new_ui"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

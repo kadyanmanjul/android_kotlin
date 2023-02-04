@@ -38,7 +38,7 @@
             app:layout_constraintTop_toBottomOf="@+id/progress_index_tv"
             app:srcCompat="@drawable/gold_medal" />
 
-        <com.joshtalks.joshskills.core.custom_ui.RadialProgressBar
+        <com.joshtalks.joshskills.premium.core.custom_ui.RadialProgressBar
             android:id="@+id/radial_progress_view"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"

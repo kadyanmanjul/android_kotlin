@@ -7,10 +7,10 @@
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.fpp.model.RecentCall" />
+            type="com.joshtalks.joshskills.premium.ui.fpp.model.RecentCall" />
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter" />
+            type="com.joshtalks.joshskills.premium.ui.fpp.adapters.RecentCallsAdapter" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

@@ -8,7 +8,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment" />
+            type="com.joshtalks.joshskills.premium.ui.lesson.grammar.GrammarFragment" />
     </data>
 
     <FrameLayout
@@ -51,7 +51,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
 
-                    <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                    <com.joshtalks.joshskills.premium.core.custom_ui.JoshVideoPlayer
                         android:id="@+id/video_player"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -79,7 +79,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/video_player">
 
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        <com.joshtalks.joshskills.premium.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/grammar_desc_tv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -572,7 +572,7 @@
                 android:layout_marginHorizontal="@dimen/_2sdp"
                 android:background="@drawable/bg_tooltip_large_start">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <com.joshtalks.joshskills.premium.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/joshTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

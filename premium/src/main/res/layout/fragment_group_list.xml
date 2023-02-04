@@ -6,15 +6,15 @@
 
     <data>
 
-        <import type="com.joshtalks.joshskills.R" />
+        <import type="com.joshtalks.joshskills.premium.R" />
 
         <import type="android.view.View" />
 
-        <import type="com.joshtalks.joshskills.ui.group.constants.GroupsConstantsKt" />
+        <import type="com.joshtalks.joshskills.premium.ui.group.constants.GroupsConstantsKt" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
+            type="com.joshtalks.joshskills.premium.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +30,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+            <com.joshtalks.joshskills.premium.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
                 firstIcon="@{vm.isFromVoip() ? R.drawable.josh_skill_logo : R.drawable.ic_search}"
                 groupHeader="@{vm.isFromVoip() ? `Choose group to call` : `Inbox`}"
@@ -244,7 +244,7 @@
             </LinearLayout>
         </FrameLayout>
 
-        <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+        <com.joshtalks.joshskills.premium.ui.tooltip.JoshTooltip
             android:id="@+id/overlay_group_tooltip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

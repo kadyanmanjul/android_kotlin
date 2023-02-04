@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+    <com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.callbar.util.CallBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/call_bar_layout"/>

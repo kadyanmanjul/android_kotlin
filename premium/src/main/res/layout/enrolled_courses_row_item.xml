@@ -9,7 +9,7 @@
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled" />
+            type="com.joshtalks.joshskills.premium.ui.userprofile.models.CourseEnrolled" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

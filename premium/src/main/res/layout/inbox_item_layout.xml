@@ -7,7 +7,7 @@
 
         <variable
             name="obj"
-            type="com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity" />
+            type="com.joshtalks.joshskills.premium.repository.local.minimalentity.InboxEntity" />
 
     </data>
 

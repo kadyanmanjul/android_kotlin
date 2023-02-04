@@ -5,7 +5,7 @@
 
         <variable
             name="issue"
-            type="com.joshtalks.joshskills.ui.voip.voip_rating.model.OptionModel" />
+            type="com.joshtalks.joshskills.premium.ui.voip.voip_rating.model.OptionModel" />
     </data>
 
     <TextView

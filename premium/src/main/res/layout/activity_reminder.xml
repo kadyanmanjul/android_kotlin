@@ -8,7 +8,7 @@
 
         <variable
             name="reminderData"
-            type="com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity" />
+            type="com.joshtalks.joshskills.premium.ui.reminder.set_reminder.ReminderActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

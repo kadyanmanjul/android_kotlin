@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_josh_course"/>
 
-    <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+    <com.joshtalks.joshskills.premium.ui.tooltip.JoshTooltip
         android:id="@+id/tooltip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

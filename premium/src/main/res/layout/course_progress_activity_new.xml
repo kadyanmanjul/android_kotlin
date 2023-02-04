@@ -8,7 +8,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew" />
+            type="com.joshtalks.joshskills.premium.ui.course_progress_new.CourseProgressActivityNew" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

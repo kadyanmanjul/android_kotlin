@@ -36,7 +36,7 @@
             app:tabTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             app:tabTextColor="@color/dark_grey" />
 
-    <com.joshtalks.joshskills.core.custom_ui.HeightWrappingViewPager
+    <com.joshtalks.joshskills.premium.core.custom_ui.HeightWrappingViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.joshtalks.joshskills.ui.lesson.popup.ScratchCardDialog">
+    tools:context="com.joshtalks.joshskills.premium.ui.lesson.popup.ScratchCardDialog">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -72,7 +72,7 @@
                     android:textColor="@color/primary_500" />
             </LinearLayout>
 
-            <com.joshtalks.joshskills.util.scratch.ScratchView
+            <com.joshtalks.joshskills.premium.util.scratch.ScratchView
                 android:id="@+id/scratch_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
