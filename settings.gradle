@@ -1,1 +1,2 @@
 include ':premium', ':joshlibrary', ':recordview', ':voip', ':base'
+include ':app'
