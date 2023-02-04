@@ -84,64 +84,64 @@ public class JoshSnackBar {
         if (builder.backgroundColor != null)
             chocolateLayout.setBackgroundColor(builder.backgroundColor);
 
-        TextView actionText = chocolateLayout.findViewById(R.id.snackbar_action);
+//        TextView actionText = chocolateLayout.findViewById(R.id.snackbar_action);
+//
+//        if (builder.actionTextSize != null) {
+//            if (builder.actionTextSizeUnit != null)
+//                actionText.setTextSize(builder.actionTextSizeUnit, builder.actionTextSize);
+//
+//            else
+//                actionText.setTextSize(builder.actionTextSize);
+//        }
+//
+//        Typeface actionTextTypeface = actionText.getTypeface();
+//
+//        if (builder.actionTextTypeface != null)
+//            actionTextTypeface = builder.actionTextTypeface;
+//
+//        if (builder.actionTextTypefaceStyle != null)
+//            actionText.setTypeface(actionTextTypeface, builder.actionTextTypefaceStyle);
+//
+//        else
+//            actionText.setTypeface(actionTextTypeface);
 
-        if (builder.actionTextSize != null) {
-            if (builder.actionTextSizeUnit != null)
-                actionText.setTextSize(builder.actionTextSizeUnit, builder.actionTextSize);
 
-            else
-                actionText.setTextSize(builder.actionTextSize);
-        }
+       // TextView text = chocolateLayout.findViewById(R.id.snackbar_text);
 
-        Typeface actionTextTypeface = actionText.getTypeface();
+//        if (builder.textSize != null) {
+//            if (builder.textSizeUnit != null)
+//                text.setTextSize(builder.textSizeUnit, builder.textSize);
+//
+//            else
+//                text.setTextSize(builder.textSize);
+//        }
 
-        if (builder.actionTextTypeface != null)
-            actionTextTypeface = builder.actionTextTypeface;
+       // Typeface textTypeface = text.getTypeface();
 
-        if (builder.actionTextTypefaceStyle != null)
-            actionText.setTypeface(actionTextTypeface, builder.actionTextTypefaceStyle);
-
-        else
-            actionText.setTypeface(actionTextTypeface);
-
-
-        TextView text = chocolateLayout.findViewById(R.id.snackbar_text);
-
-        if (builder.textSize != null) {
-            if (builder.textSizeUnit != null)
-                text.setTextSize(builder.textSizeUnit, builder.textSize);
-
-            else
-                text.setTextSize(builder.textSize);
-        }
-
-        Typeface textTypeface = text.getTypeface();
-
-        if (builder.textTypeface != null)
-            textTypeface = builder.textTypeface;
-
-        if (builder.textTypefaceStyle != null)
-            text.setTypeface(textTypeface, builder.textTypefaceStyle);
-
-        else
-            text.setTypeface(textTypeface);
+//        if (builder.textTypeface != null)
+//            textTypeface = builder.textTypeface;
+//
+//        if (builder.textTypefaceStyle != null)
+//            text.setTypeface(textTypeface, builder.textTypefaceStyle);
+//
+//        else
+//            text.setTypeface(textTypeface);
 
 
         if (builder.textColor == null)
             builder.textColor = builder.type.getStandardTextColor();
 
-        if (builder.textColors != null)
-            text.setTextColor(builder.textColors);
+//        if (builder.textColors != null)
+//            text.setTextColor(builder.textColors);
+//
+//        else if (builder.textColor != null)
+//            text.setTextColor(builder.textColor);
 
-        else if (builder.textColor != null)
-            text.setTextColor(builder.textColor);
-
-        text.setMaxLines(builder.maxLines);
-        text.setGravity(builder.centerText ? Gravity.CENTER : Gravity.CENTER_VERTICAL);
-
-        if (builder.centerText)
-            text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+//        text.setMaxLines(builder.maxLines);
+//        text.setGravity(builder.centerText ? Gravity.CENTER : Gravity.CENTER_VERTICAL);
+//
+//        if (builder.centerText)
+//            text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
         if (builder.icon == null)
             builder.icon = builder.type.getIcon(builder.view.getContext());
@@ -157,11 +157,11 @@ public class JoshSnackBar {
             }
 
             Configuration configuration = chocolateLayout.getResources().getConfiguration();
-            if (configuration.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
-                text.setCompoundDrawablesWithIntrinsicBounds(transparentHelperDrawable, null, builder.icon, null);
-            else
-                text.setCompoundDrawablesWithIntrinsicBounds(builder.icon, null, transparentHelperDrawable, null);
-            text.setCompoundDrawablePadding(text.getResources().getDimensionPixelOffset(R.dimen.dp16));
+           // if (configuration.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
+               // text.setCompoundDrawablesWithIntrinsicBounds(transparentHelperDrawable, null, builder.icon, null);
+           // else
+                //text.setCompoundDrawablesWithIntrinsicBounds(builder.icon, null, transparentHelperDrawable, null);
+           // text.setCompoundDrawablePadding(text.getResources().getDimensionPixelOffset(R.dimen.dp16));
         }
 
 

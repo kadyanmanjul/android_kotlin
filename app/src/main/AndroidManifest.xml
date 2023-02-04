@@ -7,9 +7,7 @@
         dist:onDemand="true"
         dist:instant="false"
         dist:title="@string/title_app">
-        <dist:delivery>
-            <dist:on-demand/>
-        </dist:delivery>
+
         <dist:fusing dist:include="true" />
     </dist:module>
 

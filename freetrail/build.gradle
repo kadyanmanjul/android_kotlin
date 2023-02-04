@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
-        minSdk 23
+        minSdk 21
         targetSdk 33
         versionCode rootProject.ext.version_code
         versionName rootProject.ext.version_name
@@ -35,6 +35,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding = true
     }
 
     signingConfigs {
