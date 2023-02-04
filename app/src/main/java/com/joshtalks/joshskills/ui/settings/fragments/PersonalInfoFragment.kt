@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.GENDER
 import com.joshtalks.joshskills.core.RegistrationMethods
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentPersonalInfoBinding
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_NAME
 import com.joshtalks.joshskills.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.settings.SettingsActivity

@@ -1,4 +1,9 @@
 buildscript {
+
+    def majorVersion = 5
+    def minorVersion = 5
+    def patchVersion = 12
+
     ext {
         kotlin_version = '1.7.20'
         local_base_url = "\"https://058d3bbf86e1.ngrok.io/\""
@@ -8,6 +13,8 @@ buildscript {
         voip_debug_base_url = "\"http://staging.joshtalks.org\""
         voip_ms_debug_base_url = "\"http://p2p-stg.joshtalks.org\""
         voip_ms_prod_base_url = "\"https://p2p.joshtalks.org\""
+        version_code = majorVersion * 10000 + minorVersion * 100 + patchVersion
+        version_name = "${majorVersion}.${minorVersion}.${patchVersion}"
     }
 
     repositories {
@@ -46,7 +53,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.2.0'
         classpath 'androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3'
         classpath 'com.google.gms:google-services:4.3.14'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'

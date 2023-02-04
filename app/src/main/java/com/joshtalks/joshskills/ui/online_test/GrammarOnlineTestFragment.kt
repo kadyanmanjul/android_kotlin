@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_CODE
 import com.joshtalks.joshskills.repository.server.PurchasePopupType
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay

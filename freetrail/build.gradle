@@ -1,0 +1,166 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    //id 'com.google.gms.google-services'
+}
+
+if (!project.hasProperty("devBuild")) {
+    apply plugin: 'com.google.firebase.firebase-perf'
+}
+
+android {
+    namespace 'com.joshtalks.joshskills.freetrail'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.joshtalks.joshskills"
+        minSdk 23
+        targetSdk 33
+        versionCode rootProject.ext.version_code
+        versionName rootProject.ext.version_name
+        vectorDrawables.useSupportLibrary true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+//    buildTypes {
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//        }
+//    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("JoshSkill.jks")
+            storePassword "app@joshskill"
+            keyAlias "joshskill"
+            keyPassword "app@joshskill"
+        }
+
+        release {
+            storeFile file("JoshSkill.jks")
+            storePassword "app@joshskill"
+            keyAlias "joshskill"
+            keyPassword "app@joshskill"
+        }
+    }
+
+    buildTypes {
+        debug {
+            versionNameSuffix "_Debug"
+            debuggable true
+            signingConfig signingConfigs.debug
+            resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
+            resValue("bool", "branch_test", "true")
+            resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
+            ext.enableCrashlytics = true
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
+            resValue("bool", "branch_test", "false")
+            resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+//    bundle {
+//        language {
+//            enableSplit = false
+//        }
+//        abi {
+//            enableSplit = true
+//        }
+//    }
+
+    flavorDimensions "version"
+    productFlavors {
+        local {
+            // applicationId "com.joshtalks.joshskills.local"
+            //namespace 'com.joshtalks.joshskills.freetrail'
+            versionName "${rootProject.ext.version_name}.Local"
+            buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "BASE_URL", "\"https://058d3bbf86e1.ngrok.io/\""
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "josh-local${rootProject.ext.version_name}.apk"
+                }
+            }
+        }
+        dev {
+            // applicationId "com.joshtalks.joshskills.dev"
+            //namespace 'com.joshtalks.joshskills.freetrail'
+            versionName "${rootProject.ext.version_name}.Dev"
+            buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
+            buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
+            buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
+            /*For Port */
+//            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9009\""
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "josh-dev${rootProject.ext.version_name}.apk"
+                }
+            }
+
+        }
+        skills {
+            //namespace 'com.joshtalks.joshskills.freetrail'
+            buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "josh-skills${rootProject.ext.version_name}.apk"
+                }
+            }
+        }
+        prod {
+            //namespace 'com.joshtalks.joshskills.freetrail'
+            buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
+            buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-b61aad14-403b-4408-9a21-3d8d3485feb1\""
+            buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-060dd328-7060-11ec-9c8d-9eb9413efc82\""
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "josh-skills-release${rootProject.ext.version_name}.apk"
+                }
+            }
+        }
+    }
+
+    dynamicFeatures = [':call', ':app']
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    //implementation "com.google.android.play:core:1.10.3"
+}

@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.joshtalks.joshskills">
+    xmlns:dist="http://schemas.android.com/apk/distribution">
+
+    <dist:module
+        dist:onDemand="true"
+        dist:instant="false"
+        dist:title="@string/title_app">
+        <dist:delivery>
+            <dist:on-demand/>
+        </dist:delivery>
+        <dist:fusing dist:include="true" />
+    </dist:module>
 
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk" />
 
@@ -96,24 +106,7 @@
         </intent>
     </queries>
 
-    <application
-        android:name=".core.JoshApplication"
-        android:allowBackup="false"
-        android:hardwareAccelerated="@bool/useHardwareAcceleration"
-        android:hasFragileUserData="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:largeHeap="true"
-        android:persistent="true"
-        android:preserveLegacyExternalStorage="true"
-        android:requestLegacyExternalStorage="true"
-        android:resizeableActivity="false"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="false"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
-        tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
+    <application>
         <activity
             android:name=".ui.errorState.ErrorActivity"
             android:exported="false" />
@@ -701,3 +694,20 @@
     </application>
 
 </manifest>
+
+
+<!--    android:allowBackup="false"-->
+<!--    android:hardwareAccelerated="@bool/useHardwareAcceleration"-->
+<!--    android:hasFragileUserData="true"-->
+<!--    android:icon="@mipmap/ic_launcher"-->
+<!--    android:label="@string/app_name"-->
+<!--    android:largeHeap="true"-->
+<!--    android:persistent="true"-->
+<!--    android:preserveLegacyExternalStorage="true"-->
+<!--    android:requestLegacyExternalStorage="true"-->
+<!--    android:resizeableActivity="false"-->
+<!--    android:roundIcon="@mipmap/ic_launcher_round"-->
+<!--    android:supportsRtl="false"-->
+<!--    android:usesCleartextTraffic="true"-->
+<!--    tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"-->
+<!--    tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated"-->

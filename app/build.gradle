@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.dynamic-feature'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -7,22 +7,16 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'hypersdk-asset-plugin'
 
-if (!project.hasProperty("devBuild")) {
-    apply plugin: 'com.google.firebase.firebase-perf'
-}
 //-PdevBuild --warning-mode=all --stacktrace
-def majorVersion = 5
-def minorVersion = 5
-def patchVersion = 12
+
 
 android {
+    namespace 'com.joshtalks.joshskills'
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
-        targetSdkVersion 33
-        versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
-        versionName "${majorVersion}.${minorVersion}.${patchVersion}"
+        buildConfigField "String", "VERSION_NAME", "\"${rootProject.ext.version_name}\""
+        buildConfigField "Integer", "VERSION_CODE", "${rootProject.ext.version_code}"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -75,46 +69,6 @@ android {
     }
 */
 
-    signingConfigs {
-        debug {
-            storeFile file("JoshSkill.jks")
-            storePassword "app@joshskill"
-            keyAlias "joshskill"
-            keyPassword "app@joshskill"
-        }
-
-        release {
-            storeFile file("JoshSkill.jks")
-            storePassword "app@joshskill"
-            keyAlias "joshskill"
-            keyPassword "app@joshskill"
-        }
-    }
-
-    buildTypes {
-        debug {
-            versionNameSuffix "_Debug"
-            debuggable true
-            signingConfig signingConfigs.debug
-            resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
-            resValue("bool", "branch_test", "true")
-            resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
-            ext.enableCrashlytics = true
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        release {
-            resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
-            resValue("bool", "branch_test", "false")
-            resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
-            debuggable false
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
-    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -136,57 +90,35 @@ android {
     flavorDimensions "version"
     productFlavors {
         local {
-            // applicationId "com.joshtalks.joshskills.local"
-            versionName "${majorVersion}.${minorVersion}.${patchVersion}.Local"
+            //namespace 'com.joshtalks.joshskills'
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://058d3bbf86e1.ngrok.io/\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-local${majorVersion}.${minorVersion}.${patchVersion}.apk"
-                }
-            }
         }
         dev {
-            // applicationId "com.joshtalks.joshskills.dev"
-            versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
+            //namespace 'com.joshtalks.joshskills'
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
-            /*For Port */
-//            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9009\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
-                }
-            }
         }
         skills {
+            //namespace 'com.joshtalks.joshskills'
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-skills${majorVersion}.${minorVersion}.${patchVersion}.apk"
-                }
-            }
         }
         prod {
+            //namespace 'com.joshtalks.joshskills'
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-b61aad14-403b-4408-9a21-3d8d3485feb1\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-060dd328-7060-11ec-9c8d-9eb9413efc82\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-skills-release${majorVersion}.${minorVersion}.${patchVersion}.apk"
-                }
-            }
         }
     }
     compileOptions {
@@ -195,30 +127,25 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    bundle {
-        language {
-            enableSplit = false
-        }
-        abi {
-            enableSplit = true
-        }
-    }
     kapt {
         generateStubs = true
     }
 
-    sourceSets {
-        main{
-            jniLibs.srcDirs = ['src/main/jniLibs']
-        }
-    }
     lint {
         abortOnError false
     }
 }
 
+def withoutBrowser = { exclude group:'androidx.browser', module: 'browser' }
+def withoutBrowserAndSlidingPane = { exclude group:'androidx.browser', module: 'browser'
+                                                    exclude group:'androidx.slidingpanelayout', module: 'slidingpanelayout'
+                                            }
+def withoutLifecycle = { exclude group:'androidx.lifecycle', module: 'lifecycle-service' }
+def withoutSlidingPane = { exclude group:'androidx.slidingpanelayout', module: 'slidingpanelayout' }
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    implementation project(":freetrail")
     implementation project(path: ':recordview')
     implementation project(path: ':joshlibrary')
     implementation project(path: ':voip')
@@ -228,7 +155,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.preference:preference-ktx:1.2.0', withoutSlidingPane
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation "androidx.collection:collection-ktx:1.2.0"
@@ -239,17 +166,16 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0', withoutLifecycle
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    implementation 'androidx.lifecycle:lifecycle-service:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-process:2.5.1'
 
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
     implementation 'androidx.work:work-rxjava2:2.7.1'
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0', withoutSlidingPane
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
@@ -268,7 +194,7 @@ dependencies {
     implementation "androidx.room:room-paging:$room_version"
 
     implementation 'com.google.android.material:material:1.6.1'
-    kapt 'com.android.databinding:compiler:3.1.4'
+    //kapt 'com.android.databinding:compiler:3.1.4'
 
     implementation('com.github.bumptech.glide:glide:4.13.2') {
         exclude group: "com.android.support"
@@ -289,14 +215,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf:20.2.0'
     implementation 'com.google.firebase:firebase-config-ktx:21.2.0'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:21.1.0'
-    implementation 'com.google.firebase:firebase-auth:21.1.0'
+    implementation 'com.google.firebase:firebase-auth:21.1.0', withoutBrowser
     implementation 'com.google.firebase:firebase-inappmessaging-ktx:20.2.0'
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.2.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.2.0', withoutBrowserAndSlidingPane
     implementation 'com.google.firebase:firebase-installations:17.1.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.0'
 
 
-    implementation 'com.google.android.gms:play-services-ads:21.3.0'
+    implementation 'com.google.android.gms:play-services-ads:21.3.0', withoutBrowser
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
     implementation 'com.google.android.libraries.places:places:2.6.0'
@@ -305,7 +231,7 @@ dependencies {
     implementation 'com.android.installreferrer:installreferrer:2.2'
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-    implementation 'com.facebook.android:facebook-android-sdk:13.0.0'
+    implementation 'com.facebook.android:facebook-android-sdk:13.0.0', withoutBrowserAndSlidingPane
     implementation 'com.facebook.stetho:stetho:1.6.0'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
 
@@ -377,7 +303,6 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation files("libs/agora-rtc-sdk.jar")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'
@@ -420,7 +345,7 @@ dependencies {
 
     implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.4.1'
 
-    implementation("com.google.android.gms:play-services-ads-identifier:18.0.1")
+    implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
 
     implementation 'com.github.ZeroOneZeroR:android_audio_mixer:v1.1'

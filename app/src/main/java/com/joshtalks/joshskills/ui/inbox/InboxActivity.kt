@@ -50,6 +50,7 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.notification.StickyNotificationService
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityInboxBinding
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_CODE
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone

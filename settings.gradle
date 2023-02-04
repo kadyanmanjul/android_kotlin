@@ -1,1 +1,3 @@
 include ':app', ':joshlibrary', ':recordview', ':voip', ':base'
+include ':freetrail'
+include ':call'

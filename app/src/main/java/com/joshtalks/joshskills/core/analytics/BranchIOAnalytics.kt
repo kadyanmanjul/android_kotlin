@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core.analytics
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_NAME
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.BranchEvent
 import io.branch.referral.util.CurrencyType

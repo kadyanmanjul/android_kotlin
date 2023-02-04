@@ -17,12 +17,12 @@ import android.util.AttributeSet
 import android.view.Gravity
 import androidx.appcompat.graphics.drawable.DrawableWrapper
 import androidx.appcompat.widget.AppCompatRatingBar
-import com.joshtalks.joshskills.R
+
 
 class JoshRatingBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.ratingBarStyle
+    defStyleAttr: Int = 0/*com.joshtalks.joshskills.R.attr.ratingBarStyle*/
 ) : AppCompatRatingBar(context, attrs, defStyleAttr) {
 
     private var mSampleTile: Bitmap? = null

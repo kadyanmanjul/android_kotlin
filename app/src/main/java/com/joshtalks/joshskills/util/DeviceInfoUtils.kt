@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.util
 
 import android.os.Build
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_CODE
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_NAME
 
 object  DeviceInfoUtils {
 

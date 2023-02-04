@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_CODE
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.model.*

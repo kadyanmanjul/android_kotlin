@@ -302,15 +302,15 @@ class SignUpActivity : ThemedBaseActivity() {
 
     private fun initLoginFeatures() {
         auth = FirebaseAuth.getInstance()
-        setupGoogleLogin()
+        //setupGoogleLogin()
     }
 
-    private fun setupGoogleLogin() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail().requestId().requestProfile().build()
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-    }
+//    private fun setupGoogleLogin() {
+//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken(getString(R.string.default_web_client_id))
+//            .requestEmail().requestId().requestProfile().build()
+//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+//    }
 
 
     private fun setupTrueCaller() {

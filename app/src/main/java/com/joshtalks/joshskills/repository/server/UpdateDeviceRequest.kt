@@ -6,6 +6,8 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_CODE
+import com.joshtalks.joshskills.freetrail.BuildConfig.VERSION_NAME
 import com.joshtalks.joshskills.repository.local.model.Mentor
 
 data class UpdateDeviceRequest(
