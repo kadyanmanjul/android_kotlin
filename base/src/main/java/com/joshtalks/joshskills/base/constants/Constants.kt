@@ -39,7 +39,7 @@ const val START_EXPERT_CALL_TIMER = "start_expert_call"
 
 
 // Content Provider UI
-const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
+const val CONTENT_URI = "content://com.joshtalks.joshskills.premium.contentprovider"
 const val START_CALL_TIME_URI = "/start_call_time"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
 const val API_HEADER = "/api_header"
@@ -128,7 +128,7 @@ const val CURRENT_ACTIVITY_COLUMN = "CURRENT_ACTIVITY_COLUMN"
 const val SERVICE_BROADCAST_KEY = "service_broadcast_key"
 const val START_SERVICE = true
 const val STOP_SERVICE = false
-const val CALLING_SERVICE_ACTION = "com.joshtalks.joshskills.CALLING_SERVICE"
+const val CALLING_SERVICE_ACTION = "com.joshtalks.joshskills.premium.CALLING_SERVICE"
 
 // Pending Intent
 const val FROM_INCOMING_CALL = "josh_from_incoming_call"

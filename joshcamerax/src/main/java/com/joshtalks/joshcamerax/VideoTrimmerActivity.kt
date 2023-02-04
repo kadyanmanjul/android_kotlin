@@ -153,11 +153,11 @@ class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
                 "startTrimmerActivity() called with: context = $context, requestCode = $requestCode, videoUri = $videoUri, destFile = $destFile, srcPath = $srcPath"
             )
 
-            //2020-05-13 21:17:31.205 32734-32734/com.joshtalks.joshskills D/VideoTrimmerActivity: startTrimmerActivity() called with:
+            //2020-05-13 21:17:31.205 32734-32734/com.joshtalks.joshskills.premium D/VideoTrimmerActivity: startTrimmerActivity() called with:
             // context = com.joshtalks.joshcamerax.MainActivity@8c518b3, requestCode = 125,
-            // videoUri = file:///storage/emulated/0/Android/data/com.joshtalks.joshskills/files/DCIM/20200513_211753record.mp4,
-            // destFile = /storage/emulated/0/Android/data/com.joshtalks.joshskills/files/DCIM/20200513_211753record.mp4,
-            // srcPath = /storage/emulated/0/Android/data/com.joshtalks.joshskills/files/DCIM/20200513_211753record.mp4
+            // videoUri = file:///storage/emulated/0/Android/data/com.joshtalks.joshskills.premium/files/DCIM/20200513_211753record.mp4,
+            // destFile = /storage/emulated/0/Android/data/com.joshtalks.joshskills.premium/files/DCIM/20200513_211753record.mp4,
+            // srcPath = /storage/emulated/0/Android/data/com.joshtalks.joshskills.premium/files/DCIM/20200513_211753record.mp4
             val intent = Intent(context, VideoTrimmerActivity::class.java)
             intent.putExtra(VIDEO_URI, videoUri)
             intent.putExtra(DEST_VIDEO_FILE, destFile)

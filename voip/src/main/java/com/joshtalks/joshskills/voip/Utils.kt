@@ -332,7 +332,7 @@ fun Context.getDeviceId(): String {
 //}
 
 fun getAcceptCallIntent(): PendingIntent {
-    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val destination = "com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity"
     val intent = Intent()
     intent.apply {
         setClassName(Utils.context!!.applicationContext, destination)
@@ -353,13 +353,13 @@ fun getAcceptCallIntent(): PendingIntent {
 fun openCallScreen(): PendingIntent {
     val intent = Intent()
     if (Utils.context?.isBlockedOrFreeTrialEnded() == true) {
-        val destination = "com.joshtalks.joshskills.ui.inbox.InboxActivity"
+        val destination = "com.joshtalks.joshskills.premium.ui.inbox.InboxActivity"
         intent.apply {
             setClassName(Utils.context!!.applicationContext, destination)
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
     } else {
-        val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+        val destination = "com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity"
         intent.apply {
             setClassName(Utils.context!!.applicationContext, destination)
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -381,7 +381,7 @@ fun openCallScreen(): PendingIntent {
 }
 
 fun intentOnNotificationTap(): PendingIntent {
-    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val destination = "com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity"
     val intent = Intent()
     intent.apply {
         setClassName(Utils.context!!.applicationContext, destination)
@@ -400,7 +400,7 @@ fun intentOnNotificationTap(): PendingIntent {
 }
 
 fun openFavoriteCallScreen(): PendingIntent {
-    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val destination = "com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity"
     val intent = Intent()
     intent.apply {
         setClassName(Utils.context!!.applicationContext, destination)
@@ -418,7 +418,7 @@ fun openFavoriteCallScreen(): PendingIntent {
     )
 }
 fun openGroupCallScreen(): PendingIntent {
-    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val destination = "com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity"
     val intent = Intent()
     intent.apply {
         setClassName(Utils.context!!.applicationContext, destination)

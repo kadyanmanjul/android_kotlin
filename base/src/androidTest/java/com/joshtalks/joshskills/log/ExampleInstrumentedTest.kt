@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.log
+package com.joshtalks.joshskills.premium.log
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.joshtalks.joshskills.log.test", appContext.packageName)
+        assertEquals("com.joshtalks.joshskills.premium.log.test", appContext.packageName)
     }
 }

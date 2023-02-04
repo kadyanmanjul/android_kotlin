@@ -1,1 +1,1 @@
-include ':app', ':joshlibrary', ':recordview', ':voip', ':base'
+include ':premium', ':joshlibrary', ':recordview', ':voip', ':base'

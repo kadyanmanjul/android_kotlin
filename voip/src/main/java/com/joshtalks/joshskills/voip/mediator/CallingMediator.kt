@@ -180,7 +180,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     throw e
             }
         }
-        val notificationActivity = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
+        val notificationActivity = "com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
         val callingActivity = Intent()
         callingActivity.apply {
             setClassName(Utils.context!!, notificationActivity)
