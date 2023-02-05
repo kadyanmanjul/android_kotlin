@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:dist="http://schemas.android.com/apk/distribution">
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="com.joshtalks.joshskills.freetrial">
 
     <dist:module
         dist:instant="true"
-        dist:title="@string/title_freetrail">
+        dist:title="@string/title_freetrial">
         <dist:delivery>
             <dist:install-time />
         </dist:delivery>
+
         <dist:fusing dist:include="true" />
     </dist:module>
+
+    <application>
+        <activity
+            android:name=".FreeTrialMainActivity"
+            android:exported="false">
+        </activity>
+    </application>
+
 </manifest>

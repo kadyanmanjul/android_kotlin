@@ -372,4 +372,5 @@ dependencies {
     // Datastore for reactive shared pref
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation 'in.juspay:hypersdk:2.1.7'
+    //implementation 'com.google.android.play:feature-delivery:2.0.1'
 }

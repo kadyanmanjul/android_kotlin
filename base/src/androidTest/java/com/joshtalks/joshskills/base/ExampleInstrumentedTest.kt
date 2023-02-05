@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.premium.log
+package com.joshtalks.joshskills.base
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

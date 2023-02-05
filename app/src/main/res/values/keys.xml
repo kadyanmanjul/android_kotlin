@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <bool name="branch_test">true</bool>
+    <integer name="google_play_services_version">12451000</integer>
+   <!--Stubs -->
+
+    <bool name="enable_system_foreground_service_default"/>
+    <bool name="enable_system_alarm_service_default"/>
+    <bool name="enable_system_job_service_default"/>
+    <string name="places_autocomplete_label"/>
+    <bool name="useHardwareAcceleration"/>
 
     <string name="ACCOUNT_KIT_CLIENT_TOKEN"/>
     <string name="facebook_client_token"/>
@@ -8,15 +17,6 @@
     <string name="ads_id"/>
     <string name="fb_login_protocol_scheme"/>
     <string name="freshchat_file_provider_authority"/>
-
-   <!--Stubs -->
-    <bool name="enable_system_foreground_service_default"/>
-    <bool name="enable_system_alarm_service_default"/>
-    <bool name="enable_system_job_service_default"/>
-    <string name="places_autocomplete_label"/>
-    <string name="branch_id"/>
-    <bool name="branch_test"/>
     <string name="truecaller_key"/>
-    <integer name="google_play_services_version"/>
-    <bool name="useHardwareAcceleration"/>
+    <string name="branch_id"/>
 </resources>

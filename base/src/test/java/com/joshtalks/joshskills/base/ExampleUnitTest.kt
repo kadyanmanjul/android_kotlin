@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.premium.log
+package com.joshtalks.joshskills.base
 
 import org.junit.Test
 
