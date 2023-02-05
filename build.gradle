@@ -1,4 +1,8 @@
 buildscript {
+    def majorVersion = 5
+    def minorVersion = 5
+    def patchVersion = 12
+
     ext {
         kotlin_version = '1.7.20'
         local_base_url = "\"https://058d3bbf86e1.ngrok.io/\""
@@ -8,6 +12,8 @@ buildscript {
         voip_debug_base_url = "\"http://staging.joshtalks.org\""
         voip_ms_debug_base_url = "\"http://p2p-stg.joshtalks.org\""
         voip_ms_prod_base_url = "\"https://p2p.joshtalks.org\""
+        version_code = majorVersion * 10000 + minorVersion * 100 + patchVersion
+        version_name = "${majorVersion}.${minorVersion}.${patchVersion}"
     }
 
     repositories {

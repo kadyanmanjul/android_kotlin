@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'hypersdk-asset-plugin'
@@ -11,19 +11,15 @@ if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }
 //-PdevBuild --warning-mode=all --stacktrace
-def majorVersion = 5
-def minorVersion = 5
-def patchVersion = 12
 
 android {
     namespace 'com.joshtalks.joshskills.premium'
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
-        versionName "${majorVersion}.${minorVersion}.${patchVersion}"
+        buildConfigField "String", "VERSION_NAME", "\"${rootProject.ext.version_name}\""
+        buildConfigField "Integer", "VERSION_CODE", "${rootProject.ext.version_code}"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -137,20 +133,11 @@ android {
     flavorDimensions "version"
     productFlavors {
         local {
-            // applicationId "com.joshtalks.joshskills.local"
-            versionName "${majorVersion}.${minorVersion}.${patchVersion}.Local"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://058d3bbf86e1.ngrok.io/\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-local${majorVersion}.${minorVersion}.${patchVersion}.apk"
-                }
-            }
         }
         dev {
-            // applicationId "com.joshtalks.joshskills.dev"
-            versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
@@ -159,22 +146,12 @@ android {
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
             /*For Port */
 //            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9009\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
-                }
-            }
         }
         skills {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-skills${majorVersion}.${minorVersion}.${patchVersion}.apk"
-                }
-            }
         }
         prod {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
@@ -183,11 +160,6 @@ android {
             buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-b61aad14-403b-4408-9a21-3d8d3485feb1\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-060dd328-7060-11ec-9c8d-9eb9413efc82\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-skills-release${majorVersion}.${minorVersion}.${patchVersion}.apk"
-                }
-            }
         }
     }
     compileOptions {
