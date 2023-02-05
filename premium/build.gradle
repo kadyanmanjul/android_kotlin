@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.dynamic-feature'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -7,9 +7,6 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'hypersdk-asset-plugin'
 
-if (!project.hasProperty("devBuild")) {
-    apply plugin: 'com.google.firebase.firebase-perf'
-}
 //-PdevBuild --warning-mode=all --stacktrace
 
 android {
@@ -72,27 +69,9 @@ android {
     }
 */
 
-    signingConfigs {
-        debug {
-            storeFile file("JoshSkill.jks")
-            storePassword "app@joshskill"
-            keyAlias "joshskill"
-            keyPassword "app@joshskill"
-        }
-
-        release {
-            storeFile file("JoshSkill.jks")
-            storePassword "app@joshskill"
-            keyAlias "joshskill"
-            keyPassword "app@joshskill"
-        }
-    }
-
     buildTypes {
         debug {
-            versionNameSuffix "_Debug"
             debuggable true
-            signingConfig signingConfigs.debug
             resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
@@ -109,7 +88,6 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
     kotlinOptions {
@@ -168,27 +146,20 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    bundle {
-        language {
-            enableSplit = false
-        }
-        abi {
-            enableSplit = true
-        }
-    }
     kapt {
         generateStubs = true
     }
 
-    sourceSets {
-        main{
-            jniLibs.srcDirs = ['src/main/jniLibs']
-        }
-    }
     lint {
         abortOnError false
     }
 }
+
+def withoutBrowser = { exclude group:'androidx.browser', module: 'browser' }
+def withoutBrowserAndSlidingPane = { exclude group:'androidx.browser', module: 'browser'
+    exclude group:'androidx.slidingpanelayout', module: 'slidingpanelayout'
+}
+def withoutSlidingPane = { exclude group:'androidx.slidingpanelayout', module: 'slidingpanelayout' }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
@@ -196,12 +167,13 @@ dependencies {
     implementation project(path: ':joshlibrary')
     implementation project(path: ':voip')
     implementation project(path: ':base')
+    implementation project(":app")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.preference:preference-ktx:1.2.0', withoutSlidingPane
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation "androidx.collection:collection-ktx:1.2.0"
@@ -222,7 +194,7 @@ dependencies {
     implementation 'androidx.work:work-rxjava2:2.7.1'
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0', withoutSlidingPane
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
@@ -262,14 +234,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf:20.2.0'
     implementation 'com.google.firebase:firebase-config-ktx:21.2.0'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:21.1.0'
-    implementation 'com.google.firebase:firebase-auth:21.1.0'
+    implementation 'com.google.firebase:firebase-auth:21.1.0', withoutBrowser
     implementation 'com.google.firebase:firebase-inappmessaging-ktx:20.2.0'
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.2.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.2.0', withoutBrowserAndSlidingPane
     implementation 'com.google.firebase:firebase-installations:17.1.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.0'
 
 
-    implementation 'com.google.android.gms:play-services-ads:21.3.0'
+    implementation 'com.google.android.gms:play-services-ads:21.3.0', withoutBrowser
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
     implementation 'com.google.android.libraries.places:places:2.6.0'
@@ -278,7 +250,7 @@ dependencies {
     implementation 'com.android.installreferrer:installreferrer:2.2'
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-    implementation 'com.facebook.android:facebook-android-sdk:13.0.0'
+    implementation 'com.facebook.android:facebook-android-sdk:13.0.0', withoutBrowserAndSlidingPane
     implementation 'com.facebook.stetho:stetho:1.6.0'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
 
@@ -350,7 +322,6 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation files("libs/agora-rtc-sdk.jar")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'

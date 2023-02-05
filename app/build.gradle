@@ -4,6 +4,10 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+if (!project.hasProperty("devBuild")) {
+    apply plugin: 'com.google.firebase.firebase-perf'
+}
+
 android {
     namespace 'com.joshtalks.joshskills'
     compileSdk 33
@@ -14,16 +18,82 @@ android {
         targetSdk 33
         versionCode rootProject.ext.version_code
         versionName rootProject.ext.version_name
-
+        //vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    signingConfigs {
+        debug {
+            storeFile file("JoshSkill.jks")
+            storePassword "app@joshskill"
+            keyAlias "joshskill"
+            keyPassword "app@joshskill"
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            storeFile file("JoshSkill.jks")
+            storePassword "app@joshskill"
+            keyAlias "joshskill"
+            keyPassword "app@joshskill"
         }
     }
+
+    buildTypes {
+        debug {
+            versionNameSuffix "_Debug"
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        release {
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    flavorDimensions "version"
+    productFlavors {
+        local {
+            versionName "${rootProject.ext.version_name}.Local"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "josh-local${rootProject.ext.version_name}.apk"
+                }
+            }
+        }
+        dev {
+            versionName "${rootProject.ext.version_name}.Dev"
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "josh-dev${rootProject.ext.version_name}.apk"
+                }
+            }
+
+        }
+        skills {
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "josh-skills${rootProject.ext.version_name}.apk"
+                }
+            }
+        }
+        prod {
+            manifestPlaceholders = [enableCrashReporting: "true"]
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "josh-skills-release${rootProject.ext.version_name}.apk"
+                }
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -31,7 +101,21 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    dynamicFeatures = [':freetrial']
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
+    dynamicFeatures = [':freetrial', ':premium']
 }
 
 dependencies {
