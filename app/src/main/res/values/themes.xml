@@ -13,4 +13,17 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="AppNoBarTheme"/>
+    <style name="AppTheme.Splash" parent="Theme.MaterialComponents.Light.DarkActionBar"/>
+    <style name="VideoPlayerTheme"/>
+    <style name="com_facebook_activity_theme"/>
+    <style name="AppThemeDark"/>
+    <style name="AppThemeNoAction"/>
+    <style name="PlacesAutocompleteOverlay"/>
+    <style name="Theme.Transparent.ImagePicker" parent="Theme.MaterialComponents.Light.DarkActionBar"/>
+    <style name="Theme.Freshchat.SelectedTheme" parent="Theme.MaterialComponents.Light.DarkActionBar" />
+    <style name="Freshchat.Theme.Transparent" parent="Theme.MaterialComponents.Light.DarkActionBar" />
+    <style name="Dexter.Internal.Theme.Transparent" parent="Theme.MaterialComponents.Light.DarkActionBar" />
+    <style name="Theme.PlayCore.Transparent" parent="Theme.MaterialComponents.Light.DarkActionBar" />
+
 </resources>

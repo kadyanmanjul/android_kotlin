@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.premium.ui.payment.new_buy_page_layout.viewmodel.RatingAndReviewViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pure_white"
+        tools:context=".ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tab_layout_"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/tooolll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+                    android:id="@+id/call_bar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/appbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
+
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:background="@color/primary_500"
+                        android:contentInsetStart="0dp"
+                        android:contentInsetLeft="0dp"
+                        android:contentInsetEnd="0dp"
+                        android:contentInsetRight="0dp"
+                        android:elevation="@dimen/_4sdp"
+                        android:minHeight="?attr/actionBarSize"
+                        app:contentInsetEnd="0dp"
+                        app:contentInsetEndWithActions="0dp"
+                        app:contentInsetLeft="0dp"
+                        app:contentInsetRight="0dp"
+                        app:contentInsetStart="0dp"
+                        app:layout_scrollFlags="scroll|enterAlways"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                        app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+                        app:titleTextColor="@color/pure_white">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_4sdp">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/iv_back"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_vertical|start"
+                                android:onClick="@{vm::onBackPress}"
+                                android:paddingTop="@dimen/_6sdp"
+                                android:paddingBottom="@dimen/_6sdp"
+                                android:visibility="visible"
+                                app:srcCompat="@drawable/ic_arrow_back"
+                                tools:visibility="visible" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/text_message_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerVertical="true"
+                                android:layout_marginHorizontal="@dimen/_8sdp"
+                                android:layout_marginVertical="@dimen/_4sdp"
+                                android:layout_toEndOf="@id/iv_back"
+                                android:foreground="?android:attr/selectableItemBackground"
+                                android:gravity="start|center"
+                                android:singleLine="true"
+                                android:text="@string/course_ratings_and_reviews"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                                android:textColor="@color/pure_white"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+
+                    </com.google.android.material.appbar.MaterialToolbar>
+                </com.google.android.material.appbar.AppBarLayout>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycle_view_rating_and_review"
+                ratingAndReviewListAdapter="@{vm.ratingAndReviewAdapter}"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="@dimen/_3sdp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tooolll"
+                tools:listitem="@layout/item_rating_and_review" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

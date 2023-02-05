@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:background="@drawable/bg_wood">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_wood_header"
+        android:elevation="@dimen/_2sdp"
+        android:gravity="center"
+        android:paddingTop="@dimen/_6sdp"
+        android:paddingBottom="@dimen/_12sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+        android:textColor="@color/pure_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Student Performance Award" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/award1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_count_award1"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/ic_ticker"
+            android:elevation="@dimen/_1sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/pure_white"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="3"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/image_award1"
+            android:layout_width="@dimen/_88sdp"
+            android:layout_height="@dimen/_97sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@id/title_award1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.533"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:src="@drawable/sample_award" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_award1"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/pure_white"
+            android:textSize="@dimen/_5ssp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/date_award1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Student of the year" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/date_award1"
+            android:layout_width="@dimen/_67sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginBottom="@dimen/_18sdp"
+            android:background="@drawable/bg_award_date"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="#884605"
+            android:textSize="@dimen/_7ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="24 Aug, 2021" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/award2"
+        layout="@layout/award_item_view_holder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/award1"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_count_award2"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/ic_ticker"
+            android:elevation="@dimen/_1sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/pure_white"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="3"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/image_award2"
+            android:layout_width="@dimen/_88sdp"
+            android:layout_height="@dimen/_97sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@id/title_award2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/sample_award" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_award2"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/pure_white"
+            android:textSize="@dimen/_5ssp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/date_award2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Student of the year" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/date_award2"
+            android:layout_width="@dimen/_67sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginBottom="@dimen/_18sdp"
+            android:background="@drawable/bg_award_date"
+            android:gravity="center"
+            android:paddingStart="@dimen/_13sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_13sdp"
+            android:paddingBottom="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="#884605"
+            android:textSize="@dimen/_7ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="24 Aug, 2021" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/award3"
+        layout="@layout/award_item_view_holder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/award2"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_count_award3"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/ic_ticker"
+            android:elevation="@dimen/_1sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/pure_white"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="3"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/image_award3"
+            android:layout_width="@dimen/_88sdp"
+            android:layout_height="@dimen/_97sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@id/title_award3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/sample_award" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_award3"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/pure_white"
+            android:textSize="@dimen/_5ssp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/date_award3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Student of the year" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/date_award3"
+            android:layout_width="@dimen/_67sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginBottom="@dimen/_18sdp"
+            android:background="@drawable/bg_award_date"
+            android:gravity="center"
+            android:padding="@dimen/_2sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="#884605"
+            android:textSize="@dimen/_7ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="24 Aug, 2021" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.mindorks.placeholderview.PlaceHolderView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintVertical_bias="0" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="rv,award1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

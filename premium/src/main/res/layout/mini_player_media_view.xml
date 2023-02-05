@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingDefaultResource">
+
+
+    <!-- <androidx.appcompat.widget.AppCompatImageView
+             android:id="@+id/play_pause_btn"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_gravity="center"
+             android:background="@color/transparent_2"
+             android:scaleType="centerInside"
+             app:srcCompat="@drawable/ic_play_notification"
+             app:tint="@color/pure_white"
+             tools:tint="red" />-->
+
+    <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_width="0dp"
+            app:cpb_indeterminate_mode="true"
+            app:cpb_progress_direction="to_left"
+            app:cpb_progressbar_color="#DDffffff"
+            app:cpb_progressbar_width="@dimen/_4sdp"
+            app:cpb_round_border="true"
+
+            />
+
+    <ProgressBar
+            android:id="@+id/progress_bar_bottom"
+            style="@style/BottomProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_4sdp"
+            android:layout_gravity="bottom"
+            android:visibility="gone" />
+</FrameLayout>

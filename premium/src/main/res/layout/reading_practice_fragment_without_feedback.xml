@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.premium.ui.lesson.reading.ReadingFragmentWithoutFeedback" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:id="@+id/root_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            tools:context=".ui.lesson.LessonActivity">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/_16sdp">
+
+                    <include
+                        android:id="@+id/practise_input_layout"
+                        layout="@layout/information_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="visible">
+
+                    </include>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/audio_view_container"
+                        style="@style/Widget.MaterialComponents.CardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:visibility="gone"
+                        app:contentPaddingLeft="@dimen/_8sdp"
+                        app:contentPaddingRight="@dimen/_10sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/practise_input_layout"
+                        card_view:cardCornerRadius="@dimen/_8sdp"
+                        card_view:cardElevation="2dp"
+                        card_view:cardUseCompatPadding="false"
+                        tools:visibility="visible">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <RelativeLayout
+                                android:id="@+id/btn_play_info_container"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity="center">
+
+                                <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+                                    android:id="@+id/btn_play_info"
+                                    android:layout_width="@dimen/_24sdp"
+                                    android:layout_height="@dimen/_24sdp"
+                                    android:layout_centerInParent="true"
+                                    android:background="@drawable/play_pause_button_background"
+                                    android:backgroundTint="@color/primary_500"
+                                    android:contentDescription="@string/play_button_description"
+                                    android:elevation="4dp"
+                                    android:onClick="@{()->handler.playPracticeAudio()}"
+                                    android:theme="?actionBarTheme"
+                                    android:tint="?colorControlNormal" />
+
+                                <com.airbnb.lottie.LottieAnimationView
+                                    android:id="@+id/play_info_hint"
+                                    android:layout_width="@dimen/_48sdp"
+                                    android:layout_height="@dimen/_48sdp"
+                                    android:layout_centerInParent="true"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:visibility="gone"
+                                    app:lottie_autoPlay="true"
+                                    app:lottie_fileName="lottie/speaking_ripple.json"
+                                    app:lottie_imageAssetsFolder="lottie"
+                                    app:lottie_loop="true"
+                                    app:lottie_repeatMode="restart"
+                                    app:lottie_scale="1"
+                                    app:lottie_speed="3"
+                                    tools:visibility="visible" />
+                            </RelativeLayout>
+
+                            <SeekBar
+                                android:id="@+id/practise_seekbar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignBaseline="@id/btn_play_info_container"
+                                android:layout_centerInParent="true"
+                                android:layout_marginHorizontal="@dimen/_8sdp"
+                                android:layout_toEndOf="@id/btn_play_info_container"
+                                android:paddingStart="@dimen/_6sdp"
+                                android:paddingEnd="@dimen/_6sdp"
+                                android:progressDrawable="@drawable/seek_bar_draw"
+                                android:thumb="@drawable/seek_thumb"
+                                android:thumbTint="@color/primary_500" />
+
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txt_info_duration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/practise_seekbar"
+                                android:layout_alignEnd="@id/practise_seekbar"
+                                android:layout_marginTop="@dimen/_20sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                                android:textColor="@color/critical"
+                                app:layout_goneMarginTop="@dimen/spacing_large" />
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/practise_info_layout"
+                        style="@style/Widget.MaterialComponents.CardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        app:layout_constraintBottom_toTopOf="@+id/video_info"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/audio_view_container"
+                        card_view:cardCornerRadius="@dimen/_8sdp"
+                        card_view:cardElevation="2dp"
+                        card_view:cardUseCompatPadding="false">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/practise_info_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.joshtalks.joshskills.premium.core.custom_ui.custom_textview.JoshTextView
+                                android:id="@+id/info_tv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_16sdp"
+                                android:gravity="start|center"
+                                android:padding="@dimen/_8sdp"
+                                android:paddingTop="@dimen/_8sdp"
+                                android:paddingBottom="@dimen/_8sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                                android:textColor="@color/text_default"
+                                android:visibility="gone"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:visibility="gone" />
+
+                            <com.joshtalks.joshskills.premium.core.custom_ui.JoshVideoPlayer
+                                android:id="@+id/video_player"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="@dimen/_16sdp"
+                                android:background="#000"
+                                android:focusable="true"
+                                android:minHeight="@dimen/_160sdp"
+                                android:padding="@dimen/_8sdp"
+                                android:paddingTop="@dimen/_8sdp"
+                                android:paddingBottom="@dimen/_8sdp"
+                                android:visibility="gone"
+                                app:controller_layout_id="@layout/layout_live_player_controller"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/info_tv"
+                                tools:visibility="gone" />
+
+                            <FrameLayout
+                                android:id="@+id/image_frame"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/info_tv">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/image_view"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:adjustViewBounds="true"
+                                    android:background="@drawable/image_placeholder_no_bottom_corners"
+                                    android:clickable="true"
+                                    android:elevation="2dp"
+                                    android:focusable="true"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:visibility="visible" />
+
+                                <ProgressBar
+                                    android:id="@+id/progress_bar_image_view"
+                                    android:layout_width="@dimen/_24sdp"
+                                    android:layout_height="@dimen/_24sdp"
+                                    android:layout_gravity="center"
+                                    android:indeterminate="true"
+                                    android:indeterminateTint="@color/primary_500"
+                                    android:visibility="gone"
+                                    tools:visibility="visible" />
+
+                            </FrameLayout>
+
+                            <androidx.constraintlayout.widget.Barrier
+                                android:id="@+id/barrier"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:barrierDirection="bottom"
+                                app:constraint_referenced_ids="image_frame,video_player" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/audio_practise_hint"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="@dimen/_16sdp"
+                                android:layout_marginTop="@dimen/_24sdp"
+                                android:layout_marginEnd="@dimen/_16sdp"
+                                android:layout_marginBottom="@dimen/_8sdp"
+                                android:gravity="center"
+                                android:padding="@dimen/_4sdp"
+                                android:text="@string/hold_to_record_msz"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
+                                android:visibility="gone"
+                                app:contentPadding="@dimen/_10sdp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/barrier"
+                                tools:visibility="visible" />
+
+                            <Chronometer
+                                android:id="@+id/counter_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top|center"
+                                android:layout_marginTop="@dimen/_32sdp"
+                                android:layout_marginBottom="@dimen/_4sdp"
+                                android:background="@drawable/bg_timer"
+                                android:drawableStart="@drawable/timer_drawable"
+                                android:drawablePadding="@dimen/_4sdp"
+                                android:drawableTint="@color/critical"
+                                android:gravity="top|center"
+                                android:padding="@dimen/_5sdp"
+                                android:textColor="@color/text_default"
+                                android:textSize="@dimen/font_11_5"
+                                android:visibility="gone"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/barrier"
+                                tools:visibility="visible" />
+
+
+                            <RelativeLayout
+                                android:id="@+id/recording_view_frame"
+                                android:layout_width="@dimen/_62sdp"
+                                android:layout_height="@dimen/_62sdp"
+                                android:background="@drawable/circle2"
+                                android:backgroundTint="@color/pure_white"
+                                android:clipChildren="false"
+                                android:clipToPadding="false"
+                                android:visibility="gone"
+                                app:layout_constraintBottom_toTopOf="@id/barrier"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/barrier"
+                                tools:visibility="visible">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                                        android:id="@+id/progress_animation"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:layout_margin="0dp"
+                                        android:max="60"
+                                        android:padding="0dp"
+                                        android:progress="0"
+                                        android:rotation="-115"
+                                        android:visibility="gone"
+                                        app:indicatorColor="@color/status_bar_color"
+                                        app:indicatorSize="@dimen/_60sdp"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:trackColor="#ffffff"
+                                        app:trackThickness="3dp"
+                                        tools:progress="10" />
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/recording_view"
+                                    android:layout_width="@dimen/_52sdp"
+                                    android:layout_height="@dimen/_52sdp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center"
+                                    android:adjustViewBounds="true"
+                                    android:background="@drawable/recv_bg_mic"
+                                    android:elevation="@dimen/_3sdp"
+                                    android:scaleType="centerInside"
+                                    android:tint="@color/pure_white"
+                                    app:srcCompat="@drawable/ic_rec_mic_big" />
+
+                            </RelativeLayout>
+
+                            <FrameLayout
+                                android:id="@+id/record_transparent_container"
+                                android:layout_width="@dimen/_52sdp"
+                                android:layout_height="@dimen/_52sdp"
+                                android:background="@color/transparent"
+                                android:clipChildren="false"
+                                android:clipToPadding="false"
+                                android:elevation="@dimen/_10sdp"
+                                android:visibility="gone"
+                                app:layout_constraintBottom_toTopOf="@id/barrier"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/barrier"
+                                tools:visibility="visible">
+
+                            </FrameLayout>
+
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:elevation="@dimen/_1sdp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.47"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="@+id/recording_view_frame"
+                                app:layout_constraintVertical_bias="1.0">
+
+                                <com.airbnb.lottie.LottieAnimationView
+                                    android:id="@+id/reading_hold_hint"
+                                    android:layout_width="@dimen/_60sdp"
+                                    android:layout_height="@dimen/_60sdp"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:visibility="gone"
+                                    app:lottie_autoPlay="false"
+                                    app:lottie_fileName="lottie/press_and_hold.json"
+                                    app:lottie_imageAssetsFolder="lottie"
+                                    app:lottie_loop="true"
+                                    app:lottie_repeatMode="restart"
+                                    app:lottie_scale="1"
+                                    app:lottie_speed="1"
+                                    tools:visibility="visible" />
+                            </FrameLayout>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <include
+                        android:id="@+id/video_info"
+                        layout="@layout/information_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@+id/practise_submit_layout"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/practise_info_layout"
+                        tools:visibility="visible" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/practise_text_info_layout"
+                        style="@style/Widget.MaterialComponents.CardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:visibility="gone"
+                        app:contentPadding="@dimen/_10sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/video_info"
+                        card_view:cardCornerRadius="@dimen/_8sdp"
+                        card_view:cardElevation="0dp"
+                        card_view:cardUseCompatPadding="false"
+                        tools:visibility="gone">
+
+                        <com.joshtalks.joshskills.premium.core.custom_ui.custom_textview.JoshTextView
+                            android:id="@+id/info_tv_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start|center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                            android:textColor="@color/text_default"
+                            tools:text="@tools:sample/lorem" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/practise_submit_layout"
+                        style="@style/Widget.MaterialComponents.CardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        android:elevation="2dp"
+                        android:minHeight="@dimen/_56sdp"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:contentPadding="@dimen/_8sdp"
+                        app:layout_constraintBottom_toTopOf="@+id/feedback_layout"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/video_info"
+                        card_view:cardCornerRadius="@dimen/_8sdp"
+                        card_view:cardUseCompatPadding="false"
+                        tools:visibility="visible">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/sub_answer_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/your_sub_answer_tv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="start|center"
+                                android:text="@string/your_answer"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                                android:textColor="@color/text_default"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/iv_close"
+                                android:layout_width="@dimen/_16sdp"
+                                android:layout_height="@dimen/_16sdp"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foregroundGravity="right"
+                                android:onClick="@{()-> handler.closeRecordedView()}"
+                                android:tint="@color/icon_subdued"
+                                android:visibility="gone"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/ic_cross"
+                                tools:visibility="visible" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/video_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_320sdp"
+                            android:layout_marginTop="@dimen/_28sdp"
+                            android:background="@drawable/rounded_video_view"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+
+                            <com.joshtalks.joshskills.premium.core.custom_ui.JoshVideoPlayer
+                                android:id="@+id/merged_video"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:background="#000"
+                                android:focusable="true"
+                                android:visibility="gone"
+                                app:controller_layout_id="@layout/layout_live_player_controller"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:visibility="visible" />
+
+
+                            <com.pnikosis.materialishprogress.ProgressWheel
+                                android:id="@+id/progress_dialog"
+                                android:layout_width="@dimen/_28sdp"
+                                android:layout_height="@dimen/_28sdp"
+                                android:layout_gravity="center"
+                                android:visibility="gone"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:matProg_barWidth="@dimen/_2sdp"
+                                tools:visibility="invisible"
+                                wheel:matProg_barColor="@color/pure_white"
+                                wheel:matProg_fillRadius="true"
+                                wheel:matProg_progressIndeterminate="true" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <LinearLayout
+                            android:id="@+id/sub_practise_submit_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/audio_list_rv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                tools:itemCount="2"
+                                tools:listitem="@layout/practice_audio_item"
+                                tools:visibility="invisible" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_share_video"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/_16sdp"
+                        android:layout_marginVertical="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:layout_marginBottom="@dimen/_16sdp"
+                        android:backgroundTint="#13990A"
+                        android:elevation="0dp"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:paddingVertical="@dimen/_4sdp"
+                        android:paddingStart="@dimen/_24sdp"
+                        android:paddingEnd="@dimen/_24sdp"
+                        android:text="Share video on whatsapp"
+                        android:textAlignment="center"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                        android:textColor="@color/pure_white"
+                        android:textSize="@dimen/_12ssp"
+                        android:visibility="gone"
+                        app:cornerRadius="@dimen/_18sdp"
+                        app:elevation="0dp"
+                        app:icon="@drawable/ic_whatsapp_img_share"
+                        app:iconGravity="textStart"
+                        app:iconSize="@dimen/_16sdp"
+                        app:iconTint="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/practise_submit_layout"
+                        app:rippleColor="@color/pure_white" />
+
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/feedback_layout"
+                        style="@style/Widget.MaterialComponents.CardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:minHeight="@dimen/_100ssp"
+                        android:visibility="gone"
+                        app:contentPadding="@dimen/_8sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/btn_share_video"
+                        card_view:cardCornerRadius="@dimen/_8sdp"
+                        card_view:cardElevation="0dp"
+                        card_view:cardUseCompatPadding="false"
+                        tools:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/feedback_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:text="@string/your_feedback"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                            android:textColor="@color/text_default"
+                            android:visibility="visible" />
+
+                        <LinearLayout
+                            android:id="@+id/feedback_result_linear_ll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:orientation="vertical"
+                            android:padding="@dimen/_8sdp"
+                            tools:visibility="gone">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/feedback_grade"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="@dimen/_4sdp"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerInside"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+                                android:textColor="@color/text_default"
+                                app:srcCompat="@drawable/ic_rec_mic_big"
+                                tools:text="B+"
+                                tools:visibility="visible" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/feedback_description"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:padding="@dimen/_4sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                                android:textColor="@color/text_default"
+                                tools:text="@string/hold_to_record_msz"
+                                tools:visibility="visible" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/feedback_result_progress_ll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:orientation="vertical"
+                            android:padding="@dimen/_8sdp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <FrameLayout
+                                android:id="@+id/container"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:background="@drawable/circle2"
+                                android:backgroundTint="@color/pure_white"
+                                android:padding="@dimen/_4sdp">
+
+                                <com.pnikosis.materialishprogress.ProgressWheel
+                                    android:id="@+id/_feedback_progress_bar"
+                                    android:layout_width="@dimen/_52sdp"
+                                    android:layout_height="@dimen/_52sdp"
+                                    android:layout_gravity="center"
+                                    wheel:matProg_barColor="@color/primary_500"
+                                    wheel:matProg_fillRadius="true"
+                                    wheel:matProg_linearProgress="false"
+                                    wheel:matProg_progressIndeterminate="true"
+                                    wheel:matProg_rimColor="#33128C7E"
+                                    wheel:matProg_rimWidth="@dimen/_4sdp" />
+
+                            </FrameLayout>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_margin="@dimen/_4sdp"
+                                android:gravity="center"
+                                android:minLines="2"
+                                android:text="@string/plz_wait_feedback" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/submit_answer_btn"
+                        style="@style/Secondary_Button_Filled_Disabled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/_16sdp"
+                        android:layout_marginVertical="@dimen/_10sdp"
+                        android:layout_marginBottom="@dimen/_16sdp"
+                        android:gravity="center"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:onClick="@{()->handler.submitPractise()}"
+                        android:paddingVertical="@dimen/_8sdp"
+                        android:paddingStart="@dimen/_24sdp"
+                        android:paddingEnd="@dimen/_24sdp"
+                        android:text="@string/submit"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/feedback_layout" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/improve_answer_btn"
+                        style="@style/Secondary_Button_Filled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/_16sdp"
+                        android:layout_marginVertical="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_16sdp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:onClick="@{()->handler.improvePractice()}"
+                        android:paddingVertical="@dimen/_8sdp"
+                        android:paddingStart="@dimen/_24sdp"
+                        android:paddingEnd="@dimen/_24sdp"
+                        android:text="@string/improve_answer"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/submit_answer_btn" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_whatsapp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/_23sdp"
+                        android:layout_marginVertical="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:layout_marginBottom="@dimen/_16sdp"
+                        android:backgroundTint="#13990A"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:paddingStart="@dimen/_24sdp"
+                        android:paddingEnd="@dimen/_24sdp"
+                        android:text="Share on Whatsapp status"
+                        android:textAlignment="center"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                        android:textColor="@color/pure_white"
+                        android:visibility="gone"
+                        app:cornerRadius="@dimen/_50sdp"
+                        app:icon="@drawable/ic_whatsapp_img_share"
+                        app:iconGravity="textStart"
+                        app:iconPadding="@dimen/_10sdp"
+                        app:iconSize="@dimen/_16sdp"
+                        app:iconTint="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/submit_answer_btn"
+                        app:rippleColor="@color/pure_white" />
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/continue_btn"
+                        style="@style/Secondary_Button_Filled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/_23sdp"
+                        android:layout_marginVertical="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_16sdp"
+                        android:elevation="2dp"
+                        android:gravity="center"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:onClick="@{()->handler.onReadingContinueClick()}"
+                        android:padding="@dimen/_8sdp"
+                        android:text="@string/continue_label"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/btn_whatsapp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/black_frame_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#88000000"
+            android:elevation="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/lesson_tooltip_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="@dimen/_108sdp"
+                android:layout_marginHorizontal="@dimen/_2sdp"
+                android:background="@drawable/bg_tooltip_large_center">
+
+                <com.joshtalks.joshskills.premium.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/joshTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingTop="@dimen/_18sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtTooltipIndex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_8sdp"
+                    android:text="1 of 3"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
+                    android:textColor="@color/text_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/btnNextStep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/_8sdp"
+                    android:background="@drawable/rounded_primary_bg_2dp"
+                    android:backgroundTint="@color/primary_500"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_14sdp"
+                    android:paddingVertical="@dimen/_3sdp"
+                    android:text="आगे बढ़े"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
+                    android:textColor="@color/pure_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@drawable/ic_outline_cancel_24"
+                android:onClick="@{()->handler.hideTooltip()}"
+                android:padding="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/progress_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/surface_overlay"
+            android:visibility="gone">
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                wheel:matProg_barColor="@color/primary_500"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="#33128C7E"
+                wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progress_bar"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/plz_wait"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textColor="@color/pure_white" />
+        </RelativeLayout>
+    </FrameLayout>
+</layout>
+

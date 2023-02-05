@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.premium.ui.userprofile.models.GroupInfo" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/group_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_46sdp"
+        android:background="@color/pure_white">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_icon"
+            android:layout_width="@dimen/_34sdp"
+            android:layout_height="@dimen/_34sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:background="@drawable/white_button_round_enabled"
+            android:gravity="center_vertical|start"
+            android:src="@drawable/josh_skill"
+            android:visibility="visible"
+            imageResource="@{itemData.groupIcon}"
+            app:layout_constraintBottom_toBottomOf="@id/title_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title_container"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/title_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_9sdp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/group_icon"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_group_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:maxLength="90"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:text="@{itemData.groupName}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
+                android:textColor="@color/pure_black"
+                tools:text="Group Namedjcbniefdrjebcijbreeicjtgnb crib" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_minutes_spoken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:text="@{itemData.textToShow}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                android:textColor="@color/dark_text_color"
+                tools:text="@string/number_of_min_talked_by" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+
+
+
+
+
+
+
+

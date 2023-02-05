@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.premium.ui.callWithExpert.fragment.TransactionsFragment" />
+
+        <variable
+            name="viewModel"
+            type="com.joshtalks.joshskills.premium.ui.callWithExpert.viewModel.WalletTransactionViewModel" />
+
+        <import type="android.view.View"/>
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pure_grey">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/_16sdp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/_20sdp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/_18sdp" />
+
+        <TextView
+            android:id="@+id/availableBalanceHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/available_balance"
+            android:textColor="@color/dark_grey"
+            android:textSize="@dimen/_13ssp"
+            android:fontFamily="@font/open_sans_semibold"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
+
+        <TextView
+            android:id="@+id/availableBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="@{viewModel.availableBalance}"
+            android:textColor="@color/icon_default"
+            android:textSize="@dimen/_21ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/availableBalanceHeading"
+            tools:text="₹ 128" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rechargeNow"
+            onSingleClick="@{handler::onRechargeClicked}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textStyle="bold"
+            android:text="@string/recharge"
+            app:cornerRadius="@dimen/_8sdp"
+            android:layout_marginEnd="-1dp"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="@+id/availableBalance"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintTop_toTopOf="@+id/availableBalance" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout_transaction"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:textAllCaps="false"
+            app:tabTextAppearance="@style/TabLayoutWalletHistory"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/availableBalance"
+            app:tabBackground="@drawable/tab_payment_history"
+            app:tabIndicator="@null"
+            android:background="@color/pure_grey"
+            app:tabRippleColor="@null"
+            android:clipToPadding="true"
+            app:tabSelectedTextColor="@color/pure_white"
+            app:tabTextColor="@color/text_subdued">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/wallet_transactions" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/payment_logs" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/disabled"
+            app:layout_constraintBottom_toTopOf="@+id/viewPager" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout_transaction" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

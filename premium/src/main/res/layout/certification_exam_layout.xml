@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_2sdp"
+    android:paddingStart="@dimen/_12sdp"
+    android:paddingEnd="@dimen/_12sdp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/sub_root_view"
+        style="@style/Widget.MaterialComponents.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_112sdp"
+        android:layout_marginRight="@dimen/_24sdp"
+        android:layout_marginLeft="@dimen/_1sdp"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/warning"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="0dp"
+        app:cardUseCompatPadding="false">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/message_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:paddingTop="@dimen/_7sdp">
+
+            <com.joshtalks.joshskills.premium.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="3"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
+                android:textColor="@color/text_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Assessment" />
+
+
+            <!--
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_code"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:gravity="center_vertical|start"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/text_default"
+                            android:textSize="@dimen/_11ssp"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/iv_award"
+                            tools:text="Code 235-dd"
+                            tools:visibility="visible" />
+            -->
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_marks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center"
+                android:gravity="start|center"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:layout_marginLeft="@dimen/_2sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                android:textColor="@color/text_default"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/tv_attempted_date"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="100% Marks "
+                tools:visibility="visible" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_attempted_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginLeft="@dimen/_2sdp"
+                android:gravity="center_vertical|start"
+                android:paddingTop="@dimen/_2sdp"
+                android:ellipsize="end"
+                android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+                android:textColor="@color/text_default"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_start_exam"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="26/11/2020" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btn_start_exam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_transparent_button_bg"
+                android:backgroundTint="@color/pure_white"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/start_exam"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                android:textColor="@color/text_default"
+                app:cornerRadius="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

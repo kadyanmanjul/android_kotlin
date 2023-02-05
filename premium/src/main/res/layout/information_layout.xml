@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/information_rect_with_bound"
+    android:visibility="gone"
+    android:paddingVertical="@dimen/_10sdp"
+    tools:visibility="visible">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:src="@drawable/info_new"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/info_text_heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:minLines="1"
+        android:text="Heading"
+        android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
+        android:textColor="@color/primary_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/_4sdp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toEndOf="@id/image"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/info_text_subheading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:minLines="1"
+        android:text="@string/info_text"
+        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionRegular"
+        android:textColor="@color/text_default"
+        app:layout_constraintTop_toBottomOf="@+id/info_text_heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="@string/retry"
+        android:visibility="gone"
+        app:backgroundTint="@color/transparent"
+        tools:visibility="visible"
+        app:iconTint="@color/warning"
+        android:textColor="@color/warning"
+        app:strokeWidth="1dp"
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_6sdp"
+        app:strokeColor="@color/warning"
+        app:icon="@drawable/retry"
+        android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
+        app:cornerRadius="@dimen/_32sdp"
+        app:layout_constraintEnd_toEndOf="@+id/info_text_subheading"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/info_text_subheading" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

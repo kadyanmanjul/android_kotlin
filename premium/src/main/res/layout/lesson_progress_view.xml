@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_220sdp"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    app:cardElevation="0dp"
+    android:background="@color/transparent"
+    app:cardCornerRadius="@dimen/_6sdp">
+
+    <FrameLayout
+        android:id="@+id/root_view"
+        android:layout_width="@dimen/_220sdp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:background="@color/transparent"
+        android:clickable="true"
+        android:paddingBottom="@dimen/_8sdp"
+        android:enabled="true"
+        android:focusable="true">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lesson_name_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
+                android:textColor="@color/text_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lesson_iv"
+                tools:text="Lesson 1: title name" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/lesson_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@drawable/video_placeholder"
+                tools:srcCompat="@drawable/have_a_referral" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/continue_lesson_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/rounded_state_button_bg"
+                android:backgroundTint="@color/primary_500"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/_2sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="@string/continue_lesson"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                android:textColor="@color/pure_white"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/view6"
+                app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv"
+                tools:visibility="gone" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/start_lesson_tv_shimmer"
+                android:layout_width="@dimen/_116sdp"
+                android:layout_height="@dimen/_26sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/view6"
+                app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/button11.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="restart"
+                app:lottie_scale="1"
+                app:lottie_speed="1" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/start_lesson_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:elevation="@dimen/_2sdp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/start_lesson"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                android:textColor="@color/pure_white"
+                app:cornerRadius="@dimen/_32sdp"
+                app:layout_constraintBottom_toBottomOf="@id/start_lesson_tv_shimmer"
+                app:layout_constraintEnd_toEndOf="@+id/start_lesson_tv_shimmer"
+                app:layout_constraintStart_toStartOf="@+id/start_lesson_tv_shimmer"
+                app:layout_constraintTop_toTopOf="@id/start_lesson_tv_shimmer" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/view1"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:visibility="gone"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv"
+                app:srcCompat="@drawable/ic_lesson_disabled_tick"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/view2"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view1"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/view1"
+                app:layout_constraintTop_toTopOf="@+id/view1"
+                app:srcCompat="@drawable/ic_lesson_disabled_tick"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/view3"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view2"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/view2"
+                app:layout_constraintTop_toTopOf="@+id/view1"
+                app:srcCompat="@drawable/ic_lesson_disabled_tick"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/view4"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view1"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/view3"
+                app:layout_constraintTop_toTopOf="@+id/view1"
+                app:srcCompat="@drawable/ic_lesson_disabled_tick"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/view5"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view1"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@+id/view4"
+                app:layout_constraintTop_toTopOf="@+id/view1"
+                app:srcCompat="@drawable/ic_lesson_disabled_tick"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/view6"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view1"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/view5"
+                app:layout_constraintTop_toTopOf="@+id/view1"
+                app:srcCompat="@drawable/ic_lesson_disabled_tick"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </FrameLayout>
+</androidx.cardview.widget.CardView>

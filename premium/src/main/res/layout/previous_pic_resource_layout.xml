@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <com.joshtalks.joshskills.premium.core.custom_ui.ZoomageView
+        android:id="@+id/imageViewMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:zoomage_animateOnReset="true"
+        app:zoomage_autoCenter="true"
+        app:zoomage_autoResetMode="UNDER"
+        android:adjustViewBounds="true"
+        app:zoomage_maxScale="8"
+        app:zoomage_minScale="0"
+        app:zoomage_restrictBounds="false"
+        app:zoomage_translatable="false"
+        app:zoomage_zoomable="true" />
+</LinearLayout>
+</layout>

@@ -1,0 +1,151 @@
+package com.joshtalks.joshskills.premium.ui.group.adapters
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.text.isDigitsOnly
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
+
+import com.joshtalks.joshskills.premium.R
+import com.joshtalks.joshskills.premium.core.Utils.getMessageTime
+import com.joshtalks.joshskills.premium.core.datetimeutils.DateTimeStyle
+import com.joshtalks.joshskills.premium.core.showToast
+import com.joshtalks.joshskills.premium.databinding.GroupChatLeftMsgBinding
+import com.joshtalks.joshskills.premium.databinding.GroupChatMetadataBinding
+import com.joshtalks.joshskills.premium.databinding.GroupChatRightMsgBinding
+import com.joshtalks.joshskills.premium.databinding.GroupChatUnreadMsgBinding
+import com.joshtalks.joshskills.premium.repository.local.model.Mentor
+import com.joshtalks.joshskills.premium.ui.group.constants.*
+import com.joshtalks.joshskills.premium.ui.group.model.ChatItem
+import com.joshtalks.joshskills.premium.ui.group.model.GroupMember
+import com.joshtalks.joshskills.premium.ui.group.viewholder.ChatViewHolder
+
+class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
+    PagingDataAdapter<ChatItem, ChatViewHolder>(
+        diffCallback
+    ) {
+
+    var groupType: String = OPENED_GROUP
+    var itemClick: ((GroupMember, View) -> Unit)? = null
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ChatViewHolder {
+        return when (viewType) {
+            RECEIVE_MESSAGE_LOCAL -> {
+                val view =
+                    setViewHolder<GroupChatLeftMsgBinding>(parent, R.layout.group_chat_left_msg)
+                LeftChatViewHolder(view)
+            }
+            SENT_MESSAGE_LOCAL -> {
+                val view =
+                    setViewHolder<GroupChatRightMsgBinding>(parent, R.layout.group_chat_right_msg)
+                RightChatViewHolder(view)
+            }
+            SENT_META_MESSAGE_LOCAL -> {
+                val view =
+                    setViewHolder<GroupChatMetadataBinding>(parent, R.layout.group_chat_metadata)
+                SentMetaViewHolder(view)
+            }
+            RECEIVE_META_MESSAGE_LOCAL, MESSAGE_ERROR -> {
+                val view =
+                    setViewHolder<GroupChatMetadataBinding>(parent, R.layout.group_chat_metadata)
+                MetaChatViewHolder(view)
+            }
+            UNREAD_MESSAGE -> {
+                val view =
+                    setViewHolder<GroupChatUnreadMsgBinding>(parent, R.layout.group_chat_unread_msg)
+                UnreadViewHolder(view)
+            }
+            else -> {
+                val view =
+                    setViewHolder<GroupChatMetadataBinding>(parent, R.layout.group_chat_metadata)
+                MetaChatViewHolder(view)
+            }
+        }
+    }
+
+    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
+        getItem(position)?.let { holder.bindData(it) }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return getItem(position)?.msgType!!
+    }
+
+    fun setListener(function: ((GroupMember, View) -> Unit)?) {
+        itemClick = function
+    }
+
+    private fun <V : ViewDataBinding> setViewHolder(parent: ViewGroup, layoutId: Int): V {
+        return DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            layoutId,
+            parent,
+            false
+        )
+    }
+
+    inner class LeftChatViewHolder(val item: GroupChatLeftMsgBinding) :
+        ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            item.itemData = groupChatData
+            if (groupType == DM_CHAT)
+                item.textTitle.visibility = View.GONE
+            item.textTitle.setOnClickListener {
+                val groupMember = GroupMember(
+                    groupChatData.getMentorId() ?: Mentor.getInstance().getId(),
+                    groupChatData.sender!!,
+                    memberIcon = "",
+                    isAdmin = true,
+                    isOnline = false,
+                    groupChatData.groupId
+                )
+                itemClick?.invoke(groupMember, item.textTitle)
+            }
+        }
+    }
+
+    inner class RightChatViewHolder(val item: GroupChatRightMsgBinding) :
+        ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            item.itemData = groupChatData
+        }
+    }
+
+    inner class MetaChatViewHolder(val item: GroupChatMetadataBinding) :
+        ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            if (groupChatData.message.isDigitsOnly())
+                groupChatData.message = getMessageTime(
+                    groupChatData.message.toLong().times(1000),
+                    timeNeeded = false,
+                    DateTimeStyle.LONG
+                )
+            item.itemData = groupChatData
+        }
+    }
+
+    inner class SentMetaViewHolder(val item: GroupChatMetadataBinding) :
+        ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            groupChatData.message = groupChatData.message.replace("${groupChatData.sender} has", "You have")
+            item.itemData = groupChatData
+        }
+    }
+
+    inner class UnreadViewHolder(val item: GroupChatUnreadMsgBinding) :
+        ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            item.itemData = groupChatData
+        }
+    }
+
+    fun setType(groupType: String){
+        this.groupType = groupType
+    }
+}

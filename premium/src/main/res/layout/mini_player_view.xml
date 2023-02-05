@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.joshtalks.joshskills.premium.core.custom_ui.MiniExoPlayer xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/video_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        app:hide_on_touch="true"
+        app:keep_content_on_player_reset="true"
+        android:focusable="true"
+        android:keepScreenOn="true"
+        app:controller_layout_id="@layout/mini_player_controller_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_question"
+        app:resize_mode="fixed_width"
+        app:surface_type="surface_view"
+        app:use_artwork="true" />

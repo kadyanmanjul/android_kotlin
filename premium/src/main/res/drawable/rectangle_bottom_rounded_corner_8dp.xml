@@ -1,0 +1,21 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- This is the line -->
+<item>
+    <shape>
+        <padding android:left="1dp" android:top="0dp" android:right="1dp" android:bottom="1dp"/>
+        <solid android:color="@color/primary_400" />
+        <corners
+            android:bottomLeftRadius="@dimen/_8sdp"
+            android:bottomRightRadius="@dimen/_8sdp" />
+    </shape>
+</item>
+<!-- This is the main color -->
+<item>
+    <shape>
+        <solid android:color="@color/pure_white" />
+        <corners
+            android:bottomLeftRadius="@dimen/_8sdp"
+            android:bottomRightRadius="@dimen/_8sdp" />
+    </shape>
+</item>
+</layer-list>

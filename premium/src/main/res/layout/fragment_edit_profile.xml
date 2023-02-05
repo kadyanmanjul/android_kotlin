@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.premium.ui.userprofile.fragments.EditProfileFragment" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary_500"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:gravity="start|center"
+                android:minHeight="?attr/actionBarSize"
+                app:contentInsetEnd="0dp"
+                app:contentInsetEndWithActions="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar"
+                tools:layout_editor_absoluteX="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/primary_500">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:background="@color/primary_500"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center_vertical|start"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        app:srcCompat="@drawable/ic_arrow_back" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginHorizontal="@dimen/_16sdp"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/iv_back"
+                        android:background="@color/primary_500"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical|start"
+                        android:lines="1"
+                        android:text="@string/edit_profile"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+                        android:textColor="@color/pure_white" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/iv_save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:background="@color/primary_500"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:text="@string/save"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                        android:textColor="@color/pure_white" />
+                </RelativeLayout>
+            </com.google.android.material.appbar.MaterialToolbar>
+
+            <LinearLayout
+                android:id="@+id/edit_profile_bg"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_64sdp"
+                android:background="@color/pure_grey"
+                android:backgroundTint="@color/surface_information"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/user_pic"
+                android:layout_width="@dimen/_72sdp"
+                android:layout_height="@dimen/_72sdp"
+                android:layout_margin="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                tools:background="@color/transparent"
+                tools:src="@drawable/ic_josh_course" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txtChangePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="@string/change_profile_photo"
+                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                android:textColor="@color/primary_500"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_pic" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtChangePicture">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineStart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintGuide_begin="@dimen/_24sdp"
+                        android:orientation="vertical" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineEnd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintGuide_end="@dimen/_24sdp"
+                        android:orientation="vertical" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/basic_details_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:gravity="center|start"
+                        android:text="@string/basic_details"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                        android:textColor="@color/text_default"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/basicDetailContainer"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                        app:layout_constraintTop_toBottomOf="@+id/basic_details_text">
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/nameInputLayout"
+                            style="@style/JoshInputField"
+                            android:layout_width="match_parent"
+                            android:hint="@string/name"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTxtName"
+                                style="@style/JoshNameEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionNext"
+                                android:singleLine="true" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/dobInputLayout"
+                            style="@style/JoshInputField"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:hint="@string/date_of_birth"
+                            app:layout_constraintTop_toBottomOf="@+id/nameInputLayout">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTxtDob"
+                                style="@style/JoshEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:cursorVisible="false"
+                                android:focusable="false"
+                                android:gravity="start"
+                                android:imeOptions="actionNone"
+                                android:importantForAutofill="no"
+                                android:inputType="none"
+                                android:onClick="@{()->handler.selectDateOfBirth()}"
+                                tools:ignore="KeyboardInaccessibleWidget" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/hometownInputLayout"
+                            style="@style/JoshInputField"
+                            android:layout_width="match_parent"
+                            android:hint="@string/your_hometown"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/dobInputLayout">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTxtHometown"
+                                style="@style/JoshNameEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionNext"
+                                android:maxLength="20"
+                                android:singleLine="true" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/aspirationInputLayout"
+                            style="@style/JoshInputFieldWithHelper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:hint="@string/aspiration_filed"
+                            app:helperText="@string/ex_ias_officer"
+                            app:layout_constraintTop_toBottomOf="@+id/hometownInputLayout">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTxtFutureGoals"
+                                style="@style/JoshEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:digits="@string/allowed_name_characters"
+                                android:gravity="start"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:lines="1"
+                                android:maxLength="24"
+                                android:maxLines="1"
+                                android:minLines="1"
+                                android:singleLine="true"
+                                android:textCursorDrawable="@drawable/cursor_drawable" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/favouriteJtInputLayout"
+                            style="@style/JoshInputFieldWithHelper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            app:errorIconDrawable="@null"
+                            android:hint="@string/favourite_josh_talk"
+                            app:helperText="@string/paste_link_to_your_favourite_josh_talk_here"
+                            app:layout_constraintTop_toBottomOf="@+id/aspirationInputLayout">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTxtJoshTalk"
+                                style="@style/JoshEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:lines="1"
+                                android:maxLength="100"
+                                android:maxLines="1"
+                                android:minLines="1"
+                                android:singleLine="true" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/education_details_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:text="@string/add_education_details"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                        android:textColor="@color/text_default"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                        app:layout_constraintTop_toBottomOf="@+id/basicDetailContainer" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/educationDetailContainer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                        app:layout_constraintTop_toBottomOf="@id/education_details_text">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/educationInputLayout"
+                            style="@style/JoshInputFieldWithHelper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/subject_degree"
+                            app:helperText="@string/ex_arts_m_tech"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txtEducationName"
+                            style="@style/JoshEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="@string/allowed_name_characters"
+                            android:gravity="start"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords"
+                            android:lines="1"
+                            android:maxLength="30"
+                            android:maxLines="1"
+                            android:minLines="1"
+                            android:singleLine="true"
+                            android:textCursorDrawable="@drawable/cursor_drawable" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/schoolInputLayout"
+                            style="@style/JoshInputFieldWithHelper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/name_of_school_college"
+                            app:helperText="@string/ex_dps_vit"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/educationInputLayout">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTxtCollegeName"
+                            style="@style/JoshEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="@string/allowed_name_characters"
+                            android:gravity="start"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords"
+                            android:lines="1"
+                            android:maxLength="30"
+                            android:maxLines="1"
+                            android:minLines="1"
+                            android:singleLine="true"
+                            android:textCursorDrawable="@drawable/cursor_drawable" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/completedYearInputLayout"
+                            style="@style/JoshInputFieldWithHelper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/completed"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/schoolInputLayout">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTxtCompletionDate"
+                            style="@style/JoshEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="@string/allowed_name_characters"
+                            android:gravity="start"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords"
+                            android:focusable="false"
+                            android:lines="1"
+                            android:onClick="@{()->handler.createDialogWithoutDateField()}"
+                            android:maxLength="30"
+                            android:maxLines="1"
+                            android:minLines="1"
+                            android:singleLine="true"
+                            android:textCursorDrawable="@drawable/cursor_drawable" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/occupation_details_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:text="@string/add_occupation_details"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                        android:textColor="@color/text_default"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                        app:layout_constraintTop_toBottomOf="@+id/educationDetailContainer" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+                        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+                        app:layout_constraintTop_toBottomOf="@+id/occupation_details_text">
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/companyInputLayout"
+                            style="@style/JoshInputFieldWithHelper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/company_business_name"
+                            app:helperText="@string/ex_josh_talks"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTxtOccupationPlace"
+                                style="@style/JoshEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:digits="@string/allowed_name_characters"
+                                android:gravity="start"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:lines="1"
+                                android:maxLength="24"
+                                android:maxLines="1"
+                                android:minLines="1"
+                                android:singleLine="true"
+                                android:textCursorDrawable="@drawable/cursor_drawable" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/occupationInputLayout"
+                            style="@style/JoshInputFieldWithHelper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:hint="@string/occupation"
+                            android:layout_marginBottom="@dimen/_54sdp"
+                            app:helperText="@string/occupation_filed_hint_text"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/companyInputLayout">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/txtOccupationName"
+                                style="@style/JoshEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:digits="@string/allowed_name_characters"
+                                android:gravity="start"
+                                android:imeOptions="actionDone"
+                                android:inputType="textCapWords"
+                                android:lines="1"
+                                android:maxLength="24"
+                                android:maxLines="1"
+                                android:minLines="1"
+                                android:singleLine="true"
+                                android:textCursorDrawable="@drawable/cursor_drawable" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+</layout>
+
+

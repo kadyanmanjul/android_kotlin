@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.premium.ui.payment.new_buy_page_layout.model.CourseDetailsList" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/price_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="#D8D8D8"
+            app:strokeWidth="@dimen/_1sdp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/price_root_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llll"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_image_shimmer"
+                        android:layout_width="@dimen/_27sdp"
+                        android:layout_height="@dimen/_27sdp"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:src="@color/disabled" />
+
+                    <LinearLayout
+                        android:id="@+id/ll"
+                        android:layout_width="@dimen/_157sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_14sdp"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/course_name_shimmer"
+                            android:layout_width="@dimen/_130sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:background="@drawable/bg_rounded_corner"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/pure_black"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/coupon_save_percent_shimmer"
+                            android:layout_width="@dimen/_100sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@drawable/bg_rounded_corner"
+                            android:gravity="center"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingHorizontal="@dimen/_8sdp"
+                            android:paddingVertical="@dimen/_4sdp"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
+                            android:textColor="@color/pure_white"
+                            android:textStyle="bold"
+                            app:textAllCaps="false" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/lll"
+                        android:layout_width="@dimen/_53sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_12sdp"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/discount_price_shimmer"
+                            android:layout_width="@dimen/_50sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_gravity="end"
+                            android:background="@drawable/bg_rounded_corner"
+                            android:gravity="end" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/original_price_shimmer"
+                            android:layout_width="@dimen/_50sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_gravity="end"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@drawable/bg_rounded_corner"
+                            android:gravity="end" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/price_per_day_shimmer"
+                            android:layout_width="@dimen/_50sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_gravity="end"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@drawable/bg_rounded_corner" />
+
+                    </LinearLayout>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>
+

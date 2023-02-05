@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Josh Skills</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="downloading_complete">ਡਾਊਨਲੋਡ ਪੂਰਾ ਹੋਇਆ</string>
+    <string name="not_now">Not Now</string>
+    <string name="not_now_underline"><u>Not Now</u></string>
+    <string name="header_congratulation">ਵਧਾਈਆਂ</string>
+    <string name="name">ਨਾਮ</string>
+    <string name="email">ਈ - ਮੇਲ</string>
+    <string name="gallery">ਗੈਲਰੀ</string>
+    <string name="audio">ਆਡੀਓ </string>
+    <string name="camera">ਕੈਮਰਾ</string>
+    <string name="volume_up_message">ਕਿਰਪਾ ਕਰਕੇ ਵਾਲੀਅਮ ਵਧਾਓ</string>
+    <string name="storage_permission_message">ਮੀਡੀਆ ਨੂੰ ਦੇਖਣ ਜਾਂ ਭੇਜਣ ਲਈ, ਜੋਸ਼ ਸਕਿਲਸ ਨੂੰ ਤੁਹਾਡੀ ਡਿਵਾਈਸ ਦੀਆਂ ਫੋਟੋਆਂ, ਮੀਡੀਆ ਅਤੇ ਫਾਈਲਾਂ ਤੱਕ ਪਹੁੰਚ ਕਰਨ ਦਿਓ।</string>
+    <string name="record_permission_message">ਵੌਇਸ ਸੁਨੇਹਿਆਂ ਨੂੰ ਰਿਕਾਰਡ ਕਰਨ ਲਈ, ਜੋਸ਼ ਸਕਿੱਲਸ ਨੂੰ ਤੁਹਾਡੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਅਤੇ ਤੁਹਾਡੀ ਡਿਵਾਈਸ ਦੀਆਂ ਫ਼ੋਟੋਆਂ, ਮੀਡੀਆ ਅਤੇ ਫ਼ਾਈਲਾਂ ਤੱਕ ਪਹੁੰਚ ਕਰਨ ਦਿਓ। ਸੈਟਿੰਗਾਂ &amp;gt; ਅਨੁਮਤੀਆਂ &amp;#39;ਤੇ ਜਾਓ, ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਅਤੇ ਸਟੋਰੇਜ ਨੂੰ ਚਾਲੂ ਕਰੋ।</string>
+    <string name="camera_permission_message">ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਕੈਪਚਰ ਕਰਨ ਲਈ, ਜੋਸ਼ ਸਕਿੱਲਸ ਨੂੰ ਆਪਣੇ ਕੈਮਰੇ ਅਤੇ ਤੁਹਾਡੀ ਡਿਵਾਈਸ ਦੀਆਂ ਫੋਟੋਆਂ, ਮੀਡੀਆ ਅਤੇ ਫਾਈਲਾਂ ਤੱਕ ਪਹੁੰਚ ਕਰਨ ਦਿਓ।</string>
+    <string name="type_message_hint">ਸੁਨੇਹਾ ਟਾਈਪ ਕਰੋ</string>
+    <string name="open">OPEN</string>
+    <string name="submit">Submit</string>
+    <string name="play_button_description">ਪਲੇ ਬਟਨ</string>
+    <string name="continue_label">ਜਾਰੀ ਰੱਖੋ</string>
+    <string name="message_size_limit">ਸੁਨੇਹੇ ਦੇ ਆਕਾਰ ਦੀ ਸੀਮਾ ਵੱਧ ਗਈ</string>
+    <string name="pdf_desc">%s ਪੰਨਾ pdf</string>
+    <string name="restart">Restart</string>
+    <string name="update_message">ਹੁਣੇ ਇੱਕ ਅੱਪਡੇਟ ਡਾਊਨਲੋਡ ਕੀਤਾ ਹੈ।</string>
+    <string name="update_download_success_message">ਹੁਣੇ ਇੱਕ ਅੱਪਡੇਟ ਡਾਊਨਲੋਡ ਕੀਤਾ ਹੈ।</string>
+    <string name="slide_to_cancel">ਰੱਦ ਕਰਨ ਲਈ ਸਲਾਈਡ ਕਰੋ</string>
+    <string name="explore_new">Course Dekhein</string>
+
+    <string name="explorer_courses">Explore Courses</string>
+
+    <string name="start_course">Start Course</string>
+    <string name="done">ਪੂਰਾ ਕੀਤਾ</string>
+    <string name="find_more_courses">Find More Courses</string>
+    <string name="internet_not_available_msz">ਇੰਝ ਲੱਗਦਾ ਹੈ ਕਿ ਤੁਹਾਡਾ ਇੰਟਰਨੈੱਟ ਬਹੁਤ ਹੌਲੀ ਹੈ ਜਾਂ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।</string>
+    <string name="plz_wait">ਕ੍ਰਿਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ</string>
+    <string name="plz_wait_feedback">ਕਿਰਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ, ਜਦੋਂ ਫੀਡਬੈਕ ਤਿਆਰ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ</string>
+    <string name="your_mobile_number">"ਤੁਹਾਡਾ ਮੋਬਾਈਲ ਨੰਬਰ"</string>
+    <string name="please_enter_otp">ਕਿਰਪਾ ਕਰਕੇ otp ਦਰਜ ਕਰੋ</string>
+    <string name="confirm_number">ਆਪਣੇ ਨੰਬਰ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ</string>
+    <string name="send_otp">otp ਭੇਜੋ</string>
+    <string name="or">OR</string>
+    <string name="no_new_message_arrive">ਕੋਈ ਨਵੀਂ ਕਲਾਸ ਨਹੀਂ</string>
+    <string name="something_went_wrong">ਓਹ! ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ ਹੈ</string>
+    <string name="time_ago_now">ਕੁਝ ਪਲ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_full_minute">%1$d ਮਿੰਟ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_full_minutes">%1$d ਮਿੰਟ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_full_hour">%1$d ਘੰਟੇ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_full_hours">%1$d ਘੰਟੇ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_full_days">%1$d ਦਿਨ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_full_month">%1$d ਮਹੀਨੇ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_full_months">%1$d ਮਹੀਨੇ ਪਹਿਲਾਂ</string>
+    <string name="attach_image">ਫੋਟੋ ਸ਼ਾਮਲ ਕਰੋ</string>
+
+
+    <string name="practice">ਅਭਿਆਸ</string>
+    <string name="status_with_colon">Status : </string>
+    <string name="submit_answer">ਜਵਾਬ ਦਾਖਲ ਕਰੋ</string>
+    <string name="improve_answer">ਜਵਾਬ ਵਿੱਚ ਸੁਧਾਰ ਕਰੋ</string>
+    <string name="today_practise">Today\'s Practice</string>
+
+    <string name="hold_to_record_msz">ਆਪਣਾ Answer Record ਕਰਨ ਦੇ ਲਈ Hold ਕਰੋ ਤੇ Press ਕਰੋ</string>
+    <string name="your_answer">ਤੁਹਾਡੀ ਰਿਕਾਰਡਿੰਗ</string>
+    <string name="attempt_reading_practice">ਇਹ ਅੱਜ ਦਾ ਪਾਠ ਅਭਿਆਸ ਹੈ, ਇਸਨੂੰ ਰਿਕਾਰਡ ਕਰੋ ਅਤੇ ਜਮ੍ਹਾਂ ਕਰੋ</string>
+    <string name="your_feedback">ਤੁਹਾਡਾ ਫੀਡਬੈਕ</string>
+    <string name="your_submitted_answer">ਤੁਹਾਡਾ ਸਪੁਰਦ ਕੀਤਾ ਜਵਾਬ</string>
+    <string name="type_your_answer_hint">ਆਪਣਾ ਜਵਾਬ ਇੱਥੇ ਟਾਈਪ ਕਰੋ</string>
+    <string name="viewing_support_app_not_exist">ਤੁਹਾਡੇ ਕੋਲ ਇਸ content ਨੂੰ ਦੇਖਣ ਲਈ ਉਚਿਤ ਐਪ ਨਹੀਂ ਹੈ</string>
+    <string name="login_signup">Login\/Signup</string>
+    <string name="wrong_otp">ਦਾਖਲ ਕੀਤਾ OTP ਅਵੈਧ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ OTP ਦਾਖਲ ਕਰੋ ਜਾਂ OTP ਨੂੰ ਦੁਬਾਰਾ ਬਣਾਓ</string>
+    <string name="refer_and_earn">Refer &amp; Earn</string>
+    <string name="copy_code">ਰੈਫਰਲ ਕੋਡ ਕਲਿੱਪਬੋਰਡ ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ </string>
+    <string name="complete_payment">ਭੁਗਤਾਨ ਨੂੰ ਪੂਰਾ ਕਰੋ</string>
+    <string name="bill_detail_header">Bill Details</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="answer_not_submitted">ਜਵਾਬ ਦਾਖਲ ਨਹੀਂ ਕੀਤੇ ਗਏ</string>
+    <string name="use_tip">ਟਿਪ ਦੀ ਵਰਤੋਂ ਕਰੋ</string>
+    <string name="type_answer_label">ਆਪਣਾ ਜਵਾਬ ਟਾਈਪ ਕਰੋ</string>
+    <string name="upload_answer_label">ਆਪਣਾ ਜਵਾਬ ਅੱਪਲੋਡ ਕਰੋ</string>
+    <string name="course_overview">Course Overview</string>
+
+    <string name="submit_practise_msz">ਕਿਰਪਾ ਕਰਕੇ ਸਪੁਰਦ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਆਪਣਾ ਕੰਮ ਪੂਰਾ ਕਰੋ</string>
+    <string name="generic_message_for_error">ਇੱਕ ਤਰੁੱਟੀ ਪਾਈ ਗਈ ਸੀ। ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ ਜੀ!</string>
+    <string name="referral_header" formatted="false">Do you want your friends to grow too?</string>
+    <string name="share_more_text"><b>Share Knowledge, Earn Love</b></string>
+    <string name="go_to_course">Go To Course</string>
+    <string name="video_url_not_exist">ਕੁਝ ਗਲਤ ਹੈ! ਵੀਡੀਓ ਮੌਜੂਦ ਨਹੀਂ ਹੈ</string>
+    <string name="download_certificate">ਡਿਜੀਟਲ ਕਾਪੀ ਡਾਊਨਲੋਡ ਕਰੋ</string>
+    <string name="cancel_button">"ਰੱਦ ਕਰੋ ਬਟਨ"</string>
+    <string name="permission_dialog_description"><![CDATA[Agar aap course ko leke serious ho aur <b>Lessons</b> reminder and <b>Practice partner</b> calls miss nahi karna chahate ho to:<br><br><b>Settings</b> me jake <b>Auto Start</b> ko <b>ON</b> kare]]></string>
+    <string name="serious_student_ho">ਕੀ ਤੁਸੀਂ ਇੱਕ ਗੰਭੀਰ ਵਿਦਿਆਰਥੀ ਹੋ?</string>
+    <string name="allow">"ਦੀ ਇਜਾਜ਼ਤ"</string>
+    <string name="try_again">ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
+    <string name="chat_option">ਚੈਟ ਕਰੋ ਅਤੇ ਭੁਗਤਾਨ ਕਰੋ</string>
+    <string name="title">ਓਹ! ਭੁਗਤਾਨ ਅਸਫਲ ਰਿਹਾ।</string>
+    <string name="trx_id">ਲੈਣ-ਦੇਣ ID: %s</string>
+    <string name="reason">ਕਾਰਨ: %s</string>
+    <string name="starting_title">ਤੁਸੀਂ ਇਸਨੂੰ ਬਣਾਇਆ!</string>
+    <string name="starting_info">%s ਕੋਰਸ ਵਿੱਚ ਸੁਆਗਤ ਹੈ</string>
+    <string name="starting_info_2">ਤੁਹਾਡਾ %s ਸਫਲਤਾਪੂਰਵਕ ਕੋਰਸ ਵਿੱਚ ਦਾਖਲ ਹੋ ਗਿਆ ਹੈ।</string>
+    <string name="tutor_line">ਮੈਂ ਤੁਹਾਨੂੰ ਸਿਖਾਉਣ ਦੀ ਉਮੀਦ ਕਰਦਾ ਹਾਂ</string>
+    <string name="tutor_register">ਕਿਰਪਾ ਕਰਕੇ ਸ਼ੁਰੂਆਤ ਕਰਨ ਲਈ ਰਜਿਸਟਰ ਕਰੋ</string>
+    <string name="tutor_start">ਚਲੋ ਸ਼ੁਰੂ ਕਰੀਏ</string>
+    <string name="register_now">Register Now</string>
+    <string name="start">ਮੇਰਾ ਕੋਰਸ ਸ਼ੁਰੂ ਕਰੋ</string>
+    <string name="tip_used_info">ਟਿਪ ਵਰਤੀ ਗਈ! ਤੁਹਾਨੂੰ ₹ %s ਦੀ ਛੋਟ ਮਿਲੀ ਹੈ ਵੱਡੇ ਭਰਾ</string>
+    <string name="bade_bhaiya_tips_new">ਵੱਡੇ ਭਰਾ ਸੁਝਾਅ!</string>
+    <string name="tip_title">ਤੁਸੀਂ ਸਾਰੇ ਕੋਰਸਾਂ &amp;#39;ਤੇ ਛੋਟ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ!</string>
+    <string name="tip_valid">"ਅਗਲੇ %s ਦਿਨ ਤੱਕ ਵੈਧ"</string>
+    <string name="tip_discount">%s OFF</string>
+    <string name="order_summary">ਆਰਡਰ ਸੰਖੇਪ</string>
+    <string name="be_calm">ਸ਼ਾਂਤ ਰਹੋ</string>
+    <string name="dont_close">ਅਤੇ ਇਸ ਵਿੰਡੋ ਨੂੰ ਬੰਦ ਨਾ ਕਰੋ</string>
+    <string name="processing">ਅਸੀਂ ਤੁਹਾਡੇ ਭੁਗਤਾਨ ਦੀ ਪ੍ਰਕਿਰਿਆ ਕਰ ਰਹੇ ਹਾਂ। ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ</string>
+    <string name="bilkul_nahi">"ਨਹੀਂ"</string>
+    <string name="otp_verify_label">"ਆਪਣੇ OTP ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ"</string>
+    <string name="register">"ਰਜਿਸਟਰ"</string>
+    <string name="date_of_birth">Date Of Birth</string>
+    <string name="otp_wait_message">"ਉਡੀਕ ਕਰੋ। ਤੁਹਾਨੂੰ ਇਸ ਸਮੇਂ ਤੋਂ ਪਹਿਲਾਂ OTP ਮਿਲੇਗਾ।"</string>
+    <string name="select_gender">ਕਿਰਪਾ ਕਰਕੇ ਲਿੰਗ ਚੁਣੋ</string>
+    <string name="dob_error_toast">"ਕਿਰਪਾ ਕਰਕੇ ਜਨਮ ਮਿਤੀ ਦਾਖਲ ਕਰੋ"</string>
+    <string name="name_error_toast">ਨਾਮ ਖਾਲੀ ਨਹੀਂ ਰੱਖਿਆ ਜਾ ਸਕਦਾ!</string>
+    <string name="please_enter_valid_number">"ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ"</string>
+    <string name="enter_valid_email_toast">"ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ ਈਮੇਲ ਆਈਡੀ ਦਾਖਲ ਕਰੋ"</string>
+    <string name="enter_postal_address">"ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ ਡਾਕ ਪਤਾ ਦਾਖਲ ਕਰੋ"</string>
+    <string name="missed_call_verify_message">ਅਸੀਂ ਤਸਦੀਕ ਲਈ ਮਿਸਡ ਕਾਲ ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹਾਂ। ਕਿਰਪਾ ਕਰਕੇ ਪੁਸ਼ਟੀਕਰਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।</string>
+    <string name="otp_verify_message">ਤੁਹਾਡੇ ਮੋਬਾਈਲ ਨੰਬਰ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ ਇੱਕ 4 ਅੰਕਾਂ ਦਾ OTP SMS ਰਾਹੀਂ ਭੇਜਿਆ ਜਾਵੇਗਾ</string>
+    <string name="missed_call_label">"ਮਿਸਡ ਕਾਲ ਵੈਰੀਫਿਕੇਸ਼ਨ"</string>
+    <string name="wait_for_second">"%s ਸਕਿੰਟਾਂ ਲਈ ਉਡੀਕ ਕਰੋ"</string>
+    <string name="retry_miss_call_verify">ਮਿਸਡ ਕਾਲ ਵੈਰੀਫਿਕੇਸ਼ਨ ਦੁਬਾਰਾ ਕਰੋ</string>
+    <string name="flash_call_verify_permission_message">ਤੁਹਾਡੇ ਨੰਬਰ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ, Josh Skills ਨੂੰ ਕਾਲ ਕਰਨ ਅਤੇ ਫ਼ੋਨ ਕਰਨ ਦੀ ਇਜਾਜ਼ਤ ਦੀ ਲੋੜ ਹੋਵੇਗੀ।
+ਸੈਟਿੰਗਾਂ&gt; ਅਨੁਮਤੀ, ਕਾਲ \'ਤੇ ਟੈਪ ਕਰੋ।</string>
+    <string name="verification_failed">Verification Failed</string>
+    <string name="gender">Gender</string>
+    <string name="female">Female</string>
+    <string name="male">Male</string>
+    <string name="other">Other</string>
+    <string name="enter_referral_code">ਰੈਫਰਲ ਕੋਡ ਦਾਖਲ ਕਰੋ</string>
+    <string name="wrong_coupon">ਕੂਪਨ ਕੋਡ ਗਲਤ ਹੈ</string>
+    <string name="referral_success_info">ਤੁਹਾਨੂੰ ਤੁਹਾਡੇ ਦੋਸਤ %s ਦੁਆਰਾ ਰੈਫਰ ਕੀਤਾ ਗਿਆ ਹੈ</string>
+    <string name="referral_success_info2">ਅਤੇ ਤੁਹਾਨੂੰ ਆਪਣੇ ਪਹਿਲੇ ਕੋਰਸ &amp;#39;ਤੇ ₹ 50 ਦੀ ਛੋਟ ਮਿਲਦੀ ਹੈ।</string>
+    <string name="close">"ਰੋਕੋ "</string>
+    <string name="show_details">Show Details</string>
+    <string name="coupon_applied_free_course">ਕੂਪਨ ਲਾਗੂ ਕੀਤਾ ਗਿਆ! ਤੁਹਾਨੂੰ ਇਹ ਕੋਰਸ ਮੁਫਤ ਵਿੱਚ ਮਿਲਿਆ ਹੈ। ਹੁਣੇ ਦਰਜ ਕਰਵਾਓ</string>
+    <string name="apply_coupon">"ਕੂਪਨ ਲਾਗੂ ਕਰੋ"</string>
+    <string name="enter_promo_code">"ਪ੍ਰੋਮੋ ਕੋਡ ਦਾਖਲ ਕਰੋ"</string>
+    <string name="start_quiz">"ਕੁਇਜ਼ ਸ਼ੁਰੂ ਕਰੋ"</string>
+    <string name="conversational_practise">ਗੱਲਬਾਤ ਅਭਿਆਸ</string>
+    <string name="tap_to_continue">"ਜਾਰੀ ਰੱਖਣ ਲਈ ਟੈਪ ਕਰੋ"</string>
+    <string name="back_to_course">"ਕੋਰਸ ਤੇ ਵਾਪਸ"</string>
+    <string name="back_to_question">"ਸਵਾਲ ਵੱਲ ਵਾਪਸ"</string>
+    <string name="well_done">"ਹੁਸ਼ਿਆਰ "</string>
+    <string name="test_summary">ਇਹ ਤੁਹਾਡੇ ਟੈਸਟ ਦਾ ਸਾਰ ਹੈ</string>
+    <string name="test_summary_title">Test Summary</string>
+    <string name="attempted">ਕੋਸ਼ਿਸ਼ ਕੀਤੀ</string>
+    <string name="not_attempted">"ਕੋਸ਼ਿਸ਼ ਨਹੀਂ ਕੀਤੀ"</string>
+    <string name="right">"ਸਹੀ"</string>
+    <string name="wrong">"ਗਲਤ"</string>
+    <string name="edit_answer">"ਜਵਾਬ ਨੂੰ ਸੋਧੋ"</string>
+    <string name="view_answer">"ਜਵਾਬਾਂ &amp;#39;ਤੇ ਜਾਓ"</string>
+    <string name="revise_concept">Revise Concept</string>
+    <string name="back_to_summary">Back To Summary</string>
+    <string name="hello">\"ਸ਼ੁਭਕਾਮਨਾਵਾਂ\"</string>
+    <string name="total_attempted">ਕੁੱਲ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ</string>
+    <string name="total_question">"ਕੁੱਲ ਸਵਾਲ"</string>
+    <string name="see_answer">"ਸਹੀ ਜਵਾਬ ਦੇਖੋ"</string>
+    <string name="see_your_answer">"ਆਪਣੇ ਜਵਾਬ ਵੇਖੋ"</string>
+    <string name="reset">ਰੀਸੈਟ ਕਰੋ</string>
+    <string name="submit_record_msz">ਕੀ ਤੁਸੀਂ ਇਸ ਰਿਕਾਰਡਿੰਗ ਨੂੰ ਸਪੁਰਦ ਕਰਨਾ ਚਾਹੋਗੇ?</string>
+    <string name="unlock_class_text">"ਅਗਲੀ ਕਲਾਸ ਨੂੰ ਅਨਲੌਕ ਕਰੋ"</string>
+    <string name="start_now">"ਹੁਣੇ ਸ਼ੁਰੂ ਕਰੋ"</string>
+    <string name="subscription_feature_3">ਜੇਕਰ ਤੁਹਾਨੂੰ ਇਹ ਪਸੰਦ ਹੈ, ਤਾਂ ਤੁਸੀਂ ਸਿਰਫ਼ 599 ਵਿੱਚ 7 ਦਿਨਾਂ ਬਾਅਦ ਅੱਪਗ੍ਰੇਡ ਕਰ ਸਕਦੇ ਹੋ!</string>
+    <string name="subscription_feature_2">"ਤੁਸੀਂ 7 ਦਿਨਾਂ ਲਈ ਐਪ &amp;#39;ਤੇ ਸਾਰੇ ਕੋਰਸਾਂ ਤੱਕ ਅਸੀਮਤ ਪਹੁੰਚ ਪ੍ਰਾਪਤ ਕਰ ਸਕਦੇ ਹੋ"</string>
+    <string name="subscription_feature_1">"ਇਹ ਪਾਸ ਤੁਹਾਨੂੰ 7 ਦਿਨਾਂ ਲਈ ਸਾਰੇ ਕੋਰਸਾਂ ਤੱਕ ਪਹੁੰਚ ਦੇਵੇਗਾ - ਬਿਲਕੁਲ ਮੁਫਤ"</string>
+    <string name="unlimited_learning">"ਬੇਅੰਤ ਸਿਖਲਾਈ"</string>
+    <string name="subscription_heading">"ਸਬਸਕ੍ਰਿਪਸ਼ਨ ਦੇ ਨਾਲ ਭਾਰਤ ਦਾ ਪਹਿਲਾ"</string>
+    <string name="start_7_day_trial">"7 ਦਿਨਾਂ ਦੀ ਮੁਫ਼ਤ ਅਜ਼ਮਾਇਸ਼ ਸ਼ੁਰੂ ਕਰੋ"</string>
+    <string name="start_free_course">"ਹੁਣੇ ਮੁਫ਼ਤ ਕੋਰਸ ਸ਼ੁਰੂ ਕਰੋ"</string>
+    <string name="get_one_year_pass">ਸਾਰੇ ਕੋਰਸਾਂ ਲਈ ਐਕਸੈਸ ਪਾਸ ਪ੍ਰਾਪਤ ਕਰੋ</string>
+    <string name="free_trial_ended">"ਮੁਫ਼ਤ ਅਜ਼ਮਾਇਸ਼ ਖ਼ਤਮ ਹੋ ਗਈ ਹੈ"</string>
+    <string name="me">"ਮੈਂ"</string>
+    <string name="add_this">Add This</string>
+    <string name="delete_media_title">"ਕਲੀਅਰ ਕੋਰਸ ਮੀਡੀਆ"</string>
+    <string name="delete_media_message">ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ &amp;#39;ਤੇ ਇਸ ਕੋਰਸ ਤੋਂ ਸਾਰੇ ਮੀਡੀਆ ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?</string>
+    <string name="reminders">"ਰਿਮਾਈਂਡਰ"</string>
+    <string name="set_reminder">"ਰੀਮਾਈਂਡਰ ਸੈੱਟ ਕਰੋ"</string>
+    <string name="add_reminder">"ਰੀਮਾਈਂਡਰ ਸ਼ਾਮਲ ਕਰੋ"</string>
+    <string name="every_day">"ਨਿੱਤ "</string>
+    <string name="on_weekdays">ਹਫ਼ਤੇ ਦੇ ਦਿਨ</string>
+    <string name="on_weekends">"ਹਫ਼ਤੇ ਦੇ ਅੰਤ ਵਿੱਚ"</string>
+    <string name="repeat">"ਦੁਹਰਾਓ"</string>
+    <string name="delete">"ਹਟਾਓ"</string>
+    <string name="save_changes">"ਬਦਲਾਵਾਂ ਨੂੰ ਸੁਰੱਖਿਅਤ ਕਰੋ"</string>
+    <string name="add_more_reminder">"ਹੋਰ ਰੀਮਾਈਂਡਰ ਸ਼ਾਮਲ ਕਰੋ"</string>
+    <string name="dismiss">"ਖਾਰਿਜ਼ ਕਰੋ"</string>
+    <string name="class_reminder">"ਕਲਾਸ ਰੀਮਾਈਂਡਰ"</string>
+    <string name="alarms_deleted">"ਅਲਾਰਮ ਮਿਟਾਇਆ ਗਿਆ"</string>
+    <string name="click_to_start_the_course">"ਕੋਰਸ ਸ਼ੁਰੂ ਕਰੋ" ਤੇ ਕਲਿਕ ਕਰੋ</string>
+    <string name="practice_with_partner">"ਸਾਥੀ ਨਾਲ ਅਭਿਆਸ ਕਰੋ"</string>
+    <string name="time_ago_full_seconds">"%1$d ਸਕਿੰਟ ਪਹਿਲਾਂ"</string>
+    <string name="inbox_header">Josh Skills</string>
+    <string name="time_ago_seconds">"%1$d ਸਕਿੰਟ ਪਹਿਲਾਂ"</string>
+    <string name="time_ago_minute">%1$d ਮਿੰਟ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_minutes">%1$d ਮਿੰਟ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_hour">%1$d ਘੰਟੇ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_hours">%1$d ਘੰਟੇ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_days">%1$d ਦਿਨ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_month">%1$d ਮਹੀਨੇ ਪਹਿਲਾਂ</string>
+    <string name="time_ago_months">%1$d ਮਹੀਨੇ ਪਹਿਲਾਂ</string>
+    <string name="volume">ਵਾਲੀਅਮ: %1$d</string>
+    <string name="brightness">ਚਮਕ: %1$d</string>
+    <string name="seconds">%1$d ਸਕਿੰਟ</string>
+    <string name="back_button_desc">ਵਾਪਸ ਜਾਓ</string>
+    <string name="help_answer">ਕੀ ਇਹ ਜਵਾਬ ਲਾਭਦਾਇਕ ਸੀ?</string>
+    <string name="go_home_text">"ਘਰ ਜਾਓ"</string>
+    <string name="faq_title">FAQ</string>
+    <string name="yes">"ਹਾਂ"</string>
+    <string name="no">"ਨਹੀਂ"</string>
+    <string name="gmail_login_error_message">ਇੱਕ ਤਰੁੱਟੀ ਪਾਈ ਗਈ ਸੀ। ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ ਜੀ!</string>
+    <string name="read_more">"ਹੋਰ ਪੜ੍ਹੋ "</string>
+    <string name="read_less">"ਘੱਟ ਪੜ੍ਹੋ"</string>
+    <string name="downloading_start">ਸਿਲੇਬਸ ਨੂੰ ਡਾਊਨਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</string>
+    <string name="downloaded_syllabus">ਸਿਲੇਬਸ PDF ਨੂੰ ਸਫਲਤਾਪੂਰਵਕ ਡਾਊਨਲੋਡ ਕੀਤਾ ਗਿਆ!</string>
+    <string name="download_syllabus">Download Syllabus</string>
+    <string name="chech_location">Check for your location</string>
+    <string name="meet_me">ਮੈਨੂੰ ਮਿਲੋ!</string>
+    <string name="meet_the_students">"ਵਿਦਿਆਰਥੀਆਂ ਨੂੰ ਮਿਲੋ"</string>
+    <string name="hi_i_am">ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਆਈ</string>
+    <string name="about_teacher_title">"ਅਧਿਆਪਕ ਬਾਰੇ"</string>
+    <string name="joined">Joined</string>
+    <string name="usb_connected_message">ਤੁਹਾਡੀ ਡਿਵਾਈਸ PC ਨਾਲ ਕਨੈਕਟ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਵੀਡੀਓ ਚਲਾਉਣ ਲਈ USB ਡਾਟਾ ਕਨੈਕਸ਼ਨ ਡਿਸਕਨੈਕਟ ਕਰੋ</string>
+    <string name="select_your_character">"ਪਹਿਲਾਂ ਆਪਣਾ ਕਿਰਦਾਰ ਚੁਣੋ"</string>
+    <string name="ok_got_it_lbl">ਠੀਕ ਹੈ ਸਮਝ ਲਿਆ</string>
+    <string name="start_practise">"ਅਭਿਆਸ ਸ਼ੁਰੂ ਕਰੋ"</string>
+    <string name="practise_intro_sub">ਇਸ ਅਭਿਆਸ ਨੂੰ ਕਿਵੇਂ ਪੂਰਾ ਕਰਨਾ ਹੈ?</string>
+    <string name="hint_name_field">ਤੁਹਾਡਾ ਨਾਮ?</string>
+    <string name="select_language">ਭਾਸ਼ਾ ਦੀ ਚੋਣ</string>
+    <string name="personal_information">ਵਿਅਕਤੀਗਤ ਜਾਣਕਾਰੀ</string>
+    <string name="app_settings">ਐਪ ਸੈਟਿੰਗਾਂ</string>
+    <string name="clear_all_downloads">Clear All Downloads</string>
+    <string name="sign_out">"ਲਾੱਗ ਆਊਟ, ਬਾਹਰ ਆਉਣਾ"</string>
+    <string name="notifications">"ਸੂਚਨਾਵਾਂ"</string>
+    <string name="autostart">"ਆਟੋ ਸਟਾਰਟ ਦੀ ਇਜਾਜ਼ਤ ਹੈ"</string>
+    <string name="language">ਭਾਸ਼ਾ</string>
+    <string name="login_type">ਲਾਗਇਨ ਕਿਸਮ</string>
+    <string name="auto_start_prompt_message">ਕਿਰਪਾ ਕਰਕੇ ਜਦੋਂ ਐਪ ਬੈਕਗ੍ਰਾਊਂਡ ਵਿੱਚ ਹੋਵੇ ਤਾਂ ਸੂਚਨਾਵਾਂ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਆਟੋਸਟਾਰਟ ਨੂੰ ਸਮਰੱਥ ਬਣਾਓ</string>
+    <string name="rate_us">ਸਾਨੂੰ ਦਰਜਾ ਦਿਓ</string>
+    <string name="short_seconds">ਸਕਿੰਟ</string>
+    <string name="time_ago_yesterday_at">ਕੱਲ੍ਹ %1$s</string>
+    <string name="usb_disconnect_title">USB ਨੂੰ ਡਿਸਕਨੈਕਟ ਕਰੋ</string>
+    <string name="selection_arrow">ਚੋਣ ਤੀਰ</string>
+    <string name="download_quality">ਡਾਊਨਲੋਡ ਗੁਣਵੱਤਾ</string>
+    <string name="pending">ਵਿਚਾਰ ਅਧੀਨ</string>
+    <string name="submitted">ਬੇਨਤੀ ਕੀਤੀ</string>
+    <string name="select_country">ਦੇਸ਼ ਚੁਣੋ</string>
+    <string name="next_class">ਅਗਲੀ ਕਲਾਸ</string>
+    <string name="enter_country">ਕਿਰਪਾ ਕਰਕੇ ਦੇਸ਼ ਦਾਖਲ ਕਰੋ</string>
+    <string name="no_result_found">ਕੋਈ ਨਤੀਜਾ ਨਹੀਂ ਮਿਲਿਆ</string>
+    <string name="correct_answer_label">ਤੁਹਾਡਾ ਜਵਾਬ ਸਹੀ ਹੈ</string>
+    <string name="wrong_answer_label">ਤੁਹਾਡਾ ਜਵਾਬ ਗਲਤ ਹੈ</string>
+    <string name="english_practise_hint">ਸਾਥੀ ਨਾਲ ਲਾਈਵ ਕਾਲ &amp;#39;ਤੇ ਅੰਗਰੇਜ਼ੀ ਦਾ ਅਭਿਆਸ ਕਰੋ</string>
+    <string name="photo">ਵਿਜ਼ੂਅਲ</string>
+    <string name="voice_message">ਵੌਇਸ ਸੁਨੇਹਾ</string>
+    <string name="video">ਵੀਡੀਓ</string>
+    <string name="conversation">Video %1$s</string>
+    <string name="unlock_class_demo">ਹੁਣ ਲਈ ਕਲਾਸਰੂਮ ਡੈਮੋ ਨੂੰ ਅਨਲੌਕ ਕਰੋ</string>
+    <string name="ex_referralcode">eg. L3ARN</string>
+
+    <string name="c_practise_tab_1">ਸੁਣੋ</string>
+    <string name="c_practise_tab_2">ਕਵਿਜ਼</string>
+    <string name="c_practise_tab_3">ਅਭਿਆਸ</string>
+    <string name="c_practise_tab_4">ਰਿਕਾਰਡ</string>
+    <string name="next_class_started">ਅਗਲੀ ਕਲਾਸ ਸ਼ੁਰੂ ਹੁੰਦੀ ਹੈ</string>
+    <string name="whatsApp_not_installed">WhatsApp ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ</string>
+    <string name="invalid_coupon_code">ਅਵੈਧ ਕੂਪਨ ਕੋਡ। ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
+    <string name="speaking">Speaking</string>
+    <string name="grammar">Grammar</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="reading">Reading</string>
+    <string name="lesson_name">Lesson %1$d: %2$s</string>
+    <string name="start_lesson">Start Lesson</string>
+    <string name="continue_lesson">ਪਾਠ ਜਾਰੀ ਰੱਖੋ</string>
+    <string name="show_explanation">ਵਿਆਖਿਆ ਦਿਖਾਓ</string>
+    <string name="hide_explanation">ਵਿਆਖਿਆ ਲੁਕਾਓ</string>
+    <string name="explanation">ਵਿਆਖਿਆ</string>
+    <string name="lessons">Lessons</string>
+    <string name="exam">Certification Exam</string>
+    <string name="congratulations">ਵਧਾਈਆਂ</string>
+
+    <string name="lesson_completed">ਪਾਠ ਪੂਰਾ ਹੋਇਆ</string>
+    <string name="redo_quiz">ਦੁਬਾਰਾ ਕਰੋ</string>
+    <string name="quiz_completed">ਕਵਿਜ਼ ਪੂਰਾ ਹੋਇਆ !!</string>
+    <string name="marks_text">ਤੁਹਾਨੂੰ %1$d/%2$d ਸਹੀ ਮਿਲਿਆ</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="user_does_not_exist">ਇਹ ਉਪਭੋਗਤਾ ਹੁਣ ਮੌਜੂਦ ਨਹੀਂ ਹੈ</string>
+    <string name="start_quiz_camel">"ਕੁਇਜ਼ ਸ਼ੁਰੂ ਕਰੋ"</string>
+    <string name="word_tag">Word %1$d/%2$d - %3$s</string>
+    <string name="ques_short_form">ਸਵਾਲ- %1$d/%2$d %3$s</string>
+    <string name="completed">ਹੋ ਗਿਆ</string>
+    <string name="profile_photo">ਪ੍ਰੋਫਾਈਲ ਤਸਵੀਰ</string>
+    <string name="age">Age:</string>
+    <string name="batch">Batch:</string>
+    <string name="highlights">Highlights</string>
+    <string name="points">Points</string>
+    <string name="awards">Awards</string>
+    <string name="see_all">ਹੋਰ ਜਾਣਕਾਰੀ</string>
+    <string name="with">with</string>
+    <string name="lesson_no">"Lesson %1$d"</string>
+
+    <string name="today_lesson">Today\'s lesson: %1$s</string>
+    <string name="examination_not_unlocked">ਪ੍ਰੀਖਿਆ ਅਨਲੌਕ ਨਹੀਂ ਕੀਤੀ ਗਈ</string>
+    <string name="okay">Okay</string>
+    <string name="exam_info">%1$d ਸਵਾਲ - %2$d ਮਿੰਟ - %3$d ਅੰਕ</string>
+    <string name="you_can_only_attempt_the_certification_exam">ਤੁਸੀਂ ਪਾਠ %1$d ਤੋਂ ਬਾਅਦ ਹੀ ਪ੍ਰਮਾਣੀਕਰਣ ਪ੍ਰੀਖਿਆ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਸਕਦੇ ਹੋ</string>
+    <string name="rank">Rank</string>
+    <string name="how_to_pronounce">How to pronounce:</string>
+    <string name="auto_logout_message">ਤੁਸੀਂ ਇਸ ਫ਼ੋਨ ਤੋਂ ਲੌਗ ਆਊਟ ਹੋ ਗਏ ਹੋ ਕਿਉਂਕਿ ਤੁਸੀਂ ਕਿਸੇ ਹੋਰ ਫ਼ੋਨ ਤੋਂ ਲੌਗਇਨ ਕੀਤਾ ਹੈ।</string>
+
+    <string name="call_engage_record_message">ਜਦੋਂ ਤੁਸੀਂ ਕਾਲ &amp;#39;ਤੇ ਹੁੰਦੇ ਹੋ ਤਾਂ ਅਭਿਆਸ ਨੂੰ ਰਿਕਾਰਡ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ</string>
+    <string name="call_engage_initiate_call_message">ਜਦੋਂ ਤੁਸੀਂ ਪਹਿਲਾਂ ਹੀ ਕਾਲ &amp;#39;ਤੇ ਹੁੰਦੇ ਹੋ ਤਾਂ ਨਵੀਂ ਕਾਲ ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ</string>
+    <string name="mute">Mute</string>
+    <string name="restart_course_message">ਕੀ ਤੁਸੀਂ ਕੋਰਸ ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਤੁਹਾਡੇ ਕਮਾਏ Points ਤੁਹਾਡੇ ਕੋਲ ਰਹਿਣਗੇ ਪਰ ਕੋਰਸ Lesson 1 ਤੋਂ ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਹੋਵੇਗਾ</string>
+    <string name="mehnat_prompt">ਇਸ ਤਰ੍ਹਾਂ ਕੋਸ਼ਿਸ਼ ਕਰਦੇ ਰਹੋ</string>
+    <string name="extend_free_trial_subheading">ਅਸੀਂ ਦੇਖਦੇ ਹਾਂ ਕਿ ਤੁਸੀਂ Lesson 1 ਪੂਰਾ ਨਹੀਂ ਕੀਤਾ ਹੈ!ਇਹ ਐਪ ਸਿਰਫ਼ serious students ਲਈ ਹੈ ਜੋ ਅੰਗਰੇਜ਼ੀ ਸਿੱਖਣਾ ਚਾਹੁੰਦੇ ਹਨ।</string>
+    <string name="extend_free_trial1">ਅਸੀਂ ਤੁਹਾਨੂੰ ਇੱਕ ਦਿਨ ਦਾ Free Trial ਦੇਣਾ ਚਾਹੁੰਦੇ ਹਾਂ।</string>
+    <string name="extend_free_trial2">ਤੁਸੀਂ Free Trial ਸਿਰਫ਼ ਇੱਕ ਵਾਰ ਵਧਾ ਸਕਦੇ ਹੋ।</string>
+    <string name="extend_free_trial3">ਕੀ ਤੁਸੀਂ ਆਪਣੀ English ਨੂੰ ਸੁਧਾਰਨ ਲਈ serious ਹੋ?</string>
+    <string name="share_screen_tagline"><b>আমি রোজ</b> speaking practice <b>করছি</b> call<b>\nএ</b> নতুন নতুন মানুষের <b>সাথে।</b></string>
+    <string name="share_with_friends_text">আমি English শিখছি, যেখানে Environment পাওয়া নতুন লোকের সাথে কথা বলার। তুমিও ইংলিশ শিখতে পার।</string>
+
+    <string name="tooltip_conversation">ਤੁਹਾਡਾ ਜਮਾਤੀ ਕੌਣ ਹੈ ਤੁਸੀਂ ਇਸਨੂੰ ਇੱਥੇ ਦੇਖ ਸਕਦੇ ਹੋ</string>
+    <string name="tooltip_lesson_grammar">ਅੱਜ ਇਸ ਭਾਗ ਵਿੱਚ ਅਸੀਂ ਆਪਣੇ ਵਿਆਕਰਨ ਪੱਧਰ ਦੀ ਜਾਂਚ ਕਰਾਂਗੇ</string>
+    <string name="tooltip_leaderboard_sotd">ਇੱਕ ਦਿਨ ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਮਿਹਨਤ ਕਰਨ ਵਾਲੇ ਵਿਦਿਆਰਥੀ ਨੂੰ ਦਿਨ ਦਾ ਵਿਦਿਆਰਥੀ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ।</string>
+    <string name="tooltip_leaderboard_sotm">ਇੱਕ ਮਹੀਨੇ ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਮਿਹਨਤ ਕਰਨ ਵਾਲੇ ਵਿਦਿਆਰਥੀ ਨੂੰ ਮਹੀਨੇ ਦਾ ਵਿਦਿਆਰਥੀ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ।</string>
+    <string name="tooltip_leaderboard_sotw">ਇੱਕ ਹਫ਼ਤੇ ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਮਿਹਨਤ ਕਰਨ ਵਾਲੇ ਵਿਦਿਆਰਥੀ ਨੂੰ ਹਫ਼ਤੇ ਦਾ ਵਿਦਿਆਰਥੀ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ।</string>
+    <string name="tooltip_online_status">ਹੁਣ ਅਸੀਂ ਇਹ ਪਤਾ ਲਗਾ ਸਕਦੇ ਹਾਂ ਕਿ ਕਿਹੜੇ ਵਿਦਿਆਰਥੀ ਔਨਲਾਈਨ ਹਨ</string>
+    <string name="tooltip_open_profile">ਤੁਸੀਂ ਕਿਸੇ ਦੀ ਵੀ profile ਖੋਲ੍ਹ ਸਕਦੇ ਹੋ</string>
+    <string name="tooltip_points_history_screen">ਅਸੀਂ ਦੇਖ ਸਕਦੇ ਹਾਂ ਕਿ ਇਸ ਵਿਦਿਆਰਥੀ ਨੇ ਇੱਥੋਂ ਕਿਵੇਂ ਅੰਕ ਪ੍ਰਾਪਤ ਕੀਤੇ</string>
+    <string name="tooltip_search_anyone">ਇੱਥੋਂ, ਅਸੀਂ ਆਪਣੇ ਦੋਸਤਾਂ ਅਤੇ ਬਾਕੀ ਵਿਦਿਆਰਥੀਆਂ ਦੀ ਖੋਜ ਕਰ ਸਕਦੇ ਹਾਂ।</string>
+    <string name="tooltip_user_profile_screen">ਅਸੀਂ ਜਿੰਨੀ ਮਿਹਨਤ ਕਰਦੇ ਹਾਂ, ਓਨੇ ਹੀ ਜ਼ਿਆਦਾ ਅੰਕ ਪ੍ਰਾਪਤ ਕਰਦੇ ਹਾਂ</string>
+    <string name="referral_share_text">ਮੈਂ Bharat ਵਿੱਚ Best  Teacher ਤੋਂ Spoken English ਅਤੇ Personality Development ਸਿੱਖ ਰਿਹਾ ਹਾਂ  ਹੁਣ ਮੇਰੇ ਨਾਲ ਸ਼ੁਰੂ ਕਰੋ 💪. ਮੇਰੇ ਤੋਂ ਇਹ ₹ ** OFF ਲਓ  Use my code ****. Download the app by clicking on the link:</string>
+    <string name="sign_up_profile_occupation_aspiration_text">ਇਹ information ਤੁਹਾਡੇ Practice Partners ਨੂੰ ਦਿਖਾਈ ਦੇਵੇਗੀ</string>
+
+    <string name="practice_call_experience">ਆਪਣੇ ਅਭਿਆਸ ਕਾਲ ਦੇ ਅਨੁਭਵ ਨੂੰ ਬਿਹਤਰ ਬਣਾਓ</string>
+    <string name="interests_select_same_interest_users_connect">ਤੁਹਾਡੀਆਂ ਦਿਲਚਸਪੀਆਂ ਦੀ ਚੋਣ ਕਰੋ ਤਾਂ ਜੋ ਅਸੀਂ ਤੁਹਾਨੂੰ ਉਸੇ ਦਿਲਚਸਪੀ ਵਾਲੇ ਉਪਭੋਗਤਾਵਾਂ ਨਾਲ ਜੋੜ ਸਕੀਏ</string>
+    <string name="english_level">ਤੁਹਾਡਾ ਅੰਗਰੇਜ਼ੀ ਪੱਧਰ ਕੀ ਹੈ ?</string>
+    <string name="referral_point_one">Invite ਕਰੋ ਤੇ ਜਿੱਤੋ ! ਤੁਹਾਨੂੰ ਤੇ ਤੁਹਾਡੇ ਦੋਸਤ ਨੂੰ ਮਿਲਣਗੇ %1$s</string>
+    <string name="referral_point_two">Share ਕਰੋ ਹੇਠਾਂ ਦਿੱਤਾ ਗਿਆ code ਤੇ ਆਪਣੇ ਦੋਸਤਾਂ ਨੂੰ ਕਹੋ Course ਲੈਣ ਦੇ ਲਈ ਇਹਨੂੰ ਵਰਤਣ।</string>
+
+    <string name="first_call_popup_title">English ਬੋਲਣ ਨਾਲ ਆਉਂਦੀ ਹੈ....</string>
+    <string name="first_call_popup_subtitle">%s, ਆਪਣਾ ਪਹਿਲਾ call dial ਕਰੋ ਤੇ ਦੂਸਰੇ students ਦੇ ਨਾਲ English ਵਿੱਚ ਗੱਲ ਕਰੋ।</string>
+</resources>
