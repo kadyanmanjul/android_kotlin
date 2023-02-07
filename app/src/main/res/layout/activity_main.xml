@@ -36,4 +36,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_download_free_module"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download Free Trail"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_open_free_module"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Free Trail"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_download_free_module" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

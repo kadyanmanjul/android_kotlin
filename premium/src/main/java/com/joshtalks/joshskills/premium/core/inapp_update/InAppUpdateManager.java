@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
+
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -15,7 +17,6 @@ import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
-import com.google.android.play.core.tasks.Task;
 
 
 public class InAppUpdateManager implements LifecycleObserver {

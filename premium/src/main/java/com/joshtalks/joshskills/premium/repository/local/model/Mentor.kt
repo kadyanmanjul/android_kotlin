@@ -120,14 +120,14 @@ class Mentor {
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true)
                     .push()
-                if (joshApplication.isAppVisible()) {
+                //if (joshApplication.isAppVisible()) {
                     val intent = Intent(joshApplication, SignUpActivity::class.java)
                     intent.apply {
                         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                     joshApplication.startActivity(intent)
-                }
+                //}
                 if (showNotification) {
                     showLogoutNotification()
                 }

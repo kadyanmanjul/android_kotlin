@@ -14,8 +14,9 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.identifier.AdvertisingIdClient
+import com.freshchat.consumer.sdk.provider.FreshchatInitProvider
+//import com.google.android.gms.ads.MobileAds
+//import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -899,16 +900,16 @@ class FakeCallNotificationWorker(
     }
 }
 
-fun getGoogleAdId(context: Context): String? {
-    try {
-        MobileAds.initialize(context)
-        val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
-        return adInfo.id
-    } catch (e: Exception) {
-
-    }
-    return null
-}
+//fun getGoogleAdId(context: Context): String? {
+//    try {
+//        MobileAds.initialize(context)
+//        val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
+//        return adInfo.id
+//    } catch (e: Exception) {
+//
+//    }
+//    return null
+//}
 
 class UpdateServerTimeWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

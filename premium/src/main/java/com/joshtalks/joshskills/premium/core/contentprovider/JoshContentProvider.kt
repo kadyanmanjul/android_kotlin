@@ -79,10 +79,10 @@ class JoshContentProvider : ContentProvider() {
             CURRENT_ACTIVITY -> {
                 val cursor = MatrixCursor(arrayOf(CURRENT_ACTIVITY_COLUMN))
                 try {
-                    if(AppObjectController.joshApplication.isAppVisible())
-                        cursor.addRow(arrayOf(ActivityLifecycleCallback.currentActivity::class.java.simpleName))
-                    else
-                        cursor.addRow(arrayOf("NA"))
+//                    if(AppObjectController.joshApplication.isAppVisible())
+//                        cursor.addRow(arrayOf(ActivityLifecycleCallback.currentActivity::class.java.simpleName))
+//                    else
+//                        cursor.addRow(arrayOf("NA"))
                 } catch (e : Exception) {
                     e.printStackTrace()
                     cursor.addRow(arrayOf("NA"))

@@ -4,10 +4,10 @@
     package="com.joshtalks.joshskills.freetrial">
 
     <dist:module
-        dist:instant="true"
+        dist:instant="false"
         dist:title="@string/title_freetrial">
         <dist:delivery>
-            <dist:install-time />
+            <dist:on-demand />
         </dist:delivery>
 
         <dist:fusing dist:include="true" />
@@ -15,9 +15,15 @@
 
     <application>
         <activity
-            android:name=".FreeTrialMainActivity"
+            android:name=".SecondFreeTrailActivity"
             android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
         </activity>
+        <activity
+            android:name=".FreeTrialMainActivity"
+            android:exported="false"></activity>
     </application>
 
 </manifest>

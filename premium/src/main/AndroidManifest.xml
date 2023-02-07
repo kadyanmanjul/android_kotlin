@@ -676,12 +676,17 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+<!--        <provider-->
+<!--            android:name="com.google.firebase.perf.provider.FirebasePerfProvider"-->
+<!--            android:authorities="${applicationId}.firebaseperfprovider"-->
+<!--            tools:node="remove" />-->
         <provider
             android:name=".core.contentprovider.JoshContentProvider"
             android:authorities="com.joshtalks.joshskills.contentprovider"
             android:enabled="true"
             android:exported="true"
             android:permission="com.joshtalks.permission.READ_WRITE_CONTENT" /> <!-- <service -->
+
         <!-- android:name=".core.service.BackgroundService" -->
         <!-- android:enabled="true" -->
         <!-- android:exported="false" /> -->

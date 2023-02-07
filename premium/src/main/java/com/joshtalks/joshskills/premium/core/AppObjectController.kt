@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.premium.core
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -106,7 +107,7 @@ class AppObjectController {
     companion object {
 
         @JvmStatic
-        lateinit var joshApplication: JoshApplication
+        lateinit var joshApplication: Application
         //private set
 
         @JvmStatic
