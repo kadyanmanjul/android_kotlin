@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.premium.repository.service
+package com.joshtalks.joshskills
 
 import android.content.Context
 import android.net.Uri

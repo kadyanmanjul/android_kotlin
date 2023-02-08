@@ -7,7 +7,16 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.lifecycle.ProcessLifecycleInitializer
+import androidx.startup.AppInitializer
+import androidx.work.WorkManagerInitializer
 import com.google.android.play.core.splitcompat.SplitCompat
+import com.google.firebase.FirebaseApp
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.FirebaseCommonKtxRegistrar
+import com.google.firebase.ktx.initialize
+import com.google.firebase.remoteconfig.RemoteConfigRegistrar
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.voip.Utils
@@ -30,13 +39,19 @@ class PremiumMainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_premium_main)
         AppObjectController.joshApplication = application
         Utils.initUtils(application)
+//        AppInitializer.getInstance(applicationContext).initializeComponent(ProcessLifecycleInitializer::class.java)
         if (BuildConfig.DEBUG) {
             Branch.enableTestMode()
             Branch.enableLogging()
         }
         // TODO: Need to be removed
-        //Branch.getAutoInstance(this)
+        Branch.getAutoInstance(this)
         //turnOnStrictMode()
+        RemoteConfigRegistrar()
+        AppObjectController.init()
+        AppObjectController.initFirebaseRemoteConfig()
+        AppObjectController.configureCrashlytics()
+        AppInitializer.getInstance(applicationContext).initializeComponent(WorkManagerInitializer::class.java)
 
         btnEnterPremium.setOnClickListener {
             try {
@@ -60,8 +75,8 @@ class PremiumMainActivity : AppCompatActivity() {
     val components = listOf(
         "com.google.firebase.perf.provider.FirebasePerfProvider",
         "com.userexperior.provider.UeContentProvider",
-        "androidx.startup.InitializationProvider",
-        "com.joshtalks.joshskills.premium.repository.service.GenericFileProvider",
+        //"androidx.startup.InitializationProvider",
+        //"com.joshtalks.joshskills.GenericFileProvider",
         "androidx.core.content.FileProvider",
         "com.joshtalks.joshskills.premium.core.contentprovider.JoshContentProvider",
         "com.freshchat.consumer.sdk.provider.FreshchatInitProvider",

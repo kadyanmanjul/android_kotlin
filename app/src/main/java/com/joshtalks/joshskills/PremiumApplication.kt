@@ -12,8 +12,8 @@ class PremiumApplication : SplitCompatApplication() {
     val components = listOf(
         "com.google.firebase.perf.provider.FirebasePerfProvider",
         "com.userexperior.provider.UeContentProvider",
-        "androidx.startup.InitializationProvider",
-        "com.joshtalks.joshskills.premium.repository.service.GenericFileProvider",
+        //"androidx.startup.InitializationProvider",
+        //"com.joshtalks.joshskills.premium.repository.service.GenericFileProvider",
         "androidx.core.content.FileProvider",
         "com.joshtalks.joshskills.premium.core.contentprovider.JoshContentProvider",
         "com.freshchat.consumer.sdk.provider.FreshchatInitProvider",

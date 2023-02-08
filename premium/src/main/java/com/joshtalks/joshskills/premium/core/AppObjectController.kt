@@ -506,14 +506,20 @@ class AppObjectController {
         // TODO: Need to be test the logic if internet is offline
         fun initFirebaseRemoteConfig() {
             CoroutineScope(Dispatchers.IO).launch {
-                if (isRemoteConfigInitialize.not()) {
-                    isRemoteConfigInitialize = true
-                    val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(60 * 3600)
-                    getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
-                    getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
-                    getFirebaseRemoteConfig().fetchAndActivate().addOnFailureListener {
-                        isRemoteConfigInitialize = false
+                try {
+                    if (isRemoteConfigInitialize.not()) {
+                        isRemoteConfigInitialize = true
+                        val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder()
+                            .setMinimumFetchIntervalInSeconds(60 * 3600)
+                        getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
+                        getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
+                        getFirebaseRemoteConfig().fetchAndActivate().addOnFailureListener {
+                            isRemoteConfigInitialize = false
+                        }
                     }
+                } catch (e : Exception) {
+                    Log.d("Bhaskar", "initFirebaseRemoteConfig: ERROR")
+                    e.printStackTrace()
                 }
             }
         }

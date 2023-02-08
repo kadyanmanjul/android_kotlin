@@ -645,17 +645,6 @@
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="location|phoneCall"
             tools:node="merge" />
-
-        <provider
-            android:name=".repository.service.GenericFileProvider"
-            android:authorities="com.joshtalks.joshskills.provider"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            tools:replace="android:authorities">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${file_provider}.provider"

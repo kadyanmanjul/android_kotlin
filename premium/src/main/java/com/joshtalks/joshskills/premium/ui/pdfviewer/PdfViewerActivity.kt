@@ -24,7 +24,7 @@ import com.joshtalks.joshskills.premium.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.premium.repository.local.entity.PdfType
 import com.joshtalks.joshskills.premium.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.premium.repository.service.EngagementNetworkHelper
-import com.joshtalks.joshskills.premium.repository.service.GenericFileProvider
+import com.joshtalks.joshskills.GenericFileProvider
 import com.joshtalks.joshskills.premium.track.CONVERSATION_ID
 import com.joshtalks.joshskills.premium.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope

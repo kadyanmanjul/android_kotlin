@@ -124,7 +124,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
                 USER_CREATED_SUCCESSFULLY -> openSignUpNameFragment()
             }
         }
-        initTrueCallerUI()
+        //initTrueCallerUI()
     }
 
     override fun onPause() {

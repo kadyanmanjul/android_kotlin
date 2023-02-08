@@ -11,9 +11,13 @@ import android.os.Bundle
 import android.os.Message
 import android.provider.Settings
 import android.view.View
+import androidx.lifecycle.ProcessLifecycleInitializer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.startup.AppInitializer
+import androidx.work.WorkManager
+import androidx.work.WorkManagerInitializer
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
@@ -72,6 +76,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
         viewModel.initApp()
         AppObjectController.initFonts()
         initiateLibraries()
+        //AppInitializer.getInstance(applicationContext).initializeComponent(EmojiCompatInitializer::class.java)
         WorkManagerAdmin.runMemoryManagementWorker()
         LogSaver.startSavingLog() // to save logs in external storage
         animatedProgressBar()
