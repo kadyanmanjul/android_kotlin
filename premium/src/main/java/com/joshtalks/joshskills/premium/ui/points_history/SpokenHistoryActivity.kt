@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.premium.ui.points_history
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.CoreJoshActivity
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
@@ -44,6 +46,11 @@ class SpokenHistoryActivity : CoreJoshActivity() {
         initToolbar()
         viewModel.getSpokenMinutesSummary(mentorId)
         showProgressBar()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     override fun getConversationId(): String? {

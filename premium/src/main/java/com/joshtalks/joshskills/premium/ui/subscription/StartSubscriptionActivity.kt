@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.premium.ui.subscription
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -10,6 +11,7 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.core.BaseActivity
@@ -85,6 +87,11 @@ class StartSubscriptionActivity : BaseActivity() {
 
         addObservers()
 
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun logEvent(eventName: String) {

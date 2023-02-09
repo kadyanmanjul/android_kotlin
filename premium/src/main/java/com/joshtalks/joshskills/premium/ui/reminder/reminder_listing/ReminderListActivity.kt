@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.premium.ui.reminder.reminder_listing
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.GestureDetector
@@ -15,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.core.CoreJoshActivity
@@ -77,6 +79,11 @@ class ReminderListActivity : CoreJoshActivity(),
                 reminderList.addAll(data)
                 adapter.notifyDataSetChanged()
             })
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun initRv() {

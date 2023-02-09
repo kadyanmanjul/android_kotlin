@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.BaseActivity
 import com.joshtalks.joshskills.premium.core.EMPTY
@@ -83,6 +84,11 @@ class LessonCompletedActivity : BaseActivity() {
             setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, false) })
             finish()
         }
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     override fun onBackPressed() {

@@ -11,6 +11,7 @@ import android.view.Window
 import android.view.WindowManager.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
 import com.joshtalks.joshskills.premium.databinding.ActivityIncomingNotificationBinding
@@ -60,6 +61,11 @@ class IncomingNotificationActivity : AppCompatActivity() {
         }
         startTimer()
         checkForPremiumUser()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun startTimer() {

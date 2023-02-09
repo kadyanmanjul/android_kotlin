@@ -15,6 +15,7 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.freshchat.consumer.sdk.FreshchatConfig
 import com.freshchat.consumer.sdk.FreshchatNotificationConfig
 import com.freshchat.consumer.sdk.j.af
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.BuildConfig
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
@@ -85,6 +86,11 @@ class HelpActivity : CoreJoshActivity() {
         initialiseFreshChat()
         AppObjectController.getLocalBroadcastManager()
             .registerReceiver(restoreIdReceiver, IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED))
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     fun initialiseFreshChat() {

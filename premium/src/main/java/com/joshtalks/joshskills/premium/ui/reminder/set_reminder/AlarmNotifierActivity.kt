@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textview.MaterialTextView
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.core.FirebaseRemoteConfigKey
@@ -75,6 +76,11 @@ class AlarmNotifierActivity : AppCompatActivity(),
             vibrator.vibrate(pattern, 0)
         }
 
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     override fun onClick(v: View) {

@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.constants.IS_USER_EXIST
 import com.joshtalks.joshskills.premium.core.*
@@ -90,6 +91,11 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
                 else signUp(it)
             }
         }
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun initOnboardingCourse() {

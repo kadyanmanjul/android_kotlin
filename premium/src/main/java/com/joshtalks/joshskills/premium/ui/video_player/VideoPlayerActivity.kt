@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.BuildConfig
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.AppObjectController
@@ -360,6 +361,11 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             AnalyticsEvent.COURSE_NAME.NAME,
             binding.textMessageTitle.text.toString()
         )
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun addObserver() {

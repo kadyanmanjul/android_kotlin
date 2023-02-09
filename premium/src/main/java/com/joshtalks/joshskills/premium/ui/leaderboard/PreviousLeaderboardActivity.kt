@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.premium.ui.leaderboard
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.core.EMPTY
@@ -51,6 +53,10 @@ class PreviousLeaderboardActivity : CoreJoshActivity() {
         setOnClickListeners()
     }
 
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
     }

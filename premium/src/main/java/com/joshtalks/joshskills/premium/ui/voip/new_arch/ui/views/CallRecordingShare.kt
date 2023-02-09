@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.ANALYTICS_EVENT
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
@@ -64,6 +65,11 @@ class CallRecordingShare : AppCompatActivity() {
        addAnalytics("notification")
         playRecordedVideo()
 
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     fun addAnalytics(event : String){

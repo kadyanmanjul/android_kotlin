@@ -17,6 +17,7 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
@@ -94,6 +95,11 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
             intent.getParcelableExtra(CERTIFICATION_EXAM_QUESTION) as CertificationQuestionModel?
         addObserver()
         viewModel.getUserAllExamReports(certificateExamId)
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     override fun getConversationId(): String? {

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.widget.TextView
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.CoreJoshActivity
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
@@ -31,6 +32,11 @@ class SettingsActivity : CoreJoshActivity() {
         }
 
         replaceFragment(R.id.settings_container, SettingsFragment(), SettingsFragment.TAG)
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     companion object {

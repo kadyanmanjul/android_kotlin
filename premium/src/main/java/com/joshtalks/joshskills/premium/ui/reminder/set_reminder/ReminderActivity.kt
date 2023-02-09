@@ -8,6 +8,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.core.CoreJoshActivity
@@ -139,6 +140,11 @@ class ReminderActivity : CoreJoshActivity() {
             alarmMins = minute
             alarmAmPm = if (alarmHour > 11) Calendar.PM else Calendar.AM
         }
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun onAlarmSetSuccess(reminderId: Int) {

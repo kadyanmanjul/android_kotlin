@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.premium.ui.certification_exam
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -10,6 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.BaseActivity
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
@@ -97,6 +99,10 @@ class CertificationBaseActivity : BaseActivity() {
         addObserver()
     }
 
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
     }

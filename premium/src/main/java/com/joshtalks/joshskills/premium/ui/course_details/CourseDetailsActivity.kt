@@ -33,6 +33,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.textview.MaterialTextView
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.EventLiveData
 import com.joshtalks.joshskills.premium.constants.PAYMENT_FAILED
@@ -205,6 +206,11 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         subscribeLiveData()
         MarketingAnalytics.openPreCheckoutPage()
         paymentManager.initializePaymentGateway()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun initABTest() {

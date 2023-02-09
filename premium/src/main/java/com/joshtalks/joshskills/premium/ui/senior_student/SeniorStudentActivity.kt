@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.premium.ui.senior_student
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.CoreJoshActivity
 import com.joshtalks.joshskills.premium.core.analytics.AnalyticsEvent
@@ -39,6 +41,11 @@ class SeniorStudentActivity : CoreJoshActivity() {
             hideProgressBar()
         }
         initToolbar()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun initToolbar() {

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.premium.ui.voip.favorite
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.Menu
@@ -8,6 +9,7 @@ import android.view.MenuItem
 import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.premium.core.EMPTY
@@ -25,6 +27,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FavoriteListActivity : BaseFppActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     private var conversationId1: String = EMPTY
 

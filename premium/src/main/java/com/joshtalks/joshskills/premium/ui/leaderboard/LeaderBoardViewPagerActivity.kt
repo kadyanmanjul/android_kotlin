@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.premium.ui.leaderboard
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Rect
@@ -29,6 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
@@ -104,6 +106,11 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         PrefManager.put(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, false, true)
         PrefManager.put(HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION, false, true)*/
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun addLeaderboardTooltips() {

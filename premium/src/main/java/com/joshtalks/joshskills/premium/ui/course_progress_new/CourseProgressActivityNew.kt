@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
@@ -104,6 +105,11 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
         setupUi()
         getData()
 
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun setWhiteStatusBar(){

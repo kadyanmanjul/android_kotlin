@@ -17,6 +17,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.credentials.*
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.Utils.isInternetAvailable
@@ -92,6 +93,11 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 binding.scrollView.smoothScrollTo(0, binding.btnSubmitDetails.y.toInt())
             }
         })
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun initView() {

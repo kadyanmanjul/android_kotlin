@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.premium.ui.special_practice
 
 import android.app.Activity
 import android.app.DownloadManager
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -11,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.EMPTY
 import com.joshtalks.joshskills.premium.core.PermissionUtils
@@ -31,6 +33,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import timber.log.Timber
 
 class SpecialPracticeActivity : BaseKFactorActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     private val binding by lazy<ActivityRecordVideoBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_record_video)

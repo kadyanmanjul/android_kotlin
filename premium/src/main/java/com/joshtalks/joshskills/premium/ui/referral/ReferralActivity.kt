@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.BuildConfig
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
@@ -101,6 +102,11 @@ class ReferralActivity : BaseActivity() {
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.name, flowFrom)
             .push()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
 

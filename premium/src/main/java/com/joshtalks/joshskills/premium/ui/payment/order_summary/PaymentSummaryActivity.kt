@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.premium.ui.payment.order_summary
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -39,6 +40,7 @@ import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.material.textview.MaterialTextView
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
@@ -192,6 +194,11 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         initCountryCode()
         logPaymentAnalyticsEvents()
         paymentManager.initializePaymentGateway()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun initViewModel() {

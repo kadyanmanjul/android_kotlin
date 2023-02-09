@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.premium.ui.points_history
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.graphics.Rect
@@ -18,6 +19,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
@@ -60,6 +62,11 @@ class PointsHistoryActivity : CoreJoshActivity() {
         initToolbar()
         viewModel.getPointsSummary(mentorId)
         showProgressBar()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     override fun getConversationId(): String? {

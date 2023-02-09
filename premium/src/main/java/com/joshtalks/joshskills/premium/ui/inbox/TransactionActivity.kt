@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.premium.ui.inbox
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.BaseActivity
 import com.joshtalks.joshskills.premium.core.AppObjectController
@@ -14,6 +16,11 @@ import com.joshtalks.joshskills.premium.ui.inbox.adapter.TransactionAdapter
 import com.joshtalks.joshskills.premium.ui.referral.FROM_CLASS
 
 class TransactionActivity : BaseActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     val binding by lazy<ActivityTransactionBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_transaction)
