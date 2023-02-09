@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.premium.ui.errorState
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.BaseActivity
 import com.joshtalks.joshskills.premium.core.EMPTY
@@ -17,6 +19,10 @@ import kotlinx.coroutines.launch
 
 class ErrorActivity : BaseActivity() {
 
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     private val vm: ErrorStateViewModel by lazy {
         ViewModelProvider(this)[ErrorStateViewModel::class.java]

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.premium.ui.payment.new_buy_page_layout
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -29,6 +30,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textview.MaterialTextView
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.constants.PAYMENT_FAILED
 import com.joshtalks.joshskills.premium.constants.PAYMENT_PENDING
@@ -91,6 +93,11 @@ const val COUPON_APPLY_POP_UP_SHOW_AND_BACK = 1000
 const val NORMAL_BACK_PRESS = 1111
 
 class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCourseListener {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     var englishCourseCard: View? = null
     var teacherRatingAndReviewCard: View? = null

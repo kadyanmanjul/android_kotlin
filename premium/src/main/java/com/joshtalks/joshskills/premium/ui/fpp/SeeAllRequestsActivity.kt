@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.premium.ui.fpp
 
+import android.content.Context
 import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.databinding.ActivitySeeAllRequestsBinding
 import com.joshtalks.joshskills.premium.ui.fpp.adapters.SeeAllRequestsAdapter
@@ -14,6 +16,11 @@ import com.joshtalks.joshskills.premium.ui.userprofile.UserProfileActivity
 import java.lang.Exception
 
 class SeeAllRequestsActivity : BaseFppActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     val binding by lazy<ActivitySeeAllRequestsBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_see_all_requests)

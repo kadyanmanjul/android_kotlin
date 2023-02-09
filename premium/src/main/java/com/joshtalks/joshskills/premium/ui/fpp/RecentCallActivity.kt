@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.premium.ui.fpp
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -11,6 +12,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.EMPTY
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
@@ -33,6 +35,11 @@ import com.joshtalks.joshskills.premium.ui.userprofile.UserProfileActivity
 import java.lang.Exception
 
 class RecentCallActivity : BaseFppActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     val binding by lazy<ActivityRecentCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_recent_call)

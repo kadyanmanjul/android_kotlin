@@ -40,6 +40,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.play.core.splitcompat.SplitCompat
 //import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.EventLiveData
@@ -145,6 +146,11 @@ class UserProfileActivity : CoreJoshActivity() {
         getProfileData(intervalType, previousPage)
         initABTest(mentorId, intervalType, previousPage)
         setOnClickListeners()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     override fun onDestroy() {

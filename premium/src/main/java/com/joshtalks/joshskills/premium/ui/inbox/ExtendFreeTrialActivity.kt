@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.premium.ui.inbox
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.premium.core.abTest.GoalKeys
@@ -38,6 +40,11 @@ class ExtendFreeTrialActivity : AppCompatActivity() {
             .addParam(ParamKeys.VARIANT, VariantKeys.EFT_ENABLED.name)
             .addParam(ParamKeys.CAMPAIGN, CampaignKeys.EXTEND_FREE_TRIAL.name)
             .push()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun addObserver() {

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.premium.ui.callWithExpert
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.BaseActivity
 import com.joshtalks.joshskills.premium.constants.EXPERT_UPGRADE_CLICK
@@ -44,6 +46,12 @@ import java.math.BigDecimal
 import org.json.JSONObject
 
 class CallWithExpertActivity : BaseActivity(), PaymentGatewayListener {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
+
     private val backPressMutex = Mutex(false)
 
     private lateinit var binding: ActivityCallWithExpertBinding

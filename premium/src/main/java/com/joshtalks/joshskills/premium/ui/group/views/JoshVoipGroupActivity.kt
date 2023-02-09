@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.premium.ui.group.views
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 
@@ -8,6 +9,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.play.core.splitcompat.SplitCompat
 
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.*
@@ -41,6 +43,11 @@ import java.lang.Exception
 private const val TAG = "JoshVoipGroupActivity"
 
 class JoshVoipGroupActivity : BaseGroupActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     val vm by lazy {
         ViewModelProvider(this)[JoshGroupViewModel::class.java]

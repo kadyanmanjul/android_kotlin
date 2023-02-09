@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.BaseActivity
 import com.joshtalks.joshskills.premium.constants.CLOSE_INTEREST_ACTIVITY
@@ -16,6 +17,11 @@ import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import kotlinx.coroutines.sync.Mutex
 
 class UserInterestActivity : BaseActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
 
     val binding by lazy<ActivityUserInterestBinding> { DataBindingUtil.setContentView(this,R.layout.activity_user_interest) }
 

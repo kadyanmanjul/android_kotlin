@@ -31,6 +31,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.BuildConfig
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.EventLiveData
@@ -142,6 +143,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
             }
         }
+    }
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     private fun openErrorScreen(errorCode:String, map:HashMap<*, *>){

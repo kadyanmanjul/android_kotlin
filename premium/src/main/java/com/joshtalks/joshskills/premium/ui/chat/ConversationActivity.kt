@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.premium.ui.chat
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
@@ -32,6 +33,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
 import com.google.android.material.button.MaterialButton
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.EventLiveData
 import com.joshtalks.joshskills.premium.constants.COURSE_RESTART_FAILURE
@@ -214,6 +216,11 @@ class ConversationActivity :
             return
         }
         init()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     override fun getConversationId(): String {

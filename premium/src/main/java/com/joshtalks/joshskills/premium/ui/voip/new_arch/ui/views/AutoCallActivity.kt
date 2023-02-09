@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views
 
+import android.content.Context
 import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.*
@@ -20,6 +22,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class AutoCallActivity : BaseActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
+
     private val binding by lazy<ActivityAutoCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_auto_call)
     }

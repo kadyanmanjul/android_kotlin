@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.premium.ui.voip.share_call
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.premium.core.abTest.GoalKeys
@@ -59,6 +61,11 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         populateViewsAndFragment()
         binding.lifecycleOwner = this
         binding.handler = this
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
     }
 
     fun sharePreviewToOtherApps(isComingFromButton:Boolean) {
