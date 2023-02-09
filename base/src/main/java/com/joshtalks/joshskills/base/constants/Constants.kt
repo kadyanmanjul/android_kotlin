@@ -39,7 +39,7 @@ const val START_EXPERT_CALL_TIMER = "start_expert_call"
 
 
 // Content Provider UI
-const val CONTENT_URI = "content://com.joshtalks.joshskills.premium.contentprovider"
+const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
 const val START_CALL_TIME_URI = "/start_call_time"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
 const val API_HEADER = "/api_header"

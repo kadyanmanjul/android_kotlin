@@ -10,7 +10,7 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentManager
-import com.github.dhaval2404.imagepicker.ImagePicker
+//import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.analytics.AnalyticsEvent
@@ -112,22 +112,22 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     fun change() {
         MixPanelTracker.publishEvent(MixPanelEvent.GALLERY_CLICKED).push()
         logChooserAnalyticsEvent(AnalyticsEvent.GALLERY_UPLOAD.NAME,isFromRegistration)
-        ImagePicker.with(this)
-            .crop()          //Crop image(Optional), Check Customization for more option
-            .galleryOnly()
-            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ImagePicker"))
-            .start(ImagePicker.REQUEST_CODE)
+//        ImagePicker.with(this)
+//            .crop()          //Crop image(Optional), Check Customization for more option
+//            .galleryOnly()
+//            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ImagePicker"))
+//            .start(ImagePicker.REQUEST_CODE)
         dismiss()
     }
 
     fun captureImage() {
         MixPanelTracker.publishEvent(MixPanelEvent.CAMERA_CLICKED).push()
         logChooserAnalyticsEvent(AnalyticsEvent.CAMERA_UPLOAD.NAME,isFromRegistration)
-        ImagePicker.with(this)
-            .crop()//Crop imagJoshCameraActivitye(Optional), Check Customization for more option
-            .cameraOnly()
-            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ImagePicker"))
-            .start(ImagePicker.REQUEST_CODE)
+//        ImagePicker.with(this)
+//            .crop()//Crop imagJoshCameraActivitye(Optional), Check Customization for more option
+//            .cameraOnly()
+//            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ImagePicker"))
+//            .start(ImagePicker.REQUEST_CODE)
         dismiss()
     }
 

@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ProcessLifecycleInitializer
 import androidx.lifecycle.ViewModelProvider
@@ -41,8 +42,11 @@ import com.joshtalks.joshskills.premium.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.premium.util.RedirectAction.*
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
+import io.branch.referral.Branch.BranchReferralInitListener
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
@@ -55,6 +59,13 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
     }
     private val binding by lazy {
         ActivityLauncherBinding.inflate(layoutInflater)
+    }
+    val appOpenCoroutine = lifecycleScope.launch {
+        delay(3 * 1000)
+        if(isActive) {
+            Log.d(TAG, "appOpenCoroutine: ")
+            viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
+        }
     }
 
     companion object {
@@ -73,6 +84,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
         AppObjectController.configureCrashlytics()
+        setObservers()
         viewModel.initApp()
         AppObjectController.initFonts()
         initiateLibraries()
@@ -81,11 +93,12 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
         LogSaver.startSavingLog() // to save logs in external storage
         animatedProgressBar()
         handleIntent()
-        setObservers()
         AppObjectController.getNewArchVoipFlag()
         AppObjectController.initObjectInThread()
         VoipPref.initVoipPref(this)
         AppObjectController.registerBroadcastReceiver()
+        //viewModel.getGuestMentor()
+        Log.d("Bhaskar", "onCreate: Finished")
     }
 
     @Synchronized
@@ -101,6 +114,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
 
     private fun setObservers() {
         viewModel.apiCallStatus.observe(this) {
+            Log.d("Bhaskar", "setObservers: ----- ${it}")
             when (it) {
                 ApiCallStatus.START -> binding.progressBar.visibility = View.VISIBLE
                 ApiCallStatus.SUCCESS ->
@@ -113,6 +127,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
             }
         }
         viewModel.event.observe(this) {
+            Log.d("Bhaskar", "setObservers: ${it.what}")
             when (it.what) {
                 FETCH_GAID -> viewModel.getGaid()
                 UPDATE_GAID -> viewModel.updateGaid()
@@ -123,6 +138,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
             }
         }
         viewModel.redirectEvent.observe(this) {
+            Log.d("Bhaskar", "setObservers: ")
             val intent = when (it) {
                 SIGN_UP -> Intent(this, SignUpActivity::class.java)
                 INBOX -> getInboxActivityIntent()
@@ -182,6 +198,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        Log.d("Bhaskar", "onNewIntent: ")
         this.intent = intent
         if (intent.hasExtra(Defines.IntentKeys.ForceNewBranchSession.key) &&
             intent.getBooleanExtra(Defines.IntentKeys.ForceNewBranchSession.key, false)
@@ -213,12 +230,21 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 .withCallback(this@LauncherActivity)
                 .withData(this.intent?.data)
                 .init()
+
+            appOpenCoroutine.start()
         } else {
+            Log.d("Bhaskar", "onStart: ANALYZE_APP_REQUIREMENT")
             viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
         }
+        Log.d("Bhaskar", "onStart: Finished")
     }
 
     override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
+        try {
+            appOpenCoroutine.cancel()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
         if (error != null) {
             viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
             return
@@ -229,6 +255,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
     }
 
     private fun analyzeAppRequirement() {
+        Log.d("Bhaskar", "analyzeAppRequirement: ")
         viewModel.event.postValue(Message().apply {
             what = when {
                 PrefManager.getStringValue(USER_UNIQUE_ID).isEmpty() -> FETCH_GAID
@@ -240,6 +267,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
     }
 
     private fun startNextActivity() {
+        Log.d("Bhaskar", "onCreate: startNextActivity")
         if (viewModel.canRunApplication()) {
             WorkManagerAdmin.appStartWorker()
             viewModel.addAnalytics()

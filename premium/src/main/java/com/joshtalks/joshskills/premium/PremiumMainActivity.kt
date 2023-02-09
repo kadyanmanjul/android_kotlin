@@ -10,6 +10,7 @@ import android.widget.Button
 import androidx.lifecycle.ProcessLifecycleInitializer
 import androidx.startup.AppInitializer
 import androidx.work.WorkManagerInitializer
+import com.facebook.FacebookSdk
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ktx.Firebase
@@ -17,6 +18,7 @@ import com.google.firebase.ktx.FirebaseCommonKtxRegistrar
 import com.google.firebase.ktx.initialize
 import com.google.firebase.remoteconfig.RemoteConfigRegistrar
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.voip.Utils
@@ -50,6 +52,12 @@ class PremiumMainActivity : AppCompatActivity() {
         RemoteConfigRegistrar()
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
+        try {
+            if(FacebookSdk.isInitialized().not())
+                FacebookSdk.sdkInitialize(applicationContext)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
         AppObjectController.configureCrashlytics()
         AppInitializer.getInstance(applicationContext).initializeComponent(WorkManagerInitializer::class.java)
 
@@ -63,26 +71,20 @@ class PremiumMainActivity : AppCompatActivity() {
     }
 
     private fun enableProvider() {
-        for (componentPath in components) {
-            packageManager.setComponentEnabledSetting(
-                ComponentName(this, componentPath),
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
-            )
+        try {
+            for (componentPath in PremiumApplication.components) {
+                try {
+                    packageManager.setComponentEnabledSetting(
+                        ComponentName(this, componentPath),
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP
+                    )
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
+            }
+        } catch (e : Exception) {
+            e.printStackTrace()
         }
     }
-
-    val components = listOf(
-        "com.google.firebase.perf.provider.FirebasePerfProvider",
-        "com.userexperior.provider.UeContentProvider",
-        //"androidx.startup.InitializationProvider",
-        //"com.joshtalks.joshskills.GenericFileProvider",
-        "androidx.core.content.FileProvider",
-        "com.joshtalks.joshskills.premium.core.contentprovider.JoshContentProvider",
-        "com.freshchat.consumer.sdk.provider.FreshchatInitProvider",
-        "com.github.dhaval2404.imagepicker.ImagePickerFileProvider",
-        "com.facebook.internal.FacebookInitProvider",
-        "com.squareup.picasso.PicassoProvider",
-        //"com.google.firebase.components.ComponentDiscoveryService"
-    )
 }

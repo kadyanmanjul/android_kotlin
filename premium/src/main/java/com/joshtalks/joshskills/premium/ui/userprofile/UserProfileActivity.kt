@@ -40,7 +40,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
-import com.github.dhaval2404.imagepicker.ImagePicker
+//import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.EventLiveData
 import com.joshtalks.joshskills.premium.constants.COURSE_LIST_DATA
@@ -1378,10 +1378,10 @@ class UserProfileActivity : CoreJoshActivity() {
             if (url.isNotBlank()) {
                 addUserImageInView(url)
             }
-        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+        } /*else if (resultCode == ImagePicker.RESULT_ERROR) {
             Timber.e(ImagePicker.getError(data))
             // Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
-        } else {
+        }*/ else {
             Timber.e("Task Cancelled")
             // Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }

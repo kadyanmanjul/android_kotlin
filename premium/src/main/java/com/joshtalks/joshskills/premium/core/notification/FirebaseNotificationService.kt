@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.JoshApplication.Companion.isAppVisible
 import com.joshtalks.joshskills.premium.core.analytics.AnalyticsEvent
@@ -33,6 +34,9 @@ const val QUESTION_ID = "question_id"
 const val FCM_ACTIVE = "FCM_ACTIVE"
 
 class FirebaseNotificationService : FirebaseMessagingService() {
+    init {
+        AppObjectController.joshApplication = PremiumApplication.premiumApplication
+    }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)

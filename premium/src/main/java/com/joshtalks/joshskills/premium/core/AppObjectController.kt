@@ -346,7 +346,7 @@ class AppObjectController {
             CoroutineScope(Dispatchers.IO).launch {
                 ActivityLifecycleCallback.register(joshApplication)
                 initUserExperionCam()
-                initFacebookService(joshApplication)
+                //initFacebookService(joshApplication)
                 observeFirestore()
             }
         }

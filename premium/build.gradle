@@ -72,18 +72,12 @@ android {
     buildTypes {
         debug {
             debuggable true
-            resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
-            resValue("bool", "branch_test", "true")
-            resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             ext.enableCrashlytics = true
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
-            resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
-            resValue("bool", "branch_test", "false")
-            resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
             debuggable false
             minifyEnabled false
             shrinkResources false
@@ -339,7 +333,7 @@ dependencies {
 
     debugImplementation 'com.itkacher.okhttpprofiler:okhttpprofiler:1.0.7'
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
-    implementation 'com.github.dhaval2404:imagepicker:2.1'
+    //implementation 'com.github.dhaval2404:imagepicker:2.1'
     //ScrollingPagerIndicator can remide this indicator
     implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.2.1"
     implementation "com.github.skydoves:balloon:1.3.3"
@@ -374,5 +368,6 @@ dependencies {
     // Datastore for reactive shared pref
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation 'in.juspay:hypersdk:2.1.7'
+    //implementation 'com.userexperior:userexperior-android:7.0.5'
     //implementation 'com.google.android.play:feature-delivery:2.0.1'
 }

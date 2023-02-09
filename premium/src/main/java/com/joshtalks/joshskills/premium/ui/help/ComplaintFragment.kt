@@ -21,7 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
-import com.github.dhaval2404.imagepicker.ImagePicker
+//import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.custom_ui.progress.FlipProgressDialog
@@ -100,11 +100,11 @@ class ComplaintFragment : Fragment() {
 
 
     fun attachMedia() {
-        ImagePicker.with(this)
-            .crop()          //Crop image(Optional), Check Customization for more option
-            .galleryOnly()
-            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ImagePicker"))
-            .start(ImagePicker.REQUEST_CODE)
+//        ImagePicker.with(this)
+//            .crop()          //Crop image(Optional), Check Customization for more option
+//            .galleryOnly()
+//            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ImagePicker"))
+//            .start(ImagePicker.REQUEST_CODE)
     }
 
     fun removeAttachMedia() {
@@ -122,9 +122,9 @@ class ComplaintFragment : Fragment() {
                 if (url.isNotBlank()) {
                     addUserImageInView(url)
                 }
-            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            } /*else if (resultCode == ImagePicker.RESULT_ERROR) {
                 Timber.e(ImagePicker.getError(data))
-            } else {
+            } */else {
                 Timber.e("Task Cancelled")
             }
         } catch (ex: Exception) {

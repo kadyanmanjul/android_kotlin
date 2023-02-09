@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
-import com.github.dhaval2404.imagepicker.ImagePicker
+//import com.github.dhaval2404.imagepicker.ImagePicker
 
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.*
@@ -485,10 +485,10 @@ class JoshGroupActivity : BaseGroupActivity() {
             if (url.isNotBlank()) {
                 vm.showImageThumb(url)
             }
-        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+        } /*else if (resultCode == ImagePicker.RESULT_ERROR) {
             Timber.e(ImagePicker.getError(data))
             showToast(ImagePicker.getError(data))
-        }
+        }*/
     }
 
     override fun setIntentExtras() {

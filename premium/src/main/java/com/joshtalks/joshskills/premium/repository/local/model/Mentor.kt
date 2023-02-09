@@ -70,8 +70,8 @@ class Mentor {
             }
         }
 
-        fun updateFromLoginResponse(loginResponse: LoginResponse) {
-            CoroutineScope(Dispatchers.IO).launch {
+        suspend fun updateFromLoginResponse(loginResponse: LoginResponse) {
+            //CoroutineScope(Dispatchers.IO).launch {
                 val user = User.getInstance()
                 user.userId = loginResponse.userId
                 user.isVerified = false
@@ -86,7 +86,7 @@ class Mentor {
                 AppAnalytics.updateUser()
                 NotificationUtils(joshApplication).removeScheduledNotification(NotificationCategory.APP_OPEN)
                 UserExperior.setUserIdentifier(getInstance().getId())
-            }
+           // }
         }
 
         @JvmStatic

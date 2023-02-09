@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.*
@@ -34,6 +36,12 @@ import com.joshtalks.joshskills.premium.core.PrefManager as CorePrefManager
 private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
+
     private val backPressMutex = Mutex(false)
     private var isServiceBounded = false
     var file: File? = null

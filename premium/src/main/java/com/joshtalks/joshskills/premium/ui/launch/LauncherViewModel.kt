@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Message
 import android.telephony.TelephonyManager
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -185,6 +186,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getGuestMentor() {
+        Log.d("Bhaskar", "getGuestMentor: ")
         viewModelScope.launch {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
@@ -197,7 +199,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 if (response.lastLoginType != LastLoginType.NEVER)
                     PrefManager.put(LAST_LOGIN_TYPE, response.lastLoginType.name)
                 Mentor.updateFromLoginResponse(response)
-                delay(700)
+                //delay(700)
                 event.value = Message().apply { what = START_ACTIVITY }
                 apiCallStatus.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Exception) {

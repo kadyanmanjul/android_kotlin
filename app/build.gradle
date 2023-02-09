@@ -43,6 +43,9 @@ android {
     buildTypes {
         debug {
             versionNameSuffix "_Debug"
+            resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
+            resValue("bool", "branch_test", "true")
+            resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             debuggable true
             minifyEnabled false
             shrinkResources false
@@ -50,6 +53,9 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
+            resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
+            resValue("bool", "branch_test", "false")
+            resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
             debuggable false
             minifyEnabled false
             shrinkResources false
@@ -141,8 +147,9 @@ dependencies {
 //    implementation 'com.google.android.play:app-update:2.0.1'
 
     //implementation 'androidx.multidex:multidex:2.0.1'
-    api 'com.userexperior:userexperior-android:7.0.5'
+    //api 'com.userexperior:userexperior-android:7.0.5'
     //implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     // Dependency with the implementation code for the APIs
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    api 'com.userexperior:userexperior-android:7.0.5'
 }

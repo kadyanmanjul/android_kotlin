@@ -28,7 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.github.dhaval2404.imagepicker.ImagePicker
+//import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
 import com.google.android.material.button.MaterialButton
@@ -1768,16 +1768,16 @@ class ConversationActivity :
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            ImagePicker.with(this@ConversationActivity)
-                                .crop()
-                                .cameraOnly()
-                                .saveDir(
-                                    File(
-                                        getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!,
-                                        "ImagePicker"
-                                    )
-                                )
-                                .start(ImagePicker.REQUEST_CODE)
+//                            ImagePicker.with(this@ConversationActivity)
+//                                .crop()
+//                                .cameraOnly()
+//                                .saveDir(
+//                                    File(
+//                                        getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!,
+//                                        "ImagePicker"
+//                                    )
+//                                )
+//                                .start(ImagePicker.REQUEST_CODE)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
