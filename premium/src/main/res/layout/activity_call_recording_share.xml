@@ -20,8 +20,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".ui.special_practice.ViewAndShareVideoFragment">
+            android:layout_height="match_parent">
 
             <com.joshtalks.joshskills.premium.core.custom_ui.JoshVideoPlayer
                 android:id="@+id/video_view"

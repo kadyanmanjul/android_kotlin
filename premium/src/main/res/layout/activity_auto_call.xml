@@ -16,8 +16,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_24sdp"
-            tools:context=".ui.voip.new_arch.ui.views.AutoCallActivity">
+            android:padding="@dimen/_24sdp">
 
 
             <androidx.appcompat.widget.LinearLayoutCompat
