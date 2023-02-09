@@ -8,6 +8,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.abTest.repository.ABTestRepository
@@ -44,7 +45,7 @@ import java.math.BigDecimal
 import org.json.JSONObject
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
-    var context: JoshApplication = getApplication()
+    var context: PremiumApplication = getApplication()
 
     enum class ViewState {
         PROCESSING, PROCESSED, INTERNET_NOT_AVAILABLE, ERROR_OCCURED

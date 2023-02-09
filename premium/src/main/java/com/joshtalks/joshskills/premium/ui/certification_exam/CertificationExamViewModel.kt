@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.premium.repository.local.model.Mentor
@@ -27,7 +28,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class CertificationExamViewModel(application: Application) : AndroidViewModel(application) {
-    private var context: JoshApplication = getApplication()
+    private var context : PremiumApplication = getApplication()
 
     var conversationId: String = EMPTY
     private val _certificationQuestionLiveData: MutableLiveData<CertificationQuestionModel> =

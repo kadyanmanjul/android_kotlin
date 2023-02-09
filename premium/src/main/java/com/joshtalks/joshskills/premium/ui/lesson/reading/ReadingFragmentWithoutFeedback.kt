@@ -814,11 +814,11 @@ class ReadingFragmentWithoutFeedback :
         ) {
             currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                    fetchVideo()
-                }
-            }
+//            lifecycleScope.launch {
+//                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+//                    fetchVideo()
+//                }
+//            }
             currentLessonQuestion?.run {
 
                 appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)

@@ -39,8 +39,8 @@ class PremiumMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_premium_main)
-        AppObjectController.joshApplication = application
-        Utils.initUtils(application)
+        //AppObjectController.joshApplication = application
+        Utils.initUtils(PremiumApplication.premiumApplication)
 //        AppInitializer.getInstance(applicationContext).initializeComponent(ProcessLifecycleInitializer::class.java)
         if (BuildConfig.DEBUG) {
             Branch.enableTestMode()

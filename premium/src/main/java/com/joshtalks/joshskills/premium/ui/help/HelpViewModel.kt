@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.core.ApiCallStatus
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.core.JoshApplication
@@ -28,7 +29,7 @@ import id.zelory.compressor.constraint.resolution
 
 class HelpViewModel(application: Application) : AndroidViewModel(application) {
 
-    var context: JoshApplication = getApplication()
+    var context: PremiumApplication = getApplication()
     val faqCategoryLiveData: MutableLiveData<List<FAQCategory>> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val faqListLiveData: MutableLiveData<List<FAQ>> = MutableLiveData()

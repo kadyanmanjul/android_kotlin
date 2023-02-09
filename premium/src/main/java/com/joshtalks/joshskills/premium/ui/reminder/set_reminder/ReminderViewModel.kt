@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.core.ApiCallStatus
 import com.joshtalks.joshskills.premium.core.AppObjectController
@@ -20,7 +21,7 @@ import java.net.UnknownHostException
 
 class ReminderViewModel(application: Application) : AndroidViewModel(application) {
 
-    val context: JoshApplication = getApplication()
+    val context: PremiumApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
     val submitApiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
 

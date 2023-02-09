@@ -34,9 +34,9 @@ const val QUESTION_ID = "question_id"
 const val FCM_ACTIVE = "FCM_ACTIVE"
 
 class FirebaseNotificationService : FirebaseMessagingService() {
-    init {
-        AppObjectController.joshApplication = PremiumApplication.premiumApplication
-    }
+//    init {
+//        AppObjectController.joshApplication = PremiumApplication.premiumApplication
+//    }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)

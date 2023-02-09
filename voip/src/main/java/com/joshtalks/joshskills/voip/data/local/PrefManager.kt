@@ -37,7 +37,7 @@ private const val TAG = "PrefManager"
 
 class PrefManager {
     companion object {
-        lateinit var preferenceManager: SharedPreferences
+        @Volatile lateinit var preferenceManager: SharedPreferences
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
             e.printStackTrace()
         }

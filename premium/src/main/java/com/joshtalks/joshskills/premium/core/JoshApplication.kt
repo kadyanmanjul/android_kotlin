@@ -59,7 +59,7 @@ class JoshApplication :
 
     override fun onCreate() {
         super.onCreate()
-        AppObjectController.joshApplication = this
+        //AppObjectController.joshApplication = this
         Utils.initUtils(this)
         if (BuildConfig.DEBUG) {
             Branch.enableTestMode()

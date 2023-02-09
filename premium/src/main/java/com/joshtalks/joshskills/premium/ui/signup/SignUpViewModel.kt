@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
@@ -60,7 +61,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
     val otpField = ObservableField<String>()
-    var context: JoshApplication = getApplication()
+    var context: PremiumApplication = getApplication()
     var phoneNumber = ObservableField<String>("")
     var countryCode = ObservableField<String>("")
 //    var phWithCountryCode = "$countryCode $phoneNumber"

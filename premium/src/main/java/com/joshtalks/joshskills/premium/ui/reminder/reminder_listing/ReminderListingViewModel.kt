@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.core.JoshApplication
 import com.joshtalks.joshskills.premium.core.showToast
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class ReminderListingViewModel(application: Application) : AndroidViewModel(application) {
 
-    val context: JoshApplication = getApplication()
+    val context: PremiumApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
     var reminderList: LiveData<List<ReminderResponse>>
 

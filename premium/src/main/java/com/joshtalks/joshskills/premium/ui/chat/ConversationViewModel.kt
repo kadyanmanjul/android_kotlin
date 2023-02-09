@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.EventLiveData
 import com.joshtalks.joshskills.premium.constants.COURSE_RESTART_FAILURE
@@ -66,7 +67,7 @@ class ConversationViewModel(
 ) :
     AndroidViewModel(application) {
     lateinit var recordFile: File
-    private var context: JoshApplication = getApplication()
+    private var context: PremiumApplication = getApplication()
     private var appDatabase = AppObjectController.appDatabase
     private var chatDao = AppObjectController.appDatabase.chatDao()
     private var mRefreshControl = true

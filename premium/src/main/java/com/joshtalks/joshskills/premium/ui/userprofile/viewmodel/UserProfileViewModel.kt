@@ -10,6 +10,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.premium.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.USER_NAME
@@ -91,7 +92,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     var message = Message()
     var singleLiveEvent = EventLiveData
 
-    var context: JoshApplication = getApplication()
+    var context: PremiumApplication = getApplication()
 
     val helpCountAbTestliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }

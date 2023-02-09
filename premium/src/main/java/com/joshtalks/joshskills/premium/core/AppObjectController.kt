@@ -17,6 +17,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.BuildConfig
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.*
@@ -107,7 +108,7 @@ class AppObjectController {
     companion object {
 
         @JvmStatic
-        lateinit var joshApplication: Application
+        val joshApplication: Application = PremiumApplication.premiumApplication
         //private set
 
         @JvmStatic
