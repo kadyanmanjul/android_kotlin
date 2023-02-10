@@ -27,7 +27,7 @@ import com.joshtalks.joshskills.premium.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.premium.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.premium.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.Category
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -153,7 +153,7 @@ class FirstCallBottomSheet : BottomSheetDialogFragment() {
                 putExtra(INTENT_DATA_COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
                 putExtra(INTENT_DATA_TOPIC_ID, "5")
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+                putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER.ordinal)
             }
             VoipPref.resetAutoCallCount()
             dismiss()

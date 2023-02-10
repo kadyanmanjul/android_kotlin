@@ -28,7 +28,7 @@ import com.joshtalks.joshskills.premium.ui.special_practice.utils.FLOW_FROM
 import com.joshtalks.joshskills.premium.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.premium.util.DeepLinkRedirectUtil.DeepLinkType.*
-import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.Category
 import io.branch.referral.Defines
 import org.json.JSONObject
 
@@ -176,7 +176,7 @@ class DeepLinkRedirectUtil(private val jsonParams: JSONObject) {
                 putExtra(INTENT_DATA_COURSE_ID, "151")
                 putExtra(INTENT_DATA_TOPIC_ID, "5")
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+                putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER.ordinal)
             }
         )
 

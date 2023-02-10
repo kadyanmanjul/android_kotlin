@@ -106,8 +106,8 @@ import com.joshtalks.joshskills.premium.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.premium.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.premium.calling.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -261,7 +261,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                 putExtra(INTENT_DATA_COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID).ifEmpty { DEFAULT_COURSE_ID })
                 putExtra(INTENT_DATA_TOPIC_ID, "5")
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+                putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER.ordinal)
             }
             VoipPref.resetAutoCallCount()
             startActivity(callIntent)
@@ -1668,7 +1668,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
             VoipPref.preferenceManager.getBoolean(IS_FIRST_CALL, true) && PrefManager.getBoolValue(
                 IS_FREE_TRIAL
             ) -> {
-                if (getVoipState() == State.IDLE &&
+                if (getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE &&
                     PrefManager.getIntValue(FT_CALLS_LEFT) == 15 &&
                     PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()
                 )

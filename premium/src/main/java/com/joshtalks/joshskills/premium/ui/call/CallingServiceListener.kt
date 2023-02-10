@@ -18,8 +18,8 @@ import com.joshtalks.joshskills.premium.core.PrefManager
 import com.joshtalks.joshskills.premium.core.USER_LOCALE
 import com.joshtalks.joshskills.premium.repository.local.model.Mentor
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.voipLog
-import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.premium.calling.Utils
+import com.joshtalks.joshskills.premium.calling.data.CallingRemoteService
 
 private const val TAG = "CallingServiceReceiver"
 class CallingServiceReceiver : BroadcastReceiver() {

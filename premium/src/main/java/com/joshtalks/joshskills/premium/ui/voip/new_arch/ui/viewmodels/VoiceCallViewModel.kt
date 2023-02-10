@@ -23,13 +23,15 @@ import com.joshtalks.joshskills.premium.ui.call.repository.RepositoryConstants.C
 import com.joshtalks.joshskills.premium.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.premium.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.models.CallUIState
-import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.data.ServiceEvents
-import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.premium.calling.Utils
+import com.joshtalks.joshskills.premium.calling.getMentorName
+import com.joshtalks.joshskills.premium.calling.getMentorProfile
+import com.joshtalks.joshskills.premium.calling.constant.*
+import com.joshtalks.joshskills.premium.calling.*
+import com.joshtalks.joshskills.premium.calling.data.ServiceEvents
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager
+import com.joshtalks.joshskills.premium.calling.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.premium.calling.voipanalytics.EventName
 import kotlinx.coroutines.*
 import java.util.ArrayDeque
 import kotlinx.coroutines.sync.Mutex
@@ -47,7 +49,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
     private val mutex = Mutex(false)
-    var callType : Category = Category.PEER_TO_PEER
+    var callType : com.joshtalks.joshskills.premium.calling.constant.Category = com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER
     var isEnabled = ObservableBoolean(true)
     val callStatus = ObservableInt(getCallStatus())
     var imageList = ObservableArrayList<String>()
@@ -64,11 +66,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
             mutex.withLock {
-                if (PrefManager.getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
+                if (PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE && isConnectionRequestSent.not()) {
                     Log.d(TAG, " connectCallJob : Inside - $callData  $callType")
                     repository.connectCall(callData,callType)
                     isConnectionRequestSent = true
-                    if((callType==Category.FPP || callType==Category.EXPERT)&& source == FROM_ACTIVITY){
+                    if((callType== com.joshtalks.joshskills.premium.calling.constant.Category.FPP || callType== com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT)&& source == FROM_ACTIVITY){
                         uiState.currentState = "Ringing..."
                     }
                 }
@@ -94,7 +96,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                                 connectCall()
                             else {
                                 val msg = Message.obtain().apply {
-                                    what = CLOSE_CALL_SCREEN
+                                    what =
+                                        com.joshtalks.joshskills.premium.calling.constant.CLOSE_CALL_SCREEN
                                 }
                                 withContext(Dispatchers.Main) {
                                     singleLiveEvent.value = msg
@@ -117,9 +120,9 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         uiState.currentState = "Connecting..."
                         val msg = Message.obtain().apply {
                             what = if (source == FROM_INCOMING_CALL)
-                                CANCEL_INCOMING_TIMER
+                                com.joshtalks.joshskills.premium.calling.constant.CANCEL_INCOMING_TIMER
                             else
-                                CALL_INITIATED_EVENT
+                                com.joshtalks.joshskills.premium.calling.constant.CALL_INITIATED_EVENT
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
@@ -129,7 +132,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         uiState.currentState = "Timer"
                         if (source != FROM_INCOMING_CALL) {
                             val msg = Message.obtain().apply {
-                                what = CALL_CONNECTED_EVENT
+                                what =
+                                    com.joshtalks.joshskills.premium.calling.constant.CALL_CONNECTED_EVENT
                             }
                             withContext(Dispatchers.Main) {
                                 singleLiveEvent.value = msg
@@ -138,7 +142,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     }
                     ServiceEvents.CLOSE_CALL_SCREEN -> {
                         val msg = Message.obtain().apply {
-                            what = CLOSE_CALL_SCREEN
+                            what =
+                                com.joshtalks.joshskills.premium.calling.constant.CLOSE_CALL_SCREEN
                             obj = it.data
                         }
                         withContext(Dispatchers.Main) {
@@ -147,7 +152,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     }
                     ServiceEvents.RECONNECTING_FAILED -> {
                         val msg = Message.obtain().apply {
-                            what = RECONNECTING_FAILED
+                            what =
+                                com.joshtalks.joshskills.premium.calling.constant.RECONNECTING_FAILED
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
@@ -168,7 +174,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
 
-                if(voipState!=State.IDLE && voipState != State.SEARCHING) {
+                if(voipState!= com.joshtalks.joshskills.premium.calling.constant.State.IDLE && voipState != com.joshtalks.joshskills.premium.calling.constant.State.SEARCHING) {
                     uiState.name = state.remoteUserName
                     uiState.profileImage = state.remoteUserImage ?: ""
                 }
@@ -204,7 +210,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     uiState.currentState = "User Muted the Call"
                     voipLog?.log("Mute")
                 } else {
-                    if (voipState == State.CONNECTED || voipState == State.RECONNECTING)
+                    if (voipState == com.joshtalks.joshskills.premium.calling.constant.State.CONNECTED || voipState == com.joshtalks.joshskills.premium.calling.constant.State.RECONNECTING)
                         uiState.currentState = "Timer"
                 }
 
@@ -238,7 +244,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     private fun getCallStatus(): Int {
         val status = PrefManager.getVoipState()
-        return if (status == State.CONNECTED) {
+        return if (status == com.joshtalks.joshskills.premium.calling.constant.State.CONNECTED) {
             ONGOING
         } else {
             CONNECTING
@@ -261,7 +267,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 extra = PrefManager.getVoipState().name
             )
             val msg = Message.obtain().apply {
-                what = SHOW_DISCONNECT_DIALOG
+                what =
+                    com.joshtalks.joshskills.premium.calling.constant.SHOW_DISCONNECT_DIALOG
             }
             singleLiveEvent.value = msg
         }
@@ -380,6 +387,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     }
 
     private fun isNotRestrictedFromCall() : Boolean {
-        return checkBlockStatusInSP().not() || callType == Category.EXPERT || callType == Category.FPP
+        return checkBlockStatusInSP().not() || callType == com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT || callType == com.joshtalks.joshskills.premium.calling.constant.Category.FPP
     }
 }

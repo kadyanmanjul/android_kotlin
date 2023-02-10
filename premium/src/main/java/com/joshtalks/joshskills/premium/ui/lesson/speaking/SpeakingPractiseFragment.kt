@@ -70,8 +70,8 @@ import com.joshtalks.joshskills.premium.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.premium.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.premium.util.UtilTime
-import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.premium.calling.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -179,8 +179,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         //checkForVoipState()
     }
 
-    private fun getVoipState(): State {
-        return com.joshtalks.joshskills.voip.data.local.PrefManager.getVoipState()
+    private fun getVoipState(): com.joshtalks.joshskills.premium.calling.constant.State {
+        return com.joshtalks.joshskills.premium.calling.data.local.PrefManager.getVoipState()
     }
 
     override fun onStop() {
@@ -334,7 +334,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.postGoal(GoalKeys.CALL_PP_CLICKED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
             val state = getVoipState()
             Log.d(TAG, " Start Call Button - Voip State $state")
-            if (state == State.IDLE) {
+            if (state == com.joshtalks.joshskills.premium.calling.constant.State.IDLE) {
                 if (checkPstnState() == PSTNState.Idle) {
                     if (Utils.isInternetAvailable().not()) {
                         showToast("Seems like you have no internet")
@@ -351,7 +351,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnGroupCall.setOnClickListener {
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if (getVoipState() == State.IDLE) {
+            if (getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE) {
                 val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, getConversationId())
                 }
@@ -368,7 +368,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
             val state = getVoipState()
             Log.d(TAG, " Start Call Button - Voip State $state")
-            if (state == State.IDLE) {
+            if (state == com.joshtalks.joshskills.premium.calling.constant.State.IDLE) {
                 if (checkPstnState() == PSTNState.Idle) {
                     if (Utils.isInternetAvailable().not()) {
                         showToast("Seems like you have no internet")
@@ -668,7 +668,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .push()
-            if (getVoipState() == State.IDLE)
+            if (getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE)
                 startPractise(favoriteUserCall = false, isNewUserCall = true)
             else
                 showToast("Wait for last call to get disconnected")
@@ -988,7 +988,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 putExtra(INTENT_DATA_COURSE_ID, courseId)
                 putExtra(INTENT_DATA_TOPIC_ID, topicId)
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+                putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER.ordinal)
             }
             VoipPref.resetAutoCallCount()
             requireActivity().startActivityForResult(callIntent, CALLING_ACTIVITY_REQUEST_CODE)
@@ -1112,7 +1112,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 dismissTooltipButton()
                 val state = getVoipState()
                 Log.d(TAG, " Start Call Button - Voip State $state")
-                if (state == State.IDLE) {
+                if (state == com.joshtalks.joshskills.premium.calling.constant.State.IDLE) {
                     if (checkPstnState() == PSTNState.Idle) {
                         if (Utils.isInternetAvailable().not()) {
                             showToast("Seems like you have no internet")

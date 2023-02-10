@@ -13,7 +13,7 @@
         <import type="com.joshtalks.joshskills.base.constants.ConstantsKt" />
 
 
-        <import type="com.joshtalks.joshskills.voip.Utils" />
+        <import type="com.joshtalks.joshskills.premium.calling.Utils" />
 
         <variable
             name="vm"

@@ -22,13 +22,13 @@ import com.joshtalks.joshskills.premium.core.PermissionUtils.isCallingPermission
 import com.joshtalks.joshskills.premium.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.voipLog
-import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
-import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.premium.calling.Utils
+import com.joshtalks.joshskills.premium.calling.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.premium.calling.constant.*
+import com.joshtalks.joshskills.premium.calling.data.CallingRemoteService
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager
+import com.joshtalks.joshskills.premium.calling.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.premium.calling.voipanalytics.EventName
 import kotlinx.coroutines.sync.Mutex
 import java.io.File
 import com.joshtalks.joshskills.premium.core.PrefManager as CorePrefManager
@@ -141,7 +141,7 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun getArguments() {
         vm.source = getSource()
-        vm.callType = Category.values()[intent.getIntExtra(
+        vm.callType = com.joshtalks.joshskills.premium.calling.constant.Category.values()[intent.getIntExtra(
             INTENT_DATA_CALL_CATEGORY,
             PrefManager.getCallCategory().ordinal
         )]
@@ -171,26 +171,26 @@ class VoiceCallActivity : BaseActivity() {
 
     private fun setCallData() {
         when (vm.callType) {
-            Category.PEER_TO_PEER -> {
+            com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER -> {
                 val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
                 val courseId = intent?.getStringExtra(INTENT_DATA_COURSE_ID)
                 voipLog?.log("Call Data --> $intent")
                 vm.callData[INTENT_DATA_COURSE_ID] = courseId ?: "0"
                 vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
             }
-            Category.FPP -> {
+            com.joshtalks.joshskills.premium.calling.constant.Category.FPP -> {
                 val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
                 vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
                 vm.callData[INTENT_DATA_FPP_NAME] =
                     intent?.getStringExtra(INTENT_DATA_FPP_NAME).toString()
             }
-            Category.GROUP -> {
+            com.joshtalks.joshskills.premium.calling.constant.Category.GROUP -> {
                 val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
                 val groupId = intent?.getStringExtra(INTENT_DATA_GROUP_ID)
                 vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
                 vm.callData[INTENT_DATA_GROUP_ID] = groupId ?: "0"
             }
-            Category.EXPERT -> {
+            com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT -> {
                 val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
                 vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
                 vm.callData[INTENT_DATA_EXPERT_PRICE_PER_MIN] =
@@ -215,7 +215,7 @@ class VoiceCallActivity : BaseActivity() {
 
         val shouldOpenCallFragment =
             ((topicId == EMPTY || topicId == null) && mentorId == null && groupId == null)
-        return if (shouldOpenCallFragment && PrefManager.getVoipState() == State.IDLE)
+        return if (shouldOpenCallFragment && PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE)
             FROM_INCOMING_CALL
         else if (shouldOpenCallFragment)
             FROM_CALL_BAR
@@ -238,16 +238,16 @@ class VoiceCallActivity : BaseActivity() {
 
     private fun startCallingScreen() {
         when (vm.callType) {
-            Category.PEER_TO_PEER -> {
+            com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER -> {
                 openFragment { addCallUserFragment() }
             }
-            Category.FPP -> {
+            com.joshtalks.joshskills.premium.calling.constant.Category.FPP -> {
                 addFppCallFragment()
             }
-            Category.GROUP -> {
+            com.joshtalks.joshskills.premium.calling.constant.Category.GROUP -> {
                 openFragment { addGroupCallFragment() }
             }
-            Category.EXPERT -> {
+            com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT -> {
                 addExpertCallFragment()
             }
         }
@@ -265,25 +265,25 @@ class VoiceCallActivity : BaseActivity() {
         event.observe(this) {
             Log.i(TAG, "initViewState: event -> ${it.what}")
             when (it.what) {
-                CALL_INITIATED_EVENT -> {
+                com.joshtalks.joshskills.premium.calling.constant.CALL_INITIATED_EVENT -> {
                     when (vm.callType) {
-                        Category.PEER_TO_PEER -> {
+                        com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER -> {
                             replaceCallUserFragment()
                         }
-                        Category.GROUP -> {
+                        com.joshtalks.joshskills.premium.calling.constant.Category.GROUP -> {
                             replaceGroupUserFragment()
                         }
                         else -> {}
                     }
                 }
-                CLOSE_CALL_SCREEN -> {
+                com.joshtalks.joshskills.premium.calling.constant.CLOSE_CALL_SCREEN -> {
                     val intent = Intent().apply {
                         putExtra(CALL_DURATION, it.obj as? Long)
                     }
                     setResult(RESULT_OK, intent)
                     finishAndRemoveTask()
                 }
-                SHOW_DISCONNECT_DIALOG -> {
+                com.joshtalks.joshskills.premium.calling.constant.SHOW_DISCONNECT_DIALOG -> {
                     showDialog()
                 }
 
@@ -362,7 +362,7 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (PrefManager.getVoipState() == State.IDLE || PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING || PrefManager.getVoipState() == State.JOINED)
+        if (PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE || PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.SEARCHING || PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.JOINING || PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.JOINED)
             backPressMutex.onMultipleBackPress {
                 super.onBackPressed()
                 vm.backPress()
@@ -384,9 +384,9 @@ class VoiceCallActivity : BaseActivity() {
             )
 
         val builder = AlertDialog.Builder(this).apply {
-            if(vm.callType == Category.PEER_TO_PEER)
+            if(vm.callType == com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER)
                 setTitle( dialogTitle.ifBlank { getString(R.string.default_disconnect_dialog_title) })
-            if(vm.callType == Category.PEER_TO_PEER)
+            if(vm.callType == com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER)
                 setMessage(
                     getConformationDialogMessage()
                 )

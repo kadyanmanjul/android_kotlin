@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.premium.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.premium.ui.fpp.constants.*
 import com.joshtalks.joshskills.premium.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -106,7 +106,7 @@ class FavoriteListActivity : BaseFppActivity() {
                     val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
                     callIntent.apply {
                         putExtra(STARTING_POINT, FROM_ACTIVITY)
-                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                        putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.FPP.ordinal)
                         putExtra(INTENT_DATA_FPP_MENTOR_ID, viewModel.selectedUser?.mentorId)
                         putExtra(INTENT_DATA_FPP_NAME, viewModel.selectedUser?.name)
                         putExtra(INTENT_DATA_FPP_IMAGE, viewModel.selectedUser?.image)

@@ -70,7 +70,7 @@ import com.joshtalks.joshskills.premium.ui.special_practice.utils.PROCEED_PAYMEN
 import com.joshtalks.joshskills.premium.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.premium.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.premium.util.DividerItemDecoration
-import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.premium.calling.Utils.Companion.onMultipleBackPress
 import com.joshtalks.skydoves.balloon.OnBalloonClickListener
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken

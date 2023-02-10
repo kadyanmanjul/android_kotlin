@@ -76,7 +76,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
-import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager as VoipPrefManager
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002

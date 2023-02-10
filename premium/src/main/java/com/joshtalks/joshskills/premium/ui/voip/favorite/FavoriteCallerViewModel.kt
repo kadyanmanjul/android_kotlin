@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.premium.repository.local.entity.practise.Favorit
 import com.joshtalks.joshskills.premium.ui.fpp.constants.*
 import com.joshtalks.joshskills.premium.ui.voip.favorite.adapter.FppFavoriteAdapter
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.premium.calling.constant.State
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -149,7 +149,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
             )
             return
         }
-        if (getVoipState() == State.IDLE) {
+        if (getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE) {
             Log.d("naa", "clickOnPhoneCall: ${favoriteCaller.mentorId}")
             selectedUser = favoriteCaller
             message.what = START_FPP_CALL

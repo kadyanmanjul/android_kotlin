@@ -38,7 +38,7 @@ android {
             buildConfigField "String", "MS_BASE_URL", "${rootProject.ext.voip_ms_debug_base_url}"
             buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-d49381a1-56bf-4854-96bb-3400c5facddd\""
             buildConfigField "String", "PUBNUB_SUB_P2P_KEY", "\"sub-c-2069fa10-9b9b-11ec-879a-86a1e6519840\""
-            buildConfigField "String", "AGORA_API_KEY", "\"c009eb4d56614e4090b28c52830a6880\""
+            //buildConfigField "String", "AGORA_API_KEY", "\"c009eb4d56614e4090b28c52830a6880\""
         }
 
         prod {
@@ -46,7 +46,7 @@ android {
             buildConfigField "String", "MS_BASE_URL", "${rootProject.ext.voip_ms_prod_base_url}"
             buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-ca4c4308-ae44-4431-9a31-c4dfdd6b0bf1\""
             buildConfigField "String", "PUBNUB_SUB_P2P_KEY", "\"sub-c-d19da452-a164-11ec-a074-1a3740267833\""
-            buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
+            //buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
         }
     }
 
@@ -57,16 +57,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    sourceSets {
-        main{
-            jniLibs.srcDirs = ['src/main/jniLibs']
-        }
-    }
 }
 
 dependencies {
-    implementation project(path: ':base')
+    //implementation project(path: ':base')
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation "androidx.collection:collection-ktx:1.2.0"
@@ -79,7 +73,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-    implementation files("libs/agora-rtc-sdk.jar")
+    //implementation files("libs/agora-rtc-sdk.jar")
     implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.2.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'

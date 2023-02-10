@@ -10,8 +10,8 @@ import com.joshtalks.joshskills.premium.core.BLOCK_STATUS
 import com.joshtalks.joshskills.premium.core.FT_CALLS_LEFT
 import com.joshtalks.joshskills.premium.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.premium.ui.lesson.speaking.spf_models.BlockStatusModel
-import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.premium.calling.constant.State
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager
 import com.joshtalks.joshskills.premium.core.PrefManager as CorePrefManager
 import java.time.Duration
 import java.util.*
@@ -33,9 +33,9 @@ private fun Cursor?.getStringData(columnName : String) : String {
 }
 
 
-fun getVoipState(): State {
+fun getVoipState(): com.joshtalks.joshskills.premium.calling.constant.State {
     val state = PrefManager.getVoipState().ordinal
-    return State.values()[state]
+    return com.joshtalks.joshskills.premium.calling.constant.State.values()[state]
 }
 
 

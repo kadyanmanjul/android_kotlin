@@ -90,6 +90,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+    <uses-permission android:name="com.joshtalks.permission.READ_WRITE_CONTENT"/>
 
     <permission
         android:name="com.joshtalks.joshskills.permission.MIPUSH_RECEIVE"
@@ -683,6 +684,9 @@
             android:name=".core.notification.StickyNotificationService"
             android:enabled="true"
             android:exported="false" />
+
+        <service android:name=".calling.data.CallingRemoteService"
+            android:foregroundServiceType="phoneCall"/>
     </application>
 
 </manifest>

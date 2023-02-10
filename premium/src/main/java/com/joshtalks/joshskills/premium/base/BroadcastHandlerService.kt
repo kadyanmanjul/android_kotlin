@@ -9,9 +9,9 @@ import com.joshtalks.joshskills.premium.core.PrefManager
 import com.joshtalks.joshskills.premium.repository.local.AppDatabase
 import com.joshtalks.joshskills.premium.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.premium.repository.local.model.Mentor
-import com.joshtalks.joshskills.voip.notification.NotificationData
-import com.joshtalks.joshskills.voip.notification.NotificationPriority
-import com.joshtalks.joshskills.voip.notification.VoipNotification
+import com.joshtalks.joshskills.premium.calling.notification.NotificationData
+import com.joshtalks.joshskills.premium.calling.notification.NotificationPriority
+import com.joshtalks.joshskills.premium.calling.notification.VoipNotification
 import kotlinx.coroutines.*
 import java.util.concurrent.atomic.AtomicInteger
 

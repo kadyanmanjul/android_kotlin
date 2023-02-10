@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.premium.repository.server.introduction.DemoOnboa
 import com.joshtalks.joshskills.premium.ui.lesson.speaking.spf_models.BlockStatusModel
 import com.joshtalks.joshskills.premium.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.premium.ui.lesson.speaking.spf_models.VideoPopupItem
-import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
+import com.joshtalks.joshskills.premium.calling.data.api.CallRecordingRequest
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*

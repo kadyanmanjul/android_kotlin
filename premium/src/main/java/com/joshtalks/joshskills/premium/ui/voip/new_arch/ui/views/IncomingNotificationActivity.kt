@@ -15,9 +15,9 @@ import com.google.android.play.core.splitcompat.SplitCompat
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
 import com.joshtalks.joshskills.premium.databinding.ActivityIncomingNotificationBinding
-import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
+import com.joshtalks.joshskills.premium.calling.Utils
+import com.joshtalks.joshskills.premium.calling.data.CallingRemoteService
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager as VoipPrefManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

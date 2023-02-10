@@ -28,11 +28,11 @@ import com.joshtalks.joshskills.premium.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.AutoCallActivity
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.UserInterestActivity
-import com.joshtalks.joshskills.voip.BeepTimer
-import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.data.local.AGORA_CALL_ID
-import com.joshtalks.joshskills.voip.data.local.LOCAL_USER_AGORA_ID
-import com.joshtalks.joshskills.voip.inSeconds
+import com.joshtalks.joshskills.premium.calling.BeepTimer
+import com.joshtalks.joshskills.premium.calling.constant.Category
+import com.joshtalks.joshskills.premium.calling.data.local.AGORA_CALL_ID
+import com.joshtalks.joshskills.premium.calling.data.local.LOCAL_USER_AGORA_ID
+import com.joshtalks.joshskills.premium.calling.inSeconds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -104,7 +104,7 @@ object VoipPref {
         editor.commit()
         if (duration.inSeconds() >= AppObjectController.getFirebaseRemoteConfig().getLong(AUTO_CONNECT_PRIMARY_CONDITION))
             resetAutoCallCount()
-        if (callType != Category.EXPERT.ordinal)
+        if (callType != com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT.ordinal)
             showPopUp(duration, callType)
 
         if (preferenceManager.getBoolean(IS_FIRST_5MIN_CALL, true) &&
@@ -175,11 +175,11 @@ object VoipPref {
             val resp = AppObjectController.commonNetworkService.getPopupType()
             return if ((resp.body()?.get("show_screen") == true))
                 POPUP.INTEREST
-            else if ((resp.body()?.get("show_scratch_card") == true) && callType == Category.PEER_TO_PEER.ordinal)
+            else if ((resp.body()?.get("show_scratch_card") == true) && callType == com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER.ordinal)
                 POPUP.SCRATCH_CARD
-            else if ((resp.body()?.get("show_payment_popup") == true) && callType != Category.EXPERT.ordinal)
+            else if ((resp.body()?.get("show_payment_popup") == true) && callType != com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT.ordinal)
                 POPUP.PURCHASE
-            else if (callType != Category.EXPERT.ordinal)
+            else if (callType != com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT.ordinal)
                 POPUP.CALL_RATING
             else
                 POPUP.ERROR
@@ -197,7 +197,7 @@ object VoipPref {
                         duration.inSeconds() < AppObjectController.getFirebaseRemoteConfig().getLong(
                     AUTO_CONNECT_PRIMARY_CONDITION) &&
                         preferenceManager.getInt(AUTO_CONNECT_CURRENT_TRY_COUNT, 0) < AppObjectController.getFirebaseRemoteConfig().getLong(AUTO_CONNECT_MAX_RETRY_PER_CALL) &&
-                        com.joshtalks.joshskills.voip.data.local.PrefManager.getLastDisconnectScreenName() == "VoiceCallActivity"
+                        com.joshtalks.joshskills.premium.calling.data.local.PrefManager.getLastDisconnectScreenName() == "VoiceCallActivity"
             }
             else -> false
         }
@@ -218,7 +218,7 @@ object VoipPref {
 
     private fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {
         BeepTimer.stopBeepSound()
-        if (callType == Category.EXPERT.ordinal) {
+        if (callType == com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT.ordinal) {
             setExpertCallDuration(duration)
 
             CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
@@ -444,11 +444,11 @@ object VoipPref {
     }
 
     fun setExpertCallDuration(duration: String) {
-        com.joshtalks.joshskills.voip.data.local.PrefManager.setExpertCallDuration(duration)
+        com.joshtalks.joshskills.premium.calling.data.local.PrefManager.setExpertCallDuration(duration)
     }
 
     fun getExpertCallDuration(): String? {
-        return com.joshtalks.joshskills.voip.data.local.PrefManager.getExpertCallDuration()
+        return com.joshtalks.joshskills.premium.calling.data.local.PrefManager.getExpertCallDuration()
     }
 }
 

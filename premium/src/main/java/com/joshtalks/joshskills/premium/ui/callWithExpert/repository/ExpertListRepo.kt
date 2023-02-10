@@ -15,8 +15,8 @@ import com.joshtalks.joshskills.premium.ui.callWithExpert.model.AvailableAmount
 import com.joshtalks.joshskills.premium.ui.callWithExpert.model.Transaction
 import com.joshtalks.joshskills.premium.ui.callWithExpert.model.WalletLogs
 import com.joshtalks.joshskills.premium.ui.callWithExpert.repository.db.SkillsDatastore
-import com.joshtalks.joshskills.voip.BeepTimer
-import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.premium.calling.BeepTimer
+import com.joshtalks.joshskills.premium.calling.constant.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -119,7 +119,7 @@ class ExpertListRepo {
     //TODO: Remove if not being used
     fun deductAmountAfterCall(duration: String, remoteUserMentorId: String, callType: Int) {
         BeepTimer.stopBeepSound()
-        if (callType == Category.EXPERT.ordinal) {
+        if (callType == com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT.ordinal) {
             VoipPref.setExpertCallDuration(duration)
 
             CoroutineScope(Dispatchers.IO + VoipPref.coroutineExceptionHandler).launch {

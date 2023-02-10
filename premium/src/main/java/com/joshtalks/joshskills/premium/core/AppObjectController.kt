@@ -414,7 +414,7 @@ class AppObjectController {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         val resp = p2pNetworkService.getVoipNewArchFlag()
-                        com.joshtalks.joshskills.voip.data.local.PrefManager.initServicePref(
+                        com.joshtalks.joshskills.premium.calling.data.local.PrefManager.initServicePref(
                             joshApplication
                         )
                         PrefManager.put(
@@ -426,7 +426,7 @@ class AppObjectController {
                         PrefManager.put(IS_GAME_ON, resp.isGameOn ?: 1)
                         PrefManager.put(IS_LEVEL_DETAILS_ENABLED, resp.isLevelFormOn ?: 0)
                         PrefManager.put(IS_INTEREST_FORM_ENABLED, resp.isInterestFormOn ?: 0)
-                        com.joshtalks.joshskills.voip.data.local.PrefManager.setBeepTimerStatus(resp.isBeepTimerEnabled ?: 0)
+                        com.joshtalks.joshskills.premium.calling.data.local.PrefManager.setBeepTimerStatus(resp.isBeepTimerEnabled ?: 0)
                     } catch (ex: Exception) {
                         when (ex) {
                             is HttpException -> {

@@ -78,6 +78,7 @@ android {
         dev {
             versionName "${rootProject.ext.version_name}.Dev"
             //manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "AGORA_API_KEY", "\"c009eb4d56614e4090b28c52830a6880\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${rootProject.ext.version_name}.apk"
@@ -95,6 +96,7 @@ android {
         }
         prod {
             //manifestPlaceholders = [enableCrashReporting: "true"]
+            buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-skills-release${rootProject.ext.version_name}.apk"
@@ -126,6 +128,12 @@ android {
         dataBinding = true
     }
 
+    sourceSets {
+        main{
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
+
     dynamicFeatures = [':premium', ':freetrial']
 }
 
@@ -152,4 +160,5 @@ dependencies {
     // Dependency with the implementation code for the APIs
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     api 'com.userexperior:userexperior-android:7.0.5'
+    api files("libs/agora-rtc-sdk.jar")
 }

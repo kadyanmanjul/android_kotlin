@@ -75,7 +75,7 @@ import com.joshtalks.joshskills.premium.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.premium.ui.special_practice.utils.GATEWAY_INITIALISED
 import com.joshtalks.joshskills.premium.ui.special_practice.utils.PROCEED_PAYMENT_CLICK
 import com.joshtalks.joshskills.premium.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.premium.calling.Utils.Companion.onMultipleBackPress
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

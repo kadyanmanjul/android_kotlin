@@ -30,7 +30,7 @@ import com.joshtalks.joshskills.premium.ui.callWithExpert.viewModel.CallWithExpe
 import com.joshtalks.joshskills.premium.ui.callWithExpert.viewModel.ExpertListViewModel
 import com.joshtalks.joshskills.premium.ui.fpp.constants.CAN_BE_CALL
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.Category
 import com.skydoves.balloon.ArrowPositionRules
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
@@ -161,7 +161,7 @@ class ExpertListFragment : BaseFragment() {
                 putExtra(IS_EXPERT_CALLING, "true")
                 putExtra(INTENT_DATA_EXPERT_PRICE_PER_MIN, expertListViewModel.selectedUser?.expertPricePerMinute.toString())
                 putExtra(INTENT_DATA_TOTAL_AMOUNT, viewModel.walletAmount.value?.toString())
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.EXPERT.ordinal)
+                putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.EXPERT.ordinal)
                 putExtra(INTENT_DATA_FPP_MENTOR_ID, expertListViewModel.selectedUser?.mentorId)
                 putExtra(INTENT_DATA_FPP_NAME, expertListViewModel.selectedUser?.expertName)
                 putExtra(INTENT_DATA_FPP_IMAGE, expertListViewModel.selectedUser?.expertImage)

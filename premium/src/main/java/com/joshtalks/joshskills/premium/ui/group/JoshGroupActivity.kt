@@ -35,8 +35,8 @@ import com.joshtalks.joshskills.premium.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.premium.ui.userprofile.fragments.MENTOR_ID
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.premium.calling.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.State
 
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -153,13 +153,13 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
-        if (getVoipState() == State.IDLE) {
+        if (getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE) {
             GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
 
             val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
             callIntent.apply {
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
+                putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.GROUP.ordinal)
                 putExtra(INTENT_DATA_GROUP_ID, bundle.getString(GROUPS_ID))
                 putExtra(INTENT_DATA_TOPIC_ID, "5")
                 putExtra(INTENT_DATA_GROUP_NAME, bundle.getString(GROUPS_TITLE))
@@ -171,11 +171,11 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun openFppCallScreen(uid: Int, data: Bundle) {
-        if (getVoipState() == State.IDLE) {
+        if (getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE) {
             val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
             callIntent.apply {
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
-                putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.FPP.ordinal)
                 putExtra(INTENT_DATA_FPP_MENTOR_ID, vm.mentorId)
                 putExtra(INTENT_DATA_FPP_NAME, data.getString(INTENT_DATA_FPP_NAME))
                 putExtra(INTENT_DATA_FPP_IMAGE, data.getString(INTENT_DATA_FPP_IMAGE))

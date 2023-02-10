@@ -27,7 +27,7 @@ import com.joshtalks.joshskills.premium.ui.settings.adapter.SettingsAdapter
 import com.joshtalks.joshskills.premium.ui.settings.model.Setting
 import com.joshtalks.joshskills.premium.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.premium.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager as VoipPrefManager
 
 class SettingsFragment : Fragment() {
 

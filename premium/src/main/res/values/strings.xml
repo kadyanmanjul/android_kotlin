@@ -1007,4 +1007,20 @@
     <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
 
 
+
+    <!--    Notification Module-->
+    <string name="channel_name_calls" translatable="false">Josh Calling Channel</string>
+    <string name="CHANNEL_ID_CALLS" translatable="false">com.joshtalks.skills.high</string>
+    <string name="channel_name_normal" translatable="false">others</string>
+    <string name="channel_calls_description" translatable="false">For Incoming Calls Notification</string>
+    <string name="channel_others_description" translatable="false">some other updates</string>
+
+    <string name="expert_p2p_title" translatable="false">Expert Call</string>
+    <string name="premium_p2p_title" translatable="false">Premium User Calling</string>
+
+    <string name="CHANNEL_ID_OTHERS" translatable="false">com.joshtalks.skills.low</string>
+
+    <!-- Voip Preference-->
+    <string name="voip_service_shared_pref_file_name" translatable="false">com.joshtalks.joshskills.new_arch_voip_service_shared_pref_file</string>
+
 </resources>

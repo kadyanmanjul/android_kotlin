@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.premium.constants.START_USER_INTEREST_FRAGMENT
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.databinding.ActivityUserInterestBinding
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.CallInterestViewModel
-import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.premium.calling.Utils.Companion.onMultipleBackPress
 import kotlinx.coroutines.sync.Mutex
 
 class UserInterestActivity : BaseActivity() {

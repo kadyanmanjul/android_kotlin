@@ -32,7 +32,7 @@ import com.joshtalks.joshskills.premium.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.premium.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.premium.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.Category
 
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -174,7 +174,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
         callIntent.apply {
             putExtra(STARTING_POINT, FROM_ACTIVITY)
-            putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
+            putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.GROUP.ordinal)
             putExtra(INTENT_DATA_GROUP_ID, groupItemData?.getUniqueId())
             putExtra(INTENT_DATA_TOPIC_ID, "5")
             putExtra(INTENT_DATA_GROUP_NAME, groupItemData?.getTitle())

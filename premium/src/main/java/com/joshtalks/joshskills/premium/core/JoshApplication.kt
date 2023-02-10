@@ -23,9 +23,9 @@ import com.joshtalks.joshskills.premium.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.premium.util.ReminderUtil
-import com.joshtalks.joshskills.voip.ProximityHelper
-import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.premium.calling.ProximityHelper
+import com.joshtalks.joshskills.premium.calling.Utils
+import com.joshtalks.joshskills.premium.calling.constant.State
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import timber.log.Timber

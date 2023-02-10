@@ -22,6 +22,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.premium.calling.Utils
+import com.joshtalks.joshskills.premium.calling.constant.*
+import com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_ID
+import com.joshtalks.joshskills.premium.calling.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.COURSE_ID
 import com.joshtalks.joshskills.premium.core.analytics.DismissNotifEventReceiver
@@ -56,10 +60,8 @@ import com.joshtalks.joshskills.premium.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.premium.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
-import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.premium.calling.constant.*
+import com.joshtalks.joshskills.premium.calling.data.CallingRemoteService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -435,10 +437,16 @@ class NotificationUtils(val context: Context) {
                     val jsonObj = JSONObject(actionData ?: EMPTY)
                     val callContext = context
                     val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
-                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
-                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,jsonObj.getString(INCOMING_CALL_CATEGORY))
+                    remoteServiceIntent.putExtra(
+                        INCOMING_CALL_ID, jsonObj.getString(
+                            INCOMING_CALL_ID
+                        ))
+                    remoteServiceIntent.putExtra(
+                        com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_CATEGORY,jsonObj.getString(
+                            com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_CATEGORY
+                        ))
                     remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
-                    com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
+                    Utils.context?.startService(remoteServiceIntent)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -449,9 +457,18 @@ class NotificationUtils(val context: Context) {
                     val jsonObj = JSONObject(actionData ?: EMPTY)
                     val callContext = context
                     val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
-                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
-                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
-                    remoteServiceIntent.putExtra(REMOTE_USER_NAME, jsonObj.getString(REMOTE_USER_NAME))
+                    remoteServiceIntent.putExtra(
+                        INCOMING_CALL_ID, jsonObj.getString(
+                            INCOMING_CALL_ID
+                        ))
+                    remoteServiceIntent.putExtra(
+                        com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_CATEGORY, jsonObj.getString(
+                            com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_CATEGORY
+                        ))
+                    remoteServiceIntent.putExtra(
+                        REMOTE_USER_NAME, jsonObj.getString(
+                            REMOTE_USER_NAME
+                        ))
                     remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
                     callContext.startService(remoteServiceIntent)
                 } catch (e: Exception) {
@@ -464,10 +481,21 @@ class NotificationUtils(val context: Context) {
                     val jsonObj = JSONObject(actionData ?: EMPTY)
                     val callContext = context
                     val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
-                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
-                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
-                    remoteServiceIntent.putExtra(REMOTE_USER_NAME, jsonObj.getString(REMOTE_USER_NAME))
-                    remoteServiceIntent.putExtra(IS_PREMIUM_USER, jsonObj.optString(IS_PREMIUM_USER, "false"))
+                    remoteServiceIntent.putExtra(
+                        INCOMING_CALL_ID, jsonObj.getString(
+                            INCOMING_CALL_ID
+                        ))
+                    remoteServiceIntent.putExtra(
+                        com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_CATEGORY, jsonObj.getString(
+                            com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_CATEGORY
+                        ))
+                    remoteServiceIntent.putExtra(
+                        REMOTE_USER_NAME, jsonObj.getString(
+                            REMOTE_USER_NAME
+                        ))
+                    remoteServiceIntent.putExtra(
+                        com.joshtalks.joshskills.premium.calling.constant.IS_PREMIUM_USER, jsonObj.optString(
+                            com.joshtalks.joshskills.premium.calling.constant.IS_PREMIUM_USER, "false"))
                     remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
                     callContext.startService(remoteServiceIntent)
                 } catch (e: Exception) {
@@ -480,10 +508,22 @@ class NotificationUtils(val context: Context) {
                     val jsonObj = JSONObject(actionData ?: EMPTY)
                     val callContext = context
                     val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
-                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
-                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
-                    remoteServiceIntent.putExtra(INCOMING_GROUP_NAME, jsonObj.getString(INCOMING_GROUP_NAME))
-                    remoteServiceIntent.putExtra(INCOMING_GROUP_IMAGE, jsonObj.getString(INCOMING_GROUP_IMAGE))
+                    remoteServiceIntent.putExtra(
+                        INCOMING_CALL_ID, jsonObj.getString(
+                            INCOMING_CALL_ID
+                        ))
+                    remoteServiceIntent.putExtra(
+                        com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_CATEGORY, jsonObj.getString(
+                            com.joshtalks.joshskills.premium.calling.constant.INCOMING_CALL_CATEGORY
+                        ))
+                    remoteServiceIntent.putExtra(
+                        com.joshtalks.joshskills.premium.calling.constant.INCOMING_GROUP_NAME, jsonObj.getString(
+                            com.joshtalks.joshskills.premium.calling.constant.INCOMING_GROUP_NAME
+                        ))
+                    remoteServiceIntent.putExtra(
+                        com.joshtalks.joshskills.premium.calling.constant.INCOMING_GROUP_IMAGE, jsonObj.getString(
+                            com.joshtalks.joshskills.premium.calling.constant.INCOMING_GROUP_IMAGE
+                        ))
                     remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
                     callContext.startService(remoteServiceIntent)
                 } catch (e: Exception) {
@@ -504,7 +544,7 @@ class NotificationUtils(val context: Context) {
                     putExtra(INTENT_DATA_COURSE_ID, "151")
                     putExtra(INTENT_DATA_TOPIC_ID, "5")
                     putExtra(STARTING_POINT, FROM_ACTIVITY)
-                    putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+                    putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER.ordinal)
                 }
                 return intent
             }

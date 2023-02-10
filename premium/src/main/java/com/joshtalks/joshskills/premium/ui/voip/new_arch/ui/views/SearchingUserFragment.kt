@@ -23,8 +23,8 @@ import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.models.SearchingRule
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.models.SearchingTip
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.views.adapter.SearchUserAdapter
-import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.premium.calling.constant.State
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.reflect.Type
@@ -191,7 +191,7 @@ class SearchingUserFragment : BaseFragment() {
     }
 
     private fun setCurrentCallState() {
-        if ((PrefManager.getVoipState() == State.JOINED || PrefManager.getVoipState() == State.CONNECTED)) {
+        if ((PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.JOINED || PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.CONNECTED)) {
             replaceCallUserFragment()
         }
     }

@@ -21,7 +21,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.core.AppObjectController
 import com.joshtalks.joshskills.premium.ui.launch.LauncherActivity
-import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.premium.calling.Utils
 import io.branch.referral.Branch
 import com.joshtalks.joshskills.premium.BuildConfig
 

@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.premium.ui.fpp.constants.CAN_BE_CALL
 import com.joshtalks.joshskills.premium.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.premium.util.showAppropriateMsg
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.premium.calling.constant.State
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -74,7 +74,7 @@ class ExpertListViewModel : BaseViewModel() {
             )
             return
         }
-        if (getVoipState() == State.IDLE) {
+        if (getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE) {
             selectedUser = expertListModel
             viewModelScope.launch {
                 startExpertCall.emit(true)

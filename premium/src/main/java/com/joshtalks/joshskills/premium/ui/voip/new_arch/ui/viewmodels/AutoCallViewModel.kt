@@ -20,10 +20,10 @@ import com.joshtalks.joshskills.premium.core.FirebaseRemoteConfigKey.Companion.A
 import com.joshtalks.joshskills.premium.core.PrefManager
 import com.joshtalks.joshskills.premium.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.models.AutoConnectData
-import com.joshtalks.joshskills.voip.constant.CALL_NOW
-import com.joshtalks.joshskills.voip.constant.STOP_WAITING
-import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.premium.calling.constant.CALL_NOW
+import com.joshtalks.joshskills.premium.calling.constant.STOP_WAITING
+import com.joshtalks.joshskills.premium.calling.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.premium.calling.voipanalytics.EventName
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -48,7 +48,8 @@ class AutoCallViewModel(val applicationContext: Application) :
                 mutex.withLock {
                     if (isCalled.not()) {
                         val msg = Message.obtain().apply {
-                            what = CALL_NOW
+                            what =
+                                com.joshtalks.joshskills.premium.calling.constant.CALL_NOW
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
@@ -61,7 +62,7 @@ class AutoCallViewModel(val applicationContext: Application) :
 
     fun stopWaiting(view: View) {
         val msg = Message.obtain().apply {
-            what = STOP_WAITING
+            what = com.joshtalks.joshskills.premium.calling.constant.STOP_WAITING
         }
         singleLiveEvent.value = msg
     }
@@ -70,7 +71,7 @@ class AutoCallViewModel(val applicationContext: Application) :
         CallAnalytics.addAnalytics(
             event = EventName.AUTO_CONNECT_SCREEN_SHOWN,
             agoraCallId = "",
-            agoraMentorId = com.joshtalks.joshskills.voip.data.local.PrefManager.getLocalUserAgoraId().toString()
+            agoraMentorId = com.joshtalks.joshskills.premium.calling.data.local.PrefManager.getLocalUserAgoraId().toString()
         )
         setTipsUI()
         val json = fetchScreenJson(AUTO_CONNECT_SCREEN_DATA, AUTO_CONNECT_SCREEN_DATA_DEFAULT)

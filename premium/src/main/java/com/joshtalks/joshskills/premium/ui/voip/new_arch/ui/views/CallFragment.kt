@@ -20,11 +20,11 @@ import com.joshtalks.joshskills.premium.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.premium.databinding.FragmentCallBinding
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
-import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.premium.calling.constant.CANCEL_INCOMING_TIMER
+import com.joshtalks.joshskills.premium.calling.constant.State
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager
+import com.joshtalks.joshskills.premium.calling.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.premium.calling.voipanalytics.EventName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,7 +83,7 @@ class   CallFragment : BaseFragment() {
     }
     override fun initViewBinding() {
         callBinding.vm = vm
-        if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != State.CONNECTED) {
+        if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != com.joshtalks.joshskills.premium.calling.constant.State.CONNECTED) {
             startIncomingTimer()
         }
         callBinding.executePendingBindings()
@@ -94,7 +94,7 @@ class   CallFragment : BaseFragment() {
 
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
-                CANCEL_INCOMING_TIMER -> {
+                com.joshtalks.joshskills.premium.calling.constant.CANCEL_INCOMING_TIMER -> {
                     stopAnimation()
                     callBinding.incomingTimerContainer.visibility = View.INVISIBLE
                 }
@@ -187,9 +187,9 @@ class   CallFragment : BaseFragment() {
 
     private fun setCurrentCallState() {
         if(isFragmentRestarted) {
-            if(vm.source == FROM_INCOMING_CALL && (PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING))
+            if(vm.source == FROM_INCOMING_CALL && (PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.SEARCHING || PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.JOINING))
                 return
-            else if((PrefManager.getVoipState() == State.JOINED || PrefManager.getVoipState() == State.CONNECTED).not())
+            else if((PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.JOINED || PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.CONNECTED).not())
                 requireActivity().finish()
         } else
             isFragmentRestarted = true

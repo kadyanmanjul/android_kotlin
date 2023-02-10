@@ -11,11 +11,11 @@ import com.joshtalks.joshskills.premium.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.premium.databinding.ActivityAutoCallBinding
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.AutoCallViewModel
-import com.joshtalks.joshskills.voip.constant.CALL_NOW
-import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.constant.STOP_WAITING
-import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.premium.calling.constant.CALL_NOW
+import com.joshtalks.joshskills.premium.calling.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.STOP_WAITING
+import com.joshtalks.joshskills.premium.calling.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.premium.calling.voipanalytics.EventName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -62,19 +62,19 @@ class AutoCallActivity : BaseActivity() {
     override fun initViewState() {
         event.observe(this) {
             when(it.what) {
-                CALL_NOW -> {
+                com.joshtalks.joshskills.premium.calling.constant.CALL_NOW -> {
                     CallAnalytics.addAnalytics(
                         event = EventName.AUTO_CONNECT_CALL_NOW_PRESSED,
                         agoraCallId = "",
-                        agoraMentorId = com.joshtalks.joshskills.voip.data.local.PrefManager.getLocalUserAgoraId().toString()
+                        agoraMentorId = com.joshtalks.joshskills.premium.calling.data.local.PrefManager.getLocalUserAgoraId().toString()
                     )
                     callNow()
                 }
-                STOP_WAITING -> {
+                com.joshtalks.joshskills.premium.calling.constant.STOP_WAITING -> {
                     CallAnalytics.addAnalytics(
                         event = EventName.AUTO_CONNECT_SKIP_PRESSED,
                         agoraCallId = "",
-                        agoraMentorId = com.joshtalks.joshskills.voip.data.local.PrefManager.getLocalUserAgoraId().toString()
+                        agoraMentorId = com.joshtalks.joshskills.premium.calling.data.local.PrefManager.getLocalUserAgoraId().toString()
                     )
                     finish()
                 }
@@ -90,7 +90,7 @@ class AutoCallActivity : BaseActivity() {
             putExtra(INTENT_DATA_COURSE_ID, "151")
             putExtra(INTENT_DATA_TOPIC_ID, "5")
             putExtra(STARTING_POINT, FROM_ACTIVITY)
-            putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            putExtra(INTENT_DATA_CALL_CATEGORY, com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER.ordinal)
         }
         startActivity(callIntent)
         finish()

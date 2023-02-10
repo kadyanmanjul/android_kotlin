@@ -7,7 +7,7 @@ import android.content.Intent
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
-import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.premium.calling.voipLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

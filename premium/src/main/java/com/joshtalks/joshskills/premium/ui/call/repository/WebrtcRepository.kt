@@ -9,14 +9,15 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
+import com.joshtalks.joshskills.premium.calling.Utils
 import com.joshtalks.joshskills.premium.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.viewmodels.voipLog
-import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.getApiHeader
-import com.joshtalks.joshskills.voip.getMentorId
+import com.joshtalks.joshskills.premium.calling.constant.Category
+import com.joshtalks.joshskills.premium.calling.constant.State
+import com.joshtalks.joshskills.premium.calling.data.CallingRemoteService
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager
+import com.joshtalks.joshskills.premium.calling.getApiHeader
+import com.joshtalks.joshskills.premium.calling.getMentorId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,11 +33,11 @@ class WebrtcRepository(scope : CoroutineScope) {
         Log.d(TAG, "INIT : ")
         try {
             val remoteServiceIntent =
-                Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
-            val apiHeader = com.joshtalks.joshskills.voip.Utils.context?.getApiHeader()
-            remoteServiceIntent.putExtra(INTENT_DATA_MENTOR_ID, com.joshtalks.joshskills.voip.Utils.context?.getMentorId())
+                Intent(Utils.context, CallingRemoteService::class.java)
+            val apiHeader = Utils.context?.getApiHeader()
+            remoteServiceIntent.putExtra(INTENT_DATA_MENTOR_ID, Utils.context?.getMentorId())
             remoteServiceIntent.putExtra(INTENT_DATA_API_HEADER, apiHeader)
-            com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
+            Utils.context?.startService(remoteServiceIntent)
         } catch (e: Exception) {
             voipLog?.log("ERROR at INIT...")
             e.printStackTrace()
@@ -86,9 +87,9 @@ class WebrtcRepository(scope : CoroutineScope) {
         }
     }
 
-    fun connectCall(callData: HashMap<String, Any>, category: Category = Category.PEER_TO_PEER) {
+    fun connectCall(callData: HashMap<String, Any>, category: com.joshtalks.joshskills.premium.calling.constant.Category = com.joshtalks.joshskills.premium.calling.constant.Category.PEER_TO_PEER) {
         Log.d(TAG, "connectCall: - $callData")
-        if(mService != null && PrefManager.getVoipState() == State.IDLE)
+        if(mService != null && PrefManager.getVoipState() == com.joshtalks.joshskills.premium.calling.constant.State.IDLE)
             mService?.connectCall(callData, category)
     }
 

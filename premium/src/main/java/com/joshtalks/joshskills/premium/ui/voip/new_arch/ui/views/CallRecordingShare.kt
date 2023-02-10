@@ -29,7 +29,7 @@ import com.joshtalks.joshskills.premium.ui.special_practice.utils.WHATSAPP_PACKA
 import com.joshtalks.joshskills.premium.ui.video_player.VIDEO_URL
 import com.joshtalks.joshskills.premium.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.premium.util.DeepLinkUtil
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.premium.calling.data.CallingRemoteService
 
 
 class CallRecordingShare : AppCompatActivity() {

@@ -47,7 +47,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
-import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager as VoipPrefManager
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()

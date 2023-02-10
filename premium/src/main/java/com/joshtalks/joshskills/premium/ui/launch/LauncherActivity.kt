@@ -50,7 +50,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
+import com.joshtalks.joshskills.premium.calling.data.local.PrefManager as VoipPrefManager
 
 const val APP_PACKAGE_COUNT = 2
 

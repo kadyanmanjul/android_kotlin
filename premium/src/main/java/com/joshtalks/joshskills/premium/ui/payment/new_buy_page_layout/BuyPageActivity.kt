@@ -77,7 +77,7 @@ import com.joshtalks.joshskills.premium.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.premium.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.premium.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.premium.util.showAppropriateMsg
-import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
+import com.joshtalks.joshskills.premium.calling.Utils.Companion.onMultipleBackPress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex

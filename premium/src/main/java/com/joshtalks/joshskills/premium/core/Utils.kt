@@ -77,7 +77,7 @@ import com.joshtalks.joshskills.premium.core.PAYMENT_MOBILE_NUMBER
 import com.joshtalks.joshskills.premium.core.PrefManager
 import com.joshtalks.joshskills.premium.repository.local.model.User
 import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.premium.calling.constant.State
 import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
 import io.michaelrocks.libphonenumber.android.NumberParseException
