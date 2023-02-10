@@ -48,7 +48,6 @@
                 android:layout_marginTop="@dimen/_14sdp"
                 android:text="@string/permission_dialog_description"
                 android:textSize="@dimen/_14ssp"
-                android:fontFamily="@font/open_sans"
                 android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
                 android:textColor="@color/text_default" />
 

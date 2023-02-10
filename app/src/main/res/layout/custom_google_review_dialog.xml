@@ -33,10 +33,9 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/open_sans"
             android:text="Kya aapko iss course se koi bhi fayda hua he ? Your review matters."
             android:textColor="@color/text_default"
-            android:textSize="@dimen/_14ssp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingRegular20"
             android:paddingLeft="@dimen/_12sdp"
             android:paddingRight="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_18sdp"

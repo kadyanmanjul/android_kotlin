@@ -135,7 +135,7 @@
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginBottom="@dimen/_5sdp"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Italic"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="#511615"
                     android:textStyle="italic"
                     android:textSize="@dimen/_8sdp"

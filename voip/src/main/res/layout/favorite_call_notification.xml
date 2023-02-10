@@ -17,7 +17,6 @@
         android:layout_marginTop="2dip"
         android:ellipsize="end"
         android:gravity="center"
-        android:fontFamily="@font/open_sans_semibold"
         android:singleLine="true"
         android:text="ORIGINAL"
         android:textColor="#FFF"

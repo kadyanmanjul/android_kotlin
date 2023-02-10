@@ -25,7 +25,6 @@
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_38sdp"
             android:layout_marginEnd="@dimen/_28sdp"
-            android:fontFamily="@font/opensans_semibold"
             android:lineSpacingExtra="-8dp"
             android:text="@string/practice_call_experience"
             android:textAppearance="@style/TextAppearance.JoshTypography.Interest_Heading_SemiBold"

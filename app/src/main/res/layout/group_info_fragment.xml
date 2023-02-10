@@ -116,8 +116,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_22sdp"
-                        android:fontFamily="@font/open_sans"
                         android:text="@{vm.memberCount - 6 + ` more`}"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
                         android:textSize="@dimen/_10ssp"
                         tools:text="23 more" />
 
@@ -150,12 +150,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/open_sans"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingBold20"
                         android:gravity="center"
                         android:text="Exit Group"
                         android:textColor="@color/critical"
-                        android:textSize="@dimen/_14ssp"
-                        android:textStyle="bold" />
+                        android:textSize="@dimen/_14ssp" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -52,6 +52,7 @@ import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
+import io.agora.rtc.RtcEngine
 /*import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider*/
 import io.branch.referral.Branch
@@ -402,6 +403,10 @@ class AppObjectController {
                 //EmojiManager.install(IosEmojiProvider())
                 isGroupInitialize = true
             }
+        }
+
+        fun initAgoraPath() {
+            RtcEngine.setAgoraLibPath("")
         }
 
         fun getNewArchVoipFlag() {

@@ -9,7 +9,7 @@
     android:layout_marginBottom="@dimen/_8sdp"
     android:checkable="true"
     android:checked="false"
-    android:fontFamily="@font/opensans_semibold"
+    android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold16"
     android:clickable="true"
     android:textSize="@dimen/_13ssp"
     android:focusable="true"

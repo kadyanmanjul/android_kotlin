@@ -69,7 +69,6 @@ class CallInterestFragment: BaseFragment() {
                 val chip = LayoutInflater.from(context).inflate(R.layout.interest_chip_item, null, false) as Chip
                 chip.text = item.label
                 chip.id = item.id
-                chip.typeface = Typeface.create(ResourcesCompat.getFont(requireContext(),R.font.opensans_semibold),Typeface.NORMAL)
 
                 if (item.is_selected == 1){
                     chip.isChecked = true
