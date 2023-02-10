@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
+import com.joshtalks.joshskills.base.constants.VOIP_NOTIFICATION_SMALL_ICON_ID
 import com.joshtalks.joshskills.premium.core.*
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.premium.core.analytics.MixPanelTracker
@@ -81,6 +82,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        VOIP_NOTIFICATION_SMALL_ICON_ID = com.joshtalks.joshskills.R.drawable.ic_status_bar_notification
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
         AppObjectController.configureCrashlytics()

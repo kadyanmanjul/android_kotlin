@@ -95,13 +95,12 @@ class AlarmReceiver : BroadcastReceiver() {
     ) {
         val builder = NotificationCompat.Builder(this, channelId)
             .setFullScreenIntent(getFullScreenIntent(), true)
-            .setSmallIcon(android.R.drawable.arrow_up_float)
             .setContentTitle(title)
             .setAutoCancel(true)
             .setContentText(description)
             .setCategory(Notification.CATEGORY_REMINDER)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
+            .setSmallIcon(com.joshtalks.joshskills.R.drawable.ic_status_bar_notification).setColor(
                 ContextCompat.getColor(
                     context, R.color.primary_500
                 )

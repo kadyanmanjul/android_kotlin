@@ -235,7 +235,7 @@ class DownloadMediaService : Service(), FetchListener {
         val lNotificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
             .setChannelId(notificationChannelId)
             .setContentTitle(title)
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setSmallIcon(com.joshtalks.joshskills.R.drawable.ic_status_bar_notification)
             .setColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,

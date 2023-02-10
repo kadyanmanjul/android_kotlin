@@ -113,7 +113,7 @@ public class VideoDownloadService extends DownloadService {
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT
             );
-        return notificationHelper.buildProgressNotification(R.drawable.ic_download, pendingIntent, "", downloads);
+        return notificationHelper.buildProgressNotification(com.joshtalks.joshskills.R.drawable.ic_download, pendingIntent, "", downloads);
     }
 
 

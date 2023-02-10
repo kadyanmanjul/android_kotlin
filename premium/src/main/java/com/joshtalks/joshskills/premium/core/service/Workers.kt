@@ -300,7 +300,7 @@ class BackgroundNotificationWorker(val context: Context, workerParams: WorkerPar
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notificationBuilder = NotificationCompat.Builder(context, NOTIF_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setSmallIcon(com.joshtalks.joshskills.R.drawable.ic_status_bar_notification)
             .setOngoing(true)
             .setAutoCancel(false)
             .setContentTitle(context.getString(R.string.app_name))
@@ -399,7 +399,7 @@ class StickyNotificationWorker(val context: Context, val workerParams: WorkerPar
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channel = NotificationChannelData.UPDATES
         notificationBuilder = NotificationCompat.Builder(context, channel.id)
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setSmallIcon(com.joshtalks.joshskills.R.drawable.ic_status_bar_notification)
             .setOngoing(true)
             .setAutoCancel(false)
             .setOnlyAlertOnce(true)

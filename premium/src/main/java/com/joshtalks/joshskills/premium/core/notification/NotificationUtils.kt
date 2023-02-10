@@ -151,7 +151,7 @@ class NotificationUtils(val context: Context) {
                 val notificationBuilder =
                     NotificationCompat.Builder(context, notificationChannelId)
                         .setTicker(notificationObject.ticker)
-                        .setSmallIcon(R.drawable.ic_status_bar_notification)
+                        .setSmallIcon(com.joshtalks.joshskills.R.drawable.ic_status_bar_notification)
                         .setContentTitle(notificationObject.contentTitle)
                         .setAutoCancel(true)
                         .setSound(defaultSound)

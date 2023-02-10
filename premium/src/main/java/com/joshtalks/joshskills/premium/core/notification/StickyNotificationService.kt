@@ -102,7 +102,7 @@ class StickyNotificationService : Service() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channel = NotificationChannelData.UPDATES
         notificationBuilder = NotificationCompat.Builder(this, channel.id)
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setSmallIcon(com.joshtalks.joshskills.R.drawable.ic_status_bar_notification)
             .setOngoing(true)
             .setAutoCancel(false)
             .setOnlyAlertOnce(true)

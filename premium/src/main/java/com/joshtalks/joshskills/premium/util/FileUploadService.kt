@@ -409,7 +409,7 @@ class FileUploadService : Service() {
             .setChannelId(channelId)
             .setContentTitle(getString(R.string.app_name))
             .setContentText("Submitting a practice...")
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setSmallIcon(com.joshtalks.joshskills.R.drawable.ic_status_bar_notification)
             .setOngoing(false)
             .setColor(
                 ContextCompat.getColor(

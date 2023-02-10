@@ -167,7 +167,7 @@ class Mentor {
             val notificationBuilder =
                 NotificationCompat.Builder(joshApplication, notificationChannelId)
                     .setTicker(null)
-                    .setSmallIcon(R.drawable.ic_status_bar_notification)
+                    .setSmallIcon(com.joshtalks.joshskills.R.drawable.ic_status_bar_notification)
                     .setContentTitle(contentTitle)
                     .setAutoCancel(true)
                     .setSound(defaultSound)

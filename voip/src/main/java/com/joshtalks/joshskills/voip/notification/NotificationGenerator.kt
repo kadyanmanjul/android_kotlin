@@ -10,6 +10,7 @@ import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.joshtalks.joshskills.base.constants.VOIP_NOTIFICATION_SMALL_ICON_ID
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.openCallScreen
@@ -121,7 +122,7 @@ internal class NotificationGenerator {
         }
 
         notificationBuilder
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setSmallIcon(VOIP_NOTIFICATION_SMALL_ICON_ID)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
             .setDefaults(NotificationCompat.DEFAULT_SOUND)
