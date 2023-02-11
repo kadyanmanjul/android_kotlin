@@ -121,13 +121,13 @@ class AtsOptionView : AppCompatTextView {
     }
 
     companion object {
-        var mPaddingTop = Utils.sdpToPx(R.dimen._10sdp).toInt()
-        var mPaddingBottom = Utils.sdpToPx(R.dimen._10sdp).toInt()
-        var mPaddingLeft = Utils.sdpToPx(R.dimen._14sdp).toInt()
-        var mPaddingRight = Utils.sdpToPx(R.dimen._14sdp).toInt()
-        var mPadding10F = Utils.sdpToPx(R.dimen._16sdp).toInt()
-        var mPadding6F = Utils.sdpToPx(R.dimen._8sdp).toInt()
-        var mPadding4F = Utils.sdpToPx(R.dimen._3sdp).toInt()
+        var mPaddingTop = Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._10sdp).toInt()
+        var mPaddingBottom = Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._10sdp).toInt()
+        var mPaddingLeft = Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._14sdp).toInt()
+        var mPaddingRight = Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._14sdp).toInt()
+        var mPadding10F = Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._16sdp).toInt()
+        var mPadding6F = Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._8sdp).toInt()
+        var mPadding4F = Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._3sdp).toInt()
 
     }
 
@@ -145,7 +145,7 @@ class AtsOptionView : AppCompatTextView {
         )
         setLayoutParams(layoutParams)
         gravity = Gravity.CENTER
-        minWidth = Utils.sdpToPx(R.dimen._40sdp).toInt()
+        minWidth = Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._40sdp).toInt()
         textAlignment = TEXT_ALIGNMENT_CENTER
         textSize = 16f
         setOnTouchListener { v, event ->
@@ -157,9 +157,9 @@ class AtsOptionView : AppCompatTextView {
                     )
                     v.setPadding(
                         mPaddingLeft,
-                        mPaddingTop + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        mPaddingTop + Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._1sdp).toInt(),
                         mPaddingRight,
-                        mPaddingBottom - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        mPaddingBottom - Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._1sdp).toInt(),
                     )
                     v.invalidate()
                 }
@@ -170,9 +170,9 @@ class AtsOptionView : AppCompatTextView {
                     )
                     v.setPadding(
                         mPaddingLeft,
-                        mPaddingTop - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        mPaddingTop - Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._1sdp).toInt(),
                         mPaddingRight,
-                        mPaddingBottom + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        mPaddingBottom + Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._1sdp).toInt(),
                     )
                     v.invalidate()
                 }

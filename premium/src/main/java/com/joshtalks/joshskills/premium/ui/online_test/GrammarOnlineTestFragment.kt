@@ -82,9 +82,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                     )
                     v.setPaddingRelative(
                         v.paddingLeft,
-                        currentPaddingTop + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        currentPaddingTop + Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._1sdp).toInt(),
                         v.paddingRight,
-                        currentPaddingBottom - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        currentPaddingBottom - Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._1sdp).toInt(),
                     )
                     v.invalidate()
                 }
@@ -100,9 +100,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                     )
                     v.setPaddingRelative(
                         v.paddingLeft,
-                        currentPaddingTop - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        currentPaddingTop - Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._1sdp).toInt(),
                         v.paddingRight,
-                        currentPaddingBottom + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        currentPaddingBottom + Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._1sdp).toInt(),
                     )
                     v.invalidate()
                 }

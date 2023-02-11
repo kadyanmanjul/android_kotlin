@@ -1054,7 +1054,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             val overlayItem = TooltipUtils.getOverlayItemFromView(binding.tooltipContainer)
 
             val layoutP : ViewGroup.MarginLayoutParams = overlayImageView.layoutParams as  ViewGroup.MarginLayoutParams
-            layoutP.setMargins(resources.getDimension(R.dimen._10sdp).toInt(), 0, resources.getDimension(R.dimen._10sdp).toInt(), 0)
+            layoutP.setMargins(resources.getDimension(com.joshtalks.joshskills.R.dimen._10sdp).toInt(), 0, resources.getDimension(com.joshtalks.joshskills.R.dimen._10sdp).toInt(), 0)
             overlayImageView.setBackgroundDrawable(AppCompatResources.getDrawable(requireContext(),R.drawable.round_rect_default_8))
             binding.tooltipContainer.requestLayout()
 
@@ -1083,7 +1083,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             overlayItem?.let {
                 overlayImageView.setImageBitmap(it.viewBitmap)
                 overlayImageView.x = 0F
-                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp) - resources.getDimension(R.dimen._30sdp)
+                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(com.joshtalks.joshskills.R.dimen._32sdp) - resources.getDimension(com.joshtalks.joshskills.R.dimen._30sdp)
                 overlayImageView.requestLayout()
             }
         }
@@ -1128,7 +1128,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             overlayItem?.let {
                 overlayImageView.setImageBitmap(it.viewBitmap)
                 overlayImageView.x = it.x.toFloat()
-                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp) - resources.getDimension(R.dimen._47sdp)
+                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(com.joshtalks.joshskills.R.dimen._32sdp) - resources.getDimension(com.joshtalks.joshskills.R.dimen._47sdp)
                 overlayImageView.requestLayout()
             }
             PrefManager.put(HAS_SEEN_SPEAKING_BUTOON_TOOLTIP, true)

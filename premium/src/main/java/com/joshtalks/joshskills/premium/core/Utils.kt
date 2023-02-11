@@ -480,7 +480,7 @@ object Utils {
                 ).roundToInt()
     }
 
-    // Usage : Utils.sdpToPx(R.dimen._24sdp)
+    // Usage : Utils.sdpToPx(com.joshtalks.joshskills.R.dimen._24sdp)
     fun sdpToPx(dimen: Int) = AppObjectController.joshApplication.resources.getDimension(dimen)
 
     fun call(context: Context, phoneNumber: String) {

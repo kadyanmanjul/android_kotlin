@@ -18,9 +18,9 @@ public class DottedLineSpan extends ReplacementSpan {
     private Float mOffsetY = 0f;
 
     public DottedLineSpan(int _color, String _spannedText, Context context){
-        float mStrokeWidth = context.getResources().getDimension(R.dimen._4sdp);
-        float mDashPathEffect = context.getResources().getDimension(R.dimen._1sdp);
-        mOffsetY = context.getResources().getDimension(R.dimen._8sdp);
+        float mStrokeWidth = context.getResources().getDimension(com.joshtalks.joshskills.R.dimen._4sdp);
+        float mDashPathEffect = context.getResources().getDimension(com.joshtalks.joshskills.R.dimen._1sdp);
+        mOffsetY = context.getResources().getDimension(com.joshtalks.joshskills.R.dimen._8sdp);
 
         p = new Paint();
         p.setColor(_color);

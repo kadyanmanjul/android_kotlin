@@ -408,8 +408,8 @@ class UserProfileActivity : CoreJoshActivity() {
                 binding.profileText.layoutParams as RelativeLayout.LayoutParams
             layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE)
             layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE)
-            layoutParams.topMargin = resources.getDimension(R.dimen._11sdp).toInt()
-            layoutParams.bottomMargin = resources.getDimension(R.dimen._11sdp).toInt()
+            layoutParams.topMargin = resources.getDimension(com.joshtalks.joshskills.R.dimen._11sdp).toInt()
+            layoutParams.bottomMargin = resources.getDimension(com.joshtalks.joshskills.R.dimen._11sdp).toInt()
             binding.profileText.layoutParams = layoutParams
             binding.btnConfirmOrNotNowCard.visibility = GONE
             binding.sentRequestCard.setCardBackgroundColor(
@@ -432,8 +432,8 @@ class UserProfileActivity : CoreJoshActivity() {
                 binding.profileText.layoutParams as RelativeLayout.LayoutParams
             layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE)
             layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE)
-            layoutParams.topMargin = resources.getDimension(R.dimen._11sdp).toInt()
-            layoutParams.bottomMargin = resources.getDimension(R.dimen._11sdp).toInt()
+            layoutParams.topMargin = resources.getDimension(com.joshtalks.joshskills.R.dimen._11sdp).toInt()
+            layoutParams.bottomMargin = resources.getDimension(com.joshtalks.joshskills.R.dimen._11sdp).toInt()
             binding.profileText.layoutParams = layoutParams
             binding.profileText.text = getString(R.string.profile_request_removed_text, userName)
             binding.btnConfirmOrNotNowCard.visibility = GONE

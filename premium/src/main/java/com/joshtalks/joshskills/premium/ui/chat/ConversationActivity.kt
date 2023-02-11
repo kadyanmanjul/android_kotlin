@@ -2189,7 +2189,7 @@ class ConversationActivity :
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
         overlayButtonImageView.setImageBitmap(overlayButtonItem.viewBitmap)
         arrowView.x = getScreenHeightAndWidth().second.div(3).toFloat()
-        arrowView.y = overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
+        arrowView.y = overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(com.joshtalks.joshskills.R.dimen._32sdp)
         overlayImageView.x = overlayItem.x.toFloat()
         overlayImageView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT
         overlayButtonImageView.x = overlayButtonItem.x.toFloat()

@@ -175,12 +175,12 @@ class AppObjectController {
             if (BuildConfig.DEBUG) {
                 builder.addInterceptor(getOkhhtpToolInterceptor())
                 getDebugLogsInterceptor()?.let { builder.addInterceptor(it) }
-                val logging = HttpLoggingInterceptor { message ->
-                    Timber.tag("OkHttp_Builder").d(message)
-                }.apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
-                builder.addInterceptor(logging)
+//                val logging = HttpLoggingInterceptor { message ->
+//                    Timber.tag("OkHttp_Builder").d(message)
+//                }.apply {
+//                    level = HttpLoggingInterceptor.Level.BODY
+//                }
+//                builder.addInterceptor(logging)
                 builder.addNetworkInterceptor(getStethoInterceptor())
                 builder.eventListener(PrintingEventListener())
             }
@@ -201,12 +201,12 @@ class AppObjectController {
 
             if (BuildConfig.DEBUG) {
                 builder.addInterceptor(getOkhhtpToolInterceptor())
-                val logging = HttpLoggingInterceptor { message ->
-                    Timber.tag("OkHttp_P2P_Builder").d(message)
-                }.apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
-                builder.addInterceptor(logging)
+//                val logging = HttpLoggingInterceptor { message ->
+//                    Timber.tag("OkHttp_P2P_Builder").d(message)
+//                }.apply {
+//                    level = HttpLoggingInterceptor.Level.BODY
+//                }
+//                builder.addInterceptor(logging)
                 builder.addNetworkInterceptor(getStethoInterceptor())
                 builder.eventListener(PrintingEventListener())
             }
@@ -273,13 +273,13 @@ class AppObjectController {
                 .addInterceptor(StatusCodeInterceptor())
 
             if (BuildConfig.DEBUG) {
-                val logging =
-                    HttpLoggingInterceptor { message ->
-                        Timber.tag("OkHttp").d(message)
-                    }.apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    }
-                mediaOkhttpBuilder.addInterceptor(logging)
+//                val logging =
+//                    HttpLoggingInterceptor { message ->
+//                        Timber.tag("OkHttp").d(message)
+//                    }.apply {
+//                        level = HttpLoggingInterceptor.Level.BODY
+//                    }
+//                mediaOkhttpBuilder.addInterceptor(logging)
                 mediaOkhttpBuilder.addNetworkInterceptor(getStethoInterceptor())
                 mediaOkhttpBuilder.addInterceptor(getOkhhtpToolInterceptor())
             }
@@ -490,7 +490,7 @@ class AppObjectController {
                             CalligraphyInterceptor(
                                 CalligraphyConfig.Builder()
                                     .setDefaultFontPath("fonts/JoshOpenSans-Regular.ttf")
-                                    .setFontAttrId(R.attr.fontPath)
+                                    .setFontAttrId(com.joshtalks.joshskills.R.attr.fontPath)
                                     .build()
                             )
                         ).build()

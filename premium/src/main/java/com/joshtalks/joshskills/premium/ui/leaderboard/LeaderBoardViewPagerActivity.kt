@@ -567,8 +567,8 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
     ) {
         getOverlayData(position)?.let {
             val STATUS_BAR_HEIGHT = getStatusBarHeight()
-            val VIEW_PADDING_PX = resources.getDimension(R.dimen._8sdp)
-            val FIRST_ELEMENT_OFFSET = resources.getDimension(R.dimen._4sdp)
+            val VIEW_PADDING_PX = resources.getDimension(com.joshtalks.joshskills.R.dimen._8sdp)
+            val FIRST_ELEMENT_OFFSET = resources.getDimension(com.joshtalks.joshskills.R.dimen._4sdp)
             val tabPosition = IntArray(2)
             val tab = binding.tabLayout.getTabAt(position)
             val width = tab?.view!!.width
@@ -910,9 +910,9 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         itemImageView.setImageBitmap(overlayItem.viewBitmap)
         arrowView.x = (arrowPosition
             ?: (getScreenHeightAndWidth().second / 2.0).toFloat()).toFloat() - resources.getDimension(
-            R.dimen._40sdp
+            com.joshtalks.joshskills.R.dimen._40sdp
         )
-        arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(R.dimen._32sdp)
+        arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(com.joshtalks.joshskills.R.dimen._32sdp)
         itemImageView.x = overlayItem.x.toFloat()
         itemImageView.y = overlayItem.y.toFloat() - OFFSET
         itemImageView.setOnClickListener {

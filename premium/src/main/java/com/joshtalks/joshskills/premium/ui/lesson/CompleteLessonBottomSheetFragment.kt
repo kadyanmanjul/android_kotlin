@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.premium.ui.lesson
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -110,6 +111,7 @@ class CompleteLessonBottomSheetFragment : BottomSheetDialogFragment() {
     companion object{
         @JvmStatic
         fun newInstance():CompleteLessonBottomSheetFragment{
+            Log.e("sagar", "CompleteLessonBottomSheetFragment: ", )
             val fragment = CompleteLessonBottomSheetFragment()
             fragment.isCancelable = false
             return fragment

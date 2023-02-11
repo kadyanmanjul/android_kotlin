@@ -1783,7 +1783,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         itemImageView.visibility = View.INVISIBLE
         arrowView.visibility = View.INVISIBLE
         itemImageView.setImageBitmap(overlayItem.viewBitmap)
-        arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(R.dimen._32sdp)
+        arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(com.joshtalks.joshskills.R.dimen._32sdp)
         itemImageView.x = overlayItem.x.toFloat()
         itemImageView.y = overlayItem.y.toFloat() - OFFSET
         itemImageView.setOnClickListener {
@@ -1793,13 +1793,13 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         itemImageView.requestLayout()
         itemImageView.post {
             arrowView.x =
-                (itemImageView.x + itemImageView.width / 2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
+                (itemImageView.x + itemImageView.width / 2.0).toFloat() - resources.getDimension(com.joshtalks.joshskills.R.dimen._40sdp)
             arrowView.requestLayout()
         }
         arrowView.requestLayout()
         arrowView.post {
             tooltipView.visibility = View.INVISIBLE
-            tooltipView.y = arrowView.y - resources.getDimension(R.dimen._60sdp) - OFFSET
+            tooltipView.y = arrowView.y - resources.getDimension(com.joshtalks.joshskills.R.dimen._60sdp) - OFFSET
             tooltipView.requestLayout()
             binding.itemOverlay.visibility = View.VISIBLE
             arrowView.visibility = View.VISIBLE

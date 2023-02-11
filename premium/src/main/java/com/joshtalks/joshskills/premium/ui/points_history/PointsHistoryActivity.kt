@@ -207,9 +207,9 @@ class PointsHistoryActivity : CoreJoshActivity() {
         overlayImageView.requestLayout()
         overlayImageView.post {
             arrowView.x =
-                (arrowPoint.x + arrowWidth / 2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
+                (arrowPoint.x + arrowWidth / 2.0).toFloat() - resources.getDimension(com.joshtalks.joshskills.R.dimen._40sdp)
             arrowView.y =
-                overlayItem.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
+                overlayItem.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(com.joshtalks.joshskills.R.dimen._32sdp)
             arrowView.requestLayout()
             arrowView.visibility = View.VISIBLE
             binding.overlayView.visibility = View.VISIBLE

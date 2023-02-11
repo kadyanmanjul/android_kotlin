@@ -138,7 +138,6 @@
             android:layout_height="@dimen/_24sdp"
             android:background="@drawable/bg_white_round_36"
             android:elevation="@dimen/_4sdp"
-            android:foreground="?attr/selectableItemBackground"
             android:padding="@dimen/_4sdp"
             android:src="@drawable/ic_cross"
             android:tint="@color/icon_default"

@@ -41,13 +41,13 @@ object VoipNetwork {
             .addInterceptor(HeaderInterceptor)
 
         if (BuildConfig.DEBUG) {
-            val logging =
-                HttpLoggingInterceptor { message ->
-                    Timber.tag("OkHttp").d(message)
-                }.apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
-            okHttpBuilder.addInterceptor(logging)
+//            val logging =
+//                HttpLoggingInterceptor { message ->
+//                    Timber.tag("OkHttp").d(message)
+//                }.apply {
+//                    level = HttpLoggingInterceptor.Level.BODY
+//                }
+//            okHttpBuilder.addInterceptor(logging)
             okHttpBuilder.addNetworkInterceptor(StethoInterceptor())
         }
 

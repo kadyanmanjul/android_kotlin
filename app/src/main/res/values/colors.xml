@@ -1,11 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+<resources>
+    <color name="status_bar_color">@color/primary_500</color>
+
+    <!--    base colors    -->
+    <color name="dark_blue">#1A1F71</color>
+    <color name="white">#FFFFFF</color>
+    <color name="pure_white">#FFFFFF</color>
+    <color name="pure_black">#000000</color>
+    <color name="pure_grey">#F2F2F2</color>
+    <color name="pure_white_10">#1AFFFFFF</color>
+    <color name="pure_black_80">#CC000000</color>
+
+    <!--    primary colours    -->
+    <color name="primary_800">#003A7D</color>
+    <color name="primary_700">#0D5CB8</color>
     <color name="primary_500">#107BE5</color>
+    <color name="primary_400">#9FCAF5</color>
+
+    <!--    accent colours-->
+    <color name="accent_800">#E57610</color>
+    <color name="accent_600">#F09436</color>
+
+    <!--    icon colours    -->
+    <color name="icon_default">#253858</color>
+    <color name="icon_subdued">#6D7175</color>
+    <color name="icon_disabled">#DEDFE0</color>
+
+    <!--    text colours    -->
+    <color name="text_default">#253858</color>
+    <color name="text_subdued">#6D7175</color>
+    <color name="text_light">#D3D7DE</color>
+    <color name="text_link">#0D5CB8</color>
+
+    <!--    decorative colours    -->
+    <color name="decorative_one">#FB2E7C</color>
+    <color name="decorative_two">#28BF60</color>
+    <color name="decorative_three">#09C9DB</color>
+    <color name="decorative_four">#560FBC</color>
+    <color name="decorative_five">#F5F1FB</color>
+
+    <!--    other colours    -->
+    <color name="success">#00875A</color>
+    <color name="warning">#FFC645</color>
+    <color name="critical">#DE350B</color>
+    <color name="disabled">#E8E8E8</color>
+    <color name="dark_grey">#9E9E9E</color>
+    <color name="shadow">#33000000</color>
+    <color name="transparent">#00000000</color>
+
+    <!--    surface colours    -->
+    <color name="surface_critical">#FFF5F5</color>
+    <color name="surface_success">#F3FFF2</color>
+    <color name="surface_warning">#FFFBEA</color>
+    <color name="surface_information">#ECF5FE</color>
+    <color name="surface_tip">#F9ECBD</color>
+    <color name="surface_notification">#292D30</color>
+    <color name="surface_overlay">#BF173A50</color>
+    <color name="surface_background">#F6F6F6</color>
+
+    <!--    external colors    -->
+    <color name="external_linkedin">#0077B5</color>
+    <color name="external_instagram">#E1306C</color>
+    <color name="external_facebook">#4267B2</color>
+    <color name="external_whatsapp">#25D366</color>
+
+    <!--    temporary colours    -->
+    <color name="brown">#511615</color>
+    <color name="seek_bar_background">#CCababab</color>
+    <color name="pressed_bg">#64b7b7b7</color>
+    <color name="forground_bg">#AA34B7F1</color>
+    <color name="media_tv_bg">#44000000</color>
+    <color name="bg_tint">#88ffffff</color>
+    <color name="transparent_black_alpha_70">#B3000000</color>
+    <color name="transparent_black">#a34b4949</color>
+    <color name="gray_color_special">#33D8D8D8</color>
+    <color name="dark_text_color">#99000000</color>
+    <color name="profile_request_card">#99EEEEEE</color>
+    <color name="pure_white_0_2">#33ffffff</color>
+    <color name="text_default_0_2">#33253858</color>
+    <color name="common_interest_chip_bg_color">#33F5F5F5</color>
+    <color name="Transparency_white40">#66ffffff</color>
+
+    <color name="font_color">#373737</color>
+
 </resources>
