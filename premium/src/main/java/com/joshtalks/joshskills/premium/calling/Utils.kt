@@ -18,6 +18,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
@@ -525,7 +526,7 @@ class Utils {
         val courseId :String?
             get() = context?.getCourseId()
         fun initUtils(application: Application ) {
-            context = application
+            context = PremiumApplication.premiumApplication
         }
 
         fun showToast(msg : String , length: Int = Toast.LENGTH_SHORT){

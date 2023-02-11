@@ -169,7 +169,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login"
-            style="@style/Primary_Button_Outlined"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -178,6 +177,13 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:textColor="@color/primary_500"
+            android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
+            app:strokeColor="@color/primary_500"
+            android:background="@drawable/rounded_bg_white_border"
             android:onClick="@{()->handler.loginViaPhoneNumber()}"
             android:text="@string/missed_call_label"
             android:textAllCaps="false"

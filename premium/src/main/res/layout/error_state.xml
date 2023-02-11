@@ -81,6 +81,7 @@
             android:layout_height="wrap_content"
             style="@style/Secondary_Button_Filled"
             android:text="@string/try_again"
+            android:background="@drawable/round_rectangle"
             android:paddingHorizontal="@dimen/_24sdp"
             android:layout_marginTop="@dimen/_52sdp"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"

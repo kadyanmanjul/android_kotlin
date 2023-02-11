@@ -164,6 +164,7 @@
             android:layout_marginStart="@dimen/_28sdp"
             android:layout_marginEnd="@dimen/_14sdp"
             android:layout_marginBottom="@dimen/_32sdp"
+            android:background="@drawable/round_rectangle"
             android:layout_marginTop="@dimen/_16sdp"
             android:backgroundTint="@color/external_whatsapp"
             android:onClick="@{()->handler.inviteOnlyWhatsapp()}"

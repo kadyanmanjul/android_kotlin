@@ -162,6 +162,7 @@
             android:onClick="@{()->handler.verifyOTP()}"
             android:text="@string/next"
             android:textAllCaps="false"
+            android:background="@drawable/round_rectangle"
             app:layout_constraintBottom_toTopOf="@+id/text_view_privacy"
             app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
             app:layout_constraintLeft_toLeftOf="parent"

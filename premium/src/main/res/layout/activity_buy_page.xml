@@ -350,7 +350,6 @@
                             android:layout_marginHorizontal="@dimen/_15sdp"
                             android:layout_marginTop="@dimen/_16sdp"
                             android:text="@{vm.priceText}"
-                            android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20" />
 
                         <androidx.recyclerview.widget.RecyclerView
@@ -454,13 +453,12 @@
                             android:layout_height="wrap_content"
                             android:lines="2"
                             android:text="@{vm.callUsText}"
-                            android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20"
                             android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}"
                             app:textAllCaps="false"
-                            tools:text="Sagar jain kvnfjvbfjvbjf"
-                            android:layout_alignParentLeft="true"
-                            android:layout_toLeftOf="@+id/btn_call_us"
+                            tools:text="Sagar jain kvnfjvbfjvbjfrthrtbhtbhtybtyhtyhythtyhyt"
+                            android:layout_alignParentStart="true"
+                            android:layout_toStartOf="@+id/btn_call_us"
                             tools:visibility="visible" />
 
                         <com.google.android.material.button.MaterialButton
@@ -471,6 +469,7 @@
                             android:elevation="@dimen/_3sdp"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
+                            android:background="@drawable/round_rectangle"
                             android:onClick="@{()-> vm.makePhoneCall()}"
                             android:text="Call us"
                             android:textAllCaps="false"

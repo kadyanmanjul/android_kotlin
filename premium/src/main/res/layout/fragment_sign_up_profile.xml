@@ -306,6 +306,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:maxLines="1"
+                    android:background="@drawable/round_rectangle"
                     android:onClick="@{()->handler.submitProfile()}"
                     android:text="@string/next"
                     android:textAllCaps="false"

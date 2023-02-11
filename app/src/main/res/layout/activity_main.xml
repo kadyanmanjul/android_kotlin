@@ -26,15 +26,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_open_premium"
-        android:layout_width="wrap_content"
+        style="@style/Secondary_Button_Filled_Disabled"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:gravity="center"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
+        app:iconGravity="textStart"
+        app:iconPadding="15dp"
+        app:iconTint="@color/pure_white"
+        android:layout_marginHorizontal="@dimen/_24sdp"
         android:text="Open Premium"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/btn_download_module"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.7"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_download_free_module"

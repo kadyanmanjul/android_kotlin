@@ -1,7 +1,7 @@
 buildscript {
     def majorVersion = 5
     def minorVersion = 5
-    def patchVersion = 51
+    def patchVersion = 52
 
     ext {
         kotlin_version = '1.7.20'

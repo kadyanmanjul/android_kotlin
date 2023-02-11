@@ -70,6 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
                 android:layout_marginTop="@dimen/_16sdp"
+                android:background="@drawable/round_rectangle"
                 android:layout_marginBottom="@dimen/_20sdp"
                 android:text="Dial Your 1st Call Now"
                 android:textAllCaps="false"

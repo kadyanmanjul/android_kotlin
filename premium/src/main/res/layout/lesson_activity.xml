@@ -325,6 +325,7 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/_24sdp"
             android:layout_marginBottom="@dimen/_16sdp"
+            android:background="@drawable/round_rectangle"
             android:gravity="center"
             android:insetTop="0dp"
             android:insetBottom="0dp"

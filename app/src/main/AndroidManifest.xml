@@ -23,7 +23,7 @@
         android:resizeableActivity="false"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated"
-        android:theme="@style/Theme.Lite">
+        android:theme="@style/AppTheme">
     <activity
             android:name=".MainActivity"
             android:exported="true">

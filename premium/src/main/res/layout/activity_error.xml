@@ -189,6 +189,7 @@
                     style="@style/Secondary_Button_Filled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/round_rectangle"
                     android:layout_marginTop="@dimen/_52sdp"
                     android:onClick="@{() -> handler.backPressCall()}"
                     android:paddingHorizontal="@dimen/_24sdp"
