@@ -13,9 +13,11 @@ import androidx.work.WorkManagerInitializer
 import com.facebook.FacebookSdk
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.FirebaseCommonKtxRegistrar
 import com.google.firebase.ktx.initialize
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.RemoteConfigRegistrar
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.joshtalks.joshskills.PremiumApplication
@@ -41,6 +43,7 @@ class PremiumMainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_premium_main)
         //AppObjectController.joshApplication = application
         Utils.initUtils(PremiumApplication.premiumApplication)
+        FirebaseAnalytics.getInstance(PremiumApplication.premiumApplication).setAnalyticsCollectionEnabled(true)
 //        AppInitializer.getInstance(applicationContext).initializeComponent(ProcessLifecycleInitializer::class.java)
         if (BuildConfig.DEBUG) {
             Branch.enableTestMode()

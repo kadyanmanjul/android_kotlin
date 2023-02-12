@@ -13,16 +13,7 @@ class PremiumApplication : SplitCompatApplication() {
     companion object {
         lateinit var premiumApplication: PremiumApplication
 
-        val components = listOf(
-            "com.google.firebase.perf.provider.FirebasePerfProvider",
-            "com.userexperior.provider.UeContentProvider",
-            "androidx.core.content.FileProvider",
-            "com.joshtalks.joshskills.premium.core.contentprovider.JoshContentProvider",
-            "com.freshchat.consumer.sdk.provider.FreshchatInitProvider",
-            "com.facebook.internal.FacebookInitProvider",
-            "com.squareup.picasso.PicassoProvider",
-            "com.joshtalks.joshskills.premium.core.notificationx.FirebaseNotificationService"
-        )
+        val components = emptyList<String>()
     }
 
     override fun attachBaseContext(base: Context?) {

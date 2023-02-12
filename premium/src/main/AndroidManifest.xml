@@ -34,10 +34,12 @@
         android:name="android.hardware.camera2"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
         android:name="android.permission.GET_ACCOUNTS"
         android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -97,16 +99,6 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.joshtalks.joshskills.permission.MIPUSH_RECEIVE" />
-
-    <queries>
-        <provider android:authorities="com.joshtalks.joshskills.contentprovider" />
-
-        <intent>
-            <action android:name="android.intent.action.SEND" />
-
-            <data android:mimeType="text/plain" />
-        </intent>
-    </queries>
 
     <application>
         <activity
@@ -447,31 +439,19 @@
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_places_api_key" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_status_bar_notification" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="id-1" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/primary_500" />
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${enableCrashReporting}" />
-        <meta-data
-            android:name="firebase_messaging_auto_init_enabled"
-            android:value="true" />
-        <meta-data
-            android:name="firebase_analytics_collection_enabled"
-            android:value="true" />
         <meta-data
             android:name="google_analytics_automatic_screen_reporting_enabled"
             android:value="true" />
@@ -578,14 +558,14 @@
         <!-- </receiver> -->
         <!-- Audio Control Module Receivers -->
         <receiver
-            android:name=".voip.audiocontroller.HeadsetReceiver"
+            android:name=".calling.audiocontroller.HeadsetReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.HEADSET_PLUG" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".voip.audiocontroller.BluetoothReceiver"
+            android:name=".calling.audiocontroller.BluetoothReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
@@ -629,16 +609,6 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-            android:name=".core.notification.FirebaseNotificationService"
-            android:directBootAware="true"
-            android:enabled="true"
-            android:exported="false"
-            tools:ignore="ExportedService">
-            <intent-filter android:priority="1000">
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service
             android:name=".core.chrome.KeepAliveService"
             android:exported="true"
             tools:ignore="ExportedService" />
@@ -670,12 +640,7 @@
 <!--            android:name="com.google.firebase.perf.provider.FirebasePerfProvider"-->
 <!--            android:authorities="${applicationId}.firebaseperfprovider"-->
 <!--            tools:node="remove" />-->
-        <provider
-            android:name=".core.contentprovider.JoshContentProvider"
-            android:authorities="com.joshtalks.joshskills.contentprovider"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="com.joshtalks.permission.READ_WRITE_CONTENT" /> <!-- <service -->
+ <!-- <service -->
 
         <!-- android:name=".core.service.BackgroundService" -->
         <!-- android:enabled="true" -->
@@ -684,6 +649,11 @@
             android:name=".core.notification.StickyNotificationService"
             android:enabled="true"
             android:exported="false" />
+        <provider
+            android:name="com.facebook.internal.FacebookInitProvider"
+            android:authorities="com.joshtalks.joshskills.FacebookInitProvider"
+            android:exported="false"
+            tools:node="remove" />
 
         <service android:name=".calling.data.CallingRemoteService"
             android:foregroundServiceType="phoneCall"/>

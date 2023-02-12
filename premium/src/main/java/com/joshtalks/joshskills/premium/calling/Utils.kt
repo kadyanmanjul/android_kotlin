@@ -20,15 +20,22 @@ import android.util.Log
 import android.widget.Toast
 import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.constants.COURSE_ID
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.base.model.NotificationData
+import com.joshtalks.joshskills.premium.BuildConfig
 import com.joshtalks.joshskills.premium.calling.Utils.Companion.courseId
 import com.joshtalks.joshskills.premium.calling.constant.Category
 import com.joshtalks.joshskills.premium.calling.data.CallingRemoteService
 import com.joshtalks.joshskills.premium.calling.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.premium.calling.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.premium.core.*
+import com.joshtalks.joshskills.premium.repository.local.model.Mentor
+import com.joshtalks.joshskills.premium.repository.local.model.User
+import com.joshtalks.joshskills.premium.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.premium.ui.voip.new_arch.ui.utils.isBlocked
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -61,30 +68,42 @@ fun Context.updateLastCallDetails(
     topicName: String,
 ) {
     Log.d(TAG, "updateStartCallTime: ")
-    val values = ContentValues(9).apply {
-        put(CALL_DURATION, duration)
-        put(REMOTE_USER_NAME, remoteUserName)
-        put(REMOTE_USER_IMAGE, remoteUserImage)
-        put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
-        put(CALL_ID, callId)
-        put(CALL_TYPE, callType.ordinal)
-        put(CHANNEL_NAME, channelName)
-        put(TOPIC_NAME, topicName)
-        put(CURRENT_USER_AGORA_ID, localUserAgoraId)
-        put(REMOTE_USER_MENTOR_ID, remotesUserMentorId)
-
-    }
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
-        values
+//    val values = ContentValues(9).apply {
+//        put(CALL_DURATION, duration)
+//        put(REMOTE_USER_NAME, remoteUserName)
+//        put(REMOTE_USER_IMAGE, remoteUserImage)
+//        put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
+//        put(CALL_ID, callId)
+//        put(CALL_TYPE, callType.ordinal)
+//        put(CHANNEL_NAME, channelName)
+//        put(TOPIC_NAME, topicName)
+//        put(CURRENT_USER_AGORA_ID, localUserAgoraId)
+//        put(REMOTE_USER_MENTOR_ID, remotesUserMentorId)
+//
+//    }
+//    val data = contentResolver.insert(
+//        Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
+//        values
+//    )
+    VoipPref.updateLastCallDetails(
+        duration = duration,
+        remoteUserImage = remoteUserImage,
+        remoteUserName = remoteUserName,
+        remoteUserAgoraId = remoteUserAgoraId,
+        callId = callId,
+        callType = callType.ordinal,
+        localUserAgoraId = localUserAgoraId,
+        channelName = channelName,
+        topicName = topicName,
+        showFpp = "true",
+        remoteUserMentorId = remotesUserMentorId
     )
-    Log.d(TAG, "updateStartCallTime: Data --> $data")
+    Log.d(TAG, "updateStartCallTime: Data --> duration - $duration")
 }
 
 fun Context.updateStartTime(startTime : Long) {
     Log.d(TAG, "updateStartCallTime: $startTime")
-    val values = ContentValues(1).apply { put(CALL_START_TIME, startTime) }
-    contentResolver.insert(Uri.parse(CONTENT_URI + START_CALL_TIME_URI), values)
+    VoipPref.updateCurrentCallStartTime(startTime)
 }
 
 suspend fun showToast(msg: String,length:Int=Toast.LENGTH_SHORT) {
@@ -97,24 +116,13 @@ suspend fun showToast(msg: String,length:Int=Toast.LENGTH_SHORT) {
 
 fun Context.getApiHeader(): ApiHeader {
     try {
-        val apiDataCursor = contentResolver.query(
-            Uri.parse(CONTENT_URI + API_HEADER),
-            null,
-            null,
-            null,
-            null
-        )
-
-        apiDataCursor?.moveToFirst()
         val apiHeader = ApiHeader(
-            token = apiDataCursor.getStringData(AUTHORIZATION),
-            versionCode = apiDataCursor.getStringData(APP_VERSION_CODE),
-            versionName = apiDataCursor.getStringData(APP_VERSION_NAME),
-            userAgent = apiDataCursor.getStringData(APP_USER_AGENT),
-            acceptLanguage = apiDataCursor.getStringData(APP_ACCEPT_LANGUAGE)
+            token = "JWT " + PrefManager.getStringValue(API_TOKEN),
+            versionName = BuildConfig.VERSION_NAME,
+            versionCode = BuildConfig.VERSION_CODE.toString(),
+            userAgent = "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString(),
+            acceptLanguage = PrefManager.getStringValue(USER_LOCALE)
         )
-
-        apiDataCursor?.close()
         return apiHeader
     } catch (e : Exception) {
         return ApiHeader.empty()
@@ -123,19 +131,23 @@ fun Context.getApiHeader(): ApiHeader {
 
 fun Context.getNotificationData(): NotificationData {
     try {
-        val notificationDataCursor = contentResolver.query(
-            Uri.parse(CONTENT_URI + NOTIFICATION_DATA),
-            null,
-            null,
-            null,
-            null
-        )
-        notificationDataCursor?.moveToFirst()
+        val isBlockedOrFtEnded = if (PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false)) {
+            when {
+                isBlocked() -> true
+                else -> PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false)
+            }
+        } else false
+
         val notificationData = NotificationData(
-            title = notificationDataCursor.getStringData(NOTIFICATION_TITLE_COLUMN),
-            body = notificationDataCursor.getStringData(NOTIFICATION_SUBTITLE_COLUMN)
+            title = getNotificationTitle(
+                PrefManager.getStringValue(CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID),
+                isBlockedOrFtEnded
+            ),
+            body = getNotificationBody(
+                PrefManager.getStringValue(CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID),
+                isBlockedOrFtEnded
+            )
         )
-        notificationDataCursor?.close()
         return notificationData
     } catch (e : Exception) {
         e.printStackTrace()
@@ -143,26 +155,11 @@ fun Context.getNotificationData(): NotificationData {
     }
 }
 
-private fun Cursor?.getStringData(columnName : String) : String {
-    return this?.getString(this.getColumnIndex(columnName)) ?: throw NoSuchElementException("$columnName is NULL from cursor")
-}
-
 fun Context.getMentorId(): String {
     var mentorId = ""
-    val mentorIdCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + MENTOR_ID),
-        null,
-        null,
-        null,
-        null
-    )
-
-    mentorIdCursor?.moveToFirst()
     try {
-        mentorId = mentorIdCursor.getStringData(MENTOR_ID_COLUMN)
-        mentorIdCursor?.close()
+        mentorId = Mentor.getInstance().getId()
     } catch (ex: Exception) {
-        mentorIdCursor?.close()
         ex.printStackTrace()
         return ""
     }
@@ -170,20 +167,9 @@ fun Context.getMentorId(): String {
 }
 fun Context.getCourseId(): String {
     var courseId = "151"
-    val courserIdCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + COURSE_ID),
-        null,
-        null,
-        null,
-        null
-    )
-
-    courserIdCursor?.moveToFirst()
     try {
-        courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
-        courserIdCursor?.close()
+        courseId = PrefManager.getStringValue(CURRENT_COURSE_ID,false, DEFAULT_COURSE_ID)
     }catch (ex:Exception){
-        courserIdCursor?.close()
         ex.printStackTrace()
         return "151"
     }
@@ -192,20 +178,11 @@ fun Context.getCourseId(): String {
 
 fun Context.getCurrentActivity(): String {
     var result = "NA"
-    val courserIdCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + CURRENT_ACTIVITY),
-        null,
-        null,
-        null,
-        null
-    )
-
-    courserIdCursor?.moveToFirst()
     try {
-        result = courserIdCursor.getStringData(CURRENT_ACTIVITY_COLUMN)
-        courserIdCursor?.close()
+        // TODO: Dynamic Module
+        //if(AppObjectController.joshApplication.isAppVisible())
+            result = ActivityLifecycleCallback.currentActivity::class.java.simpleName
     }catch (ex:Exception){
-        courserIdCursor?.close()
         ex.printStackTrace()
     }
     return result
@@ -213,20 +190,20 @@ fun Context.getCurrentActivity(): String {
 
 fun Context.isFreeTrialOrCourseBought(): Boolean {
     var isFreeTrialOrCourseBought = "false"
-    val trialIdCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + IS_COURSE_BOUGHT_OR_FREE_TRIAL),
-        null,
-        null,
-        null,
-        null
-    )
-    trialIdCursor?.moveToFirst()
+    val shouldHaveTapAction = when {
+        PrefManager.getBoolValue(IS_COURSE_BOUGHT) -> {
+            true
+        }
+        PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false) -> {
+            !PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = true)
+        }
+        else -> {
+            false
+        }
+    }
     try {
-        isFreeTrialOrCourseBought = trialIdCursor.getStringData(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN)
-        trialIdCursor?.close()
+        isFreeTrialOrCourseBought = shouldHaveTapAction.toString()
     }catch (ex:Exception){
-        trialIdCursor?.close()
-        ex.printStackTrace()
         return false
     }
     return isFreeTrialOrCourseBought=="true"
@@ -234,19 +211,16 @@ fun Context.isFreeTrialOrCourseBought(): Boolean {
 
 fun Context.isBlockedOrFreeTrialEnded(): Boolean {
     var result = "false"
-    val queryCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + IS_FT_ENDED_OR_BLOCKED),
-        null,
-        null,
-        null,
-        null
-    )
-    queryCursor?.moveToFirst()
+    val isBlockedOrFtEnded = when {
+        isBlocked() -> true
+        PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false) -> {
+            PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = false)
+        }
+        else -> false
+    }
     try {
-        result = queryCursor.getStringData(FT_ENDED_OR_BLOCKED_COLUMN)
-        queryCursor?.close()
+        result = isBlockedOrFtEnded.toString()
     } catch (ex: Exception) {
-        queryCursor?.close()
         return true
     }
     return result == "true"
@@ -254,20 +228,12 @@ fun Context.isBlockedOrFreeTrialEnded(): Boolean {
 
 fun Context.getMentorName(): String {
     var mentorName = ""
-    val mentorNameCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + MENTOR_NAME),
-        null,
-        null,
-        null,
-        null
-    )
-
-    mentorNameCursor?.moveToFirst()
     try {
-        mentorName = mentorNameCursor.getStringData(MENTOR_NAME_COLUMN)
-        mentorNameCursor?.close()
+        mentorName = if (PrefManager.getStringValue(USER_NAME)!= EMPTY)
+            PrefManager.getStringValue(USER_NAME)
+        else
+            User.getInstance().firstName ?: ""
     } catch (ex: Exception) {
-        mentorNameCursor?.close()
         ex.printStackTrace()
         return ""
     }
@@ -276,20 +242,12 @@ fun Context.getMentorName(): String {
 
 fun Context.getMentorProfile(): String {
     var mentorProfile = ""
-    val mentorProfileCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + MENTOR_PROFILE),
-        null,
-        null,
-        null,
-        null
-    )
-
-    mentorProfileCursor?.moveToFirst()
     try {
-        mentorProfile = mentorProfileCursor.getStringData(MENTOR_PROFILE_COLUMN)
-        mentorProfileCursor?.close()
+        mentorProfile = if (PrefManager.getStringValue(USER_PROFILE)!= EMPTY)
+            PrefManager.getStringValue(USER_PROFILE)
+        else
+            User.getInstance().photo ?: ""
     }catch (ex: Exception) {
-        mentorProfileCursor?.close()
         ex.printStackTrace()
         return ""
     }
@@ -298,20 +256,9 @@ fun Context.getMentorProfile(): String {
 
 fun Context.getDeviceId(): String {
     var deviceId = ""
-    val deviceIdCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + DEVICE_ID),
-        null,
-        null,
-        null,
-        null
-    )
-
-    deviceIdCursor?.moveToFirst()
     try {
-        deviceId = deviceIdCursor.getStringData(DEVICE_ID_COLUMN)
-        deviceIdCursor?.close()
+        deviceId = com.joshtalks.joshskills.premium.core.Utils.getDeviceId()
     } catch (ex: Exception) {
-        deviceIdCursor?.close()
         ex.printStackTrace()
         return ""
     }
@@ -614,5 +561,34 @@ class Utils {
                 e.printStackTrace()
             }
         }
+    }
+}
+
+private fun getNotificationTitle(courseId: String, blockedOrFTEnded: Boolean): String {
+    val name = Mentor.getInstance().getUser()?.firstName ?: "User"
+    if (blockedOrFTEnded) return "${name}, JUST ₹2/DAY !!!"
+    return when (courseId) {
+        "151", "1214" -> "$name, English बोलने से आती हैं."
+        "1203"-> "$name, ইংলিশ প্রাকটিস করলে তবেই বলতে পারবেন।"
+        "1206"-> "$name, English ਬੋਲਣ ਨਾਲ ਆਉਂਦੀ ਹੈ।"
+        "1207"-> "$name, English बोलल्याने येते."
+        "1209"-> "$name, English സംസാരിച്ചു  പഠിക്കാം."
+        "1210"-> "$name, பேசினால் தான் ஆங்கிலம் வரும்"
+        "1211"-> "$name, English మాట్లాడితేనే వస్తుంది."
+        else -> "$name, You will learn English by speaking."
+    }
+}
+
+private fun getNotificationBody(courseId: String, blockedOrFtEnded: Boolean): String {
+    if (!blockedOrFtEnded) return "Call now"
+    return when(courseId) {
+        "151", "1214" -> "Unlimited Calling, जब चाहें, जहाँ चाहें,  जितना चाहें !!!"
+        "1203"-> "Unlimited Calling, যে কোন সময় যে কোন জায়গায় যতটা আপনি চান"
+        "1206"-> "Unlimited Calling, ਜਦੋਂ ਚਾਹੋ, ਜਿੱਥੇ ਚਾਹੋ, ਜਿਹਨਾਂ ਚਾਹੋ !!!"
+        "1207"-> "Unlimited Calling, केव्हाही, कुठेही, पाहिजे तितके!!!"
+        "1209"-> "Unlimited Calling, എപ്പോൾ വേണമെങ്കിലും,എവിടെ വേണമെങ്കിലും,എത്ര വേണമെങ്കിലും!!!"
+        "1210"-> "Unlimited Calling, எங்கும், எந்நேரத்திலும், அளவில்லாமல்!!!"
+        "1211"-> "Unlimited Calling, ఎప్పుడు కావాలన్న, ఎక్కడ కావాలన్న, ఎంత కావాలన్న !!!"
+        else -> "Unlimited Calling, Anytime, Anywhere!!!"
     }
 }
