@@ -537,7 +537,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 binding.ftuTwentyMinStatus.pauseAnimation()
                                 //binding.twentyMinFtuText.text =
                                 getString(R.string.twenty_min_call_target)
-                                showTwentyMinAnimation("lottie/not_attempted.json")
+                                showTwentyMinAnimationFromUrl(getString(R.string.not_attempted_url))
                                 binding.ftuTwentyMinStatus.setMinAndMaxProgress(0.0f, 0.7f)
                             }
                             COMPLETED -> {
@@ -800,6 +800,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun showTwentyMinAnimation(jsonFileLottieAnimation: String) {
         LottieCompositionFactory.fromAsset(requireContext(), jsonFileLottieAnimation)
+            .addListener {
+                binding.ftuTwentyMinStatus.setComposition(it)
+                binding.ftuTwentyMinStatus.resumeAnimation()
+            }
+    }
+
+    private fun showTwentyMinAnimationFromUrl(jsonUrl: String) {
+        LottieCompositionFactory.fromUrl(requireContext(), jsonUrl)
             .addListener {
                 binding.ftuTwentyMinStatus.setComposition(it)
                 binding.ftuTwentyMinStatus.resumeAnimation()

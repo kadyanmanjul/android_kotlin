@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
@@ -26,6 +27,8 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationListener
+import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.io.AppDirectory.AGORA_LIB_PATH
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
@@ -103,6 +106,8 @@ private val IGNORE_UNAUTHORISED = setOf(
 class AppObjectController {
 
     companion object {
+
+        val isLibsLoaded: Boolean = false
 
         @JvmStatic
         lateinit var joshApplication: JoshApplication
@@ -345,6 +350,7 @@ class AppObjectController {
                 ActivityLifecycleCallback.register(joshApplication)
                 initFacebookService(joshApplication)
                 observeFirestore()
+                initAgoraPath()
             }
         }
 
@@ -406,7 +412,21 @@ class AppObjectController {
         }
 
         fun initAgoraPath() {
-            RtcEngine.setAgoraLibPath("")
+                Log.d(TAG, "initAgoraPath() called")
+                val path = AGORA_LIB_PATH +File.separator+ Build.SUPPORTED_ABIS[0]
+                val files = File(path).listFiles()
+                files?.mapIndexed { index, item ->
+                    Log.d("Manjul", "initAgoraPath() called with: index = $index, item = $item")
+                    if (item?.path?.contains(".zip")==false){
+                        try {
+                            System.load(item.path + File.separator + item.name+".so")
+                        }catch (e:java.lang.Exception){
+                            e.printStackTrace()
+                        }
+                    }
+                }
+
+                RtcEngine.setAgoraLibPath(path)
         }
 
         fun getNewArchVoipFlag() {

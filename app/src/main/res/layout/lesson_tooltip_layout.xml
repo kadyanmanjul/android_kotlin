@@ -14,7 +14,7 @@
         android:visibility="visible"
         app:lottie_autoPlay="true"
         android:elevation="@dimen/_1sdp"
-        app:lottie_fileName="lottie/leaderboard_arrow.json"
+        app:lottie_url="@string/leaderarrow_url"
         app:lottie_imageAssetsFolder="lottie"
         app:lottie_loop="true"
         app:lottie_repeatMode="reverse"

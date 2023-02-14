@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.io
 
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.text.format.DateUtils
@@ -12,6 +13,7 @@ import java.util.*
 object AppDirectory {
     const val APP_DIRECTORY = "JoshSkill"
     const val MEDIA_DIRECTORY = "Media"
+    const val LIB_DIRECTORY = "Libs"
     private val FORMATTER = SimpleDateFormat("yyyyMMdd", Locale.US)
 
     const val TODAY_IMAGE_COUNT = "today_image_count"
@@ -211,6 +213,10 @@ object AppDirectory {
     val VIDEO_SENT_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
+
+    val AGORA_LIB_PATH =
+        AppObjectController.joshApplication.getExternalFilesDir(null)
+            .toString() + File.separator + AppDirectory.APP_DIRECTORY + File.separator + AppDirectory.MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
 
     val VIDEO_CACHED_RECEIVED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)

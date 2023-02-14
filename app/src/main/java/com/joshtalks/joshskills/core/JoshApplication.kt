@@ -60,7 +60,7 @@ class JoshApplication :
         }
         // TODO: Need to be removed
         Branch.getAutoInstance(this)
-        turnOnStrictMode()
+        //turnOnStrictMode()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
     }
 

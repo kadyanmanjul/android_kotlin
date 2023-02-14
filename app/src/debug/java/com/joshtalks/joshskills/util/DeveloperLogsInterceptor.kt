@@ -46,7 +46,7 @@ class DebugLogsInterceptor : Interceptor {
                 )
                 dao?.insert(api)
                 dao?.getLatest()?.let {
-                    Log.d("DeveloperLogsInter", "YASH => intercept:48 $it")
+                    //Log.d("DeveloperLogsInter", "YASH => intercept:48 $it")
                     ApiRequestNotification.createNotification(it)
                 }
             }

@@ -419,5 +419,8 @@ interface CommonNetworkService {
     @POST("$DIR/analytics/error_log/")
     suspend fun pushApiLogging(@Body errorScreen: ErrorScreen) : Response<Void>
 
+    @GET("$DIR/p2p/agora_files/")
+    suspend fun getAgoraLibPath(@Query("abi_id") orderId: String) : Response<Array<String>>
+
 
 }

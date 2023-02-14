@@ -215,7 +215,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tv_today_topic"
                             app:lottie_autoPlay="false"
-                            app:lottie_fileName="lottie/not_attempted.json"
+                            app:lottie_url="@string/not_attempted_url"
                             app:lottie_imageAssetsFolder="lottie"
                             app:lottie_loop="true"
                             tools:visibility="gone" />

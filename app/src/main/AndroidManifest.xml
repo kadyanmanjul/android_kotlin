@@ -602,6 +602,16 @@
             android:exported="true"
             tools:ignore="ExportedService" />
         <service
+            android:name=".core.agora_dynamic.FileDownloadService"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedService" />
+        <service
+            android:name=".core.agora_dynamic.FileDownloadService2"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedService" />
+        <service
             android:name=".ui.chat.service.DownloadMediaService"
             android:enabled="true"
             android:exported="false"

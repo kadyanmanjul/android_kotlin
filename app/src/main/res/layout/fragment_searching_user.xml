@@ -77,7 +77,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:lottie_autoPlay="true"
-            app:lottie_fileName="lottie/search_new_anim.json"
+            app:lottie_url="@string/search_new_url"
             app:lottie_imageAssetsFolder="lottie"
             app:lottie_loop="true"
             app:lottie_repeatMode="restart"

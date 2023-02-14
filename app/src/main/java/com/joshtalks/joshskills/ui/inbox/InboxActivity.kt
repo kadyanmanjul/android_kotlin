@@ -42,6 +42,8 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.BUY_COURSE_INBOX_TOOLTIP
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.agora_dynamic.FileDownloadService
+import com.joshtalks.joshskills.core.agora_dynamic.FileDownloadService2
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.notification.StickyNotificationService
@@ -108,6 +110,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         WorkManagerAdmin.requiredTaskInLandingPage()
         viewModel.userOnlineStatusSync()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
+        //FileDownloadService.uploadAllPendingTasks(AppObjectController.joshApplication)
+        FileDownloadService2.uploadAllPendingTasks(AppObjectController.joshApplication)
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
@@ -524,7 +528,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 .let { courseList ->
                     courseList.forEach { inboxEntity ->
                         // User is Free Trail
-                        if (isServiceStarted.not()) {
+                        if (isServiceStarted.not() && AppObjectController.isLibsLoaded) {
                             isServiceStarted = true
                             val broadcastIntent = Intent().apply {
                                 action = CALLING_SERVICE_ACTION
@@ -762,10 +766,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun applicationClosed() {
-        val broadcastIntent = Intent().apply {
-            action = CALLING_SERVICE_ACTION
-            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        if (AppObjectController.isLibsLoaded) {
+            val broadcastIntent = Intent().apply {
+                action = CALLING_SERVICE_ACTION
+                putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+            }
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(broadcastIntent)
         }
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(broadcastIntent)
     }
 }

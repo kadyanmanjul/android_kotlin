@@ -682,7 +682,7 @@
                         app:layout_constraintStart_toStartOf="@+id/point_layout"
                         app:layout_constraintTop_toTopOf="@+id/point_layout"
                         app:lottie_autoPlay="false"
-                        app:lottie_fileName="lottie/leaderboard_arrow.json"
+                        app:lottie_url="@string/leaderarrow_url"
                         app:lottie_imageAssetsFolder="lottie"
                         app:lottie_loop="true"
                         app:lottie_repeatMode="reverse"
