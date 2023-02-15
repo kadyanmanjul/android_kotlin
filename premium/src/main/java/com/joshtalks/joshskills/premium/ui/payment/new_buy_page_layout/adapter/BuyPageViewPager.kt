@@ -33,8 +33,8 @@ class BuyPageViewPager(private var listOfImages: List<SliderImage> = listOf()) :
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = LayoutInflater.from(container.context).inflate(R.layout.item_buy_page_slider, container, false)
-        val imageView = view.findViewById<AppCompatImageView>(R.id.image_slider)
+        val view = LayoutInflater.from(container.context).inflate(com.joshtalks.joshskills.R.layout.item_buy_page_slider, container, false)
+        val imageView = view.findViewById<AppCompatImageView>(com.joshtalks.joshskills.R.id.image_slider)
         Glide.with(AppObjectController.joshApplication)
             .load(listOfImages[position].imageUrl)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)

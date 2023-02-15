@@ -429,21 +429,21 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
         for (i in 0 until dotsCount) {
             dots[i] = ImageView(this)
-            dots[i]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.non_active_dot))
+            dots[i]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, com.joshtalks.joshskills.R.drawable.non_active_dot))
             val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             params.setMargins(8, 0, 8, 0)
             binding.indicator.addView(dots[i], params)
         }
 
-        dots[0]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.active_dot))
+        dots[0]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, com.joshtalks.joshskills.R.drawable.active_dot))
 
         binding.sliderViewPager.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 for (i in 0 until dotsCount) {
-                    dots[i]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.non_active_dot))
+                    dots[i]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, com.joshtalks.joshskills.R.drawable.non_active_dot))
                 }
-                dots[position]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, R.drawable.active_dot))
+                dots[position]!!.setImageDrawable(ContextCompat.getDrawable(applicationContext, com.joshtalks.joshskills.R.drawable.active_dot))
             }
 
             override fun onPageScrollStateChanged(state: Int) {}

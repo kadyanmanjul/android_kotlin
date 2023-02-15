@@ -28,7 +28,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_open_premium"
-        style="@style/Secondary_Button_Filled_Disabled"
+        style="@style/Primary_Button_Filled"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

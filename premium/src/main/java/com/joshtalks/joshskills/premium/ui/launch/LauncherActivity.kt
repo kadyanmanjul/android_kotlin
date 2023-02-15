@@ -3,9 +3,11 @@ package com.joshtalks.joshskills.premium.ui.launch
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Message
@@ -19,8 +21,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.startup.AppInitializer
 import androidx.work.WorkManager
 import androidx.work.WorkManagerInitializer
+import com.facebook.FacebookSdk
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitcompat.SplitCompat
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.remoteconfig.RemoteConfigRegistrar
+import com.joshtalks.joshskills.PremiumApplication
 import com.joshtalks.joshskills.premium.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
@@ -76,6 +82,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
+        enableProvider()
         SplitCompat.installActivity(this)
     }
 
@@ -83,9 +90,22 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         VOIP_NOTIFICATION_SMALL_ICON_ID = com.joshtalks.joshskills.R.drawable.ic_status_bar_notification
+
+        com.joshtalks.joshskills.premium.calling.Utils.initUtils(PremiumApplication.premiumApplication)
+        FirebaseAnalytics.getInstance(PremiumApplication.premiumApplication).setAnalyticsCollectionEnabled(true)
+        Branch.getAutoInstance(this)
+        RemoteConfigRegistrar()
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
+        try {
+            if(FacebookSdk.isInitialized().not())
+                FacebookSdk.sdkInitialize(applicationContext)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
         AppObjectController.configureCrashlytics()
+        AppInitializer.getInstance(applicationContext).initializeComponent(WorkManagerInitializer::class.java)
+
         setObservers()
         viewModel.initApp()
         AppObjectController.initFonts()
@@ -290,6 +310,24 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .show()
+        }
+    }
+
+    private fun enableProvider() {
+        try {
+            for (componentPath in PremiumApplication.components) {
+                try {
+                    packageManager.setComponentEnabledSetting(
+                        ComponentName(this, componentPath),
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP
+                    )
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
+            }
+        } catch (e : Exception) {
+            e.printStackTrace()
         }
     }
 
