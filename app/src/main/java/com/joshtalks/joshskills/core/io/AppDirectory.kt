@@ -168,8 +168,8 @@ object AppDirectory {
     }
 
     private val DOCS_RECEIVED_MIGRATED_PATH =
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            .toString() + File.separator + APP_DIRECTORY + File.separator + "JoshAppDocs/"
+        AppObjectController.joshApplication.getExternalFilesDir(null)
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
 
 
     fun docsReceivedFile(url: String): File {
