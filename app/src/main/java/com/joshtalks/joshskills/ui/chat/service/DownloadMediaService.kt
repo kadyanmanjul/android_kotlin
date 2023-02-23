@@ -13,10 +13,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DOWNLOAD_OBJECT
 import com.joshtalks.joshskills.core.service.DownloadUtils
@@ -122,7 +119,7 @@ class DownloadMediaService : Service(), FetchListener {
                         NotificationId.INCOMING_CALL_NOTIFICATION_ID
                     )
                     val url = it.getStringExtra(DOWNLOAD_FILE_URL)!!
-                    val localAudioFile = AppDirectory.getAudioReceivedFile(url).absolutePath
+                    val localAudioFile = AppDirectory.getAudioReceivedFile(url)?.absolutePath?: EMPTY
                     data?.run {
                         addDownload(this, url, localAudioFile)
                     }
@@ -134,7 +131,7 @@ class DownloadMediaService : Service(), FetchListener {
                         NotificationId.INCOMING_CALL_NOTIFICATION_ID
                     )
                     val url = it.getStringExtra(DOWNLOAD_FILE_URL)!!
-                    val localAudioFile = AppDirectory.getAudioReceivedFile(url).absolutePath
+                    val localAudioFile = AppDirectory.getAudioReceivedFile(url)?.absolutePath?: EMPTY
                     data?.run {
                         addDownload(this, url, localAudioFile)
                     }

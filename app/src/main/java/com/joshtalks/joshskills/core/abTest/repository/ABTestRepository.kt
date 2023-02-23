@@ -14,7 +14,6 @@ class ABTestRepository {
     private val database = AppObjectController.appDatabase.abCampaignDao()
     var data: Map<String, Boolean> = getABTestData()
 
-    private val listOfCampaigns = CampaignKeys.values().map { it.NAME }
     private val setOfPostedGoals: MutableSet<String> by lazy {
         PrefManager.getStringValue(AB_TEST_GOALS_POSTED).split(",").toMutableSet()
     }
@@ -23,11 +22,11 @@ class ABTestRepository {
         return database.getABTestCampaign(campaign)
     }
 
-    suspend fun updateAllCampaigns(list: List<String> = listOfCampaigns) {
+    suspend fun updateAllCampaigns() {
         try {
             database.deleteAllCampaigns()
             val prop = JSONObject()
-            val apiResponse = apiService.getAllCampaigns(list.joinToString(","))
+            val apiResponse = apiService.getAllCampaigns()
             if (apiResponse.isSuccessful && apiResponse.body() != null) {
                 putABTestData(apiResponse.body()!!)
                 database.insertCampaigns(apiResponse.body()!!)

@@ -1760,44 +1760,48 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
     }
 
     override fun showGrammarAnimation(overlayItem: ItemOverlay) {
-        binding.itemOverlay.visibility = View.INVISIBLE
-        binding.itemOverlay.setOnClickListener(null)
-        val OFFSET = getStatusBarHeight()
-        val itemImageView = binding.itemOverlay.findViewById<ImageView>(R.id.main_item_imageview)
-        val arrowView =
-            binding.itemOverlay.findViewById<LottieAnimationView>(R.id.arrow_animation_lesson)
-        val tooltipView = binding.itemOverlay.findViewById<JoshTooltip>(R.id.tooltip)
-        tooltipView.visibility = View.INVISIBLE
-        itemImageView.visibility = View.INVISIBLE
-        arrowView.visibility = View.INVISIBLE
-        itemImageView.setImageBitmap(overlayItem.viewBitmap)
-        arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(R.dimen._32sdp)
-        itemImageView.x = overlayItem.x.toFloat()
-        itemImageView.y = overlayItem.y.toFloat() - OFFSET
-        itemImageView.setOnClickListener {
+        try {
             binding.itemOverlay.visibility = View.INVISIBLE
-            viewModel.eventLiveData.postValue(Event(true))
-        }
-        itemImageView.requestLayout()
-        itemImageView.post {
-            arrowView.x =
-                (itemImageView.x + itemImageView.width / 2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
-            arrowView.requestLayout()
-        }
-        arrowView.requestLayout()
-        arrowView.post {
+            binding.itemOverlay.setOnClickListener(null)
+            val OFFSET = getStatusBarHeight()
+            val itemImageView = binding.itemOverlay.findViewById<ImageView>(R.id.main_item_imageview)
+            val arrowView =
+                binding.itemOverlay.findViewById<LottieAnimationView>(R.id.arrow_animation_lesson)
+            val tooltipView = binding.itemOverlay.findViewById<JoshTooltip>(R.id.tooltip)
             tooltipView.visibility = View.INVISIBLE
-            tooltipView.y = arrowView.y - resources.getDimension(R.dimen._60sdp) - OFFSET
-            tooltipView.requestLayout()
-            binding.itemOverlay.visibility = View.VISIBLE
-            arrowView.visibility = View.VISIBLE
-            itemImageView.visibility = View.VISIBLE
-            tooltipView.setTooltipText(
-                getString(R.string.tooltip_lesson_grammar)
+            itemImageView.visibility = View.INVISIBLE
+            arrowView.visibility = View.INVISIBLE
+            itemImageView.setImageBitmap(overlayItem.viewBitmap)
+            arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(R.dimen._32sdp)
+            itemImageView.x = overlayItem.x.toFloat()
+            itemImageView.y = overlayItem.y.toFloat() - OFFSET
+            itemImageView.setOnClickListener {
+                binding.itemOverlay.visibility = View.INVISIBLE
+                viewModel.eventLiveData.postValue(Event(true))
+            }
+            itemImageView.requestLayout()
+            itemImageView.post {
+                arrowView.x =
+                    (itemImageView.x + itemImageView.width / 2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
+                arrowView.requestLayout()
+            }
+            arrowView.requestLayout()
+            arrowView.post {
+                tooltipView.visibility = View.INVISIBLE
+                tooltipView.y = arrowView.y - resources.getDimension(R.dimen._60sdp) - OFFSET
+                tooltipView.requestLayout()
+                binding.itemOverlay.visibility = View.VISIBLE
+                arrowView.visibility = View.VISIBLE
+                itemImageView.visibility = View.VISIBLE
+                tooltipView.setTooltipText(
+                    getString(R.string.tooltip_lesson_grammar)
 
-            )
-            slideInAnimation(tooltipView)
-            PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)
+                )
+                slideInAnimation(tooltipView)
+                PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)
+            }
+        }catch (ex:Exception){
+            ex.printStackTrace()
         }
     }
 

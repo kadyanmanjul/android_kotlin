@@ -25,9 +25,13 @@ class TransactionActivity : BaseActivity() {
 
     override fun onCreated() {
         lifecycleScope.launchWhenCreated {
-            val transactions = AppObjectController.commonNetworkService.getTransactionHistory()
-                .sortedByDescending { it.getTransactionTime().time }
-            binding.transactionRv.adapter = TransactionAdapter(transactions)
+            try {
+                val transactions = AppObjectController.commonNetworkService.getTransactionHistory()
+                    .sortedByDescending { it.getTransactionTime().time }
+                binding.transactionRv.adapter = TransactionAdapter(transactions)
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
         }
     }
 

@@ -377,13 +377,15 @@ class AudioPlayerViewHolder(
     }
 
     fun downloadStart(url: String) {
-        DownloadUtils.downloadFile(
-            url,
-            AppDirectory.getAudioReceivedFile(url).absolutePath,
-            message.chatId,
-            message,
-            downloadListener
-        )
+        AppDirectory.getAudioReceivedFile(url)?.let {
+            DownloadUtils.downloadFile(
+                url,
+                it.absolutePath,
+                message.chatId,
+                message,
+                downloadListener
+            )
+        }
     }
 
     private fun mediaUploading() {

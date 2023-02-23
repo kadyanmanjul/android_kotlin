@@ -202,7 +202,7 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                             DOWNLOAD_STATUS.DOWNLOADING
                         )
                     val file =
-                        AppDirectory.getAudioReceivedFile(choice.audioUrl.toString()).absolutePath
+                        AppDirectory.getAudioReceivedFile(choice.audioUrl.toString())?.absolutePath?: EMPTY
                     if (choice.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                         return@launch
                     }

@@ -128,11 +128,10 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/errorCode"
+                    android:id="@+id/error_code_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_23sdp"
-                    android:text="@{`Error code -  ER ` + handler.errorCode}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular20"
                     android:textColor="@color/text_subdued"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -141,11 +140,10 @@
                     tools:text="Error code - ER401" />
 
                 <TextView
-                    android:id="@+id/errorTitle"
+                    android:id="@+id/error_title_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_70sdp"
-                    android:text="@{handler.errorTitle}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.HeadingSemiBold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -154,17 +152,16 @@
                     tools:text="We are sorry" />
 
                 <TextView
-                    android:id="@+id/errorSubTitle"
+                    android:id="@+id/error_subtitle_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:gravity="center"
-                    android:text="@{handler.errorSubtitle}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.BodyRegular16"
                     android:textColor="@color/text_subdued"
                     app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
                     app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-                    app:layout_constraintTop_toBottomOf="@+id/errorTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/error_title_text"
                     tools:text="@string/error_message_screen" />
 
                 <TextView

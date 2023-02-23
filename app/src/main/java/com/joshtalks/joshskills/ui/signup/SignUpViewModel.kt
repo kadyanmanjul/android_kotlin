@@ -236,7 +236,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             user.userId = loginResponse.userId
             user.isVerified = true
             user.token = loginResponse.token
-            user.source = loginResponse.createdSource!!
+            user.source = loginResponse.createdSource?: EMPTY
             User.update(user)
             PrefManager.put(API_TOKEN, loginResponse.token)
             Mentor.getInstance()

@@ -979,15 +979,17 @@ class ReadingFragmentWithoutFeedback :
         currentLessonQuestion?.videoList?.let {
             if (it.isNotEmpty()) {
                 scope.launch { mutex.lock() }
-                DownloadUtils.downloadFile(
-                    it[0].video_url!!,
-                    AppDirectory.docsReceivedFile(it[0].video_url!!).absolutePath,
-                    currentLessonQuestion!!.id,
-                    null,
-                    downloadListener,
-                    true,
-                    currentLessonQuestion
-                )
+                AppDirectory.docsReceivedFile(it[0].video_url!!)?.let { it1 ->
+                    DownloadUtils.downloadFile(
+                        it[0].video_url!!,
+                        it1.absolutePath,
+                        currentLessonQuestion!!.id,
+                        null,
+                        downloadListener,
+                        true,
+                        currentLessonQuestion
+                    )
+                }
             }
         }
     }

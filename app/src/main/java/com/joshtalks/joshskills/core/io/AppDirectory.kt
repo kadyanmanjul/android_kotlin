@@ -48,18 +48,22 @@ object AppDirectory {
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/"
 
-    fun getAudioReceivedFile(path: String): File {
-        val rootPath = AUDIO_RECEIVED_MIGRATED_PATH
-        val f = File(rootPath)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        val file = File(rootPath + File.separator + Utils.getFileNameFromURL(path))
-        if (file.exists()) {
+    fun getAudioReceivedFile(path: String): File? {
+        try {
+            val rootPath = AUDIO_RECEIVED_MIGRATED_PATH
+            val f = File(rootPath)
+            if (f.exists().not()) {
+                f.mkdirs()
+            }
+            val file = File(rootPath + File.separator + Utils.getFileNameFromURL(path))
+            if (file.exists()) {
+                return file
+            }
+            file.createNewFile()
             return file
+        }catch (ex:Exception){
+            return null
         }
-        file.createNewFile()
-        return file
     }
 
 
@@ -172,16 +176,20 @@ object AppDirectory {
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
 
 
-    fun docsReceivedFile(url: String): File {
-        val rootPath = DOCS_RECEIVED_MIGRATED_PATH
+    fun docsReceivedFile(url: String): File? {
+        return try {
+            val rootPath = DOCS_RECEIVED_MIGRATED_PATH
 
-        val f = File(rootPath)
-        if (f.exists().not()) {
-            f.mkdirs()
+            val f = File(rootPath)
+            if (f.exists().not()) {
+                f.mkdirs()
+            }
+            val file = File(rootPath + File.separator + Utils.getFileNameFromURL(url))
+            file.createNewFile()
+            file
+        }catch (ex:Exception){
+            null
         }
-        val file = File(rootPath + File.separator + Utils.getFileNameFromURL(url))
-        file.createNewFile()
-        return file
     }
 
     private val VIDEO_RECEIVED_MIGRATED_PATH =

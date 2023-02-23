@@ -173,7 +173,7 @@ class PdfCourseProgressView : FrameLayout {
             try {
                 if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.getFileSize(
                         File(
-                            AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+                            AppDirectory.docsReceivedFile(it.coursePdfUrl)?.absolutePath ?: EMPTY
                         )
                     ) > 0
                 ) {
@@ -199,7 +199,7 @@ class PdfCourseProgressView : FrameLayout {
         this.pdfInfo?.let {
             if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.getFileSize(
                     File(
-                        AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+                        AppDirectory.docsReceivedFile(it.coursePdfUrl)?.absolutePath ?: EMPTY
                     )
                 ) > 0
             ) {
@@ -207,7 +207,7 @@ class PdfCourseProgressView : FrameLayout {
                     context = context,
                     pdfId = courseId,
                     courseName = it.coursePdfName,
-                    pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath,
+                    pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl)?.absolutePath?: EMPTY,
                     conversationId = conversationId
                 )
             } else {
@@ -259,12 +259,14 @@ class PdfCourseProgressView : FrameLayout {
             return
         }
         pdfInfo?.let {
-            DownloadUtils.downloadFile(
-                it.coursePdfUrl,
-                AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath,
-                courseId,
-                downloadListener
-            )
+            AppDirectory.docsReceivedFile(it.coursePdfUrl)?.let { it1 ->
+                DownloadUtils.downloadFile(
+                    it.coursePdfUrl,
+                    it1.absolutePath,
+                    courseId,
+                    downloadListener
+                )
+            }
         }
     }
 

@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -24,12 +23,10 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.add
 
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
@@ -58,7 +55,6 @@ import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.errorState.BUY_COURSE_FEATURE_ERROR
 import com.joshtalks.joshskills.ui.errorState.ErrorActivity
-import com.joshtalks.joshskills.ui.errorState.ErrorStateDialog
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
@@ -74,7 +70,6 @@ import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.math.BigDecimal

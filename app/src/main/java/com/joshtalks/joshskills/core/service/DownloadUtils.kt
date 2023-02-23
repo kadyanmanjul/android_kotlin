@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -293,7 +294,7 @@ object DownloadUtils {
                 for (audioType in listAudioData) {
                     audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
                     appDatabase.chatDao().updateAudioObject(audioType)
-                    val file = AppDirectory.getAudioReceivedFile(audioType.audio_url).absolutePath
+                    val file = AppDirectory.getAudioReceivedFile(audioType.audio_url)?.absolutePath?: EMPTY
                     if (audioType.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                         return@execute
                     }

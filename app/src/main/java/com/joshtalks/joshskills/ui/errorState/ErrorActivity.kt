@@ -34,12 +34,19 @@ class ErrorActivity : BaseActivity() {
 
     override fun onCreated() {
         lifecycleScope.launch (Dispatchers.IO){
-            vm.saveApiFail(errorCode, payload, exception)
+            vm.saveApiFail(errorCode?: EMPTY, payload, exception)
         }
     }
 
     override fun initViewState() {
+        if (errorCode != null)
+            binding.errorCodeText.text = errorCode
 
+        if (errorTitle!=null)
+            binding.errorTitleText.text = errorTitle
+
+        if (errorSubtitle!=null)
+            binding.errorSubtitleText.text = errorSubtitle
     }
 
     fun backPressCall() {
@@ -53,12 +60,12 @@ class ErrorActivity : BaseActivity() {
     }
 
     companion object {
-        lateinit var errorCode: String
-        lateinit var errorTitle: String
-        lateinit var errorSubtitle: String
+        var errorCode: String? = EMPTY
+        var errorTitle: String? = EMPTY
+        var errorSubtitle: String? = EMPTY
         private var activity: Activity? = null
-        lateinit var payload : String
-        lateinit var exception :String
+        lateinit var payload: String
+        lateinit var exception: String
         fun showErrorScreen(
             errorCode: String,
             errorTitle: String,

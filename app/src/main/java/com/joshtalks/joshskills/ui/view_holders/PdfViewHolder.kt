@@ -305,13 +305,15 @@ class PdfViewHolder(
     }
 
     private fun download(url: String) {
-        DownloadUtils.downloadFile(
-            url,
-            AppDirectory.docsReceivedFile(url).absolutePath,
-            message.chatId,
-            message,
-            downloadListener
-        )
+        AppDirectory.docsReceivedFile(url)?.let {
+            DownloadUtils.downloadFile(
+                url,
+                it.absolutePath,
+                message.chatId,
+                message,
+                downloadListener
+            )
+        }
 
     }
 

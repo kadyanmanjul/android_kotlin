@@ -921,7 +921,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                         download()
                     } else if (PermissionUtils.isStoragePermissionEnabled(requireContext()) && AppDirectory.getFileSize(
                             File(
-                                AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
+                                AppDirectory.docsReceivedFile(pdfObj.url)?.absolutePath ?: EMPTY
                             )
                         ) > 0
                     ) {
@@ -1036,13 +1036,15 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
         if (pdfQuestion?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
             pdfQuestion?.pdfList?.getOrNull(0)?.let { pdfType ->
-                PdfViewerActivity.startPdfActivity(
-                    context = requireContext(),
-                    pdfId = pdfType.id,
-                    courseName = pdfQuestion?.title ?: "Josh Skills",
-                    pdfPath = AppDirectory.docsReceivedFile(pdfType.url).absolutePath,
-                    conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
-                )
+                AppDirectory.docsReceivedFile(pdfType.url)?.let {
+                    PdfViewerActivity.startPdfActivity(
+                        context = requireContext(),
+                        pdfId = pdfType.id,
+                        courseName = pdfQuestion?.title ?: "Josh Skills",
+                        pdfPath = it.absolutePath,
+                        conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
+                    )
+                }
             }
         } else {
             download()
@@ -1102,17 +1104,17 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         pdfQuestion?.pdfList?.let {
             if (it.isNotEmpty()) {
                 fileDownloadingInProgressView()
-                DownloadUtils.downloadFile(
-                    it[0].url,
-                    AppDirectory.docsReceivedFile(it[0].url).absolutePath,
-                    pdfQuestion!!.id,
-                    null,
-                    downloadListener,
-                    true,
-                    pdfQuestion
-                )
-            } else if (BuildConfig.DEBUG) {
-                showToast("Pdf size is 0")
+                AppDirectory.docsReceivedFile(it[0].url)?.let { it1 ->
+                    DownloadUtils.downloadFile(
+                        it[0].url,
+                        it1.absolutePath,
+                        pdfQuestion!!.id,
+                        null,
+                        downloadListener,
+                        true,
+                        pdfQuestion
+                    )
+                }
             }
         }
     }

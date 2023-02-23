@@ -75,7 +75,7 @@ class RemoveMediaWorker(var context: Context, var workerParams: WorkerParameters
                                                 totalDeletedMediaSize += AppDirectory.getFileSize(
                                                     this
                                                 ).bytesToKB()
-                                                AppDirectory.deleteFileFile(this)
+                                                this?.let { AppDirectory.deleteFileFile(it) }
                                             }
                                             deleteLocalCreatedFile(downloadedLocalPath)
                                             chat.downloadStatus = DOWNLOAD_STATUS.NOT_START
@@ -111,7 +111,7 @@ class RemoveMediaWorker(var context: Context, var workerParams: WorkerParameters
                                                     this
                                                 )
                                                     .bytesToKB()
-                                                AppDirectory.deleteFileFile(this)
+                                                this?.let { AppDirectory.deleteFileFile(it) }
                                             }
                                             chat.downloadStatus = DOWNLOAD_STATUS.NOT_START
                                             appDatabase.chatDao().updateChatMessage(chat)
