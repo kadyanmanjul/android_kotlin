@@ -96,6 +96,10 @@
         </intent>
     </queries>
 
+    <queries>
+        <provider android:authorities="com.joshtalks.joshskills.provider" />
+    </queries>
+
     <application
         android:name=".core.JoshApplication"
         android:allowBackup="false"
@@ -598,16 +602,6 @@
 
         <service
             android:name=".util.FileUploadService"
-            android:enabled="true"
-            android:exported="true"
-            tools:ignore="ExportedService" />
-        <service
-            android:name=".core.agora_dynamic.FileDownloadService"
-            android:enabled="true"
-            android:exported="true"
-            tools:ignore="ExportedService" />
-        <service
-            android:name=".core.agora_dynamic.FileDownloadService2"
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedService" />

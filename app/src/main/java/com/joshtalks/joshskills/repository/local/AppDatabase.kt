@@ -755,12 +755,6 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_61_62: Migration = object : Migration(61,62) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("DROP TABLE `special_table`")
-            }
-        }
-
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }

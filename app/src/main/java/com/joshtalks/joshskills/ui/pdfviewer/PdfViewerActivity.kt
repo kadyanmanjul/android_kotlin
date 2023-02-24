@@ -2,10 +2,16 @@ package com.joshtalks.joshskills.ui.pdfviewer
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -20,7 +26,10 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.repository.service.GenericFileProvider
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.util.showAppropriateMsg
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,6 +44,7 @@ class PdfViewerActivity : BaseActivity() {
     private lateinit var conversationBinding: ActivityPdfViewerBinding
     private var pdfObject: PdfType? = null
     private var uiHandler = Handler(Looper.getMainLooper())
+    private var path: String = EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -67,7 +77,6 @@ class PdfViewerActivity : BaseActivity() {
     private fun showPdf() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                var path: String = EMPTY
 
                 path = if (intent.hasExtra(PDF_PATH)) {
                     intent.getStringExtra(PDF_PATH)!!
@@ -82,6 +91,7 @@ class PdfViewerActivity : BaseActivity() {
                     try {
                         conversationBinding.pdfView.fromFile(path)
                         conversationBinding.pdfView.show()
+                        conversationBinding.ivShare.isVisible = true
                         AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
                             .addParam("URL", pdfObject?.url)
                             .push()
@@ -95,6 +105,43 @@ class PdfViewerActivity : BaseActivity() {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
+        }
+    }
+
+    fun sharePDF(v: View) {
+        try {
+            var uri : Uri ?
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "application/pdf"
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                val file = File(path)
+                 uri =
+                    if (Build.VERSION.SDK_INT < 24)
+                        Uri.fromFile(file)
+                    else
+                        GenericFileProvider.getUriForFile(this@PdfViewerActivity, file)
+                putExtra(Intent.EXTRA_STREAM, uri)
+            }
+            val chooser = Intent.createChooser(intent, "Share PDF")
+
+            val resInfoList = this.packageManager.queryIntentActivities(
+                chooser,
+                PackageManager.MATCH_DEFAULT_ONLY
+            )
+
+            for (resolveInfo in resInfoList) {
+                val packageName = resolveInfo.activityInfo.packageName
+                grantUriPermission(
+                    packageName,
+                    uri,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+
+            startActivity(chooser)
+        } catch (e: Exception) {
+            e.showAppropriateMsg()
+            e.printStackTrace()
         }
     }
 
