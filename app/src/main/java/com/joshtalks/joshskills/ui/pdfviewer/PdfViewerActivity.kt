@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityPdfViewerBinding
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.PdfType
@@ -110,35 +111,19 @@ class PdfViewerActivity : BaseActivity() {
 
     fun sharePDF(v: View) {
         try {
+
+            val shareFilePath = AppDirectory.getDocsShareFile(
+                null,
+                pdfExtension = ".pdf"
+            ).absolutePath
+            AppDirectory.copy(path, shareFilePath!!)
             var uri : Uri ?
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/pdf"
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                val file = File(path)
-                 uri =
-                    if (Build.VERSION.SDK_INT < 24)
-                        Uri.fromFile(file)
-                    else
-                        GenericFileProvider.getUriForFile(this@PdfViewerActivity, file)
-                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(Intent.EXTRA_STREAM, Uri.parse(shareFilePath))
             }
-            val chooser = Intent.createChooser(intent, "Share PDF")
-
-            val resInfoList = this.packageManager.queryIntentActivities(
-                chooser,
-                PackageManager.MATCH_DEFAULT_ONLY
-            )
-
-            for (resolveInfo in resInfoList) {
-                val packageName = resolveInfo.activityInfo.packageName
-                grantUriPermission(
-                    packageName,
-                    uri,
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-            }
-
-            startActivity(chooser)
+            startActivity(Intent.createChooser(intent, "Share PDF"))
         } catch (e: Exception) {
             e.showAppropriateMsg()
             e.printStackTrace()

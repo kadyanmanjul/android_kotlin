@@ -22,6 +22,7 @@ object AppDirectory {
     const val TODAY_DATE = "today_date"
     const val APP_SHORT_NAME = "JS"
     const val AUDIO_EXTENSION = ".m4a"
+    const val PDF_EXTENSION = ".pdf"
 
 
     enum class FileType {
@@ -175,6 +176,9 @@ object AppDirectory {
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
 
+    private val DOCS_SHARE_PATH =
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator
+
 
     fun docsReceivedFile(url: String): File? {
         return try {
@@ -191,6 +195,28 @@ object AppDirectory {
             null
         }
     }
+
+    fun getDocsShareFile(path: String?, pdfExtension: String = PDF_EXTENSION): File {
+
+        val rootPath = DOCS_SHARE_PATH
+        val f = File(rootPath)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        var fileName = EMPTY
+
+        if (path.isNullOrEmpty().not()) {
+            fileName = File(path!!).name
+        }
+
+        if (fileName.isEmpty()) {
+            fileName = "Docs_" + System.currentTimeMillis().toString() + pdfExtension
+        }
+        val file = File(rootPath + File.separator + fileName)
+        file.createNewFile()
+        return file
+    }
+
 
     private val VIDEO_RECEIVED_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
