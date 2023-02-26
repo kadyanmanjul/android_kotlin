@@ -60,12 +60,12 @@ class ErrorActivity : BaseActivity() {
     }
 
     companion object {
-        var errorCode: String? = EMPTY
-        var errorTitle: String? = EMPTY
-        var errorSubtitle: String? = EMPTY
+        private var errorCode: String? = EMPTY
+        private var errorTitle: String? = EMPTY
+        private var errorSubtitle: String? = EMPTY
         private var activity: Activity? = null
-        lateinit var payload: String
-        lateinit var exception: String
+        private var payload: String? = EMPTY
+        private var exception: String? = EMPTY
         fun showErrorScreen(
             errorCode: String,
             errorTitle: String,
