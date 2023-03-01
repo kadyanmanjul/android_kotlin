@@ -191,7 +191,7 @@
                         android:imeOptions="actionNone"
                         android:importantForAutofill="no"
                         android:inputType="none"
-                        android:onClick="@{()->handler.selectDateOfBirth()}"
+                        android:onClick="@{handler::selectDateOfBirth}"
                         tools:ignore="KeyboardInaccessibleWidget" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -306,7 +306,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:maxLines="1"
-                    android:onClick="@{()->handler.submitProfile()}"
+                    android:onClick="@{handler::submitProfile}"
                     android:text="@string/next"
                     android:textAllCaps="false"
                     app:layout_constraintBottom_toBottomOf="parent"

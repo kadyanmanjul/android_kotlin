@@ -316,7 +316,7 @@ class FreeTrialOnBoardActivity : ThemedCoreJoshActivity() {
         hideProgressBar()
     }
 
-    fun showPrivacyPolicyDialog() {
+    fun showPrivacyPolicyDialog(v:View) {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
         showWebViewDialog(url)
     }

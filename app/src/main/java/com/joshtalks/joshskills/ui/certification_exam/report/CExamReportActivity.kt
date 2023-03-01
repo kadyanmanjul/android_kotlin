@@ -240,6 +240,16 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         super.onBackPressed()
     }
 
+    fun onBackPressed(v:View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+        if (viewModel.isSAnswerUiShow) {
+            viewModel.isSAnswerUiShow = false
+            RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNKNOWN))
+            return
+        }
+        super.onBackPressed()
+    }
+
     /*override fun downloadedFile(path: String) {
         showToast(getString(R.string.certificate_download_success))
         lifecycleScope.launch(Dispatchers.IO) {

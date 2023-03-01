@@ -396,7 +396,7 @@ class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
         )
     }
 
-    fun showFreeTrialPaymentScreen() {
+    fun showFreeTrialPaymentScreen(v:View) {
 //        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
 //            this,
 //            AppObjectController.getFirebaseRemoteConfig().getString(

@@ -1533,11 +1533,11 @@ class UserProfileActivity : CoreJoshActivity() {
         isAnimationVisible = false
     }
 
-    fun showSeniorStudentScreen() {
+    fun showSeniorStudentScreen(v:View) {
         SeniorStudentActivity.startSeniorStudentActivity(this)
     }
 
-    fun showFreeTrialPaymentScreen() {
+    fun showFreeTrialPaymentScreen(v:View) {
 //        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
 //            this,
 //            AppObjectController.getFirebaseRemoteConfig().getString(
@@ -1575,7 +1575,7 @@ class UserProfileActivity : CoreJoshActivity() {
         }
     }
 
-    fun openShareScreen(){
+    fun openShareScreen(v:View){
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {

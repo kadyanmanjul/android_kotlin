@@ -326,7 +326,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         }
     }
 
-    fun hideTooltip() {
+    fun hideTooltip(v:View) {
         binding.lessonTooltipLayout.visibility = View.GONE
         PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
     }
@@ -349,6 +349,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             return
         }
         moveToOnlineTestFragment()
+    }
+    fun startOnlineExamTest(v:View) {
+        startOnlineExamTest()
     }
 
     fun moveToOnlineTestFragment() {
@@ -442,7 +445,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         }
     }
 
-    fun onGrammarContinueClick() {
+    fun onGrammarContinueClick(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_CONTINUE)
             .addParam(ParamKeys.LESSON_ID, lessonId)
             .push()

@@ -60,7 +60,7 @@ class SignUpPermissionDialogFragment : BottomSheetDialogFragment() {
             .getString(FirebaseRemoteConfigKey.SIGNIN_DIALOG_DESCRIPTION)
     }
 
-    fun allow() {
+    fun allow(v:View) {
         dismiss()
         navigateToSignUpScreen()
     }

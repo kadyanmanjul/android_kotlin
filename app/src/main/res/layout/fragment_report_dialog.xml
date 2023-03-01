@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="28dp"
                     android:enabled="false"
-                    android:onClick="@{(v)->fragment.submitReport(v)}"
+                    android:onClick="@{fragment::submitReport}"
                     android:text="@string/submit_report_btn"
                     android:textAlignment="center"
                     android:textAllCaps="false"

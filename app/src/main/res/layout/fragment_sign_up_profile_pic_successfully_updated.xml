@@ -52,7 +52,7 @@
             android:clickable="true"
             android:focusable="true"
             android:maxLines="1"
-            android:onClick="@{()->handler.startCourse()}"
+            android:onClick="@{handler.startCourse}"
             android:paddingTop="@dimen/_12sdp"
             android:paddingBottom="@dimen/_12sdp"
             android:text="@string/start_course"

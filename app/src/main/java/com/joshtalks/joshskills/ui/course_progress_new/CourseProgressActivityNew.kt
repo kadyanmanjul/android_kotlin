@@ -334,7 +334,7 @@ class CourseProgressActivityNew : CourseProgressAdapter.ProgressItemClickListene
         ).show()
     }
 
-    fun showFreeTrialPaymentScreen() {
+    fun showFreeTrialPaymentScreen(v:View) {
 //        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
 //            this,
 //            AppObjectController.getFirebaseRemoteConfig().getString(

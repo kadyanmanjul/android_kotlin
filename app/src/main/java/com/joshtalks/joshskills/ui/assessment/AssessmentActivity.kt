@@ -442,6 +442,11 @@ class AssessmentActivity : CoreJoshActivity() {
         if (exitActivity())
             super.onBackPressed()
     }
+    fun onBackPressed(view: View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+        if (exitActivity())
+            super.onBackPressed()
+    }
 
     private fun subscribeRxBus() {
 

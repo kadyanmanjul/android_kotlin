@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Application
 import android.os.Message
+import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,7 +35,7 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
     private val message = Message()
     val isProgressVisible = ObservableBoolean(false)
 
-    fun extendFreeTrial() {
+    fun extendFreeTrial(v:View) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 isProgressVisible.set(true)
@@ -111,7 +112,7 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
             }
         }
     }
-    fun openConversationActivity(){
+    fun openConversationActivity(v: View){
         MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
         message.what= OPEN_CONVERSATION_ACTIVITY
         singleLiveEvent.value=message

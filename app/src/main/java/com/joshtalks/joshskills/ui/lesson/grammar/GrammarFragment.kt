@@ -193,7 +193,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
-    fun hideTooltip() {
+    fun hideTooltip(v:View) {
         binding.lessonTooltipLayout.visibility = View.GONE
         PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
     }
@@ -582,7 +582,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
-    fun scrollToBottom() {
+    fun scrollToBottom(v:View) {
         binding.grammarScrollView.scrollTo(0, binding.grammarScrollView.bottom)
     }
 
@@ -725,7 +725,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
-    fun onQuestionSubmit() {
+    fun onQuestionSubmit(v:View) {
         try {
             if (binding.quizRadioGroup.tag is Int) {
                 val question = assessmentQuestions[currentQuizQuestion]
@@ -779,7 +779,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
-    fun onStartQuizClick() {
+    fun onStartQuizClick(v:View) {
         binding.quizShader.visibility = View.GONE
         showQuizUi()
     }
@@ -789,7 +789,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         else QuestionStatus.WRONG
     }
 
-    fun onContinueClick() {
+    fun onContinueClick(v:View) {
         try {
             val question = assessmentQuestions[currentQuizQuestion]
             if (question.choiceList.isNotEmpty()) {
@@ -818,7 +818,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
-    fun onGrammarContinueClick() {
+    fun onGrammarContinueClick(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_CONTINUE)
             .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
@@ -826,7 +826,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
     }
 
-    fun onRedoQuizClick() {
+    fun onRedoQuizClick(v:View) {
         correctAns = 0
         assessmentQuestions.forEach { question ->
             question.question.isAttempted = false
@@ -863,7 +863,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         binding.showExplanationBtn.text = getString(R.string.show_explanation)
     }
 
-    fun showExplanation() {
+    fun showExplanation(v:View) {
         if (binding.explanationLbl.visibility == View.VISIBLE) {
             binding.showExplanationBtn.text = getString(R.string.show_explanation)
             binding.explanationLbl.visibility = View.GONE
@@ -967,7 +967,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         )
     }
 
-    fun showNextQuestion() {
+    fun showNextQuestion(v:View) {
         try {
             MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_NEXT_QUESTION)
                 .addParam(ParamKeys.LESSON_ID, lessonID)
@@ -978,7 +978,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
-    fun showPreviousQuestion() {
+    fun showPreviousQuestion(v:View) {
         try {
             MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_PREVIOUS_QUESTION)
                 .addParam(ParamKeys.LESSON_ID, lessonID)
@@ -989,7 +989,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
-    fun onClickPdfContainer() {
+    fun onClickPdfContainer(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_NOTES)
             .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
@@ -1051,12 +1051,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
     }
 
-    fun downloadCancel() {
+    fun downloadCancel(v:View) {
         fileNotDownloadView()
         pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.NOT_START
     }
 
-    fun downloadStart() {
+    fun downloadStart(v:View) {
         if (pdfQuestion?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
             return
         }

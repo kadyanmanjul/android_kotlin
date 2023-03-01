@@ -46,6 +46,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -503,7 +504,7 @@ class SignUpActivity : ThemedBaseActivity() {
         showWebViewDialog(url)
     }
 
-    fun onSkipPressed() {
+    fun onSkipPressed(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.SKIP_CLICKED).push()
         logSkipEvent()
         viewModel.changeSignupStatusToProfilePicSkipped()
@@ -591,6 +592,16 @@ class SignUpActivity : ThemedBaseActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+        supportFragmentManager.popBackStackImmediate()
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            if (PrefManager.getStringValue(USER_LOCALE) != "en")
+                requestWorkerForChangeLanguage("en", canCreateActivity = false)
+            this@SignUpActivity.finish()
+            return
+        }
+    }
+    fun onBackPressed(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         supportFragmentManager.popBackStackImmediate()
         if (supportFragmentManager.backStackEntryCount == 0) {
@@ -740,6 +751,11 @@ class SignUpActivity : ThemedBaseActivity() {
             else
                 PendingIntent.FLAG_UPDATE_CURRENT
         ).send()
+    }
+
+    fun openHelpActivity(v:View) {
+        val i = Intent(this, HelpActivity::class.java)
+        startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
     }
 
     private fun isVariantActive(variantKey: VariantKeys) = viewModel.abTestRepository.isVariantActive(variantKey)

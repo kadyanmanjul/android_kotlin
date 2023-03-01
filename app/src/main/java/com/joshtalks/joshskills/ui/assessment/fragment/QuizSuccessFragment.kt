@@ -25,7 +25,7 @@ class QuizSuccessFragment : Fragment() {
         return binding.root
     }
 
-    fun backToCourse() {
+    fun backToCourse(v:View) {
         requireActivity().finish()
     }
 

@@ -61,7 +61,7 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
         binding.offerText.text = offerText
     }
 
-    fun openCourseExplore() {
+    fun openCourseExplore(v:View) {
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)
                 .addParam("name", this.javaClass.simpleName)
@@ -74,7 +74,7 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun signUp() {
+    fun signUp(v:View) {
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
                 .addBasicParam()

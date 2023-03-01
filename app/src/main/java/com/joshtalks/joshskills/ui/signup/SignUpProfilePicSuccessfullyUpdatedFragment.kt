@@ -58,7 +58,7 @@ class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
         }, 500)
     }
 
-    fun startCourse() {
+    fun startCourse(v:View) {
         logStartCourseEvent()
         MixPanelTracker.publishEvent(MixPanelEvent.REGISTRATION_START_COURSE).push()
         viewModel.changeSignupStatusToStartAfterPicUploaded()

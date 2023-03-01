@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -85,7 +86,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import java.time.Duration
 import java.util.*
-
 
 const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
@@ -300,7 +300,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
             spQuestion?.topicId?.let {
                 this.topicId = it
-                Log.d("SAGAR", "addObservers() called")
                 viewModel.getTopicDetail(it)
             }
             spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
@@ -423,7 +422,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         viewModel.speakingTopicLiveData.observe(viewLifecycleOwner) { response ->
-            Log.d("SAGAR", "addObservers() called with: response = $response")
             binding.progressView.visibility = GONE
             viewModel.isNewStudentActive.set(response?.isNewStudentCallsActivated)
             howToSpeakButtonShow = response?.howToTalkButton ?: -1
@@ -544,7 +542,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             }
                         }
 
-                        requireActivity().findViewById<MaterialTextView>(R.id.spotlight_call_btn).text =
+                        requireActivity().findViewById<MaterialButton>(R.id.spotlight_call_btn).text =
                             response.p2pBtnText?.let {
                                 it.ifBlank { getString(R.string.call_practice_partner) }
                             } ?: getString(R.string.call_practice_partner)
@@ -744,7 +742,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             CoroutineScope(Dispatchers.Main).launch {
                 if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
                     //This code is for show balloon tooltip and highlight topic container
-                    Log.e("sagar", "showToolTipOnLesson: 2")
 
                     setOverlayAnimationOnTopicContainer()
                     showTooltipTopic(
@@ -756,7 +753,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         )
                     )
                 } else {
-                    Log.e("sagar", "showToolTipOnLesson: 3" )
                     //This code is for show balloon tooltip and highlight peer to peer button
                     showTooltipButton(
                         AppObjectController.getFirebaseRemoteConfig().getString(SPEAKING_BB_TIP_BUTTON_HEADER),
@@ -839,10 +835,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun initDemoViews(it: Int, howToSpeak:Int) {
-        Log.e("sagar", "initDemoViews1:$howToSpeakButtonShow ", )
 
         if (PrefManager.getBoolValue(IS_FREE_TRIAL) && lessonNo == 1) {
-            Log.e("sagar", "initDemoViews:$howToSpeakButtonShow ", )
             if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID && howToSpeak != -1) {
                 binding.imgRecentCallsHistory.visibility = VISIBLE
                 binding.imgRecentCallsHistory.text = "How to speak"
@@ -1027,7 +1021,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
-    fun showSeniorStudentScreen() {
+    fun showSeniorStudentScreen(v:View) {
         SeniorStudentActivity.startSeniorStudentActivity(requireActivity())
     }
 
@@ -1094,7 +1088,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.saveImpression(SPEAKING_TOOLTIP2)
 
             binding.welcomeContainer.setOnClickListener {
-                Log.e("sagar", "showToolTipOnLesson: 4")
                 binding.welcomeContainer.visibility = GONE
                 dismissTooltipTopicContainer()
                 //This code is for show balloon tooltip and highlight peer to peer button

@@ -74,7 +74,7 @@ class ExamUnlockDialogFragment(
         return spanString
     }
 
-    fun dismissDialog() {
+    fun dismissDialog(v:View) {
         dismiss()
     }
 }

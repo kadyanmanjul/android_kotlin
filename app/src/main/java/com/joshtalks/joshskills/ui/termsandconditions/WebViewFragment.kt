@@ -116,6 +116,10 @@ class WebViewFragment : DialogFragment() {
         binding.webView.loadUrl(webUrl)
     }
 
+    fun dismiss(v:View){
+        dismiss()
+    }
+
     override fun show(manager: FragmentManager, tag: String?) {
         try {
             val ft = manager.beginTransaction()

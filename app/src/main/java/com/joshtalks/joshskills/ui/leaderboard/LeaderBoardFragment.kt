@@ -186,7 +186,7 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
         initRV()
         addObserver()
         setListener()
-        // viewModel.getLeaderBoardData(Mentor.getInstance().getId(), type)
+        //viewModel.getLeaderBoardData(Mentor.getInstance().getId(), type)
     }
 
     private fun setListener() {

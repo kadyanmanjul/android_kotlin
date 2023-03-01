@@ -133,7 +133,7 @@ class TestSummaryFragment : Fragment() {
         binding.recyclerView.addItemDecoration(divider)
     }
 
-    fun dismiss() {
+    fun dismiss(v:View) {
         (requireActivity() as AssessmentActivity).submitTest()
     }
 

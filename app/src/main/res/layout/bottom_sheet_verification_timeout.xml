@@ -49,7 +49,7 @@
                 android:background="@drawable/ic_cross"
                 android:backgroundTint="@color/icon_default"
                 android:contentDescription="@string/cancel_button"
-                android:onClick="@{()->handler.cancel()}"
+                android:onClick="@{handler::cancel}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/view" />
 
@@ -75,7 +75,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:maxLines="1"
-                android:onClick="@{()->handler.flashCallVerify()}"
+                android:onClick="@{handler::flashCallVerify}"
                 android:paddingTop="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@string/retry_miss_call_verify"
@@ -97,7 +97,7 @@
                 android:layout_marginTop="@dimen/_8sdp"
                 android:backgroundTint="@color/pure_white"
                 android:gravity="center"
-                android:onClick="@{()->handler.smsVerify()}"
+                android:onClick="@{handler::smsVerify}"
                 android:paddingTop="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@string/send_otp"

@@ -78,11 +78,19 @@ class FaqDetailsFragment : Fragment() {
         patchRequestForAnswer(isAnswerHelpful)
     }
 
+    fun setIsAnswerHelpfulTrue(v:View) {
+        setIsAnswerHelpful(true)
+    }
+
+    fun setIsAnswerHelpfulFalse(v:View) {
+        setIsAnswerHelpful(false)
+    }
+
     private fun patchRequestForAnswer(isAnswerHelpful: Boolean) {
         viewModel.postFaqFeedback(faq.id.toString(), isAnswerHelpful)
     }
 
-    fun dismiss() {
+    fun dismiss(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.FAQ_GO_HOME).push()
         requireActivity().finish()
     }

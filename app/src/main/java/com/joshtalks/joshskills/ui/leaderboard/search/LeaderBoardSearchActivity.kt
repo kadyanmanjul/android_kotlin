@@ -232,7 +232,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         }
     }
 
-    fun showFreeTrialPaymentScreen() {
+    fun showFreeTrialPaymentScreen(v:View) {
 //        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
 //            this,
 //            AppObjectController.getFirebaseRemoteConfig().getString(
@@ -250,8 +250,11 @@ class LeaderBoardSearchActivity : BaseActivity() {
         // finish()
     }
 
-    fun clearSearchText() {
+    fun clearSearchText(v:View) {
         binding.searchView.setText(EMPTY)
+    }
+    fun onBackPressed(v:View) {
+        onBackPressed()
     }
 
     companion object {

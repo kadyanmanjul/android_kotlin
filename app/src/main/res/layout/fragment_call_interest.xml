@@ -83,7 +83,6 @@
             android:background="@drawable/rounded_state_button_bg"
             android:enabled="false"
             android:gravity="center"
-            android:onClick="@{}"
             android:paddingHorizontal="@dimen/_16sdp"
             android:paddingVertical="@dimen/_10sdp"
             android:text="@string/save"

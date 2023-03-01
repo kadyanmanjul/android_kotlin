@@ -251,7 +251,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
         }
     }
 
-    fun openPointsInfoTable() {
+    fun openPointsInfoTable(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_EARN_POINTS).push()
         startActivity(
             Intent(this, PointsInfoActivity::class.java).apply {
@@ -260,7 +260,7 @@ class PointsHistoryActivity : CoreJoshActivity() {
         )
     }
 
-    fun showFreeTrialPaymentScreen() {
+    fun showFreeTrialPaymentScreen(v:View) {
 //        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
 //            this,
 //            AppObjectController.getFirebaseRemoteConfig().getString(

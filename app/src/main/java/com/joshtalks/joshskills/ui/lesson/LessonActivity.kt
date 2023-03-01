@@ -883,7 +883,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         PrefManager.put(HAS_SEEN_LESSON_SPOTLIGHT, true)
     }
 
-    fun startOnlineExamTest() {
+    fun startOnlineExamTest(v:View) {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.grammarSpotlightClickLiveData.postValue(Unit)
     }
@@ -892,6 +892,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
         if (introVideoControl) closeVideoPopUpUi()
+    }
+
+    fun callPracticePartner(v:View) {
+        callPracticePartner()
     }
 
     private fun openReadingFullScreen() {
@@ -1603,13 +1607,13 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         }
     }
 
-    fun buyCourse() {
+    fun buyCourse(v:View) {
         if (testId != -1) {
             PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
         }
     }
 
-    fun openWhatsapp() {
+    fun openWhatsapp(v:View) {
         if (whatsappUrl.isNullOrBlank().not()) {
             val whatsappIntent = Intent(Intent.ACTION_VIEW)
             whatsappIntent.data = Uri.parse(whatsappUrl)

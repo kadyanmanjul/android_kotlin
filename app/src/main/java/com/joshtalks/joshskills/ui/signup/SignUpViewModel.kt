@@ -402,6 +402,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         incorrectAttempt += 1
     }
 
+
     fun changeSignupStatusToProfilePicUploaded() {
         _signUpStatus.postValue(SignUpStepStatus.ProfilePicUploaded)
     }

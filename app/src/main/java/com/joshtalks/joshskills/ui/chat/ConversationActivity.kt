@@ -366,7 +366,7 @@ class ConversationActivity :
         countdownTimerBack?.start()
     }
 
-    fun hideLeaderboardTooltip() {
+    fun hideLeaderboardTooltip(v:View) {
         conversationBinding.leaderboardTooltipLayout.visibility = GONE
         PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
     }
@@ -408,7 +408,7 @@ class ConversationActivity :
         conversationBinding.overlayLeaderboardTooltip.visibility = GONE
     }
 
-    fun showFreeTrialPaymentScreen() {
+    fun showFreeTrialPaymentScreen(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
         BuyPageActivity.startBuyPageActivity(
             this,
@@ -529,7 +529,11 @@ class ConversationActivity :
         }
     }
 
-    fun restartCourse(isFromRestartButton: Boolean) {
+    fun restartCourseClick(v: View) {
+        restartCourse(true)
+    }
+
+    fun restartCourse(isFromRestartButton: Boolean = true) {
         if (isFromRestartButton) {
             conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
             MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)
@@ -716,7 +720,7 @@ class ConversationActivity :
 
         findViewById<View>(R.id.ll_audio).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.AUDIO_SELECTED.NAME).push()
-            addAttachmentUIUpdate()
+            addAttachmentUIUpdate(it)
             PermissionUtils.storageReadAndWritePermission(
                 activityRef.get()!!,
                 object : MultiplePermissionsListener {
@@ -747,7 +751,7 @@ class ConversationActivity :
 
         findViewById<View>(R.id.ll_camera).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
-            addAttachmentUIUpdate()
+            addAttachmentUIUpdate(it)
             uploadImageByUser()
         }
         conversationBinding.btnNextStep.setOnClickListener {
@@ -1739,7 +1743,7 @@ class ConversationActivity :
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun uploadImageByCameraOrGallery() {
+    fun uploadImageByCameraOrGallery(v:View) {
         AppAnalytics.create(AnalyticsEvent.CAMERA_CLICKED.NAME).push()
         uploadImageByUser()
     }
@@ -2021,7 +2025,7 @@ class ConversationActivity :
         }
     }
 
-    fun addAttachmentUIUpdate() {
+    fun addAttachmentUIUpdate(v:View) {
         AttachmentUtil.revealAttachments(revealAttachmentView, conversationBinding)
         this.revealAttachmentView = !revealAttachmentView
         AppAnalytics.create(AnalyticsEvent.ATTACHMENT_CLICKED.NAME).push()

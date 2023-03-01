@@ -129,7 +129,7 @@ class EditProfileFragment : DialogFragment(){
         super.onPause()
         compositeDisposable.clear()
     }
-     fun createDialogWithoutDateField() {
+     fun createDialogWithoutDateField(v:View) {
         val alertDialog: AlertDialog?
         val builder = AlertDialog.Builder(activity, R.style.YearPickerAlertDialogStyle)
         val inflater = requireActivity().layoutInflater
@@ -272,7 +272,7 @@ class EditProfileFragment : DialogFragment(){
         }
 
         if (editTxtJoshTalk.text.toString() != EMPTY){
-            if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https") || !(editTxtJoshTalk.text.toString()).startsWith("https")){
+            if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https")){
                 binding.favouriteJtInputLayout.error = getString(R.string.invalid_url_message)
                 return
             }
@@ -379,7 +379,7 @@ class EditProfileFragment : DialogFragment(){
         )
     }
 
-    fun selectDateOfBirth() {
+    fun selectDateOfBirth(v:View) {
         datePicker?.show()
     }
 

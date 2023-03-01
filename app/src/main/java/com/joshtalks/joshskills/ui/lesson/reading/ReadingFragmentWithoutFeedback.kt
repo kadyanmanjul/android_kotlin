@@ -556,7 +556,7 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    fun hideTooltip() {
+    fun hideTooltip(v:View) {
         binding.lessonTooltipLayout.visibility = GONE
         PrefManager.put(HAS_SEEN_READING_TOOLTIP, true)
     }
@@ -1766,6 +1766,10 @@ class ReadingFragmentWithoutFeedback :
         disableSubmitButton()
     }
 
+    fun closeRecordedView(v:View) {
+        closeRecordedView()
+    }
+
     fun playVideoEvent() {
         if (video.isNullOrEmpty().not()) {
             viewModel.saveReadingPracticeImpression(
@@ -1800,7 +1804,7 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    fun playPracticeAudio() {
+    fun playPracticeAudio(v:View) {
         gainAudioFocus()
         if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
                 HAS_SEEN_READING_PLAY_ANIMATION
@@ -1922,7 +1926,7 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    fun improvePractice() {
+    fun improvePractice(v:View) {
         if (currentLessonQuestion?.expectedEngageType != null) {
             currentLessonQuestion?.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.AU == it) {
@@ -1936,6 +1940,11 @@ class ReadingFragmentWithoutFeedback :
                 }
             }
         }
+    }
+
+
+    fun submitPractise(v:View) {
+        submitPractise()
     }
 
     fun submitPractise() {
@@ -2028,7 +2037,7 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    fun onReadingContinueClick() {
+    fun onReadingContinueClick(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.READING_CONTINUE)
             .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()

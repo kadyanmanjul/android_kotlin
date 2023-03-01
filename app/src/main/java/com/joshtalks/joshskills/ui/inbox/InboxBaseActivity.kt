@@ -117,13 +117,9 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
 
     protected fun courseExploreClick() {
         lifecycleScope.launch(Dispatchers.IO) {
-            if (isGuestUser().not()) {
-                openCourseExplorer()
-                MixPanelTracker.publishEvent(MixPanelEvent.FIND_MORE_COURSES).push()
-                logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-                return@launch
-            }
             openCourseExplorer()
+            MixPanelTracker.publishEvent(MixPanelEvent.FIND_MORE_COURSES).push()
+            logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
         }
     }
     abstract fun openCourseExplorer()

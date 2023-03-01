@@ -145,7 +145,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         }
     }
 
-    fun hideTooltip() {
+    fun hideTooltip(v:View) {
         binding.lessonTooltipLayout.visibility = View.GONE
         PrefManager.put(HAS_SEEN_VOCAB_TOOLTIP, true)
     }
@@ -334,7 +334,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         return true
     }
 
-    fun onContinueClick() {
+    fun onContinueClick(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_CONTINUE)
             .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
@@ -349,7 +349,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         )
     }
 
-    fun onCloseDialog() {
+    fun onCloseDialog(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_CLOSE)
             .addParam(ParamKeys.LESSON_ID,lessonID)
             .push()

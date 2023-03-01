@@ -305,11 +305,11 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    fun selectDateOfBirth() {
+    fun selectDateOfBirth(view: View) {
         datePicker?.show()
     }
 
-    fun submit() {
+    fun submit(view: View) {
         lifecycleScope.launch(Dispatchers.IO) {
             if (binding.etName.text.isNullOrEmpty()) {
                 showToast(getString(R.string.name_error_toast))

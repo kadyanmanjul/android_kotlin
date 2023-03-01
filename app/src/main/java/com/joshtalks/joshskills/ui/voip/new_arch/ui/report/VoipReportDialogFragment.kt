@@ -94,7 +94,7 @@ class VoipReportDialogFragment : BaseDialogFragment() {
             }
     }
 
-    fun submitReport(v: View) {
+    fun submitReport(v:View) {
         val map: HashMap<String, Any> = HashMap()
         map[CHANNEL_NAME] = channelName
         map[FEEDBACK_OPTIONS] = vm.optionId

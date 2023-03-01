@@ -74,7 +74,7 @@ class ReviseConceptFragment : CoreJoshFragment() {
             .into(iv)
     }
 
-    fun dismiss() {
+    fun dismiss(v:View) {
         requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
     }
 

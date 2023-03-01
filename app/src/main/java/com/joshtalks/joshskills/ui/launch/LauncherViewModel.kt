@@ -41,6 +41,7 @@ const val UPDATE_GAID = 1002
 const val FETCH_MENTOR = 1003
 const val ANALYZE_APP_REQUIREMENT = 1004
 const val START_ACTIVITY = 1005
+const val device_id = "device_id"
 
 class LauncherViewModel(application: Application) : AndroidViewModel(application) {
     var jsonParams: JSONObject = JSONObject()
