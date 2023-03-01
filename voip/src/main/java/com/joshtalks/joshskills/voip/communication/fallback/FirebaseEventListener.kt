@@ -28,7 +28,7 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
                 if (value != null) {
                     Log.d(TAG, "onEvent: ${value.data} ... $value")
                     val data = value.data
-                    if(data?.get("status").toString().toInt() == PROCESSED)
+                    if(data?.get("status")?.toString()?.toInt() == PROCESSED)
                         return@launch
                     val message = getMessage(data)
                     Log.d(TAG, "onEvent: $message")
