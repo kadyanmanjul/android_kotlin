@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.certification_exam
 
 import android.app.Application
+import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -56,8 +57,16 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         saveImpression(START_EXAM)
         startExamLiveData.postValue(Unit)
     }
+    fun startExam(v:View) {
+        saveImpression(START_EXAM)
+        startExamLiveData.postValue(Unit)
+    }
 
     fun showPreviousResult() {
+        saveImpression(PREV_RESULT)
+        previousExamsResultLiveData.postValue(Unit)
+    }
+    fun showPreviousResult(v:View) {
         saveImpression(PREV_RESULT)
         previousExamsResultLiveData.postValue(Unit)
     }

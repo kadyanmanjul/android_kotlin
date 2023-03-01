@@ -53,7 +53,7 @@ class ReminderBottomSheet : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    fun dismissDialog() {
+    fun dismissDialog(v:View) {
         AppAnalytics.create(AnalyticsEvent.ADD_REMINDER_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -61,7 +61,7 @@ class ReminderBottomSheet : BottomSheetDialogFragment() {
         cancel()
     }
 
-    fun goToCourse() {
+    fun goToCourse(v:View) {
         AppAnalytics.create(AnalyticsEvent.GO_TO_COURSE_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()

@@ -91,11 +91,11 @@ class GIFActivity : CoreJoshActivity() {
         this.startAnimation(animSet)
     }
 
-    fun exit() {
+    fun exit(v:View) {
         finish()
     }
 
-    fun goToProfile() {
+    fun goToProfile(v:View) {
         UserProfileActivity.startUserProfileActivity(
             this, Mentor.getInstance().getId(),
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),

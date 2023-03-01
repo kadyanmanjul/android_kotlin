@@ -186,7 +186,7 @@
                 android:background="@drawable/round_rectangle"
                 android:backgroundTint="@color/primary_500"
                 android:gravity="center"
-                android:onClick="@{()-> vm.shareWithFriends()}"
+                android:onClick="@{ vm::shareWithFriends}"
                 android:paddingTop="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@string/select_friend"

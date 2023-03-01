@@ -170,18 +170,18 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     }
 
-    fun loginViaTrueCaller() {
+    fun loginViaTrueCaller(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION).push()
         viewModel.loginAnalyticsEvent(LoginViaStatus.TRUECALLER.name)
         RxBus2.publish(LoginViaEventBus(LoginViaStatus.TRUECALLER))
     }
 
-    fun loginViaGoogle() {
+    fun loginViaGoogle(v:View) {
         viewModel.loginAnalyticsEvent(LoginViaStatus.GMAIL.name)
         RxBus2.publish(LoginViaEventBus(LoginViaStatus.GMAIL))
     }
 
-    fun loginViaPhoneNumber() {
+    fun loginViaPhoneNumber(v:View) {
         if (binding.mobileEt.text.isNullOrEmpty() || isValidFullNumber(
                 prefix,
                 binding.mobileEt.text.toString()
@@ -197,12 +197,12 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         viewModel.saveTrueCallerImpression(PHONE_NUMBER_SUBMITTED)
     }
 
-    fun clearPhoneNumber() {
+    fun clearPhoneNumber(v:View) {
         binding.mobileEt.setText(EMPTY)
         enableMobileEditText()
     }
 
-    fun showPrivacyPolicyDialog() {
+    fun showPrivacyPolicyDialog(v:View) {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
         (activity as BaseActivity).showWebViewDialog(url)
     }

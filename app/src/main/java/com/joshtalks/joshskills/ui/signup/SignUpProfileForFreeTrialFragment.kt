@@ -137,6 +137,10 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         }
     }
 
+    fun submitProfile(v:View) {
+        submitProfile()
+    }
+
     fun submitForFreeTrial() {
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
@@ -178,7 +182,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         binding.btnLogin.hideProgress(R.string.register)
     }
 
-    fun showPrivacyPolicyDialog() {
+    fun showPrivacyPolicyDialog(v:View) {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
         (activity as BaseActivity).showWebViewDialog(url)
     }

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.errorState
 
 import android.app.Activity
 import android.content.Intent
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -49,13 +50,13 @@ class ErrorActivity : BaseActivity() {
             binding.errorSubtitleText.text = errorSubtitle
     }
 
-    fun backPressCall() {
+    fun backPressCall(v: View) {
         val intent = Intent(this, activity!!::class.java)
         startActivity(intent)
         this.finish()
     }
 
-    fun makeCall() {
+    fun makeCall(v:View) {
         Utils.call(this, binding.supportPhoneNumber.text.toString())
     }
 

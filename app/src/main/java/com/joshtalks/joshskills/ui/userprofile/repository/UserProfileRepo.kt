@@ -22,7 +22,7 @@ class UserProfileRepo {
         commService.patchAwardDetails(extras)
 
     suspend fun requestMediaRequest(obj: Map<String, String>) =
-        chatNetwork.requestUploadMediaAsync(obj).await()
+        chatNetwork.requestUploadMediaAsync(obj)
 
     suspend fun updateProfilePicFromPreviousProfile(imageId: String) =
         signupNetwork.updateProfilePicFromPreviousProfile(imageId)

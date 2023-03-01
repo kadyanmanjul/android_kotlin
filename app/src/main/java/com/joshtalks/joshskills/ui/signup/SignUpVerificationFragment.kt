@@ -227,12 +227,16 @@ class SignUpVerificationFragment : Fragment() {
         }
     }
 
-    fun editNumber() {
+    fun verifyOTP(v:View) {
+        verifyOTP()
+    }
+
+    fun editNumber(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.EDIT_NUMBER).push()
         requireActivity().onBackPressed()
     }
 
-    fun regeneratedOTP() {
+    fun regeneratedOTP(v:View) {
         /*if ((requireActivity() as SignUpActivity).verification != null) {
             (requireActivity() as SignUpActivity).createVerification(
                 viewModel.countryCode,
@@ -257,7 +261,7 @@ class SignUpVerificationFragment : Fragment() {
         binding.btnVerify.isEnabled = false
     }
 
-    fun showPrivacyPolicyDialog() {
+    fun showPrivacyPolicyDialog(v:View) {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
         (activity as BaseActivity).showWebViewDialog(url)
     }

@@ -75,6 +75,11 @@ class PdfViewerActivity : BaseActivity() {
         super.onBackPressed()
     }
 
+    fun onBackPressed(v:View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+        super.onBackPressed()
+    }
+
     private fun showPdf() {
         CoroutineScope(Dispatchers.IO).launch {
             try {

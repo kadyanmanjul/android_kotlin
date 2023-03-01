@@ -61,7 +61,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center_vertical|start"
-                        android:onClick="@{()->handler.onBackPressed()}"
+                        android:onClick="@{handler::onBackPressed}"
                         android:paddingTop="@dimen/_6sdp"
                         android:paddingBottom="@dimen/_6sdp"
                         app:srcCompat="@drawable/ic_arrow_back"

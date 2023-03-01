@@ -164,7 +164,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val obj = mapOf("media_path" to File(mediaPath).name)
-                val responseObj = userProfileRepo.requestMediaRequest(obj)
+                val responseObj = userProfileRepo.requestMediaRequest(obj).await()
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
                     val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
@@ -643,7 +643,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun shareWithFriends() {
+    fun shareWithFriends(v:View) {
         getDeepLinkAndInviteFriends(WHATSAPP_PACKAGE_STRING)
     }
 

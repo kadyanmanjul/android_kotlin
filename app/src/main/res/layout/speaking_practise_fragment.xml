@@ -421,7 +421,7 @@
                         android:layout_marginTop="@dimen/_14sdp"
                         android:drawablePadding="@dimen/_4sdp"
                         android:gravity="center"
-                        android:onClick="@{()->handler.showSeniorStudentScreen()}"
+                        android:onClick="@{handler::showSeniorStudentScreen}"
                         android:text="@string/label_become_senior_student2"
                         android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
                         android:textColor="@color/primary_500"

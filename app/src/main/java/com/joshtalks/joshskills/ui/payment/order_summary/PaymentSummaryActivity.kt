@@ -878,7 +878,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
 
     }
 
-    fun clearText() {
+    fun clearText(v:View) {
         binding.mobileEt.setText(EMPTY)
         appAnalytics.addParam(AnalyticsEvent.MOBILE_NUMBER_CLEARED.NAME, true)
     }
@@ -966,7 +966,7 @@ class PaymentSummaryActivity : CoreJoshActivity(), PaymentGatewayListener {
         this@PaymentSummaryActivity.finish()
     }
 
-    fun showPrivacyPolicyDialog() {
+    fun showPrivacyPolicyDialog(v:View) {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("privacy_policy_url")
         showWebViewDialog(url)
     }

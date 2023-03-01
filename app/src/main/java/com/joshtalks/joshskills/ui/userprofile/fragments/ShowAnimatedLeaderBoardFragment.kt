@@ -370,7 +370,7 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
         binding.recyclerView.removeOnItemTouchListener(listener)
     }
 
-    fun onContinueClicked() {
+    fun onContinueClicked(v:View) {
         if (lessonInterval==0){
             dismiss()
         } else {

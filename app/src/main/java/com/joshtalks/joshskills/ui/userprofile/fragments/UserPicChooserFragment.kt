@@ -102,14 +102,14 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun delete() {
+    fun delete(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.REMOVE_PROFILE_PHOTO).push()
         logChooserAnalyticsEvent(AnalyticsEvent.DELETE_PIC.NAME,isFromRegistration)
         RxBus2.publish(DeleteProfilePicEventBus(""))
         dismiss()
     }
 
-    fun change() {
+    fun change(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.GALLERY_CLICKED).push()
         logChooserAnalyticsEvent(AnalyticsEvent.GALLERY_UPLOAD.NAME,isFromRegistration)
         ImagePicker.with(this)
@@ -120,7 +120,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         dismiss()
     }
 
-    fun captureImage() {
+    fun captureImage(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.CAMERA_CLICKED).push()
         logChooserAnalyticsEvent(AnalyticsEvent.CAMERA_UPLOAD.NAME,isFromRegistration)
         ImagePicker.with(this)

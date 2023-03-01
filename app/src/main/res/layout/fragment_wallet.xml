@@ -131,7 +131,6 @@
             android:layout_height="match_parent"
             android:background="@color/surface_overlay"
             android:elevation="@dimen/_8sdp"
-            android:onClick="@{null}"
             android:visibility="@{viewModel.loading ? View.VISIBLE : View.GONE}"
             tools:visibility="visible">
 

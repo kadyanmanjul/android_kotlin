@@ -589,10 +589,8 @@ class GroupChatViewModel : BaseViewModel() {
         return pushPayloadHelper.build()
     }
 
-    fun scrollChatToEnd(view: View, unread: CircleImageView) {
+    fun scrollChatToEnd() {
         scrollToEnd = true
-        view.visibility = View.GONE
-        unread.visibility = View.INVISIBLE
         message.what = NEW_CHAT_ADDED
         singleLiveEvent.value = message
     }

@@ -99,7 +99,7 @@ class ComplaintFragment : Fragment() {
     }
 
 
-    fun attachMedia() {
+    fun attachMedia(v:View) {
         ImagePicker.with(this)
             .crop()          //Crop image(Optional), Check Customization for more option
             .galleryOnly()
@@ -107,7 +107,7 @@ class ComplaintFragment : Fragment() {
             .start(ImagePicker.REQUEST_CODE)
     }
 
-    fun removeAttachMedia() {
+    fun removeAttachMedia(v:View) {
         lodgeComplaintBinding.imageContainer.visibility = View.GONE
         lodgeComplaintBinding.ivAttach.visibility = View.VISIBLE
         attachmentPath = null
@@ -166,7 +166,7 @@ class ComplaintFragment : Fragment() {
     }
 
 
-    fun submitComplaint() {
+    fun submitComplaint(v:View) {
         if (lodgeComplaintBinding.etName.text.toString().isEmpty()) {
             showToast("Please enter name")
             return

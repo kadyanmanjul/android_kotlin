@@ -225,7 +225,7 @@
                                 android:imeOptions="actionNone"
                                 android:importantForAutofill="no"
                                 android:inputType="none"
-                                android:onClick="@{()->handler.selectDateOfBirth()}"
+                                android:onClick="@{handler::selectDateOfBirth}"
                                 tools:ignore="KeyboardInaccessibleWidget" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -410,7 +410,7 @@
                             android:inputType="textCapWords"
                             android:focusable="false"
                             android:lines="1"
-                            android:onClick="@{()->handler.createDialogWithoutDateField()}"
+                            android:onClick="@{handler::createDialogWithoutDateField}"
                             android:maxLength="30"
                             android:maxLines="1"
                             android:minLines="1"

@@ -331,6 +331,11 @@ class CourseExploreActivity : CoreJoshActivity() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         super.onBackPressed()
     }
+    fun onBackPressed(v:View) {
+        onCancelResult()
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+        super.onBackPressed()
+    }
 
     override fun onStart() {
         super.onStart()

@@ -82,15 +82,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
         attemptSequence = intent.getIntExtra(ARG_ATTEMPT_SEQUENCE, -1)
         viewModel.examType.value = intent.getStringExtra(EXAM_TYPE)
         certificationQuestionModel?.run {
-            if (CertificationExamView.EXAM_VIEW == examView) {
-                if (lastQuestionOfExit < 0) {
-                    questionsList.addAll(questions.shuffled())
-                } else {
-                    questionsList.addAll(questions)
-                }
-            } else {
-                questionsList.addAll(questions.sortedBy { it.sortOrder })
-            }
+            questionsList.addAll(questions.sortedBy { it.sortOrder })
         }
         addObserver()
         setupViewPager(questionsList)

@@ -179,7 +179,7 @@ class ReferralActivity : BaseActivity() {
         activityReferralBinding.tvReferralCode.setOnTouchListener(touchListener)
     }
 
-    fun inviteOnlyWhatsapp() {
+    fun inviteOnlyWhatsapp(v:View) {
         getDeepLinkAndInviteFriends(WHATSAPP_PACKAGE_STRING)
     }
 

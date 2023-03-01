@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
@@ -58,7 +59,7 @@ class FeedbackViewModel : BaseViewModel() {
         return " second "
     }
 
-    fun closeDialog(){
+    fun closeDialog(v: View){
         responseLiveData.postValue(null)
     }
 
@@ -80,6 +81,16 @@ class FeedbackViewModel : BaseViewModel() {
                 }
             }
         }
+    }
+
+    fun submitFeedbackYES(v:View) {
+        submitFeedback("YES")
+    }
+    fun submitFeedbackMAYBE(v:View) {
+        submitFeedback("MAYBE")
+    }
+    fun submitFeedbackNO(v:View) {
+        submitFeedback("NO")
     }
 }
 

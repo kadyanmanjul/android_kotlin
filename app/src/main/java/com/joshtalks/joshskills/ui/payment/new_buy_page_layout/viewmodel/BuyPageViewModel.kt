@@ -291,7 +291,7 @@ class BuyPageViewModel : BaseViewModel() {
         }
     }
 
-    fun openCouponListScreen() {
+    fun openCouponListScreen(view: View) {
         message.what = OPEN_COUPON_LIST_SCREEN
         singleLiveEvent.value = message
     }
@@ -301,12 +301,12 @@ class BuyPageViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun openCourseExplore() {
+    fun openCourseExplore(view: View) {
         message.what = OPEN_COURSE_EXPLORE
         singleLiveEvent.value = message
     }
 
-    fun makePhoneCall() {
+    fun makePhoneCall(view: View) {
         message.what = MAKE_PHONE_CALL
         singleLiveEvent.value = message
     }

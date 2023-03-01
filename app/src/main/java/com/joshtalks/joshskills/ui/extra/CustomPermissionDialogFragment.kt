@@ -101,7 +101,7 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun allow() {
+    fun allow(v:View) {
         dismiss()
         when(popupType) {
             NOTIFICATION_POPUP -> {
@@ -120,7 +120,7 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         navigateToSettings()
     }
 
-    fun cancel() {
+    fun cancel(v:View) {
         dismiss()
         when(popupType) {
             NOTIFICATION_POPUP -> {

@@ -46,7 +46,7 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
                 )
     }
 
-    fun submitProfilePic() {
+    fun submitProfilePic(v:View) {
         //val requestMap = mutableMapOf<String, String?>()
         //viewModel.completingProfile(requestMap)
         MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_PHOTO).push()

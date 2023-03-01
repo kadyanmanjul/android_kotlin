@@ -247,11 +247,11 @@ class SignUpProfileFragment : BaseSignUpFragment() {
     }
 
 
-    fun selectDateOfBirth() {
+    fun selectDateOfBirth(v:View) {
         datePicker?.show()
     }
 
-    fun submitProfile() {
+    fun submitProfile(v:View) {
         if (binding.nameEditText.text?.trim().isNullOrEmpty()) {
             showToast(getString(R.string.name_error_toast))
             return

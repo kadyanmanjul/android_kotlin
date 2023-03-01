@@ -78,7 +78,7 @@ class SettingsFragment : Fragment() {
         sheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
-    fun actionConfirmed() {
+    fun actionConfirmed(v:View) {
         when (action) {
             PopupActions.SIGNOUT -> {
                 signout()
@@ -182,7 +182,7 @@ class SettingsFragment : Fragment() {
         (requireActivity() as BaseActivity).checkForOemNotifications(AUTO_START_SETTINGS_POPUP)
     }
 
-    fun hideBottomView() {
+    fun hideBottomView(v:View) {
         MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
         sheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
     }

@@ -44,12 +44,12 @@ class VerificationTimeoutBottomSheet : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    fun flashCallVerify() {
+    fun flashCallVerify(v:View) {
         listener?.onSelect(VerificationVia.FLASH_CALL)
         cancel()
     }
 
-    fun smsVerify() {
+    fun smsVerify(v:View) {
         listener?.onSelect(VerificationVia.SMS)
         cancel()
     }
@@ -65,6 +65,10 @@ class VerificationTimeoutBottomSheet : BottomSheetDialogFragment() {
             dismissAllowingStateLoss()
             ex.printStackTrace()
         }
+    }
+
+    fun cancel(v:View) {
+        cancel()
     }
 }
 

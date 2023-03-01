@@ -97,12 +97,12 @@ class PromotionDialogFragment : DialogFragment() {
             .into(fragmentPrmotationDialogBinding.ivPromotion)
     }
 
-    fun cancelPromotion() {
+    fun cancelPromotion(v:View) {
         listener?.onDismiss()
         dismissAllowingStateLoss()
     }
 
-    fun openPromotion() {
+    fun openPromotion(v:View) {
         courseId?.run {
             CourseDetailsActivity.startCourseDetailsActivity(
                 activity=requireActivity(),

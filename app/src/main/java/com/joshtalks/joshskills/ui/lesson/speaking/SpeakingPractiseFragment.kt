@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -519,7 +520,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         if (!response.p2pBtnIcon.isNullOrBlank())
                             binding.btnPeerToPeerCall.icon = requireActivity().getDrawable(R.drawable.ic_phone_icon)
 
-                        requireActivity().findViewById<MaterialTextView>(R.id.spotlight_call_btn).text =
+                        requireActivity().findViewById<MaterialButton>(R.id.spotlight_call_btn).text =
                             response.p2pBtnText?.let {
                                 it.ifBlank { getString(R.string.call_practice_partner) }
                             } ?: getString(R.string.call_practice_partner)
@@ -997,7 +998,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
-    fun showSeniorStudentScreen() {
+    fun showSeniorStudentScreen(v:View) {
         SeniorStudentActivity.startSeniorStudentActivity(requireActivity())
     }
 

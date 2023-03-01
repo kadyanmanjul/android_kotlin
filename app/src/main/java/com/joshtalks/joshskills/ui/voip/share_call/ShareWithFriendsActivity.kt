@@ -79,6 +79,14 @@ class ShareWithFriendsActivity : AppCompatActivity() {
             .build()
     }
 
+    fun sharePreviewToOtherAppsFalse(v:View) {
+        sharePreviewToOtherApps(false)
+    }
+
+    fun sharePreviewToOtherAppsTrue(v:View) {
+        sharePreviewToOtherApps(true)
+    }
+
     fun inviteFriends(dynamicLink: String) {
         val view = fragment.getShareScreen()
         val bitmapCreated = getBitMapFromView(view)
@@ -190,6 +198,10 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         fOut.flush()
         fOut.close()
         file.setReadable(true, false)
+    }
+
+    fun onBackPressed(v:View){
+        super.onBackPressed()
     }
 
     private fun shareFile(bitmap: Bitmap, dynamicLink: String) {

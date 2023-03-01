@@ -87,6 +87,7 @@ class GroupChatFragment : BaseFragment() {
     override fun initViewBinding() {
         init()
         binding.vm = vm
+        binding.fragment = this
         binding.executePendingBindings()
         vm.memberCount.set(0)
     }
@@ -200,6 +201,12 @@ class GroupChatFragment : BaseFragment() {
             return@setOnMenuItemClickListener false
         }
         popupMenu.show()
+    }
+
+    fun scrollChatToEnd(view: View) {
+        view.visibility = View.GONE
+        binding.scrollUnread.visibility = View.INVISIBLE
+        vm.scrollChatToEnd()
     }
 
     override fun onResume() {

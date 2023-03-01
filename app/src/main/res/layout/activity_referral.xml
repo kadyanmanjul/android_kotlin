@@ -10,10 +10,6 @@
             name="handler"
             type="com.joshtalks.joshskills.ui.referral.ReferralActivity" />
 
-        <variable
-            name="packageVal"
-            type="String" />
-
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -165,7 +161,7 @@
             android:layout_marginBottom="@dimen/_32sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:backgroundTint="@color/external_whatsapp"
-            android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
+            android:onClick="@{handler::inviteOnlyWhatsapp}"
             android:text="@string/btn_share_on_whatsapp"
             android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
             app:layout_constraintEnd_toStartOf="@+id/btn_other_share"
@@ -179,7 +175,7 @@
             android:layout_marginEnd="@dimen/_26sdp"
             android:background="@drawable/rounded_rectangle_attach"
             android:backgroundTint="@color/disabled"
-            android:onClick="@{()->handler.getDeepLinkAndInviteFriends(packageVal)}"
+            android:onClick="@{handler::inviteOnlyWhatsapp}"
             android:src="@drawable/navigation_more_vert"
             app:layout_constraintBottom_toBottomOf="@+id/shareOnWhatsAppBtn"
             app:layout_constraintEnd_toEndOf="parent"

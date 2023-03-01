@@ -76,7 +76,7 @@ class ShowAwardFragment : DialogFragment() {
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
-    fun nextAward() {
+    fun nextAward(v:View) {
         if (position >= award?.size!!) {
             return
         } else {
@@ -91,7 +91,7 @@ class ShowAwardFragment : DialogFragment() {
         }
     }
 
-    fun prevAward() {
+    fun prevAward(v:View) {
         if (position <= 0) {
             return
         } else {
@@ -106,6 +106,10 @@ class ShowAwardFragment : DialogFragment() {
         }
     }
 
+    fun dismiss(v:View) {
+        dismiss()
+    }
+
     fun showNewAward(position: Int) {
         if (position >= 0 && position < award?.size!!) {
             award?.get(position)?.imageUrl?.let {
@@ -118,7 +122,7 @@ class ShowAwardFragment : DialogFragment() {
         }
     }
 
-    fun goToProfile() {
+    fun goToProfile(v:View) {
         UserProfileActivity.startUserProfileActivity(
             requireActivity(), Mentor.getInstance().getId(),
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),

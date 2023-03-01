@@ -53,6 +53,10 @@ class QuestionListBottomSheet : BottomSheetDialogFragment(), Callback {
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialog)
     }
 
+    fun dismissAllowingStateLoss(v:View){
+        dismissAllowingStateLoss()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -96,12 +100,12 @@ class QuestionListBottomSheet : BottomSheetDialogFragment(), Callback {
         binding.recyclerView.adapter = QuestionListAdapter(questionList, currentQuestion, this)
     }
 
-    fun pauseAndExit() {
+    fun pauseAndExit(v:View) {
         dismissAllowingStateLoss()
         listener?.onPauseExit()
     }
 
-    fun finishExam() {
+    fun finishExam(v:View) {
         dismissAllowingStateLoss()
         listener?.onFinishExam()
     }

@@ -134,7 +134,7 @@ class StartSubscriptionActivity : BaseActivity() {
         viewModel.fetchSubscriptionDetails()
     }
 
-    fun cancel() {
+    fun cancel(v:View) {
         finish()
     }
 
