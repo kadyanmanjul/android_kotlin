@@ -839,6 +839,9 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         }
     }
+    fun buyCourse(v:View) {
+        buyCourse()
+    }
 
     private fun dismissBbTip() {
         try {
@@ -966,7 +969,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         super.onDestroy()
     }
 
-    fun goToTop() {
+    fun goToTop(v:View) {
         val params: CoordinatorLayout.LayoutParams =
             binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
         val behavior = params.behavior as AppBarLayout.Behavior
@@ -1070,6 +1073,15 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
     override fun onBalloonClick(view: View) {}
 
     override fun onBackPressed() {
+        onBackPressedClick()
+    }
+
+
+    fun onBackPressed(v:View) {
+        onBackPressedClick()
+    }
+
+    fun onBackPressedClick() {
         if (viewModel.getCoursePrice() == 0.0 || intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
             super.onBackPressed()
         else if (!isPaymentInitiated)
