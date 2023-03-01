@@ -53,7 +53,6 @@ import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.track.TrackActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -100,8 +99,6 @@ abstract class BaseActivity :
         FirebaseInAppMessagingClickListener {
 
     private lateinit var referrerClient: InstallReferrerClient
-    private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
-    private var versionResponse: VersionResponse? = null
     var videoChatObject: ChatModel? = null
 
     enum class ActivityEnum {

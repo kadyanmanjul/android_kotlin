@@ -52,8 +52,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.course_detail.*
-import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
-import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.ui.course_details.viewholder.*
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
@@ -187,11 +185,8 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
         initView()
         val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
-        val freeTrialData = FreeTrialData.getMapObject()
 
         if ((testId == PrefManager.getIntValue(SUBSCRIPTION_TEST_ID) || testId == 122)
-            && freeTrialData?.is7DFTBought == true
-            && (SubscriptionData.getMapObject()?.isSubscriptionBought == true).not()
             && remainingTrialDays in 0..7
             && PrefManager.getBoolValue(SHOW_COURSE_DETAIL_TOOLTIP)
         ) {
@@ -844,6 +839,9 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         }
     }
+    fun buyCourse(v:View) {
+        buyCourse()
+    }
 
     private fun dismissBbTip() {
         try {
@@ -971,7 +969,7 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
         super.onDestroy()
     }
 
-    fun goToTop() {
+    fun goToTop(v:View) {
         val params: CoordinatorLayout.LayoutParams =
             binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
         val behavior = params.behavior as AppBarLayout.Behavior
@@ -1075,6 +1073,15 @@ class CourseDetailsActivity : ThemedBaseActivity(), OnBalloonClickListener, Paym
     override fun onBalloonClick(view: View) {}
 
     override fun onBackPressed() {
+        onBackPressedClick()
+    }
+
+
+    fun onBackPressed(v:View) {
+        onBackPressedClick()
+    }
+
+    fun onBackPressedClick() {
         if (viewModel.getCoursePrice() == 0.0 || intent.getStringExtra(STARTED_FROM) == "BuyPageActivity")
             super.onBackPressed()
         else if (!isPaymentInitiated)
