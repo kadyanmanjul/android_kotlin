@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.util.*;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
@@ -126,7 +127,9 @@ public class AppAnalytics {
             firebaseAnalytics.setUserProperty("email", user.getEmail());
             firebaseAnalytics.setUserProperty("age", getAge(user.getDateOfBirth()) + "");
             firebaseAnalytics.setUserProperty("date_of_birth", user.getDateOfBirth());
-            firebaseAnalytics.setUserProperty("gender", (user.getGender().equals("M") ? "MALE" : "FEMALE"));
+            if (user.getGender()!=null) {
+                firebaseAnalytics.setUserProperty("gender", (user.getGender().equals("M") ? "MALE" : "FEMALE"));
+            }
             firebaseAnalytics.setUserProperty("username", user.getUsername());
             firebaseAnalytics.setUserProperty("user_type", user.getUserType());
 
