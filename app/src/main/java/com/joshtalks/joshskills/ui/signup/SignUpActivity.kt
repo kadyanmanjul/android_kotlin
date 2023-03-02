@@ -461,6 +461,7 @@ class SignUpActivity : ThemedBaseActivity() {
                 val account = task.getResult(ApiException::class.java)
                 handleGoogleSignInResult(account)
             } catch (e: ApiException) {
+                e.printStackTrace()
                 hideProgressBar()
                 MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
                     .addParam(ParamKeys.IS_SUCCESS, false)
@@ -529,9 +530,9 @@ class SignUpActivity : ThemedBaseActivity() {
                             .addParam(ParamKeys.IS_SUCCESS, true)
                             .push()
                     } else {
-                        task.exception?.showAppropriateMsg()
-
+                        task.exception?.printStackTrace()
                         showToast(getString(R.string.generic_message_for_error))
+                        hideProgressBar()
                         MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
                             .addParam(ParamKeys.IS_SUCCESS, false)
                             .push()
