@@ -25,8 +25,6 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
-import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -330,48 +328,6 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun updateSubscriptionStatus() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response =
-                    AppObjectController.signUpNetworkService.getOnBoardingStatus(
-                        Mentor.getInstance().getId(),
-                        PrefManager.getStringValue(USER_UNIQUE_ID)
-                    )
-                if (response.isSuccessful) {
-                    response.body()?.run {
-                        // Update Version Data in local
-                        PrefManager.put(SUBSCRIPTION_TEST_ID, this.subscriptionTestId)
-                        val versionData = VersionResponse.getInstance()
-                        versionData.version.let {
-                            it.name = this.version.name
-                            it.id = this.version.id
-                            VersionResponse.update(versionData)
-                        }
-
-                        // save Free trial data
-                        FreeTrialData.update(this.freeTrialData)
-
-                        PrefManager.put(EXPLORE_TYPE, this.exploreType)
-                        PrefManager.put(
-                            IS_SUBSCRIPTION_STARTED,
-                            this.subscriptionData.isSubscriptionBought
-                        )
-                        PrefManager.put(
-                            REMAINING_SUBSCRIPTION_DAYS,
-                            this.subscriptionData.remainingDays
-                        )
-
-                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought)
-                        PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
-                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip5)
-                    }
-                }
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-            }
-        }
-    }
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

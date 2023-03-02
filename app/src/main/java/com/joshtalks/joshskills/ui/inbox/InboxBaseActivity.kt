@@ -18,15 +18,12 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 
 abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppUpdateHandler {
     private var isFromOnBoarding: Boolean = true
     protected var inAppUpdateManager: InAppUpdateManager? = null
-    private var versionResponse: VersionResponse? = null
     private lateinit var activityRef: WeakReference<AppCompatActivity>
     protected val viewModel: InboxViewModel by lazy {
         ViewModelProvider(this).get(InboxViewModel::class.java)
@@ -38,9 +35,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
         super.onCreate(savedInstanceState)
         activityRef = WeakReference(this)
        // addObserver()
-        lifecycleScope.launch(Dispatchers.IO) {
-            versionResponse = VersionResponse.getInstance()
-        }
         AppObjectController.isSettingUpdate = false
     }
 
@@ -118,7 +112,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
             AppAnalytics.create(eventName)
                 .addBasicParam()
                 .addUserDetails()
-                .addParam("version", versionResponse?.version?.name.toString())
                 .push()
         }
     }
@@ -170,24 +163,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
                 logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
                 return@launch
             }
-            versionResponse?.version?.name?.let {
-
-                when (it) {
-                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
-                        openCourseExplorer()
-                        MixPanelTracker.publishEvent(MixPanelEvent.FIND_MORE_COURSES).push()
-                        logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-                    }
-                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
-                        if (isSubscriptionStarted && isSubscriptionEnd.not()) {
-                            openCourseExplorer()
-                        } else {
-                            openCourseExplorer()
-                        }
-                        logEvent(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
-                    }
-                }
-            }
+            openCourseExplorer()
         }
     }
     abstract fun openCourseExplorer()
