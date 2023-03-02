@@ -27,6 +27,12 @@
 -dontwarn org.joda.time.**
 -keep class org.joda.time.** { *; }
 
+#Google-SignIn
+-keep class com.google.googlesignin.** { *; }
+-keepnames class com.google.googlesignin.* { *; }
+-keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.internal.** { *; }
+
 # Gson
 -dontwarn sun.misc.**
 -keep class com.google.gson.examples.android.model.** { *; }
