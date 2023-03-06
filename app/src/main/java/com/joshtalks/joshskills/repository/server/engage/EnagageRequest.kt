@@ -18,6 +18,14 @@ data class PdfEngage(
     @SerializedName("total_view")
     var totalView: Int = 1
 )
+data class SharePdfEngage(
+    @SerializedName("pdf_id")
+    val pdfId: String,
+    @SerializedName("mentor_id")
+    var mentorId: String,
+    @SerializedName("event_name")
+    var event: String
+)
 
 
 data class ImageEngage(

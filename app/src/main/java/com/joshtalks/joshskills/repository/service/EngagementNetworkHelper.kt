@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.repository.server.engage.AudioEngage
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.engage.ImageEngage
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
+import com.joshtalks.joshskills.repository.server.engage.SharePdfEngage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,6 +65,16 @@ object EngagementNetworkHelper {
     }
 
     fun engagePdfApi(pdfEngage: PdfEngage) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppObjectController.chatNetworkService.engagePdf(pdfEngage)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun savePdfShareImpression(pdfEngage: SharePdfEngage) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 AppObjectController.chatNetworkService.engagePdf(pdfEngage)
