@@ -46,46 +46,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(), InAppUpdateManager.InAppU
         }
     }
 
-//    private fun addObserver() {
-//        lifecycleScope.launchWhenResumed {
-//            viewModel.overAllWatchTime.collectLatest {
-//                lifecycleScope.launch(Dispatchers.IO) {
-//                    var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
-//                    val reviewFrequency =
-//                        AppObjectController.getFirebaseRemoteConfig()
-//                            .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW)
-//                    when (reviewCount) {
-//                        0 -> if (it > reviewFrequency) {
-//                            showInAppReview()
-//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-//                        }
-//                        1 -> if (it > reviewFrequency * 2) {
-//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-//                            showInAppReview()
-//                        }
-//                        2 -> if (it > reviewFrequency * 3) {
-//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-//                            showInAppReview()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-    //    private fun showInAppReview() {
-//        val manager = ReviewManagerFactory.create(applicationContext)
-//        manager.requestReviewFlow().addOnCompleteListener { request ->
-//            if (request.isSuccessful) {
-//                val reviewInfo = request.result
-//                manager.launchReviewFlow(this, reviewInfo).addOnCompleteListener { result ->
-//                    println("result = [${result.isSuccessful}]")
-//                    result.exception?.printStackTrace()
-//                }
-//            }
-//        }
-//    }
-
     protected suspend fun checkInAppUpdate() {
         val forceUpdateMinVersion =
             AppObjectController.getFirebaseRemoteConfig().getLong("force_upgrade_after_version")

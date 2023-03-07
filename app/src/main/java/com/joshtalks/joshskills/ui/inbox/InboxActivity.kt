@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.inbox
 
+import android.Manifest
 import android.app.Activity
 import android.app.NotificationManager
 import android.app.ProgressDialog
@@ -14,9 +15,12 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -104,6 +108,21 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         DataBindingUtil.setContentView(this, R.layout.activity_inbox)
     }
 
+    private val requestPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { permissions ->
+            if (PrefManager.getBoolValue(NOTIFICATION_POPUP_SHOWN,false).not()) {
+                viewModel.saveNotificationPermissionGrantStatus(permissions)
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ).not() && permissions.not()
+                ) {
+                    PrefManager.put(NOTIFICATION_POPUP_SHOWN, true, false)
+                    PermissionUtils.notificationDeniedPermissionDialog(this)
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
         viewModel.userOnlineStatusSync()
@@ -140,6 +159,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     openErrorScreen(errorCode = BUY_COURSE_FEATURE_ERROR.toString(), map)
                 }
             }
+        }
+        checkAndGrantNotificationsPermissions()
+    }
+
+    private fun checkAndGrantNotificationsPermissions(){
+        val isNotificationEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled()
+        viewModel.saveNotificationEnabledStatus(isNotificationEnabled)
+        if(isNotificationEnabled.not()){
+            requestPermissionsLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+            )
         }
     }
 

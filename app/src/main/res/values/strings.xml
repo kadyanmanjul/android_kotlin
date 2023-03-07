@@ -543,6 +543,7 @@
 
     <string name="favorite_p2p_title" translatable="false">Favorite Practice Partner Calling</string>
     <string name="call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone, Phone and Storage </string>
+    <string name="notification_permission_message" translatable="false">Please allow notification on your device settings for regular updates --> Manage notifications and allow notifications </string>
     <string name="demo_call_start_permission_message" translatable="false">Please allow permissions on your device settings to start speaking Go to settings --> permissions and enable Microphone, Phone and Storage </string>
     <string name="spoke_for_minute" translatable="false">Spoke for %1$s </string>
     <string name="block" translatable="false">Block</string>

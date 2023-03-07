@@ -151,6 +151,21 @@ object PermissionUtils {
                 ) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun isNotificationPermissionEnabled(context: Context): Boolean {
+        return (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS))== PackageManager.PERMISSION_GRANTED
+    }
+
+    fun notificationPermission(
+        activity: Activity?,
+        multiplePermissionsListener: MultiplePermissionsListener
+    ) {
+        Dexter.withContext(activity)
+            .withPermissions(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+            .withListener(multiplePermissionsListener).check()
+    }
+
     fun isReadContactPermissionEnabled(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
@@ -397,7 +412,19 @@ object PermissionUtils {
             message(message)
             positiveButton(R.string.settings) {
                 openSettings(activity)
+            }
+            negativeButton(R.string.not_now)
+        }
+    }
 
+    fun notificationDeniedPermissionDialog(
+        activity: Activity,
+        message: Int = R.string.notification_permission_message
+    ) {
+        MaterialDialog(activity).show {
+            message(message)
+            positiveButton(R.string.settings) {
+                openSettings(activity)
             }
             negativeButton(R.string.not_now)
         }

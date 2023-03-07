@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedAdapter
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxRecommendedCourse
 import com.joshtalks.joshskills.ui.inbox.payment_verify.Payment
 import com.joshtalks.joshskills.ui.inbox.payment_verify.PaymentStatus
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import io.branch.referral.util.CurrencyType
@@ -320,6 +319,34 @@ class InboxViewModel : BaseViewModel(){
                     Pair("event_name", eventName)
                 )
                 AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+    fun saveNotificationPermissionGrantStatus(status: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val value = if(status) 1 else 0
+                val requestData = hashMapOf(
+                    Pair("device_id", Utils.getDeviceId()),
+                    Pair("is_allowed", value.toString())
+                )
+                AppObjectController.commonNetworkService.saveImpressionForNotification(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun saveNotificationEnabledStatus(status: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val value = if(status) 1 else 0
+                val requestData = hashMapOf(
+                    Pair("is_enabled", value.toString())
+                )
+                AppObjectController.commonNetworkService.saveImpressionForNotificationStatus(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }

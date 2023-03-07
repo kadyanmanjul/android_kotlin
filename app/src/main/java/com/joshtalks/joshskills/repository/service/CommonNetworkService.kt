@@ -401,6 +401,13 @@ interface CommonNetworkService {
     @POST("$DIR/impression/track_explore_course_impression/")
     suspend fun saveImpressionForExplore(@Body params: Map<String, String>): Response<Void>
 
+    @POST("$DIR/impression/notification_permission/")
+    suspend fun saveImpressionForNotification(@Body params: Map<String, String>): Response<Void>
+
+    @POST("$DIR/impression/notification_status/")
+    suspend fun saveImpressionForNotificationStatus(@Body params: Map<String, String>): Response<Void>
+
+
     @GET("$DIR/course/course_recommendations/")
     suspend fun getCourseRecommendations(): Response<ArrayList<InboxRecommendedCourse>>
 
