@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 62,
-    "identityHash": "0fe85e1ee1ea36ae48a7e710d0ea72b2",
+    "identityHash": "2f34babe90c23e43daf120d69655beb6",
     "entities": [
       {
         "tableName": "course",
@@ -2314,7 +2314,7 @@
       },
       {
         "tableName": "SpeakingTopic",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `topic_name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `already_talked` INTEGER NOT NULL, `total_new_student_calls` INTEGER NOT NULL, `required_new_student_calls` INTEGER NOT NULL, `is_new_student_calls_activated` INTEGER NOT NULL, `call_duration_status` TEXT NOT NULL, `isFromDb` INTEGER NOT NULL, `is_ft_caller_blocked` TEXT, `p2p_button_text` TEXT, `speaking_tab_title` TEXT, `speaking_info_text` TEXT, `speaking_tooltip_text` TEXT, `p2p_button_icon` TEXT, `howToTalkButton` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `topic_name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `already_talked` INTEGER NOT NULL, `total_new_student_calls` INTEGER NOT NULL, `required_new_student_calls` INTEGER NOT NULL, `is_new_student_calls_activated` INTEGER NOT NULL, `call_duration_status` TEXT NOT NULL, `isFromDb` INTEGER NOT NULL, `is_ft_caller_blocked` TEXT, `p2p_button_text` TEXT, `speaking_tab_title` TEXT, `speaking_info_text` TEXT, `speaking_tooltip_text` TEXT, `p2p_button_icon` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -2403,12 +2403,6 @@
           {
             "fieldPath": "p2pBtnIcon",
             "columnName": "p2p_button_icon",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "howToTalkButton",
-            "columnName": "howToTalkButton",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -3548,7 +3542,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0fe85e1ee1ea36ae48a7e710d0ea72b2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2f34babe90c23e43daf120d69655beb6')"
     ]
   }
 }

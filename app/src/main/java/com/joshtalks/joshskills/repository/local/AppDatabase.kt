@@ -758,8 +758,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_62_63: Migration = object : Migration(62,63) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE `SpeakingTopic` ADD COLUMN `speaking_trouble_tooltip_duration` TEXT")
-
+                database.execSQL("ALTER TABLE `SpeakingTopic` ADD COLUMN `speaking_trouble_tooltip_duration` INTEGER NOT NULL DEFAULT -1")
             }
         }
 

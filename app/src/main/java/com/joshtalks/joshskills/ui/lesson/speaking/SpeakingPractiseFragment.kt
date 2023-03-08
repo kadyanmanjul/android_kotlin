@@ -126,7 +126,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private lateinit var toolTipTopicContainer: Balloon
     private lateinit var toolTipButton: Balloon
     private lateinit var toolTipRecentCall:Balloon
-    private var howToSpeakButtonShow = EMPTY
+    private var howToSpeakButtonShow = -1
 
     private val getBlockStatus = fun() {
     }
@@ -426,7 +426,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             Log.d("SAGAR", "addObservers() called with: response = $response")
             binding.progressView.visibility = GONE
             viewModel.isNewStudentActive.set(response?.isNewStudentCallsActivated)
-            howToSpeakButtonShow = response?.howToTalkButton ?: EMPTY
+            howToSpeakButtonShow = response?.howToTalkButton ?: -1
             if (response == null) {
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             } else {
@@ -526,7 +526,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         // agar p2p button wale tootlip enable hai tu un 3 tooltip dikhne ke bad ye ayega tu vo bhi check karna hoga vo enable hai ya nahi varna
                         // ye check karna hai how to speak enable hai tu direct ye dikha du
                         if(viewModel.abTestRepository.isVariantActive(VariantKeys.SPEAKING_TOOLTIP_V2_ENABLED)){
-                            if (((VoipPref.getLastCallDurationInSec() != 1L) && (VoipPref.getLastCallDurationInSec() <= (response.howToTalkButton?.toLong() ?: 0))) && PrefManager.getBoolValue(
+                            if (((VoipPref.getLastCallDurationInSec() != 1L) && (VoipPref.getLastCallDurationInSec() <= (response.howToTalkButton.toLong()))) && PrefManager.getBoolValue(
                                     HAS_SEEN_SPEAKING_BUTOON_TOOLTIP) && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_RECENT_BUTTON_TOOLTIP)){
                                 Log.e("sagar", "addObservers: Inside if", )
                                 CoroutineScope(Dispatchers.IO).launch {
@@ -535,7 +535,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 }
                             }
                         }else{
-                            if (((VoipPref.getLastCallDurationInSec() != 1L) && (VoipPref.getLastCallDurationInSec() <= (response.howToTalkButton?.toLong() ?: 0))) && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_RECENT_BUTTON_TOOLTIP)){
+                            if (((VoipPref.getLastCallDurationInSec() != 1L) && (VoipPref.getLastCallDurationInSec() <= (response.howToTalkButton.toLong()))) && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_RECENT_BUTTON_TOOLTIP)){
                                 Log.e("sagar", "addObservers: Inside if", )
                                 CoroutineScope(Dispatchers.IO).launch {
                                     if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
@@ -666,6 +666,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                 }
             }
+
+            initDemoViews(lessonNo, howToSpeakButtonShow)
         }
         binding.btnFavorite.setOnClickListener {
             FavoriteListActivity.openFavoriteCallerActivity(
@@ -730,9 +732,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         } else {
             binding.btnCallWithExpert.isVisible = false
-        }
-        lifecycleScope.launch(Dispatchers.Main){
-            initDemoViews(lessonNo)
         }
     }
 
@@ -839,9 +838,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
     }
 
-    private fun initDemoViews(it: Int) {
+    private fun initDemoViews(it: Int, howToSpeak:Int) {
+        Log.e("sagar", "initDemoViews1:$howToSpeakButtonShow ", )
+
         if (PrefManager.getBoolValue(IS_FREE_TRIAL) && lessonNo == 1) {
-            if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID && howToSpeakButtonShow != EMPTY) {
+            Log.e("sagar", "initDemoViews:$howToSpeakButtonShow ", )
+            if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID && howToSpeak != -1) {
                 binding.imgRecentCallsHistory.visibility = VISIBLE
                 binding.imgRecentCallsHistory.text = "How to speak"
                 binding.imgRecentCallsHistory.icon =

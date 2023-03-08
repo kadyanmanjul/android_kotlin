@@ -74,7 +74,7 @@ data class SpeakingTopic(
 
     @SerializedName("speaking_trouble_tooltip_duration")
     @ColumnInfo(name = "speaking_trouble_tooltip_duration")
-    val howToTalkButton: String? = null
+    val howToTalkButton: Int = -1
 
 ) : Parcelable
 
