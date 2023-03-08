@@ -11,15 +11,18 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.ScratchCardDialogBinding
 import com.joshtalks.joshskills.repository.server.PurchaseDataResponse
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
+import com.joshtalks.joshskills.ui.special_practice.utils.SCRATCH
 import com.joshtalks.joshskills.util.scratch.ScratchView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +33,8 @@ class ScratchCardDialog : BaseDialogFragment() {
 
     private lateinit var binding: ScratchCardDialogBinding
     private lateinit var cardData: PurchaseDataResponse
+
+    var couponCode:String = EMPTY
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +53,8 @@ class ScratchCardDialog : BaseDialogFragment() {
         arguments?.getParcelable<PurchaseDataResponse>(SCRATCH_CARD_DATA)?.let {
             cardData = it
             binding.cardTitle.text = it.popUpTitle
-            binding.cardBody.text = it.popUpBody
+            binding.cardBody.text =  it.popUpBody?.let { it1 -> HtmlCompat.fromHtml(it1,HtmlCompat.FROM_HTML_MODE_LEGACY) }
+            couponCode = it.couponCode?: EMPTY
             if (it.couponCode.isNullOrBlank().not()) {
                 binding.cardContinue.text = "CLAIM NOW!"
                 binding.cardImage.setImageResource(R.drawable.ic_coin)
@@ -68,7 +74,10 @@ class ScratchCardDialog : BaseDialogFragment() {
                     AppObjectController.getFirebaseRemoteConfig().getString(
                         FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
                     ),
-                    "SCRATCH_CARD"
+                    "SCRATCH_CARD",
+                    shouldAutoApplyCoupon = true,
+                    shouldAutoApplyFrom = SCRATCH,
+                    autoApplyCouponCode = couponCode
                 )
             dismiss()
         }
@@ -125,9 +134,9 @@ class ScratchCardDialog : BaseDialogFragment() {
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
-        if (!manager.isDestroyed && !manager.isStateSaved) {
-            super.show(manager, tag)
-        }
+        val ft = manager.beginTransaction()
+        ft.add(this, tag)
+        ft.commitAllowingStateLoss()
     }
 
     companion object {

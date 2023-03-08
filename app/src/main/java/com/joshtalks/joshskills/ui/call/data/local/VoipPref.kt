@@ -317,8 +317,14 @@ object VoipPref {
                     callCount = PrefManager.getIntValue(FT_CALLS_LEFT),
                     callDuration = duration
                 )
-                resp.body().let {
-                    ScratchCardDialog.newInstance(it).show(fragmentActivity.supportFragmentManager, "ScratchCardDialog")
+                if(duration.inSeconds() > 10){
+                    resp.body().let {
+                        ScratchCardDialog.newInstance(it).show(fragmentActivity.supportFragmentManager, "ScratchCardDialog")
+                    }
+                }else if(PrefManager.getBoolValue(HAS_SEEN_SPEAKING_RECENT_BUTTON_TOOLTIP, false) &&  duration.inSeconds() < 10){
+                    resp.body().let {
+                        ScratchCardDialog.newInstance(it).show(fragmentActivity.supportFragmentManager, "ScratchCardDialog")
+                    }
                 }
             } catch (ex: Exception) {
                 Log.d(TAG, "showScratchDialog: ${ex.message}")

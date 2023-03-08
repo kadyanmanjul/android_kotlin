@@ -100,16 +100,17 @@
                         <androidx.viewpager.widget.ViewPager
                             android:id="@+id/slider_view_pager"
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/_150sdp"
+                            android:layout_height="@dimen/_140sdp"
                             android:visibility="gone"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginVertical="@dimen/_13sdp" />
+                            android:layout_marginTop="@dimen/_10sdp" />
 
                         <LinearLayout
                             android:id="@+id/indicator"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_10sdp"
                             android:visibility="gone"
+                            android:layout_marginTop="@dimen/_6sdp"
                             android:gravity="center_vertical|center_horizontal"
                             android:orientation="horizontal" />
 
@@ -259,16 +260,15 @@
                         android:id="@+id/shimmer4_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
                         android:orientation="vertical"
-                        android:visibility="@{vm.isCouponApiCall ? View.GONE : View.VISIBLE}">
+                        android:visibility="gone">
 
                         <RelativeLayout
                             android:id="@+id/offer_ll"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
-                            android:layout_marginTop="@dimen/_12sdp">
+                            android:layout_marginTop="@dimen/_10sdp">
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/offer_for_you_txt"
@@ -344,6 +344,7 @@
                         android:visibility="@{vm.isPriceApiCall ? View.GONE: View.VISIBLE}">
 
                         <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/price_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
@@ -385,6 +386,68 @@
                             android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/shimmer10_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <RelativeLayout
+                            android:id="@+id/offer_ll_new"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_10sdp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/offer_for_you_txt_new"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:text="@{vm.offerForYouText}"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold24"
+                                android:textColor="@color/text_default"
+                                android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/insert_code_new"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:onClick="@{()->vm.openCouponListScreen()}"
+                                android:text="@string/insert_code"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                                android:textColor="@color/primary_500"
+                                android:visibility="@{vm.isOfferOrInsertCodeVisible() ? View.VISIBLE : View.GONE}" />
+
+                        </RelativeLayout>
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/couponList_new"
+                            offersListAdapter="@{vm.offersListAdapter}"
+                            onOfferItemClick="@{vm.onItemClick}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_18sdp"
+                            android:layout_marginBottom="@dimen/_16sdp"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                            tools:listitem="@layout/item_offfers_card" />
+
+                        <View
+                            android:id="@+id/view6_new"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_2sdp"
+                            android:layout_marginHorizontal="@dimen/_10sdp"
+                            android:background="@drawable/dotted_line" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmer_for_testimonials2"

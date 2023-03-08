@@ -53,12 +53,12 @@
                     android:gravity="center"
                     android:text="Better luck next time" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/card_body"
-                    style="@style/TextAppearance.JoshTypography.BodySemiBold16"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:textStyle="normal"
                     android:text="Talk longer and get a chance to win exciting offers"
                     android:textColor="@color/text_subdued" />
 

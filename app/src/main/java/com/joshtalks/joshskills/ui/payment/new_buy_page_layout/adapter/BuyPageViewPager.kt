@@ -17,14 +17,12 @@ class BuyPageViewPager(private var listOfImages: List<SliderImage> = listOf()) :
 
 
     fun addListOfImages(images: List<SliderImage>) {
-        Log.e("sagar", "addListOfImages: $images")
         if (listOfImages.isEmpty()) {
             listOfImages = images
         }
     }
 
     override fun getCount(): Int {
-        Log.e("sagar", "getCount: ${listOfImages.size}" )
         return listOfImages.size
     }
 

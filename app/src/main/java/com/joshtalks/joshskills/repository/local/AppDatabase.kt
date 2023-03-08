@@ -136,7 +136,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         ABTestCampaignData::class, GroupMember::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class, Payment::class, BuyCourseFeatureModelNew::class
     ],
-    version = 62,
+    version = 63,
     exportSchema = true
 )
 @TypeConverters(
@@ -248,7 +248,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_58_59,
                                 MIGRATION_59_60,
                                 MIGRATION_60_61,
-                                MIGRATION_61_62)
+                                MIGRATION_61_62,
+                                MIGRATION_62_63)
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
@@ -754,6 +755,15 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("DROP TABLE `special_table`")
             }
         }
+
+        private val MIGRATION_62_63: Migration = object : Migration(62,63) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `SpeakingTopic` ADD COLUMN `speaking_trouble_tooltip_duration` TEXT")
+
+            }
+        }
+
+
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()

@@ -100,6 +100,8 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     var isPaymentInitiated = false
     var couponCodeFromIntent: String? = null
     var shouldAutoApplyCoupon: Boolean = false
+    var shouldAutoApplyFrom: String? = null
+    var autoApplyCoupon: String?=null
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     private var flowFrom: String = EMPTY
     var paymentButtonValue = 0
@@ -108,6 +110,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
     private var openCourseListener: OnOpenCourseListener? = null
     private val binding by lazy<ActivityBuyPageBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_buy_page)
+    }
+
+    private val scope by lazy {
+        Timer()
     }
 
     private var errorView: Stub<ErrorView>? = null
@@ -143,6 +149,8 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         flowFrom = intent.getStringExtra(FLOW_FROM) ?: EMPTY
         couponCodeFromIntent = intent.getStringExtra(COUPON_CODE)
         shouldAutoApplyCoupon = intent.getBooleanExtra(SHOULD_AUTO_APPLY_COUPON_ARG, false)
+        shouldAutoApplyFrom = intent.getStringExtra(SHOULD_AUTO_APPLY_FROM)
+        autoApplyCoupon = intent.getStringExtra(AUTO_APPLY_COUPON_CODE)
         if (intent.hasExtra(IS_FAKE_CALL)) {
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
@@ -214,8 +222,14 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     onCouponApply(coupon)
                 }
                 APPLY_COUPON_FROM_INTENT -> {
-                    if (shouldAutoApplyCoupon) {
-                        viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply == true }?.let { coupon ->
+                    if (shouldAutoApplyCoupon && shouldAutoApplyFrom == SCRATCH) {
+                        // This logic will get last coupon which is isAutoApply == true
+                        viewModel.couponList?.lastOrNull { coupon -> coupon.isAutoApply == true }?.let { coupon ->
+                            viewModel.saveImpression(L2_COUPON_AUTO_APPLIED)
+                            autoApplyCoupon?.let { it1 -> viewModel.applyEnteredCoupon(it1, NORMAL_BACK_PRESS, 0) }
+                        }
+                    }else if(shouldAutoApplyCoupon && shouldAutoApplyFrom == LESSON){
+                        viewModel.couponList?.firstOrNull { coupon -> coupon.isAutoApply == true}?.let { coupon ->
                             viewModel.saveImpression(L2_COUPON_AUTO_APPLIED)
                             viewModel.applyEnteredCoupon(coupon.couponCode, NORMAL_BACK_PRESS, 0)
                         }
@@ -402,10 +416,14 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
         setRating(buyCourseFeatureModel)
 
-        buyCourseFeatureModel.information?.forEach { it ->
-            val view = getCourseDescriptionList(it)
-            if (view != null) {
-                binding.courseDescList.addView(view)
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V3_ENABLED) || viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V4_ENABLED)){
+            binding.courseDescList.visibility = View.GONE
+        }else{
+            buyCourseFeatureModel.information?.forEach { it ->
+                val view = getCourseDescriptionList(it)
+                if (view != null) {
+                    binding.courseDescList.addView(view)
+                }
             }
         }
     }
@@ -439,7 +457,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             override fun onPageScrollStateChanged(state: Int) {}
         })
 
-        Timer().schedule(object : TimerTask() {
+        scope.schedule(object : TimerTask() {
             override fun run() {
                 runOnUiThread {
                     var i = binding.sliderViewPager.currentItem
@@ -474,6 +492,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             ratingInflate.inflate(R.layout.teacher_rating_and_review_card, null, false)
 
         if (viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V1_ENABLED)){
+
+            binding.shimmer10Layout.visibility = View.GONE
+            binding.shimmer5Layout.visibility = View.VISIBLE
+
             showShimmerTestimonials1(true)
             showShimmerTestimonials2(false)
 
@@ -491,6 +513,9 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
         }else if (viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V2_ENABLED)){
 
+            binding.shimmer10Layout.visibility = View.GONE
+            binding.shimmer5Layout.visibility = View.VISIBLE
+
             showShimmerTestimonials1(false)
             showShimmerTestimonials2(true)
 
@@ -504,7 +529,41 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             binding.shimmer2Layout.visibility = View.GONE
             setSlider(buyCourseFeatureModel)
 
-        }else{
+        }else if(viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V3_ENABLED)){
+            binding.shimmer10Layout.visibility = View.VISIBLE
+            binding.shimmer5Layout.visibility = View.GONE
+            showShimmerTestimonials1(false)
+            showShimmerTestimonials2(false)
+            setSlider(buyCourseFeatureModel)
+            binding.teacherRatingAndReview.visibility = View.GONE
+            binding.priceText.visibility = View.GONE
+
+            binding.sliderViewPager.visibility = View.VISIBLE
+            binding.indicator.visibility = View.VISIBLE
+            binding.courseTypeContainer.visibility = View.GONE
+
+            binding.shimmer2Layout.visibility = View.GONE
+        }
+
+        else if(viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V4_ENABLED)){
+            binding.shimmer10Layout.visibility = View.VISIBLE
+            binding.shimmer5Layout.visibility = View.GONE
+            showShimmerTestimonials1(false)
+            showShimmerTestimonials2(false)
+            binding.teacherRatingAndReview.visibility = View.GONE
+            binding.priceText.visibility = View.GONE
+
+            binding.teacherRatingAndReview.visibility = View.GONE
+            binding.priceText.visibility = View.GONE
+            binding.courseTypeContainer.visibility = View.VISIBLE
+
+            binding.shimmer2Layout.visibility = View.VISIBLE
+        }
+
+        else{
+            binding.shimmer10Layout.visibility = View.GONE
+            binding.shimmer5Layout.visibility = View.VISIBLE
+
             showShimmerTestimonials1(true)
             showShimmerTestimonials2(false)
 
@@ -513,7 +572,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
             binding.sliderViewPager.visibility = View.GONE
             binding.indicator.visibility = View.GONE
-            binding.courseTypeContainer.visibility = View.VISIBLE
+            binding.courseTypeContainer.visibility = View.GONE
 
             binding.shimmer2Layout.visibility = View.VISIBLE
 
@@ -645,13 +704,17 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             testId: String,
             flowFrom: String,
             coupon: String = EMPTY,
-            shouldAutoApplyCoupon: Boolean = false
+            shouldAutoApplyCoupon: Boolean = false,
+            shouldAutoApplyFrom: String = EMPTY,
+            autoApplyCouponCode:String = EMPTY
         ) {
             Intent(activity, BuyPageActivity::class.java).apply {
                 putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
                 putExtra(FLOW_FROM, flowFrom)
                 putExtra(COUPON_CODE, coupon)
                 putExtra(SHOULD_AUTO_APPLY_COUPON_ARG, shouldAutoApplyCoupon)
+                putExtra(SHOULD_AUTO_APPLY_FROM, shouldAutoApplyFrom)
+                putExtra(AUTO_APPLY_COUPON_CODE, autoApplyCouponCode)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
@@ -947,5 +1010,10 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             payload = map["payload"].toString(),
             exception = map["exception"].toString()
         )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
     }
 }

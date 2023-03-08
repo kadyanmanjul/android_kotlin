@@ -99,6 +99,7 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.special_practice.utils.L2_CLAIM_NOW_CLICKED
 import com.joshtalks.joshskills.ui.special_practice.utils.L2_COUPON_UNLOCKED
+import com.joshtalks.joshskills.ui.special_practice.utils.LESSON
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
@@ -302,7 +303,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
 
     private fun showBottomCouponBanner() {
         if (viewModel.abTestRepository.isVariantActive(VariantKeys.L2_LESSON_COMPLETE_ENABLED)) {
-            viewModel.saveImpression(L2_COUPON_UNLOCKED)
             binding.buyCourseBanner.visibility = View.VISIBLE
             viewModel.getCompletedLessonCount(courseId)
             viewModel.completedLessonCount.observe(this) { count ->
@@ -325,13 +325,15 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                             buyCourseBannerLessonProgressTv.isVisible = it.not()
                             buyCourseBannerAvailBtn.isVisible = it
                             buyCourseBannerAvailBtn.text = getString(R.string.claim_now)
+                            viewModel.saveImpression(L2_COUPON_UNLOCKED)
                             binding.buyCourseBannerAvailBtn.setOnClickListener {
                                 viewModel.saveImpression(L2_CLAIM_NOW_CLICKED)
                                 BuyPageActivity.startBuyPageActivity(
                                     this@LessonActivity,
                                     testId.toString(),
                                     "offer coupon banner",
-                                    shouldAutoApplyCoupon = true
+                                    shouldAutoApplyCoupon = true,
+                                    shouldAutoApplyFrom = LESSON
                                 )
                             }
                             if (it.not()) {
@@ -763,7 +765,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         viewModel.introVideoLiveDataForSpeakingSection.observe(this) {
             Log.e("sagar", "setObservers111: ${it.videoLink}" )
             introVideoUrl = it.videoLink
-            if (introVideoUrl.isNullOrBlank()) {
+            if (introVideoUrl.isNullOrBlank().not()) {
+                showIntroVideoUi()
+            } else {
                 showToast("Something went wrong")
             }
         }
@@ -1466,7 +1470,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
         if (lessonNumber == 1 && PrefManager.getBoolValue(IS_FREE_TRIAL)){
             try {
                 viewModel.speakingTopicLiveData.observe(this){ response ->
-                    Log.e("sagar", "setSelectedColor: 3${viewModel.abTestRepository.isVariantActive(VariantKeys.SPEAKING_TOOLTIP_V2_ENABLED)} ${introVideoControl}" )
+                    Log.e("SAGAR", "setSelectedColor: 3${viewModel.abTestRepository.isVariantActive(VariantKeys.SPEAKING_TOOLTIP_V2_ENABLED)} ${introVideoControl}" )
                     if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_BB_TIP_SHOW) && (tab?.position == 0 || tab?.position == -1)) {
                         Log.e("sagar", "setSelectedColor: " )
                         if (response == null) {
@@ -1510,7 +1514,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimat
                                 //TODO here we have to add one more condition if we have to show by default tooltip
                                 if (introVideoControl && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_VIDEO) && courseId == "151"){
                                     lifecycleScope.launch(Dispatchers.Main) {
-                                        delay(200)
+                                       // delay(200)
                                         if (introVideoUrl.isNullOrBlank().not()) {
                                             Log.e("sagar", "setObservers: $introVideoControl $introVideoUrl")
                                             PrefManager.put(HAS_SEEN_SPEAKING_VIDEO, true)

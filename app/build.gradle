@@ -12,8 +12,8 @@ if (!project.hasProperty("devBuild")) {
 }
 //-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 5
-def minorVersion = 5
-def patchVersion = 97
+def minorVersion = 6
+def patchVersion = 3
 
 android {
     compileSdkVersion 33

@@ -327,6 +327,8 @@ class FirebaseRemoteConfigKey {
         const val TEACHER_IMAGE_URL = "TEACHER_IMAGE_URL_"
         const val TEACHER_NAME = "TEACHER_NAME_"
 
+        const val HOW_TO_TALK_BUTTON = "HOW_TO_TALK_BUTTON_"
+
     }
 }
 

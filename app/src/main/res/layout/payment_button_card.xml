@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         android:background="@color/warning"
         android:gravity="center"
-        android:paddingVertical="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_4sdp"
+        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.JoshTypography.CaptionSemiBold"
         android:textColor="@color/text_default"
         android:visibility="gone"
@@ -53,7 +54,7 @@
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.JoshTypography.TinyRegular"
         android:textColor="@color/dark_grey"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_payment_course">

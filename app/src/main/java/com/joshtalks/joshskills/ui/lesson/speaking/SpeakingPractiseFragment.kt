@@ -86,6 +86,7 @@ import kotlinx.coroutines.*
 import java.time.Duration
 import java.util.*
 
+
 const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
 const val ATTEMPTED = "AT"
@@ -124,6 +125,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private val event = EventLiveData
     private lateinit var toolTipTopicContainer: Balloon
     private lateinit var toolTipButton: Balloon
+    private lateinit var toolTipRecentCall:Balloon
+    private var howToSpeakButtonShow = EMPTY
 
     private val getBlockStatus = fun() {
     }
@@ -297,6 +300,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
             spQuestion?.topicId?.let {
                 this.topicId = it
+                Log.d("SAGAR", "addObservers() called")
                 viewModel.getTopicDetail(it)
             }
             spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
@@ -398,15 +402,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.imgRecentCallsHistory.setOnSingleClickListener {
             if (binding.imgRecentCallsHistory.text == "How to speak"){
                 lessonActivityListener?.introVideoCmplt()
-                viewModel.isHowToSpeakClicked(true)
+                lessonActivityListener?.showIntroVideo()
+                //viewModel.isHowToSpeakClicked(true)
                 binding.btnCallDemo.visibility = View.VISIBLE
                 viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
-                MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_SPEAK)
-                    .addParam(ParamKeys.LESSON_ID, lessonID)
-                    .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
-                    .push()
             }else{
-                MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
                 RecentCallActivity.openRecentCallActivity(
                     requireActivity(),
                     CONVERSATION_ID
@@ -423,8 +423,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         viewModel.speakingTopicLiveData.observe(viewLifecycleOwner) { response ->
+            Log.d("SAGAR", "addObservers() called with: response = $response")
             binding.progressView.visibility = GONE
             viewModel.isNewStudentActive.set(response?.isNewStudentCallsActivated)
+            howToSpeakButtonShow = response?.howToTalkButton ?: EMPTY
             if (response == null) {
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             } else {
@@ -518,6 +520,29 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                         if (!response.p2pBtnIcon.isNullOrBlank())
                             binding.btnPeerToPeerCall.icon = requireActivity().getDrawable(R.drawable.ic_phone_icon)
+
+                        //TODO get call duration so we can show overlay on how to talk
+
+                        // agar p2p button wale tootlip enable hai tu un 3 tooltip dikhne ke bad ye ayega tu vo bhi check karna hoga vo enable hai ya nahi varna
+                        // ye check karna hai how to speak enable hai tu direct ye dikha du
+                        if(viewModel.abTestRepository.isVariantActive(VariantKeys.SPEAKING_TOOLTIP_V2_ENABLED)){
+                            if (((VoipPref.getLastCallDurationInSec() != 1L) && (VoipPref.getLastCallDurationInSec() <= (response.howToTalkButton?.toLong() ?: 0))) && PrefManager.getBoolValue(
+                                    HAS_SEEN_SPEAKING_BUTOON_TOOLTIP) && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_RECENT_BUTTON_TOOLTIP)){
+                                Log.e("sagar", "addObservers: Inside if", )
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
+                                        setOverlayAnimationOnRecentCallButton()
+                                }
+                            }
+                        }else{
+                            if (((VoipPref.getLastCallDurationInSec() != 1L) && (VoipPref.getLastCallDurationInSec() <= (response.howToTalkButton?.toLong() ?: 0))) && !PrefManager.getBoolValue(HAS_SEEN_SPEAKING_RECENT_BUTTON_TOOLTIP)){
+                                Log.e("sagar", "addObservers: Inside if", )
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
+                                        setOverlayAnimationOnRecentCallButton()
+                                }
+                            }
+                        }
 
                         requireActivity().findViewById<MaterialTextView>(R.id.spotlight_call_btn).text =
                             response.p2pBtnText?.let {
@@ -720,7 +745,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             CoroutineScope(Dispatchers.Main).launch {
                 if (!PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
                     //This code is for show balloon tooltip and highlight topic container
-                    Log.e("sagar", "showToolTipOnLesson: 2", )
+                    Log.e("sagar", "showToolTipOnLesson: 2")
 
                     setOverlayAnimationOnTopicContainer()
                     showTooltipTopic(
@@ -815,18 +840,21 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun initDemoViews(it: Int) {
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL) && lessonNo == 1) {
+            if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID && howToSpeakButtonShow != EMPTY) {
+                binding.imgRecentCallsHistory.visibility = VISIBLE
+                binding.imgRecentCallsHistory.text = "How to speak"
+                binding.imgRecentCallsHistory.icon =
+                    requireActivity().getDrawable(R.drawable.info_iv)
+            }
+        } else if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+            binding.imgRecentCallsHistory.visibility = VISIBLE
+        }
+
         if (it == 1 && isIntroVideoEnabled && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
             lessonActivityListener?.showIntroVideo()
             lessonNo = it
             binding.btnCallDemo.visibility = View.GONE
-
-            if (PrefManager.getBoolValue(IS_FREE_TRIAL) && lessonNo == 1) {
-                binding.imgRecentCallsHistory.visibility = VISIBLE
-                binding.imgRecentCallsHistory.text = "How to speak"
-                binding.imgRecentCallsHistory.icon = requireActivity().getDrawable(R.drawable.info_iv)
-            }else if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
-                binding.imgRecentCallsHistory.visibility = VISIBLE
-            }
 
             try {
                 viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner) {
@@ -1064,7 +1092,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.saveImpression(SPEAKING_TOOLTIP2)
 
             binding.welcomeContainer.setOnClickListener {
-                Log.e("sagar", "showToolTipOnLesson: 4", )
+                Log.e("sagar", "showToolTipOnLesson: 4")
                 binding.welcomeContainer.visibility = GONE
                 dismissTooltipTopicContainer()
                 //This code is for show balloon tooltip and highlight peer to peer button
@@ -1138,6 +1166,33 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
         }
     }
+
+    private suspend fun setOverlayAnimationOnRecentCallButton() {
+        withContext(Dispatchers.Main) {
+            val STATUS_BAR_HEIGHT = getStatusBarHeight()
+            binding.welcomeContainer.visibility = VISIBLE
+            val overlayImageView = binding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
+            val overlayItem = TooltipUtils.getOverlayItemFromView(binding.imgRecentCallsHistory)
+
+            showTooltipRecentCallButton()
+
+
+            binding.welcomeContainer.setOnClickListener {
+                PrefManager.put(HAS_SEEN_SPEAKING_RECENT_BUTTON_TOOLTIP, true)
+                binding.welcomeContainer.visibility = GONE
+                dismissTooltipRecentButton()
+            }
+
+            overlayItem?.let {
+                overlayImageView.setImageBitmap(it.viewBitmap)
+                overlayImageView.x = it.x.toFloat()
+                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._40sdp) - resources.getDimension(R.dimen._55sdp)
+                overlayImageView.requestLayout()
+            }
+            viewModel.saveImpression(HOW_TO_SPEAK_TOOLTIP)
+        }
+    }
+
 
     fun getStatusBarHeight(): Int {
         val rectangle = Rect()
@@ -1218,6 +1273,41 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
+    private fun showTooltipRecentCallButton() {
+        try {
+            if (this::toolTipRecentCall.isInitialized.not()) {
+                toolTipRecentCall = Balloon.Builder(requireContext())
+                    .setLayout(R.layout.layout_speaking_button_tooltip)
+                    .setHeight(BalloonSizeSpec.WRAP)
+                    .setIsVisibleArrow(true)
+                    .setBackgroundColorResource(R.color.surface_tip)
+                    .setArrowDrawableResource(R.drawable.ic_arrow_yellow_stroke)
+                    .setWidthRatio(0.75f)
+                    .setArrowPosition(0.5f)
+                    .setDismissWhenTouchOutside(false)
+                    .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                    .setLifecycleOwner(this)
+                    .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                    .build()
+                val textViewTitle = toolTipRecentCall.getContentView().findViewById<MaterialTextView>(R.id.title)
+                textViewTitle.visibility = GONE
+                val textViewSubHeadingText = toolTipRecentCall.getContentView().findViewById<MaterialTextView>(R.id.balloon_text)
+                textViewSubHeadingText.text = "अच्छी बात नहीं हुई ? जानिये English में कैसे बात करें।"
+
+                toolTipRecentCall.showAlignBottom(binding.imgRecentCallsHistory)
+            }
+
+        } catch (ex: Exception) {
+            Log.d(TAG, "showBuyCourseTooltip: ${ex.message}")
+        }
+    }
+
+    private fun dismissTooltipRecentButton(){
+        if (this::toolTipRecentCall.isInitialized && toolTipRecentCall.isShowing){
+            toolTipRecentCall.dismiss()
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         if (this::toolTipTopicContainer.isInitialized && toolTipTopicContainer.isShowing || this::toolTipButton.isInitialized && toolTipButton.isShowing) {
@@ -1225,6 +1315,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         dismissTooltipTopicContainer()
+        dismissTooltipRecentButton()
         binding.welcomeContainer.visibility = GONE
         dismissTooltipButton()
         binding.btnPeerToPeerCall.visibility = VISIBLE

@@ -70,7 +70,11 @@ data class SpeakingTopic(
 
     @SerializedName("p2p_button_icon")
     @ColumnInfo(name = "p2p_button_icon")
-    val p2pBtnIcon: String? = null
+    val p2pBtnIcon: String? = null,
+
+    @SerializedName("speaking_trouble_tooltip_duration")
+    @ColumnInfo(name = "speaking_trouble_tooltip_duration")
+    val howToTalkButton: String? = null
 
 ) : Parcelable
 

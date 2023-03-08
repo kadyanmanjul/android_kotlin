@@ -132,7 +132,7 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
             val courseDescListInflate: LayoutInflater = AppObjectController.joshApplication.getSystemService(AppCompatActivity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             courseDescListCard = courseDescListInflate.inflate(R.layout.layout_expert_feature, null, true)
             val courseDesc = courseDescListCard?.findViewById<TextView>(R.id.feature_text)
-            courseDesc?.compoundDrawablesRelative?.get(0)?.setTint(AppObjectController.joshApplication.resources.getColor(R.color.primary_500))
+            courseDesc?.compoundDrawablesRelative?.get(0)?.setTint(courseDesc.context.resources.getColor(R.color.primary_500))
             courseDesc?.text = HtmlCompat.fromHtml(featureText, HtmlCompat.FROM_HTML_MODE_LEGACY)
             return courseDescListCard
         }
