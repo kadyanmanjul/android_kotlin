@@ -302,6 +302,19 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun saveImpressionForInstant(eventName: String, mentorId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", mentorId), Pair("event_name", eventName)
+                )
+                launcherScreenImpressionService.saveImpressionInstantApp(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
     fun initDeepLinkData() {
         if (jsonParams.getBooleanOrNull(Defines.Jsonkey.Clicked_Branch_Link.key) == true) {
             handleBranchAnalytics()

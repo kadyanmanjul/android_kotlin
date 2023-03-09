@@ -60,8 +60,12 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Toast.makeText(this, readCookie(), Toast.LENGTH_LONG).show()
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                viewModel.saveImpressionForInstant("IA_TO_MAIN_APP_MIGRATE", readCookie())
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
