@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Message
 import android.provider.Settings
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -32,6 +33,7 @@ import com.joshtalks.joshskills.ui.errorState.*
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.util.RedirectAction.*
+import com.joshtalks.joshskills.util.readCookie
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
@@ -58,6 +60,9 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Toast.makeText(this, readCookie(), Toast.LENGTH_LONG).show()
+        }
         AppObjectController.init()
         AppObjectController.initFirebaseRemoteConfig()
         AppObjectController.configureCrashlytics()
