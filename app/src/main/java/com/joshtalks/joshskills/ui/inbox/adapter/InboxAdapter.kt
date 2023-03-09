@@ -103,7 +103,7 @@ class InboxAdapter(
                 courseProgressBar.progress = 0
 //                horizontalLine.visibility = android.view.View.VISIBLE
                 imageUrl(binding.profileImage, inboxEntity.course_icon)
-                if (PrefManager.getBoolValue(IS_FREE_TRIAL) && inboxEntity.created == null && inboxEntity.isCapsuleCourse) {
+                if (inboxEntity.created == null && inboxEntity.isCapsuleCourse) {
                     unseenMsgCount.visibility = ViewGroup.VISIBLE
                     unseenMsgCount.text = "3"
                 } else {
