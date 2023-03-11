@@ -62,7 +62,7 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
         setContentView(binding.root)
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                viewModel.saveImpressionForInstant("IA_TO_MAIN_APP_MIGRATE", readCookie())
+                viewModel.saveImpressionForInstant(readCookie(), Mentor.getInstance().getId())
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

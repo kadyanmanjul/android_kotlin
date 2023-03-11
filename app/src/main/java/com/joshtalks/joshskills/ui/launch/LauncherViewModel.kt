@@ -34,6 +34,7 @@ import org.json.JSONObject
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 
 const val FETCH_GAID = 1001
@@ -302,13 +303,14 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun saveImpressionForInstant(eventName: String, mentorId:String) {
+    fun saveImpressionForInstant(instantAppMentorId: String, mentorId:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val requestData = hashMapOf(
-                    Pair("mentor_id", mentorId), Pair("event_name", eventName)
-                )
-                launcherScreenImpressionService.saveImpressionInstantApp(requestData)
+                val map = HashMap<String,String>()
+                map["instant_app_mentor_id"] = instantAppMentorId
+                map["mentor_id"] = mentorId
+
+                launcherScreenImpressionService.saveImpressionInstantApp(map)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }

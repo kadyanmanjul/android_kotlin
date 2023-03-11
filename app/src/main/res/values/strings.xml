@@ -1001,9 +1001,6 @@
     <string name="type_your_mobile">Type your mobile</string>
     <string name="type_your_email">Type your email</string>
     <string name="type_problem">Please explain your problem in detail</string>
-    <string name="leaderarrow_url" translatable="false">https://s3.ap-south-1.amazonaws.com/www.static.skills.com/agora/leaderboard_arrow.json</string>
-    <string name="not_attempted_url" translatable="false">https://s3.ap-south-1.amazonaws.com/www.static.skills.com/agora/not_attempted.json</string>
-    <string name="search_new_url" translatable="false">https://s3.ap-south-1.amazonaws.com/www.static.skills.com/agora/search_new_anim.json</string>
     <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
 
 

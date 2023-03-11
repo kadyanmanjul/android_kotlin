@@ -68,27 +68,31 @@ class ScratchCardDialog : BaseDialogFragment() {
         }
 
         binding.cardContinue.setOnClickListener {
-            if (binding.cardContinue.text != requireActivity().getString(R.string.got_it))
-                BuyPageActivity.startBuyPageActivity(
-                    requireActivity(),
-                    AppObjectController.getFirebaseRemoteConfig().getString(
-                        FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                    ),
-                    "SCRATCH_CARD",
-                    shouldAutoApplyCoupon = true,
-                    shouldAutoApplyFrom = SCRATCH,
-                    autoApplyCouponCode = couponCode
-                )
-            dismiss()
+            if(isAdded && activity!=null) {
+                if (binding.cardContinue.text != requireActivity().getString(R.string.got_it))
+                    BuyPageActivity.startBuyPageActivity(
+                        requireActivity(),
+                        AppObjectController.getFirebaseRemoteConfig().getString(
+                            FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                        ),
+                        "SCRATCH_CARD",
+                        shouldAutoApplyCoupon = true,
+                        shouldAutoApplyFrom = SCRATCH,
+                        autoApplyCouponCode = couponCode
+                    )
+                dismiss()
+            }
         }
 
         binding.scratchView.setRevealListener(object : ScratchView.IRevealListener {
             override fun onRevealed(scratchView: ScratchView) {
-                scratchView.reveal()
-                savePopupImpression("SCRATCH_CARD_UNLOCKED")
-                if (binding.cardContinue.text != requireActivity().getString(R.string.got_it)) {
-                    binding.cardConfetti.visibility = VISIBLE
-                    binding.cardConfetti.playAnimation()
+                if(isAdded && activity!=null) {
+                    scratchView.reveal()
+                    savePopupImpression("SCRATCH_CARD_UNLOCKED")
+                    if (binding.cardContinue.text != requireActivity().getString(R.string.got_it)) {
+                        binding.cardConfetti.visibility = VISIBLE
+                        binding.cardConfetti.playAnimation()
+                    }
                 }
             }
 

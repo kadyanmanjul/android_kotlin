@@ -251,7 +251,7 @@
                 android:layout_height="match_parent"
                 android:paddingTop="@dimen/_2sdp"
                 app:lottie_autoPlay="true"
-                app:lottie_url="@string/leaderarrow_url"
+                app:lottie_fileName="lottie/leaderboard_arrow.json"
                 app:lottie_imageAssetsFolder="lottie"
                 app:lottie_loop="true"
                 app:lottie_repeatMode="reverse" />

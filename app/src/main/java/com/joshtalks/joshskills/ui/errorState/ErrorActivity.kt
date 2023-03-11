@@ -50,9 +50,11 @@ class ErrorActivity : BaseActivity() {
     }
 
     fun backPressCall() {
-        val intent = Intent(this, activity!!::class.java)
-        startActivity(intent)
-        this.finish()
+        if(activity!=null){
+            val intent = Intent(this, activity!!::class.java)
+            startActivity(intent)
+            this.finish()
+        }
     }
 
     fun makeCall() {

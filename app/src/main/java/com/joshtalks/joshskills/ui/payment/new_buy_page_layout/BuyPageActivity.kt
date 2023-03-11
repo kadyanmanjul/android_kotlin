@@ -572,9 +572,11 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
 
             binding.sliderViewPager.visibility = View.GONE
             binding.indicator.visibility = View.GONE
-            binding.courseTypeContainer.visibility = View.GONE
+            binding.courseTypeContainer.visibility = View.VISIBLE
 
             binding.shimmer2Layout.visibility = View.VISIBLE
+            binding.shimmer4Layout.visibility = View.VISIBLE
+            binding.view3.visibility = View.GONE
 
         }
 

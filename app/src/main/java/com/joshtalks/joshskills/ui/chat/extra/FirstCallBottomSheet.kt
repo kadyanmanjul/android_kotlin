@@ -152,8 +152,8 @@ class FirstCallBottomSheet : BottomSheetDialogFragment() {
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             }
             VoipPref.resetAutoCallCount()
-            dismiss()
             startActivity(callIntent)
+            dismiss()
         }
     }
 

@@ -562,7 +562,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 binding.ftuTwentyMinStatus.pauseAnimation()
                                 //binding.twentyMinFtuText.text =
                                 getString(R.string.twenty_min_call_target)
-                                showTwentyMinAnimationFromUrl(getString(R.string.not_attempted_url))
+                                showTwentyMinAnimationFromUrl("lottie/not_attempted.json")
                                 binding.ftuTwentyMinStatus.setMinAndMaxProgress(0.0f, 0.7f)
                             }
                             COMPLETED -> {
