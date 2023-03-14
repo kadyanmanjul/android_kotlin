@@ -2,11 +2,25 @@ package com.joshtalks.joshskills.core.service
 
 import android.app.NotificationManager
 import android.content.Context
-import androidx.work.*
-import com.joshtalks.joshskills.core.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
@@ -123,28 +137,6 @@ object WorkManagerAdmin {
     fun syncNotificationEngagement() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<NotificationEngagementSyncWorker>().build())
-    }
-
-    fun setBackgroundNotificationWorker() {
-        removeBackgroundNotificationWorker()
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val delay = AppObjectController.getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.NOTIFICATION_API_TIME)
-
-        val workRequest = OneTimeWorkRequestBuilder<BackgroundNotificationWorker>()
-            .setConstraints(constraints)
-            .setInitialDelay(delay, TimeUnit.HOURS)
-            .addTag(BackgroundNotificationWorker::class.java.name)
-            .build()
-
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
-    }
-
-    fun removeBackgroundNotificationWorker() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .cancelAllWorkByTag(BackgroundNotificationWorker::class.java.name)
     }
 
     fun setStickyNotificationWorker(title: String?, body: String?, coupon: String, expiry: Long) {

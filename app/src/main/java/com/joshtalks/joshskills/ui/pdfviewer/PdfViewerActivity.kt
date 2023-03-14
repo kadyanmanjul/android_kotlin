@@ -2,14 +2,10 @@ package com.joshtalks.joshskills.ui.pdfviewer
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.core.view.isVisible
@@ -30,10 +26,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.server.engage.SharePdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
-import com.joshtalks.joshskills.repository.service.GenericFileProvider
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

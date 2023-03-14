@@ -24,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController.Companion.builder
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.IS_MISSED_NOTIFICATION_ACTIVE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -39,6 +40,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
+import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherScreenImpressionService
@@ -264,72 +266,6 @@ class FeedbackRatingWorker(context: Context, workerParams: WorkerParameters) :
             ex.printStackTrace()
         }
         return Result.success()
-    }
-}
-
-class BackgroundNotificationWorker(val context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-
-    override suspend fun doWork(): Result {
-        return try {
-            buildNotification()
-            ReminderUtil(context).setAlarmNotificationWorker()
-            NotificationAnalytics().fetchMissedNotification(context)
-            NotificationAnalytics().pushToServer()
-            removeNotification()
-            Result.success()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Result.failure()
-        }
-    }
-
-    private fun buildNotification() {
-        val notificationIntent = Intent(context, InboxActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            0,
-            notificationIntent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                PendingIntent.FLAG_IMMUTABLE
-            else
-                0
-        )
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val notificationBuilder = NotificationCompat.Builder(context, NOTIF_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setOngoing(true)
-            .setAutoCancel(false)
-            .setContentTitle(context.getString(R.string.app_name))
-            .setContentText("Fetching all your notifications!")
-            .setContentIntent(pendingIntent)
-            .setDefaults(Notification.FLAG_ONGOING_EVENT)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            notificationBuilder.priority = NotificationManager.IMPORTANCE_LOW
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                NOTIF_CHANNEL_ID,
-                NOTIF_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_LOW
-            )
-
-            notificationBuilder.setChannelId(NOTIF_CHANNEL_ID)
-            notificationManager.createNotificationChannel(notificationChannel)
-        }
-
-        val notification = notificationBuilder.build()
-        notification.flags = Notification.FLAG_NO_CLEAR
-
-        notificationManager.notify(NOTIF_ID, notification)
-    }
-
-    private fun removeNotification() {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(NOTIF_ID)
     }
 }
 

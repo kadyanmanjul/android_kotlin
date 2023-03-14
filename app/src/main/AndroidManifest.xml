@@ -34,7 +34,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.CAPTURE_AUDIO_OUTPUT"
         tools:ignore="ProtectedPermissions" />
@@ -96,7 +96,6 @@
             <data android:mimeType="text/plain" />
         </intent>
     </queries>
-
     <queries>
         <provider android:authorities="com.joshtalks.joshskills.provider" />
     </queries>
@@ -119,6 +118,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
+        <profileable android:shell="true"/>
         <activity
             android:name=".ui.errorState.ErrorActivity"
             android:exported="false" />
@@ -571,7 +571,15 @@
         </receiver>
         <receiver
             android:name=".core.notification.ScheduledNotificationReceiver"
-            android:exported="false" /> <!-- <receiver -->
+            android:exported="false" />
+        <receiver
+            android:name=".core.notification.ScheduledLocalNotificationReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver> <!-- <receiver -->
         <!-- android:name=".core.service.ServiceStartReceiver" -->
         <!-- android:exported="true"> -->
         <!-- <intent-filter> -->

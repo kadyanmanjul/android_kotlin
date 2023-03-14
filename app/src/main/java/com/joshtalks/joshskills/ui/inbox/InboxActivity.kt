@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.inbox
 import android.Manifest
 import android.app.Activity
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -33,6 +34,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
@@ -49,6 +51,9 @@ import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.notification.StickyNotificationService
+import com.joshtalks.joshskills.core.notification.client_side.AlarmFrequency
+import com.joshtalks.joshskills.core.notification.client_side.AlarmUtil
+import com.joshtalks.joshskills.core.notification.client_side.LocalAlarmUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityInboxBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -125,6 +130,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
+        LocalAlarmUtils.removeLocalNotifications(this.applicationContext)
+        LocalAlarmUtils.scheduleNotifications(this.applicationContext)
+        //WorkManagerAdmin.scheduleLocalNotifications()
         viewModel.userOnlineStatusSync()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()

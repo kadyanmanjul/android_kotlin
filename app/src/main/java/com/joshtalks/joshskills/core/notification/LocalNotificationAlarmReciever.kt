@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.joshtalks.joshskills.core.notification.client_side.LocalAlarmUtils
 
 class LocalNotificationAlarmReciever : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -29,6 +30,8 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
         if ("android.intent.action.BOOT_COMPLETED" == intent.action) {
             CoroutineScope(Dispatchers.IO).launch {
                 context.showNotificationWithFullScreenIntent(context, notificationIndex = index)
+                LocalAlarmUtils.removeLocalNotifications(context)
+                LocalAlarmUtils.scheduleNotifications(context, 60 * 60 * 1000 * 1)
             }
         } else
             CoroutineScope(Dispatchers.IO).launch {
