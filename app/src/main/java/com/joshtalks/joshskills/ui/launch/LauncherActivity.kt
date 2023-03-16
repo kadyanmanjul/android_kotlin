@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +39,8 @@ import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import com.joshtalks.joshskills.voip.data.local.PrefManager as VoipPrefManager
@@ -50,6 +53,13 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
     }
     private val binding by lazy {
         ActivityLauncherBinding.inflate(layoutInflater)
+    }
+    val appOpenCoroutine = lifecycleScope.launch {
+        delay(3 * 1000)
+        if(isActive) {
+            Log.d(TAG, "appOpenCoroutine: ")
+            viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
+        }
     }
 
     companion object {
@@ -209,12 +219,22 @@ class LauncherActivity : ThemedCoreJoshActivity(), Branch.BranchReferralInitList
                 .withCallback(this@LauncherActivity)
                 .withData(this.intent?.data)
                 .init()
+            try {
+                appOpenCoroutine.start()
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
         } else {
             viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
         }
     }
 
     override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
+        try {
+            appOpenCoroutine.cancel()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
         if (error != null) {
             viewModel.event.postValue(Message().apply { what = ANALYZE_APP_REQUIREMENT })
             return
