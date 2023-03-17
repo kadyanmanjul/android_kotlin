@@ -91,6 +91,7 @@ import com.joshtalks.joshskills.ui.lesson.popup.PurchaseDialog
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.BuyPageActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.special_practice.utils.LESSON
 import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
@@ -2250,7 +2251,8 @@ class ConversationActivity :
                                     AppObjectController.getFirebaseRemoteConfig()
                                         .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID),
                                     "CONVERSATION_FT_TIMER",
-                                    shouldAutoApplyCoupon = true
+                                    shouldAutoApplyCoupon = true,
+                                    shouldAutoApplyFrom = LESSON
                                 )
                             }
                         }
