@@ -3,9 +3,11 @@ package com.joshtalks.joshskills.core.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.joshtalks.joshskills.core.INACTIVE_DAYS
 import com.joshtalks.joshskills.core.TOTAL_LOCAL_NOTIFICATIONS_SHOWN
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.LogException.catchException
 import com.joshtalks.joshskills.core.notification.client_side.LocalAlarmUtils
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
@@ -115,30 +117,37 @@ ScheduledLocalNotificationReceiver : BroadcastReceiver() {
                 LocalAlarmUtils.scheduleNotifications(context,60*60*1000*1)
             }
         } else {
-            val notificationId = intent?.extras?.getString("id","Local_notification")
-            context?.let {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val inactiveDays = PrefManager.getIntValue(INACTIVE_DAYS,false,1)
-                    val totalNotifications = PrefManager.getIntValue(TOTAL_LOCAL_NOTIFICATIONS_SHOWN,false,1)
-                    PrefManager.put(INACTIVE_DAYS,inactiveDays+1)
-                    PrefManager.put(TOTAL_LOCAL_NOTIFICATIONS_SHOWN,totalNotifications+1)
-                    val title = NOTIFICATION_TITLE.get(totalNotifications%(NOTIFICATION_TITLE.size))
-                        .replace("_inactive_", inactiveDays.toString())
-                        .replace("_username_", User.getInstance().firstName.toString())
+            try {
+                val notificationId = intent?.extras?.getString("id", "Local_notification")
+                context?.let {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val inactiveDays = PrefManager.getIntValue(INACTIVE_DAYS, false, 0).plus(1)
+                        val totalNotifications =
+                            PrefManager.getIntValue(TOTAL_LOCAL_NOTIFICATIONS_SHOWN, false, 0).plus(1)
+                        PrefManager.put(INACTIVE_DAYS, inactiveDays)
+                        PrefManager.put(TOTAL_LOCAL_NOTIFICATIONS_SHOWN, totalNotifications)
+                        val title =
+                            NOTIFICATION_TITLE.get(totalNotifications % (NOTIFICATION_TITLE.size))
+                                .replace("_inactive_", inactiveDays.toString())
+                                .replace("_username_", User.getInstance().firstName.toString())
 
 
-                    val desc = NOTIFICATION_DESC.get(totalNotifications%(NOTIFICATION_DESC.size))
-                        .replace("_inactive_", inactiveDays.toString())
-                        .replace("_username_", User.getInstance().firstName.toString())
+                        val desc =
+                            NOTIFICATION_DESC.get(totalNotifications % (NOTIFICATION_DESC.size))
+                                .replace("_inactive_", inactiveDays.toString())
+                                .replace("_username_", User.getInstance().firstName.toString())
 
-                    NotificationUtils(it).sendNotification(NotificationObject().apply {
-                        id = notificationId
-                        contentTitle = title
-                        contentText = desc
-                        action = NotificationAction.OPEN_APP
-                        actionData = null
-                    })
+                        NotificationUtils(it).sendNotification(NotificationObject().apply {
+                            id = notificationId
+                            contentTitle = title
+                            contentText = desc
+                            action = NotificationAction.OPEN_APP
+                            actionData = null
+                        })
+                    }
                 }
+            }catch (ex:Exception){
+                catchException(ex)
             }
         }
     }

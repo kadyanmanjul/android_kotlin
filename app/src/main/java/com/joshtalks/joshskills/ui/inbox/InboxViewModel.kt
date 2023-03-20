@@ -461,4 +461,27 @@ class InboxViewModel : BaseViewModel(){
         singleLiveEvent.value = message
     }
 
+    fun savePreviousNotificationImpressions() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val days = PrefManager.getIntValue(INACTIVE_DAYS, false, 0)
+                PrefManager.put(INACTIVE_DAYS,0,false)
+                val numNotifications = PrefManager.getIntValue(TOTAL_LOCAL_NOTIFICATIONS_SHOWN, false, 0)
+                if (days > 0 && numNotifications > 0) {
+                    val requestData = hashMapOf(
+                        Pair("mentor_id", Mentor.getInstance().getId()),
+                        Pair("event_name", "APP_OPENED_AFTER_DROP"),
+                        Pair("number_of_inactive_days", days),
+                        Pair("total_notifications_sent", numNotifications)
+                    )
+                    AppObjectController.commonNetworkService.saveImpressionForClientNotifications(
+                        requestData
+                    )
+                }
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
 }

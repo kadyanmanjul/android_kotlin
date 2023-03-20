@@ -2087,6 +2087,16 @@
     </entry>
 
     <entry>
+        <key>IS_CLIENT_NOTIFICATION_ACTIVE</key>
+        <value>false</value>
+    </entry>
+
+    <entry>
+        <key>CLIENT_NOTIFICATION_FOR_PAID</key>
+        <value>true</value>
+    </entry>
+
+    <entry>
         <key>LESSON_SPEAKING_BB_TIP_HEADER</key>
         <value>Welcome to Speaking Section</value>
     </entry>

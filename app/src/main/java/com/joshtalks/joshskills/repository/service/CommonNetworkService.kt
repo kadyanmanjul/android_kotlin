@@ -407,6 +407,8 @@ interface CommonNetworkService {
     @POST("$DIR/impression/notification_status/")
     suspend fun saveImpressionForNotificationStatus(@Body params: Map<String, String>): Response<Void>
 
+    @POST("$DIR/impression/retention_notification")
+    suspend fun saveImpressionForClientNotifications(@Body params: Map<String, Any>): Response<Void>
 
     @GET("$DIR/course/course_recommendations/")
     suspend fun getCourseRecommendations(): Response<ArrayList<InboxRecommendedCourse>>
