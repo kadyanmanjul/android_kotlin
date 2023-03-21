@@ -33,6 +33,7 @@ android {
     flavorDimensions "version"
     productFlavors {
         dev {
+            dimension 'version'
             buildConfigField "String", "BASE_URL", "${rootProject.ext.voip_debug_base_url}"
             buildConfigField "String", "MS_BASE_URL", "${rootProject.ext.voip_ms_debug_base_url}"
             buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-d49381a1-56bf-4854-96bb-3400c5facddd\""
@@ -41,6 +42,7 @@ android {
         }
 
         prod {
+            dimension 'version'
             buildConfigField "String", "BASE_URL", "${rootProject.ext.prod_base_url}"
             buildConfigField "String", "MS_BASE_URL", "${rootProject.ext.voip_ms_prod_base_url}"
             buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-ca4c4308-ae44-4431-9a31-c4dfdd6b0bf1\""
