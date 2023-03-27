@@ -374,7 +374,7 @@ interface CommonNetworkService {
         @Query("lessons_completed") lessonsCompleted: Int? = null
     ): Response<Coupon>
 
-    @GET("$DIR/course/buy_page_pricing/")
+    @GET("$DIR/course/buy_page_pricing_v2/")
     suspend fun getCoursePriceList(@Query("code") code: String?): Response<CoursePriceListModel>
 
     @GET("$DIR/course/list_reviews/")

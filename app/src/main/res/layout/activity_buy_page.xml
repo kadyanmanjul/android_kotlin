@@ -85,7 +85,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_16sdp"
-                            android:layout_marginTop="@dimen/_16sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
                             android:visibility="gone"
                             tools:visibility="visible" />
 
@@ -95,6 +95,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:orientation="vertical"
+                            tools:visibility="visible"
                             android:visibility="gone" />
 
                         <androidx.viewpager.widget.ViewPager
@@ -144,6 +145,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
+                        tools:visibility="visible"
                         android:visibility="gone">
 
                         <androidx.recyclerview.widget.RecyclerView
@@ -151,18 +153,10 @@
                             featureListAdapter="@{vm.featureAdapter}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_6sdp"
                             android:layout_marginHorizontal="@dimen/_15sdp"
                             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                             app:spanCount="2" />
-
-                        <View
-                            android:id="@+id/view9"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_2sdp"
-                            android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:background="@drawable/dotted_line"
-                            android:visibility="gone" />
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/course_desc_list"
@@ -171,7 +165,15 @@
                             android:layout_marginHorizontal="@dimen/_15sdp"
                             android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
-                            android:visibility="visible" />
+                            android:visibility="gone" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/image_communication"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_16sdp"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/communication_text" />
 
                         <View
                             android:id="@+id/view3"
@@ -183,65 +185,74 @@
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
-
                     <com.facebook.shimmer.ShimmerFrameLayout
-                        android:id="@+id/shimmer_for_testimonials1"
+                        android:id="@+id/shimmer5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_15sdp"
                         android:layout_marginVertical="@dimen/_12sdp"
-                        android:visibility="visible"
-                        tools:visibility="gone">
+                        android:visibility="@{vm.isPriceApiCall ? View.VISIBLE : View.GONE}">
 
-                        <include layout="@layout/shimmer_layout_for_rating" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <include layout="@layout/shimmer_layout_for_price" />
+
+                            <include layout="@layout/shimmer_layout_for_price" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
 
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/shimmer_layout_for_testimonials1"
+                        android:id="@+id/shimmer5_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone">
+                        android:visibility="@{vm.isPriceApiCall ? View.GONE: View.VISIBLE}">
 
-                        <View
-                            android:id="@+id/view13"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_2sdp"
-                            android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_19sdp"
-                            android:background="@drawable/dotted_line" />
-
-                        <androidx.appcompat.widget.LinearLayoutCompat
-                            android:id="@+id/teacher_rating_and_review"
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/price_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
                             android:layout_marginTop="@dimen/_16sdp"
-                            android:orientation="vertical"
-                            android:visibility="visible" />
+                            android:text="@{vm.priceText}"
+                            android:textAlignment="center"
+                            android:visibility="gone"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20" />
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/testimonials"
-                            onVideoItemClick="@{vm.openTestimonialVideo}"
-                            testimonialsListAdapter="@{vm.testiMonialsListAdapter}"
+                            android:id="@+id/course_price_list"
+                            onPriceItemClick="@{vm.onItemPriceClick}"
+                            priceListAdapter="@{vm.priceListAdapter}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="@dimen/_10sdp"
-                            android:visibility="gone"
-                            android:paddingTop="@dimen/_10sdp"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            tools:listitem="@layout/item_offfers_card" />
+                            android:orientation="vertical"
+                            android:visibility="@{vm.isPriceApiCall ? View.GONE : View.VISIBLE}"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/btn_see_course_list"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_13sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:onClick="@{()-> vm.openCourseExplore()}"
+                            android:text="See list of courses in unlimited access >>"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+                            android:textColor="@color/primary_500"
+                            android:visibility="@{vm.isSeeAllButtonShow ? View.VISIBLE : View.GONE}" />
 
                         <View
-                            android:id="@+id/view4"
+                            android:id="@+id/view14"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
+                            android:layout_marginTop="@dimen/_14sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_16sdp"
                             android:background="@drawable/dotted_line" />
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <com.facebook.shimmer.ShimmerFrameLayout
@@ -316,75 +327,57 @@
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
+
                     <com.facebook.shimmer.ShimmerFrameLayout
-                        android:id="@+id/shimmer5"
+                        android:id="@+id/shimmer_for_testimonials1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_15sdp"
                         android:layout_marginVertical="@dimen/_12sdp"
-                        android:visibility="@{vm.isPriceApiCall ? View.VISIBLE : View.GONE}">
+                        android:visibility="visible"
+                        tools:visibility="gone">
 
-                        <androidx.appcompat.widget.LinearLayoutCompat
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <include layout="@layout/shimmer_layout_for_price" />
-
-                            <include layout="@layout/shimmer_layout_for_price" />
-                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        <include layout="@layout/shimmer_layout_for_rating" />
 
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/shimmer5_layout"
+                        android:id="@+id/shimmer_layout_for_testimonials1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="@{vm.isPriceApiCall ? View.GONE: View.VISIBLE}">
+                        android:visibility="gone">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/price_text"
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/teacher_rating_and_review"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_15sdp"
                             android:layout_marginTop="@dimen/_16sdp"
-                            android:text="@{vm.priceText}"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.SubHeadingSemiBold20" />
+                            android:orientation="vertical"
+                            android:visibility="visible" />
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/course_price_list"
-                            onPriceItemClick="@{vm.onItemPriceClick}"
-                            priceListAdapter="@{vm.priceListAdapter}"
+                            android:id="@+id/testimonials"
+                            onVideoItemClick="@{vm.openTestimonialVideo}"
+                            testimonialsListAdapter="@{vm.testiMonialsListAdapter}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_16sdp"
-                            android:orientation="vertical"
-                            android:visibility="@{vm.isPriceApiCall ? View.GONE : View.VISIBLE}"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/btn_see_course_list"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/_13sdp"
-                            android:layout_marginTop="@dimen/_12sdp"
-                            android:onClick="@{()-> vm.openCourseExplore()}"
-                            android:text="See list of courses in unlimited access >>"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
-                            android:textColor="@color/primary_500"
-                            android:visibility="@{vm.isSeeAllButtonShow ? View.VISIBLE : View.GONE}" />
+                            android:clipToPadding="false"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:visibility="gone"
+                            android:paddingTop="@dimen/_10sdp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_offfers_card" />
 
                         <View
-                            android:id="@+id/view5"
+                            android:id="@+id/view4"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_29sdp"
-                            android:background="@drawable/dotted_line"
-                            android:visibility="@{vm.callUsText.isEmpty() ? View.GONE : View.VISIBLE}" />
-
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:background="@drawable/dotted_line" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
@@ -447,7 +440,6 @@
                             android:background="@drawable/dotted_line" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
-
 
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmer_for_testimonials2"

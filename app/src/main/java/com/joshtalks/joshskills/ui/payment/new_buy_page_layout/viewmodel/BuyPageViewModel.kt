@@ -57,11 +57,13 @@ class BuyPageViewModel : BaseViewModel() {
     var isPriceApiCall = ObservableBoolean(true)
     var priceText = ObservableField(EMPTY)
     var alreadyReasonSelected: String? = null
+    var imageLogo: String? = null
     var userPhoneNumber: String? = null
     val abTestRepository by lazy { ABTestRepository() }
 
     fun isSeeAllButtonShow(): Boolean {
-        return PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+        //return PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+        return false
     }
 
     fun getBuyPageFeature() {
@@ -85,6 +87,18 @@ class BuyPageViewModel : BaseViewModel() {
                 e.printStackTrace()
             }
 
+        }
+    }
+
+    fun refreshFeatureList(members: List<String>?) {
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                members?.let {
+                    featureAdapter.addFeatureList(members)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -462,6 +476,10 @@ class BuyPageViewModel : BaseViewModel() {
                 LogException.catchException(ex)
             }
         }
+    }
+
+    fun setSkillImageLogo(image: String) {
+        imageLogo = image
     }
 
 }

@@ -22,8 +22,12 @@ data class CourseDetailsList(
     var perDayPrice: String? = null,
     @SerializedName("sub_text")
     var subText: List<String>? = null,
+    @SerializedName("course_text")
+    var courseText: List<String>? = null,
     @SerializedName("test_id")
-    var testId:String? = null
+    var testId:String? = null,
+    @SerializedName("title")
+    var courseTitle:String? = null
 )
 
 data class PriceParameterModel(

@@ -1,33 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <variable
-            name="amount"
-            type="com.joshtalks.joshskills.ui.callWithExpert.model.Amount" />
-    </data>
-
-    <com.google.android.material.card.MaterialCardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_7sdp"
-        app:strokeColor="@color/primary_400"
-        app:strokeWidth="@dimen/_1sdp"
-        app:cardCornerRadius="@dimen/_6sdp">
+        android:layout_marginVertical="@dimen/_4sdp"
+        android:layout_marginHorizontal="@dimen/_7sdp">
 
-        <TextView
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
+            android:src="@drawable/buypage_tick"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintEnd_toStartOf="@id/feature_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/feature_name"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_35sdp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_2sdp"
             android:gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+            android:singleLine="false"
             android:textAlignment="center"
-            android:textColor="@color/primary_500"
+            android:textAppearance="@style/TextAppearance.JoshTypography.BodySemiBold20"
+            android:textColor="@color/pure_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Unlimited Calling" />
 
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

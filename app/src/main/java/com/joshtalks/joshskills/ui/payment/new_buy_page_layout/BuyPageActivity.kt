@@ -58,6 +58,7 @@ import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment
 import com.joshtalks.joshskills.ui.payment.PaymentPendingFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.BuyPageViewPager
+import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.featureListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.BookACallFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
@@ -208,7 +209,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     }
                 }
                 CLICK_ON_PRICE_CARD -> {
-                    setCoursePrices(it.obj as CourseDetailsList, it.arg1)
+                    setCourseDetails(it.obj as CourseDetailsList, it.arg1)
                 }
                 CLICK_ON_COUPON_APPLY -> {
                     Log.e("sagar", "initViewState: 1" )
@@ -364,7 +365,24 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         Log.e("Sagar", "updateListItem: ${viewModel.couponList}")
     }
 
-    private fun setCoursePrices(list: CourseDetailsList, position: Int) {
+    private fun setCourseDetails(list: CourseDetailsList, position: Int) {
+        val courseDetailsInflate: LayoutInflater =
+            getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        englishCourseCard =
+            courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
+        binding.courseTypeContainer.removeAllViews()
+
+        val image = englishCourseCard?.findViewById<ImageView>(R.id.img_skill_logo)
+        image?.setImage(viewModel.imageLogo ?: EMPTY,)
+        val text = englishCourseCard?.findViewById<TextView>(R.id.sample_text)
+        text?.text = list.courseTitle
+        binding.courseTypeContainer.addView(englishCourseCard)
+        viewModel.refreshFeatureList(list.courseText)
+        if (list.testId.equals("1928")){
+            binding.imageCommunication.visibility=View.VISIBLE
+        }else{
+            binding.imageCommunication.visibility=View.GONE
+        }
         priceForPaymentProceed = list
         proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text =
             if (paymentButtonValue == 0)
@@ -400,19 +418,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         binding.shimmer1Layout.visibility = View.VISIBLE
         binding.shimmer2.visibility = View.GONE
         binding.shimmer2.stopShimmer()
-        val courseDetailsInflate: LayoutInflater =
-            getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        englishCourseCard =
-            courseDetailsInflate.inflate(R.layout.english_course_card, null, true)
-        binding.courseTypeContainer.removeAllViews()
-
-        val image = englishCourseCard?.findViewById<ImageView>(R.id.img_skill_logo)
-        image?.setImage(buyCourseFeatureModel.otherCourseImage ?: EMPTY)
-
-        val text = englishCourseCard?.findViewById<TextView>(R.id.sample_text)
-        text?.text = buyCourseFeatureModel.courseName
-        binding.courseTypeContainer.addView(englishCourseCard)
-
+        viewModel.setSkillImageLogo(buyCourseFeatureModel.otherCourseImage)
 
         setRating(buyCourseFeatureModel)
 
@@ -503,7 +509,6 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
             binding.teacherRatingAndReview.addView(teacherRatingAndReviewCard)
 
             binding.testimonials.visibility = View.VISIBLE
-            binding.view13.visibility = View.VISIBLE
             binding.sliderViewPager.visibility = View.VISIBLE
             binding.indicator.visibility = View.VISIBLE
             binding.courseTypeContainer.visibility = View.GONE
