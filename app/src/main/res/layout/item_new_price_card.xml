@@ -19,7 +19,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="@dimen/_85sdp"
             android:layout_height="@dimen/_23sdp"
-            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_29sdp"
             android:layout_marginBottom="@dimen/_minus14sdp"
             android:elevation="@dimen/_10sdp"
@@ -28,7 +28,7 @@
             app:layout_constraintBottom_toTopOf="@id/price_card_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/best_value"
+            app:srcCompat="@drawable/ic_best_value"
             tools:visibility="visible" />
 
         <com.google.android.material.card.MaterialCardView
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_13sdp"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             app:cardCornerRadius="@dimen/_6sdp"
             app:rippleColor="@color/surface_information"

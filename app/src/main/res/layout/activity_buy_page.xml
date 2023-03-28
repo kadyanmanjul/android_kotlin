@@ -85,7 +85,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_16sdp"
-                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_1sdp"
                             android:visibility="gone"
                             tools:visibility="visible" />
 
@@ -93,7 +93,7 @@
                             android:id="@+id/course_type_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_6sdp"
                             android:orientation="vertical"
                             tools:visibility="visible"
                             android:visibility="gone" />
@@ -180,7 +180,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_2sdp"
                             android:layout_marginHorizontal="@dimen/_10sdp"
-                            android:layout_marginTop="@dimen/_19sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
                             android:background="@drawable/dotted_line" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>

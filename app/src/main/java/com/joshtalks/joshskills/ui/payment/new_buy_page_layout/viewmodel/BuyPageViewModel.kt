@@ -72,7 +72,7 @@ class BuyPageViewModel : BaseViewModel() {
                 val response = buyPageRepo.getBuyPageFeatureData()
                 apiStatus.postValue(ApiCallStatus.SUCCESS)
                 withContext(mainDispatcher) {
-                    featureAdapter.addFeatureList(response?.features)
+                    //featureAdapter.addFeatureList(response?.features)
                     testiMonialsListAdapter.addVideoList(response?.videos)
                     callUsText.set(response?.callUsText)
                     priceText.set(response?.priceEnglishText)
