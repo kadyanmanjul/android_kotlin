@@ -229,9 +229,14 @@
                     android:host="joshskills.app.link"
                     android:scheme="https" />
                 <data
+                    android:host="instant.joshtalks.org"
+                    android:scheme="http" />
+                <data android:scheme="https" />
+                <data
                     android:host="joshskills-alternate.app.link"
                     android:scheme="https" />
                 <data android:scheme="@string/fb_login_protocol_scheme" />
+
             </intent-filter>
         </activity>
         <activity
