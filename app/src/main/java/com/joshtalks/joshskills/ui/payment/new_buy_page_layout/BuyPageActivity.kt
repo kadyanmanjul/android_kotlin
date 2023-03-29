@@ -50,7 +50,10 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
-import com.joshtalks.joshskills.ui.errorState.*
+import com.joshtalks.joshskills.ui.errorState.COURSE_PRICE_LIST_ERROR
+import com.joshtalks.joshskills.ui.errorState.CREATE_ORDER_V3_ERROR
+import com.joshtalks.joshskills.ui.errorState.ErrorActivity
+import com.joshtalks.joshskills.ui.errorState.GET_USER_COUPONS_API_ERROR
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
@@ -58,7 +61,6 @@ import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogNew
 import com.joshtalks.joshskills.ui.payment.PaymentInProcessFragment
 import com.joshtalks.joshskills.ui.payment.PaymentPendingFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.BuyPageViewPager
-import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.featureListAdapter
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.BookACallFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.CouponCardFragment
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.fragment.RatingAndReviewFragment
@@ -383,6 +385,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         }else{
             binding.imageCommunication.visibility=View.GONE
         }
+        viewModel.saveImpressionForBuyPageLayout("PRICE_CARD_CLICK" + list.testId)
         priceForPaymentProceed = list
         proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text =
             if (paymentButtonValue == 0)

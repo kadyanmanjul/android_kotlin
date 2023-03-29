@@ -54,6 +54,8 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityInboxBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.help.HelpCenterOptions
+import com.joshtalks.joshskills.repository.server.help.HelpCenterOptionsModel
 import com.joshtalks.joshskills.ui.callWithExpert.utils.gone
 import com.joshtalks.joshskills.ui.callWithExpert.utils.visible
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -528,8 +530,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         } else {
             tryAgain.visibility = View.GONE
         }
+        HelpCenterOptions.getHelpOptionsModelObject()?.let { helpCenterOptionsModel ->
+            Log.e("sagar", "initPaymentStatusView: ${helpCenterOptionsModel.options.forEach { it.actionData }}", )
+        }
         if (isHelpLineVisible) {
-            val helpLine = "+91 8634503202"
+            var helpLine = "+91 8634503202"
+            HelpCenterOptions.getHelpOptionsModelObject()?.let { helpCenterOptionsModel ->
+                helpLine = helpCenterOptionsModel.options[0].actionData.toString()
+            }
             callText.visibility = View.VISIBLE
             number.visibility = View.VISIBLE
             callText.text = getString(R.string.failed_payment_call_text)
@@ -543,6 +551,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         } else {
             callText.visibility = View.GONE
             number.visibility = View.GONE
+        }
+    }
+
+    fun getHelpOptionsModelObject(): HelpCenterOptionsModel? {
+        val value = AppObjectController.getFirebaseRemoteConfig().getString("help_options_new")
+        return try {
+            AppObjectController.gsonMapper.fromJson(
+                value,
+                HelpCenterOptionsModel::class.java
+            )
+        } catch (ex: Exception) {
+            null
         }
     }
 
