@@ -8,9 +8,12 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.WindowManager
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.getPDFFilePath
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
@@ -28,6 +31,7 @@ import com.joshtalks.joshskills.repository.server.engage.SharePdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,9 +80,9 @@ class PdfViewerActivity : BaseActivity() {
     private fun showPdf() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                pdfId =intent.getStringExtra(PDF_ID)
+                pdfId = intent.getStringExtra(PDF_ID)
 
-                    path = if (intent.hasExtra(PDF_PATH)) {
+                path = if (intent.hasExtra(PDF_PATH)) {
                     intent.getStringExtra(PDF_PATH)!!
                 } else {
 
@@ -110,19 +114,25 @@ class PdfViewerActivity : BaseActivity() {
 
     fun sharePDF(v: View) {
         try {
-
-            val shareFilePath = AppDirectory.getDocsShareFile(
-                null,
-                pdfExtension = ".pdf"
-            ).absolutePath
+            val shareFilePath = getPDFFilePath()
+            val paths = FileProvider.getUriForFile(
+                applicationContext, BuildConfig.APPLICATION_ID + ".provider",
+                File(shareFilePath)
+            )
             AppDirectory.copy(path, shareFilePath!!)
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/pdf"
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                putExtra(Intent.EXTRA_STREAM, Uri.parse(shareFilePath))
+                putExtra(Intent.EXTRA_STREAM, paths)
             }
             pdfId?.run {
-                EngagementNetworkHelper.savePdfShareImpression(SharePdfEngage(this, Mentor.getInstance().getId()?: EMPTY,"Share"))
+                EngagementNetworkHelper.savePdfShareImpression(
+                    SharePdfEngage(
+                        this,
+                        Mentor.getInstance().getId() ?: EMPTY,
+                        "Share"
+                    )
+                )
             }
             startActivity(Intent.createChooser(intent, "Share PDF"))
         } catch (e: Exception) {

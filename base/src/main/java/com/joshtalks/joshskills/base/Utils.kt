@@ -233,6 +233,10 @@ fun getVideoFilePath(): String {
     return getAndroidDownloadFolder()?.absolutePath + "/" + "JoshSkill-" + System.currentTimeMillis() + ".mp4"
 }
 
+fun getPDFFilePath(): String {
+    return getAndroidDownloadFolder()?.absolutePath + "/" + "JoshSkill-" + System.currentTimeMillis() + ".pdf"
+}
+
 fun getAndroidDownloadFolder(): File? {
     return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 }
