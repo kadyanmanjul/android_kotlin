@@ -207,11 +207,6 @@ android {
         generateStubs = true
     }
 
-    sourceSets {
-        main{
-            jniLibs.srcDirs = ['src/main/jniLibs']
-        }
-    }
     lint {
         abortOnError false
     }
@@ -368,7 +363,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation files("libs/agora-rtc-sdk.jar")
+//    implementation files("libs/agora-rtc-sdk.jar")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'
@@ -401,5 +396,4 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation 'in.juspay:hypersdk:2.1.7'
     implementation "com.google.android.gms:play-services-instantapps:18.0.1"
-
 }

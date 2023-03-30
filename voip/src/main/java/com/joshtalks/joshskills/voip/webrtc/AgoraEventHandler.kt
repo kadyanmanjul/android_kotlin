@@ -6,8 +6,8 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import io.agora.rtc.Constants
-import io.agora.rtc.IRtcEngineEventHandler
+import io.agora.rtc2.Constants
+import io.agora.rtc2.IRtcEngineEventHandler
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow

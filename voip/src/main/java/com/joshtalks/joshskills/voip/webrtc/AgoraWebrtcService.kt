@@ -6,8 +6,8 @@ import android.util.Log
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
-import io.agora.rtc.Constants
-import io.agora.rtc.RtcEngine
+import io.agora.rtc2.Constants
+import io.agora.rtc2.RtcEngine
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
