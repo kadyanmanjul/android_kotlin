@@ -590,9 +590,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         }
                         if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
                             PrefManager.put(IS_COURSE_BOUGHT, true)
-                            if (PrefManager.getStringValue(STICKY_COUPON_DATA).isNotEmpty()) {
+                            try {
                                 stopService(Intent(this@InboxActivity, StickyNotificationService::class.java))
                                 PrefManager.put(STICKY_COUPON_DATA, EMPTY)
+                                val nMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                                nMgr.cancel(10206)
+                            }catch (ex:java.lang.Exception){
+                                ex.printStackTrace()
                             }
                         }
 
