@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lesson_nav_graph"
+    app:startDestination="@id/lessonSectionsFragment">
+
+    <fragment
+        android:id="@+id/lessonSectionsFragment"
+        android:name="com.joshtalks.joshskills.ui.lesson.LessonSectionsFragment"
+        android:label="LessonSectionsFragment" >
+        <action
+            android:id="@+id/action_lessonSectionsFragment_to_grammarFragment"
+            app:destination="@id/grammarFragment" />
+        <action
+            android:id="@+id/action_lessonSectionsFragment_to_speakingPractiseFragment"
+            app:destination="@id/speakingPractiseFragment" />
+        <action
+            android:id="@+id/action_lessonSectionsFragment_to_vocabularyFragment"
+            app:destination="@id/vocabularyFragment" />
+        <action
+            android:id="@+id/action_lessonSectionsFragment_to_readingFragmentWithoutFeedback"
+            app:destination="@id/readingFragmentWithoutFeedback" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/speakingPractiseFragment"
+        android:name="com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment"
+        android:label="SpeakingPractiseFragment" />
+    <fragment
+        android:id="@+id/readingFragmentWithoutFeedback"
+        android:name="com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback"
+        android:label="ReadingFragmentWithoutFeedback" />
+    <fragment
+        android:id="@+id/vocabularyFragment"
+        android:name="com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment"
+        android:label="VocabularyFragment" />
+    <fragment
+        android:id="@+id/grammarFragment"
+        android:name="com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment"
+        android:label="GrammarFragment" />
+
+
+</navigation>

@@ -12,8 +12,9 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.OFFER_FOR
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.errorState.GET_USER_COUPONS_API_ERROR
 import com.joshtalks.joshskills.ui.errorState.COURSE_PRICE_LIST_ERROR
+import com.joshtalks.joshskills.ui.errorState.ErrorScreen
+import com.joshtalks.joshskills.ui.errorState.GET_USER_COUPONS_API_ERROR
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.FREE_TRIAL_PAYMENT_TEST_ID
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.adapter.*
 import com.joshtalks.joshskills.ui.payment.new_buy_page_layout.model.Coupon
@@ -27,7 +28,6 @@ import org.json.JSONObject
 import timber.log.Timber
 import java.math.BigDecimal
 import java.util.*
-import kotlin.collections.ArrayList
 
 class BuyPageViewModel : BaseViewModel() {
     private val buyPageRepo by lazy { BuyPageRepo() }
@@ -180,6 +180,15 @@ class BuyPageViewModel : BaseViewModel() {
                         withContext(mainDispatcher) {
                             priceListAdapter.addPriceList(response.body()?.courseDetails, validDuration,couponType)
                         }
+                        response.body()?.courseDetails?.forEach {
+                            AppObjectController.commonNetworkService.pushApiLogging(
+                                ErrorScreen(
+                                    apiErrorCode = "1001",
+                                    payload = EMPTY,
+                                    exception = it.encryptedText
+                                )
+                            )
+                        }
                     } else {
                         isPriceApiCall.set(true)
                         withContext(mainDispatcher) {
@@ -257,6 +266,7 @@ class BuyPageViewModel : BaseViewModel() {
         { it, type, position, cardType ->
             when (type) {
                 CLICK_ON_PRICE_CARD -> {
+                    saveImpressionForBuyPageLayout("CLICK_ON_PRICE_CARD_VIEWMODEL", it.encryptedText)
                     message.what = CLICK_ON_PRICE_CARD
                     message.obj = it
                     message.arg1 = position
@@ -383,17 +393,12 @@ class BuyPageViewModel : BaseViewModel() {
 
     fun saveImpressionForBuyPageLayout(eventName: String, eventData: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                buyPageRepo.saveBuyPageImpression(
-                    mapOf(
-                        "event_name" to eventName,
-                        "event_data" to eventData
-                    )
+            buyPageRepo.saveBuyPageImpression(
+                mapOf(
+                    "event_name" to eventName,
+                    "event_data" to eventData
                 )
-            } catch (ex: java.lang.Exception) {
-                ex.printStackTrace()
-                LogException.catchException(ex)
-            }
+            )
         }
     }
 

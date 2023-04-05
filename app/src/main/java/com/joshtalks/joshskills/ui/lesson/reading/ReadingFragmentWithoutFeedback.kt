@@ -287,10 +287,10 @@ class ReadingFragmentWithoutFeedback :
                 container,
                 false
             )
-        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
+        binding.mainRootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.lifecycleOwner = this
         binding.handler = this
-        return binding.rootView
+        return binding.mainRootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

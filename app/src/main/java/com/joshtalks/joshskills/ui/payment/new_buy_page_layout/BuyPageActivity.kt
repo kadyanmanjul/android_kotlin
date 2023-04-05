@@ -211,7 +211,9 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
                     }
                 }
                 CLICK_ON_PRICE_CARD -> {
-                    setCourseDetails(it.obj as CourseDetailsList, it.arg1)
+                    val objectData = it.obj as CourseDetailsList
+                    viewModel.saveImpressionForBuyPageLayout("CLICK_ON_PRICE_CARD_DATA", objectData.encryptedText)
+                    setCourseDetails(objectData, it.arg1)
                 }
                 CLICK_ON_COUPON_APPLY -> {
                     Log.e("sagar", "initViewState: 1" )
@@ -380,13 +382,15 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         text?.text = list.courseTitle
         binding.courseTypeContainer.addView(englishCourseCard)
         viewModel.refreshFeatureList(list.courseText)
-        if (list.testId.equals("1928")){
+        if (list.testId == "1928"){
             binding.imageCommunication.visibility=View.VISIBLE
         }else{
             binding.imageCommunication.visibility=View.GONE
         }
+        viewModel.saveImpressionForBuyPageLayout("ENCRYPTED_TEXT", list.encryptedText)
         viewModel.saveImpressionForBuyPageLayout("PRICE_CARD_CLICK" + list.testId)
         priceForPaymentProceed = list
+        viewModel.saveImpressionForBuyPageLayout("ENCRYPTED_TEXT_PROCEED", priceForPaymentProceed?.encryptedText?: EMPTY)
         proceedButtonCard?.findViewById<MaterialButton>(R.id.btn_payment_course)?.text =
             if (paymentButtonValue == 0)
                 "Pay ${priceForPaymentProceed?.discountedPrice.toString() ?: "Pay ₹499"}"
@@ -428,7 +432,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         if (viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V3_ENABLED) || viewModel.abTestRepository.isVariantActive(VariantKeys.NEW_BUY_PAGE_V4_ENABLED)){
             binding.courseDescList.visibility = View.GONE
         }else{
-            buyCourseFeatureModel.information?.forEach { it ->
+            buyCourseFeatureModel.information.forEach { it ->
                 val view = getCourseDescriptionList(it)
                 if (view != null) {
                     binding.courseDescList.addView(view)
@@ -631,6 +635,7 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         binding.paymentProceedBtnCard.addView(proceedButtonCard)
         paymentButton?.setOnSingleClickListener {
             isPaymentInitiated = true
+            viewModel.saveImpressionForBuyPageLayout("PAYMENT_BUTTON_CLICK", priceForPaymentProceed?.encryptedText?: EMPTY)
             viewModel.saveImpressionForBuyPageLayout(PROCEED_PAYMENT_CLICK, testId)
             startPayment()
         }
@@ -656,13 +661,16 @@ class BuyPageActivity : ThemedBaseActivityV2(), PaymentGatewayListener, OnOpenCo
         }
         NotificationUtils(applicationContext).removeScheduledNotification(NotificationCategory.AFTER_BUY_PAGE)
         NotificationUtils(applicationContext).updateNotificationDb(NotificationCategory.PAYMENT_INITIATED)
+        viewModel.saveImpressionForBuyPageLayout("START_PAYMENT", priceForPaymentProceed?.encryptedText?: EMPTY)
         try {
+            Log.e("sagar", "startPayment: ${priceForPaymentProceed?.encryptedText}")
             paymentManager.createOrder(
                 phoneNumber,
                 priceForPaymentProceed?.encryptedText ?: EMPTY,
                 priceForPaymentProceed?.testId ?: EMPTY
             )
         } catch (ex: Exception) {
+            Log.e("sagar", "startPayment: ${ex.message} ", )
             ex.showAppropriateMsg()
         }
     }

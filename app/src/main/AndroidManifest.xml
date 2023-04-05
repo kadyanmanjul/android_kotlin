@@ -118,7 +118,12 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
-        <profileable android:shell="true"/>
+        <activity
+            android:name=".ui.lesson.LessonSectionActivity"
+            android:exported="false" />
+
+        <profileable android:shell="true" />
+
         <activity
             android:name=".ui.errorState.ErrorActivity"
             android:exported="false" />
@@ -236,7 +241,6 @@
                     android:host="joshskills-alternate.app.link"
                     android:scheme="https" />
                 <data android:scheme="@string/fb_login_protocol_scheme" />
-
             </intent-filter>
         </activity>
         <activity

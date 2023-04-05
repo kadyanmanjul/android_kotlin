@@ -1002,6 +1002,8 @@
     <string name="type_your_email">Type your email</string>
     <string name="type_problem">Please explain your problem in detail</string>
     <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

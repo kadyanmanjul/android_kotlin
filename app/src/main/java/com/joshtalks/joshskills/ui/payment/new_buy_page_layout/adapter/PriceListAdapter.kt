@@ -41,7 +41,8 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
         holder.setData(priceList?.get(position))
 
         Log.d("PriceListAdapter.kt", "SAGAR => onBindViewHolder:29 ${prevHolder?.layoutPosition} ${holder.layoutPosition}}")
-        if (priceList?.get(position) != null && priceList?.get(position)!!.isRecommended == true && (prevHolder == holder || prevHolder == null)) {
+
+        if (priceList?.get(position) != null && priceList?.get(position)!!.isRecommended && (prevHolder == holder || prevHolder == null)) {
             itemClick?.invoke(priceList?.get(position)!!, CLICK_ON_PRICE_CARD, position, REMOVE)
             prevHolder = holder
             holder.binding.priceCardView.strokeColor  = AppObjectController.joshApplication.resources.getColor(R.color.primary_500)
@@ -104,7 +105,7 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
             if (priceList?.perDayPrice != null)
                 binding.pricePerDay.text = priceList.perDayPrice + " "
 
-            val savings = (priceList?.actualAmount)?.minus((priceList.discountedPrice) ?: 0)
+            val savings = (priceList?.actualAmount)?.minus((priceList.discountedPrice))
 
             if (savings != null) {
                 val percent = (savings / ((priceList.actualAmount).toDouble()) * 100).toInt()
@@ -114,7 +115,7 @@ class PriceListAdapter(var priceList: List<CourseDetailsList>? = listOf()) :
             if (priceList?.subText != null) {
                 binding.priceDescList.visibility = View.VISIBLE
                 binding.priceDescList.removeAllViews()
-                priceList.subText?.forEach { it ->
+                priceList.subText.forEach { it ->
                     val view = getCourseDescriptionList(it)
                     if (view != null) {
                         binding.priceDescList.addView(view)
