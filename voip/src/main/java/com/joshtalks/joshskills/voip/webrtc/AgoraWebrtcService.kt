@@ -7,6 +7,8 @@ import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import io.agora.rtc2.Constants
+import io.agora.rtc2.Constants.CHANNEL_PROFILE_COMMUNICATION
+import io.agora.rtc2.Constants.CONNECTION_STATE_DISCONNECTED
 import io.agora.rtc2.RtcEngine
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,6 +46,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             setParameters("{\"che.audio.enable.agc\":true}")  //automatic gain control
             setParameters("{\"che.audio.enable.ns\":false}")   //noise suppression
             enableAudioVolumeIndication(500, 3, true)
+            setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
         }
         Log.d(TAG, "initWebrtcService: ${agoraEngine}")
         observeCallbacks()
@@ -54,6 +57,19 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             Log.d(TAG, "Connect Call Request : $request")
             state.emit(JOINING)
             currentState = JOINING
+            try {
+                if(agoraEngine?.connectionState != CONNECTION_STATE_DISCONNECTED) {
+                    state.emit(LEAVING_AND_JOINING)
+                    currentState = LEAVING_AND_JOINING
+                    createLazyJoinRequest(request)
+                    leaveChannel()
+                    return
+                }
+            } catch (e : Exception) {
+                if (e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
             val status = joinChannel(request)
             Log.d(TAG, "Join Channel Status ----> $status")
             when (status) {

@@ -160,6 +160,12 @@ android {
         exclude "lib/x86_64/libagora_udrm3_extension.so"
 
     }
+
+    sourceSets {
+        main{
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
 }
 
 dependencies {
@@ -177,7 +183,8 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.2.1'
-    implementation 'io.agora.rtc:voice-sdk:4.1.1'
+//    implementation 'io.agora.rtc:voice-sdk:4.1.1'
+    implementation files("libs/agora-rtc-sdk.jar")
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'

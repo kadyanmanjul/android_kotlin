@@ -210,6 +210,110 @@ android {
     lint {
         abortOnError false
     }
+
+    packagingOptions {
+
+        exclude "lib/arm64-v8a/libagora-crypto.so"
+
+        exclude "lib/arm64-v8a/libagora_segmentation_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_fd_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_ai_denoise_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_dav1d_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_jnd_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_ai_echo_cancellation_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_ai_noise_suppression_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_audio_beauty_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_drm_loader_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_spatial_audio_extension.so"
+
+        exclude "lib/arm64-v8a/libagora_udrm3_extension.so"
+
+        //
+        exclude "lib/armeabi-v7a/libagora-crypto.so"
+
+        exclude "lib/armeabi-v7a/libagora_segmentation_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_fd_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_ai_denoise_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_dav1d_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_jnd_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_ai_echo_cancellation_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_ai_noise_suppression_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_audio_beauty_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_drm_loader_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_spatial_audio_extension.so"
+
+        exclude "lib/armeabi-v7a/libagora_udrm3_extension.so"
+
+        //
+
+        exclude "lib/x86/libagora-crypto.so"
+
+        exclude "lib/x86/libagora_segmentation_extension.so"
+
+        exclude "lib/x86/libagora_fd_extension.so"
+
+        exclude "lib/x86/libagora_ai_denoise_extension.so"
+
+        exclude "lib/x86/libagora_dav1d_extension.so"
+
+        exclude "lib/x86/libagora_jnd_extension.so"
+
+        exclude "lib/x86/libagora_ai_echo_cancellation_extension.so"
+
+        exclude "lib/x86/libagora_ai_noise_suppression_extension.so"
+
+        exclude "lib/x86/libagora_audio_beauty_extension.so"
+
+        exclude "lib/x86/libagora_drm_loader_extension.so"
+
+        exclude "lib/x86/libagora_spatial_audio_extension.so"
+
+        exclude "lib/x86/libagora_udrm3_extension.so"
+
+        //
+        exclude "lib/x86_64/libagora-crypto.so"
+
+        exclude "lib/x86_64/libagora_segmentation_extension.so"
+
+        exclude "lib/x86_64/libagora_fd_extension.so"
+
+        exclude "lib/x86_64/libagora_ai_denoise_extension.so"
+
+        exclude "lib/x86_64/libagora_dav1d_extension.so"
+
+        exclude "lib/x86_64/libagora_jnd_extension.so"
+
+        exclude "lib/x86_64/libagora_ai_echo_cancellation_extension.so"
+
+        exclude "lib/x86_64/libagora_ai_noise_suppression_extension.so"
+
+        exclude "lib/x86_64/libagora_audio_beauty_extension.so"
+
+        exclude "lib/x86_64/libagora_drm_loader_extension.so"
+
+        exclude "lib/x86_64/libagora_spatial_audio_extension.so"
+
+        exclude "lib/x86_64/libagora_udrm3_extension.so"
+
+    }
 }
 
 dependencies {
