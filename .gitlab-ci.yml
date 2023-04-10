@@ -1,0 +1,32 @@
+image: openjdk:8-jdk
+
+stages:
+  - build
+  - test
+  - deploy
+
+cache:
+  paths:
+    - .gradle/
+
+build:
+  stage: build
+  script:
+    - chmod +x ./gradlew
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+      - app/build/outputs/
+
+test:
+  stage: test
+  script:
+    - chmod +x ./gradlew
+    - ./gradlew test
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying app..."
+  only:
+    - master
